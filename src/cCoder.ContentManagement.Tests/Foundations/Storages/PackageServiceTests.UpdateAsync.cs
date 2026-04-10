@@ -1,0 +1,111 @@
+using cCoder.Data.Models;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Packaging;
+using cCoder.Data.Models.Security;
+using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
+using Config = cCoder.ContentManagement.Models.Config;
+using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
+using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
+using RenderParams = cCoder.ContentManagement.Models.RenderParams;
+using RenderResult = cCoder.ContentManagement.Models.RenderResult;
+using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using System.Security;
+using FluentAssertions;
+using Moq;
+using Xunit;
+
+
+
+namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
+
+public partial class PackageServiceTests
+{
+    [Fact]
+    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
+    {
+        // Given
+        Package package = CreateRandomPackage();
+
+        cCoder.Data.Models.Packaging.Package submitted = null;
+
+        authorizationBrokerMock.Setup(x => x.Authorize(null, "Package_update"));
+
+        packageBrokerMock
+            .Setup(x => x.UpdatePackageAsync(It.IsAny<cCoder.Data.Models.Packaging.Package>()))
+            .Callback<cCoder.Data.Models.Packaging.Package>(candidate => submitted = new cCoder.Data.Models.Packaging.Package
+            {
+                Id = candidate.Id,
+                Name = candidate.Name,
+                Description = candidate.Description,
+                Category = candidate.Category,
+                SourceApi = candidate.SourceApi
+            })
+            .ReturnsAsync((cCoder.Data.Models.Packaging.Package value) => value);
+
+        // When
+        Package result = await packageService.UpdateAsync(package);
+
+        // Then
+        result.Should().NotBeSameAs(package);
+        submitted.Should().NotBeNull();
+        submitted.Should().BeEquivalentTo(new
+        {
+            package.Id,
+            package.Name,
+            package.Description,
+            package.Category,
+            package.SourceApi
+        });
+        submitted.Items.Should().BeNull();
+        result.Should().BeEquivalentTo(new
+        {
+            package.Id,
+            package.Name,
+            package.Description,
+            package.Category,
+            package.SourceApi
+        });
+        result.Items.Should().BeEquivalentTo(package.Items);
+        packageBrokerMock.Verify(x => x.UpdatePackageAsync(It.IsAny<cCoder.Data.Models.Packaging.Package>()), Times.Once);
+        packageBrokerMock.VerifyNoOtherCalls();
+        authorizationBrokerMock.Verify(x => x.Authorize(null, "Package_update"), Times.Once);
+        authorizationBrokerMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
+    {
+        // Given
+        Package package = CreateRandomPackage();
+
+        authorizationBrokerMock
+            .Setup(x => x.Authorize(null, "Package_update"))
+            .Throws(new SecurityException("Access Denied!"));
+
+        // When
+        Func<Task> action = async () => await packageService.UpdateAsync(package);
+
+        // Then
+        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
+        packageBrokerMock.VerifyNoOtherCalls();
+        authorizationBrokerMock.Verify(x => x.Authorize(null, "Package_update"), Times.Once);
+        authorizationBrokerMock.VerifyNoOtherCalls();
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
