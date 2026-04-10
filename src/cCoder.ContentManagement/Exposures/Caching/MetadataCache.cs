@@ -13,21 +13,22 @@ internal class MetadataCache : IMetadataCache
     public int ExpiryTimeInMinutes { get; set; } = 60;
 
     private readonly IDictionary<string, IDictionary<string, string>> metaSerialized;
-
     private readonly IMetadataTypeCache metadataTypeCache;
-
     private readonly ICommonObjectCache resourceCache;
+    private string metadataSignature;
 
     public MetadataCache(IMetadataTypeCache metadataTypeCache, ICommonObjectCache resourceCache)
     {
         metaSerialized = new Dictionary<string, IDictionary<string, string>>();
         this.metadataTypeCache = metadataTypeCache;
         this.resourceCache = resourceCache;
+        metadataSignature = string.Empty;
         Rebuild();
     }
 
     public string GetAll(string culture = "")
     {
+        EnsureSynchronized();
         return "[" + string.Join(',', (from c in GetTypeSets()
                                        select metaSerialized[culture][c.Name.ToLower()]).ToArray()) + "]";
     }
@@ -51,6 +52,8 @@ internal class MetadataCache : IMetadataCache
                 Set(metadataContainerSet2.Name.ToLower(), ToJsonForOData(metadataContainerSet2), culture.Id);
             }
         }
+
+        metadataSignature = ComputeMetadataSignature();
     }
 
     public void Set(string key, string value, string culture)
@@ -67,12 +70,20 @@ internal class MetadataCache : IMetadataCache
 
     public string ToJson(string culture)
     {
+        EnsureSynchronized();
         return ToJsonForOData(metaSerialized[culture]);
     }
 
     public string Get(string key, string culture)
     {
+        EnsureSynchronized();
         return metaSerialized[culture].ContainsKey(key) ? metaSerialized[culture][key] : string.Empty;
+    }
+
+    private void EnsureSynchronized()
+    {
+        if (!string.Equals(metadataSignature, ComputeMetadataSignature(), StringComparison.Ordinal))
+            Rebuild();
     }
 
     private MetadataContainerSet[] GetTypeSets()
@@ -105,6 +116,13 @@ internal class MetadataCache : IMetadataCache
                 .ToArray(),
         };
     }
+
+    private string ComputeMetadataSignature() =>
+        string.Join(
+            "\u001f",
+            metadataTypeCache
+                .GetAll()
+                .OrderBy(payload => payload, StringComparer.Ordinal));
 
     private static string ToJsonForOData(object model)
     {
