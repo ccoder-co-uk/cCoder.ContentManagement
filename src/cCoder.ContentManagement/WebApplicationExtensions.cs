@@ -1,6 +1,5 @@
 using System.Security;
 using System.Text.Json;
-using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Services.Foundations;
