@@ -13,7 +13,7 @@ namespace Web.AcceptanceTests.Tests.ContentManagement;
 public sealed partial class AppControllerTests
 {
     [Fact]
-    public async Task Post_CreatesGuestAdministratorRoleForCreatedApp()
+    public async Task Post_CreatesBootstrapAdministratorRoleForCreatedApp()
     {
         SeededApp seededApp = await SeedDatabase("app_create");
         App createdApp = await CreateAppAsync(

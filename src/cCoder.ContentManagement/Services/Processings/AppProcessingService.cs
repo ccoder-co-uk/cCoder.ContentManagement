@@ -57,10 +57,12 @@ internal class AppProcessingService(
     public async ValueTask<App> AddAsync(App inputApp)
     {
         ValidateApp(inputApp, "inputApp");
+
         if (string.IsNullOrEmpty(inputApp.DefaultTheme))
         {
             inputApp.DefaultTheme = "Default";
         }
+
         inputApp.Cultures = BuildCulturesForApp(inputApp);
         inputApp.Roles = BuildRolesForApp(inputApp);
         App storedApp = await service.AddAsync(inputApp);
@@ -211,12 +213,19 @@ internal class AppProcessingService(
     private ICollection<Role> BuildRolesForApp(App app)
     {
         List<Role> list = (app.Roles ?? new List<Role>()).ToList();
-        string userId = (string.IsNullOrWhiteSpace(authorizationBroker.GetCurrentUser()?.Id) ? "Guest" : authorizationBroker.GetCurrentUser().Id);
+        string currentUserId = authorizationBroker.GetCurrentUser()?.Id;
+        bool isFirstApp = !service.GetAll(ignoreFilters: true).Any();
+        string defaultUserId = string.IsNullOrWhiteSpace(currentUserId) ? "Guest" : currentUserId;
+        string bootstrapUserId = isFirstApp
+            ? NormalizeBootstrapUserId(currentUserId)
+            : defaultUserId;
+
         string[] administratorPrivilegeIds = privilegeBroker.GetAllPrivileges(ignoreFilters: false)
             .ToArray()
-            .Where(privilege => privilege.Id != "app_create")
+            .Where(privilege => isFirstApp || privilege.Id != "app_create")
             .Select(privilege => privilege.Id)
             .ToArray();
+
         string[] userPrivilegeIds = privilegeBroker.GetAllPrivileges(ignoreFilters: false)
             .ToArray()
             .Where(privilege =>
@@ -225,9 +234,11 @@ internal class AppProcessingService(
                 !privilege.Type.StartsWith("Workflow", StringComparison.OrdinalIgnoreCase))
             .Select(privilege => privilege.Id)
             .ToArray();
-        EnsureRole(list, "Administrators", administratorPrivilegeIds, userId);
-        EnsureRole(list, "Users", userPrivilegeIds, userId);
+
+        EnsureRole(list, "Administrators", administratorPrivilegeIds, bootstrapUserId);
+        EnsureRole(list, "Users", userPrivilegeIds, bootstrapUserId);
         EnsureRole(list, "Guests", userPrivilegeIds, "Guest");
+
         foreach (Role item in list)
         {
             item.App = app;
@@ -286,6 +297,11 @@ internal class AppProcessingService(
             });
         }
     }
+
+    private static string NormalizeBootstrapUserId(string userId) =>
+        string.IsNullOrWhiteSpace(userId) || string.Equals(userId, "Guest", StringComparison.OrdinalIgnoreCase)
+            ? null
+            : userId;
 
     private static void StampAppChildren(App app)
     {
