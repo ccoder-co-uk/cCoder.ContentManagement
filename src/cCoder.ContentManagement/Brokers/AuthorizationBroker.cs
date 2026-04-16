@@ -57,11 +57,9 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
 
     private static bool HasAppAdminPrivilege(CoreDataContext coreDataContext, string userId, int? appId)
     {
-        if (!appId.HasValue)
-        {
-            return false;
-        }
-        return GetUserRoles(coreDataContext, userId).Any((Role role) => role.AppId == appId && role.Privileges.Any((string privilege) => string.Equals(privilege, "app_admin", StringComparison.OrdinalIgnoreCase)));
+        return GetUserRoles(coreDataContext, userId)
+            .Any((Role role) => role.AppId == appId && role.Privileges.Any((string privilege) => string.Equals(privilege, "app_admin", StringComparison.OrdinalIgnoreCase))) ||
+                !coreDataContext.Roles.IgnoreQueryFilters().Any();
     }
 
     private static Role[] GetUserRoles(CoreDataContext coreDataContext, string userId)
