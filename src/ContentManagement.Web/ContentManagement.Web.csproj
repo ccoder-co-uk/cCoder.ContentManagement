@@ -4,6 +4,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <LocalDataProject>..\..\..\cCoder.Data\src\cCoder.Data\cCoder.Data.csproj</LocalDataProject>
+    <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
+    <UseLocalData Condition="'$(UseLocalData)' == 'true' and !Exists('$(LocalDataProject)')">false</UseLocalData>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(UseLocalData)' == 'true'">
+    <ProjectReference Include="$(LocalDataProject)" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.4.1" />
@@ -12,7 +20,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.1.5" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.5" />
     <PackageReference Include="cCoder.AppSecurity" Version="2026.4.10.1329" />
-    <PackageReference Include="cCoder.Data" Version="2026.4.10.1156" />
+    <PackageReference Include="cCoder.Data" Version="2026.4.10.1156" Condition="'$(UseLocalData)' != 'true'" />
     <PackageReference Include="cCoder.Eventing.EventLibrary" Version="2026.4.15.1800" />
     <PackageReference Include="cCoder.Eventing.EventLibrary.AzureServiceBus" Version="2026.4.15.1800" />
     <PackageReference Include="cCoder.Security.Api" Version="2026.2.10.1440" />
@@ -21,7 +29,7 @@
     <PackageReference Include="cCoder.Security.Objects" Version="2026.2.10.1440" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" />
+    <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" AdditionalProperties="UseLocalData=$(UseLocalData)" />
   </ItemGroup>
 </Project>
 

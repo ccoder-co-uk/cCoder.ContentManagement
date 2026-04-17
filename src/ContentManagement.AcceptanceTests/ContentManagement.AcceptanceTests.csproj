@@ -5,6 +5,9 @@
     <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+  <PropertyGroup>
+    <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="cCoder.Security.Data.EF" Version="2026.2.10.1440" />
     <PackageReference Include="cCoder.Security.Data.EF.MSSQL" Version="2026.2.10.1440" />
@@ -24,7 +27,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ContentManagement.Web\ContentManagement.Web.csproj" />
+    <ProjectReference Include="..\ContentManagement.Web\ContentManagement.Web.csproj" AdditionalProperties="UseLocalData=$(UseLocalData)" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

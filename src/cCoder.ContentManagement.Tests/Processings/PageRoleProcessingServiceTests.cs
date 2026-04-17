@@ -11,6 +11,7 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data;
 using Moq;
 using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
@@ -24,6 +25,7 @@ public partial class PageRoleProcessingServiceTests
     private readonly Mock<IPageService> pageServiceMock = new();
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPageRoleService> pageRoleServiceMock = new();
+    private readonly Mock<IPageRoleBroker> pageRoleBrokerMock = new();
     private readonly Mock<IRoleBroker> roleBrokerMock = new();
     private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
     private readonly PageRoleProcessingService pageRoleProcessingService;
@@ -32,6 +34,7 @@ public partial class PageRoleProcessingServiceTests
     {
         pageRoleProcessingService = new PageRoleProcessingService(
             pageRoleServiceMock.Object,
+            pageRoleBrokerMock.Object,
             roleBrokerMock.Object,
             pageServiceMock.Object,
             authorizationBrokerMock.Object
