@@ -4,6 +4,7 @@ using Apps.Shared;
 using cCoder.AppSecurity;
 using cCoder.ContentManagement;
 using cCoder.Data;
+using cCoder.Security;
 using cCoder.Security.Api;
 using cCoder.Security.Data.EF;
 using cCoder.Security.Data.EF.MSSQL;
