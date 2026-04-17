@@ -4,10 +4,10 @@ using Apps.Shared;
 using cCoder.AppSecurity;
 using cCoder.ContentManagement;
 using cCoder.Data;
+using cCoder.Security;
 using cCoder.Security.Api;
 using cCoder.Security.Data.EF;
 using cCoder.Security.Data.EF.MSSQL;
-using cCoder.Security.Objects.Entities;
 using EventLibrary;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -136,23 +136,19 @@ public class Program
         {
             try
             {
-                using SecurityDbContext sso = new MSSQLSecurityDbContextFactory(ssoConnection)
+                using var sso = new MSSQLSecurityDbContextFactory(ssoConnection)
                     .CreateDbContext();
 
                 string requestType = request.Path.Value?.StartsWith("/api/", StringComparison.OrdinalIgnoreCase) == true
                     ? "Api_"
                     : "Page_";
 
-                UserEvent userEvent = new()
-                {
-                    TenantId = core.Apps.FirstOrDefault(app => app.Domain == request.Host.Host)?.TenantId,
-                    CreatedBy = core.AuthInfo.SSOUserId,
-                    EventName = $"{requestType}{request.Method}{request.Path.Value}",
-                    CreatedOn = DateTimeOffset.UtcNow,
-                    SessionId = context.Session.Id,
-                    Value = url,
-                };
-
+                object userEvent = CreateUserEvent(
+                    tenantId: core.Apps.FirstOrDefault(app => app.Domain == request.Host.Host)?.TenantId,
+                    createdBy: core.AuthInfo.SSOUserId,
+                    eventName: $"{requestType}{request.Method}{request.Path.Value}",
+                    sessionId: context.Session.Id,
+                    value: url);
                 await sso.AddAsync(userEvent);
                 await sso.SaveChangesAsync();
             }
@@ -165,6 +161,30 @@ public class Program
         }
 
         logger.LogDebug(logEntry);
+    }
+
+    private static object CreateUserEvent(
+        string tenantId,
+        string createdBy,
+        string eventName,
+        string sessionId,
+        string value)
+    {
+        Type userEventType =
+            Type.GetType("cCoder.Security.Objects.Entities.UserEvent, cCoder.Security.Data", false)
+            ?? Type.GetType("cCoder.Security.Objects.Entities.UserEvent, cCoder.Security.Objects", false)
+            ?? throw new InvalidOperationException("Unable to resolve the security UserEvent type.");
+
+        object userEvent = Activator.CreateInstance(userEventType)
+            ?? throw new InvalidOperationException("Unable to construct the security UserEvent type.");
+
+        userEventType.GetProperty("TenantId")?.SetValue(userEvent, tenantId);
+        userEventType.GetProperty("CreatedBy")?.SetValue(userEvent, createdBy);
+        userEventType.GetProperty("EventName")?.SetValue(userEvent, eventName);
+        userEventType.GetProperty("CreatedOn")?.SetValue(userEvent, DateTimeOffset.UtcNow);
+        userEventType.GetProperty("SessionId")?.SetValue(userEvent, sessionId);
+        userEventType.GetProperty("Value")?.SetValue(userEvent, value);
+        return userEvent;
     }
 }
 
