@@ -38,7 +38,7 @@ public static class ContentManagementServiceCollectionConfigurationExtensions
         return configuration;
     }
 
-    internal static void ConfigureContentManagementApiModel(this ODataConventionModelBuilder builder) =>
+    public static void ConfigureContentManagementApiModel(this ODataConventionModelBuilder builder) =>
         new ContentManagementModelBuilder(builder).Configure();
 
     private static ContentManagementConfiguration CreateConfiguration(

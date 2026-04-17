@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security;
 using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using Page = cCoder.Data.Models.CMS.Page;
 using PageRole = cCoder.Data.Models.Security.PageRole;
@@ -10,7 +11,12 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PageRoleProcessingService(IPageRoleService service, IRoleBroker roleBroker, IPageService pageService, IAuthorizationBroker authorizationBroker) : IPageRoleProcessingService
+internal class PageRoleProcessingService(
+    IPageRoleService service,
+    IPageRoleBroker pageRoleBroker,
+    IRoleBroker roleBroker,
+    IPageService pageService,
+    IAuthorizationBroker authorizationBroker) : IPageRoleProcessingService
 {
     private User User => authorizationBroker.GetCurrentUser();
 
@@ -92,10 +98,10 @@ internal class PageRoleProcessingService(IPageRoleService service, IRoleBroker r
     {
         ValidateAppId(appId, "appId");
         ValidatePageRoleInfos(items, "items");
-        Role[] roles = roleBroker.GetAllRoles(ignoreFilters: false)
+        Role[] roles = roleBroker.GetAllRoles(ignoreFilters: true)
             .Where(role => role.AppId == appId)
             .ToArray();
-        Page[] pages = (from page in pageService.GetAll()
+        Page[] pages = (from page in pageService.GetAll(ignoreFilters: true)
                                                         where page.AppId == appId
                                                         select page).ToArray();
         PageRole[] pageRoles = (from pageRole in items.Select(delegate (PageRoleInfo pageRoleInfo)
@@ -109,8 +115,36 @@ internal class PageRoleProcessingService(IPageRoleService service, IRoleBroker r
                 };
             })
                                                                 where pageRole.PageId != 0 && pageRole.RoleId != Guid.Empty
-                                                                select pageRole).ToArray();
-        await AddOrUpdate(pageRoles);
+                                                                select pageRole)
+            .GroupBy(pageRole => new { pageRole.PageId, pageRole.RoleId })
+            .Select(group => group.First())
+            .ToArray();
+
+        int[] pageIds = pageRoles
+            .Select(pageRole => pageRole.PageId)
+            .Distinct()
+            .ToArray();
+
+        PageRole[] existingPageRoles = pageRoleBroker.GetAllPageRoles(ignoreFilters: true)
+            .Where(pageRole => ((ReadOnlySpan<int>)pageIds).Contains(pageRole.PageId))
+            .ToArray();
+
+        PageRole[] pageRolesToDelete = existingPageRoles
+            .Where(existing => !pageRoles.Any(incoming =>
+                incoming.PageId == existing.PageId
+                && incoming.RoleId == existing.RoleId))
+            .ToArray();
+
+        if (pageRolesToDelete.Length > 0)
+            await pageRoleBroker.DeleteAllPageRolesAsync(pageRolesToDelete);
+
+        foreach (PageRole pageRole in pageRoles
+            .Where(incoming => !existingPageRoles.Any(existing =>
+                existing.PageId == incoming.PageId
+                && existing.RoleId == incoming.RoleId)))
+        {
+            await pageRoleBroker.AddPageRoleAsync(pageRole);
+        }
     }
 
     public async ValueTask DeleteAllAsync(IEnumerable<PageRole> items)

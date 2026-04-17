@@ -136,7 +136,7 @@ internal class PageOrchestrationService(
         Array.Sort(validatedPages,
             (left, right) => left.Path.Split('/').Length.CompareTo(right.Path.Split('/').Length));
 
-        Page[] allPages = processingService.GetAll()
+        Page[] allPages = processingService.GetAll(ignoreFilters: true)
             .Where(page => page.AppId == appId)
             .ToArray();
 
