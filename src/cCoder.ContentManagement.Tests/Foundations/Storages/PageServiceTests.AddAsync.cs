@@ -131,6 +131,38 @@ public partial class PageServiceTests
     }
 
     [Fact]
+    public async Task ShouldPreserveShowOnMenusWhenAddingHiddenPageAsync()
+    {
+        // Given
+        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(new SecurityDataModels.User { Id = "test-user" });
+        Page page = CreateRandomPage(id: 0);
+        page.ShowOnMenus = false;
+
+        CmsDataModels.Page submitted = null;
+
+        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "Page_create"));
+
+        pageBrokerMock
+            .Setup(x => x.AddPageAsync(It.Is<CmsDataModels.Page>(candidate => !ReferenceEquals(candidate, page))))
+            .Callback<CmsDataModels.Page>(candidate => submitted = candidate)
+            .ReturnsAsync((CmsDataModels.Page value) => value);
+
+        // When
+        Page result = await pageService.AddAsync(page);
+
+        // Then
+        submitted.Should().NotBeNull();
+        submitted.ShowOnMenus.Should().BeFalse();
+        result.ShowOnMenus.Should().BeFalse();
+
+        pageBrokerMock.Verify(
+            x => x.AddPageAsync(It.Is<CmsDataModels.Page>(candidate => !ReferenceEquals(candidate, page))),
+            Times.Once);
+        pageBrokerMock.VerifyNoOtherCalls();
+        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Page_create"), Times.Once);
+    }
+
+    [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
     {
         // Given
