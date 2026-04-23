@@ -41,12 +41,9 @@ internal partial class CultureService(
         ValidateCulture(culture, "culture");
         authorizationBroker.Authorize(GetAppId(culture.Id), "Culture_create");
         Culture result = await cultureBroker.AddCultureAsync(CreateStorageCulture(culture));
-        result.Apps = culture.Apps;
-        result.Users = culture.Users;
-        result.PageInfos = culture.PageInfos;
-        result.PageContents = culture.PageContents;
-        result.MetaItems = culture.MetaItems;
-        return result;
+        culture.Id = result.Id;
+        culture.Name = result.Name;
+        return culture;
     }
 
     public async ValueTask<Culture> UpdateAsync(Culture culture)
@@ -54,12 +51,9 @@ internal partial class CultureService(
         ValidateCulture(culture, "culture");
         authorizationBroker.Authorize(GetAppId(culture.Id), "Culture_update");
         Culture result = await cultureBroker.UpdateCultureAsync(CreateStorageCulture(culture));
-        result.Apps = culture.Apps;
-        result.Users = culture.Users;
-        result.PageInfos = culture.PageInfos;
-        result.PageContents = culture.PageContents;
-        result.MetaItems = culture.MetaItems;
-        return result;
+        culture.Id = result.Id;
+        culture.Name = result.Name;
+        return culture;
     }
 
     public async ValueTask DeleteAsync(string id)

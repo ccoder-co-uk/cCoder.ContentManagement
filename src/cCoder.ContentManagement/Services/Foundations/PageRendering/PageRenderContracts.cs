@@ -3,17 +3,17 @@ using cCoder.ContentManagement.Rendering.Models;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
-internal interface IMetadataCacheFoundationService
+internal interface IMetadataCacheService
 {
     Func<string, string> Get(string culture);
 }
 
-internal interface ICommonObjectCacheFoundationService
+internal interface ICommonObjectCacheService
 {
     PageCacheSlice Get(PageRenderEngineRequest request);
 }
 
-internal interface IMarkupRenderFoundationService
+internal interface IMarkupRenderService
 {
     PageRenderResult Render(PageRenderSession session);
 }

@@ -44,8 +44,10 @@ public partial class PageInfoServiceTests
         PageInfo result = await pageInfoService.UpdateAsync(pageInfo);
 
         // Then
-        result.Should().NotBeSameAs(pageInfo);
+        result.Should().BeSameAs(pageInfo);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(pageInfo);
+        result.Should().NotBeSameAs(submitted);
         submitted.Should().BeEquivalentTo(pageInfo);
         result.Should().BeEquivalentTo(pageInfo);
         pageInfoBrokerMock.Verify(x => x.UpdatePageInfoAsync(It.IsAny<DataPageInfo>()), Times.Once);

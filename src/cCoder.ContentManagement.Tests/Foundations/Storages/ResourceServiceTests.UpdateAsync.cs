@@ -46,8 +46,10 @@ public partial class ResourceServiceTests
         Resource result = await resourceService.UpdateAsync(resource);
 
         // Then
-        result.Should().NotBeSameAs(resource);
+        result.Should().BeSameAs(resource);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(resource);
+        result.Should().NotBeSameAs(submitted);
 
         submitted
             .Should()

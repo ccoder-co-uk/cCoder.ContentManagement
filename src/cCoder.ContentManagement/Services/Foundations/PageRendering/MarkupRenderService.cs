@@ -14,11 +14,11 @@ using Newtonsoft.Json.Serialization;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
-internal sealed class MarkupRenderFoundationService(
+internal sealed class MarkupRenderService(
     IComponentReaderBroker componentReaderBroker,
     IScriptReaderBroker scriptReaderBroker,
     IJsonBroker jsonBroker,
-    IRenderFileContentService renderFileContentService) : IMarkupRenderFoundationService
+    IRenderFileContentService renderFileContentService) : IMarkupRenderService
 {
     private static readonly RegexOptions regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline;
 

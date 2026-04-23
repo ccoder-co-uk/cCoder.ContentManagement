@@ -34,22 +34,17 @@ public partial class PackageServiceTests
             .Setup(x =>
                 x.AddPackageAsync(It.Is<cCoder.Data.Models.Packaging.Package>(candidate => !ReferenceEquals(candidate, package)))
             )
-            .Callback<cCoder.Data.Models.Packaging.Package>(candidate => submitted = new cCoder.Data.Models.Packaging.Package
-            {
-                Id = candidate.Id,
-                Name = candidate.Name,
-                Description = candidate.Description,
-                Category = candidate.Category,
-                SourceApi = candidate.SourceApi
-            })
+            .Callback<cCoder.Data.Models.Packaging.Package>(candidate => submitted = candidate)
             .ReturnsAsync((cCoder.Data.Models.Packaging.Package value) => value);
 
         // When
         Package result = await packageService.AddAsync(package);
 
         // Then
-        result.Should().NotBeSameAs(package);
+        result.Should().BeSameAs(package);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(package);
+        result.Should().NotBeSameAs(submitted);
 
         submitted
             .Should()

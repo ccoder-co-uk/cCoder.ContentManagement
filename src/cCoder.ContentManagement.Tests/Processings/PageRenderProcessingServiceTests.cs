@@ -41,9 +41,9 @@ public partial class PageRenderProcessingServiceTests
     private PageRenderProcessingService CreateSut() =>
         new(
             new PageRenderExecutionOrchestrationService(
-                new MetadataCacheFoundationService(metadataReaderBroker),
-                new CommonObjectCacheFoundationService(commonObjectReaderBroker),
-                new MarkupRenderFoundationService(
+                new MetadataCacheService(metadataReaderBroker),
+                new CommonObjectCacheService(commonObjectReaderBroker),
+                new MarkupRenderService(
                     componentReaderBroker,
                     scriptReaderBroker,
                     new JsonBroker(),

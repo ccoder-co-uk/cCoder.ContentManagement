@@ -44,8 +44,17 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         newScript.LastUpdated = now;
         newScript.LastUpdatedBy = currentUserId;
         Script result = await scriptBroker.AddScriptAsync(newScript);
-        result.App = script.App;
-        return result;
+        script.Id = result.Id;
+        script.Name = result.Name;
+        script.Description = result.Description;
+        script.LastUpdated = result.LastUpdated;
+        script.LastUpdatedBy = result.LastUpdatedBy;
+        script.CreatedOn = result.CreatedOn;
+        script.CreatedBy = result.CreatedBy;
+        script.AppId = result.AppId;
+        script.Key = result.Key;
+        script.Content = result.Content;
+        return script;
     }
 
     public async ValueTask<Script> UpdateAsync(Script script)
@@ -58,8 +67,17 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         updateScript.LastUpdated = now;
         updateScript.LastUpdatedBy = currentUserId;
         Script result = await scriptBroker.UpdateScriptAsync(updateScript);
-        result.App = script.App;
-        return result;
+        script.Id = result.Id;
+        script.Name = result.Name;
+        script.Description = result.Description;
+        script.LastUpdated = result.LastUpdated;
+        script.LastUpdatedBy = result.LastUpdatedBy;
+        script.CreatedOn = result.CreatedOn;
+        script.CreatedBy = result.CreatedBy;
+        script.AppId = result.AppId;
+        script.Key = result.Key;
+        script.Content = result.Content;
+        return script;
     }
 
     public async ValueTask DeleteAsync(int id)

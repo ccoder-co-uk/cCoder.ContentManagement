@@ -45,8 +45,10 @@ public partial class ContentServiceTests
         Content result = await contentService.AddAsync(content);
 
         // Then
-        result.Should().NotBeSameAs(content);
+        result.Should().BeSameAs(content);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(content);
+        result.Should().NotBeSameAs(submitted);
 
         submitted
             .Should()

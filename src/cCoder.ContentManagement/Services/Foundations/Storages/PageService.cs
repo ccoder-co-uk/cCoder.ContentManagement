@@ -52,13 +52,20 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         newPage.LastUpdated = now;
         newPage.LastUpdatedBy = currentUserId;
         Page result = await pageBroker.AddPageAsync(newPage);
-        result.App = page.App;
-        result.Parent = page.Parent;
-        result.PageInfo = page.PageInfo;
-        result.Pages = page.Pages;
-        result.Contents = page.Contents;
-        result.Roles = page.Roles;
-        return result;
+        page.Id = result.Id;
+        page.ParentId = result.ParentId;
+        page.AppId = result.AppId;
+        page.Order = result.Order;
+        page.ShowOnMenus = result.ShowOnMenus;
+        page.Name = result.Name;
+        page.LastUpdated = result.LastUpdated;
+        page.LastUpdatedBy = result.LastUpdatedBy;
+        page.CreatedOn = result.CreatedOn;
+        page.CreatedBy = result.CreatedBy;
+        page.Path = result.Path;
+        page.ResourceKey = result.ResourceKey;
+        page.Layout = result.Layout;
+        return page;
     }
 
     public async ValueTask<Page> UpdateAsync(Page page)
@@ -71,13 +78,20 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         updatePage.LastUpdated = now;
         updatePage.LastUpdatedBy = currentUserId;
         Page result = await pageBroker.UpdatePageAsync(updatePage);
-        result.App = page.App;
-        result.Parent = page.Parent;
-        result.PageInfo = page.PageInfo;
-        result.Pages = page.Pages;
-        result.Contents = page.Contents;
-        result.Roles = page.Roles;
-        return result;
+        page.Id = result.Id;
+        page.ParentId = result.ParentId;
+        page.AppId = result.AppId;
+        page.Order = result.Order;
+        page.ShowOnMenus = result.ShowOnMenus;
+        page.Name = result.Name;
+        page.LastUpdated = result.LastUpdated;
+        page.LastUpdatedBy = result.LastUpdatedBy;
+        page.CreatedOn = result.CreatedOn;
+        page.CreatedBy = result.CreatedBy;
+        page.Path = result.Path;
+        page.ResourceKey = result.ResourceKey;
+        page.Layout = result.Layout;
+        return page;
     }
 
     public async ValueTask DeleteAsync(int id)

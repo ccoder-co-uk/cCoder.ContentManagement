@@ -42,8 +42,10 @@ public partial class AppServiceTests
         App result = await appService.UpdateAsync(app);
 
         // Then
-        result.Should().NotBeSameAs(app);
+        result.Should().BeSameAs(app);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(app);
+        result.Should().NotBeSameAs(submitted);
         result.Should().BeEquivalentTo(new
         {
             app.Id,

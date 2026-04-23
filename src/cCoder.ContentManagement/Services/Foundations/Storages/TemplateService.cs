@@ -44,8 +44,17 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
         newTemplate.LastUpdated = now;
         newTemplate.LastUpdatedBy = currentUserId;
         Template result = await templateBroker.AddTemplateAsync(newTemplate);
-        result.App = template.App;
-        return result;
+        template.Id = result.Id;
+        template.Name = result.Name;
+        template.Description = result.Description;
+        template.LastUpdated = result.LastUpdated;
+        template.LastUpdatedBy = result.LastUpdatedBy;
+        template.CreatedOn = result.CreatedOn;
+        template.CreatedBy = result.CreatedBy;
+        template.AppId = result.AppId;
+        template.ResourceKey = result.ResourceKey;
+        template.RawString = result.RawString;
+        return template;
     }
 
     public async ValueTask<Template> UpdateAsync(Template template)
@@ -58,8 +67,17 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
         updateTemplate.LastUpdated = now;
         updateTemplate.LastUpdatedBy = currentUserId;
         Template result = await templateBroker.UpdateTemplateAsync(updateTemplate);
-        result.App = template.App;
-        return result;
+        template.Id = result.Id;
+        template.Name = result.Name;
+        template.Description = result.Description;
+        template.LastUpdated = result.LastUpdated;
+        template.LastUpdatedBy = result.LastUpdatedBy;
+        template.CreatedOn = result.CreatedOn;
+        template.CreatedBy = result.CreatedBy;
+        template.AppId = result.AppId;
+        template.ResourceKey = result.ResourceKey;
+        template.RawString = result.RawString;
+        return template;
     }
 
     public async ValueTask DeleteAsync(int id)

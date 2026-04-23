@@ -44,8 +44,18 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
         newLayout.LastUpdated = now;
         newLayout.LastUpdatedBy = currentUserId;
         Layout result = await layoutBroker.AddLayoutAsync(newLayout);
-        result.App = layout.App;
-        return result;
+        layout.Id = result.Id;
+        layout.Name = result.Name;
+        layout.Description = result.Description;
+        layout.LastUpdated = result.LastUpdated;
+        layout.LastUpdatedBy = result.LastUpdatedBy;
+        layout.CreatedOn = result.CreatedOn;
+        layout.CreatedBy = result.CreatedBy;
+        layout.AppId = result.AppId;
+        layout.HeaderHtml = result.HeaderHtml;
+        layout.Html = result.Html;
+        layout.Script = result.Script;
+        return layout;
     }
 
     public async ValueTask<Layout> UpdateAsync(Layout layout)
@@ -58,8 +68,18 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
         updateLayout.LastUpdated = now;
         updateLayout.LastUpdatedBy = currentUserId;
         Layout result = await layoutBroker.UpdateLayoutAsync(updateLayout);
-        result.App = layout.App;
-        return result;
+        layout.Id = result.Id;
+        layout.Name = result.Name;
+        layout.Description = result.Description;
+        layout.LastUpdated = result.LastUpdated;
+        layout.LastUpdatedBy = result.LastUpdatedBy;
+        layout.CreatedOn = result.CreatedOn;
+        layout.CreatedBy = result.CreatedBy;
+        layout.AppId = result.AppId;
+        layout.HeaderHtml = result.HeaderHtml;
+        layout.Html = result.Html;
+        layout.Script = result.Script;
+        return layout;
     }
 
     public async ValueTask DeleteAsync(int id)

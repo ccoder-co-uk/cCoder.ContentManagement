@@ -49,8 +49,10 @@ public partial class TemplateServiceTests
         Template result = await templateService.AddAsync(template);
 
         // Then
-        result.Should().NotBeSameAs(template);
+        result.Should().BeSameAs(template);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(template);
+        result.Should().NotBeSameAs(submitted);
 
         submitted
             .Should()

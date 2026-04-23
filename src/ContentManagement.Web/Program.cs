@@ -115,9 +115,9 @@ public class Program
             return;
 
         log.LogError("{Message}\n{StackTrace}", exception.Message, exception.StackTrace);
-        await context.Response.WriteAsync(
-            "{ \"error\": \"" + exception.Message.Replace("\"", "\'") + "\" }");
-    }
+    await context.Response.WriteAsync(
+        "{ \"error\": \"" + exception.Message.Replace("\"", "\'") + "\" }");
+}
 
     private static async Task LogRequest(HttpContext context, ILogger logger)
     {

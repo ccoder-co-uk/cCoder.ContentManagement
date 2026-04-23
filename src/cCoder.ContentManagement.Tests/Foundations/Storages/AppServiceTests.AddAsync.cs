@@ -46,23 +46,16 @@ public partial class AppServiceTests
 
         appBrokerMock
             .Setup(x => x.AddAppAsync(It.IsAny<CmsDataModels.App>()))
-            .Callback<CmsDataModels.App>(candidate => submitted = new CmsDataModels.App
-            {
-                Id = candidate.Id,
-                DefaultCultureId = candidate.DefaultCultureId,
-                TenantId = candidate.TenantId,
-                Name = candidate.Name,
-                Domain = candidate.Domain,
-                DefaultTheme = candidate.DefaultTheme,
-                ConfigJson = candidate.ConfigJson
-            })
+            .Callback<CmsDataModels.App>(candidate => submitted = candidate)
             .ReturnsAsync((CmsDataModels.App value) => value);
         // When
         App result = await appService.AddAsync(app);
 
         // Then
-        result.Should().NotBeSameAs(app);
+        result.Should().BeSameAs(app);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(app);
+        result.Should().NotBeSameAs(submitted);
         submitted.Should().BeEquivalentTo(new
         {
             app.Id,

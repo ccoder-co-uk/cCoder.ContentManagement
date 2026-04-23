@@ -43,8 +43,10 @@ public partial class ContentServiceTests
         Content result = await contentService.UpdateAsync(content);
 
         // Then
-        result.Should().NotBeSameAs(content);
+        result.Should().BeSameAs(content);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(content);
+        result.Should().NotBeSameAs(submitted);
         submitted.Should().BeEquivalentTo(content);
         result.Should().BeEquivalentTo(content);
         contentBrokerMock.Verify(x => x.UpdateContentAsync(It.IsAny<CmsDataModels.Content>()), Times.Once);

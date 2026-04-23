@@ -48,8 +48,10 @@ public partial class AppCultureServiceTests
         AppCulture result = await appCultureService.AddAsync(appCulture);
 
         // Then
-        result.Should().NotBeSameAs(appCulture);
+        result.Should().BeSameAs(appCulture);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(appCulture);
+        result.Should().NotBeSameAs(submitted);
         submitted.Should().BeEquivalentTo(appCulture);
         result.Should().BeEquivalentTo(appCulture);
         appCultureBrokerMock.Verify(

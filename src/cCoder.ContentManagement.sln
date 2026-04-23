@@ -1,17 +1,17 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", ".", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cCoder.ContentManagement", "src\cCoder.ContentManagement\cCoder.ContentManagement.csproj", "{359423EF-9A1E-408D-A593-A653E48A2ABF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cCoder.ContentManagement", "cCoder.ContentManagement\cCoder.ContentManagement.csproj", "{359423EF-9A1E-408D-A593-A653E48A2ABF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cCoder.ContentManagement.Tests", "src\cCoder.ContentManagement.Tests\cCoder.ContentManagement.Tests.csproj", "{DC77A2A6-EAFE-4347-A112-700EFB8AA702}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cCoder.ContentManagement.Tests", "cCoder.ContentManagement.Tests\cCoder.ContentManagement.Tests.csproj", "{DC77A2A6-EAFE-4347-A112-700EFB8AA702}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentManagement.AcceptanceTests", "src\ContentManagement.AcceptanceTests\ContentManagement.AcceptanceTests.csproj", "{7F4FD1DC-D38A-436D-BAB7-1A494C22022A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentManagement.AcceptanceTests", "ContentManagement.AcceptanceTests\ContentManagement.AcceptanceTests.csproj", "{7F4FD1DC-D38A-436D-BAB7-1A494C22022A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentManagement.Web", "src\ContentManagement.Web\ContentManagement.Web.csproj", "{8A1A2103-59EF-411A-A78D-03E79D991F4B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentManagement.Web", "ContentManagement.Web\ContentManagement.Web.csproj", "{8A1A2103-59EF-411A-A78D-03E79D991F4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

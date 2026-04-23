@@ -47,8 +47,10 @@ public partial class ScriptServiceTests
         Script result = await scriptService.AddAsync(script);
 
         // Then
-        result.Should().NotBeSameAs(script);
+        result.Should().BeSameAs(script);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(script);
+        result.Should().NotBeSameAs(submitted);
 
         submitted
             .Should()
