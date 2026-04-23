@@ -8,7 +8,7 @@ using cCoder.Security;
 using cCoder.Security.Api;
 using cCoder.Security.Data.EF;
 using cCoder.Security.Data.EF.MSSQL;
-using EventLibrary;
+using cCoder.Eventing;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.OData;

@@ -1,6 +1,6 @@
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
-using EventLibrary.Models;
+using cCoder.Eventing.Models;
 using DataPackageItem = cCoder.Data.Models.Packaging.PackageItem;
 using PackageItem = cCoder.Data.Models.Packaging.PackageItem;
 

@@ -1,5 +1,5 @@
 using cCoder.Data.Models.Packaging;
-using EventLibrary.Models;
+using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 

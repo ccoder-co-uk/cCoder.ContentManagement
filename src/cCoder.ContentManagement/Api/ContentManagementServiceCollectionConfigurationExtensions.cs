@@ -1,6 +1,6 @@
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Models;
-using EventLibrary;
+using cCoder.Eventing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Batch;

@@ -1,4 +1,4 @@
-using EventLibrary.Models;
+using cCoder.Eventing.Models;
 using CommonObject = cCoder.Data.Models.CommonObject;
 
 namespace cCoder.ContentManagement.Brokers.Events;
