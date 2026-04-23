@@ -45,8 +45,10 @@ public partial class CultureServiceTests
         Culture result = await cultureService.AddAsync(culture);
 
         // Then
-        result.Should().NotBeSameAs(culture);
+        result.Should().BeSameAs(culture);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(culture);
+        result.Should().NotBeSameAs(submitted);
         submitted!.Name.Should().Be(culture.Name);
         submitted.Id.Should().Be(culture.Id);
         submitted.Apps.Should().BeNull();

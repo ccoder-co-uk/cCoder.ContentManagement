@@ -45,8 +45,10 @@ public partial class LayoutServiceTests
         Layout result = await layoutService.UpdateAsync(layout);
 
         // Then
-        result.Should().NotBeSameAs(layout);
+        result.Should().BeSameAs(layout);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(layout);
+        result.Should().NotBeSameAs(submitted);
 
         submitted
             .Should()

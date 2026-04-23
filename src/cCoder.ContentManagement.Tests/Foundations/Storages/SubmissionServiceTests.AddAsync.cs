@@ -49,8 +49,10 @@ public partial class SubmissionServiceTests
         Submission result = await submissionService.AddAsync(submission);
 
         // Then
-        result.Should().NotBeSameAs(submission);
+        result.Should().BeSameAs(submission);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(submission);
+        result.Should().NotBeSameAs(submitted);
 
         submitted
             .Should()

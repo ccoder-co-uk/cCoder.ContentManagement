@@ -24,6 +24,8 @@ internal class AppProcessingService(
     IPrivilegeBroker privilegeBroker,
     IAppEventProcessingService appEventProcessingService,
     IAuthorizationBroker authorizationBroker,
+    IRoleBroker roleBroker,
+    IUserRoleBroker userRoleBroker,
     HttpContext httpContext = null) : IAppProcessingService
 {
     public App Get(int id)
@@ -66,6 +68,36 @@ internal class AppProcessingService(
         inputApp.Cultures = BuildCulturesForApp(inputApp);
         inputApp.Roles = BuildRolesForApp(inputApp);
         App storedApp = await service.AddAsync(inputApp);
+        if (storedApp.Roles != null)
+        {
+            foreach (Role role in storedApp.Roles)
+            {
+                role.AppId = storedApp.Id;
+                role.App = null;
+
+                await roleBroker.AddRoleAsync(new Role
+                {
+                    Id = role.Id,
+                    AppId = role.AppId,
+                    Name = role.Name,
+                    Description = role.Description,
+                    Privs = role.Privs,
+                });
+
+                foreach (UserRole user in role.Users ?? Array.Empty<UserRole>())
+                {
+                    user.RoleId = role.Id;
+                    user.Role = role;
+
+                    await userRoleBroker.AddUserRoleAsync(new UserRole
+                    {
+                        RoleId = user.RoleId,
+                        UserId = user.UserId,
+                    });
+                }
+            }
+        }
+
         StampAppChildren(storedApp);
         await appEventProcessingService.RaiseAppAddEventAsync(storedApp);
         return storedApp;
@@ -100,6 +132,75 @@ internal class AppProcessingService(
         }
 
         App updatedApp = await service.UpdateAsync(existingApp);
+        if (updatedApp.Roles != null)
+        {
+            Role[] existingRoles = roleBroker.GetAllRoles(ignoreFilters: true)
+                .Where(role => role.AppId == updatedApp.Id)
+                .ToArray();
+
+            foreach (Role role in updatedApp.Roles)
+            {
+                role.AppId = updatedApp.Id;
+                role.App = null;
+
+                if (existingRoles.Any(existingRole => existingRole.Id == role.Id))
+                {
+                    await roleBroker.UpdateRoleAsync(new Role
+                    {
+                        Id = role.Id,
+                        AppId = role.AppId,
+                        Name = role.Name,
+                        Description = role.Description,
+                        Privs = role.Privs,
+                    });
+                }
+                else
+                {
+                    await roleBroker.AddRoleAsync(new Role
+                    {
+                        Id = role.Id,
+                        AppId = role.AppId,
+                        Name = role.Name,
+                        Description = role.Description,
+                        Privs = role.Privs,
+                    });
+                }
+
+                UserRole[] existingUserRoles = userRoleBroker.GetAllUserRoles(ignoreFilters: true)
+                    .Where(userRole => userRole.RoleId == role.Id)
+                    .ToArray();
+
+                string[] incomingUserIds = (role.Users ?? Array.Empty<UserRole>())
+                    .Select(userRole => userRole.UserId)
+                    .Where(userId => !string.IsNullOrWhiteSpace(userId))
+                    .Distinct(StringComparer.Ordinal)
+                    .ToArray();
+
+                UserRole[] userRolesToDelete = existingUserRoles
+                    .Where(userRole => !incomingUserIds.Contains(userRole.UserId, StringComparer.Ordinal))
+                    .ToArray();
+
+                if (userRolesToDelete.Length > 0)
+                {
+                    await userRoleBroker.DeleteAllUserRolesAsync(userRolesToDelete);
+                }
+
+                foreach (string userId in incomingUserIds)
+                {
+                    if (existingUserRoles.Any(userRole => string.Equals(userRole.UserId, userId, StringComparison.Ordinal)))
+                    {
+                        continue;
+                    }
+
+                    await userRoleBroker.AddUserRoleAsync(new UserRole
+                    {
+                        RoleId = role.Id,
+                        UserId = userId,
+                    });
+                }
+            }
+        }
+
         StampAppChildren(updatedApp);
         await appEventProcessingService.RaiseAppUpdateEventAsync(updatedApp);
         return updatedApp;

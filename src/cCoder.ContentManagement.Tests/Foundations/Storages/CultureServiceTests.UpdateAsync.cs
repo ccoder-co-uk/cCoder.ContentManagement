@@ -43,8 +43,10 @@ public partial class CultureServiceTests
         Culture result = await cultureService.UpdateAsync(culture);
 
         // Then
-        result.Should().NotBeSameAs(culture);
+        result.Should().BeSameAs(culture);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(culture);
+        result.Should().NotBeSameAs(submitted);
         submitted.Should().BeEquivalentTo(culture);
         result.Should().BeEquivalentTo(culture);
         cultureBrokerMock.Verify(x => x.UpdateCultureAsync(It.IsAny<CmsDataModels.Culture>()), Times.Once);

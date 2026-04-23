@@ -9,6 +9,7 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 
 using cCoder.ContentManagement.Services.Foundations.Storages;
@@ -28,16 +29,23 @@ public partial class AppProcessingServiceTests
     private readonly Mock<IPrivilegeBroker> privilegeBrokerMock = new();
     private readonly Mock<IAppEventProcessingService> appEventProcessingServiceMock = new();
     private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
+    private readonly Mock<IRoleBroker> roleBrokerMock = new();
+    private readonly Mock<IUserRoleBroker> userRoleBrokerMock = new();
     private readonly AppProcessingService appProcessingService;
 
     public AppProcessingServiceTests()
     {
+        roleBrokerMock.Setup(x => x.GetAllRoles(true)).Returns(Array.Empty<Role>().AsQueryable());
+        userRoleBrokerMock.Setup(x => x.GetAllUserRoles(true)).Returns(Array.Empty<UserRole>().AsQueryable());
+
         appProcessingService = new AppProcessingService(
             appServiceMock.Object,
             cultureServiceMock.Object,
             privilegeBrokerMock.Object,
             appEventProcessingServiceMock.Object,
-            authorizationBrokerMock.Object
+            authorizationBrokerMock.Object,
+            roleBrokerMock.Object,
+            userRoleBrokerMock.Object
         );
     }
 

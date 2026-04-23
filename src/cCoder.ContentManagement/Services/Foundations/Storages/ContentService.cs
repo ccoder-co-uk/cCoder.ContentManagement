@@ -41,9 +41,12 @@ internal partial class ContentService(
         ValidateContent(content, "content");
         authorizationBroker.Authorize(GetAppId(content.PageId), "Content_create");
         Content result = await contentBroker.AddContentAsync(CreateStorageContent(content));
-        result.Page = content.Page;
-        result.Culture = content.Culture;
-        return result;
+        content.Id = result.Id;
+        content.PageId = result.PageId;
+        content.CultureId = result.CultureId;
+        content.Name = result.Name;
+        content.Html = result.Html;
+        return content;
     }
 
     public async ValueTask<Content> UpdateAsync(Content content)
@@ -51,9 +54,12 @@ internal partial class ContentService(
         ValidateContent(content, "content");
         authorizationBroker.Authorize(GetAppId(content.PageId), "Content_update");
         Content result = await contentBroker.UpdateContentAsync(CreateStorageContent(content));
-        result.Page = content.Page;
-        result.Culture = content.Culture;
-        return result;
+        content.Id = result.Id;
+        content.PageId = result.PageId;
+        content.CultureId = result.CultureId;
+        content.Name = result.Name;
+        content.Html = result.Html;
+        return content;
     }
 
     public async ValueTask DeleteAsync(int id)

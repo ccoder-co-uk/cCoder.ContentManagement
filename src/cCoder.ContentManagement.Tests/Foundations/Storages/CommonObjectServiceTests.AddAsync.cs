@@ -45,8 +45,10 @@ public partial class CommonObjectServiceTests
         CommonObject result = await commonObjectService.AddAsync(commonObject);
 
         // Then
-        result.Should().NotBeSameAs(commonObject);
+        result.Should().BeSameAs(commonObject);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(commonObject);
+        result.Should().NotBeSameAs(submitted);
 
         submitted
             .Should()

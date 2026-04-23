@@ -51,8 +51,14 @@ internal partial class AppService(
         authorizationBroker.Authorize(null, "App_create");
         App storedApp = CreateStorageApp(app);
         App result = await appBroker.AddAppAsync(storedApp);
-        CopyChildren(result, app);
-        return result;
+        app.Id = result.Id;
+        app.DefaultCultureId = result.DefaultCultureId;
+        app.TenantId = result.TenantId;
+        app.Name = result.Name;
+        app.Domain = result.Domain;
+        app.DefaultTheme = result.DefaultTheme;
+        app.ConfigJson = result.ConfigJson;
+        return app;
     }
 
     public async ValueTask<App> UpdateAsync(App app)
@@ -61,8 +67,14 @@ internal partial class AppService(
         authorizationBroker.Authorize(app.Id, "App_update");
         App storedApp = CreateStorageApp(app);
         App result = await appBroker.UpdateAppAsync(storedApp);
-        CopyChildren(result, app);
-        return result;
+        app.Id = result.Id;
+        app.DefaultCultureId = result.DefaultCultureId;
+        app.TenantId = result.TenantId;
+        app.Name = result.Name;
+        app.Domain = result.Domain;
+        app.DefaultTheme = result.DefaultTheme;
+        app.ConfigJson = result.ConfigJson;
+        return app;
     }
 
     public async ValueTask UpdatePageOrderAsync(int id, IEnumerable<Page> pages)
@@ -125,24 +137,8 @@ internal partial class AppService(
             Name = app.Name,
             Domain = app.Domain,
             DefaultTheme = app.DefaultTheme,
-            ConfigJson = app.ConfigJson
+            ConfigJson = app.ConfigJson,
         };
     }
 
-    private static void CopyChildren(App target, App source)
-    {
-        if (target == null || source == null)
-        {
-            return;
-        }
-
-        target.Cultures = source.Cultures;
-        target.Roles = source.Roles;
-        target.Pages = source.Pages;
-        target.Components = source.Components;
-        target.Scripts = source.Scripts;
-        target.Templates = source.Templates;
-        target.Resources = source.Resources;
-        target.Layouts = source.Layouts;
-    }
 }

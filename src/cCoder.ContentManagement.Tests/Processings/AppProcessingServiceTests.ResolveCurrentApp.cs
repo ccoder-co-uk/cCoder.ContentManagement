@@ -53,6 +53,8 @@ public partial class AppProcessingServiceTests
             privilegeBrokerMock.Object,
             appEventProcessingServiceMock.Object,
             authorizationBrokerMock.Object,
+            roleBrokerMock.Object,
+            userRoleBrokerMock.Object,
             context
         );
 
@@ -98,6 +100,8 @@ public partial class AppProcessingServiceTests
             privilegeBrokerMock.Object,
             appEventProcessingServiceMock.Object,
             authorizationBrokerMock.Object,
+            roleBrokerMock.Object,
+            userRoleBrokerMock.Object,
             context
         );
 

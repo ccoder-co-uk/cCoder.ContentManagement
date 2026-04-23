@@ -37,8 +37,11 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
         PackageItem dataPackageItem = CreateStoragePackageItem(packageItem);
         authorizationBroker.Authorize(packageItemBroker.GetAppId(dataPackageItem), "PackageItem_create");
         PackageItem result = await packageItemBroker.AddPackageItemAsync(dataPackageItem);
-        result.Package = packageItem.Package;
-        return result;
+        packageItem.Id = result.Id;
+        packageItem.PackageId = result.PackageId;
+        packageItem.Type = result.Type;
+        packageItem.Data = result.Data;
+        return packageItem;
     }
 
     public async ValueTask<PackageItem> UpdateAsync(PackageItem packageItem)
@@ -46,8 +49,11 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
         PackageItem dataPackageItem = CreateStoragePackageItem(packageItem);
         authorizationBroker.Authorize(packageItemBroker.GetAppId(dataPackageItem), "PackageItem_update");
         PackageItem result = await packageItemBroker.UpdatePackageItemAsync(dataPackageItem);
-        result.Package = packageItem.Package;
-        return result;
+        packageItem.Id = result.Id;
+        packageItem.PackageId = result.PackageId;
+        packageItem.Type = result.Type;
+        packageItem.Data = result.Data;
+        return packageItem;
     }
 
     public async ValueTask DeleteAsync(Guid id)

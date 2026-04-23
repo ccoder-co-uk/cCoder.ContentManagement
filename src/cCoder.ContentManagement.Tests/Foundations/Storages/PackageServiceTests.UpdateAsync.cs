@@ -32,22 +32,17 @@ public partial class PackageServiceTests
 
         packageBrokerMock
             .Setup(x => x.UpdatePackageAsync(It.IsAny<cCoder.Data.Models.Packaging.Package>()))
-            .Callback<cCoder.Data.Models.Packaging.Package>(candidate => submitted = new cCoder.Data.Models.Packaging.Package
-            {
-                Id = candidate.Id,
-                Name = candidate.Name,
-                Description = candidate.Description,
-                Category = candidate.Category,
-                SourceApi = candidate.SourceApi
-            })
+            .Callback<cCoder.Data.Models.Packaging.Package>(candidate => submitted = candidate)
             .ReturnsAsync((cCoder.Data.Models.Packaging.Package value) => value);
 
         // When
         Package result = await packageService.UpdateAsync(package);
 
         // Then
-        result.Should().NotBeSameAs(package);
+        result.Should().BeSameAs(package);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(package);
+        result.Should().NotBeSameAs(submitted);
         submitted.Should().BeEquivalentTo(new
         {
             package.Id,

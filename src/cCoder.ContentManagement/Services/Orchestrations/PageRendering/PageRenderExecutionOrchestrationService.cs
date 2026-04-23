@@ -4,9 +4,9 @@ using cCoder.ContentManagement.Rendering.Services.Foundations;
 namespace cCoder.ContentManagement.Rendering.Services.Orchestrations;
 
 internal sealed class PageRenderExecutionOrchestrationService(
-    IMetadataCacheFoundationService metadataCacheFoundationService,
-    ICommonObjectCacheFoundationService commonObjectCacheFoundationService,
-    IMarkupRenderFoundationService markupRenderFoundationService) : IPageRenderExecutionOrchestrationService
+    IMetadataCacheService metadataCacheService,
+    ICommonObjectCacheService commonObjectCacheService,
+    IMarkupRenderService markupRenderService) : IPageRenderExecutionOrchestrationService
 {
     public PageRenderResult Render(PageRenderSession session)
     {
@@ -14,13 +14,13 @@ internal sealed class PageRenderExecutionOrchestrationService(
             ? session.Request.Culture
             : session.App?.DefaultCulture ?? string.Empty;
 
-        session.MetadataResolver = metadataCacheFoundationService.Get(culture);
+        session.MetadataResolver = metadataCacheService.Get(culture);
 
-        PageCacheSlice pageCacheSlice = commonObjectCacheFoundationService.Get(session.Request);
+        PageCacheSlice pageCacheSlice = commonObjectCacheService.Get(session.Request);
         session.CommonResourcesByLookup = pageCacheSlice.CommonResourcesByLookup;
         session.CommonComponentsByName = pageCacheSlice.CommonComponentsByName;
         session.CommonScriptsByName = pageCacheSlice.CommonScriptsByName;
 
-        return markupRenderFoundationService.Render(session);
+        return markupRenderService.Render(session);
     }
 }

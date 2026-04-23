@@ -45,8 +45,10 @@ public partial class PageServiceTests
         Page result = await pageService.AddAsync(page);
 
         // Then
-        result.Should().NotBeSameAs(page);
+        result.Should().BeSameAs(page);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(page);
+        result.Should().NotBeSameAs(submitted);
 
         submitted
             .Should()

@@ -43,7 +43,20 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         newCommonObject.CreatedBy = currentUserId;
         newCommonObject.LastUpdated = now;
         newCommonObject.LastUpdatedBy = currentUserId;
-        return await commonObjectBroker.AddCommonObjectAsync(newCommonObject);
+        CommonObject result = await commonObjectBroker.AddCommonObjectAsync(newCommonObject);
+        commonObject.Id = result.Id;
+        commonObject.Name = result.Name;
+        commonObject.Description = result.Description;
+        commonObject.LastUpdated = result.LastUpdated;
+        commonObject.LastUpdatedBy = result.LastUpdatedBy;
+        commonObject.CreatedOn = result.CreatedOn;
+        commonObject.CreatedBy = result.CreatedBy;
+        commonObject.Version = result.Version;
+        commonObject.Key = result.Key;
+        commonObject.Type = result.Type;
+        commonObject.Json = result.Json;
+        commonObject.Culture = result.Culture;
+        return commonObject;
     }
 
     public async ValueTask<CommonObject> UpdateAsync(CommonObject commonObject)
@@ -55,7 +68,20 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateCommonObject.LastUpdated = now;
         updateCommonObject.LastUpdatedBy = currentUserId;
-        return await commonObjectBroker.UpdateCommonObjectAsync(updateCommonObject);
+        CommonObject result = await commonObjectBroker.UpdateCommonObjectAsync(updateCommonObject);
+        commonObject.Id = result.Id;
+        commonObject.Name = result.Name;
+        commonObject.Description = result.Description;
+        commonObject.LastUpdated = result.LastUpdated;
+        commonObject.LastUpdatedBy = result.LastUpdatedBy;
+        commonObject.CreatedOn = result.CreatedOn;
+        commonObject.CreatedBy = result.CreatedBy;
+        commonObject.Version = result.Version;
+        commonObject.Key = result.Key;
+        commonObject.Type = result.Type;
+        commonObject.Json = result.Json;
+        commonObject.Culture = result.Culture;
+        return commonObject;
     }
 
     public async ValueTask DeleteAsync(int id)

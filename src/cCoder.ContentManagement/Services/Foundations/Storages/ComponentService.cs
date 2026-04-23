@@ -44,8 +44,19 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
         newComponent.LastUpdated = now;
         newComponent.LastUpdatedBy = currentUserId;
         Component result = await componentBroker.AddComponentAsync(newComponent);
-        result.App = component.App;
-        return result;
+        component.Id = result.Id;
+        component.Name = result.Name;
+        component.Description = result.Description;
+        component.LastUpdated = result.LastUpdated;
+        component.LastUpdatedBy = result.LastUpdatedBy;
+        component.CreatedOn = result.CreatedOn;
+        component.CreatedBy = result.CreatedBy;
+        component.AppId = result.AppId;
+        component.ResourceKey = result.ResourceKey;
+        component.Content = result.Content;
+        component.Script = result.Script;
+        component.Key = result.Key;
+        return component;
     }
 
     public async ValueTask<Component> UpdateAsync(Component component)
@@ -58,8 +69,19 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
         updateComponent.LastUpdated = now;
         updateComponent.LastUpdatedBy = currentUserId;
         Component result = await componentBroker.UpdateComponentAsync(updateComponent);
-        result.App = component.App;
-        return result;
+        component.Id = result.Id;
+        component.Name = result.Name;
+        component.Description = result.Description;
+        component.LastUpdated = result.LastUpdated;
+        component.LastUpdatedBy = result.LastUpdatedBy;
+        component.CreatedOn = result.CreatedOn;
+        component.CreatedBy = result.CreatedBy;
+        component.AppId = result.AppId;
+        component.ResourceKey = result.ResourceKey;
+        component.Content = result.Content;
+        component.Script = result.Script;
+        component.Key = result.Key;
+        return component;
     }
 
     public async ValueTask DeleteAsync(int id)

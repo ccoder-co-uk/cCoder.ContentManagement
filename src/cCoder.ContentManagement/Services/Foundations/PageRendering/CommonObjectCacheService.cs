@@ -3,7 +3,7 @@ using cCoder.ContentManagement.Rendering.Models;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
-internal sealed class CommonObjectCacheFoundationService(ICommonObjectReaderBroker broker) : ICommonObjectCacheFoundationService
+internal sealed class CommonObjectCacheService(ICommonObjectReaderBroker broker) : ICommonObjectCacheService
 {
     public PageCacheSlice Get(PageRenderEngineRequest request)
     {

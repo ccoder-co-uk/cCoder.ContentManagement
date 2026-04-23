@@ -41,9 +41,13 @@ internal partial class PageInfoService(
         ValidatePageInfo(pageInfo, "pageInfo");
         authorizationBroker.Authorize(GetAppId(pageInfo.PageId), "PageInfo_create");
         PageInfo result = await pageInfoBroker.AddPageInfoAsync(CreateStoragePageInfo(pageInfo));
-        result.Page = pageInfo.Page;
-        result.Culture = pageInfo.Culture;
-        return result;
+        pageInfo.Id = result.Id;
+        pageInfo.PageId = result.PageId;
+        pageInfo.CultureId = result.CultureId;
+        pageInfo.Title = result.Title;
+        pageInfo.Description = result.Description;
+        pageInfo.Keywords = result.Keywords;
+        return pageInfo;
     }
 
     public async ValueTask<PageInfo> UpdateAsync(PageInfo pageInfo)
@@ -51,9 +55,13 @@ internal partial class PageInfoService(
         ValidatePageInfo(pageInfo, "pageInfo");
         authorizationBroker.Authorize(GetAppId(pageInfo.PageId), "PageInfo_update");
         PageInfo result = await pageInfoBroker.UpdatePageInfoAsync(CreateStoragePageInfo(pageInfo));
-        result.Page = pageInfo.Page;
-        result.Culture = pageInfo.Culture;
-        return result;
+        pageInfo.Id = result.Id;
+        pageInfo.PageId = result.PageId;
+        pageInfo.CultureId = result.CultureId;
+        pageInfo.Title = result.Title;
+        pageInfo.Description = result.Description;
+        pageInfo.Keywords = result.Keywords;
+        return pageInfo;
     }
 
     public async ValueTask DeleteAsync(int id)

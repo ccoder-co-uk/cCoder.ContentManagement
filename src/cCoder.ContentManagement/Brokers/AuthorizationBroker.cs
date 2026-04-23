@@ -81,7 +81,7 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
                           where userRole.UserId == userId
                           select userRole.RoleId).Distinct().ToArray();
         return (from role in coreDataContext.Roles.IgnoreQueryFilters().AsNoTracking()
-                where ((ReadOnlySpan<Guid>)roleIds).Contains(role.Id)
+                where roleIds.Contains(role.Id)
                 select role).ToArray();
     }
 }

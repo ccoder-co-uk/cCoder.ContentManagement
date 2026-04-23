@@ -24,9 +24,9 @@ internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAu
         ValidateAppCulture(appCulture, "appCulture");
         authorizationBroker.Authorize(appCulture.AppId, "AppCulture_create");
         AppCulture result = await appCultureBroker.AddAppCultureAsync(CreateStorageAppCulture(appCulture));
-        result.App = appCulture.App;
-        result.Culture = appCulture.Culture;
-        return result;
+        appCulture.AppId = result.AppId;
+        appCulture.CultureId = result.CultureId;
+        return appCulture;
     }
 
     public async ValueTask DeleteAsync(AppCulture appCulture)

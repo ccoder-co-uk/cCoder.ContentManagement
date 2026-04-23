@@ -16,13 +16,13 @@
 ## Build
 
 ```powershell
-dotnet build cCoder.ContentManagement.sln -v minimal
+dotnet build src/cCoder.ContentManagement.sln -v minimal
 ```
 
 ## Test
 
 ```powershell
-dotnet test cCoder.ContentManagement.sln -v minimal --no-build
+dotnet test src/cCoder.ContentManagement.sln -v minimal --no-build
 ```
 
 ## Package

@@ -138,9 +138,9 @@ public static class IServiceCollectionExtensions
         services.AddTransient<IPageRenderOrchestrationService, PageRenderOrchestrationService>();
         services.AddTransient<IPageRenderProcessingService, PageRenderProcessingService>();
         services.AddTransient<IPageRenderExecutionOrchestrationService, PageRenderExecutionOrchestrationService>();
-        services.AddTransient<IMetadataCacheFoundationService, MetadataCacheFoundationService>();
-        services.AddTransient<ICommonObjectCacheFoundationService, CommonObjectCacheFoundationService>();
-        services.AddTransient<IMarkupRenderFoundationService, MarkupRenderFoundationService>();
+        services.AddTransient<IMetadataCacheService, MetadataCacheService>();
+        services.AddTransient<ICommonObjectCacheService, CommonObjectCacheService>();
+        services.AddTransient<IMarkupRenderService, MarkupRenderService>();
         services.AddTransient<IComponentReaderBroker, ComponentReaderBroker>();
         services.AddTransient<IScriptReaderBroker, ScriptReaderBroker>();
         services.AddTransient<IMetadataReaderBroker, MetadataReaderBroker>();

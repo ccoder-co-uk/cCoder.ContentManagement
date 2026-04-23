@@ -49,8 +49,10 @@ public partial class ComponentServiceTests
         Component result = await componentService.AddAsync(component);
 
         // Then
-        result.Should().NotBeSameAs(component);
+        result.Should().BeSameAs(component);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(component);
+        result.Should().NotBeSameAs(submitted);
 
         submitted
             .Should()

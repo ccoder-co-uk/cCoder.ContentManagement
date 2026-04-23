@@ -45,8 +45,16 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         newSubmission.LastUpdatedOn = now;
         newSubmission.LastUpdatedBy = currentUserId;
         Submission result = await submissionBroker.AddSubmissionAsync(newSubmission);
-        result.App = submission.App;
-        return result;
+        submission.Id = result.Id;
+        submission.AppId = result.AppId;
+        submission.CreatedBy = result.CreatedBy;
+        submission.LastUpdatedBy = result.LastUpdatedBy;
+        submission.CreatedOn = result.CreatedOn;
+        submission.LastUpdatedOn = result.LastUpdatedOn;
+        submission.SourceComponent = result.SourceComponent;
+        submission.State = result.State;
+        submission.DataJson = result.DataJson;
+        return submission;
     }
 
     public async ValueTask<Submission> UpdateAsync(Submission submission)
@@ -59,8 +67,16 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         updateSubmission.LastUpdatedOn = now;
         updateSubmission.LastUpdatedBy = currentUserId;
         Submission result = await submissionBroker.UpdateSubmissionAsync(updateSubmission);
-        result.App = submission.App;
-        return result;
+        submission.Id = result.Id;
+        submission.AppId = result.AppId;
+        submission.CreatedBy = result.CreatedBy;
+        submission.LastUpdatedBy = result.LastUpdatedBy;
+        submission.CreatedOn = result.CreatedOn;
+        submission.LastUpdatedOn = result.LastUpdatedOn;
+        submission.SourceComponent = result.SourceComponent;
+        submission.State = result.State;
+        submission.DataJson = result.DataJson;
+        return submission;
     }
 
     public async ValueTask DeleteAsync(Guid id)

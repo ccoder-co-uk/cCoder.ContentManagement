@@ -40,8 +40,10 @@ public partial class PackageItemServiceTests
         PackageItem result = await packageItemService.UpdateAsync(packageItem);
 
         // Then
-        result.Should().NotBeSameAs(packageItem);
+        result.Should().BeSameAs(packageItem);
         submitted.Should().NotBeNull();
+        submitted.Should().NotBeSameAs(packageItem);
+        result.Should().NotBeSameAs(submitted);
         submitted.Should().BeEquivalentTo(packageItem);
         result.Should().BeEquivalentTo(packageItem);
         packageItemBrokerMock.Verify(

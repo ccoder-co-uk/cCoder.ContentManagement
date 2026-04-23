@@ -19,9 +19,9 @@ internal partial class PageRoleService(
         ValidatePageRole(pageRole, "pageRole");
         authorizationBroker.Authorize(GetAppId(pageRole.PageId), "PageRole_create");
         PageRole result = await pageRoleBroker.AddPageRoleAsync(CreateStoragePageRole(pageRole));
-        result.Page = pageRole.Page;
-        result.Role = pageRole.Role;
-        return result;
+        pageRole.PageId = result.PageId;
+        pageRole.RoleId = result.RoleId;
+        return pageRole;
     }
 
     public async ValueTask DeleteAsync(PageRole pageRole)

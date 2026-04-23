@@ -44,8 +44,19 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
         newResource.LastUpdated = now;
         newResource.LastUpdatedBy = currentUserId;
         Resource result = await resourceBroker.AddResourceAsync(newResource);
-        result.App = resource.App;
-        return result;
+        resource.Id = result.Id;
+        resource.Name = result.Name;
+        resource.Description = result.Description;
+        resource.LastUpdated = result.LastUpdated;
+        resource.LastUpdatedBy = result.LastUpdatedBy;
+        resource.CreatedOn = result.CreatedOn;
+        resource.CreatedBy = result.CreatedBy;
+        resource.AppId = result.AppId;
+        resource.Key = result.Key;
+        resource.Culture = result.Culture;
+        resource.DisplayName = result.DisplayName;
+        resource.ShortDisplayName = result.ShortDisplayName;
+        return resource;
     }
 
     public async ValueTask<Resource> UpdateAsync(Resource resource)
@@ -58,8 +69,19 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
         updateResource.LastUpdated = now;
         updateResource.LastUpdatedBy = currentUserId;
         Resource result = await resourceBroker.UpdateResourceAsync(updateResource);
-        result.App = resource.App;
-        return result;
+        resource.Id = result.Id;
+        resource.Name = result.Name;
+        resource.Description = result.Description;
+        resource.LastUpdated = result.LastUpdated;
+        resource.LastUpdatedBy = result.LastUpdatedBy;
+        resource.CreatedOn = result.CreatedOn;
+        resource.CreatedBy = result.CreatedBy;
+        resource.AppId = result.AppId;
+        resource.Key = result.Key;
+        resource.Culture = result.Culture;
+        resource.DisplayName = result.DisplayName;
+        resource.ShortDisplayName = result.ShortDisplayName;
+        return resource;
     }
 
     public async ValueTask DeleteAsync(int id)
