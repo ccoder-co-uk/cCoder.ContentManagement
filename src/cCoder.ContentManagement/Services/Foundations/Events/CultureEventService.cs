@@ -1,6 +1,6 @@
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
-using EventLibrary.Models;
+using cCoder.Eventing.Models;
 using Culture = cCoder.Data.Models.CMS.Culture;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;

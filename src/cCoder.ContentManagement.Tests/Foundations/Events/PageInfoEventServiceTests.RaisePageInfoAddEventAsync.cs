@@ -9,7 +9,7 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using EventLibrary.Models;
+using cCoder.Eventing.Models;
 using FluentAssertions;
 using Moq;
 using Xunit;
