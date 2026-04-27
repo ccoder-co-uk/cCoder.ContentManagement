@@ -204,6 +204,50 @@ public partial class AppProcessingServiceTests
         guests.Users.Should().ContainSingle(userRole => userRole.UserId == "Guest");
     }
 
+    [Fact]
+    public async Task ShouldRaiseAppAddEventWithoutRoleBackReferencesForAddAsync()
+    {
+        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => TestUsers.WithPrivilege("app_create"));
+        appServiceMock
+            .Setup(x => x.GetAll(true))
+            .Returns(Array.Empty<App>().AsQueryable());
+        appServiceMock
+            .Setup(x => x.AddAsync(It.IsAny<App>()))
+            .ReturnsAsync((App candidate) =>
+            {
+                candidate.Id = 1;
+                return candidate;
+            });
+        cultureServiceMock
+            .Setup(x => x.GetAll(false))
+            .Returns(new[] { new Culture { Id = string.Empty } }.AsQueryable());
+        privilegeBrokerMock
+            .Setup(x => x.GetAllPrivileges(false))
+            .Returns(
+                new[]
+                {
+                    new SecurityDataModels.Privilege { Id = "app_create", Operation = "Create", Type = "App" },
+                    new SecurityDataModels.Privilege { Id = "app_read", Operation = "Read", Type = "App" },
+                    new SecurityDataModels.Privilege { Id = "app_admin", Operation = "Admin", Type = "App" }
+                }.AsQueryable());
+
+        App raisedApp = null;
+
+        appEventProcessingServiceMock
+            .Setup(x => x.RaiseAppAddEventAsync(It.IsAny<App>()))
+            .Callback<App>(app => raisedApp = app)
+            .Returns(ValueTask.CompletedTask);
+
+        await appProcessingService.AddAsync(CreateRandomApp());
+
+        raisedApp.Should().NotBeNull();
+        raisedApp.Roles.Should().NotBeEmpty();
+        raisedApp.Roles.Should().OnlyContain(role => role.App == null);
+        raisedApp.Roles.SelectMany(role => role.Users ?? Array.Empty<UserRole>())
+            .Should()
+            .OnlyContain(userRole => userRole.Role == null);
+    }
+
 }
 
 
