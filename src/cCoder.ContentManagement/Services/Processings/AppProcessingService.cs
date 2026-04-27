@@ -87,7 +87,7 @@ internal class AppProcessingService(
                 foreach (UserRole user in role.Users ?? Array.Empty<UserRole>())
                 {
                     user.RoleId = role.Id;
-                    user.Role = role;
+                    user.Role = null;
 
                     await userRoleBroker.AddUserRoleAsync(new UserRole
                     {
@@ -342,7 +342,7 @@ internal class AppProcessingService(
 
         foreach (Role item in list)
         {
-            item.App = app;
+            item.App = null;
             item.AppId = app.Id;
             Role role = item;
             if (role.Users == null)
@@ -352,7 +352,7 @@ internal class AppProcessingService(
             foreach (UserRole user in item.Users)
             {
                 user.RoleId = item.Id;
-                user.Role = item;
+                user.Role = null;
             }
         }
         return list;
@@ -393,8 +393,7 @@ internal class AppProcessingService(
             role.Users.Add(new UserRole
             {
                 RoleId = role.Id,
-                UserId = userId,
-                Role = role
+                UserId = userId
             });
         }
     }
@@ -429,10 +428,11 @@ internal class AppProcessingService(
         foreach (Role role in app.Roles ?? Array.Empty<Role>())
         {
             role.AppId = app.Id;
+            role.App = null;
             foreach (UserRole user in role.Users ?? Array.Empty<UserRole>())
             {
                 user.RoleId = role.Id;
-                user.Role = role;
+                user.Role = null;
             }
         }
 
