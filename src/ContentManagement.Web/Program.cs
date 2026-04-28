@@ -58,8 +58,8 @@ public class Program
         cCoder.Data.IServiceCollectionExtensions.AddCoreData(
             builder.Services,
             coreConnection);
-        builder.Services.AddAppSecurity();
-        builder.Services.AddContentManagementApi();
+        builder.Services.AddAppSecurityHostedServices();
+        builder.Services.AddContentManagementWeb();
 
         builder.Logging.ClearProviders();
         builder.Logging.AddSimpleConsole(options =>
@@ -95,11 +95,10 @@ public class Program
             pattern: @"{*path}",
             defaults: new { controller = "Home", action = "Index" },
             constraints: new { path = new NoApiRouteConstraint() });
-        app.UseContentManagementExposure(LogRequest, log);
+        app.StartContentManagementWeb(LogRequest, log);
         app.UseDomainDefaultCors();
         app.UseDomainExceptionHandling(HandleUnhandledException);
-        app.UseAppSecurityEventHandlers();
-        app.ListenToContentManagementEvents();
+        app.StartAppSecurityHostedServices();
         app.Run();
     }
 

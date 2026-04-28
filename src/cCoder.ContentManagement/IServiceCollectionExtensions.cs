@@ -15,6 +15,7 @@ using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models;
@@ -31,9 +32,20 @@ using Microsoft.OpenApi;
 
 namespace cCoder.ContentManagement;
 
-public static class IServiceCollectionExtensions
+public static partial class IServiceCollectionExtensions
 {
-    public static void AddContentManagement(this IServiceCollection services)
+    public static void AddContentManagementWeb(
+        this IServiceCollection services,
+        Action<ContentManagementConfiguration> configure = null,
+        ODataConventionModelBuilder builder = null) =>
+        services.AddConfiguredContentManagementWeb((_, configuration) => configure?.Invoke(configuration), builder);
+
+    public static void AddContentManagementHostedServices(
+        this IServiceCollection services,
+        Action<ContentManagementConfiguration> configure = null) =>
+        services.AddConfiguredContentManagement((_, configuration) => configure?.Invoke(configuration));
+
+    private static void AddContentManagement(this IServiceCollection services)
     {
         services.AddEventingTypes();
         services.AddBrokers();
@@ -45,10 +57,10 @@ public static class IServiceCollectionExtensions
         services.AddRendering();
     }
 
-    public static void AddContentManagementApi(this IServiceCollection services, ODataConventionModelBuilder builder = null)
+    private static void AddContentManagementWeb(this IServiceCollection services, ODataConventionModelBuilder builder = null)
     {
         services.AddContentManagement();
-        services.AddApi("ContentManagement", ConfigureContentManagementApiModel, builder);
+
     }
 
     private static void AddEventingTypes(this IServiceCollection services)
@@ -252,156 +264,5 @@ public static class IServiceCollectionExtensions
         services.AddTransient<ITemplateEventProcessingService, TemplateEventProcessingService>();
         services.AddTransient<ITemplateProcessingService, TemplateProcessingService>();
         services.AddTransient<ITemplateRenderProcessingService, TemplateRenderProcessingService>();
-    }
-
-    private static void ConfigureContentManagementApiModel(ODataConventionModelBuilder builder) =>
-        new ContentManagementModelBuilder(builder).Configure();
-
-    private static void AddApi(
-        this IServiceCollection services,
-        string routePrefix,
-        Action<ODataConventionModelBuilder> configureModel,
-        ODataConventionModelBuilder builder = null,
-        bool useFullSchemaIds = false)
-    {
-        services.AddSingleton<Action<ODataConventionModelBuilder>>(configureModel);
-
-        if (builder is not null)
-            configureModel(builder);
-
-        AddAspNet(services);
-
-        if (builder is null)
-            AddApiDocumentation(services, routePrefix, useFullSchemaIds);
-
-        IEdmModel routeModel = BuildRouteModel(configureModel);
-        DefaultODataBatchHandler batchHandler = new();
-
-        services.AddControllers().AddOData(options =>
-        {
-            options.RouteOptions.EnableQualifiedOperationCall = false;
-            options.EnableAttributeRouting = true;
-            options.RouteOptions.EnableKeyAsSegment = false;
-            options.Expand()
-                .Count()
-                .Filter()
-                .Select()
-                .OrderBy()
-                .SetMaxTop(1000)
-                .AddRouteComponents($"Api/{routePrefix}", routeModel, batchHandler);
-
-            if (builder is null)
-                _ = options.AddRouteComponents("Api/Core", routeModel, batchHandler);
-        });
-    }
-
-    private static void AddApiDocumentation(
-        IServiceCollection services,
-        string routePrefix,
-        bool useFullSchemaIds)
-    {
-        services.AddSwaggerGen(options =>
-        {
-            options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-            AddSwaggerDocuments(options, routePrefix);
-            options.DocInclusionPredicate(
-                (documentName, apiDescription) =>
-                    ShouldIncludeInDocument(documentName, apiDescription.RelativePath, routePrefix));
-
-            if (useFullSchemaIds)
-                options.CustomSchemaIds(type => type.FullName?.Replace('+', '.') ?? type.Name);
-
-            options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
-            {
-                Description = @"Authorization header using the Bearer scheme.",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "bearer",
-            });
-        });
-    }
-
-    private static void AddSwaggerDocuments(
-        Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options,
-        string routePrefix)
-    {
-        options.SwaggerDoc(routePrefix, new OpenApiInfo
-        {
-            Title = $"{routePrefix} API definition",
-            Version = routePrefix,
-        });
-        options.SwaggerDoc("Core", new OpenApiInfo
-        {
-            Title = "Core API definition",
-            Version = "Core",
-        });
-        options.SwaggerDoc("v1", new OpenApiInfo
-        {
-            Title = "Core API definition",
-            Version = "v1",
-        });
-    }
-
-    private static bool ShouldIncludeInDocument(
-        string documentName,
-        string relativePath,
-        string routePrefix)
-    {
-        if (string.IsNullOrWhiteSpace(relativePath))
-            return false;
-
-        if (string.Equals(documentName, "v1", StringComparison.OrdinalIgnoreCase))
-            documentName = "Core";
-
-        string path = NormalizePath(relativePath);
-
-        return string.Equals(documentName, "Core", StringComparison.OrdinalIgnoreCase)
-            ? MatchesContextRoute(path, "Core")
-            : MatchesContextRoute(path, routePrefix);
-    }
-
-    private static bool MatchesContextRoute(string path, string context)
-    {
-        string prefix = $"/Api/{context}";
-        return path.Equals(prefix, StringComparison.OrdinalIgnoreCase)
-            || path.StartsWith($"{prefix}/", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static string NormalizePath(string relativePath) =>
-        relativePath.StartsWith('/') ? relativePath : $"/{relativePath}";
-
-    private static IEdmModel BuildRouteModel(Action<ODataConventionModelBuilder> configureModel)
-    {
-        ODataConventionModelBuilder builder = new();
-        configureModel(builder);
-        return builder.GetEdmModel();
-    }
-
-    private static void AddAspNet(IServiceCollection services)
-    {
-        services.AddRouting();
-        services.AddResponseCompression();
-        services.AddHttpClient();
-        services.AddHttpContextAccessor();
-        services.AddScoped(
-            typeof(HttpContext),
-            ctx => ctx.GetService<IHttpContextAccessor>()?.HttpContext ?? new DefaultHttpContext());
-        services.AddScoped(typeof(HttpRequest), ctx => ctx.GetRequiredService<HttpContext>().Request);
-        services.AddSession();
-        services.AddHsts(options =>
-        {
-            options.Preload = true;
-            options.IncludeSubDomains = true;
-            options.MaxAge = TimeSpan.FromMinutes(60);
-        });
-        services.AddMvc(options => options.EnableEndpointRouting = false);
-        services.AddRazorPages();
-        services.Configure<KestrelServerOptions>(options =>
-        {
-            options.Limits.MaxRequestBodySize = int.MaxValue;
-        });
-        services.AddEndpointsApiExplorer();
-        services.AddSignalR();
     }
 }

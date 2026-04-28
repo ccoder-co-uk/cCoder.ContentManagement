@@ -11,24 +11,24 @@ using Microsoft.OpenApi;
 
 namespace cCoder.ContentManagement;
 
-public static class ContentManagementServiceCollectionConfigurationExtensions
+public static partial class IServiceCollectionExtensions
 {
-    public static ContentManagementConfiguration AddContentManagement(
+    private static ContentManagementConfiguration AddConfiguredContentManagement(
         this IServiceCollection services,
         Action<IServiceCollection, ContentManagementConfiguration> configure)
     {
         ContentManagementConfiguration configuration = CreateConfiguration(services, configure);
-        IServiceCollectionExtensions.AddContentManagement(services);
+        services.AddContentManagement();
         return configuration;
     }
 
-    public static ContentManagementConfiguration AddContentManagementApi(
+    private static ContentManagementConfiguration AddConfiguredContentManagementWeb(
         this IServiceCollection services,
         Action<IServiceCollection, ContentManagementConfiguration> configure,
         ODataConventionModelBuilder builder = null)
     {
         ContentManagementConfiguration configuration = CreateConfiguration(services, configure);
-        IServiceCollectionExtensions.AddContentManagement(services);
+        services.AddContentManagementWeb(builder);
         services.AddConfiguredApi(
             configuration,
             "ContentManagement",
