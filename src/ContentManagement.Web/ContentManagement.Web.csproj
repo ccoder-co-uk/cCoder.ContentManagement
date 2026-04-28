@@ -9,13 +9,10 @@
     <LocalAppSecurityProject>..\..\..\cCoder.AppSecurity\src\cCoder.AppSecurity\cCoder.AppSecurity.csproj</LocalAppSecurityProject>
     <LocalSecurityProject>..\..\..\cCoder.Security\src\cCoder.Security\cCoder.Security.csproj</LocalSecurityProject>
     <LocalSecurityEfMssqlProject>..\..\..\cCoder.Security\src\cCoder.Security.Data.EF.MSSQL\cCoder.Security.Data.EF.MSSQL.csproj</LocalSecurityEfMssqlProject>
-    <UseLocalAppSecurity Condition="'$(UseLocalAppSecurity)' == '' and Exists('$(LocalAppSecurityProject)')">true</UseLocalAppSecurity>
     <UseLocalAppSecurity Condition="'$(UseLocalAppSecurity)' == ''">false</UseLocalAppSecurity>
     <UseLocalAppSecurity Condition="'$(UseLocalAppSecurity)' == 'true' and !Exists('$(LocalAppSecurityProject)')">false</UseLocalAppSecurity>
-    <UseLocalData Condition="'$(UseLocalData)' == '' and Exists('$(LocalDataProject)')">true</UseLocalData>
     <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
     <UseLocalData Condition="'$(UseLocalData)' == 'true' and !Exists('$(LocalDataProject)')">false</UseLocalData>
-    <UseLocalSecurity Condition="'$(UseLocalSecurity)' == '' and Exists('$(LocalSecurityProject)')">true</UseLocalSecurity>
     <UseLocalSecurity Condition="'$(UseLocalSecurity)' == ''">false</UseLocalSecurity>
     <UseLocalSecurity Condition="'$(UseLocalSecurity)' == 'true' and !Exists('$(LocalSecurityProject)')">false</UseLocalSecurity>
     <UseLocalData Condition="'$(UseLocalSecurity)' == 'true' and Exists('$(LocalDataProject)')">true</UseLocalData>

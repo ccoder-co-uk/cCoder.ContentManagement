@@ -6,7 +6,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <PropertyGroup>
-    <UseLocalData Condition="'$(UseLocalData)' == '' and Exists('..\\..\\..\\cCoder.Data\\src\\cCoder.Data\\cCoder.Data.csproj')">true</UseLocalData>
     <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
   </PropertyGroup>
   <ItemGroup>
