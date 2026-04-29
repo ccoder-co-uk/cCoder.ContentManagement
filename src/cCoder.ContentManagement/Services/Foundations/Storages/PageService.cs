@@ -45,7 +45,6 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         ValidatePage(page, "page");
         authorizationBroker.Authorize(page.AppId, "Page_create");
         Page newPage = CreateStoragePage(page);
-        newPage.ShowOnMenus = newPage.ShowOnMenus || newPage.Id == 0;
         string currentUserId = authorizationBroker.GetCurrentUser().Id;
         DateTimeOffset now = (newPage.CreatedOn = DateTimeOffset.UtcNow);
         newPage.CreatedBy = currentUserId;
