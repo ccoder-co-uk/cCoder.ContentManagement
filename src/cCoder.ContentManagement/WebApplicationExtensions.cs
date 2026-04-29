@@ -11,11 +11,21 @@ using Microsoft.Extensions.Primitives;
 
 namespace cCoder.ContentManagement;
 
-public static class WebApplicationExtensions
+public static partial class WebApplicationExtensions
 {
     private const string MetadataScope = "ContentManagement";
 
-    public static WebApplication UseContentManagementExposure(this WebApplication app, Func<HttpContext, ILogger, Task> onRequest, ILogger log = null)
+    public static WebApplication StartContentManagementWeb(
+        this WebApplication app,
+        Func<HttpContext, ILogger, Task> onRequest,
+        ILogger log = null) =>
+        app.UseContentManagementExposure(onRequest, log)
+            .ListenToContentManagementEvents();
+
+    public static WebApplication StartContentManagementHostedServices(this WebApplication app) =>
+        app.ListenToContentManagementEvents();
+
+    private static WebApplication UseContentManagementExposure(this WebApplication app, Func<HttpContext, ILogger, Task> onRequest, ILogger log = null)
     {
         log?.LogInformation("Initialising Content Management");
         app.UseSession();
@@ -103,7 +113,7 @@ public static class WebApplicationExtensions
         }
     }
 
-    public static WebApplication ListenToContentManagementEvents(this WebApplication app)
+    private static WebApplication ListenToContentManagementEvents(this WebApplication app)
     {
         using IServiceScope serviceScope = app.Services.CreateScope();
         IServiceProvider serviceProvider = serviceScope.ServiceProvider;

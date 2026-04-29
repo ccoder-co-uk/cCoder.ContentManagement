@@ -23,7 +23,7 @@ public class PageRenderRegistrationTests
     {
         ServiceCollection services = [];
 
-        services.AddContentManagement();
+        services.AddContentManagementHostedServices();
 
         ServiceDescriptor pageRendererDescriptor = services.Single(descriptor =>
             descriptor.ServiceType == typeof(IPageRenderer));
