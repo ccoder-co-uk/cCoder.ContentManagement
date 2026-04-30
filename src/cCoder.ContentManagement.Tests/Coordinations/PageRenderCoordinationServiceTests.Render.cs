@@ -329,6 +329,91 @@ public partial class PageRenderCoordinationServiceTests
     }
 
     [Fact]
+    public void ShouldRenderPublicPageWhenHydratedPageRolesContainPrivileges()
+    {
+        App app = CreateApp();
+
+        Role guestRole = new()
+        {
+            Id = Guid.NewGuid(),
+            AppId = app.Id,
+            Name = "Guests",
+            Privileges = ["page_read"]
+        };
+
+        currentUser = new User
+        {
+            Id = "Guest",
+            DefaultCultureId = string.Empty,
+            DisplayName = "Guest",
+            Email = "guest@example.com",
+            Roles =
+            [
+                new UserRole
+                {
+                    RoleId = guestRole.Id,
+                    Role = guestRole
+                }
+            ]
+        };
+
+        Page page = new()
+        {
+            Id = 19,
+            AppId = app.Id,
+            Name = "Home",
+            Path = string.Empty,
+            App = app,
+            PageInfo = [],
+            Contents = [new Content { Name = "Body", Html = "Public body" }]
+        };
+
+        PageRole[] roles =
+        [
+            new()
+            {
+                PageId = page.Id,
+                RoleId = guestRole.Id,
+                Role = guestRole
+            }
+        ];
+
+        appOrchestrationServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { app }.AsQueryable());
+        layoutOrchestrationServiceMock.Setup(x => x.GetAll(false)).Returns(app.Layouts.AsQueryable());
+        pageOrchestrationServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { page }.AsQueryable());
+        pageOrchestrationServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { page }.AsQueryable());
+        pageRoleOrchestrationServiceMock.Setup(x => x.GetAll(true)).Returns(roles.AsQueryable());
+        pageRenderOrchestrationServiceMock
+            .Setup(x => x.Render(It.IsAny<Page>(), It.IsAny<User>(), "Default", string.Empty, false))
+            .Returns(CreateRenderResult("Public body"));
+
+        coordinationService.Render(app.Id, string.Empty, "Default", string.Empty);
+
+        pageRenderOrchestrationServiceMock.Verify(
+            x => x.Render(
+                It.Is<Page>(renderPage =>
+                    renderPage.Contents.Any(content => content.Html == "Public body")
+                    && renderPage.Roles.Any(role =>
+                        role.Role != null
+                        && role.Role.Privileges != null
+                        && role.Role.Privileges.Contains("page_read"))),
+                It.IsAny<User>(),
+                "Default",
+                string.Empty,
+                false),
+            Times.Once);
+
+        pageRenderOrchestrationServiceMock.Verify(
+            x => x.Render(
+                It.Is<Page>(renderPage => renderPage.Contents.Any(content => content.Html == "[component[login]]")),
+                It.IsAny<User>(),
+                "Default",
+                string.Empty,
+                false),
+            Times.Never);
+    }
+
+    [Fact]
     public void ShouldUseBodySlotForMissingPageAndGatedPageFallbacks()
     {
         App app = CreateApp();
