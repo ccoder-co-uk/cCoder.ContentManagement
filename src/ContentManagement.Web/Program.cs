@@ -58,7 +58,8 @@ public class Program
         cCoder.Data.IServiceCollectionExtensions.AddCoreData(
             builder.Services,
             coreConnection);
-        builder.Services.AddAppSecurity();
+        builder.Services.AddAppSecurityWeb();
+        builder.Services.AddAppSecurityHostedServices();
         builder.Services.AddContentManagementWeb();
 
         builder.Logging.ClearProviders();
@@ -98,7 +99,7 @@ public class Program
         app.StartContentManagementWeb(LogRequest, log);
         app.UseDomainDefaultCors();
         app.UseDomainExceptionHandling(HandleUnhandledException);
-        app.UseAppSecurityEventHandlers();
+        app.StartAppSecurityHostedServices();
         app.Run();
     }
 
