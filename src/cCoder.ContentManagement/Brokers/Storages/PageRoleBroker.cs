@@ -11,8 +11,11 @@ public class PageRoleBroker(ICoreContextFactory coreContextFactory) : IPageRoleB
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
         return ignoreFilters
-            ? coreDataContext.PageRoles.IgnoreQueryFilters()
-            : coreDataContext.PageRoles;
+            ? coreDataContext.PageRoles
+                .IgnoreQueryFilters()
+                .Include(pageRole => pageRole.Role)
+            : coreDataContext.PageRoles
+                .Include(pageRole => pageRole.Role);
     }
 
     public async ValueTask<PageRole> AddPageRoleAsync(PageRole entity)
