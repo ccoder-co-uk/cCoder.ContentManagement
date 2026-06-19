@@ -58,8 +58,16 @@ public class Program
         cCoder.Data.IServiceCollectionExtensions.AddCoreData(
             builder.Services,
             coreConnection);
-        builder.Services.AddAppSecurityWeb();
-        builder.Services.AddAppSecurityHostedServices();
+        builder.Services.AddAppSecurityWeb(config =>
+        {
+            config.IncludeLegacyCoreContext = false;
+        });
+
+        builder.Services.AddAppSecurityHostedServices(config =>
+        {
+            config.IncludeLegacyCoreContext = false;
+        });
+
         builder.Services.AddContentManagementWeb();
 
         builder.Logging.ClearProviders();
