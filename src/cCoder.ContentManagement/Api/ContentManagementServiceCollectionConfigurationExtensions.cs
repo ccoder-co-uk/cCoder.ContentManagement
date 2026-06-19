@@ -119,14 +119,14 @@ public static partial class IServiceCollectionExtensions
             if (useFullSchemaIds)
                 options.CustomSchemaIds(type => type.FullName?.Replace('+', '.') ?? type.Name);
 
-            options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
-            {
-                Description = @"Authorization header using the Bearer scheme.",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "bearer",
-            });
+            //options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+            //{
+            //    Description = @"Authorization header using the Bearer scheme.",
+            //    Name = "Authorization",
+            //    In = ParameterLocation.Header,
+            //    Type = SecuritySchemeType.ApiKey,
+            //    Scheme = "bearer",
+            //});
         });
     }
 
