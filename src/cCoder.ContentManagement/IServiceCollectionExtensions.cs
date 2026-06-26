@@ -136,7 +136,7 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddEventHandlers(this IServiceCollection services)
     {
-        services.AddTransient<IContentManagementAppExposure, ContentManagementAppExposure>();
+        services.AddTransient<IAppManager, AppManager>();
         services.AddTransient<IContentManagementPackageManager, ContentManagementPackageManager>();
         services.AddTransient<IComponentRenderer, ComponentRenderer>();
         services.AddTransient<IPageRenderer, PageRenderer>();

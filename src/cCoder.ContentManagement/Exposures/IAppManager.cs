@@ -2,11 +2,13 @@ using App = cCoder.Data.Models.CMS.App;
 
 namespace cCoder.ContentManagement.Exposures;
 
-public interface IContentManagementAppExposure
+public interface IAppManager
 {
     App Get(int id, bool ignoreFilters = false);
 
     App GetByDomain(string domain, bool ignoreFilters = false);
+
+    IQueryable<App> GetAll(bool ignoreFilters = false);
 
     ValueTask<App> AddAsync(App app);
 

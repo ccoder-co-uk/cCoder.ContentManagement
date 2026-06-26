@@ -3,7 +3,7 @@ using App = cCoder.Data.Models.CMS.App;
 
 namespace cCoder.ContentManagement.Exposures;
 
-internal class ContentManagementAppExposure(IAppOrchestrationService appOrchestrationService) : IContentManagementAppExposure
+internal sealed class AppManager(IAppOrchestrationService appOrchestrationService) : IAppManager
 {
     public App Get(int id, bool ignoreFilters = false)
     {
@@ -13,6 +13,11 @@ internal class ContentManagementAppExposure(IAppOrchestrationService appOrchestr
     public App GetByDomain(string domain, bool ignoreFilters = false)
     {
         return appOrchestrationService.GetByDomain(domain, ignoreFilters);
+    }
+
+    public IQueryable<App> GetAll(bool ignoreFilters = false)
+    {
+        return appOrchestrationService.GetAll(ignoreFilters);
     }
 
     public ValueTask<App> AddAsync(App app)
