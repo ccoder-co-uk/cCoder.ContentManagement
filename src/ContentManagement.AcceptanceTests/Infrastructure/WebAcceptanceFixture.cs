@@ -1,6 +1,11 @@
+using cCoder.ContentManagement;
+using cCoder.Data;
+using cCoder.Security.Data.EF;
+using cCoder.Security.Data.EF.Interfaces;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Web.AcceptanceTests.Models;
 using Xunit;
 
@@ -10,6 +15,7 @@ namespace Web.AcceptanceTests.Infrastructure;
 public sealed class WebAcceptanceFixture : IAsyncLifetime
 {
     private AcceptanceDatabaseManager databaseManager;
+    private ServiceProvider databaseServices;
 
     internal WebAcceptanceFactory Factory { get; private set; } = null!;
 
@@ -24,10 +30,12 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
             DecryptionKey = "000000000000000000000000000000000000000000000000",
         };
 
-        Factory = new WebAcceptanceFactory(settings);
-        databaseManager = new AcceptanceDatabaseManager(Factory.Services);
+        databaseServices = CreateDatabaseServices(settings);
+        databaseManager = new AcceptanceDatabaseManager(databaseServices);
         await databaseManager.ResetDatabasesAsync();
-        await SeedAsync();
+        await SeedAsync(databaseServices);
+
+        Factory = new WebAcceptanceFactory(settings);
         Client = Factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false,
@@ -39,20 +47,60 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
     {
         Client?.Dispose();
 
+        if (Factory is not null)
+            await Factory.DisposeAsync();
+
         if (databaseManager is not null)
             await databaseManager.DropDatabasesAsync();
 
-        if (Factory is not null)
-            await Factory.DisposeAsync();
+        if (databaseServices is not null)
+            await databaseServices.DisposeAsync();
     }
 
-    private Task SeedAsync() =>
-        new AcceptanceApplicationSeeder(Factory.Services).SeedAsync();
+    private static Task SeedAsync(IServiceProvider services) =>
+        new AcceptanceApplicationSeeder(services).SeedAsync();
+
+    private static ServiceProvider CreateDatabaseServices(AcceptanceSettings settings)
+    {
+        ServiceCollection services = new();
+        cCoder.Data.Config dataConfig = new()
+        {
+            ConnectionStrings = new Dictionary<string, string>
+            {
+                ["Core"] = settings.CoreConnectionString,
+                ["SSO"] = settings.SsoConnectionString,
+            },
+            Settings = new Dictionary<string, string>
+            {
+                ["DecryptionKey"] = settings.DecryptionKey,
+                ["enableExternalEventing"] = "false",
+            },
+            Services = new Dictionary<string, string>(),
+        };
+
+        services.AddLogging();
+        services.AddSingleton(dataConfig);
+        services.AddSingleton(
+            new cCoder.ContentManagement.Models.Config
+            {
+                ConnectionStrings = new Dictionary<string, string>(dataConfig.ConnectionStrings),
+                Settings = new Dictionary<string, string>(dataConfig.Settings),
+                Services = new Dictionary<string, string>(dataConfig.Services),
+            });
+        services.AddSingleton<ISecurityDbContextFactory>(
+            _ => new MSSQLSecurityDbContextFactory(settings.SsoConnectionString));
+        services.AddCoreData(settings.CoreConnectionString);
+        services.AddContentManagementHostedServices();
+
+        return services.BuildServiceProvider(validateScopes: false);
+    }
 
     private static string AddDatabaseSuffix(string variableName)
     {
         string connectionString =
-            Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.Machine)
+            Environment.GetEnvironmentVariable(variableName)
+            ?? Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.User)
+            ?? Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.Machine)
             ?? ReadConfiguredConnectionString(variableName);
 
         if (string.IsNullOrWhiteSpace(connectionString))
