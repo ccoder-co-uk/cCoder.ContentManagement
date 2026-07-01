@@ -7,6 +7,52 @@ window.ContentManagementGrids = {
     appRows: [],
     pageRows: [],
 
+    pageChildEntitySets: [
+        {
+            name: "PageInfo",
+            title: "Page Info",
+            description: "Metadata rows owned by this Page",
+            key: "Id",
+            context: { type: "page", field: "PageId" },
+            fields: {
+                Id: { type: "number", editable: false },
+                PageId: { type: "number" },
+                CultureId: { type: "string" },
+                Title: { type: "string" },
+                Description: { type: "string" },
+                Keywords: { type: "string" }
+            },
+            columns: ["Id", "PageId", "CultureId", "Title", "Description", "Keywords"]
+        },
+        {
+            name: "Content",
+            title: "Content",
+            description: "Rendered content rows owned by this Page",
+            key: "Id",
+            context: { type: "page", field: "PageId" },
+            fields: {
+                Id: { type: "number", editable: false },
+                PageId: { type: "number" },
+                CultureId: { type: "string" },
+                Name: { type: "string" },
+                Html: { type: "string" }
+            },
+            columns: ["Id", "PageId", "CultureId", "Name", "Html"]
+        },
+        {
+            name: "PageRole",
+            title: "Page Roles",
+            description: "Role links owned by this Page",
+            composite: true,
+            context: { type: "page", field: "PageId" },
+            fields: {
+                PageId: { type: "number" },
+                RoleId: { type: "string" }
+            },
+            columns: ["PageId", "RoleId"]
+        },
+    ],
+
     entitySets: [
         {
             name: "App",
@@ -55,49 +101,6 @@ window.ContentManagementGrids = {
                 Layout: { type: "string" }
             },
             columns: ["Id", "AppId", "ParentId", "Order", "ShowOnMenus", "Name", "Path", "ResourceKey", "Layout"]
-        },
-        {
-            name: "PageInfo",
-            title: "Page Info",
-            description: "Metadata rows owned by the selected Page",
-            key: "Id",
-            context: { type: "page", field: "PageId" },
-            fields: {
-                Id: { type: "number", editable: false },
-                PageId: { type: "number" },
-                CultureId: { type: "string" },
-                Title: { type: "string" },
-                Description: { type: "string" },
-                Keywords: { type: "string" }
-            },
-            columns: ["Id", "PageId", "CultureId", "Title", "Description", "Keywords"]
-        },
-        {
-            name: "Content",
-            title: "Content",
-            description: "Rendered content rows owned by the selected Page",
-            key: "Id",
-            context: { type: "page", field: "PageId" },
-            fields: {
-                Id: { type: "number", editable: false },
-                PageId: { type: "number" },
-                CultureId: { type: "string" },
-                Name: { type: "string" },
-                Html: { type: "string" }
-            },
-            columns: ["Id", "PageId", "CultureId", "Name", "Html"]
-        },
-        {
-            name: "PageRole",
-            title: "Page Roles",
-            description: "Role links owned by the selected Page",
-            composite: true,
-            context: { type: "page", field: "PageId" },
-            fields: {
-                PageId: { type: "number" },
-                RoleId: { type: "string" }
-            },
-            columns: ["PageId", "RoleId"]
         },
         {
             name: "Component",
@@ -339,6 +342,8 @@ window.ContentManagementGrids = {
             scrollable: true,
             selectable: "row",
             columns: this.columns(config),
+            detailTemplate: config.name === "Page" ? this.pageDetailTemplate() : undefined,
+            detailInit: config.name === "Page" ? event => this.onPageDetailInit(event) : undefined,
             noRecords: true,
             messages: {
                 noRecords: this.noRecordsMessage(config)
@@ -382,54 +387,55 @@ window.ContentManagementGrids = {
         return columns;
     },
 
-    read: async function (config, options) {
+    read: async function (config, options, contextValues) {
         try {
-            if (config.context && !this.contextValue(config.context.type)) {
+            if (config.context && !this.contextValue(config.context.type, contextValues)) {
                 options.success([]);
                 return;
             }
 
-            const body = await ContentManagementApi.get(this.readUrl(config));
-            const rows = ContentManagementApi.unwrapCollection(body).map(row => this.withRowState(config, row));
+            const body = await ContentManagementApi.get(this.readUrl(config, contextValues));
+            const rows = ContentManagementApi.unwrapCollection(body)
+                .map(row => this.withRowState(config, row, contextValues));
             options.success(rows);
         } catch (error) {
             options.error(error);
         }
     },
 
-    readUrl: function (config) {
+    readUrl: function (config, contextValues) {
         let url = `${this.apiRoot}/${config.name}?$top=500`;
 
         if (config.context) {
-            const filter = `${config.context.field} eq ${this.contextValue(config.context.type)}`;
+            const filter = `${config.context.field} eq ${this.contextValue(config.context.type, contextValues)}`;
             url += `&$filter=${encodeURIComponent(filter)}`;
         }
 
         return url;
     },
 
-    create: async function (config, options) {
+    create: async function (config, options, contextValues) {
         try {
-            if (config.context && !this.contextValue(config.context.type)) {
+            if (config.context && !this.contextValue(config.context.type, contextValues)) {
                 throw new Error(`Select a ${config.context.type} before creating ${config.title}.`);
             }
 
-            const payload = this.preparePayload(config, options.data, true);
+            const payload = this.preparePayload(config, options.data, true, contextValues);
             const result = await ContentManagementApi.post(`${this.apiRoot}/${config.name}`, payload);
-            options.success(this.withRowState(config, result ?? payload));
+            options.success(this.withRowState(config, result ?? payload, contextValues));
             ContentManagementApi.notify(`${config.title} created`);
         } catch (error) {
             options.error(error);
         }
     },
 
-    update: async function (config, options) {
+    update: async function (config, options, contextValues) {
         try {
-            const payload = this.preparePayload(config, options.data, false);
+            const payload = this.preparePayload(config, options.data, false, contextValues);
             let result;
 
             if (config.composite) {
-                await this.deleteComposite(config, options.data._original ?? options.data);
+                await this.deleteComposite(config, options.data._original ?? options.data, contextValues);
                 result = await ContentManagementApi.post(`${this.apiRoot}/${config.name}`, payload);
             } else {
                 result = await ContentManagementApi.put(
@@ -437,17 +443,17 @@ window.ContentManagementGrids = {
                     payload);
             }
 
-            options.success(this.withRowState(config, result ?? payload));
+            options.success(this.withRowState(config, result ?? payload, contextValues));
             ContentManagementApi.notify(`${config.title} updated`);
         } catch (error) {
             options.error(error);
         }
     },
 
-    destroy: async function (config, options) {
+    destroy: async function (config, options, contextValues) {
         try {
             if (config.composite) {
-                await this.deleteComposite(config, options.data._original ?? options.data);
+                await this.deleteComposite(config, options.data._original ?? options.data, contextValues);
             } else {
                 await ContentManagementApi.delete(
                     `${this.apiRoot}/${config.name}(${this.formatKey(config, options.data[config.key])})`);
@@ -460,13 +466,13 @@ window.ContentManagementGrids = {
         }
     },
 
-    deleteComposite: function (config, data) {
+    deleteComposite: function (config, data, contextValues) {
         return ContentManagementApi.post(
             `${this.apiRoot}/${config.name}/DeleteAll`,
-            [this.preparePayload(config, data, false)]);
+            [this.preparePayload(config, data, false, contextValues)]);
     },
 
-    preparePayload: function (config, data, isCreate) {
+    preparePayload: function (config, data, isCreate, contextValues) {
         const payload = {};
 
         Object.keys(config.fields).forEach(field => {
@@ -478,7 +484,7 @@ window.ContentManagementGrids = {
         });
 
         if (config.context) {
-            payload[config.context.field] = Number(this.contextValue(config.context.type));
+            payload[config.context.field] = Number(this.contextValue(config.context.type, contextValues));
         }
 
         if (config.keyType === "guid" && isCreate && !payload[config.key]) {
@@ -519,10 +525,88 @@ window.ContentManagementGrids = {
         }
     },
 
-    onEdit: function (config, event) {
+    onEdit: function (config, event, contextValues) {
         if (config.context) {
-            event.model.set(config.context.field, Number(this.contextValue(config.context.type)));
+            event.model.set(config.context.field, Number(this.contextValue(config.context.type, contextValues)));
         }
+    },
+
+    pageDetailTemplate: function () {
+        const tabs = this.pageChildEntitySets
+            .map((config, index) => `<li class="${index === 0 ? "k-active" : ""}">${config.title}</li>`)
+            .join("");
+        const panes = this.pageChildEntitySets
+            .map(config =>
+                `<div>` +
+                `<div class="cm-detail-heading">` +
+                `<h3>${config.title}</h3>` +
+                `<span>${config.description}</span>` +
+                `</div>` +
+                `<div class="cm-child-grid" data-page-child-grid="${config.name}"></div>` +
+                `</div>`)
+            .join("");
+
+        return `<div class="cm-page-detail">` +
+            `<div class="cm-page-tabs">` +
+            `<ul>${tabs}</ul>` +
+            panes +
+            `</div>` +
+            `</div>`;
+    },
+
+    onPageDetailInit: function (event) {
+        const page = event.data;
+        const detail = event.detailRow;
+        const contextValues = { page: page.Id };
+
+        detail.find(".cm-page-tabs").kendoTabStrip();
+        this.pageChildEntitySets.forEach(config =>
+            this.createChildGrid(
+                detail.find(`[data-page-child-grid='${config.name}']`),
+                config,
+                contextValues));
+    },
+
+    createChildGrid: function (element, config, contextValues) {
+        element.kendoGrid({
+            dataSource: {
+                transport: {
+                    read: options => this.read(config, options, contextValues),
+                    create: options => this.create(config, options, contextValues),
+                    update: options => this.update(config, options, contextValues),
+                    destroy: options => this.destroy(config, options, contextValues)
+                },
+                schema: {
+                    model: {
+                        id: config.composite ? "_rowKey" : config.key,
+                        fields: this.modelFields(config)
+                    }
+                },
+                pageSize: 10
+            },
+            toolbar: [{ name: "create", text: `Create ${config.title}` }],
+            editable: {
+                mode: "popup",
+                confirmation: false,
+                window: {
+                    width: "720px"
+                }
+            },
+            pageable: true,
+            sortable: true,
+            filterable: true,
+            resizable: true,
+            reorderable: true,
+            scrollable: true,
+            columns: this.columns(config),
+            noRecords: true,
+            messages: {
+                noRecords: `No ${config.title} found for this Page.`
+            },
+            edit: childEvent => this.onEdit(config, childEvent, contextValues),
+            save: () => ContentManagementApi.notify("Saving..."),
+            remove: () => ContentManagementApi.notify("Deleting...")
+        });
     },
 
     onSelectionChanged: function (config) {
@@ -539,6 +623,7 @@ window.ContentManagementGrids = {
 
         if (config.name === "Page") {
             this.setPageContext(row.Id);
+            grid.expandRow(grid.select());
         }
     },
 
@@ -663,7 +748,11 @@ window.ContentManagementGrids = {
         });
     },
 
-    contextValue: function (contextType) {
+    contextValue: function (contextType, contextValues) {
+        if (contextValues && Object.prototype.hasOwnProperty.call(contextValues, contextType)) {
+            return contextValues[contextType];
+        }
+
         return contextType === "app" ? this.contexts.appId : this.contexts.pageId;
     },
 
@@ -676,12 +765,12 @@ window.ContentManagementGrids = {
         return `Select a ${contextName} to manage ${config.title}.`;
     },
 
-    withRowState: function (config, row) {
+    withRowState: function (config, row, contextValues) {
         const copy = Object.assign({}, row);
 
         if (config.composite) {
             copy._rowKey = this.compositeKey(config, copy);
-            copy._original = this.preparePayload(config, copy, false);
+            copy._original = this.preparePayload(config, copy, false, contextValues);
         }
 
         return copy;
