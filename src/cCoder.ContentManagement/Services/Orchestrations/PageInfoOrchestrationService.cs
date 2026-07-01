@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security;
 using cCoder.ContentManagement.Services.Processings;
 using PageInfo = cCoder.Data.Models.CMS.PageInfo;
 using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.CMS.PageInfo>;
@@ -36,7 +37,24 @@ internal class PageInfoOrchestrationService(IPageInfoProcessingService processin
     public async ValueTask DeleteAsync(int id)
     {
         ValidateId(id, "id");
-        PageInfo entity = processingService.Get(id);
+
+        PageInfo entity;
+
+        try
+        {
+            entity = processingService.Get(id);
+        }
+        catch (SecurityException)
+        {
+            entity = processingService.GetAll(ignoreFilters: true)
+                .FirstOrDefault(pageInfo => pageInfo.Id == id);
+        }
+
+        if (entity == null)
+        {
+            return;
+        }
+
         await eventService.RaisePageInfoDeleteEventAsync(entity);
         await processingService.DeleteAsync(id);
     }

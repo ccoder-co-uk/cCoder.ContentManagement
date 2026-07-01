@@ -8,7 +8,7 @@
     <LocalDataProject>..\..\..\cCoder.Data\src\cCoder.Data\cCoder.Data.csproj</LocalDataProject>
     <LocalAppSecurityProject>..\..\..\cCoder.AppSecurity\src\cCoder.AppSecurity\cCoder.AppSecurity.csproj</LocalAppSecurityProject>
     <LocalSecurityProject>..\..\..\cCoder.Security\src\cCoder.Security\cCoder.Security.csproj</LocalSecurityProject>
-    <LocalSecurityEfMssqlProject>..\..\..\cCoder.Security\src\cCoder.Security.Data.EF.MSSQL\cCoder.Security.Data.EF.MSSQL.csproj</LocalSecurityEfMssqlProject>
+    <LocalSecurityDataProject>..\..\..\cCoder.Security\src\cCoder.Security.Data\cCoder.Security.Data.csproj</LocalSecurityDataProject>
     <UseLocalAppSecurity Condition="'$(UseLocalAppSecurity)' == ''">false</UseLocalAppSecurity>
     <UseLocalAppSecurity Condition="'$(UseLocalAppSecurity)' == 'true' and !Exists('$(LocalAppSecurityProject)')">false</UseLocalAppSecurity>
     <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
@@ -22,7 +22,7 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UseLocalSecurity)' == 'true'">
     <ProjectReference Include="$(LocalSecurityProject)" />
-    <ProjectReference Include="$(LocalSecurityEfMssqlProject)" />
+    <ProjectReference Include="$(LocalSecurityDataProject)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
@@ -31,11 +31,12 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.1.7" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.1.7" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
-    <PackageReference Include="cCoder.AppSecurity" Version="2026.5.*" Condition="'$(UseLocalAppSecurity)' != 'true'" />
+    <PackageReference Include="cCoder.AppSecurity" Version="2026.7.1.1432" Condition="'$(UseLocalAppSecurity)' != 'true'" />
     <PackageReference Include="cCoder.Eventing" Version="2026.4.*" />
     <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.4.*" />
-    <PackageReference Include="cCoder.Security" Version="2026.4.*" Condition="'$(UseLocalSecurity)' != 'true'" />
-    <PackageReference Include="cCoder.Security.Data.EF.MSSQL" Version="2026.4.*" Condition="'$(UseLocalSecurity)' != 'true'" />
+    <PackageReference Include="cCoder.Eventing.Http" Version="2026.4.*" />
+    <PackageReference Include="cCoder.Security" Version="2026.7.1.1302" Condition="'$(UseLocalSecurity)' != 'true'" />
+    <PackageReference Include="cCoder.Security.Data" Version="2026.7.1.1302" Condition="'$(UseLocalSecurity)' != 'true'" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" AdditionalProperties="UseLocalData=$(UseLocalData);UseLocalSecurity=$(UseLocalSecurity);UseLocalSecurityData=$(UseLocalSecurity)" />

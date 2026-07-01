@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security;
 using cCoder.ContentManagement.Services.Processings;
 using Content = cCoder.Data.Models.CMS.Content;
 using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.CMS.Content>;
@@ -36,7 +37,23 @@ internal class ContentOrchestrationService(
     {
         ValidateId(id, "id");
 
-        Content entity = processingService.Get(id);
+        Content entity;
+
+        try
+        {
+            entity = processingService.Get(id);
+        }
+        catch (SecurityException)
+        {
+            entity = processingService.GetAll(ignoreFilters: true)
+                .FirstOrDefault(content => content.Id == id);
+        }
+
+        if (entity == null)
+        {
+            return;
+        }
+
         await eventService.RaiseContentDeleteEventAsync(entity);
         await processingService.DeleteAsync(id);
     }
