@@ -1,5 +1,6 @@
 window.ContentManagementGrids = {
     apiRoot: "/Api/ContentManagement",
+    initialized: false,
     contexts: {
         appId: null,
         pageId: null
@@ -242,6 +243,11 @@ window.ContentManagementGrids = {
     ],
 
     init: function () {
+        if (this.initialized || !ContentManagementApi.isAuthenticated()) {
+            return;
+        }
+
+        this.initialized = true;
         this.buildEntitySurfaces();
         this.entitySets.forEach(config => this.createGrid(config));
     },
@@ -256,7 +262,7 @@ window.ContentManagementGrids = {
             button.className = `cm-nav-item${index === 0 ? " active" : ""}`;
             button.type = "button";
             button.dataset.workspaceTarget = surfaceId;
-            button.innerHTML = `<span class="k-icon k-i-table"></span>${config.title}`;
+            button.textContent = config.title;
             button.addEventListener("click", () => this.showSurface(button));
             nav.appendChild(button);
 
@@ -818,5 +824,11 @@ window.ContentManagementGrids = {
         return 190;
     }
 };
+
+document.addEventListener("content-management-auth-changed", event => {
+    if (event.detail.isAuthenticated) {
+        window.ContentManagementGrids.init();
+    }
+});
 
 document.addEventListener("DOMContentLoaded", () => window.ContentManagementGrids.init());
