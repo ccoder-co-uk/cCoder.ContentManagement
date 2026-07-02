@@ -1,4 +1,4 @@
-using PackageItem = cCoder.Data.Models.Packaging.PackageItem;
+using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Processings;
 

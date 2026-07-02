@@ -1,9 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Brokers.Storages;
-using App = cCoder.Data.Models.CMS.App;
-using AppCulture = cCoder.Data.Models.CMS.AppCulture;
-using Resource = cCoder.Data.Models.CMS.Resource;
-using Script = cCoder.Data.Models.CMS.Script;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
@@ -36,56 +33,43 @@ internal class AppSupportingResourcesCoordinationService(
     public async ValueTask HandleAppDeleteAsync(App app)
     {
         ValidateApp(app, "app");
-        cCoder.Data.Models.CMS.AppCulture[] culturesToDelete = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
+        AppCulture[] culturesToDelete = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
             .Where(culture => culture.AppId == app.Id)
             .ToArray();
-        cCoder.Data.Models.CMS.Script[] scriptsToDelete = scriptBroker.GetAllScripts(ignoreFilters: true)
+        Script[] scriptsToDelete = scriptBroker.GetAllScripts(ignoreFilters: true)
             .Where(script => script.AppId == app.Id)
             .ToArray();
-        cCoder.Data.Models.CMS.Resource[] resourcesToDelete = resourceBroker.GetAllResources(ignoreFilters: true)
+        Resource[] resourcesToDelete = resourceBroker.GetAllResources(ignoreFilters: true)
             .Where(resource => resource.AppId == app.Id)
             .ToArray();
 
         if (culturesToDelete.Length > 0)
-        {
             await appCultureBroker.DeleteAllAppCulturesAsync(culturesToDelete);
-        }
 
         if (scriptsToDelete.Length > 0)
-        {
             await scriptBroker.DeleteAllScriptsAsync(scriptsToDelete);
-        }
 
         if (resourcesToDelete.Length > 0)
-        {
             await resourceBroker.DeleteAllResourcesAsync(resourcesToDelete);
-        }
     }
 
     private static void StampChildrenWithApp(App app)
     {
-        foreach (AppCulture item in app.Cultures ?? new List<AppCulture>())
-        {
-            item.AppId = app.Id;
-        }
-        foreach (Script item2 in app.Scripts ?? new List<Script>())
-        {
-            item2.AppId = app.Id;
-        }
-        foreach (Resource item3 in app.Resources ?? new List<Resource>())
-        {
-            item3.AppId = app.Id;
-        }
+        if (app.Cultures != null)
+            foreach (AppCulture item in app.Cultures)
+                item.AppId = app.Id;
+
+        if (app.Scripts != null)
+            foreach (Script item2 in app.Scripts)
+                item2.AppId = app.Id;
+
+        if (app.Resources != null)
+            foreach (Resource item3 in app.Resources)
+                item3.AppId = app.Id;
     }
 
-    private static App ValidateApp(App app, string parameterName)
-    {
-        if (app == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-        return app;
-    }
+    private static void ValidateApp(App app, string parameterName) =>
+        ThrowIf(app == null, parameterName + " is required.");
 
     private async ValueTask DeleteMissingCulturesAsync(App app)
     {
@@ -93,14 +77,12 @@ internal class AppSupportingResourcesCoordinationService(
             .Select(culture => culture.CultureId)
             .ToArray();
 
-        cCoder.Data.Models.CMS.AppCulture[] culturesToDelete = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
+        AppCulture[] culturesToDelete = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
             .Where(culture => culture.AppId == app.Id && !((ReadOnlySpan<string>)incomingCultureIds).Contains(culture.CultureId))
             .ToArray();
 
         if (culturesToDelete.Length > 0)
-        {
             await appCultureBroker.DeleteAllAppCulturesAsync(culturesToDelete);
-        }
     }
 
     private async ValueTask DeleteMissingResourcesAsync(App app)
@@ -110,14 +92,12 @@ internal class AppSupportingResourcesCoordinationService(
             .Select(resource => resource.Id)
             .ToArray();
 
-        cCoder.Data.Models.CMS.Resource[] resourcesToDelete = resourceBroker.GetAllResources(ignoreFilters: true)
+        Resource[] resourcesToDelete = resourceBroker.GetAllResources(ignoreFilters: true)
             .Where(resource => resource.AppId == app.Id && !((ReadOnlySpan<int>)incomingResourceIds).Contains(resource.Id))
             .ToArray();
 
         if (resourcesToDelete.Length > 0)
-        {
             await resourceBroker.DeleteAllResourcesAsync(resourcesToDelete);
-        }
     }
 
     private async ValueTask DeleteMissingScriptsAsync(App app)
@@ -127,14 +107,12 @@ internal class AppSupportingResourcesCoordinationService(
             .Select(script => script.Id)
             .ToArray();
 
-        cCoder.Data.Models.CMS.Script[] scriptsToDelete = scriptBroker.GetAllScripts(ignoreFilters: true)
+        Script[] scriptsToDelete = scriptBroker.GetAllScripts(ignoreFilters: true)
             .Where(script => script.AppId == app.Id && !((ReadOnlySpan<int>)incomingScriptIds).Contains(script.Id))
             .ToArray();
 
         if (scriptsToDelete.Length > 0)
-        {
             await scriptBroker.DeleteAllScriptsAsync(scriptsToDelete);
-        }
     }
 
     private async ValueTask AddOrUpdateCulturesAsync(App app)
@@ -144,13 +122,10 @@ internal class AppSupportingResourcesCoordinationService(
             .Select(culture => culture.CultureId)
             .ToHashSet(StringComparer.Ordinal);
 
-        foreach (AppCulture culture in app.Cultures ?? Array.Empty<AppCulture>())
-        {
-            if (!existingCultureIds.Contains(culture.CultureId))
-            {
-                await appCultureBroker.AddAppCultureAsync(culture);
-            }
-        }
+        if (app.Cultures != null)
+            foreach (AppCulture culture in app.Cultures)
+                if (!existingCultureIds.Contains(culture.CultureId))
+                    await appCultureBroker.AddAppCultureAsync(culture);
     }
 
     private async ValueTask AddOrUpdateResourcesAsync(App app)
@@ -160,17 +135,12 @@ internal class AppSupportingResourcesCoordinationService(
             .Select(resource => resource.Id)
             .ToHashSet();
 
-        foreach (Resource resource in app.Resources ?? Array.Empty<Resource>())
-        {
-            if (existingResourceIds.Contains(resource.Id))
-            {
-                await resourceBroker.UpdateResourceAsync(resource);
-            }
-            else
-            {
-                await resourceBroker.AddResourceAsync(resource);
-            }
-        }
+        if (app.Resources != null)
+            foreach (Resource resource in app.Resources)
+                if (existingResourceIds.Contains(resource.Id))
+                    await resourceBroker.UpdateResourceAsync(resource);
+                else
+                    await resourceBroker.AddResourceAsync(resource);
     }
 
     private async ValueTask AddOrUpdateScriptsAsync(App app)
@@ -180,16 +150,17 @@ internal class AppSupportingResourcesCoordinationService(
             .Select(script => script.Id)
             .ToHashSet();
 
-        foreach (Script script in app.Scripts ?? Array.Empty<Script>())
-        {
-            if (existingScriptIds.Contains(script.Id))
-            {
-                await scriptBroker.UpdateScriptAsync(script);
-            }
-            else
-            {
-                await scriptBroker.AddScriptAsync(script);
-            }
-        }
+        if (app.Scripts != null)
+            foreach (Script script in app.Scripts)
+                if (existingScriptIds.Contains(script.Id))
+                    await scriptBroker.UpdateScriptAsync(script);
+                else
+                    await scriptBroker.AddScriptAsync(script);
+    }
+
+    private static void ThrowIf(bool condition, string message)
+    {
+        if (condition)
+            throw new ValidationException(message);
     }
 }

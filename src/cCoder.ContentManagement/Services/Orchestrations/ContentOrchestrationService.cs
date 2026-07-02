@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 using System.Security;
 using cCoder.ContentManagement.Services.Processings;
-using Content = cCoder.Data.Models.CMS.Content;
-using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.CMS.Content>;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -50,18 +50,16 @@ internal class ContentOrchestrationService(
         }
 
         if (entity == null)
-        {
             return;
-        }
 
         await eventService.RaiseContentDeleteEventAsync(entity);
         await processingService.DeleteAsync(id);
     }
 
-    public async ValueTask<IEnumerable<Result>> AddOrUpdate(IEnumerable<Content> items)
+    public async ValueTask<IEnumerable<Result<Content>>> AddOrUpdate(IEnumerable<Content> items)
     {
         Content[] contents = ValidateContents(items, "items").ToArray();
-        List<Result> results = new();
+        List<Result<Content>> results = new();
 
         foreach (Content content in contents)
         {
@@ -71,7 +69,7 @@ internal class ContentOrchestrationService(
                     ? await AddAsync(content)
                     : await UpdateAsync(content);
 
-                results.Add(new Result
+                results.Add(new Result<Content>
                 {
                     Success = true,
                     Item = result,
@@ -80,7 +78,7 @@ internal class ContentOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(new Result
+                results.Add(new Result<Content>
                 {
                     Success = false,
                     Item = content,
@@ -97,17 +95,13 @@ internal class ContentOrchestrationService(
         Content[] contents = ValidateContents(items, "items").ToArray();
 
         foreach (Content content in contents)
-        {
             await DeleteAsync(content.Id);
-        }
     }
 
     private static int ValidateId(int id, string parameterName)
     {
         if (id < 1)
-        {
             throw new ValidationException(parameterName + " must be greater than 0.");
-        }
 
         return id;
     }
@@ -115,9 +109,7 @@ internal class ContentOrchestrationService(
     private static Content ValidateContent(Content content, string parameterName)
     {
         if (content == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return content;
     }
@@ -125,9 +117,7 @@ internal class ContentOrchestrationService(
     private static IEnumerable<Content> ValidateContents(IEnumerable<Content> contents, string parameterName)
     {
         if (contents == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return contents;
     }

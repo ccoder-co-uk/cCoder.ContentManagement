@@ -5,43 +5,24 @@ namespace cCoder.ContentManagement.Services.Coordinations;
 
 internal sealed partial class PageRenderCoordinationService
 {
-    private static void ValidateRequest(PageRenderRequest request, string parameterName)
-    {
-        if (request == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateRequest(PageRenderRequest request, string parameterName) =>
+        ThrowIf(request == null, parameterName + " is required.");
 
-    private static void ValidateAppId(int appId, string parameterName)
-    {
-        if (appId < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateAppId(int appId, string parameterName) =>
+        ThrowIf(appId < 1, parameterName + " must be greater than 0.");
 
-    private static void ValidateTheme(string theme, string parameterName)
-    {
-        if (string.IsNullOrWhiteSpace(theme))
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateTheme(string theme, string parameterName) =>
+        ThrowIf(string.IsNullOrWhiteSpace(theme), parameterName + " is required.");
 
-    private static void ValidateHost(string host)
-    {
-        if (string.IsNullOrWhiteSpace(host))
-        {
-            throw new ValidationException("host is required.");
-        }
-    }
+    private static void ValidateHost(string host) =>
+        ThrowIf(string.IsNullOrWhiteSpace(host), "host is required.");
 
-    private static void ValidateException(Exception exception, string parameterName)
+    private static void ValidateException(Exception exception, string parameterName) =>
+        ThrowIf(exception == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (exception == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }

@@ -1,4 +1,5 @@
-using CommonObject = cCoder.Data.Models.CommonObject;
+using cCoder.Data.Models;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -14,11 +15,11 @@ public interface ICommonObjectProcessingService
 
     ValueTask DeleteAsync(int id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>>> AddOrUpdate(IEnumerable<CommonObject> items);
+    ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdate(IEnumerable<CommonObject> items);
 
     ValueTask DeleteAllAsync(IEnumerable<CommonObject> items);
 
     IEnumerable<CommonObject> Latest(string type);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>>> ImportAsync(IEnumerable<CommonObject> items);
+    ValueTask<IEnumerable<Result<CommonObject>>> ImportAsync(IEnumerable<CommonObject> items);
 }

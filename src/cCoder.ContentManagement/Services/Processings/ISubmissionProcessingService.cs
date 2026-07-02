@@ -1,4 +1,5 @@
-using Submission = cCoder.Data.Models.CMS.Submission;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -14,7 +15,7 @@ public interface ISubmissionProcessingService
 
     ValueTask DeleteAsync(Guid id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Submission>>> AddOrUpdate(IEnumerable<Submission> items);
+    ValueTask<IEnumerable<Result<Submission>>> AddOrUpdate(IEnumerable<Submission> items);
 
     ValueTask DeleteAllAsync(IEnumerable<Submission> items);
 }

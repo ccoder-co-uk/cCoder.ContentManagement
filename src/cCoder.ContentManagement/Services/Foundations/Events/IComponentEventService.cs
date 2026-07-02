@@ -1,4 +1,4 @@
-using Component = cCoder.Data.Models.CMS.Component;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 

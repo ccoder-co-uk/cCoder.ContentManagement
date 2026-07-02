@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 using System.Security;
 using cCoder.ContentManagement.Services.Processings;
-using Layout = cCoder.Data.Models.CMS.Layout;
-using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.CMS.Layout>;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -49,9 +49,7 @@ internal class LayoutOrchestrationService(
         }
 
         if (entity == null)
-        {
             return;
-        }
 
         await eventService.RaiseLayoutDeleteEventAsync(entity);
         await processingService.DeleteAsync(id);
@@ -63,15 +61,13 @@ internal class LayoutOrchestrationService(
         Layout[] layoutsToDelete = [.. GetAll(ignoreFilters: true).Where(layout => layout.AppId == appId)];
 
         if (layoutsToDelete.Length > 0)
-        {
             await DeleteAllAsync(layoutsToDelete);
-        }
     }
 
-    public async ValueTask<IEnumerable<Result>> AddOrUpdate(IEnumerable<Layout> items)
+    public async ValueTask<IEnumerable<Result<Layout>>> AddOrUpdate(IEnumerable<Layout> items)
     {
         Layout[] layouts = ValidateLayouts(items, "items").ToArray();
-        List<Result> results = new();
+        List<Result<Layout>> results = new();
 
         foreach (Layout layout in layouts)
         {
@@ -81,7 +77,7 @@ internal class LayoutOrchestrationService(
                     ? await AddAsync(layout)
                     : await UpdateAsync(layout);
 
-                results.Add(new Result
+                results.Add(new Result<Layout>
                 {
                     Success = true,
                     Item = result,
@@ -90,7 +86,7 @@ internal class LayoutOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(new Result
+                results.Add(new Result<Layout>
                 {
                     Success = false,
                     Item = layout,
@@ -109,9 +105,10 @@ internal class LayoutOrchestrationService(
         Layout[] validatedItems = ValidateLayouts(items, "items").ToArray();
         string[] names = validatedItems.Select(layout => layout.Name.ToLower()).ToArray();
 
-        var dbVersions = (from layout in processingService.GetAll()
-                          where layout.AppId == appId && ((ReadOnlySpan<string>)names).Contains(layout.Name.ToLower())
-                          select new { layout.Id, layout.Name }).ToArray();
+        var dbVersions = processingService.GetAll()
+            .Where(layout => layout.AppId == appId && ((ReadOnlySpan<string>)names).Contains(layout.Name.ToLower()))
+            .Select(layout => new { layout.Id, layout.Name })
+            .ToArray();
 
         Array.ForEach(validatedItems, layout =>
         {
@@ -128,17 +125,13 @@ internal class LayoutOrchestrationService(
         Layout[] layouts = ValidateLayouts(items, "items").ToArray();
 
         foreach (Layout layout in layouts)
-        {
             await DeleteAsync(layout.Id);
-        }
     }
 
     private static int ValidateId(int id, string parameterName)
     {
         if (id < 1)
-        {
             throw new ValidationException(parameterName + " must be greater than 0.");
-        }
 
         return id;
     }
@@ -146,9 +139,7 @@ internal class LayoutOrchestrationService(
     private static int ValidateAppId(int appId, string parameterName)
     {
         if (appId < 1)
-        {
             throw new ValidationException(parameterName + " must be greater than 0.");
-        }
 
         return appId;
     }
@@ -156,9 +147,7 @@ internal class LayoutOrchestrationService(
     private static Layout ValidateLayout(Layout layout, string parameterName)
     {
         if (layout == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return layout;
     }
@@ -166,9 +155,7 @@ internal class LayoutOrchestrationService(
     private static IEnumerable<Layout> ValidateLayouts(IEnumerable<Layout> layouts, string parameterName)
     {
         if (layouts == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return layouts;
     }

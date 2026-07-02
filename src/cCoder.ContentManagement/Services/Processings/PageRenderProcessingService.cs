@@ -3,17 +3,8 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Models;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
 using cCoder.ContentManagement.Services;
-using App = cCoder.Data.Models.CMS.App;
-using Component = cCoder.Data.Models.CMS.Component;
-using Content = cCoder.Data.Models.CMS.Content;
-using Layout = cCoder.Data.Models.CMS.Layout;
-using Page = cCoder.Data.Models.CMS.Page;
-using Resource = cCoder.Data.Models.CMS.Resource;
-using Script = cCoder.Data.Models.CMS.Script;
-using Template = cCoder.Data.Models.CMS.Template;
-using User = cCoder.Data.Models.Security.User;
-using UserRole = cCoder.Data.Models.Security.UserRole;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -193,9 +184,7 @@ internal sealed class PageRenderProcessingService(
             count--;
 
             if (count == 0)
-            {
                 resultCulture = null;
-            }
         }
 
         return content ?? potentials.FirstOrDefault(candidate => string.IsNullOrEmpty(candidate.CultureId));
@@ -275,27 +264,18 @@ internal sealed class PageRenderProcessingService(
                 StringComparer.OrdinalIgnoreCase);
     }
 
-    private static void ValidatePage(Page page, string parameterName)
-    {
-        if (page == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidatePage(Page page, string parameterName) =>
+        ThrowIf(page == null, parameterName + " is required.");
 
-    private static void ValidateUser(User user, string parameterName)
-    {
-        if (user == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateUser(User user, string parameterName) =>
+        ThrowIf(user == null, parameterName + " is required.");
 
-    private static void ValidateTheme(string theme, string parameterName)
+    private static void ValidateTheme(string theme, string parameterName) =>
+        ThrowIf(string.IsNullOrWhiteSpace(theme), parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (string.IsNullOrWhiteSpace(theme))
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }

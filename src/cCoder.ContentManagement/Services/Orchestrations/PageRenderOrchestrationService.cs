@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Processings;
-using Page = cCoder.Data.Models.CMS.Page;
-using User = cCoder.Data.Models.Security.User;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -20,27 +19,18 @@ internal class PageRenderOrchestrationService(
         return pageRenderProcessingService.RenderPage(page, user, config, theme, culture, edit);
     }
 
-    private static void ValidatePage(Page page, string parameterName)
-    {
-        if (page == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidatePage(Page page, string parameterName) =>
+        ThrowIf(page == null, parameterName + " is required.");
 
-    private static void ValidateUser(User user, string parameterName)
-    {
-        if (user == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateUser(User user, string parameterName) =>
+        ThrowIf(user == null, parameterName + " is required.");
 
-    private static void ValidateTheme(string theme, string parameterName)
+    private static void ValidateTheme(string theme, string parameterName) =>
+        ThrowIf(string.IsNullOrWhiteSpace(theme), parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (string.IsNullOrWhiteSpace(theme))
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }

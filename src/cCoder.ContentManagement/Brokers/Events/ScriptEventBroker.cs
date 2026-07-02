@@ -6,18 +6,12 @@ namespace cCoder.ContentManagement.Brokers.Events;
 
 public class ScriptEventBroker(IEventHub eventHub) : IScriptEventBroker
 {
-    public ValueTask RaiseScriptAddEventAsync(EventMessage<Script> message)
-    {
-        return eventHub.RaiseEventAsync("script_add", message);
-    }
+    public ValueTask RaiseScriptAddEventAsync(EventMessage<Script> message) =>
+        eventHub.RaiseEventAsync("script_add", message);
 
-    public ValueTask RaiseScriptUpdateEventAsync(EventMessage<Script> message)
-    {
-        return eventHub.RaiseEventAsync("script_update", message);
-    }
+    public ValueTask RaiseScriptUpdateEventAsync(EventMessage<Script> message) =>
+        eventHub.RaiseEventAsync("script_update", message);
 
-    public ValueTask RaiseScriptDeleteEventAsync(EventMessage<Script> message)
-    {
-        return eventHub.RaiseEventAsync("script_delete", message);
-    }
+    public ValueTask RaiseScriptDeleteEventAsync(EventMessage<Script> message) =>
+        eventHub.RaiseEventAsync("script_delete", message);
 }

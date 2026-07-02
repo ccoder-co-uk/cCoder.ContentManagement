@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Processings;
-using Package = cCoder.Data.Models.Packaging.Package;
+using cCoder.Data.Models.Packaging;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -57,7 +58,7 @@ internal class PackageOrchestrationService(
         await processingService.DeleteAsync(id);
     }
 
-    public ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Package>>> AddOrUpdate(IEnumerable<Package> items) =>
+    public ValueTask<IEnumerable<Result<Package>>> AddOrUpdate(IEnumerable<Package> items) =>
         processingService.AddOrUpdate(ValidatePackages(items, "items"));
 
     public ValueTask DeleteAllAsync(IEnumerable<Package> items) =>
@@ -66,9 +67,7 @@ internal class PackageOrchestrationService(
     private static int ValidateAppId(int appId, string parameterName)
     {
         if (appId < 1)
-        {
             throw new ValidationException(parameterName + " must be greater than 0.");
-        }
 
         return appId;
     }
@@ -76,9 +75,7 @@ internal class PackageOrchestrationService(
     private static Guid ValidateId(Guid id, string parameterName)
     {
         if (id == Guid.Empty)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return id;
     }
@@ -86,9 +83,7 @@ internal class PackageOrchestrationService(
     private static Package ValidatePackage(Package package, string parameterName)
     {
         if (package == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return package;
     }
@@ -96,9 +91,7 @@ internal class PackageOrchestrationService(
     private static IEnumerable<Package> ValidatePackages(IEnumerable<Package> packages, string parameterName)
     {
         if (packages == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return packages;
     }
@@ -106,9 +99,7 @@ internal class PackageOrchestrationService(
     private static string[] ValidatePackageNames(string[] packageNames, string parameterName)
     {
         if (packageNames == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return packageNames;
     }

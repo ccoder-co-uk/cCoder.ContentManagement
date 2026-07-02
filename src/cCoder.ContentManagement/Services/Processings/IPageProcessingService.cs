@@ -1,4 +1,5 @@
-using Page = cCoder.Data.Models.CMS.Page;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -14,7 +15,7 @@ public interface IPageProcessingService
 
     ValueTask DeleteAsync(int id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Page>>> AddOrUpdate(IEnumerable<Page> items);
+    ValueTask<IEnumerable<Result<Page>>> AddOrUpdate(IEnumerable<Page> items);
 
     ValueTask DeleteAllAsync(IEnumerable<Page> items);
 
@@ -26,4 +27,3 @@ public interface IPageProcessingService
 
     string MenuFor(int id, string culture);
 }
-

@@ -5,12 +5,9 @@ using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Rendering.Models;
 using cCoder.ContentManagement.Services;
 using cCoder.ContentManagement.Services.Orchestrations;
-using App = cCoder.Data.Models.CMS.App;
-using Content = cCoder.Data.Models.CMS.Content;
-using Page = cCoder.Data.Models.CMS.Page;
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
-using User = cCoder.Data.Models.Security.User;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
+using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
@@ -88,9 +85,7 @@ internal sealed partial class PageRenderCoordinationService(
         App app = ResolveAppById(appId);
 
         if (app == null)
-        {
             throw new SecurityException("Unknown Domain!");
-        }
 
         string normalizedPath = path.ToLowerInvariant();
         Page page = pageOrchestrationService.GetAll(ignoreFilters: true)
@@ -139,9 +134,7 @@ internal sealed partial class PageRenderCoordinationService(
             ?? throw new InvalidOperationException("Domain Not found!");
 
         if (app.Id < 1)
-        {
             throw new InvalidOperationException("Domain Not found!");
-        }
 
         return new ResolvedPageRenderDefaults
         {
@@ -172,9 +165,7 @@ internal sealed partial class PageRenderCoordinationService(
             .FirstOrDefault();
 
         if (app != null)
-        {
             PopulateRenderCollections(app);
-        }
 
         return app;
     }
@@ -196,9 +187,7 @@ internal sealed partial class PageRenderCoordinationService(
             .FirstOrDefault();
 
         if (app != null)
-        {
             PopulateRenderCollections(app);
-        }
 
         return app;
     }
@@ -294,9 +283,7 @@ internal sealed partial class PageRenderCoordinationService(
             ?? [];
 
         if (contentNames.Length == 0)
-        {
             contentNames = ["body"];
-        }
 
         List<Content> gatedContents = new(contentNames.Length);
         CollectionsMarshal.SetCount(gatedContents, contentNames.Length);

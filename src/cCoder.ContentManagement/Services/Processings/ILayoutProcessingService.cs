@@ -1,4 +1,5 @@
-using Layout = cCoder.Data.Models.CMS.Layout;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -14,7 +15,7 @@ public interface ILayoutProcessingService
 
     ValueTask DeleteAsync(int id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Layout>>> AddOrUpdate(IEnumerable<Layout> items);
+    ValueTask<IEnumerable<Result<Layout>>> AddOrUpdate(IEnumerable<Layout> items);
 
     ValueTask DeleteAllAsync(IEnumerable<Layout> items);
 }

@@ -1,6 +1,6 @@
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Orchestrations;
-using User = cCoder.Data.Models.Security.User;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 

@@ -1,4 +1,5 @@
 using System.Security;
+using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.Data.Extensions;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Component = cCoder.Data.Models.CMS.Component;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
@@ -28,24 +29,18 @@ public class ComponentController : ODataController
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Render(int appId, string name, string culture, string theme)
-    {
-        return Ok(Renderer.Render(appId, name, culture, theme));
-    }
+    public IActionResult Render(int appId, string name, string culture, string theme) =>
+        Ok(Renderer.Render(appId, name, culture, theme));
 
     [HttpGet]
-    public IActionResult GetMetadata()
-    {
-        return Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(Component)) : new MetadataContainer(typeof(Component), isEntity: true, hasEndpoint: true));
-    }
+    public IActionResult GetMetadata() =>
+        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(Component)) : new MetadataContainer(typeof(Component), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
-    public IActionResult GetAll(ODataQueryOptions<Component> queryOptions)
-    {
-        return Ok(Service.GetAll());
-    }
+    public IActionResult GetAll(ODataQueryOptions<Component> queryOptions) =>
+        Ok(Service.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -68,9 +63,8 @@ public class ComponentController : ODataController
     public async Task<IActionResult> Post([FromBody] Component entity)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
+
         return Ok(await Service.AddAsync(entity));
     }
 
@@ -79,9 +73,8 @@ public class ComponentController : ODataController
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Component entity)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
+
         return Ok(await Service.UpdateAsync(entity));
     }
 
@@ -90,9 +83,8 @@ public class ComponentController : ODataController
     {
         Component originalEntity = Service.Get(key);
         if (originalEntity == null)
-        {
             return NotFound();
-        }
+
         delta.Patch(originalEntity);
         return Ok(await Service.UpdateAsync(originalEntity));
     }
@@ -104,4 +96,3 @@ public class ComponentController : ODataController
         return Ok();
     }
 }
-

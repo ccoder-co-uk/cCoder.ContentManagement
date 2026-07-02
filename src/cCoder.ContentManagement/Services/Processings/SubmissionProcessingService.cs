@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using Submission = cCoder.Data.Models.CMS.Submission;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -12,10 +13,8 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
         return service.Get(id);
     }
 
-    public IQueryable<Submission> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<Submission> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
     public ValueTask<Submission> AddAsync(Submission entity)
     {
@@ -35,16 +34,16 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
         return service.DeleteAsync(id);
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Submission>>> AddOrUpdate(IEnumerable<Submission> items)
+    public async ValueTask<IEnumerable<Result<Submission>>> AddOrUpdate(IEnumerable<Submission> items)
     {
         ValidateSubmissions(items, "items");
-        List<cCoder.ContentManagement.Models.Result<Submission>> results = new List<cCoder.ContentManagement.Models.Result<Submission>>();
+        List<Result<Submission>> results = new List<Result<Submission>>();
         foreach (Submission item in items)
         {
             try
             {
                 Submission savedItem = item.Id == Guid.Empty ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new cCoder.ContentManagement.Models.Result<Submission>
+                results.Add(new Result<Submission>
                 {
                     Success = true,
                     Item = savedItem,
@@ -53,7 +52,7 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<Submission>
+                results.Add(new Result<Submission>
                 {
                     Success = false,
                     Item = item,
@@ -68,32 +67,21 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
     {
         ValidateSubmissions(items, "items");
         foreach (Submission item in items)
-        {
             await DeleteAsync(item.Id);
-        }
     }
 
-    private static void ValidateId(Guid id, string parameterName)
-    {
-        if (id == Guid.Empty)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateId(Guid id, string parameterName) =>
+        ThrowIf(id == Guid.Empty, parameterName + " is required.");
 
-    private static void ValidateSubmission(Submission submission, string parameterName)
-    {
-        if (submission == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateSubmission(Submission submission, string parameterName) =>
+        ThrowIf(submission == null, parameterName + " is required.");
 
-    private static void ValidateSubmissions(IEnumerable<Submission> submissions, string parameterName)
+    private static void ValidateSubmissions(IEnumerable<Submission> submissions, string parameterName) =>
+        ThrowIf(submissions == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (submissions == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }

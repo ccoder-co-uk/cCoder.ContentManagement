@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 using System.Security;
 using cCoder.ContentManagement.Services.Processings;
-using Component = cCoder.Data.Models.CMS.Component;
-using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.CMS.Component>;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -53,9 +53,7 @@ internal class ComponentOrchestrationService(
         }
 
         if (entity == null)
-        {
             return;
-        }
 
         await eventService.RaiseComponentDeleteEventAsync(entity);
         await processingService.DeleteAsync(id);
@@ -67,15 +65,13 @@ internal class ComponentOrchestrationService(
         Component[] componentsToDelete = [.. GetAll(ignoreFilters: true).Where(component => component.AppId == appId)];
 
         foreach (Component component in componentsToDelete)
-        {
             await DeleteAsync(component.Id);
-        }
     }
 
-    public async ValueTask<IEnumerable<Result>> AddOrUpdate(IEnumerable<Component> items)
+    public async ValueTask<IEnumerable<Result<Component>>> AddOrUpdate(IEnumerable<Component> items)
     {
         Component[] components = ValidateComponents(items, "items").ToArray();
-        List<Result> results = new();
+        List<Result<Component>> results = new();
 
         foreach (Component component in components)
         {
@@ -85,7 +81,7 @@ internal class ComponentOrchestrationService(
                     ? await AddAsync(component)
                     : await UpdateAsync(component);
 
-                results.Add(new Result
+                results.Add(new Result<Component>
                 {
                     Success = true,
                     Item = result,
@@ -94,7 +90,7 @@ internal class ComponentOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(new Result
+                results.Add(new Result<Component>
                 {
                     Success = false,
                     Item = component,
@@ -113,9 +109,10 @@ internal class ComponentOrchestrationService(
         Component[] validatedItems = ValidateComponents(items, "items").ToArray();
         string[] names = validatedItems.Select(component => component.Name.ToLower()).ToArray();
 
-        var dbVersions = (from component in processingService.GetAll()
-                          where component.AppId == appId && ((ReadOnlySpan<string>)names).Contains(component.Name.ToLower())
-                          select new { component.Id, component.Name }).ToArray();
+        var dbVersions = processingService.GetAll()
+            .Where(component => component.AppId == appId && ((ReadOnlySpan<string>)names).Contains(component.Name.ToLower()))
+            .Select(component => new { component.Id, component.Name })
+            .ToArray();
 
         Array.ForEach(validatedItems, component =>
         {
@@ -132,33 +129,19 @@ internal class ComponentOrchestrationService(
         Component[] components = ValidateComponents(items, "items").ToArray();
 
         foreach (Component component in components)
-        {
             await DeleteAsync(component.Id);
-        }
     }
 
-    private static void ValidateId(int id, string parameterName)
-    {
-        if (id < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateId(int id, string parameterName) =>
+        ThrowIf(id < 1, parameterName + " must be greater than 0.");
 
-    private static void ValidateAppId(int appId, string parameterName)
-    {
-        if (appId < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateAppId(int appId, string parameterName) =>
+        ThrowIf(appId < 1, parameterName + " must be greater than 0.");
 
     private static Component ValidateComponent(Component component, string parameterName)
     {
         if (component == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return component;
     }
@@ -166,10 +149,14 @@ internal class ComponentOrchestrationService(
     private static IEnumerable<Component> ValidateComponents(IEnumerable<Component> components, string parameterName)
     {
         if (components == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return components;
+    }
+
+    private static void ThrowIf(bool condition, string message)
+    {
+        if (condition)
+            throw new ValidationException(message);
     }
 }

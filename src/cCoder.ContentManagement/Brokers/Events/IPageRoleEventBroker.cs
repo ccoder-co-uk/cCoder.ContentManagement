@@ -1,5 +1,5 @@
 using cCoder.Eventing.Models;
-using PageRole = cCoder.Data.Models.Security.PageRole;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 

@@ -12,9 +12,7 @@ public static class EdmModelExtensions
         {
             Type clrType = GetClrType(model, item.EntityType);
             if ((object)clrType != null)
-            {
                 list.Add(model.GetExtendedMetadataForType(contextName, clrType));
-            }
         }
         foreach (IEdmSchemaType item2 in model.SchemaElements.OfType<IEdmSchemaType>())
         {
@@ -43,44 +41,41 @@ public static class EdmModelExtensions
             result.HasEndpoint = false;
             return result;
         }
-        IEnumerable<OperationContainer> second = from operation in model.FindDeclaredBoundOperations(edmEntitySet.Type)
-                                                 select new OperationContainer
-                                                 {
-                                                     Name = operation.Name,
-                                                     Url = $"{result.Category}/{type.Name}/{operation.Name}()",
-                                                     Queryable = operation.IsFunction(),
-                                                     HttpVerb = (operation.IsFunction() ? "GET" : "POST"),
-                                                 ReturnType = BuildMetaFor(operation.GetReturn()?.Type?.Definition),
-                                                 Parameters = (from parameter in operation.Parameters?.Where((IEdmOperationParameter parameter) => parameter.Name != "bindingParameter")
-                                                               select new
-                                                               {
-                                                                       Name = parameter.Name,
-                                                                   TypeName = parameter.Type.FullName()
-                                                               }).ToDictionary(item => item.Name, item => item.TypeName)
-                                                 };
+        IEnumerable<OperationContainer> second = model.FindDeclaredBoundOperations(edmEntitySet.Type)
+            .Select(operation => new OperationContainer
+            {
+                Name = operation.Name,
+                Url = $"{result.Category}/{type.Name}/{operation.Name}()",
+                Queryable = operation.IsFunction(),
+                HttpVerb = (operation.IsFunction() ? "GET" : "POST"),
+                ReturnType = BuildMetaFor(operation.GetReturn()?.Type?.Definition),
+                Parameters = operation.Parameters?
+                    .Where(parameter => parameter.Name != "bindingParameter")
+                    .Select(parameter => new
+                    {
+                        Name = parameter.Name,
+                        TypeName = parameter.Type.FullName()
+                    })
+                    .ToDictionary(item => item.Name, item => item.TypeName)
+            });
         result.Operations = GetBaseCrudOperations(result).Union(second).ToList();
         return result;
     }
 
-    private static Type GetClrType(IEdmModel model, IEdmSchemaType edmType)
-    {
-        return model.GetAnnotationValue<ClrTypeAnnotation>(edmType)?.ClrType;
-    }
+    private static Type GetClrType(IEdmModel model, IEdmSchemaType edmType) =>
+        model.GetAnnotationValue<ClrTypeAnnotation>(edmType)?.ClrType;
 
     private static MetadataContainer BuildMetaFor(IEdmType definition)
     {
         if (definition == null || definition.TypeKind != EdmTypeKind.Collection)
-        {
             return null;
-        }
+
         Type type = Type.GetType(definition.FullTypeName(), throwOnError: false);
         return ((object)type == null) ? null : new MetadataContainer(type, isEntity: true, hasEndpoint: true);
     }
 
-    private static IEnumerable<OperationContainer> GetBaseCrudOperations(MetadataContainer type)
-    {
-        return type.IsJoinEntity ? GetBaseCrudOperationsForJoinEntity(type) : GetBaseCrudOperationsForEntity(type);
-    }
+    private static IEnumerable<OperationContainer> GetBaseCrudOperations(MetadataContainer type) =>
+        type.IsJoinEntity ? GetBaseCrudOperationsForJoinEntity(type) : GetBaseCrudOperationsForEntity(type);
 
     private static IEnumerable<OperationContainer> GetBaseCrudOperationsForJoinEntity(MetadataContainer type)
     {

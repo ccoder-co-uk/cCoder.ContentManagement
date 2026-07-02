@@ -10,9 +10,9 @@ internal sealed class ScriptReaderBroker(ICoreContextFactory coreContextFactory)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return (from script in coreDataContext.Scripts.IgnoreQueryFilters()
-                where script.AppId == appId
-                select script)
+        return coreDataContext.Scripts
+            .IgnoreQueryFilters()
+            .Where(script => script.AppId == appId)
             .AsNoTracking()
             .ToArray();
     }

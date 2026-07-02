@@ -1,9 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Orchestrations;
-using Content = cCoder.Data.Models.CMS.Content;
-using Page = cCoder.Data.Models.CMS.Page;
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
-using PageRole = cCoder.Data.Models.Security.PageRole;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
@@ -25,11 +23,14 @@ internal class PageCoordinationService(
             Description = pageInfo.Description,
             Keywords = pageInfo.Keywords
         }).ToArray();
-        Content[] contents = (page.Contents ?? new List<Content>()).Select(delegate (Content content)
-        {
-            content.PageId = page.Id;
-            return content;
-        }).ToArray();
+        Content[] contents = (page.Contents ?? new List<Content>())
+            .Select(content =>
+            {
+                content.PageId = page.Id;
+                return content;
+            })
+            .ToArray();
+
         PageRole[] pageRoles = (page.Roles ?? new List<PageRole>()).Select(pageRole => new PageRole
         {
             PageId = page.Id,
@@ -71,45 +72,52 @@ internal class PageCoordinationService(
             await SyncRolesAsync(page.Id, existingPageRoles, page.Roles);
         }
 
-        Page[] providedChildren = (page.Pages ?? new List<Page>()).Select(delegate (Page child)
-        {
-            child.ParentId = page.Id;
-            child.AppId = page.AppId;
-            return child;
-        }).ToArray();
+        Page[] providedChildren = (page.Pages ?? new List<Page>())
+            .Select(child =>
+            {
+                child.ParentId = page.Id;
+                child.AppId = page.AppId;
+                return child;
+            })
+            .ToArray();
+
         if (providedChildren.Length != 0)
-        {
             await pageOrchestrationService.AddOrUpdate(providedChildren);
-        }
-        int[] providedChildIds = (from child in providedChildren
-                                  where child.Id != 0
-                                  select child.Id).ToArray();
-        Page[] existingChildrenToRecompute = (from child in pageOrchestrationService.GetAll(ignoreFilters: true)
-                                              where child.ParentId == (int?)page.Id && !((ReadOnlySpan<int>)providedChildIds).Contains(child.Id)
-                                              select child).ToArray();
-        existingChildrenToRecompute.ToList().ForEach(delegate (Page child)
+
+        int[] providedChildIds = providedChildren
+            .Where(child => child.Id != 0)
+            .Select(child => child.Id)
+            .ToArray();
+
+        Page[] existingChildrenToRecompute = pageOrchestrationService.GetAll(ignoreFilters: true)
+            .Where(child => child.ParentId == (int?)page.Id && !((ReadOnlySpan<int>)providedChildIds).Contains(child.Id))
+            .ToArray();
+
+        foreach (Page child in existingChildrenToRecompute)
         {
             child.ParentId = page.Id;
             child.AppId = page.AppId;
-        });
-        if (existingChildrenToRecompute.Length != 0)
-        {
-            await pageOrchestrationService.AddOrUpdate(existingChildrenToRecompute);
         }
+
+        if (existingChildrenToRecompute.Length != 0)
+            await pageOrchestrationService.AddOrUpdate(existingChildrenToRecompute);
     }
 
     public async ValueTask HandlePageDeleteAsync(Page page)
     {
         ValidatePage(page, "page");
-        IEnumerable<PageRole> pageRolesToDelete = (from pageRole in pageRoleOrchestrationService.GetAll(ignoreFilters: true)
-                                                   where pageRole.PageId == page.Id
-                                                   select pageRole).ToArray();
-        IEnumerable<PageInfo> pageInfosToDelete = (from pageInfo in pageInfoOrchestrationService.GetAll(ignoreFilters: true)
-                                                   where pageInfo.PageId == page.Id
-                                                   select pageInfo).ToArray();
-        IEnumerable<Content> contentsToDelete = (from content in contentOrchestrationService.GetAll(ignoreFilters: true)
-                                                 where content.PageId == page.Id
-                                                 select content).ToArray();
+        IEnumerable<PageRole> pageRolesToDelete = pageRoleOrchestrationService.GetAll(ignoreFilters: true)
+            .Where(pageRole => pageRole.PageId == page.Id)
+            .ToArray();
+
+        IEnumerable<PageInfo> pageInfosToDelete = pageInfoOrchestrationService.GetAll(ignoreFilters: true)
+            .Where(pageInfo => pageInfo.PageId == page.Id)
+            .ToArray();
+
+        IEnumerable<Content> contentsToDelete = contentOrchestrationService.GetAll(ignoreFilters: true)
+            .Where(content => content.PageId == page.Id)
+            .ToArray();
+
         await pageRoleOrchestrationService.DeleteAllAsync(pageRolesToDelete);
         await pageInfoOrchestrationService.DeleteAllAsync(pageInfosToDelete);
         await contentOrchestrationService.DeleteAllAsync(contentsToDelete);
@@ -118,9 +126,8 @@ internal class PageCoordinationService(
     private static Page ValidatePage(Page page, string parameterName)
     {
         if (page == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
+
         return page;
     }
 
@@ -165,9 +172,7 @@ internal class PageCoordinationService(
         foreach (PageInfo existing in existingArray
             .Where(item => item.CultureId != string.Empty && !incomingArray.Any(incoming =>
                 string.Equals(incoming.CultureId, item.CultureId, StringComparison.Ordinal))))
-        {
             await pageInfoOrchestrationService.DeleteAsync(existing.Id);
-        }
     }
 
     private async ValueTask SyncContentsAsync(
@@ -211,9 +216,7 @@ internal class PageCoordinationService(
             .Where(item => item.CultureId != string.Empty && !incomingArray.Any(incoming =>
                 string.Equals(incoming.Name, item.Name, StringComparison.Ordinal) &&
                 string.Equals(incoming.CultureId, item.CultureId, StringComparison.Ordinal))))
-        {
             await contentOrchestrationService.DeleteAsync(existing.Id);
-        }
     }
 
     private async ValueTask SyncRolesAsync(

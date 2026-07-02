@@ -1,4 +1,4 @@
-using CommonObject = cCoder.Data.Models.CommonObject;
+using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 

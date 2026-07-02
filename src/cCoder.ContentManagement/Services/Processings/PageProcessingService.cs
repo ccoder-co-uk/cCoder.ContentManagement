@@ -1,11 +1,9 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using Content = cCoder.Data.Models.CMS.Content;
-using Page = cCoder.Data.Models.CMS.Page;
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
-using PageRole = cCoder.Data.Models.Security.PageRole;
-using User = cCoder.Data.Models.Security.User;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -21,18 +19,17 @@ internal partial class PageProcessingService(
         return service.Get(id);
     }
 
-    public IQueryable<Page> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<Page> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
     public string MenuFor(int id, string culture)
     {
         ValidateId(id, "id");
-        IEnumerable<string> enumerable = from s in service.GetAll(ignoreFilters: false)
-                                         where s.ParentId == id && s.ShowOnMenus
-                                         orderby s.Order
-                                         select $"<li data-id='{s.Id}' class='item'><a href='/{s.Path}'>{ContentManagementModelLogic.Title(s, culture)}</a></li>";
+        IEnumerable<string> enumerable = service.GetAll(ignoreFilters: false)
+            .Where(page => page.ParentId == id && page.ShowOnMenus)
+            .OrderBy(page => page.Order)
+            .Select(page => $"<li data-id='{page.Id}' class='item'><a href='/{page.Path}'>{ContentManagementModelLogic.Title(page, culture)}</a></li>");
+
         string text = (enumerable.Any() ? string.Join("", enumerable) : string.Empty);
         return "<ul class='submenu'>" + text + "</ul>";
     }
@@ -52,18 +49,16 @@ internal partial class PageProcessingService(
     public IEnumerable<Page> GetChildren(int id)
     {
         ValidateId(id, "id");
-        return from p in GetAll()
-               where p.ParentId == (int?)id
-               select p;
+        return GetAll()
+            .Where(page => page.ParentId == (int?)id);
     }
 
     public ValueTask DeleteAsync(int id)
     {
         ValidateId(id, "id");
         if (!UserCan("page_delete", id))
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return service.DeleteAsync(id);
     }
 
@@ -74,9 +69,7 @@ internal partial class PageProcessingService(
             .Where(existingPage => existingPage.Id == page.Id)
             .FirstOrDefault();
         if (dbVersion == null || !UserCan("page_update", dbVersion.Id))
-        {
             throw new SecurityException("Access Denied!");
-        }
 
         Page parent = page.ParentId.HasValue
             ? service.GetAll(ignoreFilters: true)
@@ -85,9 +78,7 @@ internal partial class PageProcessingService(
             : null;
 
         if (page.ParentId.HasValue && parent == null)
-        {
             throw new SecurityException("Access Denied!");
-        }
 
         dbVersion.ParentId = page.ParentId;
         dbVersion.AppId = page.AppId;
@@ -105,9 +96,8 @@ internal partial class PageProcessingService(
     {
         ValidatePage(page, "page");
         if (!authorizationBroker.IsAdminOfApp(page.AppId) && page.ParentId.HasValue)
-        {
             UserCan("page_create", page.ParentId.Value);
-        }
+
         Page parent = null;
         if (page.ParentId.HasValue)
         {
@@ -158,24 +148,26 @@ internal partial class PageProcessingService(
             Name = content.Name,
             Html = content.Html
         }).ToList();
-        newPage.Roles = (from role in ResolveRolesForNewPage(page, parent)
-                         select new PageRole
-                         {
-                             RoleId = role.RoleId
-                         }).ToList();
+        newPage.Roles = ResolveRolesForNewPage(page, parent)
+            .Select(role => new PageRole
+            {
+                RoleId = role.RoleId
+            })
+            .ToList();
+
         return await service.AddAsync(newPage);
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Page>>> AddOrUpdate(IEnumerable<Page> items)
+    public async ValueTask<IEnumerable<Result<Page>>> AddOrUpdate(IEnumerable<Page> items)
     {
         ValidatePages(items, "items");
-        List<cCoder.ContentManagement.Models.Result<Page>> results = new List<cCoder.ContentManagement.Models.Result<Page>>();
+        List<Result<Page>> results = new List<Result<Page>>();
         foreach (Page item in items)
         {
             try
             {
                 Page savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new cCoder.ContentManagement.Models.Result<Page>
+                results.Add(new Result<Page>
                 {
                     Success = true,
                     Item = savedItem,
@@ -184,7 +176,7 @@ internal partial class PageProcessingService(
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<Page>
+                results.Add(new Result<Page>
                 {
                     Success = false,
                     Item = item,
@@ -199,18 +191,14 @@ internal partial class PageProcessingService(
     {
         ValidatePages(items, "items");
         foreach (Page item in items)
-        {
             await DeleteAsync(item.Id);
-        }
     }
 
     public async ValueTask RecomputeAllForAppAsync(int appId)
     {
         ValidateAppId(appId, "appId");
         if (!authorizationBroker.IsAdminOfApp(appId))
-        {
             throw new SecurityException("Access Denied!");
-        }
 
         await RecomputePathsAsync(appId);
     }
@@ -249,9 +237,8 @@ internal partial class PageProcessingService(
     private ICollection<PageRole> ResolveRolesForNewPage(Page page, Page parent)
     {
         if ((page.Roles ?? Array.Empty<PageRole>()).Any())
-        {
             return page.Roles;
-        }
+
         return (parent != null)
             ? (parent.Roles ?? Array.Empty<PageRole>())
                 .Select((PageRole role) => new PageRole
@@ -259,7 +246,7 @@ internal partial class PageProcessingService(
                     RoleId = role.RoleId
                 })
                 .ToArray()
-            : ((User?.Roles ?? Array.Empty<cCoder.Data.Models.Security.UserRole>())
+            : ((User?.Roles ?? Array.Empty<UserRole>())
                 .Where(userRole => userRole.Role?.AppId == page.AppId)
                 .Select(userRole => new PageRole
                 {
@@ -280,28 +267,22 @@ internal partial class PageProcessingService(
     private static string BuildPath(string pageName, string parentPath)
     {
         if (string.Equals(pageName, "Home", StringComparison.OrdinalIgnoreCase))
-        {
             return string.Empty;
-        }
+
         string text = (pageName ?? string.Empty).Replace(" ", string.Empty);
         if (string.IsNullOrWhiteSpace(parentPath))
-        {
             return text;
-        }
+
         return parentPath.TrimEnd('/') + "/" + text;
     }
 
     private static string GetParentPath(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
-        {
             return null;
-        }
 
         string trimmedPath = path.Trim('/');
         int separatorIndex = trimmedPath.LastIndexOf('/');
         return separatorIndex < 0 ? null : trimmedPath[..separatorIndex];
     }
-
 }
-

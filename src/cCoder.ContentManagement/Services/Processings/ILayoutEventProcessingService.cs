@@ -1,4 +1,4 @@
-using Layout = cCoder.Data.Models.CMS.Layout;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 

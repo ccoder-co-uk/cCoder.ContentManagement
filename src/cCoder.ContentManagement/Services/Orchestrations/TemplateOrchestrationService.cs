@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 using System.Security;
 using cCoder.ContentManagement.Services.Processings;
-using Template = cCoder.Data.Models.CMS.Template;
-using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.CMS.Template>;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -48,9 +48,7 @@ internal class TemplateOrchestrationService(
         }
 
         if (entity == null)
-        {
             return;
-        }
 
         await eventService.RaiseTemplateDeleteEventAsync(entity);
         await processingService.DeleteAsync(id);
@@ -61,15 +59,13 @@ internal class TemplateOrchestrationService(
         Template[] templatesToDelete = [.. GetAll(ignoreFilters: true).Where(template => template.AppId == appId)];
 
         if (templatesToDelete.Length > 0)
-        {
             await DeleteAllAsync(templatesToDelete);
-        }
     }
 
-    public async ValueTask<IEnumerable<Result>> AddOrUpdate(IEnumerable<Template> items)
+    public async ValueTask<IEnumerable<Result<Template>>> AddOrUpdate(IEnumerable<Template> items)
     {
         Template[] templates = (items ?? []).ToArray();
-        List<Result> results = new();
+        List<Result<Template>> results = new();
 
         foreach (Template template in templates)
         {
@@ -79,7 +75,7 @@ internal class TemplateOrchestrationService(
                     ? await AddAsync(template)
                     : await UpdateAsync(template);
 
-                results.Add(new Result
+                results.Add(new Result<Template>
                 {
                     Success = true,
                     Item = result,
@@ -88,7 +84,7 @@ internal class TemplateOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(new Result
+                results.Add(new Result<Template>
                 {
                     Success = false,
                     Item = template,
@@ -105,9 +101,10 @@ internal class TemplateOrchestrationService(
         Template[] validatedItems = items ?? [];
         string[] names = validatedItems.Select(template => template.Name.ToLower()).ToArray();
 
-        var dbVersions = (from template in processingService.GetAll()
-                          where template.AppId == appId && ((ReadOnlySpan<string>)names).Contains(template.Name.ToLower())
-                          select new { template.Id, template.Name }).ToArray();
+        var dbVersions = processingService.GetAll()
+            .Where(template => template.AppId == appId && ((ReadOnlySpan<string>)names).Contains(template.Name.ToLower()))
+            .Select(template => new { template.Id, template.Name })
+            .ToArray();
 
         Array.ForEach(validatedItems, template =>
         {
@@ -123,17 +120,13 @@ internal class TemplateOrchestrationService(
         Template[] templates = (items ?? []).ToArray();
 
         foreach (Template template in templates)
-        {
             await DeleteAsync(template.Id);
-        }
     }
 
     private static Template ValidateTemplate(Template template, string parameterName)
     {
         if (template == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return template;
     }

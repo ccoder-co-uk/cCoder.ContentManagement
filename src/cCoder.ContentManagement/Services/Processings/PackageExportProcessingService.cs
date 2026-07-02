@@ -1,6 +1,5 @@
 using cCoder.ContentManagement.Services.Foundations.Exports;
-using Package = cCoder.Data.Models.Packaging.Package;
-using PackageItem = cCoder.Data.Models.Packaging.PackageItem;
+using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -18,7 +17,7 @@ internal class PackageExportProcessingService(IPackageExportService packageExpor
             "Resources" => packageExportService.ExportResources(appId),
             "Pages" => packageExportService.ExportPages(appId),
             "PageRoles" => packageExportService.ExportPageRoles(appId),
-            _ => new Package(packageName)
+            var ignoredPackage => new Package(packageName)
             {
                 Items = new List<PackageItem>()
             },

@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using PackageItem = cCoder.Data.Models.Packaging.PackageItem;
+using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -10,27 +10,21 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
     public PackageItem Get(Guid id, bool ignoreFilters = false)
     {
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((PackageItem i) => i.Id == id);
-        }
 
         PackageItem packageItem = GetAll().FirstOrDefault((PackageItem i) => i.Id == id);
         if (packageItem != null)
-        {
             return packageItem;
-        }
+
         PackageItem packageItem2 = GetAll(ignoreFilters: true).FirstOrDefault((PackageItem i) => i.Id == id);
         if (packageItem2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<PackageItem> GetAll(bool ignoreFilters = false)
-    {
-        return packageItemBroker.GetAllPackageItems(ignoreFilters);
-    }
+    public IQueryable<PackageItem> GetAll(bool ignoreFilters = false) =>
+        packageItemBroker.GetAllPackageItems(ignoreFilters);
 
     public async ValueTask<PackageItem> AddAsync(PackageItem packageItem)
     {
@@ -67,9 +61,7 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
     private static PackageItem CreateStoragePackageItem(PackageItem packageItem)
     {
         if (packageItem == null)
-        {
             return null;
-        }
 
         return new PackageItem
         {

@@ -2,7 +2,7 @@ using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
 using DataPackageItem = cCoder.Data.Models.Packaging.PackageItem;
-using PackageItem = cCoder.Data.Models.Packaging.PackageItem;
+using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
@@ -47,4 +47,3 @@ internal partial class PackageItemEventService(IPackageItemEventBroker packageIt
         await packageItemEventBroker.RaisePackageItemDeleteEventAsync(message);
     }
 }
-

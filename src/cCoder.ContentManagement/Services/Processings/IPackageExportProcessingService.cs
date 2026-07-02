@@ -1,4 +1,4 @@
-using Package = cCoder.Data.Models.Packaging.Package;
+using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Processings;
 

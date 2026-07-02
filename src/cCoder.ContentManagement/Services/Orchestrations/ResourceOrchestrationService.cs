@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 using System.Security;
 using cCoder.ContentManagement.Services.Processings;
-using Resource = cCoder.Data.Models.CMS.Resource;
-using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.CMS.Resource>;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -49,9 +49,7 @@ internal class ResourceOrchestrationService(
         }
 
         if (entity == null)
-        {
             return;
-        }
 
         await eventService.RaiseResourceDeleteEventAsync(entity);
         await processingService.DeleteAsync(id);
@@ -63,15 +61,13 @@ internal class ResourceOrchestrationService(
         Resource[] resourcesToDelete = [.. GetAll(ignoreFilters: true).Where(resource => resource.AppId == appId)];
 
         if (resourcesToDelete.Length > 0)
-        {
             await DeleteAllAsync(resourcesToDelete);
-        }
     }
 
-    public async ValueTask<IEnumerable<Result>> AddOrUpdate(IEnumerable<Resource> items)
+    public async ValueTask<IEnumerable<Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items)
     {
         Resource[] resources = ValidateResources(items, "items").ToArray();
-        List<Result> results = new();
+        List<Result<Resource>> results = new();
 
         foreach (Resource resource in resources)
         {
@@ -81,7 +77,7 @@ internal class ResourceOrchestrationService(
                     ? await AddAsync(resource)
                     : await UpdateAsync(resource);
 
-                results.Add(new Result
+                results.Add(new Result<Resource>
                 {
                     Success = true,
                     Item = result,
@@ -90,7 +86,7 @@ internal class ResourceOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(new Result
+                results.Add(new Result<Resource>
                 {
                     Success = false,
                     Item = resource,
@@ -108,13 +104,14 @@ internal class ResourceOrchestrationService(
 
         Resource[] validatedItems = ValidateResources(items, "items").ToArray();
 
-        var dbVersions = (from resource in processingService.GetAll()
-                          where resource.AppId == appId
-                          select new
-                          {
-                              resource.Id,
-                              Match = $"{resource.Key}_{resource.Name}_{resource.Culture}"
-                          }).ToArray();
+        var dbVersions = processingService.GetAll()
+            .Where(resource => resource.AppId == appId)
+            .Select(resource => new
+            {
+                resource.Id,
+                Match = $"{resource.Key}_{resource.Name}_{resource.Culture}"
+            })
+            .ToArray();
 
         Array.ForEach(validatedItems, resource =>
         {
@@ -131,17 +128,13 @@ internal class ResourceOrchestrationService(
         Resource[] resources = ValidateResources(items, "items").ToArray();
 
         foreach (Resource resource in resources)
-        {
             await DeleteAsync(resource.Id);
-        }
     }
 
     private static int ValidateId(int id, string parameterName)
     {
         if (id < 1)
-        {
             throw new ValidationException(parameterName + " must be greater than 0.");
-        }
 
         return id;
     }
@@ -149,9 +142,7 @@ internal class ResourceOrchestrationService(
     private static int ValidateAppId(int appId, string parameterName)
     {
         if (appId < 1)
-        {
             throw new ValidationException(parameterName + " must be greater than 0.");
-        }
 
         return appId;
     }
@@ -159,9 +150,7 @@ internal class ResourceOrchestrationService(
     private static Resource ValidateResource(Resource resource, string parameterName)
     {
         if (resource == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return resource;
     }
@@ -169,9 +158,7 @@ internal class ResourceOrchestrationService(
     private static IEnumerable<Resource> ValidateResources(IEnumerable<Resource> resources, string parameterName)
     {
         if (resources == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return resources;
     }

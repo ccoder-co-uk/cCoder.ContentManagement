@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Submission = cCoder.Data.Models.CMS.Submission;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -11,27 +11,21 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((Submission i) => i.Id == id);
-        }
 
         Submission submission = GetAll().FirstOrDefault((Submission i) => i.Id == id);
         if (submission != null)
-        {
             return submission;
-        }
+
         Submission submission2 = GetAll(ignoreFilters: true).FirstOrDefault((Submission i) => i.Id == id);
         if (submission2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<Submission> GetAll(bool ignoreFilters = false)
-    {
-        return submissionBroker.GetAllSubmissions(ignoreFilters);
-    }
+    public IQueryable<Submission> GetAll(bool ignoreFilters = false) =>
+        submissionBroker.GetAllSubmissions(ignoreFilters);
 
     public async ValueTask<Submission> AddAsync(Submission submission)
     {
@@ -90,9 +84,7 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
     private static Submission CreateStorageSubmission(Submission submission)
     {
         if (submission == null)
-        {
             return null;
-        }
 
         return new Submission
         {

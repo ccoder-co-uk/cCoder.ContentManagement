@@ -1,24 +1,11 @@
 using System.Linq.Expressions;
 using cCoder.ContentManagement.Models;
-using App = cCoder.Data.Models.CMS.App;
-using AppCulture = cCoder.Data.Models.CMS.AppCulture;
-using CommonObject = cCoder.Data.Models.CommonObject;
-using Component = cCoder.Data.Models.CMS.Component;
-using Content = cCoder.Data.Models.CMS.Content;
-using Culture = cCoder.Data.Models.CMS.Culture;
-using Layout = cCoder.Data.Models.CMS.Layout;
-using MetaItem = cCoder.Data.Models.CMS.MetaItem;
-using Page = cCoder.Data.Models.CMS.Page;
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
-using PageRole = cCoder.Data.Models.Security.PageRole;
-using Resource = cCoder.Data.Models.CMS.Resource;
-using Script = cCoder.Data.Models.CMS.Script;
-using Submission = cCoder.Data.Models.CMS.Submission;
-using Template = cCoder.Data.Models.CMS.Template;
-using User = cCoder.Data.Models.Security.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
+using cCoder.Data.Models;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Api.OData;
 

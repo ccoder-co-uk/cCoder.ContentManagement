@@ -1,5 +1,5 @@
-using App = cCoder.Data.Models.CMS.App;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
+using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures;
 

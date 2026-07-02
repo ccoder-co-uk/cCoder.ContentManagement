@@ -1,5 +1,5 @@
 using cCoder.ContentManagement.Exposures;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 

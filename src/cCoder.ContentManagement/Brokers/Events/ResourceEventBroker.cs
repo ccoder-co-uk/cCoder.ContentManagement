@@ -6,18 +6,12 @@ namespace cCoder.ContentManagement.Brokers.Events;
 
 public class ResourceEventBroker(IEventHub eventHub) : IResourceEventBroker
 {
-    public ValueTask RaiseResourceAddEventAsync(EventMessage<Resource> message)
-    {
-        return eventHub.RaiseEventAsync("resource_add", message);
-    }
+    public ValueTask RaiseResourceAddEventAsync(EventMessage<Resource> message) =>
+        eventHub.RaiseEventAsync("resource_add", message);
 
-    public ValueTask RaiseResourceUpdateEventAsync(EventMessage<Resource> message)
-    {
-        return eventHub.RaiseEventAsync("resource_update", message);
-    }
+    public ValueTask RaiseResourceUpdateEventAsync(EventMessage<Resource> message) =>
+        eventHub.RaiseEventAsync("resource_update", message);
 
-    public ValueTask RaiseResourceDeleteEventAsync(EventMessage<Resource> message)
-    {
-        return eventHub.RaiseEventAsync("resource_delete", message);
-    }
+    public ValueTask RaiseResourceDeleteEventAsync(EventMessage<Resource> message) =>
+        eventHub.RaiseEventAsync("resource_delete", message);
 }

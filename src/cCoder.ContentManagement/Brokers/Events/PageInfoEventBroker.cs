@@ -1,23 +1,17 @@
 using cCoder.Eventing;
 using cCoder.Eventing.Models;
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
 public class PageInfoEventBroker(IEventHub eventHub) : IPageInfoEventBroker
 {
-    public ValueTask RaisePageInfoAddEventAsync(EventMessage<PageInfo> message)
-    {
-        return eventHub.RaiseEventAsync("page_info_add", message);
-    }
+    public ValueTask RaisePageInfoAddEventAsync(EventMessage<PageInfo> message) =>
+        eventHub.RaiseEventAsync("page_info_add", message);
 
-    public ValueTask RaisePageInfoUpdateEventAsync(EventMessage<PageInfo> message)
-    {
-        return eventHub.RaiseEventAsync("page_info_update", message);
-    }
+    public ValueTask RaisePageInfoUpdateEventAsync(EventMessage<PageInfo> message) =>
+        eventHub.RaiseEventAsync("page_info_update", message);
 
-    public ValueTask RaisePageInfoDeleteEventAsync(EventMessage<PageInfo> message)
-    {
-        return eventHub.RaiseEventAsync("page_info_delete", message);
-    }
+    public ValueTask RaisePageInfoDeleteEventAsync(EventMessage<PageInfo> message) =>
+        eventHub.RaiseEventAsync("page_info_delete", message);
 }

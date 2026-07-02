@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using Script = cCoder.Data.Models.CMS.Script;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -12,10 +13,8 @@ internal class ScriptProcessingService(IScriptService service) : IScriptProcessi
         return service.Get(id);
     }
 
-    public IQueryable<Script> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<Script> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
     public ValueTask<Script> AddAsync(Script entity)
     {
@@ -35,16 +34,16 @@ internal class ScriptProcessingService(IScriptService service) : IScriptProcessi
         return service.DeleteAsync(id);
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Script>>> AddOrUpdate(IEnumerable<Script> items)
+    public async ValueTask<IEnumerable<Result<Script>>> AddOrUpdate(IEnumerable<Script> items)
     {
         ValidateScripts(items, "items");
-        List<cCoder.ContentManagement.Models.Result<Script>> results = new List<cCoder.ContentManagement.Models.Result<Script>>();
+        List<Result<Script>> results = new List<Result<Script>>();
         foreach (Script item in items)
         {
             try
             {
                 Script savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new cCoder.ContentManagement.Models.Result<Script>
+                results.Add(new Result<Script>
                 {
                     Success = true,
                     Item = savedItem,
@@ -53,7 +52,7 @@ internal class ScriptProcessingService(IScriptService service) : IScriptProcessi
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<Script>
+                results.Add(new Result<Script>
                 {
                     Success = false,
                     Item = item,
@@ -68,32 +67,21 @@ internal class ScriptProcessingService(IScriptService service) : IScriptProcessi
     {
         ValidateScripts(items, "items");
         foreach (Script item in items)
-        {
             await DeleteAsync(item.Id);
-        }
     }
 
-    private static void ValidateId(int id, string parameterName)
-    {
-        if (id < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateId(int id, string parameterName) =>
+        ThrowIf(id < 1, parameterName + " must be greater than 0.");
 
-    private static void ValidateScript(Script script, string parameterName)
-    {
-        if (script == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateScript(Script script, string parameterName) =>
+        ThrowIf(script == null, parameterName + " is required.");
 
-    private static void ValidateScripts(IEnumerable<Script> scripts, string parameterName)
+    private static void ValidateScripts(IEnumerable<Script> scripts, string parameterName) =>
+        ThrowIf(scripts == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (scripts == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }

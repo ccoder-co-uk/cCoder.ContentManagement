@@ -1,4 +1,5 @@
-using Resource = cCoder.Data.Models.CMS.Resource;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -16,7 +17,7 @@ public interface IResourceOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items);
+    ValueTask<IEnumerable<Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items);
 
     ValueTask ImportResourcesAsync(int appId, Resource[] items);
 

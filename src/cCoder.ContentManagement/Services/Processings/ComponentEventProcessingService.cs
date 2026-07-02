@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
-using Component = cCoder.Data.Models.CMS.Component;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -8,25 +8,31 @@ internal class ComponentEventProcessingService(IComponentEventService eventServi
 {
     public ValueTask RaiseComponentAddEventAsync(Component entity)
     {
-        return eventService.RaiseComponentAddEventAsync(ValidateComponent(entity, "entity"));
+        ValidateComponent(entity, "entity");
+
+        return eventService.RaiseComponentAddEventAsync(entity);
     }
 
     public ValueTask RaiseComponentUpdateEventAsync(Component entity)
     {
-        return eventService.RaiseComponentUpdateEventAsync(ValidateComponent(entity, "entity"));
+        ValidateComponent(entity, "entity");
+
+        return eventService.RaiseComponentUpdateEventAsync(entity);
     }
 
     public ValueTask RaiseComponentDeleteEventAsync(Component entity)
     {
-        return eventService.RaiseComponentDeleteEventAsync(ValidateComponent(entity, "entity"));
+        ValidateComponent(entity, "entity");
+
+        return eventService.RaiseComponentDeleteEventAsync(entity);
     }
 
-    private static Component ValidateComponent(Component component, string parameterName)
+    private static void ValidateComponent(Component component, string parameterName) =>
+        ThrowIf(component == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (component == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-        return component;
+        if (condition)
+            throw new ValidationException(message);
     }
 }

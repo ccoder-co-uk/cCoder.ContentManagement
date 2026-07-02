@@ -4,7 +4,7 @@ using cCoder.Data;
 using cCoder.Data.Exposures;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Resource = cCoder.Data.Models.CMS.Resource;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures.Caching;
 
@@ -29,8 +29,9 @@ internal class MetadataCache : IMetadataCache
     public string GetAll(string culture = "")
     {
         EnsureSynchronized();
-        return "[" + string.Join(',', (from c in GetTypeSets()
-                                       select metaSerialized[culture][c.Name.ToLower()]).ToArray()) + "]";
+        return "[" + string.Join(',', GetTypeSets()
+            .Select(typeSet => metaSerialized[culture][typeSet.Name.ToLower()])
+            .ToArray()) + "]";
     }
 
     public void Rebuild()
@@ -46,9 +47,8 @@ internal class MetadataCache : IMetadataCache
                 MetadataContainerSet metadataContainerSet2 = metadataContainerSet.Resource(culture.Id, resources);
                 ExtendedMetadataContainer[] types = metadataContainerSet2.Types;
                 foreach (ExtendedMetadataContainer extendedMetadataContainer in types)
-                {
                     Set(metadataContainerSet.Name.ToLower() + "/" + extendedMetadataContainer.Name.ToLower(), ToJsonForOData(extendedMetadataContainer), culture.Id);
-                }
+
                 Set(metadataContainerSet2.Name.ToLower(), ToJsonForOData(metadataContainerSet2), culture.Id);
             }
         }
@@ -59,9 +59,8 @@ internal class MetadataCache : IMetadataCache
     public void Set(string key, string value, string culture)
     {
         if (metaSerialized[culture].ContainsKey(key))
-        {
             metaSerialized[culture][key] = value;
-        }
+
         else
         {
             metaSerialized[culture].Add(new KeyValuePair<string, string>(key, value));
@@ -146,4 +145,3 @@ internal class MetadataCache : IMetadataCache
     {
     }
 }
-

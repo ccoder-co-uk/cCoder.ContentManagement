@@ -1,4 +1,4 @@
-using Package = cCoder.Data.Models.Packaging.Package;
+using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
@@ -12,4 +12,3 @@ public interface IPackageEventService
 
     ValueTask RaisePackageDeleteEventAsync(Package entity);
 }
-

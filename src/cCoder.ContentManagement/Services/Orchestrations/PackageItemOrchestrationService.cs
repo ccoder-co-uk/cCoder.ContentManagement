@@ -1,6 +1,6 @@
 using cCoder.ContentManagement.Services.Processings;
-using PackageItem = cCoder.Data.Models.Packaging.PackageItem;
-using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.Packaging.PackageItem>;
+using cCoder.Data.Models.Packaging;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -34,7 +34,7 @@ internal class PackageItemOrchestrationService(
         await processingService.DeleteAsync(id);
     }
 
-    public ValueTask<IEnumerable<Result>> AddOrUpdate(IEnumerable<PackageItem> items) =>
+    public ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdate(IEnumerable<PackageItem> items) =>
         processingService.AddOrUpdate(items);
 
     public ValueTask DeleteAllAsync(IEnumerable<PackageItem> items) =>

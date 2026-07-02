@@ -1,4 +1,6 @@
 using System.Security;
+using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
+using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.Data.Extensions;
 using cCoder.ContentManagement.Services.Foundations.Storages;
@@ -10,8 +12,7 @@ using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Page = cCoder.Data.Models.CMS.Page;
-using StringResult = cCoder.ContentManagement.Models.Result<string>;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
@@ -32,23 +33,19 @@ public class PageController : ODataController
     [HttpGet]
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
-    public IActionResult Get(ODataQueryOptions<Page> queryOptions)
-    {
-        return Ok(Service.GetAll());
-    }
+    public IActionResult Get(ODataQueryOptions<Page> queryOptions) =>
+        Ok(Service.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
-    public IActionResult RootFor([FromRoute] int key)
-    {
-        return Ok(CreateResponsePage(Service.GetRoot(key)));
-    }
+    public IActionResult RootFor([FromRoute] int key) =>
+        Ok(CreateResponsePage(Service.GetRoot(key)));
 
     [HttpGet]
     public IActionResult Menu([FromRoute] int key, string culture)
     {
-        return Ok(new StringResult
+        return Ok(new Result<string>
         {
             Id = key.ToString(),
             Item = Service.MenuFor(key, culture),
@@ -58,16 +55,12 @@ public class PageController : ODataController
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Render(int appId, string path, string theme, string culture)
-    {
-        return Ok(RenderService.Render(appId, path, theme, culture));
-    }
+    public IActionResult Render(int appId, string path, string theme, string culture) =>
+        Ok(RenderService.Render(appId, path, theme, culture));
 
     [HttpGet]
-    public IActionResult GetMetadata()
-    {
-        return Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(Page)) : new MetadataContainer(typeof(Page), isEntity: true, hasEndpoint: true));
-    }
+    public IActionResult GetMetadata() =>
+        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(Page)) : new MetadataContainer(typeof(Page), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [AllowAnonymous]
@@ -90,9 +83,8 @@ public class PageController : ODataController
     public async Task<IActionResult> Post([FromBody] Page entity)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
+
         return Ok(CreateResponsePage(await Service.AddAsync(entity)));
     }
 
@@ -101,9 +93,8 @@ public class PageController : ODataController
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Page entity)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
+
         entity.Id = key;
         return Ok(CreateResponsePage(await Service.UpdateAsync(entity)));
     }
@@ -113,9 +104,8 @@ public class PageController : ODataController
     {
         Page originalEntity = Service.Get(key);
         if (originalEntity == null)
-        {
             return NotFound();
-        }
+
         delta.Patch(originalEntity);
         return Ok(CreateResponsePage(await Service.UpdateAsync(originalEntity)));
     }
@@ -130,9 +120,7 @@ public class PageController : ODataController
     private static Page CreateResponsePage(Page page)
     {
         if (page == null)
-        {
             return null;
-        }
 
         return new Page
         {
@@ -152,4 +140,3 @@ public class PageController : ODataController
         };
     }
 }
-

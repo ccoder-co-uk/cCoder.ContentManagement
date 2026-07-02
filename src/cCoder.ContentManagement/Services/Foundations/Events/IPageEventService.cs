@@ -1,4 +1,4 @@
-using Page = cCoder.Data.Models.CMS.Page;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 

@@ -1,6 +1,6 @@
-using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
-using Component = cCoder.Data.Models.CMS.Component;
-using User = cCoder.Data.Models.Security.User;
+using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 

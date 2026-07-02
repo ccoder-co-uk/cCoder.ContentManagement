@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using Content = cCoder.Data.Models.CMS.Content;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -12,10 +13,8 @@ internal class ContentProcessingService(IContentService service) : IContentProce
         return service.Get(id);
     }
 
-    public IQueryable<Content> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<Content> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
     public ValueTask<Content> AddAsync(Content entity)
     {
@@ -35,16 +34,16 @@ internal class ContentProcessingService(IContentService service) : IContentProce
         return service.DeleteAsync(id);
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Content>>> AddOrUpdate(IEnumerable<Content> items)
+    public async ValueTask<IEnumerable<Result<Content>>> AddOrUpdate(IEnumerable<Content> items)
     {
         ValidateContents(items, "items");
-        List<cCoder.ContentManagement.Models.Result<Content>> results = new List<cCoder.ContentManagement.Models.Result<Content>>();
+        List<Result<Content>> results = new List<Result<Content>>();
         foreach (Content item in items)
         {
             try
             {
                 Content savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new cCoder.ContentManagement.Models.Result<Content>
+                results.Add(new Result<Content>
                 {
                     Success = true,
                     Item = savedItem,
@@ -53,7 +52,7 @@ internal class ContentProcessingService(IContentService service) : IContentProce
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<Content>
+                results.Add(new Result<Content>
                 {
                     Success = false,
                     Item = item,
@@ -68,32 +67,21 @@ internal class ContentProcessingService(IContentService service) : IContentProce
     {
         ValidateContents(items, "items");
         foreach (Content item in items)
-        {
             await DeleteAsync(item.Id);
-        }
     }
 
-    private static void ValidateId(int id, string parameterName)
-    {
-        if (id < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateId(int id, string parameterName) =>
+        ThrowIf(id < 1, parameterName + " must be greater than 0.");
 
-    private static void ValidateContent(Content content, string parameterName)
-    {
-        if (content == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateContent(Content content, string parameterName) =>
+        ThrowIf(content == null, parameterName + " is required.");
 
-    private static void ValidateContents(IEnumerable<Content> contents, string parameterName)
+    private static void ValidateContents(IEnumerable<Content> contents, string parameterName) =>
+        ThrowIf(contents == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (contents == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }

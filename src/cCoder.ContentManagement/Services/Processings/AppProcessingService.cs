@@ -3,18 +3,9 @@ using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using App = cCoder.Data.Models.CMS.App;
-using AppCulture = cCoder.Data.Models.CMS.AppCulture;
-using Component = cCoder.Data.Models.CMS.Component;
-using Layout = cCoder.Data.Models.CMS.Layout;
-using Page = cCoder.Data.Models.CMS.Page;
-using Resource = cCoder.Data.Models.CMS.Resource;
-using Script = cCoder.Data.Models.CMS.Script;
-using Template = cCoder.Data.Models.CMS.Template;
-using Role = cCoder.Data.Models.Security.Role;
-using PageRole = cCoder.Data.Models.Security.PageRole;
-using User = cCoder.Data.Models.Security.User;
-using UserRole = cCoder.Data.Models.Security.UserRole;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -51,19 +42,15 @@ internal class AppProcessingService(
             .FirstOrDefault();
     }
 
-    public IQueryable<App> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<App> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
     public async ValueTask<App> AddAsync(App inputApp)
     {
         ValidateApp(inputApp, "inputApp");
 
         if (string.IsNullOrEmpty(inputApp.DefaultTheme))
-        {
             inputApp.DefaultTheme = "Default";
-        }
 
         inputApp.Cultures = BuildCulturesForApp(inputApp);
         inputApp.Roles = BuildRolesForApp(inputApp);
@@ -84,7 +71,10 @@ internal class AppProcessingService(
                     Privs = role.Privs,
                 });
 
-                foreach (UserRole user in role.Users ?? Array.Empty<UserRole>())
+                if (role.Users == null)
+                    continue;
+
+                foreach (UserRole user in role.Users)
                 {
                     user.RoleId = role.Id;
                     user.Role = null;
@@ -108,9 +98,7 @@ internal class AppProcessingService(
         ValidateApp(app, "app");
         App existingApp = service.Get(app.Id, ignoreFilters: true);
         if (existingApp == null)
-        {
             throw new SecurityException("Access Denied!");
-        }
 
         existingApp.DefaultCultureId = app.DefaultCultureId;
         existingApp.TenantId = app.TenantId;
@@ -127,9 +115,7 @@ internal class AppProcessingService(
         existingApp.Resources = app.Resources ?? existingApp.Resources;
         existingApp.Layouts = app.Layouts ?? existingApp.Layouts;
         if (app.Cultures != null)
-        {
             existingApp.Cultures = BuildCulturesForApp(existingApp);
-        }
 
         App updatedApp = await service.UpdateAsync(existingApp);
         if (updatedApp.Roles != null)
@@ -181,16 +167,12 @@ internal class AppProcessingService(
                     .ToArray();
 
                 if (userRolesToDelete.Length > 0)
-                {
                     await userRoleBroker.DeleteAllUserRolesAsync(userRolesToDelete);
-                }
 
                 foreach (string userId in incomingUserIds)
                 {
                     if (existingUserRoles.Any(userRole => string.Equals(userRole.UserId, userId, StringComparison.Ordinal)))
-                    {
                         continue;
-                    }
 
                     await userRoleBroker.AddUserRoleAsync(new UserRole
                     {
@@ -212,10 +194,10 @@ internal class AppProcessingService(
         await service.DeleteAsync(id);
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<App>>> AddOrUpdate(IEnumerable<App> items)
+    public async ValueTask<IEnumerable<Result<App>>> AddOrUpdate(IEnumerable<App> items)
     {
         ValidateApps(items, "items");
-        List<cCoder.ContentManagement.Models.Result<App>> results = [];
+        List<Result<App>> results = [];
 
         foreach (App item in items)
         {
@@ -225,7 +207,7 @@ internal class AppProcessingService(
                     ? await AddAsync(item)
                     : await UpdateAsync(item);
 
-                results.Add(new cCoder.ContentManagement.Models.Result<App>
+                results.Add(new Result<App>
                 {
                     Success = true,
                     Item = app,
@@ -234,7 +216,7 @@ internal class AppProcessingService(
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<App>
+                results.Add(new Result<App>
                 {
                     Success = false,
                     Item = item,
@@ -250,9 +232,7 @@ internal class AppProcessingService(
     {
         ValidateApps(items, "items");
         foreach (App item in items)
-        {
             await DeleteAsync(item.Id);
-        }
     }
 
     public IQueryable<User> GetAppUsers(int appId)
@@ -260,9 +240,8 @@ internal class AppProcessingService(
         ValidateId(appId, "appId");
         App app = Get(appId);
         if (app != null)
-        {
             return app.Roles.SelectMany((Role role) => role.Users.Select((UserRole userRole) => userRole.User)).AsQueryable();
-        }
+
         throw new SecurityException("Access Denied!");
     }
 
@@ -277,9 +256,7 @@ internal class AppProcessingService(
             {
                 int num3 = num;
                 if (int.TryParse(text.Substring(num3, num2 - num3), out var result))
-                {
                     return service.Get(result);
-                }
             }
         }
         string domain = httpContext?.Request.Host.Host ?? string.Empty;
@@ -305,9 +282,8 @@ internal class AppProcessingService(
             })
             .ToArray();
         if (string.IsNullOrEmpty(newApp.DefaultCultureId))
-        {
             newApp.DefaultCultureId = enumerable.FirstOrDefault() ?? string.Empty;
-        }
+
         return culturesForApp;
     }
 
@@ -349,6 +325,7 @@ internal class AppProcessingService(
             {
                 ICollection<UserRole> collection = (role.Users = new List<UserRole>());
             }
+
             foreach (UserRole user in item.Users)
             {
                 user.RoleId = item.Id;
@@ -378,11 +355,13 @@ internal class AppProcessingService(
         {
             ICollection<UserRole> collection = (role2.Users = new List<UserRole>());
         }
+
         role2 = role;
         if (role2.Pages == null)
         {
             ICollection<PageRole> collection3 = (role2.Pages = new List<PageRole>());
         }
+
         Role role3 = role;
         List<string> list = new List<string>();
         list.AddRange(role.Privileges.Union<string>(requiredPrivileges, StringComparer.OrdinalIgnoreCase));
@@ -405,90 +384,74 @@ internal class AppProcessingService(
 
     private static void StampAppChildren(App app)
     {
-        foreach (AppCulture culture in app.Cultures ?? Array.Empty<AppCulture>())
-        {
-            culture.AppId = app.Id;
-        }
+        if (app.Cultures != null)
+            foreach (AppCulture culture in app.Cultures)
+                culture.AppId = app.Id;
 
-        foreach (Page page in app.Pages ?? Array.Empty<Page>())
-        {
-            page.AppId = app.Id;
-        }
+        if (app.Pages != null)
+            foreach (Page page in app.Pages)
+                page.AppId = app.Id;
 
-        foreach (Component component in app.Components ?? Array.Empty<Component>())
-        {
-            component.AppId = app.Id;
-        }
+        if (app.Components != null)
+            foreach (Component component in app.Components)
+                component.AppId = app.Id;
 
-        foreach (Script script in app.Scripts ?? Array.Empty<Script>())
-        {
-            script.AppId = app.Id;
-        }
+        if (app.Scripts != null)
+            foreach (Script script in app.Scripts)
+                script.AppId = app.Id;
 
-        foreach (Role role in app.Roles ?? Array.Empty<Role>())
-        {
-            role.AppId = app.Id;
-            role.App = null;
-            foreach (UserRole user in role.Users ?? Array.Empty<UserRole>())
+        if (app.Roles != null)
+            foreach (Role role in app.Roles)
             {
-                user.RoleId = role.Id;
-                user.Role = null;
+                role.AppId = app.Id;
+                role.App = null;
+                if (role.Users == null)
+                    continue;
+
+                foreach (UserRole user in role.Users)
+                {
+                    user.RoleId = role.Id;
+                    user.Role = null;
+                }
             }
-        }
 
-        foreach (Template template in app.Templates ?? Array.Empty<Template>())
-        {
-            template.AppId = app.Id;
-        }
+        if (app.Templates != null)
+            foreach (Template template in app.Templates)
+                template.AppId = app.Id;
 
-        foreach (Resource resource in app.Resources ?? Array.Empty<Resource>())
-        {
-            resource.AppId = app.Id;
-        }
+        if (app.Resources != null)
+            foreach (Resource resource in app.Resources)
+                resource.AppId = app.Id;
 
-        foreach (Layout layout in app.Layouts ?? Array.Empty<Layout>())
-        {
-            layout.AppId = app.Id;
-        }
+        if (app.Layouts != null)
+            foreach (Layout layout in app.Layouts)
+                layout.AppId = app.Id;
     }
 
-    private static void ValidateId(int id, string parameterName)
-    {
-        if (id < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateId(int id, string parameterName) =>
+        ThrowIf(id < 1, parameterName + " must be greater than 0.");
 
     private static void ValidateApp(App app, string parameterName)
     {
         if (app == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
+
         if (string.IsNullOrWhiteSpace(app.Name))
-        {
             throw new ValidationException(parameterName + ".Name is required.");
-        }
+
         if (string.IsNullOrWhiteSpace(app.Domain))
-        {
             throw new ValidationException(parameterName + ".Domain is required.");
-        }
     }
 
-    private static void ValidateApps(IEnumerable<App> apps, string parameterName)
-    {
-        if (apps == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateApps(IEnumerable<App> apps, string parameterName) =>
+        ThrowIf(apps == null, parameterName + " is required.");
 
-    private static void ValidateDomain(string domain, string parameterName)
+    private static void ValidateDomain(string domain, string parameterName) =>
+        ThrowIf(string.IsNullOrWhiteSpace(domain), parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (string.IsNullOrWhiteSpace(domain))
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }

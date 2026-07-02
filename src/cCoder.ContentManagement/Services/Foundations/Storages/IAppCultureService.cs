@@ -1,4 +1,4 @@
-using AppCulture = cCoder.Data.Models.CMS.AppCulture;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 

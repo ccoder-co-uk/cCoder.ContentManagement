@@ -1,4 +1,5 @@
-using Layout = cCoder.Data.Models.CMS.Layout;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -16,7 +17,7 @@ public interface ILayoutOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Layout>>> AddOrUpdate(IEnumerable<Layout> items);
+    ValueTask<IEnumerable<Result<Layout>>> AddOrUpdate(IEnumerable<Layout> items);
 
     ValueTask ImportLayoutsAsync(int appId, Layout[] items);
 

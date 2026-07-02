@@ -1,4 +1,4 @@
-using Submission = cCoder.Data.Models.CMS.Submission;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 

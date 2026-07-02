@@ -1,4 +1,5 @@
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -14,7 +15,7 @@ public interface IPageInfoOrchestrationService
 
     ValueTask DeleteAsync(int id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<PageInfo>>> AddOrUpdate(IEnumerable<PageInfo> items);
+    ValueTask<IEnumerable<Result<PageInfo>>> AddOrUpdate(IEnumerable<PageInfo> items);
 
     ValueTask DeleteAllAsync(IEnumerable<PageInfo> items);
 }

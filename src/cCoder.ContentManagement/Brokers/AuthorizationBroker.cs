@@ -17,9 +17,8 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
     public bool IsAdminOfApp(int? appId)
     {
         if (!appId.HasValue)
-        {
             return false;
-        }
+
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
         string currentUserId = GetCurrentUserId(coreDataContext);
         return HasAppAdminPrivilege(coreDataContext, currentUserId, appId.Value);
@@ -28,8 +27,13 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
     public bool IsAdmin(int appId, string userName)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        User user = coreDataContext.Users.Include((User foundUser) => foundUser.Roles).FirstOrDefault((User foundUser) => foundUser.Id == userName);
-        return coreDataContext.Apps.Include((App foundApp) => foundApp.Roles.Select((Role role) => role.Users)).FirstOrDefault((App foundApp) => foundApp.Id == appId)?.IsAppAdmin(user) ?? false;
+        User user = coreDataContext.Users
+            .Include(foundUser => foundUser.Roles)
+            .FirstOrDefault(foundUser => foundUser.Id == userName);
+
+        return coreDataContext.Apps
+            .Include(foundApp => foundApp.Roles.Select(role => role.Users))
+            .FirstOrDefault(foundApp => foundApp.Id == appId)?.IsAppAdmin(user) ?? false;
     }
 
     public void Authorize(int? appId, string privilege)
@@ -37,9 +41,7 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
         string currentUserId = GetCurrentUserId(coreDataContext);
         if (!HasAppAdminPrivilege(coreDataContext, currentUserId, appId) && !HasPrivilege(coreDataContext, currentUserId, appId, privilege))
-        {
             throw new SecurityException("Access Denied!");
-        }
     }
 
     private static string GetCurrentUserId(CoreDataContext coreDataContext)
@@ -52,13 +54,15 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
     {
         string normalizedPrivilege = privilege.ToLowerInvariant();
         Role[] userRoles = GetUserRoles(coreDataContext, userId);
-        return (appId.HasValue && HasAppAdminPrivilege(coreDataContext, userId, appId.Value)) || userRoles.Any((Role role) => (!appId.HasValue || role.AppId == appId) && role.Privileges.Any((string foundPrivilege) => string.Equals(foundPrivilege, normalizedPrivilege, StringComparison.OrdinalIgnoreCase)));
+        return (appId.HasValue && HasAppAdminPrivilege(coreDataContext, userId, appId.Value)) || userRoles.Any(role =>
+            (!appId.HasValue || role.AppId == appId)
+            && role.Privileges.Any(foundPrivilege => string.Equals(foundPrivilege, normalizedPrivilege, StringComparison.OrdinalIgnoreCase)));
     }
 
     private static bool HasAppAdminPrivilege(CoreDataContext coreDataContext, string userId, int? appId)
     {
         return GetUserRoles(coreDataContext, userId)
-            .Any((Role role) => role.AppId == appId && role.Privileges.Any((string privilege) => string.Equals(privilege, "app_admin", StringComparison.OrdinalIgnoreCase))) ||
+            .Any(role => role.AppId == appId && role.Privileges.Any(privilege => string.Equals(privilege, "app_admin", StringComparison.OrdinalIgnoreCase))) ||
                 !coreDataContext.Roles.IgnoreQueryFilters().Any();
     }
 
@@ -66,22 +70,29 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
     {
         Role[] array = LoadRolesForUser(coreDataContext, userId);
         if (string.Equals(userId, "Guest", StringComparison.OrdinalIgnoreCase))
-        {
             return array;
-        }
+
         Role[] second = LoadRolesForUser(coreDataContext, "Guest");
-        return (from role in array.Concat(second)
-                group role by role.Id into @group
-                select @group.First()).ToArray();
+        return array.Concat(second)
+            .GroupBy(role => role.Id)
+            .Select(group => group.First())
+            .ToArray();
     }
 
     private static Role[] LoadRolesForUser(CoreDataContext coreDataContext, string userId)
     {
-        Guid[] roleIds = (from userRole in coreDataContext.UserRoles.IgnoreQueryFilters().AsNoTracking()
-                          where userRole.UserId == userId
-                          select userRole.RoleId).Distinct().ToArray();
-        return (from role in coreDataContext.Roles.IgnoreQueryFilters().AsNoTracking()
-                where roleIds.Contains(role.Id)
-                select role).ToArray();
+        Guid[] roleIds = coreDataContext.UserRoles
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Where(userRole => userRole.UserId == userId)
+            .Select(userRole => userRole.RoleId)
+            .Distinct()
+            .ToArray();
+
+        return coreDataContext.Roles
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Where(role => roleIds.Contains(role.Id))
+            .ToArray();
     }
 }

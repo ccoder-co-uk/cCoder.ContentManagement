@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Component = cCoder.Data.Models.CMS.Component;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -11,27 +11,21 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((Component i) => i.Id == id);
-        }
 
         Component component = GetAll().FirstOrDefault((Component i) => i.Id == id);
         if (component != null)
-        {
             return component;
-        }
+
         Component component2 = GetAll(ignoreFilters: true).FirstOrDefault((Component i) => i.Id == id);
         if (component2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<Component> GetAll(bool ignoreFilters = false)
-    {
-        return componentBroker.GetAllComponents(ignoreFilters);
-    }
+    public IQueryable<Component> GetAll(bool ignoreFilters = false) =>
+        componentBroker.GetAllComponents(ignoreFilters);
 
     public async ValueTask<Component> AddAsync(Component component)
     {
@@ -98,9 +92,7 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
         }
 
         if (component == null)
-        {
             return;
-        }
 
         authorizationBroker.Authorize(component.AppId, "Component_delete");
         await componentBroker.DeleteComponentAsync(CreateStorageComponent(component));
@@ -109,9 +101,7 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
     private static Component CreateStorageComponent(Component component)
     {
         if (component == null)
-        {
             return null;
-        }
 
         return new Component
         {

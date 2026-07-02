@@ -1,46 +1,37 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using Component = cCoder.Data.Models.CMS.Component;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal class ComponentProcessingService(IComponentService service) : IComponentProcessingService
 {
-    public Component Get(int id)
-    {
-        return service.Get(id);
-    }
+    public Component Get(int id) =>
+        service.Get(id);
 
-    public IQueryable<Component> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<Component> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
-    public ValueTask<Component> AddAsync(Component entity)
-    {
-        return service.AddAsync(entity);
-    }
+    public ValueTask<Component> AddAsync(Component entity) =>
+        service.AddAsync(entity);
 
-    public ValueTask<Component> UpdateAsync(Component entity)
-    {
-        return service.UpdateAsync(entity);
-    }
+    public ValueTask<Component> UpdateAsync(Component entity) =>
+        service.UpdateAsync(entity);
 
-    public ValueTask DeleteAsync(int id)
-    {
-        return service.DeleteAsync(id);
-    }
+    public ValueTask DeleteAsync(int id) =>
+        service.DeleteAsync(id);
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Component>>> AddOrUpdate(IEnumerable<Component> items)
+    public async ValueTask<IEnumerable<Result<Component>>> AddOrUpdate(IEnumerable<Component> items)
     {
         ValidateComponents(items, "items");
-        List<cCoder.ContentManagement.Models.Result<Component>> results = new List<cCoder.ContentManagement.Models.Result<Component>>();
+        List<Result<Component>> results = new List<Result<Component>>();
         foreach (Component item in items)
         {
             try
             {
                 Component savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new cCoder.ContentManagement.Models.Result<Component>
+                results.Add(new Result<Component>
                 {
                     Success = true,
                     Item = savedItem,
@@ -49,7 +40,7 @@ internal class ComponentProcessingService(IComponentService service) : IComponen
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<Component>
+                results.Add(new Result<Component>
                 {
                     Success = false,
                     Item = item,
@@ -64,17 +55,15 @@ internal class ComponentProcessingService(IComponentService service) : IComponen
     {
         ValidateComponents(items, "items");
         foreach (Component item in items)
-        {
             await DeleteAsync(item.Id);
-        }
     }
 
-    private static void ValidateComponents(IEnumerable<Component> components, string parameterName)
+    private static void ValidateComponents(IEnumerable<Component> components, string parameterName) =>
+        ThrowIf(components == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (components == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }
-

@@ -1,5 +1,5 @@
-using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
-using PageRole = cCoder.Data.Models.Security.PageRole;
+using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -11,7 +11,7 @@ public interface IPageRoleOrchestrationService
 
     ValueTask DeleteAsync(PageRole entity);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<PageRole>>> AddOrUpdate(IEnumerable<PageRole> items);
+    ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdate(IEnumerable<PageRole> items);
 
     ValueTask ImportPageRolesAsync(int appId, PageRoleInfo[] items);
 

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
-using Layout = cCoder.Data.Models.CMS.Layout;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -8,25 +8,31 @@ internal class LayoutEventProcessingService(ILayoutEventService eventService) : 
 {
     public ValueTask RaiseLayoutAddEventAsync(Layout entity)
     {
-        return eventService.RaiseLayoutAddEventAsync(ValidateLayout(entity, "entity"));
+        ValidateLayout(entity, "entity");
+
+        return eventService.RaiseLayoutAddEventAsync(entity);
     }
 
     public ValueTask RaiseLayoutUpdateEventAsync(Layout entity)
     {
-        return eventService.RaiseLayoutUpdateEventAsync(ValidateLayout(entity, "entity"));
+        ValidateLayout(entity, "entity");
+
+        return eventService.RaiseLayoutUpdateEventAsync(entity);
     }
 
     public ValueTask RaiseLayoutDeleteEventAsync(Layout entity)
     {
-        return eventService.RaiseLayoutDeleteEventAsync(ValidateLayout(entity, "entity"));
+        ValidateLayout(entity, "entity");
+
+        return eventService.RaiseLayoutDeleteEventAsync(entity);
     }
 
-    private static Layout ValidateLayout(Layout layout, string parameterName)
+    private static void ValidateLayout(Layout layout, string parameterName) =>
+        ThrowIf(layout == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (layout == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-        return layout;
+        if (condition)
+            throw new ValidationException(message);
     }
 }

@@ -29,9 +29,9 @@ public static partial class WebApplicationExtensions
     {
         log?.LogInformation("Initialising Content Management");
         app.UseSession();
-        app.UseExceptionHandler(delegate (IApplicationBuilder errorApp)
+        app.UseExceptionHandler(errorApp =>
         {
-            errorApp.Run(async delegate (HttpContext context)
+            errorApp.Run(async context =>
             {
                 ILogger<IApplicationBuilder> appLogger = context.RequestServices.GetRequiredService<ILogger<IApplicationBuilder>>();
                 Exception exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
@@ -44,13 +44,12 @@ public static partial class WebApplicationExtensions
                 }
             });
         });
-        app.Use(delegate (HttpContext context, Func<Task> next)
+        app.Use((context, next) =>
         {
             Dictionary<string, StringValues> dictionary = QueryHelpers.ParseQuery(context.Request.QueryString.Value);
             if (dictionary.ContainsKey("t"))
-            {
                 context.Request.Headers["Authorization"] = "bearer " + dictionary["t"][0];
-            }
+
             if (dictionary.TryGetValue("$format", out var value))
             {
                 IHeaderDictionary headers = context.Request.Headers;
@@ -63,7 +62,7 @@ public static partial class WebApplicationExtensions
                     "xml" => "application/xml",
                     "csv" => "text/csv",
                     "excel" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    _ => context.Request.Headers["Content-Type"],
+                    var ignoredFormat => context.Request.Headers["Content-Type"],
                 };
                 if (1 == 0)
                 {
@@ -79,23 +78,23 @@ public static partial class WebApplicationExtensions
                     "xml" => "attachment; filename=export.xml",
                     "csv" => "attachment; filename=export.csv",
                     "excel" => "attachment; filename=export.xlsx",
-                    _ => "attachment; filename=export.json",
+                    var ignoredExportFormat => "attachment; filename=export.json",
                 };
                 if (1 == 0)
                 {
                 }
                 headers2["Content-Disposition"] = text3;
             }
-            return next();
+            return next(context);
         });
         PopulateMetadataTypeCache(app);
         app.Services.GetService<ICommonObjectCache>()?.Refresh();
         app.Services.GetService<IMetadataCache>()?.Rebuild();
-        app.Use(async delegate (HttpContext context, Func<Task> next)
+        app.Use(async (context, next) =>
         {
             await onRequest(context, log ?? NullLogger.Instance);
             context.Response.OnStarting(() => RemovePlatformHeaders(context));
-            await next();
+            await next(context);
         });
         return app;
     }
@@ -118,18 +117,16 @@ public static partial class WebApplicationExtensions
         using IServiceScope serviceScope = app.Services.CreateScope();
         IServiceProvider serviceProvider = serviceScope.ServiceProvider;
         foreach (IContentManagementEventHandlers service in serviceProvider.GetServices<IContentManagementEventHandlers>())
-        {
             service.ListenToAllEvents();
-        }
+
         return app;
     }
 
     private static Task RemovePlatformHeaders(HttpContext context)
     {
         if (context.Request.Query["edit"] != "true")
-        {
             context.Response.Headers.Append("X-Frame-Options", "DENY");
-        }
+
         context.Response.Headers.Remove("X-AspNet-Version");
         context.Response.Headers.Remove("X-AspNetMvc-Version");
         context.Response.Headers.Remove("X-Sourcefiles");
@@ -138,4 +135,3 @@ public static partial class WebApplicationExtensions
     }
 
 }
-

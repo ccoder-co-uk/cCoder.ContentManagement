@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Content = cCoder.Data.Models.CMS.Content;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -14,27 +14,21 @@ internal partial class ContentService(
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((Content i) => i.Id == id);
-        }
 
         Content content = GetAll().FirstOrDefault((Content i) => i.Id == id);
         if (content != null)
-        {
             return content;
-        }
+
         Content content2 = GetAll(ignoreFilters: true).FirstOrDefault((Content i) => i.Id == id);
         if (content2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<Content> GetAll(bool ignoreFilters = false)
-    {
-        return contentBroker.GetAllContents(ignoreFilters);
-    }
+    public IQueryable<Content> GetAll(bool ignoreFilters = false) =>
+        contentBroker.GetAllContents(ignoreFilters);
 
     public async ValueTask<Content> AddAsync(Content content)
     {
@@ -76,9 +70,7 @@ internal partial class ContentService(
         }
 
         if (content == null)
-        {
             return;
-        }
 
         authorizationBroker.Authorize(GetAppId(content.PageId), "Content_delete");
         await contentBroker.DeleteContentAsync(CreateStorageContent(content));
@@ -87,9 +79,7 @@ internal partial class ContentService(
     private static Content CreateStorageContent(Content content)
     {
         if (content == null)
-        {
             return null;
-        }
 
         return new Content
         {

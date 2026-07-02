@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -14,27 +14,21 @@ internal partial class PageInfoService(
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((PageInfo i) => i.Id == id);
-        }
 
         PageInfo pageInfo = GetAll().FirstOrDefault((PageInfo i) => i.Id == id);
         if (pageInfo != null)
-        {
             return pageInfo;
-        }
+
         PageInfo pageInfo2 = GetAll(ignoreFilters: true).FirstOrDefault((PageInfo i) => i.Id == id);
         if (pageInfo2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<PageInfo> GetAll(bool ignoreFilters = false)
-    {
-        return pageInfoBroker.GetAllPageInfo(ignoreFilters);
-    }
+    public IQueryable<PageInfo> GetAll(bool ignoreFilters = false) =>
+        pageInfoBroker.GetAllPageInfo(ignoreFilters);
 
     public async ValueTask<PageInfo> AddAsync(PageInfo pageInfo)
     {
@@ -78,9 +72,7 @@ internal partial class PageInfoService(
         }
 
         if (pageInfo == null)
-        {
             return;
-        }
 
         authorizationBroker.Authorize(GetAppId(pageInfo.PageId), "PageInfo_delete");
         await pageInfoBroker.DeletePageInfoAsync(CreateStoragePageInfo(pageInfo));
@@ -89,9 +81,7 @@ internal partial class PageInfoService(
     private static PageInfo CreateStoragePageInfo(PageInfo pageInfo)
     {
         if (pageInfo == null)
-        {
             return null;
-        }
 
         return new PageInfo
         {

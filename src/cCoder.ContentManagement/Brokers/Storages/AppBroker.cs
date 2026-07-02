@@ -51,16 +51,12 @@ public class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
                 ?? []];
 
         if (userRolesToDelete.Length > 0)
-        {
             coreDataContext.UserRoles.RemoveRange(userRolesToDelete);
-        }
 
         Role[] rolesToDelete = [.. entity.Roles ?? []];
 
         if (rolesToDelete.Length > 0)
-        {
             coreDataContext.Roles.RemoveRange(rolesToDelete);
-        }
 
         coreDataContext.Apps.Remove(entity);
         await coreDataContext.SaveChangesAsync();

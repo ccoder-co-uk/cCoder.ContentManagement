@@ -3,8 +3,7 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Extensions;
 using Newtonsoft.Json;
-using Package = cCoder.Data.Models.Packaging.Package;
-using PackageItem = cCoder.Data.Models.Packaging.PackageItem;
+using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Exports;
 
@@ -205,14 +204,10 @@ internal partial class PackageExportService(
             ExportPage root = page;
 
             while (root.ParentId.HasValue && pagesById.TryGetValue(root.ParentId.Value, out ExportPage parent))
-            {
                 root = parent;
-            }
 
             if (string.IsNullOrEmpty(root.Path) && !string.IsNullOrEmpty(page.Path))
-            {
                 page.Path = "/" + page.Path.TrimStart('/');
-            }
         }
 
         return CreatePackage(
@@ -267,9 +262,7 @@ internal partial class PackageExportService(
     private void EnsureAdmin(int appId)
     {
         if (!authorizationBroker.IsAdminOfApp(appId))
-        {
             throw new SecurityException("Access Denied!");
-        }
     }
 
     private static JsonSerializerSettings CreateSerializerSettings()
@@ -279,4 +272,3 @@ internal partial class PackageExportService(
         return settings;
     }
 }
-

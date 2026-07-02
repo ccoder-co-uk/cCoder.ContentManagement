@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
-using Script = cCoder.Data.Models.CMS.Script;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -8,25 +8,31 @@ internal class ScriptEventProcessingService(IScriptEventService eventService) : 
 {
     public ValueTask RaiseScriptAddEventAsync(Script entity)
     {
-        return eventService.RaiseScriptAddEventAsync(ValidateScript(entity, "entity"));
+        ValidateScript(entity, "entity");
+
+        return eventService.RaiseScriptAddEventAsync(entity);
     }
 
     public ValueTask RaiseScriptUpdateEventAsync(Script entity)
     {
-        return eventService.RaiseScriptUpdateEventAsync(ValidateScript(entity, "entity"));
+        ValidateScript(entity, "entity");
+
+        return eventService.RaiseScriptUpdateEventAsync(entity);
     }
 
     public ValueTask RaiseScriptDeleteEventAsync(Script entity)
     {
-        return eventService.RaiseScriptDeleteEventAsync(ValidateScript(entity, "entity"));
+        ValidateScript(entity, "entity");
+
+        return eventService.RaiseScriptDeleteEventAsync(entity);
     }
 
-    private static Script ValidateScript(Script script, string parameterName)
+    private static void ValidateScript(Script script, string parameterName) =>
+        ThrowIf(script == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (script == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-        return script;
+        if (condition)
+            throw new ValidationException(message);
     }
 }

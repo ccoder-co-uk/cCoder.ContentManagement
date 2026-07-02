@@ -1,4 +1,4 @@
-using User = cCoder.Data.Models.Security.User;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 

@@ -10,14 +10,10 @@ internal static class ODataCollectionExtensions
     internal static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
     {
         if (source == null)
-        {
             return;
-        }
 
         foreach (T item in source)
-        {
             action(item);
-        }
     }
 }
 
@@ -26,9 +22,7 @@ internal static class ODataTypeExtensions
     internal static string GetCSharpTypeName(this Type type)
     {
         if (!type.IsGenericType)
-        {
             return type.Name;
-        }
 
         IEnumerable<string> genericNames = type.GenericTypeArguments.Select(argument => argument.GetCSharpTypeName());
         return $"{type.Name.Split('`')[0]}<{string.Join(",", genericNames)}>".Replace("System.Object", "dynamic");
@@ -58,9 +52,7 @@ internal static class ODataTypeExtensions
                     property.GetCustomAttributes(typeof(KeyAttribute), false).Any());
 
             if (idProperty != null)
-            {
                 return idProperty;
-            }
         }
         else
         {

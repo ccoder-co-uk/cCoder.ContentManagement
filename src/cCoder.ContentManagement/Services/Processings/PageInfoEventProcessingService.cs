@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -8,25 +8,31 @@ internal class PageInfoEventProcessingService(IPageInfoEventService eventService
 {
     public ValueTask RaisePageInfoAddEventAsync(PageInfo entity)
     {
-        return eventService.RaisePageInfoAddEventAsync(ValidatePageInfo(entity, "entity"));
+        ValidatePageInfo(entity, "entity");
+
+        return eventService.RaisePageInfoAddEventAsync(entity);
     }
 
     public ValueTask RaisePageInfoUpdateEventAsync(PageInfo entity)
     {
-        return eventService.RaisePageInfoUpdateEventAsync(ValidatePageInfo(entity, "entity"));
+        ValidatePageInfo(entity, "entity");
+
+        return eventService.RaisePageInfoUpdateEventAsync(entity);
     }
 
     public ValueTask RaisePageInfoDeleteEventAsync(PageInfo entity)
     {
-        return eventService.RaisePageInfoDeleteEventAsync(ValidatePageInfo(entity, "entity"));
+        ValidatePageInfo(entity, "entity");
+
+        return eventService.RaisePageInfoDeleteEventAsync(entity);
     }
 
-    private static PageInfo ValidatePageInfo(PageInfo pageInfo, string parameterName)
+    private static void ValidatePageInfo(PageInfo pageInfo, string parameterName) =>
+        ThrowIf(pageInfo == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (pageInfo == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-        return pageInfo;
+        if (condition)
+            throw new ValidationException(message);
     }
 }
