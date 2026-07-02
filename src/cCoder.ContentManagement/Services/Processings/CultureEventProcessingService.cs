@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
-using Culture = cCoder.Data.Models.CMS.Culture;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -8,25 +8,30 @@ internal class CultureEventProcessingService(ICultureEventService eventService) 
 {
     public ValueTask RaiseCultureAddEventAsync(Culture entity)
     {
-        return eventService.RaiseCultureAddEventAsync(ValidateCulture(entity, "entity"));
+        ValidateCulture(entity, "entity");
+
+        return eventService.RaiseCultureAddEventAsync(entity);
     }
 
     public ValueTask RaiseCultureUpdateEventAsync(Culture entity)
     {
-        return eventService.RaiseCultureUpdateEventAsync(ValidateCulture(entity, "entity"));
+        ValidateCulture(entity, "entity");
+
+        return eventService.RaiseCultureUpdateEventAsync(entity);
     }
 
     public ValueTask RaiseCultureDeleteEventAsync(Culture entity)
     {
-        return eventService.RaiseCultureDeleteEventAsync(ValidateCulture(entity, "entity"));
+        ValidateCulture(entity, "entity");
+
+        return eventService.RaiseCultureDeleteEventAsync(entity);
     }
 
     private static Culture ValidateCulture(Culture culture, string parameterName)
     {
         if ((object)culture == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
+
         return culture;
     }
 }

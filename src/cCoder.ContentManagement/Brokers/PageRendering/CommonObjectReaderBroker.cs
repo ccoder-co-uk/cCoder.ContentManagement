@@ -1,8 +1,6 @@
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Rendering.Models;
-using Component = cCoder.Data.Models.CMS.Component;
-using Resource = cCoder.Data.Models.CMS.Resource;
-using Script = cCoder.Data.Models.CMS.Script;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Rendering.Brokers;
 

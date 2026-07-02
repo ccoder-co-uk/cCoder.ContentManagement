@@ -1,6 +1,6 @@
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using PageRole = cCoder.Data.Models.Security.PageRole;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -9,10 +9,8 @@ internal partial class PageRoleService(
     IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IPageRoleService
 {
-    public IQueryable<PageRole> GetAll(bool ignoreFilters = false)
-    {
-        return pageRoleBroker.GetAllPageRoles(ignoreFilters);
-    }
+    public IQueryable<PageRole> GetAll(bool ignoreFilters = false) =>
+        pageRoleBroker.GetAllPageRoles(ignoreFilters);
 
     public async ValueTask<PageRole> AddAsync(PageRole pageRole)
     {
@@ -34,9 +32,7 @@ internal partial class PageRoleService(
     private static PageRole CreateStoragePageRole(PageRole pageRole)
     {
         if (pageRole == null)
-        {
             return null;
-        }
 
         return new PageRole
         {

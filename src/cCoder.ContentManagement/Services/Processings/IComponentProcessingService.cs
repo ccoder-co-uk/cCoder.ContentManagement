@@ -1,4 +1,5 @@
-using Component = cCoder.Data.Models.CMS.Component;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -14,7 +15,7 @@ public interface IComponentProcessingService
 
     ValueTask DeleteAsync(int id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Component>>> AddOrUpdate(IEnumerable<Component> items);
+    ValueTask<IEnumerable<Result<Component>>> AddOrUpdate(IEnumerable<Component> items);
 
     ValueTask DeleteAllAsync(IEnumerable<Component> items);
 }

@@ -1,4 +1,4 @@
-using Content = cCoder.Data.Models.CMS.Content;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 

@@ -1,5 +1,5 @@
 using cCoder.Eventing.Models;
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 

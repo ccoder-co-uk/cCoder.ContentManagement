@@ -1,4 +1,4 @@
-using Template = cCoder.Data.Models.CMS.Template;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 

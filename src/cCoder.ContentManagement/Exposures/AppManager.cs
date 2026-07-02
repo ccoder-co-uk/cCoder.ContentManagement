@@ -1,37 +1,25 @@
 using cCoder.ContentManagement.Services.Orchestrations;
-using App = cCoder.Data.Models.CMS.App;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class AppManager(IAppOrchestrationService appOrchestrationService) : IAppManager
 {
-    public App Get(int id, bool ignoreFilters = false)
-    {
-        return appOrchestrationService.Get(id);
-    }
+    public App Get(int id, bool ignoreFilters = false) =>
+        appOrchestrationService.Get(id);
 
-    public App GetByDomain(string domain, bool ignoreFilters = false)
-    {
-        return appOrchestrationService.GetByDomain(domain, ignoreFilters);
-    }
+    public App GetByDomain(string domain, bool ignoreFilters = false) =>
+        appOrchestrationService.GetByDomain(domain, ignoreFilters);
 
-    public IQueryable<App> GetAll(bool ignoreFilters = false)
-    {
-        return appOrchestrationService.GetAll(ignoreFilters);
-    }
+    public IQueryable<App> GetAll(bool ignoreFilters = false) =>
+        appOrchestrationService.GetAll(ignoreFilters);
 
-    public ValueTask<App> AddAsync(App app)
-    {
-        return appOrchestrationService.AddAsync(app);
-    }
+    public ValueTask<App> AddAsync(App app) =>
+        appOrchestrationService.AddAsync(app);
 
-    public ValueTask<App> UpdateAsync(App app)
-    {
-        return appOrchestrationService.UpdateAsync(app);
-    }
+    public ValueTask<App> UpdateAsync(App app) =>
+        appOrchestrationService.UpdateAsync(app);
 
-    public ValueTask DeleteAsync(int appId)
-    {
-        return appOrchestrationService.DeleteAsync(appId);
-    }
+    public ValueTask DeleteAsync(int appId) =>
+        appOrchestrationService.DeleteAsync(appId);
 }

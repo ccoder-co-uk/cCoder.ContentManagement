@@ -1,4 +1,5 @@
-using Script = cCoder.Data.Models.CMS.Script;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -14,7 +15,7 @@ public interface IScriptProcessingService
 
     ValueTask DeleteAsync(int id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Script>>> AddOrUpdate(IEnumerable<Script> items);
+    ValueTask<IEnumerable<Result<Script>>> AddOrUpdate(IEnumerable<Script> items);
 
     ValueTask DeleteAllAsync(IEnumerable<Script> items);
 }

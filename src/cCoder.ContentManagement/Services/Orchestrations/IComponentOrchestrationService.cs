@@ -1,4 +1,5 @@
-using Component = cCoder.Data.Models.CMS.Component;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -16,7 +17,7 @@ public interface IComponentOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Component>>> AddOrUpdate(IEnumerable<Component> items);
+    ValueTask<IEnumerable<Result<Component>>> AddOrUpdate(IEnumerable<Component> items);
 
     ValueTask ImportComponentsAsync(int appId, Component[] items);
 

@@ -40,4 +40,3 @@ public abstract class ODataModelBuilder
         Builder.ComplexType<AuditResultByProperty>();
     }
 }
-

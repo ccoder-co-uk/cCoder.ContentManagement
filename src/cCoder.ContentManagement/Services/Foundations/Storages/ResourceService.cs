@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Resource = cCoder.Data.Models.CMS.Resource;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -11,27 +11,21 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((Resource i) => i.Id == id);
-        }
 
         Resource resource = GetAll().FirstOrDefault((Resource i) => i.Id == id);
         if (resource != null)
-        {
             return resource;
-        }
+
         Resource resource2 = GetAll(ignoreFilters: true).FirstOrDefault((Resource i) => i.Id == id);
         if (resource2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<Resource> GetAll(bool ignoreFilters = false)
-    {
-        return resourceBroker.GetAllResources(ignoreFilters);
-    }
+    public IQueryable<Resource> GetAll(bool ignoreFilters = false) =>
+        resourceBroker.GetAllResources(ignoreFilters);
 
     public async ValueTask<Resource> AddAsync(Resource resource)
     {
@@ -98,9 +92,7 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
         }
 
         if (resource == null)
-        {
             return;
-        }
 
         authorizationBroker.Authorize(resource.AppId, "Resource_delete");
         await resourceBroker.DeleteResourceAsync(CreateStorageResource(resource));
@@ -109,9 +101,7 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
     private static Resource CreateStorageResource(Resource resource)
     {
         if (resource == null)
-        {
             return null;
-        }
 
         return new Resource
         {

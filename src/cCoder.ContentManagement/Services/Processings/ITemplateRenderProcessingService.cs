@@ -1,7 +1,6 @@
-using Config = cCoder.ContentManagement.Models.Config;
-using RenderParams = cCoder.ContentManagement.Models.RenderParams;
-using Template = cCoder.Data.Models.CMS.Template;
-using User = cCoder.Data.Models.Security.User;
+using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 

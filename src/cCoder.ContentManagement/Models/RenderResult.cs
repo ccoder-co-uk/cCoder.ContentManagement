@@ -34,8 +34,6 @@ public class RenderResult
 
     public int StatusCode { get; set; } = 200;
 
-    public dynamic KeyInfo()
-    {
-        return new { AppId, PageId, ParentId };
-    }
+    public dynamic KeyInfo() =>
+        new { AppId, PageId, ParentId };
 }

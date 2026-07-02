@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Culture = cCoder.Data.Models.CMS.Culture;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -14,27 +14,21 @@ internal partial class CultureService(
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((Culture i) => i.Id == id);
-        }
 
         Culture culture = GetAll().FirstOrDefault((Culture i) => i.Id == id);
         if ((object)culture != null)
-        {
             return culture;
-        }
+
         Culture culture2 = GetAll(ignoreFilters: true).FirstOrDefault((Culture i) => i.Id == id);
         if ((object)culture2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<Culture> GetAll(bool ignoreFilters = false)
-    {
-        return cultureBroker.GetAllCultures(ignoreFilters);
-    }
+    public IQueryable<Culture> GetAll(bool ignoreFilters = false) =>
+        cultureBroker.GetAllCultures(ignoreFilters);
 
     public async ValueTask<Culture> AddAsync(Culture culture)
     {
@@ -67,9 +61,7 @@ internal partial class CultureService(
     private static Culture CreateStorageCulture(Culture culture)
     {
         if (culture == null)
-        {
             return null;
-        }
 
         return new Culture
         {

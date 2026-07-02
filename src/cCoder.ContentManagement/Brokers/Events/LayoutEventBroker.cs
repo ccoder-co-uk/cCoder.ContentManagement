@@ -6,18 +6,12 @@ namespace cCoder.ContentManagement.Brokers.Events;
 
 public class LayoutEventBroker(IEventHub eventHub) : ILayoutEventBroker
 {
-    public ValueTask RaiseLayoutAddEventAsync(EventMessage<Layout> message)
-    {
-        return eventHub.RaiseEventAsync("layout_add", message);
-    }
+    public ValueTask RaiseLayoutAddEventAsync(EventMessage<Layout> message) =>
+        eventHub.RaiseEventAsync("layout_add", message);
 
-    public ValueTask RaiseLayoutUpdateEventAsync(EventMessage<Layout> message)
-    {
-        return eventHub.RaiseEventAsync("layout_update", message);
-    }
+    public ValueTask RaiseLayoutUpdateEventAsync(EventMessage<Layout> message) =>
+        eventHub.RaiseEventAsync("layout_update", message);
 
-    public ValueTask RaiseLayoutDeleteEventAsync(EventMessage<Layout> message)
-    {
-        return eventHub.RaiseEventAsync("layout_delete", message);
-    }
+    public ValueTask RaiseLayoutDeleteEventAsync(EventMessage<Layout> message) =>
+        eventHub.RaiseEventAsync("layout_delete", message);
 }

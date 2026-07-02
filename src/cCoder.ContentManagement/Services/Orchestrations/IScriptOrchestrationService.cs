@@ -1,4 +1,5 @@
-using Script = cCoder.Data.Models.CMS.Script;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -16,7 +17,7 @@ public interface IScriptOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Script>>> AddOrUpdate(IEnumerable<Script> items);
+    ValueTask<IEnumerable<Result<Script>>> AddOrUpdate(IEnumerable<Script> items);
 
     ValueTask ImportScriptsAsync(int appId, Script[] items);
 

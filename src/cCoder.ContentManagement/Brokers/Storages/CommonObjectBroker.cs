@@ -22,13 +22,17 @@ public class CommonObjectBroker(ICoreContextFactory coreContextFactory) : ICommo
         List<CommonObject> list = new List<CommonObject>();
         while (true)
         {
-            CommonObject[] array = (from c in coreDataContext.CommonObjects.AsNoTracking()
-                                    group c by new { c.Name, c.Culture, c.Key, c.Type } into c
-                                    select c.OrderByDescending((CommonObject v) => v.Version).First()).Skip(num).Take(pageSize).ToArray();
+            CommonObject[] array = coreDataContext.CommonObjects
+                .AsNoTracking()
+                .GroupBy(commonObject => new { commonObject.Name, commonObject.Culture, commonObject.Key, commonObject.Type })
+                .Select(group => group.OrderByDescending(version => version.Version).First())
+                .Skip(num)
+                .Take(pageSize)
+                .ToArray();
+
             if (array.Length == 0)
-            {
                 break;
-            }
+
             list.AddRange(array);
             num += pageSize;
         }
@@ -65,8 +69,6 @@ public class CommonObjectBroker(ICoreContextFactory coreContextFactory) : ICommo
         await coreDataContext.SaveChangesAsync();
     }
 
-    public int? GetAppId(CommonObject entity)
-    {
-        return null;
-    }
+    public int? GetAppId(CommonObject entity) =>
+        null;
 }

@@ -1,15 +1,13 @@
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using AppCulture = cCoder.Data.Models.CMS.AppCulture;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAuthorizationBroker authorizationBroker) : IAppCultureService
 {
-    public IQueryable<AppCulture> GetAll(bool ignoreFilters = false)
-    {
-        return appCultureBroker.GetAllAppCultures(ignoreFilters);
-    }
+    public IQueryable<AppCulture> GetAll(bool ignoreFilters = false) =>
+        appCultureBroker.GetAllAppCultures(ignoreFilters);
 
     public AppCulture Get(int appId, string cultureId, bool ignoreFilters = false)
     {
@@ -39,9 +37,7 @@ internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAu
     private static AppCulture CreateStorageAppCulture(AppCulture appCulture)
     {
         if (appCulture == null)
-        {
             return null;
-        }
 
         return new AppCulture
         {

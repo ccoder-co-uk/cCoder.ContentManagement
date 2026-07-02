@@ -1,4 +1,4 @@
-using Script = cCoder.Data.Models.CMS.Script;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 

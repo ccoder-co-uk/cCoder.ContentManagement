@@ -1,4 +1,5 @@
 using System.Security;
+using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Brokers;
 using cCoder.Data.Extensions;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using App = cCoder.Data.Models.CMS.App;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
@@ -28,17 +29,13 @@ public class AppController : ODataController
     }
 
     [HttpGet]
-    public IActionResult IsAdmin([FromRoute] int key, string userName)
-    {
-        return Ok(AuthorizationBroker.IsAdmin(key, userName));
-    }
+    public IActionResult IsAdmin([FromRoute] int key, string userName) =>
+        Ok(AuthorizationBroker.IsAdmin(key, userName));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
-    public IActionResult Users([FromRoute] int key)
-    {
-        return Ok(Service.GetAppUsers(key));
-    }
+    public IActionResult Users([FromRoute] int key) =>
+        Ok(Service.GetAppUsers(key));
 
     [HttpPost]
     public async Task<IActionResult> UpdatePageOrderAsync([FromRoute] int key, ODataActionParameters p)
@@ -49,18 +46,14 @@ public class AppController : ODataController
     }
 
     [HttpGet]
-    public IActionResult GetMetadata()
-    {
-        return Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(App)) : new MetadataContainer(typeof(App), isEntity: true, hasEndpoint: true));
-    }
+    public IActionResult GetMetadata() =>
+        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(App)) : new MetadataContainer(typeof(App), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
-    public IActionResult GetAll(ODataQueryOptions<App> queryOptions)
-    {
-        return Ok(Service.GetAll());
-    }
+    public IActionResult GetAll(ODataQueryOptions<App> queryOptions) =>
+        Ok(Service.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -83,9 +76,8 @@ public class AppController : ODataController
     public async Task<IActionResult> Post([FromBody] App entity)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
+
         return Ok(CreateResponseApp(await Service.AddAsync(entity)));
     }
 
@@ -94,9 +86,8 @@ public class AppController : ODataController
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] App entity)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
+
         entity.Id = key;
         return Ok(CreateResponseApp(await Service.UpdateAsync(entity)));
     }
@@ -106,9 +97,8 @@ public class AppController : ODataController
     {
         App originalEntity = Service.Get(key);
         if (originalEntity == null)
-        {
             return NotFound();
-        }
+
         delta.Patch(originalEntity);
         return Ok(CreateResponseApp(await Service.UpdateAsync(originalEntity)));
     }
@@ -123,9 +113,7 @@ public class AppController : ODataController
     private static App CreateResponseApp(App app)
     {
         if (app == null)
-        {
             return null;
-        }
 
         return new App
         {
@@ -139,4 +127,3 @@ public class AppController : ODataController
         };
     }
 }
-

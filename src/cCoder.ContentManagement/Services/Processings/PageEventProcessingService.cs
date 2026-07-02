@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
-using Page = cCoder.Data.Models.CMS.Page;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -8,25 +8,31 @@ internal class PageEventProcessingService(IPageEventService eventService) : IPag
 {
     public ValueTask RaisePageAddEventAsync(Page entity)
     {
-        return eventService.RaisePageAddEventAsync(ValidatePage(entity, "entity"));
+        ValidatePage(entity, "entity");
+
+        return eventService.RaisePageAddEventAsync(entity);
     }
 
     public ValueTask RaisePageUpdateEventAsync(Page entity)
     {
-        return eventService.RaisePageUpdateEventAsync(ValidatePage(entity, "entity"));
+        ValidatePage(entity, "entity");
+
+        return eventService.RaisePageUpdateEventAsync(entity);
     }
 
     public ValueTask RaisePageDeleteEventAsync(Page entity)
     {
-        return eventService.RaisePageDeleteEventAsync(ValidatePage(entity, "entity"));
+        ValidatePage(entity, "entity");
+
+        return eventService.RaisePageDeleteEventAsync(entity);
     }
 
-    private static Page ValidatePage(Page page, string parameterName)
+    private static void ValidatePage(Page page, string parameterName) =>
+        ThrowIf(page == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (page == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-        return page;
+        if (condition)
+            throw new ValidationException(message);
     }
 }

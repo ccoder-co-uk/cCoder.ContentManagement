@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using Resource = cCoder.Data.Models.CMS.Resource;
-using User = cCoder.Data.Models.Security.User;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -16,10 +17,8 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
         return service.Get(id);
     }
 
-    public IQueryable<Resource> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<Resource> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
     public ValueTask<Resource> AddAsync(Resource entity)
     {
@@ -44,19 +43,17 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
         ValidateId(id, "id");
         Resource resource = Get(id);
         if (resource == null)
-        {
             return;
-        }
+
         if (string.IsNullOrEmpty(resource.Culture))
         {
-            Resource[] allVersions = (from r in GetAll()
-                                      where r.AppId == resource.AppId && r.Key == resource.Key && r.Name == resource.Name
-                                      select r).ToArray();
+            Resource[] allVersions = GetAll()
+                .Where(item => item.AppId == resource.AppId && item.Key == resource.Key && item.Name == resource.Name)
+                .ToArray();
+
             Resource[] array = allVersions;
             foreach (Resource version in array)
-            {
                 await service.DeleteAsync(version.Id);
-            }
         }
         else
         {
@@ -64,16 +61,16 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
         }
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items)
+    public async ValueTask<IEnumerable<Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items)
     {
         ValidateResources(items, "items");
-        List<cCoder.ContentManagement.Models.Result<Resource>> results = new List<cCoder.ContentManagement.Models.Result<Resource>>();
+        List<Result<Resource>> results = new List<Result<Resource>>();
         foreach (Resource item in items)
         {
             try
             {
                 Resource savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new cCoder.ContentManagement.Models.Result<Resource>
+                results.Add(new Result<Resource>
                 {
                     Success = true,
                     Item = savedItem,
@@ -82,7 +79,7 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<Resource>
+                results.Add(new Result<Resource>
                 {
                     Success = false,
                     Item = item,
@@ -101,19 +98,17 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
         {
             string itemId = item.Id.ToString();
             if (deletedIds.Contains(itemId))
-            {
                 continue;
-            }
+
             if (string.IsNullOrEmpty(item.Culture))
             {
-                Resource[] allVersions = (from r in GetAll()
-                                          where r.AppId == item.AppId && r.Key == item.Key && r.Name == item.Name
-                                          select r).ToArray();
+                Resource[] allVersions = GetAll()
+                    .Where(resource => resource.AppId == item.AppId && resource.Key == item.Key && resource.Name == item.Name)
+                    .ToArray();
+
                 Resource[] array = allVersions;
                 foreach (Resource version in array)
-                {
                     deletedIds.Add(version.Id.ToString());
-                }
             }
             else
             {
@@ -123,27 +118,18 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
         }
     }
 
-    private static void ValidateId(int id, string parameterName)
-    {
-        if (id < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateId(int id, string parameterName) =>
+        ThrowIf(id < 1, parameterName + " must be greater than 0.");
 
-    private static void ValidateResource(Resource resource, string parameterName)
-    {
-        if (resource == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateResource(Resource resource, string parameterName) =>
+        ThrowIf(resource == null, parameterName + " is required.");
 
-    private static void ValidateResources(IEnumerable<Resource> resources, string parameterName)
+    private static void ValidateResources(IEnumerable<Resource> resources, string parameterName) =>
+        ThrowIf(resources == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (resources == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }

@@ -92,9 +92,7 @@ public static partial class IServiceCollectionExtensions
             if (builder is null
                 && configuration.IncludeLegacyCoreContext
                 && !string.Equals(rootPath, "Api/Core", StringComparison.OrdinalIgnoreCase))
-            {
-                _ = options.AddRouteComponents("Api/Core", routeModel, batchHandler);
-            }
+                options.AddRouteComponents("Api/Core", routeModel, batchHandler);
         });
     }
 
@@ -222,4 +220,3 @@ public static partial class IServiceCollectionExtensions
         services.AddSignalR();
     }
 }
-

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
-using PageRole = cCoder.Data.Models.Security.PageRole;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -8,20 +8,24 @@ internal class PageRoleEventProcessingService(IPageRoleEventService eventService
 {
     public ValueTask RaisePageRoleAddEventAsync(PageRole entity)
     {
-        return eventService.RaisePageRoleAddEventAsync(ValidatePageRole(entity, "entity"));
+        ValidatePageRole(entity, "entity");
+
+        return eventService.RaisePageRoleAddEventAsync(entity);
     }
 
     public ValueTask RaisePageRoleDeleteEventAsync(PageRole entity)
     {
-        return eventService.RaisePageRoleDeleteEventAsync(ValidatePageRole(entity, "entity"));
+        ValidatePageRole(entity, "entity");
+
+        return eventService.RaisePageRoleDeleteEventAsync(entity);
     }
 
-    private static PageRole ValidatePageRole(PageRole pageRole, string parameterName)
+    private static void ValidatePageRole(PageRole pageRole, string parameterName) =>
+        ThrowIf(pageRole == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (pageRole == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-        return pageRole;
+        if (condition)
+            throw new ValidationException(message);
     }
 }

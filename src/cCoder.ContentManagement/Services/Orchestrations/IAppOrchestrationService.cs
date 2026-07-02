@@ -1,5 +1,6 @@
-using App = cCoder.Data.Models.CMS.App;
-using User = cCoder.Data.Models.Security.User;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -17,7 +18,7 @@ public interface IAppOrchestrationService
 
     ValueTask DeleteAsync(int id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<App>>> AddOrUpdate(IEnumerable<App> items);
+    ValueTask<IEnumerable<Result<App>>> AddOrUpdate(IEnumerable<App> items);
 
     ValueTask DeleteAllAsync(IEnumerable<App> items);
 

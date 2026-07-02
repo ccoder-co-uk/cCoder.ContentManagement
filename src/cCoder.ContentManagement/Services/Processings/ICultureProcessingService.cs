@@ -1,4 +1,5 @@
-using Culture = cCoder.Data.Models.CMS.Culture;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -14,7 +15,7 @@ public interface ICultureProcessingService
 
     ValueTask DeleteAsync(string id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Culture>>> AddOrUpdate(IEnumerable<Culture> items);
+    ValueTask<IEnumerable<Result<Culture>>> AddOrUpdate(IEnumerable<Culture> items);
 
     ValueTask DeleteAllAsync(IEnumerable<Culture> items);
 }

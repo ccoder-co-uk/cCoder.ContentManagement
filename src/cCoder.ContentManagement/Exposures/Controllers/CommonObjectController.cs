@@ -1,4 +1,5 @@
 using System.Security;
+using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using System.Text.Json;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.Data.Extensions;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using CommonObject = cCoder.Data.Models.CommonObject;
+using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
@@ -19,42 +20,32 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
-    public IActionResult Latest(string type)
-    {
-        return Ok(Service.Latest(type));
-    }
+    public IActionResult Latest(string type) =>
+        Ok(Service.Latest(type));
 
     [HttpPost]
     public async Task<IActionResult> ImportAsync([FromBody] JsonElement payload)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
 
         IEnumerable<CommonObject> items = DeserializeCommonObjects(payload);
 
         if (items == null)
-        {
             return BadRequest("A common object payload is required.");
-        }
 
         return Ok(await Service.ImportAsync(items));
     }
 
     [HttpGet]
-    public IActionResult GetMetadata()
-    {
-        return Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(CommonObject)) : new MetadataContainer(typeof(CommonObject), isEntity: true, hasEndpoint: true));
-    }
+    public IActionResult GetMetadata() =>
+        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(CommonObject)) : new MetadataContainer(typeof(CommonObject), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
-    public IActionResult GetAll(ODataQueryOptions<CommonObject> queryOptions)
-    {
-        return Ok(Service.GetAll());
-    }
+    public IActionResult GetAll(ODataQueryOptions<CommonObject> queryOptions) =>
+        Ok(Service.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -77,9 +68,8 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     public async Task<IActionResult> Post([FromBody] CommonObject entity)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
+
         return Ok(await Service.AddAsync(entity));
     }
 
@@ -88,9 +78,8 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] CommonObject entity)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
+
         entity.Id = key;
         return Ok(await Service.UpdateAsync(entity));
     }
@@ -100,9 +89,8 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     {
         CommonObject originalEntity = Service.Get(key);
         if (originalEntity == null)
-        {
             return NotFound();
-        }
+
         delta.Patch(originalEntity);
         return Ok(await Service.UpdateAsync(originalEntity));
     }
@@ -127,8 +115,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
                 itemsPayload.GetRawText(),
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
             JsonValueKind.Null => null,
-            _ => null
+            var ignoredRequest => null
         };
     }
 }
-

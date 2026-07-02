@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Processings;
-using Config = cCoder.ContentManagement.Models.Config;
-using User = cCoder.Data.Models.Security.User;
+using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -19,29 +19,23 @@ internal sealed class TemplateRenderOrchestrationService(
         return templateRenderProcessingService.Render(appId, name, model, user, culture, config, log);
     }
 
-    private static void ValidateAppId(int appId, string parameterName)
-    {
-        if (appId < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateAppId(int appId, string parameterName) =>
+        ThrowIf(appId < 1, parameterName + " must be greater than 0.");
 
-    private static void ValidateTemplateName(string name, string parameterName)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateTemplateName(string name, string parameterName) =>
+        ThrowIf(string.IsNullOrWhiteSpace(name), parameterName + " is required.");
 
     private static User ValidateUser(User user, string parameterName)
     {
         if (user == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return user;
+    }
+
+    private static void ThrowIf(bool condition, string message)
+    {
+        if (condition)
+            throw new ValidationException(message);
     }
 }

@@ -8,25 +8,31 @@ internal class AppEventProcessingService(IAppEventService eventService) : IAppEv
 {
     public ValueTask RaiseAppAddEventAsync(App app)
     {
-        return eventService.RaiseAppAddEventAsync(ValidateApp(app, "app"));
+        ValidateApp(app, "app");
+
+        return eventService.RaiseAppAddEventAsync(app);
     }
 
     public ValueTask RaiseAppDeleteEventAsync(App app)
     {
-        return eventService.RaiseAppDeleteEventAsync(ValidateApp(app, "app"));
+        ValidateApp(app, "app");
+
+        return eventService.RaiseAppDeleteEventAsync(app);
     }
 
     public ValueTask RaiseAppUpdateEventAsync(App app)
     {
-        return eventService.RaiseAppUpdateEventAsync(ValidateApp(app, "app"));
+        ValidateApp(app, "app");
+
+        return eventService.RaiseAppUpdateEventAsync(app);
     }
 
-    private static App ValidateApp(App app, string parameterName)
+    private static void ValidateApp(App app, string parameterName) =>
+        ThrowIf(app == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (app == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-        return app;
+        if (condition)
+            throw new ValidationException(message);
     }
 }

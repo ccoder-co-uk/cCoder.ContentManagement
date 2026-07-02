@@ -57,23 +57,23 @@ public sealed partial class AppControllerTests(WebAcceptanceFixture fixture)
         scopedConnectionString.Should().Contain("accept", because: scopedConnectionString);
 
         App app = await core.AddAppAsync(new App
-            {
-                Name = Unique("AcceptanceApp"),
-                Domain = $"{Unique("acceptance")}.local",
-                DefaultTheme = "Default",
-                DefaultCultureId = string.Empty,
-                TenantId = Unique("tenant"),
-                ConfigJson = "{}",
-            });
+        {
+            Name = Unique("AcceptanceApp"),
+            Domain = $"{Unique("acceptance")}.local",
+            DefaultTheme = "Default",
+            DefaultCultureId = string.Empty,
+            TenantId = Unique("tenant"),
+            ConfigJson = "{}",
+        });
 
         Role role = await core.AddRoleAsync(new Role
-            {
-                Id = Guid.NewGuid(),
-                AppId = app.Id,
-                Name = Unique("AcceptanceRole"),
-                Description = "Acceptance role",
-                Privs = string.Join(',', privileges),
-            });
+        {
+            Id = Guid.NewGuid(),
+            AppId = app.Id,
+            Name = Unique("AcceptanceRole"),
+            Description = "Acceptance role",
+            Privs = string.Join(',', privileges),
+        });
 
         await core.AddUserRoleAsync(new UserRole { RoleId = role.Id, UserId = "Guest" });
 
@@ -335,12 +335,3 @@ public sealed partial class AppControllerTests(WebAcceptanceFixture fixture)
                 .Take(count)]);
     }
 }
-
-
-
-
-
-
-
-
-

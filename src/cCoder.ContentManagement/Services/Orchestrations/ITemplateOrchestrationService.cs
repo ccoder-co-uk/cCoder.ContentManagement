@@ -1,4 +1,5 @@
-using Template = cCoder.Data.Models.CMS.Template;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -16,7 +17,7 @@ public interface ITemplateOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Template>>> AddOrUpdate(IEnumerable<Template> items);
+    ValueTask<IEnumerable<Result<Template>>> AddOrUpdate(IEnumerable<Template> items);
 
     ValueTask ImportTemplatesAsync(int appId, Template[] items);
 

@@ -87,9 +87,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent("app_update", async (IAppCultureOrchestrationService service, App app) =>
         {
             if (app.Cultures == null)
-            {
                 return;
-            }
 
             AppCulture[] cultures = app.Cultures.ToArray();
             Array.ForEach(cultures, culture => culture.AppId = app.Id);
@@ -109,9 +107,8 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
                 .ToArray();
 
             if (culturesToDelete.Length > 0)
-            {
                 await service.DeleteAllAsync(culturesToDelete);
-            }
+
         });
         eventHubBroker.ListenToEvent("app_update", async (IComponentOrchestrationService service, App app) =>
         {

@@ -1,15 +1,14 @@
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using AppCulture = cCoder.Data.Models.CMS.AppCulture;
 using Microsoft.EntityFrameworkCore;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal class AppCultureProcessingService(IAppCultureService service) : IAppCultureProcessingService
 {
-    public IQueryable<AppCulture> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<AppCulture> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
     public async ValueTask<AppCulture> AddAsync(AppCulture entity)
     {
@@ -28,16 +27,14 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
     {
         AppCulture dbVersion = service.Get(link.AppId, link.CultureId);
         if (dbVersion == null)
-        {
             throw new InvalidOperationException("The app culture does not exist.");
-        }
 
         await service.DeleteAsync(dbVersion);
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<AppCulture>>> AddOrUpdate(IEnumerable<AppCulture> items)
+    public async ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdate(IEnumerable<AppCulture> items)
     {
-        List<cCoder.ContentManagement.Models.Result<AppCulture>> results = [];
+        List<Result<AppCulture>> results = [];
 
         foreach (AppCulture item in items)
         {
@@ -45,7 +42,7 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
             {
                 AppCulture existing = service.Get(item.AppId, item.CultureId, ignoreFilters: true);
 
-                results.Add(new cCoder.ContentManagement.Models.Result<AppCulture>
+                results.Add(new Result<AppCulture>
                 {
                     Id = $"{item.AppId}:{item.CultureId}",
                     Success = true,
@@ -55,7 +52,7 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<AppCulture>
+                results.Add(new Result<AppCulture>
                 {
                     Id = $"{item.AppId}:{item.CultureId}",
                     Success = false,
@@ -71,8 +68,6 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
     public async ValueTask DeleteAllAsync(IEnumerable<AppCulture> items)
     {
         foreach (AppCulture item in items)
-        {
             await DeleteAsync(item);
-        }
     }
 }

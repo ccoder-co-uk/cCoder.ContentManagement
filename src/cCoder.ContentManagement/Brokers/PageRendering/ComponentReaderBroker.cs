@@ -10,9 +10,9 @@ internal sealed class ComponentReaderBroker(ICoreContextFactory coreContextFacto
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return (from component in coreDataContext.Components.IgnoreQueryFilters()
-                where component.AppId == appId
-                select component)
+        return coreDataContext.Components
+            .IgnoreQueryFilters()
+            .Where(component => component.AppId == appId)
             .AsNoTracking()
             .ToArray();
     }

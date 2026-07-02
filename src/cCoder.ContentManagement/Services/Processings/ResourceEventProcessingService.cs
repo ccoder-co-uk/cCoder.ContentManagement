@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
-using Resource = cCoder.Data.Models.CMS.Resource;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -8,25 +8,31 @@ internal class ResourceEventProcessingService(IResourceEventService eventService
 {
     public ValueTask RaiseResourceAddEventAsync(Resource entity)
     {
-        return eventService.RaiseResourceAddEventAsync(ValidateResource(entity, "entity"));
+        ValidateResource(entity, "entity");
+
+        return eventService.RaiseResourceAddEventAsync(entity);
     }
 
     public ValueTask RaiseResourceUpdateEventAsync(Resource entity)
     {
-        return eventService.RaiseResourceUpdateEventAsync(ValidateResource(entity, "entity"));
+        ValidateResource(entity, "entity");
+
+        return eventService.RaiseResourceUpdateEventAsync(entity);
     }
 
     public ValueTask RaiseResourceDeleteEventAsync(Resource entity)
     {
-        return eventService.RaiseResourceDeleteEventAsync(ValidateResource(entity, "entity"));
+        ValidateResource(entity, "entity");
+
+        return eventService.RaiseResourceDeleteEventAsync(entity);
     }
 
-    private static Resource ValidateResource(Resource resource, string parameterName)
+    private static void ValidateResource(Resource resource, string parameterName) =>
+        ThrowIf(resource == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (resource == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-        return resource;
+        if (condition)
+            throw new ValidationException(message);
     }
 }

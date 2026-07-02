@@ -2,11 +2,10 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using CommonObject = cCoder.Data.Models.CommonObject;
-using Component = cCoder.Data.Models.CMS.Component;
-using Resource = cCoder.Data.Models.CMS.Resource;
-using Script = cCoder.Data.Models.CMS.Script;
-using User = cCoder.Data.Models.Security.User;
+using cCoder.Data.Models;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -20,10 +19,8 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
         return service.Get(id);
     }
 
-    public IQueryable<CommonObject> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<CommonObject> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
     public IEnumerable<CommonObject> Latest(string type)
     {
@@ -32,12 +29,12 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
             .Where(item => item.Type == type);
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>>> ImportAsync(IEnumerable<CommonObject> items)
+    public async ValueTask<IEnumerable<Result<CommonObject>>> ImportAsync(IEnumerable<CommonObject> items)
     {
         ValidateCommonObjects(items, "items");
         CommonObject[] commonObjects = (items as CommonObject[]) ?? items.ToArray();
         IEnumerable<string> types = commonObjects.Select((CommonObject i) => i.Type).Distinct();
-        List<cCoder.ContentManagement.Models.Result<CommonObject>> results = new List<cCoder.ContentManagement.Models.Result<CommonObject>>();
+        List<Result<CommonObject>> results = new List<Result<CommonObject>>();
         List<CommonObject> adds = new List<CommonObject>();
         List<CommonObject> updates = new List<CommonObject>();
         foreach (string type in types)
@@ -83,10 +80,10 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
         authorizationBroker.Authorize(null, "commonobject_create");
         authorizationBroker.Authorize(null, "commonobject_update");
         int newVersionCount = service.GetAll().Count((CommonObject c) => c.Name == entity.Name && c.Type == entity.Type && c.Culture == entity.Culture && c.Key == entity.Key) + 1;
-        int newVersionFromField = (from c in service.GetAll()
-                                   where c.Name == entity.Name && c.Type == entity.Type && c.Culture == entity.Culture && c.Key == entity.Key
-                                   orderby c.Version descending
-                                   select c).FirstOrDefault()?.Version ?? 1;
+        int newVersionFromField = service.GetAll()
+            .Where(item => item.Name == entity.Name && item.Type == entity.Type && item.Culture == entity.Culture && item.Key == entity.Key)
+            .OrderByDescending(item => item.Version)
+            .FirstOrDefault()?.Version ?? 1;
         entity.Id = 0;
         entity.Version = ((newVersionCount > newVersionFromField) ? newVersionCount : (newVersionFromField + 1));
         entity.CreatedOn = DateTimeOffset.Now;
@@ -97,7 +94,7 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
         if (entity.Type.ToLowerInvariant() == "core/component")
         {
             cache.Set("component|" + entity.Name.ToLower(), jsonBroker.ParseJson<Component>(entity.Json));
-            cCoder.Data.Models.CommonObject latestSetObject = cache.LatestSet.First((cCoder.Data.Models.CommonObject r) => r.Name.ToLowerInvariant() == entity.Name.ToLowerInvariant() && r.Type == "Core/Component");
+            CommonObject latestSetObject = cache.LatestSet.First((CommonObject r) => r.Name.ToLowerInvariant() == entity.Name.ToLowerInvariant() && r.Type == "Core/Component");
             latestSetObject.Version = entity.Version;
             latestSetObject.Key = entity.Key;
             latestSetObject.Type = entity.Type;
@@ -112,7 +109,7 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
         else if (entity.Type.ToLowerInvariant() == "core/resource")
         {
             cache.Set($"resource|{entity.Key?.ToLower() ?? string.Empty}-{entity.Name?.ToLower() ?? string.Empty}-{entity.Culture?.ToLower() ?? string.Empty}", jsonBroker.ParseJson<Resource>(entity.Json));
-            cCoder.Data.Models.CommonObject latestSetObject2 = cache.LatestSet.First((cCoder.Data.Models.CommonObject r) => r.Name.ToLowerInvariant() == entity.Name.ToLowerInvariant() && r.Key.ToLowerInvariant() == entity.Key.ToLowerInvariant() && r.Name == entity.Name.ToLowerInvariant() && r.Culture.ToLowerInvariant() == entity.Culture.ToLowerInvariant() && r.Type == "Core/Resource");
+            CommonObject latestSetObject2 = cache.LatestSet.First((CommonObject r) => r.Name.ToLowerInvariant() == entity.Name.ToLowerInvariant() && r.Key.ToLowerInvariant() == entity.Key.ToLowerInvariant() && r.Name == entity.Name.ToLowerInvariant() && r.Culture.ToLowerInvariant() == entity.Culture.ToLowerInvariant() && r.Type == "Core/Resource");
             latestSetObject2.Version = entity.Version;
             latestSetObject2.Key = entity.Key;
             latestSetObject2.Type = entity.Type;
@@ -126,7 +123,7 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
         }
         else if (entity.Type.ToLowerInvariant() == "core/script")
         {
-            cCoder.Data.Models.CommonObject latestSetObject3 = cache.LatestSet.First((cCoder.Data.Models.CommonObject r) => r.Name.ToLowerInvariant() == entity.Name.ToLowerInvariant() && r.Type == "Core/Script");
+            CommonObject latestSetObject3 = cache.LatestSet.First((CommonObject r) => r.Name.ToLowerInvariant() == entity.Name.ToLowerInvariant() && r.Type == "Core/Script");
             latestSetObject3.Version = entity.Version;
             latestSetObject3.Key = entity.Key;
             latestSetObject3.Type = entity.Type;
@@ -149,16 +146,16 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
         await service.DeleteAsync(id);
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>>> AddOrUpdate(IEnumerable<CommonObject> items)
+    public async ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdate(IEnumerable<CommonObject> items)
     {
         ValidateCommonObjects(items, "items");
-        List<cCoder.ContentManagement.Models.Result<CommonObject>> results = new List<cCoder.ContentManagement.Models.Result<CommonObject>>();
+        List<Result<CommonObject>> results = new List<Result<CommonObject>>();
         foreach (CommonObject item in items)
         {
             try
             {
                 CommonObject savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new cCoder.ContentManagement.Models.Result<CommonObject>
+                results.Add(new Result<CommonObject>
                 {
                     Success = true,
                     Item = savedItem,
@@ -167,7 +164,7 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<CommonObject>
+                results.Add(new Result<CommonObject>
                 {
                     Success = false,
                     Item = item,
@@ -182,41 +179,24 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
     {
         ValidateCommonObjects(items, "items");
         foreach (CommonObject item in items)
-        {
             await DeleteAsync(item.Id);
-        }
     }
 
-    private static void ValidateId(int id, string parameterName)
-    {
-        if (id < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateId(int id, string parameterName) =>
+        ThrowIf(id < 1, parameterName + " must be greater than 0.");
 
-    private static void ValidateType(string type, string parameterName)
-    {
-        if (string.IsNullOrWhiteSpace(type))
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateType(string type, string parameterName) =>
+        ThrowIf(string.IsNullOrWhiteSpace(type), parameterName + " is required.");
 
-    private static void ValidateCommonObject(CommonObject commonObject, string parameterName)
-    {
-        if (commonObject == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateCommonObject(CommonObject commonObject, string parameterName) =>
+        ThrowIf(commonObject == null, parameterName + " is required.");
 
-    private static void ValidateCommonObjects(IEnumerable<CommonObject> commonObjects, string parameterName)
+    private static void ValidateCommonObjects(IEnumerable<CommonObject> commonObjects, string parameterName) =>
+        ThrowIf(commonObjects == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (commonObjects == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }
-

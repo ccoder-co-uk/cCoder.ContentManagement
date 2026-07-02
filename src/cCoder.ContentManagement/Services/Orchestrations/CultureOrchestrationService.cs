@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Processings;
-using Culture = cCoder.Data.Models.CMS.Culture;
-using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.CMS.Culture>;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -41,7 +41,7 @@ internal class CultureOrchestrationService(
         await processingService.DeleteAsync(id);
     }
 
-    public ValueTask<IEnumerable<Result>> AddOrUpdate(IEnumerable<Culture> items) =>
+    public ValueTask<IEnumerable<Result<Culture>>> AddOrUpdate(IEnumerable<Culture> items) =>
         processingService.AddOrUpdate(ValidateCultures(items, "items"));
 
     public ValueTask DeleteAllAsync(IEnumerable<Culture> items) =>
@@ -50,9 +50,7 @@ internal class CultureOrchestrationService(
     private static string ValidateId(string id, string parameterName)
     {
         if (string.IsNullOrWhiteSpace(id))
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return id;
     }
@@ -60,9 +58,7 @@ internal class CultureOrchestrationService(
     private static Culture ValidateCulture(Culture culture, string parameterName)
     {
         if (culture == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return culture;
     }
@@ -70,9 +66,7 @@ internal class CultureOrchestrationService(
     private static IEnumerable<Culture> ValidateCultures(IEnumerable<Culture> cultures, string parameterName)
     {
         if (cultures == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return cultures;
     }

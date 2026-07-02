@@ -1,4 +1,5 @@
-using PackageItem = cCoder.Data.Models.Packaging.PackageItem;
+using cCoder.Data.Models.Packaging;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -14,7 +15,7 @@ public interface IPackageItemProcessingService
 
     ValueTask DeleteAsync(Guid id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<PackageItem>>> AddOrUpdate(IEnumerable<PackageItem> items);
+    ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdate(IEnumerable<PackageItem> items);
 
     ValueTask DeleteAllAsync(IEnumerable<PackageItem> items);
 }

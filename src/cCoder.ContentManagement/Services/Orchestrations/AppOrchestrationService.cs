@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Brokers;
 using Microsoft.EntityFrameworkCore;
 using cCoder.ContentManagement.Services.Processings;
-using App = cCoder.Data.Models.CMS.App;
-using User = cCoder.Data.Models.Security.User;
-using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.CMS.App>;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -48,19 +48,15 @@ internal class AppOrchestrationService(
             .FirstOrDefault(foundApp => foundApp.Id == id);
 
         if (app?.Roles?.Any() == true)
-        {
             authorizationBroker.Authorize(id, "app_delete");
-        }
 
         if (app != null)
-        {
             await eventService.RaiseAppDeleteEventAsync(app);
-        }
 
         await processingService.DeleteAsync(id);
     }
 
-    public ValueTask<IEnumerable<Result>> AddOrUpdate(IEnumerable<App> items) =>
+    public ValueTask<IEnumerable<Result<App>>> AddOrUpdate(IEnumerable<App> items) =>
         processingService.AddOrUpdate(ValidateApps(items, "items"));
 
     public ValueTask DeleteAllAsync(IEnumerable<App> items) =>
@@ -77,39 +73,31 @@ internal class AppOrchestrationService(
 
     public App ResolveCurrentApp() => processingService.ResolveCurrentApp();
 
-    private static void ValidateId(int id, string parameterName)
-    {
-        if (id < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateId(int id, string parameterName) =>
+        ThrowIf(id < 1, parameterName + " must be greater than 0.");
 
     private static App ValidateApp(App app, string parameterName)
     {
         if (app == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return app;
     }
 
-    private static void ValidateDomain(string domain, string parameterName)
-    {
-        if (string.IsNullOrWhiteSpace(domain))
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateDomain(string domain, string parameterName) =>
+        ThrowIf(string.IsNullOrWhiteSpace(domain), parameterName + " is required.");
 
     private static IEnumerable<App> ValidateApps(IEnumerable<App> apps, string parameterName)
     {
         if (apps == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return apps;
+    }
+
+    private static void ThrowIf(bool condition, string message)
+    {
+        if (condition)
+            throw new ValidationException(message);
     }
 }

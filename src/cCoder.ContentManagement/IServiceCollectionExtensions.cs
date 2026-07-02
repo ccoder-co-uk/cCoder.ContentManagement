@@ -195,7 +195,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IScriptService, ScriptService>();
         services.AddTransient<ISubmissionService, SubmissionService>();
         services.AddTransient<ITemplateService, TemplateService>();
-        services.AddTransient<cCoder.ContentManagement.Services.ICurrentAppResolver, CurrentAppResolver>();
+        services.AddTransient<ICurrentAppResolver, CurrentAppResolver>();
         services.AddTransient<IContentManagementMetadataTypeService, ContentManagementMetadataTypeService>();
         services.AddTransient<IRenderFileContentService, RenderFileContentService>();
         services.AddTransient<IResourceProvider, CoreResourceProvider>();

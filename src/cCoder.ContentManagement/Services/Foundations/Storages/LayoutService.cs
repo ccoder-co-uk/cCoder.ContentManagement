@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Layout = cCoder.Data.Models.CMS.Layout;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -11,27 +11,21 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((Layout i) => i.Id == id);
-        }
 
         Layout layout = GetAll().FirstOrDefault((Layout i) => i.Id == id);
         if (layout != null)
-        {
             return layout;
-        }
+
         Layout layout2 = GetAll(ignoreFilters: true).FirstOrDefault((Layout i) => i.Id == id);
         if (layout2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<Layout> GetAll(bool ignoreFilters = false)
-    {
-        return layoutBroker.GetAllLayouts(ignoreFilters);
-    }
+    public IQueryable<Layout> GetAll(bool ignoreFilters = false) =>
+        layoutBroker.GetAllLayouts(ignoreFilters);
 
     public async ValueTask<Layout> AddAsync(Layout layout)
     {
@@ -96,9 +90,7 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
         }
 
         if (layout == null)
-        {
             return;
-        }
 
         authorizationBroker.Authorize(layout.AppId, "Layout_delete");
         await layoutBroker.DeleteLayoutAsync(CreateStorageLayout(layout));
@@ -107,9 +99,7 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
     private static Layout CreateStorageLayout(Layout layout)
     {
         if (layout == null)
-        {
             return null;
-        }
 
         return new Layout
         {

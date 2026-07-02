@@ -1,5 +1,5 @@
 using cCoder.Eventing.Models;
-using CommonObject = cCoder.Data.Models.CommonObject;
+using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 

@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Script = cCoder.Data.Models.CMS.Script;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -11,27 +11,21 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((Script i) => i.Id == id);
-        }
 
         Script script = GetAll().FirstOrDefault((Script i) => i.Id == id);
         if (script != null)
-        {
             return script;
-        }
+
         Script script2 = GetAll(ignoreFilters: true).FirstOrDefault((Script i) => i.Id == id);
         if (script2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<Script> GetAll(bool ignoreFilters = false)
-    {
-        return scriptBroker.GetAllScripts(ignoreFilters);
-    }
+    public IQueryable<Script> GetAll(bool ignoreFilters = false) =>
+        scriptBroker.GetAllScripts(ignoreFilters);
 
     public async ValueTask<Script> AddAsync(Script script)
     {
@@ -94,9 +88,7 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         }
 
         if (script == null)
-        {
             return;
-        }
 
         authorizationBroker.Authorize(script.AppId, "Script_delete");
         await scriptBroker.DeleteScriptAsync(CreateStorageScript(script));
@@ -105,9 +97,7 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
     private static Script CreateStorageScript(Script script)
     {
         if (script == null)
-        {
             return null;
-        }
 
         return new Script
         {

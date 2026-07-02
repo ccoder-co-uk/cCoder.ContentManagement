@@ -1,7 +1,7 @@
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using Resource = cCoder.Data.Models.CMS.Resource;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Api.OData;
 
@@ -109,14 +109,10 @@ public class MetadataContainer
     private static string GetTypeName(Type type)
     {
         if (type == typeof(string))
-        {
             return "string";
-        }
 
         if (typeof(IEnumerable).IsAssignableFrom(type))
-        {
             return "array";
-        }
 
         return Lookup.TryGetValue(type, out string name) ? name : "object";
     }

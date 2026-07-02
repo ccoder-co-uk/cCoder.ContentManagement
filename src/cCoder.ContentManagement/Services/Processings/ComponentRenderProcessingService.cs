@@ -12,15 +12,9 @@ using cCoder.ContentManagement.Services.Foundations.Storages;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using App = cCoder.Data.Models.CMS.App;
-using Component = cCoder.Data.Models.CMS.Component;
-using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
-using Config = cCoder.ContentManagement.Models.Config;
-using RenderParams = cCoder.ContentManagement.Models.RenderParams;
-using Replacement = cCoder.ContentManagement.Models.Replacement;
-using Resource = cCoder.Data.Models.CMS.Resource;
-using Script = cCoder.Data.Models.CMS.Script;
-using User = cCoder.Data.Models.Security.User;
+using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -102,6 +96,7 @@ internal class ComponentRenderProcessingService(
         {
             string text = (renderParams.Culture = string.Empty);
         }
+
         string text2 = (string.IsNullOrEmpty(renderParams.Culture) ? renderParams.App.DefaultCultureId : renderParams.Culture);
         string value;
         string text3 = ((config != null && config.Settings.TryGetValue("sslPort", out value)) ? (":" + value) : string.Empty);
@@ -129,9 +124,8 @@ internal class ComponentRenderProcessingService(
         if (config != null)
         {
             if (config.Services.TryGetValue("Workflow", out var value2))
-            {
                 list2.Add(new Replacement("[api[workflow]]", value2));
-            }
+
             list2.Add(new Replacement("[api[root]]", "https://" + renderParams.App?.Domain + text3 + "/Api/"));
         }
         if (renderParams is ComponentRenderParams componentRenderParams)
@@ -140,9 +134,7 @@ internal class ComponentRenderProcessingService(
             IDictionary<string, object> dictionary = default(IDictionary<string, object>);
             object value3 = null;
             if ((TryGetThemeDictionary(renderParams.App.Config, out dictionary)) && dictionary.TryGetValue(componentRenderParams.Theme, out value3))
-            {
                 list2.AddRange(BuildThemeReplacements(value3));
-            }
         }
         return list2;
     }
@@ -150,54 +142,46 @@ internal class ComponentRenderProcessingService(
     private string ProcessContentString(string key, RenderParams renderParams, string content, IEnumerable<Replacement> replacements)
     {
         if (content == null)
-        {
             return string.Empty;
-        }
+
         if (key == null)
-        {
             key = "Default";
-        }
+
         if (renderParams.Culture == null)
         {
             string text = (renderParams.Culture = string.Empty);
         }
+
         ValidateRenderParams(renderParams, replacements);
         StringBuilder result = new StringBuilder(content, content.Length * 4);
         if (renderParams is ComponentRenderParams renderParams2)
-        {
             Dms(key, result, renderParams2, replacements);
-        }
+
         Script(key, result, renderParams, replacements);
         RegexReplace(result, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "culturelink"), match => "?culture=" + GetTagName(match));
         Component(key, renderParams, replacements, result);
         Meta(result, renderParams.Culture);
         Resource(key, result, renderParams, replacements);
         ExecuteAsync(key, result, renderParams, replacements);
-        replacements.ToList().ForEach(delegate (Replacement replacement)
-        {
+        foreach (Replacement replacement in replacements)
             result.Replace(replacement.Old, replacement.New);
-        });
+
         return result.ToString();
     }
 
     private static void ValidateRenderParams(RenderParams renderParams, IEnumerable<Replacement> replacements)
     {
         if (renderParams == null)
-        {
             throw new ValidationException("renderParams is required.");
-        }
+
         if (renderParams.App == null)
-        {
             throw new ValidationException("renderParams.App is required.");
-        }
+
         if (renderParams.App.Resources == null)
-        {
             throw new ValidationException("renderParams.App.Resources is required.");
-        }
+
         if ((replacements != null || !(renderParams is ComponentRenderParams)) && replacements == null)
-        {
             throw new ValidationException("replacements is required.");
-        }
     }
 
     private static (string type, string name, string[] options) SplitMatch(Match match)
@@ -209,7 +193,7 @@ internal class ComponentRenderProcessingService(
 
     private void Component(string key, RenderParams renderParams, IEnumerable<Replacement> replacements, StringBuilder result)
     {
-        RegexReplace(result, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "component"), delegate (Match match)
+        RegexReplace(result, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "component"), match =>
         {
             (string _, string name, string[] options) tag = SplitMatch(match);
             Component component = renderParams.App?.Components?.FirstOrDefault((Component c) => c.Name.Equals(tag.name, StringComparison.CurrentCultureIgnoreCase)) ?? objectCache.Get<Component>("component|" + tag.name);
@@ -219,22 +203,22 @@ internal class ComponentRenderProcessingService(
 
     private string BuildComponentMarkup(Component component, (string type, string name, string[] options) tag, IEnumerable<Replacement> replacements, RenderParams renderParams)
     {
-        string value = string.Join(" ", from c in tag.options
-                                        where c.StartsWith("class=")
-                                        select c.Replace("class=", ""));
+        string value = string.Join(" ", tag.options
+            .Where(option => option.StartsWith("class="))
+            .Select(option => option.Replace("class=", "")));
         string content = $"<section name='{component.Name}' class='component {value}' data-id='{component.Id}' data-resource-key='{component.ResourceKey}' {string.Join(" ", tag.options.Where((string option) => !option.StartsWith("class=")))}>\r\n                        {ProcessContentString(component.ResourceKey, renderParams, component.Content, replacements)}\r\n                        <script type='text/javascript'>{ProcessContentString(component.ResourceKey, renderParams, component.Script, replacements)}</script>\r\n                    </section>";
         return ProcessContentString(component.ResourceKey, renderParams, content, replacements);
     }
 
     private void Script(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements)
     {
-        RegexReplace(source, "\\[script\\[[A-Za-z\\d_/. \\-]*\\]\\]", delegate (Match match)
+        RegexReplace(source, "\\[script\\[[A-Za-z\\d_/. \\-]*\\]\\]", match =>
         {
             string name = match.Value.Replace("[script[", "").Replace("]]", "").ToLower();
             Script script = objectCache.Get<Script>("script|" + name);
             if (script != null)
             {
-            Script obj = renderParams.App?.Scripts?.FirstOrDefault((Script s) => s.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+                Script obj = renderParams.App?.Scripts?.FirstOrDefault((Script s) => s.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
                 return ProcessContentString(key, renderParams, obj?.Content ?? script.Content, replacements);
             }
             return string.Empty;
@@ -243,7 +227,7 @@ internal class ComponentRenderProcessingService(
 
     private void ExecuteAsync(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements)
     {
-        RegexReplace(source, "\\[execute\\](.*?)\\[/execute\\]", delegate (Match match)
+        RegexReplace(source, "\\[execute\\](.*?)\\[/execute\\]", match =>
         {
             string value = match.Groups[1].Value;
             string json = replacements.FirstOrDefault((Replacement r) => r.Old == "[model]")?.New ?? "{}";
@@ -286,7 +270,7 @@ internal class ComponentRenderProcessingService(
 
     private void Dms(string key, StringBuilder source, ComponentRenderParams renderParams, IEnumerable<Replacement> replacements)
     {
-        RegexReplace(source, "\\[dms\\[[A-Za-z\\d_/. \\-]*\\]\\]", delegate (Match match)
+        RegexReplace(source, "\\[dms\\[[A-Za-z\\d_/. \\-]*\\]\\]", match =>
         {
             string path = match.Value.Replace("[dms[", "").Replace("]]", "").ToLowerInvariant();
             string latestTextContent = renderFileContentService.GetLatestTextContent(renderParams.App.Id, path);
@@ -298,22 +282,21 @@ internal class ComponentRenderProcessingService(
     {
         List<Resource> known = new List<Resource>();
         List<string> namesInKey = new List<string>();
-        RegexMatch(source, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "resource_displayname"), delegate (Match match)
+        RegexMatch(source, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "resource_displayname"), match =>
         {
             namesInKey.Add(GetTagName(match));
         });
-        RegexMatch(source, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "resource_shortdisplayname"), delegate (Match match)
+        RegexMatch(source, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "resource_shortdisplayname"), match =>
         {
             namesInKey.Add(GetTagName(match));
         });
-        RegexMatch(source, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "resource_description"), delegate (Match match)
+        RegexMatch(source, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "resource_description"), match =>
         {
             namesInKey.Add(GetTagName(match));
         });
         if (namesInKey.Count == 0)
-        {
             return;
-        }
+
         List<Resource> list = known;
         List<Resource> list2 = new List<Resource>();
         list2.AddRange(SectionForCulture(renderParams.App.Resources, key, renderParams.Culture ?? string.Empty));
@@ -324,9 +307,7 @@ internal class ComponentRenderProcessingService(
         {
             Resource resource = FindResourceInCache(key2, item.ToLowerInvariant(), culture);
             if (resource != null)
-            {
                 known.Add(resource);
-            }
         }
         RegexReplace(source, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "resource_displayname"), match => ProcessContentString(key, renderParams, known.FirstOrDefault(resource => resource.Name.Equals(GetTagName(match), StringComparison.CurrentCultureIgnoreCase))?.DisplayName ?? GetTagName(match).ToLower(), replacements));
         RegexReplace(source, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "resource_shortdisplayname"), match => ProcessContentString(key, renderParams, known.FirstOrDefault(resource => resource.Name.Equals(GetTagName(match), StringComparison.CurrentCultureIgnoreCase))?.ShortDisplayName ?? GetTagName(match).ToLower(), replacements));
@@ -337,24 +318,21 @@ internal class ComponentRenderProcessingService(
     {
         Resource resource = objectCache.Get<Resource>($"resource|{key}-{name}-{culture}");
         if (resource != null)
-        {
             return resource;
-        }
+
         if (culture.Contains('-'))
         {
             string value = culture.Split("-")[0];
             Resource resource2 = objectCache.Get<Resource>($"resource|{key}-{name}-{value}");
             if (resource2 != null)
-            {
                 return resource2;
-            }
         }
         return objectCache.Get<Resource>($"resource|{key}-{name}-{string.Empty}");
     }
 
     private void Meta(StringBuilder source, string culture)
     {
-        RegexReplace(source, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "meta"), delegate (Match match)
+        RegexReplace(source, "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace("TYPE", "meta"), match =>
         {
             string value = match.Value;
             string text = value.Substring(6, value.Length - 6);
@@ -367,13 +345,11 @@ internal class ComponentRenderProcessingService(
     {
         themeDictionary = null;
         if (!(config is IDictionary<string, object> dictionary))
-        {
             return false;
-        }
+
         if (!dictionary.TryGetValue("Themes", out var value))
-        {
             return false;
-        }
+
         themeDictionary = value as IDictionary<string, object>;
         return themeDictionary != null;
     }
@@ -381,21 +357,17 @@ internal class ComponentRenderProcessingService(
     private IEnumerable<Replacement> BuildThemeReplacements<T>(T model, string prefix = "")
     {
         if ((object)model.GetType().GetInterface("IDynamicMetaObjectProvider") != null && !(model is JObject))
-        {
             return BuildDynamicThemeReplacements(model, prefix);
-        }
+
         if (model is JObject)
-        {
             return BuildJObjectThemeReplacements(model, prefix);
-        }
+
         if (model is string)
-        {
             return new[] { new Replacement("[theme[" + prefix + "]]", model.ToString()) };
-        }
+
         if (!(model is IEnumerable))
-        {
             return BuildIEnumerableThemeReplacements(model, prefix);
-        }
+
         return BuildObjectThemeReplacements(model, prefix);
     }
 
@@ -417,7 +389,8 @@ internal class ComponentRenderProcessingService(
 
     private IEnumerable<Replacement> BuildIEnumerableThemeReplacements<T>(T model, string prefix)
     {
-        return from replacement in model.GetType().GetProperties().SelectMany(delegate (PropertyInfo property)
+        return model.GetType().GetProperties()
+            .SelectMany(property =>
             {
                 object value = property.GetValue(model);
                 string text = ((prefix.Length > 0) ? (prefix + "." + property.Name) : property.Name);
@@ -427,9 +400,8 @@ internal class ComponentRenderProcessingService(
                     string old = "[theme[" + prefix + "]]";
                     object obj = model?.ToString();
                     if (obj == null)
-                    {
                         obj = string.Empty;
-                    }
+
                     array[0] = new Replacement(old, (string)obj);
                     array[1] = new Replacement("[theme[" + text + "]]", value?.ToString() ?? string.Empty);
                     return array;
@@ -446,20 +418,18 @@ internal class ComponentRenderProcessingService(
                 }
                 return result;
             })
-               where replacement.Old != null && replacement.New != null
-               select replacement;
+            .Where(replacement => replacement.Old != null && replacement.New != null);
     }
 
     private IEnumerable<Replacement> BuildJObjectThemeReplacements<T>(T model, string prefix)
     {
         IEnumerable<KeyValuePair<string, JToken>> source = (IEnumerable<KeyValuePair<string, JToken>>)(object)model;
-        return source.SelectMany(delegate (KeyValuePair<string, JToken> token)
+        return source.SelectMany(token =>
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + token.Key) : token.Key);
             if (token.Value.GetType() == typeof(JValue))
-            {
                 return new[] { new Replacement("[theme[" + text + "]]", token.Value.ToString() ?? string.Empty) };
-            }
+
             IEnumerable<Replacement> result;
             if (token.Value == null)
             {
@@ -477,7 +447,7 @@ internal class ComponentRenderProcessingService(
     private IEnumerable<Replacement> BuildDynamicThemeReplacements<T>(T model, string prefix)
     {
         IDictionary<string, object> dynamicModel = (IDictionary<string, object>)(object)model;
-        return dynamicModel.Keys.SelectMany(delegate (string key)
+        return dynamicModel.Keys.SelectMany(key =>
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + key) : key);
             int num = 1;
@@ -486,9 +456,8 @@ internal class ComponentRenderProcessingService(
             CollectionsMarshal.AsSpan(list)[0] = new Replacement("[theme[" + text + "]]", dynamicModel[key]?.ToString() ?? string.Empty);
             List<Replacement> list2 = list;
             if (dynamicModel[key] != null && !dynamicModel[key].GetType().IsValueType)
-            {
                 list2.AddRange(BuildThemeReplacements(dynamicModel[key], text));
-            }
+
             return list2;
         });
     }
@@ -496,15 +465,13 @@ internal class ComponentRenderProcessingService(
     public static IEnumerable<Resource> SectionForCulture(IEnumerable<Resource> potentials, string key, string culture)
     {
         List<Resource> list = new List<Resource>();
-        foreach (IGrouping<string, Resource> item in from resource in potentials
-                                                     where string.Equals(resource.Key, key, StringComparison.OrdinalIgnoreCase)
-                                                     group resource by resource.Name.ToLowerInvariant())
+        foreach (IGrouping<string, Resource> item in potentials
+            .Where(resource => string.Equals(resource.Key, key, StringComparison.OrdinalIgnoreCase))
+            .GroupBy(resource => resource.Name.ToLowerInvariant()))
         {
             Resource closestCulturalMatch = GetClosestCulturalMatch(item, culture);
             if (closestCulturalMatch != null)
-            {
                 list.Add(closestCulturalMatch);
-            }
         }
         return list;
     }
@@ -521,9 +488,7 @@ internal class ComponentRenderProcessingService(
             resource = potentials.FirstOrDefault((Resource resource2) => string.Equals(resource2.Culture, resultCulture, StringComparison.OrdinalIgnoreCase));
             num--;
             if (num == 0)
-            {
                 resultCulture = null;
-            }
         }
         return resource ?? potentials.FirstOrDefault((Resource resource2) => string.IsNullOrEmpty(resource2.Culture));
     }
@@ -531,51 +496,32 @@ internal class ComponentRenderProcessingService(
     private static Component ValidateComponent(Component component, string parameterName)
     {
         if (component == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
+
         return component;
     }
 
     private static ComponentRenderParams ValidateComponentRenderParams(ComponentRenderParams renderParams, string parameterName)
     {
         if (renderParams == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
+
         return renderParams;
     }
 
-    private static void ValidateAppId(int appId, string parameterName)
-    {
-        if (appId < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateAppId(int appId, string parameterName) =>
+        ThrowIf(appId < 1, parameterName + " must be greater than 0.");
 
-    private static void ValidateName(string name, string parameterName)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateName(string name, string parameterName) =>
+        ThrowIf(string.IsNullOrWhiteSpace(name), parameterName + " is required.");
 
-    private static void ValidateTheme(string theme, string parameterName)
-    {
-        if (string.IsNullOrWhiteSpace(theme))
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateTheme(string theme, string parameterName) =>
+        ThrowIf(string.IsNullOrWhiteSpace(theme), parameterName + " is required.");
 
     private static User ValidateUser(User user, string parameterName)
     {
         if (user == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return user;
     }
@@ -586,9 +532,7 @@ internal class ComponentRenderProcessingService(
             componentService == null ||
             resourceService == null ||
             scriptService == null)
-        {
             throw new InvalidOperationException("Render storage services are not configured.");
-        }
     }
 
     private static void RegexReplace(StringBuilder source, string matchExpression, Func<Match, string> action)
@@ -604,11 +548,15 @@ internal class ComponentRenderProcessingService(
         MatchCollection matches = Regex.Matches(source.ToString(), matchExpression, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
         foreach (Match match in matches)
-        {
             action(match);
-        }
     }
 
     private static string GetTagName(Match source) =>
         source.Value.Split('[')[2].Replace("]", "").ToLowerInvariant();
+
+    private static void ThrowIf(bool condition, string message)
+    {
+        if (condition)
+            throw new ValidationException(message);
+    }
 }

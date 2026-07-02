@@ -1,7 +1,6 @@
 using cCoder.ContentManagement.Models;
-using Page = cCoder.Data.Models.CMS.Page;
-using User = cCoder.Data.Models.Security.User;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 

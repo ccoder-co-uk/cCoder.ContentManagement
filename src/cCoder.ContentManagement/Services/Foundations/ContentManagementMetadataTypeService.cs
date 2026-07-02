@@ -1,6 +1,9 @@
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Models;
 using Microsoft.AspNetCore.Mvc;
+using cCoder.Data.Models;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations;
 
@@ -22,24 +25,24 @@ internal sealed class ContentManagementMetadataTypeService : IContentManagementM
         metadataContainerSet.UriBase = "Core";
         metadataContainerSet.Types = new ExtendedMetadataContainer[19]
         {
-            Entity<cCoder.Data.Models.CMS.App>(),
-            Entity<cCoder.Data.Models.CMS.Layout>(),
-            Entity<cCoder.Data.Models.CMS.Template>(),
-            Entity<cCoder.Data.Models.CMS.Page>(),
-            Entity<cCoder.Data.Models.CMS.PageInfo>(),
-            Entity<cCoder.Data.Models.CMS.Content>(),
-            Entity<cCoder.Data.Models.CMS.Component>(),
-            Entity<cCoder.Data.Models.CommonObject>(),
-            Entity<cCoder.Data.Models.CMS.Script>(),
-            Entity<cCoder.Data.Models.CMS.MetaItem>(),
-            Entity<cCoder.Data.Models.CMS.Resource>(),
-            Entity<cCoder.Data.Models.CMS.Submission>(),
-            Entity<cCoder.Data.Models.CMS.Culture>(),
-            Entity<cCoder.Data.Models.CMS.AppCulture>(),
-            Entity<cCoder.Data.Models.Security.PageRole>(),
-            Complex<cCoder.ContentManagement.Models.RenderResult>(),
+            Entity<App>(),
+            Entity<Layout>(),
+            Entity<Template>(),
+            Entity<Page>(),
+            Entity<PageInfo>(),
+            Entity<Content>(),
+            Entity<Component>(),
+            Entity<CommonObject>(),
+            Entity<Script>(),
+            Entity<MetaItem>(),
+            Entity<Resource>(),
+            Entity<Submission>(),
+            Entity<Culture>(),
+            Entity<AppCulture>(),
+            Entity<PageRole>(),
+            Complex<RenderResult>(),
             Complex<Result<string>>(),
-            Complex<Result<cCoder.Data.Models.CommonObject>>(),
+            Complex<Result<CommonObject>>(),
             Complex<FileContentResult>()
         }.OrderBy((ExtendedMetadataContainer type) => type.Name).ToArray();
         return metadataContainerSet;
@@ -65,7 +68,7 @@ internal sealed class ContentManagementMetadataTypeService : IContentManagementM
             new ExtendedMetadataContainer(typeof(IDictionary<string, object>)),
             new ExtendedMetadataContainer(typeof(object)),
             new ExtendedMetadataContainer(typeof(Guid))
-        }.Select(delegate (ExtendedMetadataContainer type)
+        }.Select(type =>
         {
             type.Category = "System";
             return type;

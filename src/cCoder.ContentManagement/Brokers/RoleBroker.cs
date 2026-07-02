@@ -48,9 +48,8 @@ internal class RoleBroker(ICoreContextFactory coreContextFactory) : IRoleBroker
     public async ValueTask DeleteAllRolesAsync(IEnumerable<Role> items)
     {
         if (items == null || !items.Any())
-        {
             return;
-        }
+
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
         coreDataContext.Roles.RemoveRange(items);
         await coreDataContext.SaveChangesAsync();

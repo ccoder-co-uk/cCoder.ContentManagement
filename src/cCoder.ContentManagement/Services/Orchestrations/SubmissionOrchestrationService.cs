@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Processings;
-using Submission = cCoder.Data.Models.CMS.Submission;
-using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.CMS.Submission>;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -41,7 +41,7 @@ internal class SubmissionOrchestrationService(
         await processingService.DeleteAsync(id);
     }
 
-    public ValueTask<IEnumerable<Result>> AddOrUpdate(IEnumerable<Submission> items) =>
+    public ValueTask<IEnumerable<Result<Submission>>> AddOrUpdate(IEnumerable<Submission> items) =>
         processingService.AddOrUpdate(ValidateSubmissions(items, "items"));
 
     public ValueTask DeleteAllAsync(IEnumerable<Submission> items) =>
@@ -50,9 +50,7 @@ internal class SubmissionOrchestrationService(
     private static Guid ValidateId(Guid id, string parameterName)
     {
         if (id == Guid.Empty)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return id;
     }
@@ -60,9 +58,7 @@ internal class SubmissionOrchestrationService(
     private static Submission ValidateSubmission(Submission submission, string parameterName)
     {
         if (submission == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return submission;
     }
@@ -70,9 +66,7 @@ internal class SubmissionOrchestrationService(
     private static IEnumerable<Submission> ValidateSubmissions(IEnumerable<Submission> submissions, string parameterName)
     {
         if (submissions == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return submissions;
     }

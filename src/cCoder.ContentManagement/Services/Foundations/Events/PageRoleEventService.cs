@@ -1,7 +1,7 @@
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
-using PageRole = cCoder.Data.Models.Security.PageRole;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 

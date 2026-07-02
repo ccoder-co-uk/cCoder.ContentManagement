@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -12,10 +13,8 @@ internal class PageInfoProcessingService(IPageInfoService service) : IPageInfoPr
         return service.Get(id);
     }
 
-    public IQueryable<PageInfo> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<PageInfo> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
     public ValueTask<PageInfo> AddAsync(PageInfo entity)
     {
@@ -35,16 +34,16 @@ internal class PageInfoProcessingService(IPageInfoService service) : IPageInfoPr
         return service.DeleteAsync(id);
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<PageInfo>>> AddOrUpdate(IEnumerable<PageInfo> items)
+    public async ValueTask<IEnumerable<Result<PageInfo>>> AddOrUpdate(IEnumerable<PageInfo> items)
     {
         ValidatePageInfos(items, "items");
-        List<cCoder.ContentManagement.Models.Result<PageInfo>> results = new List<cCoder.ContentManagement.Models.Result<PageInfo>>();
+        List<Result<PageInfo>> results = new List<Result<PageInfo>>();
         foreach (PageInfo item in items)
         {
             try
             {
                 PageInfo savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new cCoder.ContentManagement.Models.Result<PageInfo>
+                results.Add(new Result<PageInfo>
                 {
                     Success = true,
                     Item = savedItem,
@@ -53,7 +52,7 @@ internal class PageInfoProcessingService(IPageInfoService service) : IPageInfoPr
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<PageInfo>
+                results.Add(new Result<PageInfo>
                 {
                     Success = false,
                     Item = item,
@@ -68,32 +67,21 @@ internal class PageInfoProcessingService(IPageInfoService service) : IPageInfoPr
     {
         ValidatePageInfos(items, "items");
         foreach (PageInfo item in items)
-        {
             await DeleteAsync(item.Id);
-        }
     }
 
-    private static void ValidateId(int id, string parameterName)
-    {
-        if (id < 1)
-        {
-            throw new ValidationException(parameterName + " must be greater than 0.");
-        }
-    }
+    private static void ValidateId(int id, string parameterName) =>
+        ThrowIf(id < 1, parameterName + " must be greater than 0.");
 
-    private static void ValidatePageInfo(PageInfo pageInfo, string parameterName)
-    {
-        if (pageInfo == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidatePageInfo(PageInfo pageInfo, string parameterName) =>
+        ThrowIf(pageInfo == null, parameterName + " is required.");
 
-    private static void ValidatePageInfos(IEnumerable<PageInfo> pageInfos, string parameterName)
+    private static void ValidatePageInfos(IEnumerable<PageInfo> pageInfos, string parameterName) =>
+        ThrowIf(pageInfos == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (pageInfos == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }

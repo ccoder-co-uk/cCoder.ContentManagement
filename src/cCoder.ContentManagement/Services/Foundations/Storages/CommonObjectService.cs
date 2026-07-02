@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using CommonObject = cCoder.Data.Models.CommonObject;
+using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -11,27 +11,21 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((CommonObject i) => i.Id == id);
-        }
 
         CommonObject commonObject = GetAll().FirstOrDefault((CommonObject i) => i.Id == id);
         if (commonObject != null)
-        {
             return commonObject;
-        }
+
         CommonObject commonObject2 = GetAll(ignoreFilters: true).FirstOrDefault((CommonObject i) => i.Id == id);
         if (commonObject2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<CommonObject> GetAll(bool ignoreFilters = false)
-    {
-        return commonObjectBroker.GetAllCommonObjects(ignoreFilters);
-    }
+    public IQueryable<CommonObject> GetAll(bool ignoreFilters = false) =>
+        commonObjectBroker.GetAllCommonObjects(ignoreFilters);
 
     public async ValueTask<CommonObject> AddAsync(CommonObject commonObject)
     {
@@ -96,9 +90,7 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
     private static CommonObject CreateStorageCommonObject(CommonObject commonObject)
     {
         if (commonObject == null)
-        {
             return null;
-        }
 
         return new CommonObject
         {
@@ -117,4 +109,3 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         };
     }
 }
-

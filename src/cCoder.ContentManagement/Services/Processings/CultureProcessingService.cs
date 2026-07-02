@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using Culture = cCoder.Data.Models.CMS.Culture;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -12,10 +13,8 @@ internal class CultureProcessingService(ICultureService service) : ICultureProce
         return service.Get(id);
     }
 
-    public IQueryable<Culture> GetAll(bool ignoreFilters = false)
-    {
-        return service.GetAll(ignoreFilters);
-    }
+    public IQueryable<Culture> GetAll(bool ignoreFilters = false) =>
+        service.GetAll(ignoreFilters);
 
     public ValueTask<Culture> AddAsync(Culture entity)
     {
@@ -35,16 +34,16 @@ internal class CultureProcessingService(ICultureService service) : ICultureProce
         return service.DeleteAsync(id);
     }
 
-    public async ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Culture>>> AddOrUpdate(IEnumerable<Culture> items)
+    public async ValueTask<IEnumerable<Result<Culture>>> AddOrUpdate(IEnumerable<Culture> items)
     {
         ValidateCultures(items, "items");
-        List<cCoder.ContentManagement.Models.Result<Culture>> results = new List<cCoder.ContentManagement.Models.Result<Culture>>();
+        List<Result<Culture>> results = new List<Result<Culture>>();
         foreach (Culture item in items)
         {
             try
             {
                 Culture savedItem = string.IsNullOrWhiteSpace(item.Id) ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new cCoder.ContentManagement.Models.Result<Culture>
+                results.Add(new Result<Culture>
                 {
                     Success = true,
                     Item = savedItem,
@@ -53,7 +52,7 @@ internal class CultureProcessingService(ICultureService service) : ICultureProce
             }
             catch (Exception ex)
             {
-                results.Add(new cCoder.ContentManagement.Models.Result<Culture>
+                results.Add(new Result<Culture>
                 {
                     Success = false,
                     Item = item,
@@ -68,32 +67,21 @@ internal class CultureProcessingService(ICultureService service) : ICultureProce
     {
         ValidateCultures(items, "items");
         foreach (Culture item in items)
-        {
             await DeleteAsync(item.Id);
-        }
     }
 
-    private static void ValidateId(string id, string parameterName)
-    {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateId(string id, string parameterName) =>
+        ThrowIf(string.IsNullOrWhiteSpace(id), parameterName + " is required.");
 
-    private static void ValidateCulture(Culture culture, string parameterName)
-    {
-        if ((object)culture == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
-    }
+    private static void ValidateCulture(Culture culture, string parameterName) =>
+        ThrowIf((object)culture == null, parameterName + " is required.");
 
-    private static void ValidateCultures(IEnumerable<Culture> cultures, string parameterName)
+    private static void ValidateCultures(IEnumerable<Culture> cultures, string parameterName) =>
+        ThrowIf(cultures == null, parameterName + " is required.");
+
+    private static void ThrowIf(bool condition, string message)
     {
-        if (cultures == null)
-        {
-            throw new ValidationException(parameterName + " is required.");
-        }
+        if (condition)
+            throw new ValidationException(message);
     }
 }

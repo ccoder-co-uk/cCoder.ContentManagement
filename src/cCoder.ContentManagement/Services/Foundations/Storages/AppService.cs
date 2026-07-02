@@ -2,8 +2,7 @@ using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using Microsoft.EntityFrameworkCore;
-using App = cCoder.Data.Models.CMS.App;
-using Page = cCoder.Data.Models.CMS.Page;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -25,25 +24,19 @@ internal partial class AppService(
             .FirstOrDefault(foundApp => foundApp.Id == id);
 
         if (app != null)
-        {
             return app;
-        }
 
         App app2 = appBroker.GetAllApps(ignoreFilters: true)
             .FirstOrDefault(foundApp => foundApp.Id == id);
 
         if (app2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
 
         return null;
     }
 
-    public IQueryable<App> GetAll(bool ignoreFilters = false)
-    {
-        return appBroker.GetAllApps(ignoreFilters);
-    }
+    public IQueryable<App> GetAll(bool ignoreFilters = false) =>
+        appBroker.GetAllApps(ignoreFilters);
 
     public async ValueTask<App> AddAsync(App app)
     {
@@ -104,14 +97,10 @@ internal partial class AppService(
         App app = GetAppForDelete(id);
 
         if (app == null)
-        {
             return;
-        }
 
         if (app.Roles?.Any() == true)
-        {
             authorizationBroker.Authorize(app.Id, "App_delete");
-        }
 
         await appBroker.DeleteAppAggregateAsync(app);
     }
@@ -125,9 +114,7 @@ internal partial class AppService(
     private static App CreateStorageApp(App app)
     {
         if (app == null)
-        {
             return null;
-        }
 
         return new App
         {

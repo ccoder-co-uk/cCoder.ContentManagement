@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Page = cCoder.Data.Models.CMS.Page;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -20,25 +20,19 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
             .FirstOrDefault(page => page.Id == id);
 
         if (result != null)
-        {
             return result;
-        }
 
         result = pageBroker.GetAllPages(ignoreFilters: true)
             .FirstOrDefault(foundPage => foundPage.Id == id);
 
         if (result != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
 
         return null;
     }
 
-    public IQueryable<Page> GetAll(bool ignoreFilters = false)
-    {
-        return pageBroker.GetAllPages(ignoreFilters);
-    }
+    public IQueryable<Page> GetAll(bool ignoreFilters = false) =>
+        pageBroker.GetAllPages(ignoreFilters);
 
     public async ValueTask<Page> AddAsync(Page page)
     {
@@ -107,9 +101,7 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         }
 
         if (page == null)
-        {
             return;
-        }
 
         authorizationBroker.Authorize(page.AppId, "Page_delete");
         await pageBroker.DeletePageAsync(CreateStoragePage(page));
@@ -118,9 +110,7 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
     private static Page CreateStoragePage(Page page)
     {
         if (page == null)
-        {
             return null;
-        }
 
         return new Page
         {

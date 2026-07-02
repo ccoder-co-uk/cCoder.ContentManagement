@@ -8,9 +8,7 @@ internal partial class EventHandlerService
     private static IEventHubBroker ValidateEventHubBroker(IEventHubBroker broker, string parameterName)
     {
         if (broker == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
 
         return broker;
     }

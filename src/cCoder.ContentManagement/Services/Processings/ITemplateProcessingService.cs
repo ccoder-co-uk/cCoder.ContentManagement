@@ -1,4 +1,5 @@
-using Template = cCoder.Data.Models.CMS.Template;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -14,7 +15,7 @@ public interface ITemplateProcessingService
 
     ValueTask DeleteAsync(int id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Template>>> AddOrUpdate(IEnumerable<Template> items);
+    ValueTask<IEnumerable<Result<Template>>> AddOrUpdate(IEnumerable<Template> items);
 
     ValueTask DeleteAllAsync(IEnumerable<Template> items);
 }

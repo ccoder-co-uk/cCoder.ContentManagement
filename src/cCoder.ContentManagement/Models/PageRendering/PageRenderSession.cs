@@ -27,7 +27,7 @@ internal sealed class PageRenderSession
     public IDictionary<string, PageRenderScript> ScriptsByName { get; set; } =
         new Dictionary<string, PageRenderScript>(StringComparer.OrdinalIgnoreCase);
 
-    public Func<string, string> MetadataResolver { get; set; } = static _ => string.Empty;
+    public Func<string, string> MetadataResolver { get; set; } = static unusedKey => string.Empty;
 
     public IReadOnlyDictionary<string, PageRenderResource> CommonResourcesByLookup { get; set; } =
         new Dictionary<string, PageRenderResource>(StringComparer.OrdinalIgnoreCase);

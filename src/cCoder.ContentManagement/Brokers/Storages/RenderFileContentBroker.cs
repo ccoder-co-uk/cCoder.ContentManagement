@@ -1,5 +1,6 @@
 using cCoder.Data;
 using cCoder.Data.Models.DMS;
+using DmsFile = cCoder.Data.Models.DMS.File;
 using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
@@ -9,17 +10,18 @@ internal sealed class RenderFileContentBroker(ICoreContextFactory coreContextFac
     public byte[] GetLatestRawData(int appId, string path)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        cCoder.Data.Models.DMS.File file = coreDataContext
-            .Set<cCoder.Data.Models.DMS.File>()
+        DmsFile file = coreDataContext
+            .Set<DmsFile>()
             .AsNoTracking()
             .FirstOrDefault(foundFile => foundFile.Folder.AppId == appId && foundFile.Path == path);
         if (file == null)
-        {
             return Array.Empty<byte>();
-        }
-        return (from foundContent in coreDataContext.Set<FileContent>().AsNoTracking()
-                where foundContent.FileId == file.Id
-                orderby foundContent.Version descending
-                select foundContent.RawData).FirstOrDefault() ?? Array.Empty<byte>();
+
+        return coreDataContext.Set<FileContent>()
+            .AsNoTracking()
+            .Where(foundContent => foundContent.FileId == file.Id)
+            .OrderByDescending(foundContent => foundContent.Version)
+            .Select(foundContent => foundContent.RawData)
+            .FirstOrDefault() ?? Array.Empty<byte>();
     }
 }

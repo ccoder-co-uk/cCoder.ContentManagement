@@ -1,4 +1,5 @@
 using System.Security;
+using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.Data.Extensions;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Script = cCoder.Data.Models.CMS.Script;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
@@ -22,18 +23,14 @@ public class ScriptController : ODataController
     }
 
     [HttpGet]
-    public IActionResult GetMetadata()
-    {
-        return Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(Script)) : new MetadataContainer(typeof(Script), isEntity: true, hasEndpoint: true));
-    }
+    public IActionResult GetMetadata() =>
+        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(Script)) : new MetadataContainer(typeof(Script), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
-    public IActionResult GetAll(ODataQueryOptions<Script> queryOptions)
-    {
-        return Ok(Service.GetAll());
-    }
+    public IActionResult GetAll(ODataQueryOptions<Script> queryOptions) =>
+        Ok(Service.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -56,9 +53,8 @@ public class ScriptController : ODataController
     public async Task<IActionResult> Post([FromBody] Script entity)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
+
         return Ok(await Service.AddAsync(entity));
     }
 
@@ -67,9 +63,8 @@ public class ScriptController : ODataController
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Script entity)
     {
         if (!base.ModelState.IsValid)
-        {
-            return new cCoder.ContentManagement.Api.OData.BadRequestResult(base.ModelState);
-        }
+            return new BadRequestResult(base.ModelState);
+
         return Ok(await Service.UpdateAsync(entity));
     }
 
@@ -78,9 +73,8 @@ public class ScriptController : ODataController
     {
         Script originalEntity = Service.Get(key);
         if (originalEntity == null)
-        {
             return NotFound();
-        }
+
         delta.Patch(originalEntity);
         return Ok(await Service.UpdateAsync(originalEntity));
     }
@@ -92,4 +86,3 @@ public class ScriptController : ODataController
         return Ok();
     }
 }
-

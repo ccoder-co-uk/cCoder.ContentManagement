@@ -1,4 +1,5 @@
-using Resource = cCoder.Data.Models.CMS.Resource;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -14,7 +15,7 @@ public interface IResourceProcessingService
 
     ValueTask DeleteAsync(int id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items);
+    ValueTask<IEnumerable<Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items);
 
     ValueTask DeleteAllAsync(IEnumerable<Resource> items);
 }

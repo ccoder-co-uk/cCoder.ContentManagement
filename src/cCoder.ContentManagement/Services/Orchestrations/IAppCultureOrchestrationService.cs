@@ -1,4 +1,5 @@
-using AppCulture = cCoder.Data.Models.CMS.AppCulture;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -12,7 +13,7 @@ public interface IAppCultureOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<AppCulture>>> AddOrUpdate(IEnumerable<AppCulture> items);
+    ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdate(IEnumerable<AppCulture> items);
 
     ValueTask DeleteAllAsync(IEnumerable<AppCulture> items);
 }

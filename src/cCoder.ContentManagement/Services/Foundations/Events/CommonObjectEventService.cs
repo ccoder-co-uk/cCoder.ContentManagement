@@ -1,7 +1,7 @@
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
-using CommonObject = cCoder.Data.Models.CommonObject;
+using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 

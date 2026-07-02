@@ -1,8 +1,6 @@
 using System.Security;
-using Content = cCoder.Data.Models.CMS.Content;
-using Page = cCoder.Data.Models.CMS.Page;
-using PageInfo = cCoder.Data.Models.CMS.PageInfo;
-using User = cCoder.Data.Models.Security.User;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services;
 
@@ -92,8 +90,6 @@ internal static class ContentManagementModelLogic
     internal static void ThrowIfNoAccess(bool hasAccess)
     {
         if (!hasAccess)
-        {
             throw new SecurityException("Access Denied!");
-        }
     }
 }

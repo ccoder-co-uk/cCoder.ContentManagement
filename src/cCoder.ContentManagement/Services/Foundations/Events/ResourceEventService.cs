@@ -1,7 +1,7 @@
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
-using Resource = cCoder.Data.Models.CMS.Resource;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 

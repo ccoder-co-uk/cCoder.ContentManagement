@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Package = cCoder.Data.Models.Packaging.Package;
+using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -11,27 +11,21 @@ internal partial class PackageService(IPackageBroker packageBroker, IAuthorizati
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((Package i) => i.Id == id);
-        }
 
         Package package = GetAll().FirstOrDefault((Package i) => i.Id == id);
         if (package != null)
-        {
             return package;
-        }
+
         Package package2 = GetAll(ignoreFilters: true).FirstOrDefault((Package i) => i.Id == id);
         if (package2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<Package> GetAll(bool ignoreFilters = false)
-    {
-        return packageBroker.GetAllPackages(ignoreFilters);
-    }
+    public IQueryable<Package> GetAll(bool ignoreFilters = false) =>
+        packageBroker.GetAllPackages(ignoreFilters);
 
     public async ValueTask<Package> AddAsync(Package package)
     {
@@ -70,9 +64,7 @@ internal partial class PackageService(IPackageBroker packageBroker, IAuthorizati
     private static Package CreateStoragePackage(Package package)
     {
         if (package == null)
-        {
             return null;
-        }
 
         return new Package
         {

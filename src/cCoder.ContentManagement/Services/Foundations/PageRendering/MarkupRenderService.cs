@@ -81,7 +81,7 @@ internal sealed class MarkupRenderService(
         Nav(result, session);
         Dms(key, result, session, replacements);
         Script(key, result, session, replacements);
-        RegexReplace(result, syntax.CultureLinkRegex, static _ => "?culture=");
+        RegexReplace(result, syntax.CultureLinkRegex, static unusedMatch => "?culture=");
         Component(key, session, replacements, result);
         Meta(result, session);
         Resource(result, session, key, replacements);

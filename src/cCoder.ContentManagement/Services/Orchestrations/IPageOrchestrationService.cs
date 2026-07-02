@@ -1,4 +1,5 @@
-using Page = cCoder.Data.Models.CMS.Page;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -16,7 +17,7 @@ public interface IPageOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Page>>> AddOrUpdate(IEnumerable<Page> items);
+    ValueTask<IEnumerable<Result<Page>>> AddOrUpdate(IEnumerable<Page> items);
 
     ValueTask ImportPagesAsync(int appId, Page[] items);
 

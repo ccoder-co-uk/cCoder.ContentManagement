@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Brokers;
 using Newtonsoft.Json.Linq;
 using cCoder.ContentManagement.Services.Orchestrations;
-using Package = cCoder.Data.Models.Packaging.Package;
-using PackageItem = cCoder.Data.Models.Packaging.PackageItem;
-using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
+using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.Packaging;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
@@ -32,33 +32,34 @@ internal class ContentManagementMigrationAggregationService(
         ValidateAppId(appId, "appId");
         ValidatePackage(package, "package");
 
-        foreach (PackageItem item in package.Items ?? [])
-        {
-            switch (item.Type)
+        if (package.Items != null)
+            foreach (PackageItem item in package.Items)
             {
-                case "Core/Component":
-                    await ImportComponentsAsync(appId, item);
-                    break;
-                case "Core/Layout":
-                    await ImportLayoutsAsync(appId, item);
-                    break;
-                case "Core/Page":
-                    await ImportPagesAsync(appId, item);
-                    break;
-                case "Core/PageRole":
-                    await ImportPageRolesAsync(appId, item);
-                    break;
-                case "Core/Resource":
-                    await ImportResourcesAsync(appId, item);
-                    break;
-                case "Core/Script":
-                    await ImportScriptsAsync(appId, item);
-                    break;
-                case "Core/Template":
-                    await ImportTemplatesAsync(appId, item);
-                    break;
+                switch (item.Type)
+                {
+                    case "Core/Component":
+                        await ImportComponentsAsync(appId, item);
+                        break;
+                    case "Core/Layout":
+                        await ImportLayoutsAsync(appId, item);
+                        break;
+                    case "Core/Page":
+                        await ImportPagesAsync(appId, item);
+                        break;
+                    case "Core/PageRole":
+                        await ImportPageRolesAsync(appId, item);
+                        break;
+                    case "Core/Resource":
+                        await ImportResourcesAsync(appId, item);
+                        break;
+                    case "Core/Script":
+                        await ImportScriptsAsync(appId, item);
+                        break;
+                    case "Core/Template":
+                        await ImportTemplatesAsync(appId, item);
+                        break;
+                }
             }
-        }
     }
 
     private async ValueTask ImportComponentsAsync(int appId, PackageItem item)
@@ -66,7 +67,7 @@ internal class ContentManagementMigrationAggregationService(
         ValidateAppId(appId, "appId");
         ValidatePackageItem(item, "item");
         string sanitizedData = RemoveComputedFields(item.Data);
-        cCoder.Data.Models.CMS.Component[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<cCoder.Data.Models.CMS.Component[]>(sanitizedData) : new cCoder.Data.Models.CMS.Component[1] { jsonBroker.ParseJson<cCoder.Data.Models.CMS.Component>(sanitizedData) });
+        Component[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Component[]>(sanitizedData) : new Component[1] { jsonBroker.ParseJson<Component>(sanitizedData) });
         await componentOrchestrationService.ImportComponentsAsync(appId, items);
     }
 
@@ -75,7 +76,7 @@ internal class ContentManagementMigrationAggregationService(
         ValidateAppId(appId, "appId");
         ValidatePackageItem(item, "item");
         string sanitizedData = RemoveComputedFields(item.Data);
-        cCoder.Data.Models.CMS.Layout[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<cCoder.Data.Models.CMS.Layout[]>(sanitizedData) : new cCoder.Data.Models.CMS.Layout[1] { jsonBroker.ParseJson<cCoder.Data.Models.CMS.Layout>(sanitizedData) });
+        Layout[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Layout[]>(sanitizedData) : new Layout[1] { jsonBroker.ParseJson<Layout>(sanitizedData) });
         await layoutOrchestrationService.ImportLayoutsAsync(appId, items);
     }
 
@@ -84,7 +85,7 @@ internal class ContentManagementMigrationAggregationService(
         ValidateAppId(appId, "appId");
         ValidatePackageItem(item, "item");
         string sanitizedData = RemoveComputedFields(item.Data);
-        cCoder.Data.Models.CMS.Page[] pages = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<cCoder.Data.Models.CMS.Page[]>(sanitizedData) : new cCoder.Data.Models.CMS.Page[1] { jsonBroker.ParseJson<cCoder.Data.Models.CMS.Page>(sanitizedData) });
+        Page[] pages = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Page[]>(sanitizedData) : new Page[1] { jsonBroker.ParseJson<Page>(sanitizedData) });
         await pageOrchestrationService.ImportPagesAsync(appId, pages);
     }
 
@@ -101,7 +102,7 @@ internal class ContentManagementMigrationAggregationService(
         ValidateAppId(appId, "appId");
         ValidatePackageItem(item, "item");
         string sanitizedData = RemoveComputedFields(item.Data);
-        cCoder.Data.Models.CMS.Resource[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<cCoder.Data.Models.CMS.Resource[]>(sanitizedData) : new cCoder.Data.Models.CMS.Resource[1] { jsonBroker.ParseJson<cCoder.Data.Models.CMS.Resource>(sanitizedData) });
+        Resource[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Resource[]>(sanitizedData) : new Resource[1] { jsonBroker.ParseJson<Resource>(sanitizedData) });
         await resourceOrchestrationService.ImportResourcesAsync(appId, items);
     }
 
@@ -110,7 +111,7 @@ internal class ContentManagementMigrationAggregationService(
         ValidateAppId(appId, "appId");
         ValidatePackageItem(item, "item");
         string sanitizedData = RemoveComputedFields(item.Data);
-        cCoder.Data.Models.CMS.Script[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<cCoder.Data.Models.CMS.Script[]>(sanitizedData) : new cCoder.Data.Models.CMS.Script[1] { jsonBroker.ParseJson<cCoder.Data.Models.CMS.Script>(sanitizedData) });
+        Script[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Script[]>(sanitizedData) : new Script[1] { jsonBroker.ParseJson<Script>(sanitizedData) });
         await scriptOrchestrationService.ImportScriptsAsync(appId, items);
     }
 
@@ -119,16 +120,14 @@ internal class ContentManagementMigrationAggregationService(
         ValidateAppId(appId, "appId");
         ValidatePackageItem(item, "item");
         string sanitizedData = RemoveComputedFields(item.Data);
-        cCoder.Data.Models.CMS.Template[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<cCoder.Data.Models.CMS.Template[]>(sanitizedData) : new cCoder.Data.Models.CMS.Template[1] { jsonBroker.ParseJson<cCoder.Data.Models.CMS.Template>(sanitizedData) });
+        Template[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Template[]>(sanitizedData) : new Template[1] { jsonBroker.ParseJson<Template>(sanitizedData) });
         await templateOrchestrationService.ImportTemplatesAsync(appId, items);
     }
 
     private static string RemoveComputedFields(string json)
     {
         if (string.IsNullOrWhiteSpace(json))
-        {
             return json;
-        }
 
         JToken token = JToken.Parse(json);
         RemoveComputedFields(token);
@@ -144,56 +143,45 @@ internal class ContentManagementMigrationAggregationService(
                 .ToArray();
 
             foreach (JProperty property in computedProperties)
-            {
                 property.Remove();
-            }
 
             foreach (JProperty property in jsonObject.Properties().ToArray())
-            {
                 RemoveComputedFields(property.Value);
-            }
         }
         else if (token is JArray jsonArray)
         {
             foreach (JToken arrayItem in jsonArray)
-            {
                 RemoveComputedFields(arrayItem);
-            }
         }
     }
 
     private static int ValidateAppId(int appId, string parameterName)
     {
         if (appId < 1)
-        {
             throw new ValidationException(parameterName + " must be greater than 0.");
-        }
+
         return appId;
     }
 
     private static Package ValidatePackage(Package package, string parameterName)
     {
         if (package == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
+
         return package;
     }
 
     private static PackageItem ValidatePackageItem(PackageItem packageItem, string parameterName)
     {
         if (packageItem == null)
-        {
             throw new ValidationException(parameterName + " is required.");
-        }
+
         if (string.IsNullOrWhiteSpace(packageItem.Type))
-        {
             throw new ValidationException(parameterName + ".Type is required.");
-        }
+
         if (string.IsNullOrWhiteSpace(packageItem.Data))
-        {
             throw new ValidationException(parameterName + ".Data is required.");
-        }
+
         return packageItem;
     }
 }

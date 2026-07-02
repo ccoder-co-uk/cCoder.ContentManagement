@@ -1,5 +1,5 @@
-using PackageItem = cCoder.Data.Models.Packaging.PackageItem;
-using Result = cCoder.ContentManagement.Models.Result<cCoder.Data.Models.Packaging.PackageItem>;
+using cCoder.Data.Models.Packaging;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -15,7 +15,7 @@ public interface IPackageItemOrchestrationService
 
     ValueTask DeleteAsync(Guid id);
 
-    ValueTask<IEnumerable<Result>> AddOrUpdate(IEnumerable<PackageItem> items);
+    ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdate(IEnumerable<PackageItem> items);
 
     ValueTask DeleteAllAsync(IEnumerable<PackageItem> items);
 }

@@ -1,4 +1,5 @@
-using Content = cCoder.Data.Models.CMS.Content;
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -14,7 +15,7 @@ public interface IContentOrchestrationService
 
     ValueTask DeleteAsync(int id);
 
-    ValueTask<IEnumerable<cCoder.ContentManagement.Models.Result<Content>>> AddOrUpdate(IEnumerable<Content> items);
+    ValueTask<IEnumerable<Result<Content>>> AddOrUpdate(IEnumerable<Content> items);
 
     ValueTask DeleteAllAsync(IEnumerable<Content> items);
 }

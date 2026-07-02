@@ -1,4 +1,4 @@
-using PageRole = cCoder.Data.Models.Security.PageRole;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 

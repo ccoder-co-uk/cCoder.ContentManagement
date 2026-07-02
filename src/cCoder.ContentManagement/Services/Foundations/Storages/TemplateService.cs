@@ -1,7 +1,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Template = cCoder.Data.Models.CMS.Template;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -11,27 +11,21 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
     {
         ValidateId(id, "id");
         if (ignoreFilters)
-        {
             return GetAll(ignoreFilters: true).FirstOrDefault((Template i) => i.Id == id);
-        }
 
         Template template = GetAll().FirstOrDefault((Template i) => i.Id == id);
         if (template != null)
-        {
             return template;
-        }
+
         Template template2 = GetAll(ignoreFilters: true).FirstOrDefault((Template i) => i.Id == id);
         if (template2 != null)
-        {
             throw new SecurityException("Access Denied!");
-        }
+
         return null;
     }
 
-    public IQueryable<Template> GetAll(bool ignoreFilters = false)
-    {
-        return templateBroker.GetAllTemplates(ignoreFilters);
-    }
+    public IQueryable<Template> GetAll(bool ignoreFilters = false) =>
+        templateBroker.GetAllTemplates(ignoreFilters);
 
     public async ValueTask<Template> AddAsync(Template template)
     {
@@ -94,9 +88,7 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
         }
 
         if (template == null)
-        {
             return;
-        }
 
         authorizationBroker.Authorize(template.AppId, "Template_delete");
         await templateBroker.DeleteTemplateAsync(CreateStorageTemplate(template));
@@ -105,9 +97,7 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
     private static Template CreateStorageTemplate(Template template)
     {
         if (template == null)
-        {
             return null;
-        }
 
         return new Template
         {

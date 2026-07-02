@@ -18,9 +18,7 @@ internal sealed class PageRenderUser
         string normalizedOperation = operation?.ToLowerInvariant() ?? string.Empty;
 
         if (!appId.HasValue)
-        {
             return AppPrivileges.Values.Any(privileges => privileges.Contains(normalizedOperation));
-        }
 
         return AppPrivileges.TryGetValue(appId.Value, out ISet<string> value)
             && value.Contains(normalizedOperation);

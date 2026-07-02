@@ -1,5 +1,5 @@
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using App = cCoder.Data.Models.CMS.App;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services;
 
@@ -16,9 +16,7 @@ internal class CurrentAppResolver(IAppService service, HttpContext httpContext =
             {
                 int num3 = num;
                 if (int.TryParse(text.Substring(num3, num2 - num3), out var result))
-                {
                     return service.Get(result);
-                }
             }
         }
         string host = httpContext?.Request.Host.Host ?? string.Empty;

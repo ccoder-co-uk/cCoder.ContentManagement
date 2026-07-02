@@ -45,8 +45,6 @@ public class PackageItemBroker(ICoreContextFactory coreContextFactory) : IPackag
         await coreDataContext.SaveChangesAsync();
     }
 
-    public int? GetAppId(PackageItem entity)
-    {
-        return null;
-    }
+    public int? GetAppId(PackageItem entity) =>
+        null;
 }
