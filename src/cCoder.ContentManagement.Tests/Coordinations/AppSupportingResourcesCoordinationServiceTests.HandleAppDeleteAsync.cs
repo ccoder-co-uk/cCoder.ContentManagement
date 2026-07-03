@@ -57,4 +57,92 @@ public class AppSupportingResourcesCoordinationServiceTests
         scriptOrchestrationServiceMock.VerifyNoOtherCalls();
         resourceOrchestrationServiceMock.VerifyNoOtherCalls();
     }
+
+    [Fact]
+    public async Task ShouldNotTouchSupportingResourceCollectionsWhenHandleAppUpdateAsyncGivenNullCollections()
+    {
+        // Given
+        App app = new()
+        {
+            Id = 123,
+            Cultures = null,
+            Scripts = null,
+            Resources = null
+        };
+
+        // When
+        await coordinationService.HandleAppUpdateAsync(app);
+
+        // Then
+        appCultureBrokerMock.VerifyNoOtherCalls();
+        scriptBrokerMock.VerifyNoOtherCalls();
+        resourceBrokerMock.VerifyNoOtherCalls();
+        appCultureOrchestrationServiceMock.VerifyNoOtherCalls();
+        scriptOrchestrationServiceMock.VerifyNoOtherCalls();
+        resourceOrchestrationServiceMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task ShouldDeleteExistingSupportingResourcesWhenHandleAppUpdateAsyncGivenEmptyCollections()
+    {
+        // Given
+        App app = new()
+        {
+            Id = 123,
+            Cultures = [],
+            Scripts = [],
+            Resources = []
+        };
+        AppCulture existingCulture = new() { AppId = app.Id, CultureId = "en" };
+        Script existingScript = new() { Id = 456, AppId = app.Id };
+        Resource existingResource = new() { Id = 789, AppId = app.Id };
+
+        appCultureBrokerMock
+            .Setup(broker => broker.GetAllAppCultures(true))
+            .Returns(new[] { existingCulture }.AsQueryable());
+        scriptBrokerMock
+            .Setup(broker => broker.GetAllScripts(true))
+            .Returns(new[] { existingScript }.AsQueryable());
+        resourceBrokerMock
+            .Setup(broker => broker.GetAllResources(true))
+            .Returns(new[] { existingResource }.AsQueryable());
+        appCultureBrokerMock
+            .Setup(broker => broker.DeleteAllAppCulturesAsync(
+                It.Is<IEnumerable<AppCulture>>(items => items.Single() == existingCulture)))
+            .Returns(ValueTask.CompletedTask);
+        scriptBrokerMock
+            .Setup(broker => broker.DeleteAllScriptsAsync(
+                It.Is<IEnumerable<Script>>(items => items.Single() == existingScript)))
+            .Returns(ValueTask.CompletedTask);
+        resourceBrokerMock
+            .Setup(broker => broker.DeleteAllResourcesAsync(
+                It.Is<IEnumerable<Resource>>(items => items.Single() == existingResource)))
+            .Returns(ValueTask.CompletedTask);
+
+        // When
+        await coordinationService.HandleAppUpdateAsync(app);
+
+        // Then
+        appCultureBrokerMock.Verify(broker => broker.GetAllAppCultures(true), Times.Exactly(2));
+        scriptBrokerMock.Verify(broker => broker.GetAllScripts(true), Times.Exactly(2));
+        resourceBrokerMock.Verify(broker => broker.GetAllResources(true), Times.Exactly(2));
+        appCultureBrokerMock.Verify(
+            broker => broker.DeleteAllAppCulturesAsync(
+                It.Is<IEnumerable<AppCulture>>(items => items.Single() == existingCulture)),
+            Times.Once);
+        scriptBrokerMock.Verify(
+            broker => broker.DeleteAllScriptsAsync(
+                It.Is<IEnumerable<Script>>(items => items.Single() == existingScript)),
+            Times.Once);
+        resourceBrokerMock.Verify(
+            broker => broker.DeleteAllResourcesAsync(
+                It.Is<IEnumerable<Resource>>(items => items.Single() == existingResource)),
+            Times.Once);
+        appCultureBrokerMock.VerifyNoOtherCalls();
+        scriptBrokerMock.VerifyNoOtherCalls();
+        resourceBrokerMock.VerifyNoOtherCalls();
+        appCultureOrchestrationServiceMock.VerifyNoOtherCalls();
+        scriptOrchestrationServiceMock.VerifyNoOtherCalls();
+        resourceOrchestrationServiceMock.VerifyNoOtherCalls();
+    }
 }

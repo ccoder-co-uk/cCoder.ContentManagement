@@ -22,6 +22,31 @@ namespace cCoder.Core.Services.Tests.CMS.Coordinations;
 public partial class PageCoordinationServiceTests
 {
     [Fact]
+    public async Task ShouldOnlyRecomputeExistingChildPagesWhenHandlePageUpdateGivenNullCollections()
+    {
+        // Given
+        Page page = CreateRandomPage();
+        page.Id = 42;
+        page.PageInfo = null;
+        page.Contents = null;
+        page.Roles = null;
+        page.Pages = null;
+        pageOrchestrationServiceMock
+            .Setup(service => service.GetAll(true))
+            .Returns(Array.Empty<LocalPage>().AsQueryable());
+
+        // When
+        await coordinationService.HandlePageUpdateAsync(page);
+
+        // Then
+        pageInfoOrchestrationServiceMock.VerifyNoOtherCalls();
+        contentOrchestrationServiceMock.VerifyNoOtherCalls();
+        pageRoleOrchestrationServiceMock.VerifyNoOtherCalls();
+        pageOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        pageOrchestrationServiceMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
     public async Task ShouldAddOrUpdateChildCollectionsWhenHandlePageUpdate()
     {
         // Given

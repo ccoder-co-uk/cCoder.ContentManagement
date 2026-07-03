@@ -17,21 +17,39 @@ internal class AppSupportingResourcesCoordinationService(
     {
         ValidateApp(app, "app");
         StampChildrenWithApp(app);
-        await AddOrUpdateCulturesAsync(app);
-        await AddOrUpdateResourcesAsync(app);
-        await AddOrUpdateScriptsAsync(app);
+
+        if (app.Cultures != null)
+            await AddOrUpdateCulturesAsync(app);
+
+        if (app.Resources != null)
+            await AddOrUpdateResourcesAsync(app);
+
+        if (app.Scripts != null)
+            await AddOrUpdateScriptsAsync(app);
     }
 
     public async ValueTask HandleAppUpdateAsync(App app)
     {
         ValidateApp(app, "app");
         StampChildrenWithApp(app);
-        await DeleteMissingCulturesAsync(app);
-        await DeleteMissingResourcesAsync(app);
-        await DeleteMissingScriptsAsync(app);
-        await AddOrUpdateCulturesAsync(app);
-        await AddOrUpdateResourcesAsync(app);
-        await AddOrUpdateScriptsAsync(app);
+
+        if (app.Cultures != null)
+        {
+            await DeleteMissingCulturesAsync(app);
+            await AddOrUpdateCulturesAsync(app);
+        }
+
+        if (app.Resources != null)
+        {
+            await DeleteMissingResourcesAsync(app);
+            await AddOrUpdateResourcesAsync(app);
+        }
+
+        if (app.Scripts != null)
+        {
+            await DeleteMissingScriptsAsync(app);
+            await AddOrUpdateScriptsAsync(app);
+        }
     }
 
     public async ValueTask HandleAppDeleteAsync(App app)
@@ -62,7 +80,7 @@ internal class AppSupportingResourcesCoordinationService(
 
     private async ValueTask DeleteMissingCulturesAsync(App app)
     {
-        string[] incomingCultureIds = (app.Cultures ?? Array.Empty<AppCulture>())
+        string[] incomingCultureIds = app.Cultures
             .Select(culture => culture.CultureId)
             .ToArray();
 
@@ -76,7 +94,7 @@ internal class AppSupportingResourcesCoordinationService(
 
     private async ValueTask DeleteMissingResourcesAsync(App app)
     {
-        int[] incomingResourceIds = (app.Resources ?? Array.Empty<Resource>())
+        int[] incomingResourceIds = app.Resources
             .Where(resource => resource.Id > 0)
             .Select(resource => resource.Id)
             .ToArray();
@@ -91,7 +109,7 @@ internal class AppSupportingResourcesCoordinationService(
 
     private async ValueTask DeleteMissingScriptsAsync(App app)
     {
-        int[] incomingScriptIds = (app.Scripts ?? Array.Empty<Script>())
+        int[] incomingScriptIds = app.Scripts
             .Where(script => script.Id > 0)
             .Select(script => script.Id)
             .ToArray();
@@ -111,10 +129,9 @@ internal class AppSupportingResourcesCoordinationService(
             .Select(culture => culture.CultureId)
             .ToHashSet(StringComparer.Ordinal);
 
-        if (app.Cultures != null)
-            foreach (AppCulture culture in app.Cultures)
-                if (!existingCultureIds.Contains(culture.CultureId))
-                    await appCultureBroker.AddAppCultureAsync(culture);
+        foreach (AppCulture culture in app.Cultures)
+            if (!existingCultureIds.Contains(culture.CultureId))
+                await appCultureBroker.AddAppCultureAsync(culture);
     }
 
     private async ValueTask AddOrUpdateResourcesAsync(App app)
@@ -124,12 +141,11 @@ internal class AppSupportingResourcesCoordinationService(
             .Select(resource => resource.Id)
             .ToHashSet();
 
-        if (app.Resources != null)
-            foreach (Resource resource in app.Resources)
-                if (existingResourceIds.Contains(resource.Id))
-                    await resourceBroker.UpdateResourceAsync(resource);
-                else
-                    await resourceBroker.AddResourceAsync(resource);
+        foreach (Resource resource in app.Resources)
+            if (existingResourceIds.Contains(resource.Id))
+                await resourceBroker.UpdateResourceAsync(resource);
+            else
+                await resourceBroker.AddResourceAsync(resource);
     }
 
     private async ValueTask AddOrUpdateScriptsAsync(App app)
@@ -139,12 +155,11 @@ internal class AppSupportingResourcesCoordinationService(
             .Select(script => script.Id)
             .ToHashSet();
 
-        if (app.Scripts != null)
-            foreach (Script script in app.Scripts)
-                if (existingScriptIds.Contains(script.Id))
-                    await scriptBroker.UpdateScriptAsync(script);
-                else
-                    await scriptBroker.AddScriptAsync(script);
+        foreach (Script script in app.Scripts)
+            if (existingScriptIds.Contains(script.Id))
+                await scriptBroker.UpdateScriptAsync(script);
+            else
+                await scriptBroker.AddScriptAsync(script);
     }
 
     private static void ThrowIf(bool condition, string message)

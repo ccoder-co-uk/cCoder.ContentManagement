@@ -8,6 +8,7 @@ using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
 using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
+using System.ComponentModel.DataAnnotations;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using FluentAssertions;
 using Moq;
@@ -26,6 +27,9 @@ public partial class PageOrchestrationServiceTests
         entity.Layout = "Default";
         entity.PageInfo = [new PageInfo { CultureId = string.Empty, Title = "Home" }];
         entity.Contents = [];
+        layoutProcessingServiceMock
+            .Setup(x => x.GetAll(true))
+            .Returns(new[] { CreateLayoutFor(entity) }.AsQueryable());
         pageProcessingServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
 
         pageEventProcessingServiceMock
@@ -37,8 +41,32 @@ public partial class PageOrchestrationServiceTests
 
         // Then
         result.Should().BeSameAs(entity);
+        layoutProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
         pageProcessingServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
         pageEventProcessingServiceMock.Verify(x => x.RaisePageAddEventAsync(entity), Times.Once);
+    }
+
+    [Fact]
+    public async Task ShouldThrowValidationExceptionWhenAddAsyncGivenUnknownLayout()
+    {
+        // Given
+        Page entity = CreateRandomPage();
+        entity.Layout = "MissingLayout";
+        entity.PageInfo = [new PageInfo { CultureId = string.Empty, Title = "Home" }];
+        entity.Contents = [];
+        layoutProcessingServiceMock
+            .Setup(x => x.GetAll(true))
+            .Returns(Array.Empty<Layout>().AsQueryable());
+
+        // When
+        Func<Task> act = async () => await orchestrationService.AddAsync(entity);
+
+        // Then
+        await act.Should().ThrowAsync<ValidationException>()
+            .WithMessage($"Layout '{entity.Layout}' does not exist for app {entity.AppId}.");
+        layoutProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageProcessingServiceMock.VerifyNoOtherCalls();
+        pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

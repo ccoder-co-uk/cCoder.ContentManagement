@@ -8,7 +8,8 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal class PageOrchestrationService(
     IPageProcessingService processingService,
-    IPageEventProcessingService eventService) : IPageOrchestrationService
+    IPageEventProcessingService eventService,
+    ILayoutProcessingService layoutProcessingService) : IPageOrchestrationService
 {
     public Page Get(int id)
     {
@@ -24,6 +25,7 @@ internal class PageOrchestrationService(
         ValidatePage(entity, "entity");
         ValidateSinglePage(entity, "entity");
         ValidatePageCollections(entity, "entity");
+        ValidateLayoutExistsForApp(entity);
 
         Page result = await processingService.AddAsync(entity);
         await eventService.RaisePageAddEventAsync(result);
@@ -33,6 +35,8 @@ internal class PageOrchestrationService(
     public async ValueTask<Page> UpdateAsync(Page entity)
     {
         ValidatePage(entity, "entity");
+        ValidatePageLayout(entity);
+        ValidateLayoutExistsForApp(entity);
 
         Page result = await processingService.UpdateAsync(entity);
         entity.Id = result.Id;
@@ -235,12 +239,25 @@ internal class PageOrchestrationService(
         if (page.PageInfo == null || !page.PageInfo.Any(pi => pi.CultureId == string.Empty))
             throw new ValidationException("Pages MUST have page information defined for the default culture, other cultures are optional.");
 
-        if (string.IsNullOrWhiteSpace(page.Layout))
-            throw new ValidationException("Pages MUST specify a layout.");
+        ValidatePageLayout(page);
 
         if (page.Contents == null)
             throw new ValidationException("Pages MUST include a contents collection.");
     }
+
+    private void ValidateLayoutExistsForApp(Page page)
+    {
+        bool layoutExists = layoutProcessingService.GetAll(ignoreFilters: true)
+            .Any(layout =>
+                layout.AppId == page.AppId &&
+                layout.Name == page.Layout);
+
+        if (!layoutExists)
+            throw new ValidationException($"Layout '{page.Layout}' does not exist for app {page.AppId}.");
+    }
+
+    private static void ValidatePageLayout(Page page) =>
+        ThrowIf(string.IsNullOrWhiteSpace(page.Layout), "Pages MUST specify a layout.");
 
     private static void ThrowIf(bool condition, string message)
     {
