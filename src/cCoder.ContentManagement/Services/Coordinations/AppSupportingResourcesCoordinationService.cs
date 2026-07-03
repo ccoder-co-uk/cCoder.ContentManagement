@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
@@ -7,7 +8,10 @@ namespace cCoder.ContentManagement.Services.Coordinations;
 internal class AppSupportingResourcesCoordinationService(
     IAppCultureBroker appCultureBroker,
     IScriptBroker scriptBroker,
-    IResourceBroker resourceBroker) : IAppSupportingResourcesCoordinationService
+    IResourceBroker resourceBroker,
+    IAppCultureOrchestrationService appCultureOrchestrationService,
+    IScriptOrchestrationService scriptOrchestrationService,
+    IResourceOrchestrationService resourceOrchestrationService) : IAppSupportingResourcesCoordinationService
 {
     public async ValueTask HandleAppAddAsync(App app)
     {
@@ -33,24 +37,9 @@ internal class AppSupportingResourcesCoordinationService(
     public async ValueTask HandleAppDeleteAsync(App app)
     {
         ValidateApp(app, "app");
-        AppCulture[] culturesToDelete = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
-            .Where(culture => culture.AppId == app.Id)
-            .ToArray();
-        Script[] scriptsToDelete = scriptBroker.GetAllScripts(ignoreFilters: true)
-            .Where(script => script.AppId == app.Id)
-            .ToArray();
-        Resource[] resourcesToDelete = resourceBroker.GetAllResources(ignoreFilters: true)
-            .Where(resource => resource.AppId == app.Id)
-            .ToArray();
-
-        if (culturesToDelete.Length > 0)
-            await appCultureBroker.DeleteAllAppCulturesAsync(culturesToDelete);
-
-        if (scriptsToDelete.Length > 0)
-            await scriptBroker.DeleteAllScriptsAsync(scriptsToDelete);
-
-        if (resourcesToDelete.Length > 0)
-            await resourceBroker.DeleteAllResourcesAsync(resourcesToDelete);
+        await appCultureOrchestrationService.DeleteByAppIdAsync(app.Id);
+        await scriptOrchestrationService.DeleteByAppIdAsync(app.Id);
+        await resourceOrchestrationService.DeleteByAppIdAsync(app.Id);
     }
 
     private static void StampChildrenWithApp(App app)

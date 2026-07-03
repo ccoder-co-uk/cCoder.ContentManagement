@@ -24,16 +24,16 @@ public partial class PackageProcessingServiceTests
 {
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPackageService> packageServiceMock = new();
-    private readonly Mock<IPackageExportService> packageExportServiceMock = new();
     private readonly Mock<IPackageItemProcessingService> packageItemServiceMock = new();
+    private readonly Mock<IPackageExportService> packageExportServiceMock = new();
     private readonly PackageProcessingService packageProcessingService;
 
     public PackageProcessingServiceTests()
     {
         packageProcessingService = new PackageProcessingService(
             packageServiceMock.Object,
-            packageExportServiceMock.Object,
-            packageItemServiceMock.Object
+            packageItemServiceMock.Object,
+            packageExportServiceMock.Object
         );
     }
 

@@ -4,6 +4,7 @@ using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -117,6 +118,7 @@ internal partial class PageProcessingService(
         }
         page.Path = BuildPath(page.Name, parent?.Path);
         page.ParentId = parent?.Id;
+        ValidatePathDoesNotExistForApp(page);
         Page newPage = new Page
         {
             ParentId = page.ParentId,
@@ -284,5 +286,18 @@ internal partial class PageProcessingService(
         string trimmedPath = path.Trim('/');
         int separatorIndex = trimmedPath.LastIndexOf('/');
         return separatorIndex < 0 ? null : trimmedPath[..separatorIndex];
+    }
+
+    private void ValidatePathDoesNotExistForApp(Page page)
+    {
+        string normalizedPath = (page.Path ?? string.Empty).ToUpperInvariant();
+        bool pathExists = service.GetAll(ignoreFilters: true)
+            .Any(existingPage =>
+                existingPage.AppId == page.AppId &&
+                existingPage.Id != page.Id &&
+                (existingPage.Path ?? string.Empty).ToUpper() == normalizedPath);
+
+        if (pathExists)
+            throw new ValidationException($"A page already exists for app {page.AppId} with path '{page.Path ?? string.Empty}'.");
     }
 }

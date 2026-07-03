@@ -57,6 +57,7 @@ public partial class PageProcessingServiceTests
 
         currentUser = actor;
         pageServiceMock.Setup(x => x.AddAsync(It.IsAny<Page>())).ReturnsAsync(addedPage);
+        pageServiceMock.Setup(x => x.GetAll(true)).Returns(Array.Empty<Page>().AsQueryable());
 
         Page result = await pageProcessingService.AddAsync(page);
 
@@ -75,6 +76,7 @@ public partial class PageProcessingServiceTests
                 ),
             Times.Once
         );
+        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
@@ -125,15 +127,184 @@ public partial class PageProcessingServiceTests
         currentUser = actor;
         pageServiceMock.Setup(x => x.AddAsync(It.IsAny<Page>())).ReturnsAsync(addedPage);
         pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { parent }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { parent }.AsQueryable());
 
         Page result = await pageProcessingService.AddAsync(page);
 
         result.Should().BeSameAs(addedPage);
         pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
+        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
         pageServiceMock.Verify(
             x => x.AddAsync(It.Is<Page>(p => p.Path == "parent/Child" && p.AppId == 1)),
             Times.Once
         );
+        pageServiceMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task ShouldThrowValidationExceptionWhenComputedPathAlreadyExistsForSameAppOnAddAsync()
+    {
+        authorizationBrokerMock
+            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
+            .Callback((int? appId, string privilege) =>
+            {
+                if (!(currentUser?.Can(appId, privilege) ?? false))
+                    throw new SecurityException("Access Denied!");
+            });
+
+        authorizationBrokerMock
+            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
+            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+
+        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+
+        currentUser = TestUsers.WithPrivilege("page_create", 1);
+        Page existingPage = new()
+        {
+            Id = 24,
+            AppId = 1,
+            Name = "About",
+            Path = "About",
+        };
+        Page page = new()
+        {
+            AppId = 1,
+            Name = "About",
+            PageInfo = [new PageInfo { CultureId = string.Empty, Title = "About Us" }],
+            Contents = [],
+        };
+
+        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { existingPage }.AsQueryable());
+
+        Func<Task> act = async () => await pageProcessingService.AddAsync(page);
+
+        await act.Should()
+            .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
+            .WithMessage("A page already exists for app 1 with path 'About'.");
+
+        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageServiceMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task ShouldAllowComputedPathWhenItOnlyExistsForAnotherAppOnAddAsync()
+    {
+        authorizationBrokerMock
+            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
+            .Callback((int? appId, string privilege) =>
+            {
+                if (!(currentUser?.Can(appId, privilege) ?? false))
+                    throw new SecurityException("Access Denied!");
+            });
+
+        authorizationBrokerMock
+            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
+            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+
+        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+
+        currentUser = TestUsers.WithPrivilege("page_create", 1);
+        Page existingPage = new()
+        {
+            Id = 24,
+            AppId = 2,
+            Name = "About",
+            Path = "About",
+        };
+        Page page = new()
+        {
+            AppId = 1,
+            Name = "About",
+            PageInfo = [new PageInfo { CultureId = string.Empty, Title = "About Us" }],
+            Contents = [],
+        };
+        Page addedPage = new()
+        {
+            Id = 12,
+            AppId = 1,
+            Name = "About",
+            Path = "About",
+            Roles = [],
+        };
+
+        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { existingPage }.AsQueryable());
+        pageServiceMock.Setup(x => x.AddAsync(It.IsAny<Page>())).ReturnsAsync(addedPage);
+
+        Page result = await pageProcessingService.AddAsync(page);
+
+        result.Should().BeSameAs(addedPage);
+        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageServiceMock.Verify(
+            x => x.AddAsync(It.Is<Page>(p => p.AppId == 1 && p.Path == "About")),
+            Times.Once);
+        pageServiceMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task ShouldThrowValidationExceptionWhenComputedPathExistsOnPageUserCannotSeeForSameAppOnAddAsync()
+    {
+        authorizationBrokerMock
+            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
+            .Callback((int? appId, string privilege) =>
+            {
+                if (!(currentUser?.Can(appId, privilege) ?? false))
+                    throw new SecurityException("Access Denied!");
+            });
+
+        authorizationBrokerMock
+            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
+            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+
+        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+
+        currentUser = TestUsers.WithPrivilege("page_create", 1);
+        UserRole userRole = currentUser.Roles.First();
+        Page parent = new()
+        {
+            Id = 55,
+            AppId = 1,
+            Name = "Parent",
+            Path = "parent",
+            Roles =
+            [
+                new PageRole
+                {
+                    RoleId = userRole.RoleId,
+                    Role = userRole.Role,
+                },
+            ],
+            PageInfo = [new PageInfo { CultureId = string.Empty, Title = "Parent" }],
+        };
+        Page hiddenDuplicate = new()
+        {
+            Id = 88,
+            AppId = 1,
+            Name = "Child",
+            ParentId = parent.Id,
+            Path = "parent/Child",
+            Roles = [],
+        };
+        Page page = new()
+        {
+            AppId = 1,
+            Name = "Child",
+            ParentId = parent.Id,
+            PageInfo = [new PageInfo { CultureId = string.Empty, Title = "Child Title" }],
+            Contents = [],
+            Roles = [],
+        };
+
+        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { parent }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { parent, hiddenDuplicate }.AsQueryable());
+
+        Func<Task> act = async () => await pageProcessingService.AddAsync(page);
+
+        await act.Should()
+            .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
+            .WithMessage("A page already exists for app 1 with path 'parent/Child'.");
+
+        pageServiceMock.Verify(x => x.GetAll(false), Times.Exactly(2));
+        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

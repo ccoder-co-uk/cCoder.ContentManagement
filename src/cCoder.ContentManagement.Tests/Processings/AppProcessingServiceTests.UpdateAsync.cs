@@ -51,9 +51,6 @@ public partial class AppProcessingServiceTests
         currentUser = admin;
         appServiceMock.Setup(x => x.Get(dbApp.Id, true)).Returns(dbApp);
         appServiceMock.Setup(x => x.UpdateAsync(dbApp)).ReturnsAsync(dbApp);
-        appEventProcessingServiceMock
-            .Setup(x => x.RaiseAppUpdateEventAsync(dbApp))
-            .Returns(ValueTask.CompletedTask);
 
         // When
         App result = await appProcessingService.UpdateAsync(app);
@@ -63,8 +60,6 @@ public partial class AppProcessingServiceTests
         appServiceMock.Verify(x => x.Get(dbApp.Id, true), Times.Once);
         appServiceMock.Verify(x => x.UpdateAsync(dbApp), Times.Once);
         appServiceMock.VerifyNoOtherCalls();
-        appEventProcessingServiceMock.Verify(x => x.RaiseAppUpdateEventAsync(dbApp), Times.Once);
-        appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -103,7 +98,6 @@ public partial class AppProcessingServiceTests
         appServiceMock.Verify(x => x.Get(app.Id, true), Times.Once);
         appServiceMock.Verify(x => x.UpdateAsync(It.IsAny<App>()), Times.Once);
         appServiceMock.VerifyNoOtherCalls();
-        appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

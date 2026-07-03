@@ -13,7 +13,6 @@ internal class AppProcessingService(
     IAppService service,
     ICultureService cultureService,
     IPrivilegeBroker privilegeBroker,
-    IAppEventProcessingService appEventProcessingService,
     IAuthorizationBroker authorizationBroker,
     IRoleBroker roleBroker,
     IUserRoleBroker userRoleBroker,
@@ -89,7 +88,6 @@ internal class AppProcessingService(
         }
 
         StampAppChildren(storedApp);
-        await appEventProcessingService.RaiseAppAddEventAsync(storedApp);
         return storedApp;
     }
 
@@ -184,7 +182,6 @@ internal class AppProcessingService(
         }
 
         StampAppChildren(updatedApp);
-        await appEventProcessingService.RaiseAppUpdateEventAsync(updatedApp);
         return updatedApp;
     }
 

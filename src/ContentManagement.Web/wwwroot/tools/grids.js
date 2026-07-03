@@ -97,7 +97,7 @@ window.ContentManagementGrids = {
                 Order: { type: "number" },
                 ShowOnMenus: { type: "boolean" },
                 Name: { type: "string" },
-                Path: { type: "string" },
+                Path: { type: "string", editable: false },
                 ResourceKey: { type: "string" },
                 Layout: { type: "string" }
             },
@@ -316,11 +316,13 @@ window.ContentManagementGrids = {
     },
 
     createGrid: function (config) {
-        $(`#${this.gridId(config)}`).kendoGrid({
+        const gridElement = $(`#${this.gridId(config)}`);
+
+        gridElement.kendoGrid({
             dataSource: {
                 transport: {
                     read: options => this.read(config, options),
-                    create: options => this.create(config, options),
+                    create: options => this.create(config, options, null, gridElement),
                     update: options => this.update(config, options),
                     destroy: options => this.destroy(config, options)
                 },
@@ -356,7 +358,7 @@ window.ContentManagementGrids = {
             },
             change: () => this.onSelectionChanged(config),
             edit: event => this.onEdit(config, event),
-            save: () => ContentManagementApi.notify("Saving..."),
+            save: event => this.onSave(config, event, null, gridElement),
             remove: () => ContentManagementApi.notify("Deleting..."),
             dataBound: () => this.onDataBound(config)
         });
@@ -420,19 +422,25 @@ window.ContentManagementGrids = {
         return url;
     },
 
-    create: async function (config, options, contextValues) {
+    create: async function (config, options, contextValues, gridElement) {
         try {
             if (config.context && !this.contextValue(config.context.type, contextValues)) {
                 throw new Error(`Select a ${config.context.type} before creating ${config.title}.`);
             }
 
             const payload = this.preparePayload(config, options.data, true, contextValues);
-            const result = await ContentManagementApi.post(`${this.apiRoot}/${config.name}`, payload);
-            options.success(this.withRowState(config, result ?? payload, contextValues));
+            await ContentManagementApi.post(`${this.apiRoot}/${config.name}`, payload);
+            options.success(options.data);
+            this.refreshGridData(config, gridElement);
             ContentManagementApi.notify(`${config.title} created`);
         } catch (error) {
             options.error(error);
         }
+    },
+
+    refreshGridData: function (config, gridElement) {
+        const grid = gridElement?.data("kendoGrid") ?? $(`#${this.gridId(config)}`).data("kendoGrid");
+        grid?.dataSource?.read();
     },
 
     update: async function (config, options, contextValues) {
@@ -454,6 +462,35 @@ window.ContentManagementGrids = {
         } catch (error) {
             options.error(error);
         }
+    },
+
+    onSave: async function (config, event, contextValues, gridElement) {
+        ContentManagementApi.notify("Saving...");
+
+        if (event.model.isNew()) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const data = Object.assign(
+            {},
+            event.model.toJSON ? event.model.toJSON() : event.model,
+            event.values);
+
+        await this.update(
+            config,
+            {
+                data,
+                success: () => {
+                    event.container.data("kendoWindow")?.close();
+                    this.refreshGridData(config, gridElement);
+                },
+                error: error => {
+                    ContentManagementApi.notify(error.message ?? String(error), true);
+                }
+            },
+            contextValues);
     },
 
     destroy: async function (config, options, contextValues) {
@@ -498,8 +535,26 @@ window.ContentManagementGrids = {
         }
 
         this.applyStamp(config, payload, isCreate);
+        this.applyAggregateDefaults(config, payload, isCreate);
 
         return payload;
+    },
+
+    applyAggregateDefaults: function (config, payload, isCreate) {
+        if (!isCreate || config.name !== "Page") {
+            return;
+        }
+
+        payload.PageInfo = payload.PageInfo ?? [
+            {
+                CultureId: "",
+                Title: payload.Name || "Page",
+                Description: "",
+                Keywords: ""
+            }
+        ];
+
+        payload.Contents = payload.Contents ?? [];
     },
 
     applyStamp: function (config, payload, isCreate) {
@@ -578,7 +633,7 @@ window.ContentManagementGrids = {
             dataSource: {
                 transport: {
                     read: options => this.read(config, options, contextValues),
-                    create: options => this.create(config, options, contextValues),
+                    create: options => this.create(config, options, contextValues, element),
                     update: options => this.update(config, options, contextValues),
                     destroy: options => this.destroy(config, options, contextValues)
                 },
@@ -610,7 +665,7 @@ window.ContentManagementGrids = {
                 noRecords: `No ${config.title} found for this Page.`
             },
             edit: childEvent => this.onEdit(config, childEvent, contextValues),
-            save: () => ContentManagementApi.notify("Saving..."),
+            save: childEvent => this.onSave(config, childEvent, contextValues, element),
             remove: () => ContentManagementApi.notify("Deleting...")
         });
     },

@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal class PackageProcessingService(
     IPackageService service,
-    IPackageExportService packageExportService,
-    IPackageItemProcessingService packageItemService) : IPackageProcessingService
+    IPackageItemProcessingService packageItemService,
+    IPackageExportService packageExportService) : IPackageProcessingService
 {
     public Package ExportPackage(int appId, string packageName)
     {
@@ -70,13 +70,10 @@ internal class PackageProcessingService(
                 .Where(item => item.PackageId == result.Id)
                 .ToArray());
 
-            entity.Items.ForEach(item =>
-            {
-                item.PackageId = result.Id;
-            });
-
+            entity.Items.ForEach(item => item.PackageId = result.Id);
             await packageItemService.AddOrUpdate(entity.Items);
         }
+
         return result;
     }
 

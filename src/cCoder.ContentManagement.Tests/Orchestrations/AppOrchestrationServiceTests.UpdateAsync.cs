@@ -19,11 +19,14 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class AppOrchestrationServiceTests
 {
     [Fact]
-    public async Task ShouldCallProcessingWhenUpdateAsync()
+    public async Task ShouldCallProcessingThenRaiseUpdateEventAsyncWhenUpdateAsync()
     {
         // Given
         App entity = CreateRandomApp();
         appProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        appEventProcessingServiceMock
+            .Setup(x => x.RaiseAppUpdateEventAsync(entity))
+            .Returns(ValueTask.CompletedTask);
 
         // When
         App result = await orchestrationService.UpdateAsync(entity);
@@ -31,6 +34,7 @@ public partial class AppOrchestrationServiceTests
         // Then
         result.Should().BeSameAs(entity);
         appProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        appEventProcessingServiceMock.Verify(x => x.RaiseAppUpdateEventAsync(entity), Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
