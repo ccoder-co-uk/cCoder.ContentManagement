@@ -27,7 +27,6 @@ public partial class AppProcessingServiceTests
     private readonly Mock<IAppService> appServiceMock = new();
     private readonly Mock<ICultureService> cultureServiceMock = new();
     private readonly Mock<IPrivilegeBroker> privilegeBrokerMock = new();
-    private readonly Mock<IAppEventProcessingService> appEventProcessingServiceMock = new();
     private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
     private readonly Mock<IRoleBroker> roleBrokerMock = new();
     private readonly Mock<IUserRoleBroker> userRoleBrokerMock = new();
@@ -42,7 +41,6 @@ public partial class AppProcessingServiceTests
             appServiceMock.Object,
             cultureServiceMock.Object,
             privilegeBrokerMock.Object,
-            appEventProcessingServiceMock.Object,
             authorizationBrokerMock.Object,
             roleBrokerMock.Object,
             userRoleBrokerMock.Object

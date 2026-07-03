@@ -1,6 +1,5 @@
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
-using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using Moq;
@@ -11,12 +10,12 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Events;
 public partial class EventHandlerServiceTests
 {
     [Fact]
-    public void ShouldRegisterDirectAppChildAndExistingPagePackageHandlers()
+    public void ShouldRegisterPassThroughAppPageAndPackageHandlers()
     {
         // Given
-        SetupAppEventRegistrations("app_add");
-        SetupAppEventRegistrations("app_update");
-        SetupAppDeleteRegistrations();
+        SetupAppCoordinationEventRegistrations("app_add");
+        SetupAppCoordinationEventRegistrations("app_update");
+        SetupAppCoordinationEventRegistrations("app_delete");
         eventHubBrokerMock
             .Setup(x => x.ListenToEvent<Page, IPageCoordinationService>(
                 "page_add",
@@ -41,37 +40,16 @@ public partial class EventHandlerServiceTests
         eventHubBrokerMock.VerifyAll();
     }
 
-    private void SetupAppEventRegistrations(string eventName)
+    private void SetupAppCoordinationEventRegistrations(string eventName)
     {
         eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<App, IAppCultureOrchestrationService>(
+            .Setup(x => x.ListenToEvent<App, IAppSupportingResourcesCoordinationService>(
                 eventName,
-                It.IsAny<Func<IAppCultureOrchestrationService, App, ValueTask>>()));
+                It.IsAny<Func<IAppSupportingResourcesCoordinationService, App, ValueTask>>()));
         eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<App, IComponentOrchestrationService>(
+            .Setup(x => x.ListenToEvent<App, IAppRenderableCoordinationService>(
                 eventName,
-                It.IsAny<Func<IComponentOrchestrationService, App, ValueTask>>()));
-        eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<App, ILayoutOrchestrationService>(
-                eventName,
-                It.IsAny<Func<ILayoutOrchestrationService, App, ValueTask>>()));
-        eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<App, IPageOrchestrationService>(
-                eventName,
-                It.IsAny<Func<IPageOrchestrationService, App, ValueTask>>()));
-        eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<App, IResourceOrchestrationService>(
-                eventName,
-                It.IsAny<Func<IResourceOrchestrationService, App, ValueTask>>()));
-        eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<App, IScriptOrchestrationService>(
-                eventName,
-                It.IsAny<Func<IScriptOrchestrationService, App, ValueTask>>()));
-        eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<App, ITemplateOrchestrationService>(
-                eventName,
-                It.IsAny<Func<ITemplateOrchestrationService, App, ValueTask>>()));
+                It.IsAny<Func<IAppRenderableCoordinationService, App, ValueTask>>()));
     }
 
-    private void SetupAppDeleteRegistrations() => SetupAppEventRegistrations("app_delete");
 }

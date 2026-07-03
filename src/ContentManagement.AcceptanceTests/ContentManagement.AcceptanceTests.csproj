@@ -9,7 +9,7 @@
     <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="cCoder.Security.Data" Version="2026.7.1.1527" />
+    <PackageReference Include="cCoder.Security.Data" Version="2026.7.3.1125" />
     <PackageReference Include="FluentAssertions" Version="8.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.9" />

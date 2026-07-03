@@ -31,13 +31,17 @@ internal class AppOrchestrationService(
     public async ValueTask<App> AddAsync(App entity)
     {
         ValidateApp(entity, "entity");
-        return await processingService.AddAsync(entity);
+        App result = await processingService.AddAsync(entity);
+        await eventService.RaiseAppAddEventAsync(result);
+        return result;
     }
 
     public async ValueTask<App> UpdateAsync(App entity)
     {
         ValidateApp(entity, "entity");
-        return await processingService.UpdateAsync(entity);
+        App result = await processingService.UpdateAsync(entity);
+        await eventService.RaiseAppUpdateEventAsync(result);
+        return result;
     }
 
     public async ValueTask DeleteAsync(int id)

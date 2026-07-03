@@ -38,28 +38,10 @@ internal class AppRenderableCoordinationService(
     public async ValueTask HandleAppDeleteAsync(App app)
     {
         ValidateApp(app, "app");
-        IEnumerable<Page> pagesToDelete = pageOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(page => page.AppId == app.Id)
-            .ToArray();
-
-        Component[] componentsToDelete = componentOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(component => component.AppId == app.Id)
-            .ToArray();
-
-        IEnumerable<Template> templatesToDelete = templateOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(template => template.AppId == app.Id)
-            .ToArray();
-
-        IEnumerable<Layout> layoutsToDelete = layoutOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(layout => layout.AppId == app.Id)
-            .ToArray();
-
-        await pageOrchestrationService.DeleteAllAsync(pagesToDelete);
-        if (componentsToDelete.Length > 0)
-            await componentOrchestrationService.DeleteAllAsync(componentsToDelete);
-
-        await templateOrchestrationService.DeleteAllAsync(templatesToDelete);
-        await layoutOrchestrationService.DeleteAllAsync(layoutsToDelete);
+        await pageOrchestrationService.DeleteByAppIdAsync(app.Id);
+        await componentOrchestrationService.DeleteByAppIdAsync(app.Id);
+        await templateOrchestrationService.DeleteByAppIdAsync(app.Id);
+        await layoutOrchestrationService.DeleteByAppIdAsync(app.Id);
     }
 
     private static void StampChildrenWithApp(App app)

@@ -65,9 +65,6 @@ public partial class AppProcessingServiceTests
                 candidate.Id = 1;
                 return candidate;
             });
-        appEventProcessingServiceMock
-            .Setup(x => x.RaiseAppAddEventAsync(It.IsAny<App>()))
-            .Returns(ValueTask.CompletedTask);
 
         cultureServiceMock
             .Setup(x => x.GetAll(false))
@@ -111,8 +108,6 @@ public partial class AppProcessingServiceTests
         appServiceMock.VerifyNoOtherCalls();
         cultureServiceMock.VerifyNoOtherCalls();
         privilegeBrokerMock.VerifyNoOtherCalls();
-        appEventProcessingServiceMock.Verify(x => x.RaiseAppAddEventAsync(It.IsAny<App>()), Times.Once);
-        appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -159,7 +154,6 @@ public partial class AppProcessingServiceTests
         appServiceMock.Verify(x => x.GetAll(true), Times.Once);
         appServiceMock.Verify(x => x.AddAsync(It.IsAny<App>()), Times.Once);
         appServiceMock.VerifyNoOtherCalls();
-        appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -176,9 +170,6 @@ public partial class AppProcessingServiceTests
                 candidate.Id = 1;
                 return candidate;
             });
-        appEventProcessingServiceMock
-            .Setup(x => x.RaiseAppAddEventAsync(It.IsAny<App>()))
-            .Returns(ValueTask.CompletedTask);
         cultureServiceMock
             .Setup(x => x.GetAll(false))
             .Returns(new[] { new Culture { Id = string.Empty } }.AsQueryable());
@@ -205,7 +196,7 @@ public partial class AppProcessingServiceTests
     }
 
     [Fact]
-    public async Task ShouldRaiseAppAddEventWithoutRoleBackReferencesForAddAsync()
+    public async Task ShouldReturnAddedAppWithoutRoleBackReferencesForAddAsync()
     {
         authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => TestUsers.WithPrivilege("app_create"));
         appServiceMock
@@ -231,19 +222,11 @@ public partial class AppProcessingServiceTests
                     new SecurityDataModels.Privilege { Id = "app_admin", Operation = "Admin", Type = "App" }
                 }.AsQueryable());
 
-        App raisedApp = null;
+        App result = await appProcessingService.AddAsync(CreateRandomApp());
 
-        appEventProcessingServiceMock
-            .Setup(x => x.RaiseAppAddEventAsync(It.IsAny<App>()))
-            .Callback<App>(app => raisedApp = app)
-            .Returns(ValueTask.CompletedTask);
-
-        await appProcessingService.AddAsync(CreateRandomApp());
-
-        raisedApp.Should().NotBeNull();
-        raisedApp.Roles.Should().NotBeEmpty();
-        raisedApp.Roles.Should().OnlyContain(role => role.App == null);
-        raisedApp.Roles.SelectMany(role => role.Users ?? Array.Empty<UserRole>())
+        result.Roles.Should().NotBeEmpty();
+        result.Roles.Should().OnlyContain(role => role.App == null);
+        result.Roles.SelectMany(role => role.Users ?? Array.Empty<UserRole>())
             .Should()
             .OnlyContain(userRole => userRole.Role == null);
     }
