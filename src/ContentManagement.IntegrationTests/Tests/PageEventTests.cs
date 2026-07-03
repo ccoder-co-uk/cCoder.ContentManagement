@@ -320,9 +320,13 @@ public sealed partial class PageEventTests(ContentManagementIntegrationFixture f
                 .Select(page => page.Id)
         ];
 
-        await core.Set<PageRole>().IgnoreQueryFilters()
-            .Where(role => pageIds.Contains(role.PageId))
-            .ExecuteDeleteAsync();
+        await core.Database.ExecuteSqlInterpolatedAsync($"""
+            DELETE pr
+            FROM [Security].[PageRoles] pr
+            INNER JOIN [CMS].[Pages] p
+                ON p.[Id] = pr.[PageId]
+            WHERE p.[AppId] = {appId}
+            """);
         await core.Set<PageInfo>().IgnoreQueryFilters()
             .Where(pageInfo => pageIds.Contains(pageInfo.PageId))
             .ExecuteDeleteAsync();
