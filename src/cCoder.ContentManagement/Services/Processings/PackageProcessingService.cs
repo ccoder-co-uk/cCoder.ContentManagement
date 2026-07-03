@@ -64,14 +64,16 @@ internal class PackageProcessingService(
     {
         ValidatePackage(entity, "entity");
         Package result = await service.UpdateAsync(entity);
-        if (entity.Items != null && entity.Items.Any())
+        if (entity.Items != null)
         {
             await packageItemService.DeleteAllAsync(packageItemService.GetAll()
                 .Where(item => item.PackageId == result.Id)
                 .ToArray());
 
             entity.Items.ForEach(item => item.PackageId = result.Id);
-            await packageItemService.AddOrUpdate(entity.Items);
+
+            if (entity.Items.Any())
+                await packageItemService.AddOrUpdate(entity.Items);
         }
 
         return result;

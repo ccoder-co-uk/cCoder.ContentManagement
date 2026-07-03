@@ -53,6 +53,54 @@ public sealed partial class PageControllerTests
         await DeletePageAsync(existingPage.Id);
         await Teardown(seededContext);
     }
+
+    [Fact]
+    public async Task Post_WhenLayoutDoesNotExistForApp_ShouldReturnLayoutError()
+    {
+        // Given
+        SeededPageContext seededContext = await SeedDatabase("page_create");
+        string name = Unique("Page");
+        string missingLayout = Unique("MissingLayout");
+
+        // When
+        using HttpResponseMessage response = await Client.PostAsJsonAsync(
+            BaseUrl,
+            new
+            {
+                appId = seededContext.AppId,
+                name,
+                order = 1,
+                showOnMenus = true,
+                resourceKey = "Default",
+                layout = missingLayout,
+                pageInfo = new[]
+                {
+                    new
+                    {
+                        cultureId = "",
+                        title = name,
+                        description = $"{name} description",
+                        keywords = $"{name.ToLowerInvariant()},acceptance",
+                    },
+                },
+                contents = new[]
+                {
+                    new
+                    {
+                        cultureId = "",
+                        name = "body",
+                        html = $"<p>{name} body</p>",
+                    },
+                },
+            });
+        string content = await response.Content.ReadAsStringAsync();
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError, content);
+        content.Should().Contain($"Layout '{missingLayout}' does not exist for app {seededContext.AppId}.");
+
+        await Teardown(seededContext);
+    }
 }
 
 

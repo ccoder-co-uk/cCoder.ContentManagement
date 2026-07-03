@@ -15,24 +15,48 @@ internal class AppRenderableCoordinationService(
     {
         ValidateApp(app, "app");
         StampChildrenWithApp(app);
-        await templateOrchestrationService.AddOrUpdate(app.Templates ?? Array.Empty<Template>());
-        await layoutOrchestrationService.AddOrUpdate(app.Layouts ?? Array.Empty<Layout>());
-        await AddOrUpdateComponentsAsync(app);
-        await pageOrchestrationService.AddOrUpdate(app.Pages ?? Array.Empty<Page>());
+
+        if (app.Templates != null)
+            await templateOrchestrationService.AddOrUpdate(app.Templates);
+
+        if (app.Layouts != null)
+            await layoutOrchestrationService.AddOrUpdate(app.Layouts);
+
+        if (app.Components != null)
+            await AddOrUpdateComponentsAsync(app);
+
+        if (app.Pages != null)
+            await pageOrchestrationService.AddOrUpdate(app.Pages);
     }
 
     public async ValueTask HandleAppUpdateAsync(App app)
     {
         ValidateApp(app, "app");
         StampChildrenWithApp(app);
-        await DeleteMissingPagesAsync(app);
-        await DeleteMissingComponentsAsync(app);
-        await DeleteMissingTemplatesAsync(app);
-        await DeleteMissingLayoutsAsync(app);
-        await templateOrchestrationService.AddOrUpdate(app.Templates ?? Array.Empty<Template>());
-        await layoutOrchestrationService.AddOrUpdate(app.Layouts ?? Array.Empty<Layout>());
-        await AddOrUpdateComponentsAsync(app);
-        await pageOrchestrationService.AddOrUpdate(app.Pages ?? Array.Empty<Page>());
+
+        if (app.Templates != null)
+        {
+            await DeleteMissingTemplatesAsync(app);
+            await templateOrchestrationService.AddOrUpdate(app.Templates);
+        }
+
+        if (app.Layouts != null)
+        {
+            await DeleteMissingLayoutsAsync(app);
+            await layoutOrchestrationService.AddOrUpdate(app.Layouts);
+        }
+
+        if (app.Components != null)
+        {
+            await DeleteMissingComponentsAsync(app);
+            await AddOrUpdateComponentsAsync(app);
+        }
+
+        if (app.Pages != null)
+        {
+            await DeleteMissingPagesAsync(app);
+            await pageOrchestrationService.AddOrUpdate(app.Pages);
+        }
     }
 
     public async ValueTask HandleAppDeleteAsync(App app)
@@ -65,7 +89,7 @@ internal class AppRenderableCoordinationService(
 
     private async ValueTask DeleteMissingPagesAsync(App app)
     {
-        int[] incomingPageIds = (app.Pages ?? Array.Empty<Page>())
+        int[] incomingPageIds = app.Pages
             .Where(page => page.Id > 0)
             .Select(page => page.Id)
             .ToArray();
@@ -80,7 +104,7 @@ internal class AppRenderableCoordinationService(
 
     private async ValueTask DeleteMissingComponentsAsync(App app)
     {
-        int[] incomingComponentIds = (app.Components ?? Array.Empty<Component>())
+        int[] incomingComponentIds = app.Components
             .Where(component => component.Id > 0)
             .Select(component => component.Id)
             .ToArray();
@@ -95,7 +119,7 @@ internal class AppRenderableCoordinationService(
 
     private async ValueTask DeleteMissingTemplatesAsync(App app)
     {
-        int[] incomingTemplateIds = (app.Templates ?? Array.Empty<Template>())
+        int[] incomingTemplateIds = app.Templates
             .Where(template => template.Id > 0)
             .Select(template => template.Id)
             .ToArray();
@@ -110,7 +134,7 @@ internal class AppRenderableCoordinationService(
 
     private async ValueTask DeleteMissingLayoutsAsync(App app)
     {
-        int[] incomingLayoutIds = (app.Layouts ?? Array.Empty<Layout>())
+        int[] incomingLayoutIds = app.Layouts
             .Where(layout => layout.Id > 0)
             .Select(layout => layout.Id)
             .ToArray();
@@ -130,12 +154,11 @@ internal class AppRenderableCoordinationService(
             .Select(component => component.Id)
             .ToHashSet();
 
-        if (app.Components != null)
-            foreach (Component component in app.Components)
-                if (existingComponentIds.Contains(component.Id))
-                    await componentOrchestrationService.UpdateAsync(component);
-                else
-                    await componentOrchestrationService.AddAsync(component);
+        foreach (Component component in app.Components)
+            if (existingComponentIds.Contains(component.Id))
+                await componentOrchestrationService.UpdateAsync(component);
+            else
+                await componentOrchestrationService.AddAsync(component);
     }
 
     private static void ValidateApp(App app, string parameterName) =>

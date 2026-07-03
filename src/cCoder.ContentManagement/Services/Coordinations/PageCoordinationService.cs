@@ -14,31 +14,45 @@ internal class PageCoordinationService(
     public async ValueTask HandlePageAddAsync(Page page)
     {
         ValidatePage(page, "page");
-        PageInfo[] pageInfos = (page.PageInfo ?? new List<PageInfo>()).Select((PageInfo pageInfo) => new PageInfo
-        {
-            Id = pageInfo.Id,
-            PageId = page.Id,
-            CultureId = pageInfo.CultureId,
-            Title = pageInfo.Title,
-            Description = pageInfo.Description,
-            Keywords = pageInfo.Keywords
-        }).ToArray();
-        Content[] contents = (page.Contents ?? new List<Content>())
-            .Select(content =>
-            {
-                content.PageId = page.Id;
-                return content;
-            })
-            .ToArray();
 
-        PageRole[] pageRoles = (page.Roles ?? new List<PageRole>()).Select(pageRole => new PageRole
+        if (page.PageInfo != null)
         {
-            PageId = page.Id,
-            RoleId = pageRole.RoleId
-        }).ToArray();
-        await pageInfoOrchestrationService.AddOrUpdate(pageInfos);
-        await contentOrchestrationService.AddOrUpdate(contents);
-        await pageRoleOrchestrationService.AddOrUpdate(pageRoles);
+            PageInfo[] pageInfos = page.PageInfo.Select((PageInfo pageInfo) => new PageInfo
+            {
+                Id = pageInfo.Id,
+                PageId = page.Id,
+                CultureId = pageInfo.CultureId,
+                Title = pageInfo.Title,
+                Description = pageInfo.Description,
+                Keywords = pageInfo.Keywords
+            }).ToArray();
+
+            await pageInfoOrchestrationService.AddOrUpdate(pageInfos);
+        }
+
+        if (page.Contents != null)
+        {
+            Content[] contents = page.Contents
+                .Select(content =>
+                {
+                    content.PageId = page.Id;
+                    return content;
+                })
+                .ToArray();
+
+            await contentOrchestrationService.AddOrUpdate(contents);
+        }
+
+        if (page.Roles != null)
+        {
+            PageRole[] pageRoles = page.Roles.Select(pageRole => new PageRole
+            {
+                PageId = page.Id,
+                RoleId = pageRole.RoleId
+            }).ToArray();
+
+            await pageRoleOrchestrationService.AddOrUpdate(pageRoles);
+        }
     }
 
     public async ValueTask HandlePageUpdateAsync(Page page)
@@ -72,22 +86,27 @@ internal class PageCoordinationService(
             await SyncRolesAsync(page.Id, existingPageRoles, page.Roles);
         }
 
-        Page[] providedChildren = (page.Pages ?? new List<Page>())
-            .Select(child =>
-            {
-                child.ParentId = page.Id;
-                child.AppId = page.AppId;
-                return child;
-            })
-            .ToArray();
+        int[] providedChildIds = [];
 
-        if (providedChildren.Length != 0)
-            await pageOrchestrationService.AddOrUpdate(providedChildren);
+        if (page.Pages != null)
+        {
+            Page[] providedChildren = page.Pages
+                .Select(child =>
+                {
+                    child.ParentId = page.Id;
+                    child.AppId = page.AppId;
+                    return child;
+                })
+                .ToArray();
 
-        int[] providedChildIds = providedChildren
-            .Where(child => child.Id != 0)
-            .Select(child => child.Id)
-            .ToArray();
+            if (providedChildren.Length != 0)
+                await pageOrchestrationService.AddOrUpdate(providedChildren);
+
+            providedChildIds = providedChildren
+                .Where(child => child.Id != 0)
+                .Select(child => child.Id)
+                .ToArray();
+        }
 
         Page[] existingChildrenToRecompute = pageOrchestrationService.GetAll(ignoreFilters: true)
             .Where(child => child.ParentId == (int?)page.Id && !((ReadOnlySpan<int>)providedChildIds).Contains(child.Id))

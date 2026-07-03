@@ -353,6 +353,22 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
         new()
         {
             Id = appId,
+            Layouts =
+            [
+                new Layout
+                {
+                    AppId = appId,
+                    Name = "Default",
+                    Description = "Integration default layout",
+                    HeaderHtml = string.Empty,
+                    Html = "<main>[content[body]]</main>",
+                    Script = string.Empty,
+                    CreatedBy = "Guest",
+                    CreatedOn = DateTimeOffset.UtcNow,
+                    LastUpdatedBy = "Guest",
+                    LastUpdated = DateTimeOffset.UtcNow,
+                }
+            ],
             Pages =
             [
                 new Page
