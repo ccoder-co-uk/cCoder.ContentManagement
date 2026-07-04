@@ -40,8 +40,8 @@ internal class AppOrchestrationService(
     {
         ValidateApp(entity, "entity");
         App result = await processingService.UpdateAsync(entity);
-        PreserveExternalChildren(result, entity);
-        await eventService.RaiseAppUpdateEventAsync(result);
+        ReflectUpdatedApp(result, entity);
+        await eventService.RaiseAppUpdateEventAsync(entity);
         return result;
     }
 
@@ -100,18 +100,23 @@ internal class AppOrchestrationService(
         return apps;
     }
 
-    private static void PreserveExternalChildren(App target, App source)
+    private static void ReflectUpdatedApp(App source, App target)
     {
-        target.Tasks = source.Tasks;
-        target.Calendars = source.Calendars;
-        target.Folders = source.Folders;
-        target.Flows = source.Flows;
-        target.MailServers = source.MailServers;
-        target.MailSenders = source.MailSenders;
-        target.MailReceivers = source.MailReceivers;
-        target.MailQueue = source.MailQueue;
-        target.SentMail = source.SentMail;
-        target.ReceivedMail = source.ReceivedMail;
+        target.Id = source.Id;
+        target.DefaultCultureId = source.DefaultCultureId;
+        target.TenantId = source.TenantId;
+        target.Name = source.Name;
+        target.Domain = source.Domain;
+        target.DefaultTheme = source.DefaultTheme;
+        target.ConfigJson = source.ConfigJson;
+        target.Cultures = source.Cultures;
+        target.Pages = source.Pages;
+        target.Components = source.Components;
+        target.Scripts = source.Scripts;
+        target.Roles = source.Roles;
+        target.Templates = source.Templates;
+        target.Resources = source.Resources;
+        target.Layouts = source.Layouts;
     }
 
     private static void ThrowIf(bool condition, string message)
