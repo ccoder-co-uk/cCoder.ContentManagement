@@ -40,6 +40,7 @@ internal class AppOrchestrationService(
     {
         ValidateApp(entity, "entity");
         App result = await processingService.UpdateAsync(entity);
+        PreserveExternalChildren(result, entity);
         await eventService.RaiseAppUpdateEventAsync(result);
         return result;
     }
@@ -97,6 +98,20 @@ internal class AppOrchestrationService(
             throw new ValidationException(parameterName + " is required.");
 
         return apps;
+    }
+
+    private static void PreserveExternalChildren(App target, App source)
+    {
+        target.Tasks = source.Tasks;
+        target.Calendars = source.Calendars;
+        target.Folders = source.Folders;
+        target.Flows = source.Flows;
+        target.MailServers = source.MailServers;
+        target.MailSenders = source.MailSenders;
+        target.MailReceivers = source.MailReceivers;
+        target.MailQueue = source.MailQueue;
+        target.SentMail = source.SentMail;
+        target.ReceivedMail = source.ReceivedMail;
     }
 
     private static void ThrowIf(bool condition, string message)
