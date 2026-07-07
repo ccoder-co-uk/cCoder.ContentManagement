@@ -18,7 +18,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "Culture",
-  "Key": "Key",
+  "Key": "CMS",
   "Name": "Name",
   "DisplayName": "DisplayName",
   "ShortDisplayName": "ShortDisplayName",
@@ -2658,7 +2658,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Core",
+  "Key": "CMS",
   "Name": "Month-2",
   "DisplayName": "February",
   "ShortDisplayName": "February",
@@ -2673,7 +2673,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Core",
+  "Key": "CMS",
   "Name": "Month-3",
   "DisplayName": "March",
   "ShortDisplayName": "March",
@@ -2688,7 +2688,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Core",
+  "Key": "CMS",
   "Name": "Month-4",
   "DisplayName": "April",
   "ShortDisplayName": "April",
@@ -2703,7 +2703,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Core",
+  "Key": "CMS",
   "Name": "Month-5",
   "DisplayName": "May",
   "ShortDisplayName": "May",
@@ -2718,7 +2718,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Core",
+  "Key": "CMS",
   "Name": "Month-6",
   "DisplayName": "June",
   "ShortDisplayName": "June",
@@ -2733,7 +2733,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Core",
+  "Key": "CMS",
   "Name": "Month-7",
   "DisplayName": "July",
   "ShortDisplayName": "July",
@@ -2748,7 +2748,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "login",
   "DisplayName": "Login",
   "ShortDisplayName": "Login",
@@ -2793,7 +2793,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Core",
+  "Key": "CMS",
   "Name": "Month-1",
   "DisplayName": "January",
   "ShortDisplayName": "January",
@@ -2808,7 +2808,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "Month-7",
   "DisplayName": "July",
   "ShortDisplayName": "July",
@@ -2823,7 +2823,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "Month-6",
   "DisplayName": "June",
   "ShortDisplayName": "June",
@@ -2838,7 +2838,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "Month-5",
   "DisplayName": "May",
   "ShortDisplayName": "May",
@@ -2853,7 +2853,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "Month-4",
   "DisplayName": "April",
   "ShortDisplayName": "April",
@@ -2868,7 +2868,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "Month-3",
   "DisplayName": "March",
   "ShortDisplayName": "March",
@@ -2883,7 +2883,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "Month-2",
   "DisplayName": "February",
   "ShortDisplayName": "February",
@@ -2898,7 +2898,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "Month-1",
   "DisplayName": "January",
   "ShortDisplayName": "January",
@@ -2973,7 +2973,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "oldpassword",
   "DisplayName": "Old Password",
   "ShortDisplayName": "Old Password",
@@ -2988,7 +2988,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "newpassword",
   "DisplayName": "New Password",
   "ShortDisplayName": "New Password",
@@ -3003,7 +3003,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "close",
   "DisplayName": "Close",
   "ShortDisplayName": "Close",
@@ -3018,7 +3018,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "phonenumber",
   "DisplayName": "Phone Number",
   "ShortDisplayName": "Phone Number",
@@ -3033,7 +3033,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "updatepassword",
   "DisplayName": "Update Password",
   "ShortDisplayName": "Update Password",
@@ -3048,7 +3048,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Default",
+  "Key": "CMS",
   "Name": "update",
   "DisplayName": "Update",
   "ShortDisplayName": "Update",
@@ -3333,7 +3333,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "notifications",
+  "Key": "CMS",
   "Name": "notificationserrortext",
   "DisplayName": "Notifications Error Text",
   "ShortDisplayName": "Notifications Error Text",
@@ -3528,7 +3528,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "context",
   "DisplayName": "Context",
   "ShortDisplayName": "Context",
@@ -3543,7 +3543,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "displayname",
   "DisplayName": "Display Name",
   "ShortDisplayName": "Display Name",
@@ -3558,7 +3558,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "url",
   "DisplayName": "Url",
   "ShortDisplayName": "Url",
@@ -3573,7 +3573,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "rawjson",
   "DisplayName": "Raw JSON",
   "ShortDisplayName": "Raw JSON",
@@ -3588,7 +3588,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "properties",
   "DisplayName": "Properties",
   "ShortDisplayName": "Properties",
@@ -3603,7 +3603,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "endpoints",
   "DisplayName": "Endpoints",
   "ShortDisplayName": "Endpoints",
@@ -3618,7 +3618,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "dependson",
   "DisplayName": "Depends On",
   "ShortDisplayName": "Depends On",
@@ -3633,7 +3633,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "name",
   "DisplayName": "Name",
   "ShortDisplayName": "Name",
@@ -3648,7 +3648,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "type",
   "DisplayName": "Type",
   "ShortDisplayName": "Type",
@@ -3663,7 +3663,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "servertype",
   "DisplayName": "Server Type",
   "ShortDisplayName": "Server Type",
@@ -3678,7 +3678,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "servertypename",
   "DisplayName": "Server Type Name",
   "ShortDisplayName": "Server Type Name",
@@ -3693,7 +3693,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "template",
   "DisplayName": "Template",
   "ShortDisplayName": "Template",
@@ -3708,7 +3708,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "shortdisplayname",
   "DisplayName": "Short Display Name",
   "ShortDisplayName": "Short Display Name",
@@ -3723,7 +3723,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "description",
   "DisplayName": "Description",
   "ShortDisplayName": "Description",
@@ -3738,7 +3738,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "isgeneric",
   "DisplayName": "Is Generic",
   "ShortDisplayName": "Is Generic",
@@ -3753,7 +3753,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "isvaluetype",
   "DisplayName": "Is Value Type",
   "ShortDisplayName": "Is Value Type",
@@ -3768,7 +3768,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "isreadonly",
   "DisplayName": "Is Read Only",
   "ShortDisplayName": "Is Read Only",
@@ -3783,7 +3783,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "isrequired",
   "DisplayName": "Is Required",
   "ShortDisplayName": "Is Required",
@@ -3798,7 +3798,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "methods",
   "DisplayName": "Methods",
   "ShortDisplayName": "Methods",
@@ -3813,7 +3813,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "endpoint",
   "DisplayName": "Endpoint",
   "ShortDisplayName": "Endpoint",
@@ -3828,7 +3828,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "foreignkey",
   "DisplayName": "Foreign Key",
   "ShortDisplayName": "Foreign Key",
@@ -3843,7 +3843,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "relatedentity",
   "DisplayName": "Related Entity",
   "ShortDisplayName": "Related Entity",
@@ -3858,7 +3858,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "request",
   "DisplayName": "Request",
   "ShortDisplayName": "Request",
@@ -3873,7 +3873,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "path",
   "DisplayName": "Path",
   "ShortDisplayName": "Path",
@@ -3888,7 +3888,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "httpmethod",
   "DisplayName": "HTTP Method",
   "ShortDisplayName": "HTTP Method",
@@ -3903,7 +3903,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "headers",
   "DisplayName": "Headers",
   "ShortDisplayName": "Headers",
@@ -3918,7 +3918,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "add",
   "DisplayName": "Add",
   "ShortDisplayName": "Add",
@@ -3933,7 +3933,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "delete",
   "DisplayName": "Delete",
   "ShortDisplayName": "Delete",
@@ -3948,7 +3948,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "body",
   "DisplayName": "Body",
   "ShortDisplayName": "Body",
@@ -3963,7 +3963,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "response",
   "DisplayName": "Response",
   "ShortDisplayName": "Response",
@@ -3978,7 +3978,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "value",
   "DisplayName": "Value",
   "ShortDisplayName": "Value",
@@ -3993,7 +3993,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "apiurl",
   "DisplayName": "Api Url",
   "ShortDisplayName": "Api Url",
@@ -4008,7 +4008,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "send",
   "DisplayName": "Send",
   "ShortDisplayName": "Send",
@@ -4023,7 +4023,7 @@ public static partial class UIBaseline
                 Data = """
 {
   "Culture": "",
-  "Key": "Debug",
+  "Key": "CMS",
   "Name": "explore",
   "DisplayName": "Explore",
   "ShortDisplayName": "Explore",
