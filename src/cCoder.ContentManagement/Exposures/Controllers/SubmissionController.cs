@@ -25,7 +25,7 @@ public class SubmissionController : ODataController
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(Submission)) : new MetadataContainer(typeof(Submission), isEntity: true, hasEndpoint: true));
+        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Submission)) : new MetadataContainer(typeof(Submission), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]

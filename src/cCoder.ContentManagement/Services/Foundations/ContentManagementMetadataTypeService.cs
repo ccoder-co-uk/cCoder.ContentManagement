@@ -21,8 +21,8 @@ internal sealed class ContentManagementMetadataTypeService : IContentManagementM
     private static MetadataContainerSet ContentManagementTypes()
     {
         MetadataContainerSet metadataContainerSet = new MetadataContainerSet();
-        metadataContainerSet.Name = "Core";
-        metadataContainerSet.UriBase = "Core";
+        metadataContainerSet.Name = "ContentManagement";
+        metadataContainerSet.UriBase = "ContentManagement";
         metadataContainerSet.Types = new ExtendedMetadataContainer[19]
         {
             Entity<App>(),
@@ -78,12 +78,12 @@ internal sealed class ContentManagementMetadataTypeService : IContentManagementM
 
     private static ExtendedMetadataContainer Entity<T>()
     {
-        return Create(typeof(T), "Core", isEntity: true, hasEndpoint: true);
+        return Create(typeof(T), "ContentManagement", isEntity: true, hasEndpoint: true);
     }
 
     private static ExtendedMetadataContainer Complex<T>()
     {
-        return Create(typeof(T), "Core");
+        return Create(typeof(T), "ContentManagement");
     }
 
     private static ExtendedMetadataContainer Create(Type type, string category, bool isEntity = false, bool hasEndpoint = false)

@@ -60,7 +60,7 @@ public class PageController : ODataController
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(Page)) : new MetadataContainer(typeof(Page), isEntity: true, hasEndpoint: true));
+        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Page)) : new MetadataContainer(typeof(Page), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [AllowAnonymous]
