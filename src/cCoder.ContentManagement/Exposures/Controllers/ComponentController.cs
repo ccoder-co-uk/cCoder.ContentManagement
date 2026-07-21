@@ -34,7 +34,7 @@ public class ComponentController : ODataController
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("Core", typeof(Component)) : new MetadataContainer(typeof(Component), isEntity: true, hasEndpoint: true));
+        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Component)) : new MetadataContainer(typeof(Component), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]

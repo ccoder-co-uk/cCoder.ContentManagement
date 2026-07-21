@@ -23,15 +23,15 @@ public partial class ContentManagementMetadataTypeServiceTests
     {
         MetadataContainerSet[] result = service.GetKnownMetadata().ToArray();
 
-        result.Select(set => set.Name).Should().Equal("Core", "System");
+        result.Select(set => set.Name).Should().Equal("ContentManagement", "System");
     }
 
     [Fact]
-    public void ShouldReturnExpectedCoreTypesOnGetKnownMetadata()
+    public void ShouldReturnExpectedContentManagementTypesOnGetKnownMetadata()
     {
-        MetadataContainerSet result = service.GetKnownMetadata().Single(set => set.Name == "Core");
+        MetadataContainerSet result = service.GetKnownMetadata().Single(set => set.Name == "ContentManagement");
 
-        result.UriBase.Should().Be("Core");
+        result.UriBase.Should().Be("ContentManagement");
         result.Types.Select(type => type.Name)
             .Should()
             .Contain([
