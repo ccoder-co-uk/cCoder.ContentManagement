@@ -67,7 +67,7 @@ public partial class PageRoleProcessingServiceTests
 
         currentUser = user;
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { page }.AsQueryable());
 
         pageRoleServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
@@ -83,7 +83,7 @@ deletedPageRole: new LocalPageRole { PageId = link.PageId, RoleId = link.RoleId 
     );
 
         // Then
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         pageRoleServiceMock.Verify(expression: x => x.GetAllPageRole(ignoreFilters: true), times: Times.Once);
 
         pageRoleServiceMock.Verify(

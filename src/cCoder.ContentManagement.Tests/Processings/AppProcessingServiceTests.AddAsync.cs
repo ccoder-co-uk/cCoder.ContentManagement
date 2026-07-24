@@ -75,8 +75,8 @@ public partial class AppProcessingServiceTests
                 return candidate;
             });
 
-        cultureServiceMock
-            .Setup(expression: x => x.GetAllCulture(ignoreFilters: false))
+        cultureBrokerMock
+            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
             .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
 
         privilegeBrokerMock
@@ -121,11 +121,11 @@ newApp: It.Is<App>(match: app =>
 times: Times.Once
         );
 
-        cultureServiceMock.Verify(expression: x => x.GetAllCulture(ignoreFilters: false), times: Times.Once);
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
         privilegeBrokerMock.Verify(expression: x => x.GetAllPrivileges(ignoreFilters: false), times: Times.Exactly(callCount: 2));
         appServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
-        cultureServiceMock.VerifyNoOtherCalls();
+        cultureBrokerMock.VerifyNoOtherCalls();
         privilegeBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -158,8 +158,8 @@ times: Times.Once
             .Setup(expression: x => x.GetAllApp(ignoreFilters: true))
             .Returns(value: new[] { new App { Id = 99, Domain = "existing.local" } }.AsQueryable());
 
-        cultureServiceMock
-            .Setup(expression: x => x.GetAllCulture(ignoreFilters: false))
+        cultureBrokerMock
+            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
             .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
 
         privilegeBrokerMock
@@ -179,7 +179,7 @@ times: Times.Once
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        cultureServiceMock.Verify(expression: x => x.GetAllCulture(ignoreFilters: false), times: Times.Once);
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
         privilegeBrokerMock.Verify(expression: x => x.GetAllPrivileges(ignoreFilters: false), times: Times.Exactly(callCount: 2));
         appServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
         appServiceMock.Verify(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()), times: Times.Once);
@@ -206,8 +206,8 @@ times: Times.Once
                 return candidate;
             });
 
-        cultureServiceMock
-            .Setup(expression: x => x.GetAllCulture(ignoreFilters: false))
+        cultureBrokerMock
+            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
             .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
 
         privilegeBrokerMock
@@ -261,8 +261,8 @@ value: new[]
                 return candidate;
             });
 
-        cultureServiceMock
-            .Setup(expression: x => x.GetAllCulture(ignoreFilters: false))
+        cultureBrokerMock
+            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
             .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
 
         privilegeBrokerMock

@@ -48,7 +48,7 @@ public partial class PageRoleProcessingServiceTests
         pageRoleServiceMock.Verify(expression: x => x.GetAllPageRole(), times: Times.Once);
         pageRoleServiceMock.VerifyNoOtherCalls();
         roleBrokerMock.VerifyNoOtherCalls();
-        pageServiceMock.VerifyNoOtherCalls();
+        pageBrokerMock.VerifyNoOtherCalls();
     }
 
 }

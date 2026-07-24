@@ -12352,6 +12352,10 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
+      "ToType": "cCoder.ContentManagement.Brokers.Storages.CultureBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PageBroker"
     },
     {
@@ -12365,10 +12369,6 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.AppService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService",
@@ -12516,15 +12516,15 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
+      "ToType": "cCoder.ContentManagement.Brokers.Storages.PageBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PageRoleBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.PageRoleService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.PageService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ResourceEventProcessingService",
@@ -12585,13 +12585,6 @@
   ],
   "AnalysisItems": [
     {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.ServiceProviders.ServiceProviderBroker",
-      "LineNumber": 16
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
@@ -12620,90 +12613,6 @@
       "LineNumber": 16
     },
     {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
-      "LineNumber": 28
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
-      "LineNumber": 33
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
-      "LineNumber": 49
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
-      "LineNumber": 28
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
-      "LineNumber": 33
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
-      "LineNumber": 49
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService",
-      "LineNumber": 28
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService",
-      "LineNumber": 33
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService",
-      "LineNumber": 49
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService",
-      "LineNumber": 29
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService",
-      "LineNumber": 33
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService",
-      "LineNumber": 49
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
@@ -12711,22 +12620,8 @@
       "LineNumber": 12
     },
     {
-      "Code": "STXP001",
-      "Description": "A processing service may use only one foundation service and no higher-level service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
-      "LineNumber": 16
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "LineNumber": 16
-    },
-    {
-      "Code": "STXP001",
-      "Description": "A processing service may use only one foundation service and no higher-level service.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "LineNumber": 16

@@ -56,7 +56,7 @@ public partial class AppProcessingServiceTests
 
         AppProcessingService serviceWithContext = new(
 service: appServiceMock.Object,
-cultureService: cultureServiceMock.Object,
+cultureBroker: cultureBrokerMock.Object,
 privilegeBroker: privilegeBrokerMock.Object,
 authorizationBroker: authorizationBrokerMock.Object,
 roleBroker: roleBrokerMock.Object,
@@ -110,7 +110,7 @@ httpContext: context
 
         AppProcessingService serviceWithContext = new(
 service: appServiceMock.Object,
-cultureService: cultureServiceMock.Object,
+cultureBroker: cultureBrokerMock.Object,
 privilegeBroker: privilegeBrokerMock.Object,
 authorizationBroker: authorizationBrokerMock.Object,
 roleBroker: roleBrokerMock.Object,

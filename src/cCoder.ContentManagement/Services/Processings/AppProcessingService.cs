@@ -15,7 +15,7 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class AppProcessingService(
     IAppService service,
-    ICultureService cultureService,
+    ICultureBroker cultureBroker,
     IPrivilegeBroker privilegeBroker,
     IAuthorizationBroker authorizationBroker,
     IRoleBroker roleBroker,
@@ -367,7 +367,7 @@ internal partial class AppProcessingService(
         string[] requestedCultureIds = enumerable.Distinct()
             .ToArray();
 
-        AppCulture[] culturesForApp = cultureService.GetAllCulture(ignoreFilters: false)
+        AppCulture[] culturesForApp = cultureBroker.GetAllCultures(ignoreFilters: false)
             .Where(predicate: culture => culture.Id == string.Empty || requestedCultureIds.Contains(value: culture.Id))
             .Select(selector: culture => new AppCulture
             {

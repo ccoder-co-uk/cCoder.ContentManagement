@@ -83,7 +83,7 @@ public partial class PageRoleProcessingServiceTests
         roleBrokerMock.Setup(expression: x => x.GetAllRoles(ignoreFilters: true))
             .Returns(value: new[] { roleToAdd }.AsQueryable());
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { page }.AsQueryable());
 
         pageRoleServiceMock.Setup(expression: x => x.AddPageRoleAsync(newPageRole: link))
@@ -139,7 +139,7 @@ public partial class PageRoleProcessingServiceTests
         roleBrokerMock.Setup(expression: x => x.GetAllRoles(ignoreFilters: true))
             .Returns(value: new[] { roleToAdd }.AsQueryable());
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { page }.AsQueryable());
 
         // When

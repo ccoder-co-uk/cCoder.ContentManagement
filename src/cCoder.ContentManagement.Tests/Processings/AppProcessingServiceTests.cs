@@ -29,7 +29,7 @@ public partial class AppProcessingServiceTests
 {
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IAppService> appServiceMock = new();
-    private readonly Mock<ICultureService> cultureServiceMock = new();
+    private readonly Mock<ICultureBroker> cultureBrokerMock = new();
     private readonly Mock<IPrivilegeBroker> privilegeBrokerMock = new();
     private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
     private readonly Mock<IRoleBroker> roleBrokerMock = new();
@@ -49,7 +49,7 @@ public partial class AppProcessingServiceTests
 
         appProcessingService = new AppProcessingService(
 service: appServiceMock.Object,
-cultureService: cultureServiceMock.Object,
+cultureBroker: cultureBrokerMock.Object,
 privilegeBroker: privilegeBrokerMock.Object,
 authorizationBroker: authorizationBrokerMock.Object,
 roleBroker: roleBrokerMock.Object,

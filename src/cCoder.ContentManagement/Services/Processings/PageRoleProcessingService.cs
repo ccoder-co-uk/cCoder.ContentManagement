@@ -17,7 +17,7 @@ internal partial class PageRoleProcessingService(
     IPageRoleService service,
     IPageRoleBroker pageRoleBroker,
     IRoleBroker roleBroker,
-    IPageService pageService,
+    IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IPageRoleProcessingService
 {
     private User GetCurrentUser() =>
@@ -54,7 +54,7 @@ internal partial class PageRoleProcessingService(
         ValidatePageRoleOnDelete(inputs: [deletedPageRole]);
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "link");
 
-        Page page = pageService.GetAllPage(ignoreFilters: true)
+        Page page = pageBroker.GetAllPages(ignoreFilters: true)
             .FirstOrDefault(predicate: existingPage => existingPage.Id == deletedPageRole.PageId);
 
         PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)
@@ -137,7 +137,7 @@ internal partial class PageRoleProcessingService(
             .Where(predicate: role => role.AppId == appId)
             .ToArray();
 
-        Page[] pages = pageService.GetAllPage(ignoreFilters: true)
+        Page[] pages = pageBroker.GetAllPages(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
             .ToArray();
 
@@ -206,7 +206,7 @@ internal partial class PageRoleProcessingService(
             role: roleBroker.GetAllRoles(ignoreFilters: true)
         .Where(predicate: role => role.Id == entity.RoleId)
         .FirstOrDefault(),
-            page: pageService.GetAllPage(ignoreFilters: true)
+            page: pageBroker.GetAllPages(ignoreFilters: true)
         .FirstOrDefault(predicate: page => page.Id == entity.PageId));
 
     private static void ValidateAppId(int appId, string parameterName) =>
@@ -283,7 +283,7 @@ internal partial class PageRoleProcessingService(
     {
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "link");
 
-        Page page = pageService.GetAllPage(ignoreFilters: true)
+        Page page = pageBroker.GetAllPages(ignoreFilters: true)
             .FirstOrDefault(predicate: existingPage => existingPage.Id == deletedPageRole.PageId);
 
         PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)

@@ -26,7 +26,7 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class PageRoleProcessingServiceTests
 {
-    private readonly Mock<IPageService> pageServiceMock = new();
+    private readonly Mock<IPageBroker> pageBrokerMock = new();
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPageRoleService> pageRoleServiceMock = new();
     private readonly Mock<IPageRoleBroker> pageRoleBrokerMock = new();
@@ -40,7 +40,7 @@ public partial class PageRoleProcessingServiceTests
 service: pageRoleServiceMock.Object,
 pageRoleBroker: pageRoleBrokerMock.Object,
 roleBroker: roleBrokerMock.Object,
-pageService: pageServiceMock.Object,
+pageBroker: pageBrokerMock.Object,
 authorizationBroker: authorizationBrokerMock.Object
         );
     }
