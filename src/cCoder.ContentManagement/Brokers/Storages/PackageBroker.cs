@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.Packaging;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +22,7 @@ public class PackageBroker(ICoreContextFactory coreContextFactory) : IPackageBro
     public async ValueTask<Package> AddPackageAsync(Package entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Package result = (await coreDataContext.Packages.AddAsync(entity)).Entity;
+        Package result = (await coreDataContext.Packages.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -26,7 +30,10 @@ public class PackageBroker(ICoreContextFactory coreContextFactory) : IPackageBro
     public async ValueTask<Package> UpdatePackageAsync(Package entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Package result = coreDataContext.Packages.Update(entity).Entity;
+
+        Package result = coreDataContext.Packages.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -34,14 +41,14 @@ public class PackageBroker(ICoreContextFactory coreContextFactory) : IPackageBro
     public async ValueTask<int> DeletePackageAsync(Package entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Packages.Remove(entity);
+        coreDataContext.Packages.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllPackagesAsync(IEnumerable<Package> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Packages.RemoveRange(items);
+        coreDataContext.Packages.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 }

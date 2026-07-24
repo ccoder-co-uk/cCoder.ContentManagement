@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -9,35 +13,50 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
 {
     public Template Get(int id, bool ignoreFilters = false)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Template i) => i.Id == id);
+        {
+            return GetAll(ignoreFilters: true)
+                        .FirstOrDefault(predicate: (Template i) => i.Id == id);
+        }
 
-        Template template = GetAll().FirstOrDefault((Template i) => i.Id == id);
+        Template template = GetAll()
+            .FirstOrDefault(predicate: (Template i) => i.Id == id);
+
         if (template != null)
+        {
             return template;
+        }
 
-        Template template2 = GetAll(ignoreFilters: true).FirstOrDefault((Template i) => i.Id == id);
+        Template template2 = GetAll(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Template i) => i.Id == id);
+
         if (template2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
     }
 
     public IQueryable<Template> GetAll(bool ignoreFilters = false) =>
-        templateBroker.GetAllTemplates(ignoreFilters);
+        templateBroker.GetAllTemplates(ignoreFilters: ignoreFilters);
 
     public async ValueTask<Template> AddAsync(Template template)
     {
-        ValidateTemplate(template, "template");
-        authorizationBroker.Authorize(template.AppId, "Template_create");
-        Template newTemplate = CreateStorageTemplate(template);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateTemplate(template: template, parameterName: "template");
+        authorizationBroker.Authorize(appId: template.AppId, privilege: "Template_create");
+        Template newTemplate = CreateStorageTemplate(template: template);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = (newTemplate.CreatedOn = DateTimeOffset.UtcNow);
         newTemplate.CreatedBy = currentUserId;
         newTemplate.LastUpdated = now;
         newTemplate.LastUpdatedBy = currentUserId;
-        Template result = await templateBroker.AddTemplateAsync(newTemplate);
+        Template result = await templateBroker.AddTemplateAsync(entity: newTemplate);
         template.Id = result.Id;
         template.Name = result.Name;
         template.Description = result.Description;
@@ -53,14 +72,17 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
 
     public async ValueTask<Template> UpdateAsync(Template template)
     {
-        ValidateTemplate(template, "template");
-        authorizationBroker.Authorize(template.AppId, "Template_update");
-        Template updateTemplate = CreateStorageTemplate(template);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateTemplate(template: template, parameterName: "template");
+        authorizationBroker.Authorize(appId: template.AppId, privilege: "Template_update");
+        Template updateTemplate = CreateStorageTemplate(template: template);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateTemplate.LastUpdated = now;
         updateTemplate.LastUpdatedBy = currentUserId;
-        Template result = await templateBroker.UpdateTemplateAsync(updateTemplate);
+        Template result = await templateBroker.UpdateTemplateAsync(entity: updateTemplate);
         template.Id = result.Id;
         template.Name = result.Name;
         template.Description = result.Description;
@@ -76,28 +98,33 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
 
     public async ValueTask DeleteAsync(int id)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
         Template template;
+
         try
         {
-            template = Get(id);
+            template = Get(id: id);
         }
         catch (SecurityException)
         {
-            template = Get(id, ignoreFilters: true);
+            template = Get(id: id, ignoreFilters: true);
         }
 
         if (template == null)
+        {
             return;
+        }
 
-        authorizationBroker.Authorize(template.AppId, "Template_delete");
-        await templateBroker.DeleteTemplateAsync(CreateStorageTemplate(template));
+        authorizationBroker.Authorize(appId: template.AppId, privilege: "Template_delete");
+        await templateBroker.DeleteTemplateAsync(entity: CreateStorageTemplate(template: template));
     }
 
     private static Template CreateStorageTemplate(Template template)
     {
         if (template == null)
+        {
             return null;
+        }
 
         return new Template
         {

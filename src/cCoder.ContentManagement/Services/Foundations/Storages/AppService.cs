@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -13,37 +17,42 @@ internal partial class AppService(
 {
     public App Get(int id, bool ignoreFilters = false)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
+
         if (ignoreFilters)
         {
             return appBroker.GetAllApps(ignoreFilters: true)
-                .FirstOrDefault(app => app.Id == id);
+                .FirstOrDefault(predicate: app => app.Id == id);
         }
 
         App app = appBroker.GetAllApps(ignoreFilters: false)
-            .FirstOrDefault(foundApp => foundApp.Id == id);
+            .FirstOrDefault(predicate: foundApp => foundApp.Id == id);
 
         if (app != null)
+        {
             return app;
+        }
 
         App app2 = appBroker.GetAllApps(ignoreFilters: true)
-            .FirstOrDefault(foundApp => foundApp.Id == id);
+            .FirstOrDefault(predicate: foundApp => foundApp.Id == id);
 
         if (app2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
     }
 
     public IQueryable<App> GetAll(bool ignoreFilters = false) =>
-        appBroker.GetAllApps(ignoreFilters);
+        appBroker.GetAllApps(ignoreFilters: ignoreFilters);
 
     public async ValueTask<App> AddAsync(App app)
     {
-        ValidateApp(app, "app");
-        authorizationBroker.Authorize(null, "App_create");
-        App storedApp = CreateStorageApp(app);
-        App result = await appBroker.AddAppAsync(storedApp);
+        ValidateApp(app: app, parameterName: "app");
+        authorizationBroker.Authorize(appId: null, privilege: "App_create");
+        App storedApp = CreateStorageApp(app: app);
+        App result = await appBroker.AddAppAsync(entity: storedApp);
         app.Id = result.Id;
         app.DefaultCultureId = result.DefaultCultureId;
         app.TenantId = result.TenantId;
@@ -56,10 +65,10 @@ internal partial class AppService(
 
     public async ValueTask<App> UpdateAsync(App app)
     {
-        ValidateApp(app, "app");
-        authorizationBroker.Authorize(app.Id, "App_update");
-        App storedApp = CreateStorageApp(app);
-        App result = await appBroker.UpdateAppAsync(storedApp);
+        ValidateApp(app: app, parameterName: "app");
+        authorizationBroker.Authorize(appId: app.Id, privilege: "App_update");
+        App storedApp = CreateStorageApp(app: app);
+        App result = await appBroker.UpdateAppAsync(entity: storedApp);
         app.Id = result.Id;
         app.DefaultCultureId = result.DefaultCultureId;
         app.TenantId = result.TenantId;
@@ -72,49 +81,56 @@ internal partial class AppService(
 
     public async ValueTask UpdatePageOrderAsync(int id, IEnumerable<Page> pages)
     {
-        ValidateId(id, "id");
-        ValidatePages(pages, "pages");
-        authorizationBroker.Authorize(id, "App_update");
-        Dictionary<int, Page> incomingPagesById = pages.ToDictionary(page => page.Id);
+        ValidateId(id: id, parameterName: "id");
+        ValidatePages(pages: pages, parameterName: "pages");
+        authorizationBroker.Authorize(appId: id, privilege: "App_update");
+        Dictionary<int, Page> incomingPagesById = pages.ToDictionary(keySelector: page => page.Id);
+
         List<Page> existingPages = pageBroker.GetAllPages(ignoreFilters: true)
-            .Where(page => page.AppId == id)
+            .Where(predicate: page => page.AppId == id)
             .ToList();
 
         foreach (Page existingPage in existingPages)
         {
-            if (incomingPagesById.TryGetValue(existingPage.Id, out Page incomingPage))
+            if (incomingPagesById.TryGetValue(key: existingPage.Id, value: out Page incomingPage))
             {
                 existingPage.Order = incomingPage.Order;
                 existingPage.ParentId = incomingPage.ParentId;
-                await pageBroker.UpdatePageAsync(existingPage);
+                await pageBroker.UpdatePageAsync(entity: existingPage);
             }
         }
     }
 
     public async ValueTask DeleteAsync(int id)
     {
-        ValidateId(id, "id");
-        App app = GetAppForDelete(id);
+        ValidateId(id: id, parameterName: "id");
+        App app = GetAppForDelete(id: id);
 
         if (app == null)
+        {
             return;
+        }
 
         if (app.Roles?.Any() == true)
-            authorizationBroker.Authorize(app.Id, "App_delete");
+        {
+            authorizationBroker.Authorize(appId: app.Id, privilege: "App_delete");
+        }
 
-        await appBroker.DeleteAppAggregateAsync(app);
+        await appBroker.DeleteAppAggregateAsync(entity: app);
     }
 
     private App GetAppForDelete(int id) =>
         appBroker.GetAllApps(ignoreFilters: true)
-            .Include(app => app.Roles)
-            .ThenInclude(role => role.Users)
-            .FirstOrDefault(app => app.Id == id);
+        .Include(navigationPropertyPath: app => app.Roles)
+        .ThenInclude(navigationPropertyPath: role => role.Users)
+        .FirstOrDefault(predicate: app => app.Id == id);
 
     private static App CreateStorageApp(App app)
     {
         if (app == null)
+        {
             return null;
+        }
 
         return new App
         {

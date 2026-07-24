@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.CMS;
@@ -8,31 +12,33 @@ internal class ContentEventProcessingService(IContentEventService eventService) 
 {
     public ValueTask RaiseContentAddEventAsync(Content entity)
     {
-        ValidateContent(entity, "entity");
+        ValidateContent(content: entity, parameterName: "entity");
 
-        return eventService.RaiseContentAddEventAsync(entity);
+        return eventService.RaiseContentAddEventAsync(entity: entity);
     }
 
     public ValueTask RaiseContentUpdateEventAsync(Content entity)
     {
-        ValidateContent(entity, "entity");
+        ValidateContent(content: entity, parameterName: "entity");
 
-        return eventService.RaiseContentUpdateEventAsync(entity);
+        return eventService.RaiseContentUpdateEventAsync(entity: entity);
     }
 
     public ValueTask RaiseContentDeleteEventAsync(Content entity)
     {
-        ValidateContent(entity, "entity");
+        ValidateContent(content: entity, parameterName: "entity");
 
-        return eventService.RaiseContentDeleteEventAsync(entity);
+        return eventService.RaiseContentDeleteEventAsync(entity: entity);
     }
 
     private static void ValidateContent(Content content, string parameterName) =>
-        ThrowIf(content == null, parameterName + " is required.");
+        ThrowIf(condition: content == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

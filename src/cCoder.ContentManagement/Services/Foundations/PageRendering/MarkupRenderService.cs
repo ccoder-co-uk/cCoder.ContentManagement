@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Collections;
 using System.Net;
 using System.Reflection;
@@ -24,26 +28,29 @@ internal sealed class MarkupRenderService(
 
     private static readonly PageRenderSyntax syntax = new()
     {
-        ContentRegex = new Regex("\\[content\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\](?<options>[^\\]]*)\\]", regexOptions),
-        ResourceDisplayNameRegex = new Regex("\\[resource_displayname\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", regexOptions),
-        ResourceShortDisplayNameRegex = new Regex("\\[resource_shortdisplayname\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", regexOptions),
-        ResourceDescriptionRegex = new Regex("\\[resource_description\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", regexOptions),
-        NavRegex = new Regex("\\[nav\\[(?<name>[A-Za-z\\d_\\-/. ]*)\\]\\]", regexOptions),
-        NavExpandedRegex = new Regex("\\[navExpanded\\[(?<name>[A-Za-z\\d_\\-/. ]*)\\]\\]", regexOptions),
-        DmsRegex = new Regex("\\[dms\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", regexOptions),
-        ExecuteRegex = new Regex("\\[execute\\](.*?)\\[/execute\\]", regexOptions),
-        ComponentRegex = new Regex("\\[component\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\](?<options>[^\\]]*)\\]", regexOptions),
-        ScriptRegex = new Regex("\\[script\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", regexOptions),
-        MetaRegex = new Regex("\\[meta\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", regexOptions),
-        CultureLinkRegex = new Regex("\\[culturelink\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", regexOptions)
+        ContentRegex = new Regex(pattern: "\\[content\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\](?<options>[^\\]]*)\\]", options: regexOptions),
+        ResourceDisplayNameRegex = new Regex(pattern: "\\[resource_displayname\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", options: regexOptions),
+        ResourceShortDisplayNameRegex = new Regex(pattern: "\\[resource_shortdisplayname\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", options: regexOptions),
+        ResourceDescriptionRegex = new Regex(pattern: "\\[resource_description\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", options: regexOptions),
+        NavRegex = new Regex(pattern: "\\[nav\\[(?<name>[A-Za-z\\d_\\-/. ]*)\\]\\]", options: regexOptions),
+        NavExpandedRegex = new Regex(pattern: "\\[navExpanded\\[(?<name>[A-Za-z\\d_\\-/. ]*)\\]\\]", options: regexOptions),
+        DmsRegex = new Regex(pattern: "\\[dms\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", options: regexOptions),
+        ExecuteRegex = new Regex(pattern: "\\[execute\\](.*?)\\[/execute\\]", options: regexOptions),
+        ComponentRegex = new Regex(pattern: "\\[component\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\](?<options>[^\\]]*)\\]", options: regexOptions),
+        ScriptRegex = new Regex(pattern: "\\[script\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", options: regexOptions),
+        MetaRegex = new Regex(pattern: "\\[meta\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", options: regexOptions),
+        CultureLinkRegex = new Regex(pattern: "\\[culturelink\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", options: regexOptions)
     };
 
     public PageRenderResult Render(PageRenderSession session)
     {
-        string key = string.IsNullOrWhiteSpace(session.Page?.ResourceKey) ? "Default" : session.Page.ResourceKey;
-        string culture = ResolveCulture(session);
-        List<Replacement> replacements = BuildDefaultReplacements(session).ToList();
-        AddThemeTemplateReplacements(session, replacements);
+        string key = string.IsNullOrWhiteSpace(value: session.Page?.ResourceKey) ? "Default" : session.Page.ResourceKey;
+        string culture = ResolveCulture(session: session);
+
+        List<Replacement> replacements = BuildDefaultReplacements(session: session)
+            .ToList();
+
+        AddThemeTemplateReplacements(session: session, replacements: replacements);
 
         return new PageRenderResult
         {
@@ -58,38 +65,38 @@ internal sealed class MarkupRenderService(
             Title = session.Page?.Title ?? string.Empty,
             Description = session.Page?.Description ?? string.Empty,
             Keywords = session.Page?.Keywords ?? string.Empty,
-            HeaderHtml = RenderMarkup(key, session.Layout?.HeaderHtml ?? string.Empty, session, replacements, allowContentTags: false),
-            BodyHtml = RenderMarkup(key, session.Layout?.BodyHtml ?? string.Empty, session, replacements),
+            HeaderHtml = RenderMarkup(key: key, content: session.Layout?.HeaderHtml ?? string.Empty, session: session, replacements: replacements, allowContentTags: false),
+            BodyHtml = RenderMarkup(key: key, content: session.Layout?.BodyHtml ?? string.Empty, session: session, replacements: replacements),
             StatusCode = session.Page == null ? 404 : 200
         };
     }
 
     private string RenderMarkup(string key, string content, PageRenderSession session, IReadOnlyCollection<Replacement> replacements, bool allowContentTags = true)
     {
-        if (string.IsNullOrEmpty(content))
+        if (string.IsNullOrEmpty(value: content))
         {
             return string.Empty;
         }
 
-        StringBuilder result = new(content, content.Length * 4);
+        StringBuilder result = new(value: content, capacity: content.Length * 4);
 
         if (allowContentTags)
         {
-            Content(key, result, session, replacements);
+            Content(key: key, source: result, session: session, replacements: replacements);
         }
 
-        Nav(result, session);
-        Dms(key, result, session, replacements);
-        Script(key, result, session, replacements);
-        RegexReplace(result, syntax.CultureLinkRegex, static unusedMatch => "?culture=");
-        Component(key, session, replacements, result);
-        Meta(result, session);
-        Resource(result, session, key, replacements);
-        ExecuteAsync(key, result, session, replacements);
+        Nav(source: result, session: session);
+        Dms(key: key, source: result, session: session, replacements: replacements);
+        Script(key: key, source: result, session: session, replacements: replacements);
+        RegexReplace(source: result, regex: syntax.CultureLinkRegex, action: static unusedMatch => "?culture=");
+        Component(key: key, session: session, replacements: replacements, result: result);
+        Meta(source: result, session: session);
+        Resource(source: result, session: session, key: key, replacements: replacements);
+        ExecuteAsync(key: key, source: result, session: session, replacements: replacements);
 
         foreach (Replacement replacement in replacements)
         {
-            result.Replace(replacement.Old, replacement.New);
+            result.Replace(oldValue: replacement.Old, newValue: replacement.New);
         }
 
         return result.ToString();
@@ -97,18 +104,20 @@ internal sealed class MarkupRenderService(
 
     private void Content(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements)
     {
-        RegexReplace(source, syntax.ContentRegex, match =>
+        RegexReplace(source: source, regex: syntax.ContentRegex, action: match =>
         {
-            string name = GetName(match);
-            string[] options = GetOptions(match);
+            string name = GetName(match: match);
+            string[] options = GetOptions(match: match);
             PageRenderContent pageRenderContent = null;
 
-            if (session.Page != null && session.Page.ContentByName.TryGetValue(name, out PageRenderContent value))
+            if (session.Page != null && session.Page.ContentByName.TryGetValue(key: name, value: out PageRenderContent value))
             {
                 pageRenderContent = value;
             }
 
-            string optionalClass = string.Join(" ", options.Where(option => option.StartsWith("class=")).Select(option => option.Replace("class=", string.Empty)));
+            string optionalClass = string.Join(separator: " ", values: options.Where(predicate: option => option.StartsWith(value: "class="))
+                .Select(selector: option => option.Replace(oldValue: "class=", newValue: string.Empty)));
+
             string contentEditable = session.Request.Edit ? "contenteditable" : string.Empty;
 
             if (pageRenderContent == null)
@@ -116,29 +125,29 @@ internal sealed class MarkupRenderService(
                 return "[[Missing Content:" + name + "]]";
             }
 
-            string html = $"<section name='{name}' class='content {optionalClass}' data-id='{pageRenderContent.Id}' {contentEditable} {string.Join(" ", options.Where(option => !option.StartsWith("class=")))}>\n                        {(session.Request.Edit ? pageRenderContent.Html : RenderMarkup(key, pageRenderContent.Html, session, replacements))}\n                    </section>";
+            string html = $"<section name='{name}' class='content {optionalClass}' data-id='{pageRenderContent.Id}' {contentEditable} {string.Join(separator: " ", values: options.Where(predicate: option => !option.StartsWith(value: "class=")))}>\n                        {(session.Request.Edit ? pageRenderContent.Html : RenderMarkup(key: key, content: pageRenderContent.Html, session: session, replacements: replacements))}\n                    </section>";
 
             return session.Request.Edit
                 ? html
-                : RenderMarkup(key, html, session, replacements, allowContentTags: false);
+                : RenderMarkup(key: key, content: html, session: session, replacements: replacements, allowContentTags: false);
         });
     }
 
     private void Nav(StringBuilder source, PageRenderSession session)
     {
-        RegexReplace(source, syntax.NavRegex, match => BuildMenuFor(GetName(match), expand: false));
-        RegexReplace(source, syntax.NavExpandedRegex, match => BuildMenuFor(GetName(match), expand: true));
+        RegexReplace(source: source, regex: syntax.NavRegex, action: match => BuildMenuFor(tagName: GetName(match: match), expand: false));
+        RegexReplace(source: source, regex: syntax.NavExpandedRegex, action: match => BuildMenuFor(tagName: GetName(match: match), expand: true));
 
         string BuildMenuFor(string tagName, bool expand)
         {
             PageRenderPage page = null;
 
-            if (int.TryParse(tagName, out int pageId) && session.App != null)
+            if (int.TryParse(s: tagName, result: out int pageId) && session.App != null)
             {
-                session.App.PagesById.TryGetValue(pageId, out page);
+                session.App.PagesById.TryGetValue(key: pageId, value: out page);
             }
 
-            return "<div class='collapse navbar-collapse'><ul class='navbar-nav'>" + BuildMenuItemsFor(page, expand) + "</ul></div>";
+            return "<div class='collapse navbar-collapse'><ul class='navbar-nav'>" + BuildMenuItemsFor(page: page, expand: expand) + "</ul></div>";
         }
 
         string BuildMenuItemsFor(PageRenderPage page, bool expand)
@@ -149,21 +158,21 @@ internal sealed class MarkupRenderService(
             }
 
             return string.Join(
-                "",
-                session.App.PagesById.Values
-                    .Where(subPage => subPage.ParentId == page?.Id && subPage.ShowOnMenus)
-                    .OrderBy(subPage => subPage.Order)
-                    .Select(subPage =>
+separator: "",
+values: session.App.PagesById.Values
+                    .Where(predicate: subPage => subPage.ParentId == page?.Id && subPage.ShowOnMenus)
+                .OrderBy(keySelector: subPage => subPage.Order)
+                .Select(selector: subPage =>
                     {
                         string selected = subPage.ParentId.HasValue
                             && page != null
-                            && !string.IsNullOrWhiteSpace(session.Page?.Path)
-                            && session.Page.Path.Contains(subPage.Path)
+                            && !string.IsNullOrWhiteSpace(value: session.Page?.Path)
+                            && session.Page.Path.Contains(value: subPage.Path)
                                 ? " active"
                                 : string.Empty;
 
                         return expand
-                            ? $"<li data-id='{subPage.Id}' class='nav-item'><a href='/{subPage.Path}' class='nav-link{selected}'>{subPage.Title}</a><ul class='submenu dropdown-menu'>{BuildMenuItemsFor(subPage, expand: true)}</ul></li>"
+                            ? $"<li data-id='{subPage.Id}' class='nav-item'><a href='/{subPage.Path}' class='nav-link{selected}'>{subPage.Title}</a><ul class='submenu dropdown-menu'>{BuildMenuItemsFor(page: subPage, expand: true)}</ul></li>"
                             : $"<li data-id='{subPage.Id}' class='nav-item'><a href='/{subPage.Path}' class='nav-link{selected}'>{subPage.Title}</a></li>";
                     }));
         }
@@ -171,14 +180,14 @@ internal sealed class MarkupRenderService(
 
     private void Dms(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements)
     {
-        RegexReplace(source, syntax.DmsRegex, match =>
+        RegexReplace(source: source, regex: syntax.DmsRegex, action: match =>
         {
-            string name = GetName(match);
-            string latestTextContent = renderFileContentService.GetLatestTextContent(session.App?.Id ?? 0, name);
+            string name = GetName(match: match);
+            string latestTextContent = renderFileContentService.GetLatestTextContent(appId: session.App?.Id ?? 0, path: name);
 
-            return string.IsNullOrEmpty(latestTextContent)
+            return string.IsNullOrEmpty(value: latestTextContent)
                 ? string.Empty
-                : RenderMarkup(key, latestTextContent, session, replacements, allowContentTags: false);
+                : RenderMarkup(key: key, content: latestTextContent, session: session, replacements: replacements, allowContentTags: false);
         });
     }
 
@@ -189,73 +198,76 @@ internal sealed class MarkupRenderService(
             return;
         }
 
-        RegexReplace(result, syntax.ComponentRegex, match =>
+        RegexReplace(source: result, regex: syntax.ComponentRegex, action: match =>
         {
-            string name = GetName(match);
-            string[] options = GetOptions(match);
-            PageRenderComponent component = ResolveComponent(session, name);
+            string name = GetName(match: match);
+            string[] options = GetOptions(match: match);
+            PageRenderComponent component = ResolveComponent(session: session, name: name);
 
             if (component == null)
             {
                 return "[[Missing Component:" + name + "]]";
             }
 
-            string optionalClass = string.Join(" ", options.Where(option => option.StartsWith("class=")).Select(option => option.Replace("class=", string.Empty)));
-            string content = $"<section name='{component.Name}' class='component {optionalClass}' data-id='{component.Id}' data-resource-key='{component.ResourceKey}' {string.Join(" ", options.Where(option => !option.StartsWith("class=")))}>\n                        {RenderMarkup(component.ResourceKey, component.Content, session, replacements, allowContentTags: false)}\n                        <script type='text/javascript'>{RenderMarkup(component.ResourceKey, component.Script, session, replacements, allowContentTags: false)}</script>\n                    </section>";
+            string optionalClass = string.Join(separator: " ", values: options.Where(predicate: option => option.StartsWith(value: "class="))
+                .Select(selector: option => option.Replace(oldValue: "class=", newValue: string.Empty)));
 
-            return RenderMarkup(component.ResourceKey, content, session, replacements, allowContentTags: false);
+            string content = $"<section name='{component.Name}' class='component {optionalClass}' data-id='{component.Id}' data-resource-key='{component.ResourceKey}' {string.Join(separator: " ", values: options.Where(predicate: option => !option.StartsWith(value: "class=")))}>\n                        {RenderMarkup(key: component.ResourceKey, content: component.Content, session: session, replacements: replacements, allowContentTags: false)}\n                        <script type='text/javascript'>{RenderMarkup(key: component.ResourceKey, content: component.Script, session: session, replacements: replacements, allowContentTags: false)}</script>\n                    </section>";
+
+            return RenderMarkup(key: component.ResourceKey, content: content, session: session, replacements: replacements, allowContentTags: false);
         });
     }
 
     private void Script(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements)
     {
-        RegexReplace(source, syntax.ScriptRegex, match =>
+        RegexReplace(source: source, regex: syntax.ScriptRegex, action: match =>
         {
-            string name = GetName(match);
-            PageRenderScript script = ResolveScript(session, name);
+            string name = GetName(match: match);
+            PageRenderScript script = ResolveScript(session: session, name: name);
 
             return script == null
                 ? string.Empty
-                : RenderMarkup(key, script.Content, session, replacements, allowContentTags: false);
+                : RenderMarkup(key: key, content: script.Content, session: session, replacements: replacements, allowContentTags: false);
         });
     }
 
     private void ExecuteAsync(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements)
     {
-        RegexReplace(source, syntax.ExecuteRegex, match =>
+        RegexReplace(source: source, regex: syntax.ExecuteRegex, action: match =>
         {
             string code = match.Groups[1].Value;
-            string json = replacements.FirstOrDefault(replacement => replacement.Old == "[model]")?.New ?? "{}";
+            string json = replacements.FirstOrDefault(predicate: replacement => replacement.Old == "[model]")?.New ?? "{}";
 
-            using HttpClient httpClient = new(new HttpClientHandler
+            using HttpClient httpClient = new(handler: new HttpClientHandler
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             })
             {
-                BaseAddress = new Uri(replacements.First(replacement => replacement.Old == "[api[workflow]]").New),
-                Timeout = TimeSpan.FromMinutes(10)
+                BaseAddress = new Uri(uriString: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]")
+                .New),
+                Timeout = TimeSpan.FromMinutes(minutes: 10)
             };
 
-            string content = SerializeForOData(new
+            string content = SerializeForOData(model: new
             {
                 Script = code,
-                Model = jsonBroker.ParseJson(json)
+                Model = jsonBroker.ParseJson(json: json)
             });
 
             Task<string> task = httpClient
-                .PostAsync("ExecuteScript?useDetails=true", new StringContent(content, Encoding.UTF8, "text/plain"))
-                .ContinueWith(responseTask => responseTask.Result.Content.ReadAsStringAsync())
+                .PostAsync(requestUri: "ExecuteScript?useDetails=true", content: new StringContent(content: content, encoding: Encoding.UTF8, mediaType: "text/plain"))
+                .ContinueWith(continuationFunction: responseTask => responseTask.Result.Content.ReadAsStringAsync())
                 .Unwrap();
 
             task.Wait();
 
-            return RenderMarkup(key, task.Result, session, replacements, allowContentTags: false);
+            return RenderMarkup(key: key, content: task.Result, session: session, replacements: replacements, allowContentTags: false);
         });
     }
 
     private static string SerializeForOData(object model)
     {
-        return JsonConvert.SerializeObject(model, Formatting.None, new JsonSerializerSettings
+        return JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             TypeNameHandling = TypeNameHandling.None,
@@ -273,7 +285,7 @@ internal sealed class MarkupRenderService(
 
     private void Meta(StringBuilder source, PageRenderSession session)
     {
-        RegexReplace(source, syntax.MetaRegex, match => session.MetadataResolver(GetName(match)) ?? string.Empty);
+        RegexReplace(source: source, regex: syntax.MetaRegex, action: match => session.MetadataResolver(arg: GetName(match: match)) ?? string.Empty);
     }
 
     private void Resource(StringBuilder source, PageRenderSession session, string key, IReadOnlyCollection<Replacement> replacements)
@@ -283,55 +295,56 @@ internal sealed class MarkupRenderService(
             return;
         }
 
-        RegexReplace(source, syntax.ResourceDisplayNameRegex, match =>
-            RenderMarkup(key, ResolveResource(session, key, GetName(match))?.DisplayName ?? GetName(match), session, replacements, allowContentTags: false));
+        RegexReplace(source: source, regex: syntax.ResourceDisplayNameRegex, action: match =>
+            RenderMarkup(key: key, content: ResolveResource(session: session, key: key, name: GetName(match: match))?.DisplayName ?? GetName(match: match), session: session, replacements: replacements, allowContentTags: false));
 
-        RegexReplace(source, syntax.ResourceShortDisplayNameRegex, match =>
-            RenderMarkup(key, ResolveResource(session, key, GetName(match))?.ShortDisplayName ?? GetName(match), session, replacements, allowContentTags: false));
+        RegexReplace(source: source, regex: syntax.ResourceShortDisplayNameRegex, action: match =>
+            RenderMarkup(key: key, content: ResolveResource(session: session, key: key, name: GetName(match: match))?.ShortDisplayName ?? GetName(match: match), session: session, replacements: replacements, allowContentTags: false));
 
-        RegexReplace(source, syntax.ResourceDescriptionRegex, match =>
-            RenderMarkup(key, ResolveResource(session, key, GetName(match))?.Description ?? GetName(match), session, replacements, allowContentTags: false));
+        RegexReplace(source: source, regex: syntax.ResourceDescriptionRegex, action: match =>
+            RenderMarkup(key: key, content: ResolveResource(session: session, key: key, name: GetName(match: match))?.Description ?? GetName(match: match), session: session, replacements: replacements, allowContentTags: false));
     }
 
     private IEnumerable<Replacement> BuildDefaultReplacements(PageRenderSession session)
     {
-        string culture = ResolveCulture(session);
-        string port = session.Config != null && session.Config.Settings.TryGetValue("sslPort", out string value) ? ":" + value : string.Empty;
+        string culture = ResolveCulture(session: session);
+        string port = session.Config != null && session.Config.Settings.TryGetValue(key: "sslPort", value: out string value) ? ":" + value : string.Empty;
         PageRenderUser user = session.User ?? new PageRenderUser();
-        bool isGuest = string.IsNullOrWhiteSpace(user.Id) || string.Equals(user.Id, "Guest", StringComparison.OrdinalIgnoreCase);
+        bool isGuest = string.IsNullOrWhiteSpace(value: user.Id) || string.Equals(a: user.Id, b: "Guest", comparisonType: StringComparison.OrdinalIgnoreCase);
 
         List<Replacement> replacements =
         [
-            new("[[user]]", JsonConvert.SerializeObject(new
+            new(old: "[[user]]", @new: JsonConvert.SerializeObject(value: new
             {
                 Id = isGuest ? "Guest" : user.Id,
-                DefaultCultureId = string.IsNullOrWhiteSpace(user.DefaultCultureId) ? culture : user.DefaultCultureId,
+                DefaultCultureId = string.IsNullOrWhiteSpace(value: user.DefaultCultureId) ? culture : user.DefaultCultureId,
                 DisplayName = isGuest ? "Guest" : user.DisplayName,
                 Email = user.Email ?? string.Empty
             })),
-            new("[[displayname]]", isGuest ? "Guest" : user.DisplayName),
-            new("[[loginlink]]", isGuest ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>"),
-            new("[[date]]", DateTimeOffset.UtcNow.ToString("dd MMM yyyy")),
-            new("[[culture]]", culture),
-            new("[[lang]]", culture.Split('-').FirstOrDefault() ?? string.Empty),
-            new("[app[name]]", session.App?.Name ?? string.Empty),
-            new("[app[domain]]", session.App?.Domain ?? string.Empty),
-            new("[app[root]]", "https://" + session.App?.Domain + port + "/"),
-            new("[app[id]]", session.App?.Id.ToString() ?? string.Empty),
-            new("[api[root]]", "https://" + session.App?.Domain + port + "/Api/"),
-            new("[page[title]]", session.Page?.Title ?? string.Empty),
-            new("[page[description]]", session.Page?.Description ?? string.Empty),
-            new("[page[keywords]]", session.Page?.Keywords ?? string.Empty),
-            new("[page[id]]", session.Page?.Id.ToString() ?? string.Empty),
-            new("[page[parentid]]", session.Page?.ParentId?.ToString() ?? string.Empty),
-            new("[page[path]]", session.Page?.Path ?? string.Empty),
-            new("[page[url]]", string.IsNullOrWhiteSpace(session.Page?.Path) ? "https://" + session.App?.Domain + "/" : "https://" + session.App?.Domain + "/" + session.Page?.Path),
-            new("[theme[name]]", session.Request.Theme ?? string.Empty),
-            new("[[editlink]]", user.Can(session.App?.Id, "page_update") ? "<p style='cursor:pointer' onclick=\"setQueryParameter('edit', true)\">Edit</p>" : string.Empty)
+            new(old: "[[displayname]]", @new: isGuest ? "Guest" : user.DisplayName),
+            new(old: "[[loginlink]]", @new: isGuest ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>"),
+            new(old: "[[date]]", @new: DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy")),
+            new(old: "[[culture]]", @new: culture),
+            new(old: "[[lang]]", @new: culture.Split(separator: '-')
+            .FirstOrDefault() ?? string.Empty),
+            new(old: "[app[name]]", @new: session.App?.Name ?? string.Empty),
+            new(old: "[app[domain]]", @new: session.App?.Domain ?? string.Empty),
+            new(old: "[app[root]]", @new: "https://" + session.App?.Domain + port + "/"),
+            new(old: "[app[id]]", @new: session.App?.Id.ToString() ?? string.Empty),
+            new(old: "[api[root]]", @new: "https://" + session.App?.Domain + port + "/Api/"),
+            new(old: "[page[title]]", @new: session.Page?.Title ?? string.Empty),
+            new(old: "[page[description]]", @new: session.Page?.Description ?? string.Empty),
+            new(old: "[page[keywords]]", @new: session.Page?.Keywords ?? string.Empty),
+            new(old: "[page[id]]", @new: session.Page?.Id.ToString() ?? string.Empty),
+            new(old: "[page[parentid]]", @new: session.Page?.ParentId?.ToString() ?? string.Empty),
+            new(old: "[page[path]]", @new: session.Page?.Path ?? string.Empty),
+            new(old: "[page[url]]", @new: string.IsNullOrWhiteSpace(value: session.Page?.Path) ? "https://" + session.App?.Domain + "/" : "https://" + session.App?.Domain + "/" + session.Page?.Path),
+            new(old: "[theme[name]]", @new: session.Request.Theme ?? string.Empty),
+            new(old: "[[editlink]]", @new: user.Can(appId: session.App?.Id, operation: "page_update") ? "<p style='cursor:pointer' onclick=\"setQueryParameter('edit', true)\">Edit</p>" : string.Empty)
         ];
 
-        replacements.AddRange(BuildConfiguredReplacements(session));
-        replacements.AddRange(BuildThemeValueReplacements(session));
+        replacements.AddRange(collection: BuildConfiguredReplacements(session: session));
+        replacements.AddRange(collection: BuildThemeValueReplacements(session: session));
 
         return replacements;
     }
@@ -339,27 +352,27 @@ internal sealed class MarkupRenderService(
     private static IEnumerable<Replacement> BuildConfiguredReplacements(PageRenderSession session)
     {
         if (session.Config != null
-            && session.Config.Services.TryGetValue("Workflow", out string workflowService)
-            && !string.IsNullOrWhiteSpace(workflowService))
+            && session.Config.Services.TryGetValue(key: "Workflow", value: out string workflowService)
+            && !string.IsNullOrWhiteSpace(value: workflowService))
         {
-            yield return new Replacement("[api[workflow]]", workflowService);
+            yield return new Replacement(old: "[api[workflow]]", @new: workflowService);
         }
     }
 
     private IEnumerable<Replacement> BuildThemeValueReplacements(PageRenderSession session)
     {
-        if (!TryGetThemeDictionary(session.App?.Config, out IDictionary<string, object> themeDictionary))
+        if (!TryGetThemeDictionary(config: session.App?.Config, themeDictionary: out IDictionary<string, object> themeDictionary))
         {
             yield break;
         }
 
         object requestedTheme = null;
 
-        if (!string.IsNullOrWhiteSpace(session.Request.Theme)
-            && themeDictionary.TryGetValue(session.Request.Theme, out requestedTheme)
+        if (!string.IsNullOrWhiteSpace(value: session.Request.Theme)
+            && themeDictionary.TryGetValue(key: session.Request.Theme, value: out requestedTheme)
             && requestedTheme != null)
         {
-            foreach (Replacement replacement in BuildThemeReplacements(requestedTheme))
+            foreach (Replacement replacement in BuildThemeReplacements(model: requestedTheme))
             {
                 yield return replacement;
             }
@@ -367,14 +380,14 @@ internal sealed class MarkupRenderService(
             yield break;
         }
 
-        if (string.IsNullOrWhiteSpace(session.App?.DefaultTheme)
-            || !themeDictionary.TryGetValue(session.App.DefaultTheme, out requestedTheme)
+        if (string.IsNullOrWhiteSpace(value: session.App?.DefaultTheme)
+            || !themeDictionary.TryGetValue(key: session.App.DefaultTheme, value: out requestedTheme)
             || requestedTheme == null)
         {
             yield break;
         }
 
-        foreach (Replacement replacement in BuildThemeReplacements(requestedTheme))
+        foreach (Replacement replacement in BuildThemeReplacements(model: requestedTheme))
         {
             yield return replacement;
         }
@@ -382,7 +395,7 @@ internal sealed class MarkupRenderService(
 
     private void AddThemeTemplateReplacements(PageRenderSession session, ICollection<Replacement> replacements)
     {
-        if (!TryGetThemeDictionary(session.App?.Config, out IDictionary<string, object> themeDictionary))
+        if (!TryGetThemeDictionary(config: session.App?.Config, themeDictionary: out IDictionary<string, object> themeDictionary))
         {
             return;
         }
@@ -390,35 +403,35 @@ internal sealed class MarkupRenderService(
         PageRenderTemplate baseTemplate = null;
         PageRenderTemplate themeTemplate = null;
 
-        session.App?.TemplatesByName.TryGetValue("Theme", out baseTemplate);
-        session.App?.TemplatesByName.TryGetValue("Theme-" + session.Request.Theme, out themeTemplate);
+        session.App?.TemplatesByName.TryGetValue(key: "Theme", value: out baseTemplate);
+        session.App?.TemplatesByName.TryGetValue(key: "Theme-" + session.Request.Theme, value: out themeTemplate);
 
         string baseTheme = baseTemplate == null
             ? string.Empty
-            : RenderTemplate(baseTemplate, themeDictionary, session, replacements.ToList());
+            : RenderTemplate(template: baseTemplate, model: themeDictionary, session: session, pageReplacements: replacements.ToList());
 
-        themeDictionary.TryGetValue(session.Request.Theme ?? string.Empty, out object themeModel);
+        themeDictionary.TryGetValue(key: session.Request.Theme ?? string.Empty, value: out object themeModel);
 
-        if (themeModel == null && !string.IsNullOrWhiteSpace(session.App?.DefaultTheme))
+        if (themeModel == null && !string.IsNullOrWhiteSpace(value: session.App?.DefaultTheme))
         {
-            themeDictionary.TryGetValue(session.App.DefaultTheme, out themeModel);
+            themeDictionary.TryGetValue(key: session.App.DefaultTheme, value: out themeModel);
         }
 
         string renderedTheme = themeModel == null || themeTemplate == null
             ? string.Empty
-            : RenderTemplate(themeTemplate, themeModel, session, replacements.ToList());
+            : RenderTemplate(template: themeTemplate, model: themeModel, session: session, pageReplacements: replacements.ToList());
 
-        replacements.Add(new Replacement("[theme[template]]", renderedTheme));
-        replacements.Add(new Replacement("[theme[base]]", baseTheme));
+        replacements.Add(item: new Replacement(old: "[theme[template]]", @new: renderedTheme));
+        replacements.Add(item: new Replacement(old: "[theme[base]]", @new: baseTheme));
     }
 
     private string RenderTemplate(PageRenderTemplate template, object model, PageRenderSession session, IReadOnlyCollection<Replacement> pageReplacements)
     {
         List<Replacement> replacements = pageReplacements.ToList();
-        replacements.Add(new Replacement("[model]", JsonConvert.SerializeObject(model)));
-        replacements.AddRange(BuildModelReplacements(model));
+        replacements.Add(item: new Replacement(old: "[model]", @new: JsonConvert.SerializeObject(value: model)));
+        replacements.AddRange(collection: BuildModelReplacements(model: model));
 
-        return RenderMarkup(template.ResourceKey, template.RawString, session, replacements, allowContentTags: false);
+        return RenderMarkup(key: template.ResourceKey, content: template.RawString, session: session, replacements: replacements, allowContentTags: false);
     }
 
     private IEnumerable<Replacement> BuildModelReplacements(object model, string prefix = "")
@@ -430,30 +443,31 @@ internal sealed class MarkupRenderService(
 
         if (model is string text)
         {
-            return [new Replacement("[model[" + prefix + "]]", text)];
+            return [new Replacement(old: "[model[" + prefix + "]]", @new: text)];
         }
 
         if (model is JObject jObject)
         {
-            return BuildJObjectReplacements(jObject, prefix);
+            return BuildJObjectReplacements(model: jObject, prefix: prefix);
         }
 
         if (model is JArray jArray)
         {
-            return BuildCollectionReplacements(jArray, prefix);
+            return BuildCollectionReplacements(model: jArray, prefix: prefix);
         }
 
-        if (model.GetType().GetInterface("IDynamicMetaObjectProvider") != null)
+        if (model.GetType()
+            .GetInterface(name: "IDynamicMetaObjectProvider") != null)
         {
-            return BuildDynamicReplacements((IDictionary<string, object>)model, prefix);
+            return BuildDynamicReplacements(model: (IDictionary<string, object>)model, prefix: prefix);
         }
 
         if (model is IEnumerable enumerable && model is not string)
         {
-            return BuildCollectionReplacements(enumerable, prefix);
+            return BuildCollectionReplacements(model: enumerable, prefix: prefix);
         }
 
-        return BuildObjectReplacements(model, prefix);
+        return BuildObjectReplacements(model: model, prefix: prefix);
     }
 
     private IEnumerable<Replacement> BuildCollectionReplacements(IEnumerable model, string prefix)
@@ -463,12 +477,12 @@ internal sealed class MarkupRenderService(
 
         foreach (object item in model)
         {
-            replacements.AddRange(BuildModelReplacements(item, $"{prefix}[{index}]"));
+            replacements.AddRange(collection: BuildModelReplacements(model: item, prefix: $"{prefix}[{index}]"));
             index++;
         }
 
-        string lengthBinding = string.IsNullOrEmpty(prefix) ? "Length" : prefix + ".Length";
-        replacements.Add(new Replacement("[model[" + lengthBinding + "]]", index.ToString()));
+        string lengthBinding = string.IsNullOrEmpty(value: prefix) ? "Length" : prefix + ".Length";
+        replacements.Add(item: new Replacement(old: "[model[" + lengthBinding + "]]", @new: index.ToString()));
 
         return replacements;
     }
@@ -477,46 +491,48 @@ internal sealed class MarkupRenderService(
     {
         return model.GetType()
             .GetProperties()
-            .SelectMany(property =>
+            .SelectMany(selector: property =>
             {
-                object value = property.GetValue(model);
-                string bindingExpression = string.IsNullOrEmpty(prefix) ? property.Name : prefix + "." + property.Name;
+                object value = property.GetValue(obj: model);
+                string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
 
                 if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
                 {
-                    return [new Replacement("[model[" + bindingExpression + "]]", value?.ToString() ?? string.Empty)];
+                    return [new Replacement(old: "[model[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
                 }
 
                 return value != null
-                    ? BuildModelReplacements(value, bindingExpression)
+                    ? BuildModelReplacements(model: value, prefix: bindingExpression)
                     : Array.Empty<Replacement>();
             });
     }
 
     private IEnumerable<Replacement> BuildJObjectReplacements(JObject model, string prefix)
     {
-        return model.Properties().SelectMany(property =>
+        return model.Properties()
+            .SelectMany(selector: property =>
         {
-            string bindingExpression = string.IsNullOrEmpty(prefix) ? property.Name : prefix + "." + property.Name;
+            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
 
             return property.Value is JValue value
-                ? [new Replacement("[model[" + bindingExpression + "]]", value.ToString())]
-                : BuildModelReplacements(property.Value, bindingExpression);
+                ? [new Replacement(old: "[model[" + bindingExpression + "]]", @new: value.ToString())]
+                : BuildModelReplacements(model: property.Value, prefix: bindingExpression);
         });
     }
 
     private IEnumerable<Replacement> BuildDynamicReplacements(IDictionary<string, object> model, string prefix)
     {
-        return model.Keys.SelectMany(key =>
+        return model.Keys.SelectMany(selector: key =>
         {
-            string bindingExpression = string.IsNullOrEmpty(prefix) ? key : prefix + "." + key;
+            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
             object value = model[key];
 
-            List<Replacement> replacements = [new("[model[" + bindingExpression + "]]", value?.ToString() ?? string.Empty)];
+            List<Replacement> replacements = [new(old: "[model[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
 
-            if (value != null && !value.GetType().IsValueType && value is not string)
+            if (value != null && !value.GetType()
+                .IsValueType && value is not string)
             {
-                replacements.AddRange(BuildModelReplacements(value, bindingExpression));
+                replacements.AddRange(collection: BuildModelReplacements(model: value, prefix: bindingExpression));
             }
 
             return replacements;
@@ -532,25 +548,26 @@ internal sealed class MarkupRenderService(
 
         if (model is JObject jObject)
         {
-            return BuildThemeJObjectReplacements(jObject, prefix);
+            return BuildThemeJObjectReplacements(model: jObject, prefix: prefix);
         }
 
         if (model is string text)
         {
-            return [new Replacement("[theme[" + prefix + "]]", text)];
+            return [new Replacement(old: "[theme[" + prefix + "]]", @new: text)];
         }
 
-        if (model.GetType().GetInterface("IDynamicMetaObjectProvider") != null && model is IDictionary<string, object> dynamicModel)
+        if (model.GetType()
+            .GetInterface(name: "IDynamicMetaObjectProvider") != null && model is IDictionary<string, object> dynamicModel)
         {
-            return BuildThemeDynamicReplacements(dynamicModel, prefix);
+            return BuildThemeDynamicReplacements(model: dynamicModel, prefix: prefix);
         }
 
         if (model is IEnumerable enumerable && model is not string)
         {
-            return BuildThemeCollectionReplacements(enumerable, prefix);
+            return BuildThemeCollectionReplacements(model: enumerable, prefix: prefix);
         }
 
-        return BuildThemeObjectReplacements(model, prefix);
+        return BuildThemeObjectReplacements(model: model, prefix: prefix);
     }
 
     private IEnumerable<Replacement> BuildThemeCollectionReplacements(IEnumerable model, string prefix)
@@ -561,12 +578,12 @@ internal sealed class MarkupRenderService(
 
         foreach (object item in model)
         {
-            replacements.AddRange(BuildThemeReplacements(item, bindingExpression + $"[{index}]"));
+            replacements.AddRange(collection: BuildThemeReplacements(model: item, prefix: bindingExpression + $"[{index}]"));
             index++;
         }
 
         string lengthBinding = bindingExpression.Length == 0 ? "Length" : bindingExpression + ".Length";
-        replacements.Add(new Replacement("[theme[" + lengthBinding + "]]", index.ToString()));
+        replacements.Add(item: new Replacement(old: "[theme[" + lengthBinding + "]]", @new: index.ToString()));
 
         return replacements;
     }
@@ -575,50 +592,52 @@ internal sealed class MarkupRenderService(
     {
         return model.GetType()
             .GetProperties()
-            .SelectMany(property =>
+            .SelectMany(selector: property =>
             {
-                object value = property.GetValue(model);
-                string bindingExpression = string.IsNullOrEmpty(prefix) ? property.Name : prefix + "." + property.Name;
+                object value = property.GetValue(obj: model);
+                string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
 
                 if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
                 {
                     return
                     [
-                        new Replacement("[theme[" + prefix + "]]", model?.ToString() ?? string.Empty),
-                        new Replacement("[theme[" + bindingExpression + "]]", value?.ToString() ?? string.Empty)
+                        new Replacement(old: "[theme[" + prefix + "]]", @new: model?.ToString() ?? string.Empty),
+                        new Replacement(old: "[theme[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)
                     ];
                 }
 
                 return value != null
-                    ? BuildThemeReplacements(value, bindingExpression)
+                    ? BuildThemeReplacements(model: value, prefix: bindingExpression)
                     : Array.Empty<Replacement>();
             });
     }
 
     private IEnumerable<Replacement> BuildThemeJObjectReplacements(JObject model, string prefix)
     {
-        return model.Properties().SelectMany(property =>
+        return model.Properties()
+            .SelectMany(selector: property =>
         {
-            string bindingExpression = string.IsNullOrEmpty(prefix) ? property.Name : prefix + "." + property.Name;
+            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
 
             return property.Value is JValue value
-                ? [new Replacement("[theme[" + bindingExpression + "]]", value.ToString())]
-                : BuildThemeReplacements(property.Value, bindingExpression);
+                ? [new Replacement(old: "[theme[" + bindingExpression + "]]", @new: value.ToString())]
+                : BuildThemeReplacements(model: property.Value, prefix: bindingExpression);
         });
     }
 
     private IEnumerable<Replacement> BuildThemeDynamicReplacements(IDictionary<string, object> model, string prefix)
     {
-        return model.Keys.SelectMany(key =>
+        return model.Keys.SelectMany(selector: key =>
         {
-            string bindingExpression = string.IsNullOrEmpty(prefix) ? key : prefix + "." + key;
+            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
             object value = model[key];
 
-            List<Replacement> replacements = [new("[theme[" + bindingExpression + "]]", value?.ToString() ?? string.Empty)];
+            List<Replacement> replacements = [new(old: "[theme[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
 
-            if (value != null && !value.GetType().IsValueType)
+            if (value != null && !value.GetType()
+                .IsValueType)
             {
-                replacements.AddRange(BuildThemeReplacements(value, bindingExpression));
+                replacements.AddRange(collection: BuildThemeReplacements(model: value, prefix: bindingExpression));
             }
 
             return replacements;
@@ -634,7 +653,7 @@ internal sealed class MarkupRenderService(
             return false;
         }
 
-        if (!dictionary.TryGetValue("Themes", out object value))
+        if (!dictionary.TryGetValue(key: "Themes", value: out object value))
         {
             return false;
         }
@@ -645,20 +664,22 @@ internal sealed class MarkupRenderService(
 
     private PageRenderResource ResolveResource(PageRenderSession session, string key, string name)
     {
-        string culture = ResolveCulture(session).ToLowerInvariant();
+        string culture = ResolveCulture(session: session)
+            .ToLowerInvariant();
+
         string normalizedKey = key.ToLowerInvariant();
         string normalizedName = name.ToLowerInvariant();
 
-        PageRenderResource resource = FindIndexedResource(session.ResourcesByLookup, normalizedKey, normalizedName, culture);
+        PageRenderResource resource = FindIndexedResource(lookup: session.ResourcesByLookup, key: normalizedKey, name: normalizedName, culture: culture);
 
         if (resource != null)
         {
             return resource;
         }
 
-        if (culture.Contains('-'))
+        if (culture.Contains(value: '-'))
         {
-            resource = FindIndexedResource(session.ResourcesByLookup, normalizedKey, normalizedName, culture.Split('-')[0]);
+            resource = FindIndexedResource(lookup: session.ResourcesByLookup, key: normalizedKey, name: normalizedName, culture: culture.Split(separator: '-')[0]);
 
             if (resource != null)
             {
@@ -666,22 +687,22 @@ internal sealed class MarkupRenderService(
             }
         }
 
-        resource = FindIndexedResource(session.ResourcesByLookup, normalizedKey, normalizedName, string.Empty);
-        return resource ?? ResolveCommonResource(session, normalizedKey, normalizedName, culture);
+        resource = FindIndexedResource(lookup: session.ResourcesByLookup, key: normalizedKey, name: normalizedName, culture: string.Empty);
+        return resource ?? ResolveCommonResource(session: session, key: normalizedKey, name: normalizedName, culture: culture);
     }
 
     private PageRenderResource ResolveCommonResource(PageRenderSession session, string key, string name, string culture)
     {
-        PageRenderResource resource = FindIndexedResource(session.CommonResourcesByLookup, key, name, culture);
+        PageRenderResource resource = FindIndexedResource(lookup: session.CommonResourcesByLookup, key: key, name: name, culture: culture);
 
         if (resource != null)
         {
             return resource;
         }
 
-        if (culture.Contains('-'))
+        if (culture.Contains(value: '-'))
         {
-            resource = FindIndexedResource(session.CommonResourcesByLookup, key, name, culture.Split('-')[0]);
+            resource = FindIndexedResource(lookup: session.CommonResourcesByLookup, key: key, name: name, culture: culture.Split(separator: '-')[0]);
 
             if (resource != null)
             {
@@ -689,24 +710,24 @@ internal sealed class MarkupRenderService(
             }
         }
 
-        return FindIndexedResource(session.CommonResourcesByLookup, key, name, string.Empty);
+        return FindIndexedResource(lookup: session.CommonResourcesByLookup, key: key, name: name, culture: string.Empty);
     }
 
     private static PageRenderResource FindIndexedResource(IReadOnlyDictionary<string, PageRenderResource> lookup, string key, string name, string culture)
     {
-        return lookup.TryGetValue(BuildResourceLookupKey(key, name, culture), out PageRenderResource value)
+        return lookup.TryGetValue(key: BuildResourceLookupKey(key: key, name: name, culture: culture), value: out PageRenderResource value)
             ? value
             : null;
     }
 
     private PageRenderComponent ResolveComponent(PageRenderSession session, string name)
     {
-        if (session.ComponentsByName.TryGetValue(name, out PageRenderComponent component))
+        if (session.ComponentsByName.TryGetValue(key: name, value: out PageRenderComponent component))
         {
             return component;
         }
 
-        cCoder.Data.Models.CMS.Component dataComponent = componentReaderBroker.GetComponent(session.Request.AppId, name);
+        cCoder.Data.Models.CMS.Component dataComponent = componentReaderBroker.GetComponent(appId: session.Request.AppId, name: name);
 
         if (dataComponent != null)
         {
@@ -723,17 +744,17 @@ internal sealed class MarkupRenderService(
             return component;
         }
 
-        return session.CommonComponentsByName.TryGetValue(name, out component) ? component : null;
+        return session.CommonComponentsByName.TryGetValue(key: name, value: out component) ? component : null;
     }
 
     private PageRenderScript ResolveScript(PageRenderSession session, string name)
     {
-        if (session.ScriptsByName.TryGetValue(name, out PageRenderScript script))
+        if (session.ScriptsByName.TryGetValue(key: name, value: out PageRenderScript script))
         {
             return script;
         }
 
-        cCoder.Data.Models.CMS.Script dataScript = scriptReaderBroker.GetScript(session.Request.AppId, name);
+        cCoder.Data.Models.CMS.Script dataScript = scriptReaderBroker.GetScript(appId: session.Request.AppId, name: name);
 
         if (dataScript != null)
         {
@@ -747,14 +768,14 @@ internal sealed class MarkupRenderService(
             return script;
         }
 
-        return session.CommonScriptsByName.TryGetValue(name, out script) ? script : null;
+        return session.CommonScriptsByName.TryGetValue(key: name, value: out script) ? script : null;
     }
 
     private static string BuildResourceLookupKey(string key, string name, string culture) =>
         $"{key}|{name}|{culture}";
 
     private static string ResolveCulture(PageRenderSession session) =>
-        !string.IsNullOrWhiteSpace(session.Request.Culture)
+        !string.IsNullOrWhiteSpace(value: session.Request.Culture)
             ? session.Request.Culture
             : session.App?.DefaultCulture ?? string.Empty;
 
@@ -762,12 +783,12 @@ internal sealed class MarkupRenderService(
         match.Groups["name"].Value.ToLowerInvariant();
 
     private static string[] GetOptions(Match match) =>
-        match.Groups["options"].Value.Split("|", StringSplitOptions.RemoveEmptyEntries);
+        match.Groups["options"].Value.Split(separator: "|", options: StringSplitOptions.RemoveEmptyEntries);
 
     private static void RegexReplace(StringBuilder source, Regex regex, Func<Match, string> action)
     {
-        string result = regex.Replace(source.ToString(), match => action(match));
+        string result = regex.Replace(input: source.ToString(), evaluator: match => action(arg: match));
         source.Clear();
-        source.Append(result);
+        source.Append(value: result);
     }
 }

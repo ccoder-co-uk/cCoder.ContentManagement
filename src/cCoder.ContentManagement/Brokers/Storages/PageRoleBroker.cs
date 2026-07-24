@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.Security;
 using Microsoft.EntityFrameworkCore;
@@ -13,15 +17,15 @@ public class PageRoleBroker(ICoreContextFactory coreContextFactory) : IPageRoleB
         return ignoreFilters
             ? coreDataContext.PageRoles
                 .IgnoreQueryFilters()
-                .Include(pageRole => pageRole.Role)
+            .Include(navigationPropertyPath: pageRole => pageRole.Role)
             : coreDataContext.PageRoles
-                .Include(pageRole => pageRole.Role);
+                .Include(navigationPropertyPath: pageRole => pageRole.Role);
     }
 
     public async ValueTask<PageRole> AddPageRoleAsync(PageRole entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        PageRole result = (await coreDataContext.PageRoles.AddAsync(entity)).Entity;
+        PageRole result = (await coreDataContext.PageRoles.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -29,14 +33,14 @@ public class PageRoleBroker(ICoreContextFactory coreContextFactory) : IPageRoleB
     public async ValueTask<int> DeletePageRoleAsync(PageRole entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.PageRoles.Remove(entity);
+        coreDataContext.PageRoles.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllPageRolesAsync(IEnumerable<PageRole> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.PageRoles.RemoveRange(items);
+        coreDataContext.PageRoles.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 }

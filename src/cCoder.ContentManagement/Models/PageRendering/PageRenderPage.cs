@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 namespace cCoder.ContentManagement.Rendering.Models;
 
 internal sealed class PageRenderPage
@@ -27,5 +31,5 @@ internal sealed class PageRenderPage
     public string Keywords { get; set; } = string.Empty;
 
     public IReadOnlyDictionary<string, PageRenderContent> ContentByName { get; set; } =
-        new Dictionary<string, PageRenderContent>(StringComparer.OrdinalIgnoreCase);
+        new Dictionary<string, PageRenderContent>(comparer: StringComparer.OrdinalIgnoreCase);
 }

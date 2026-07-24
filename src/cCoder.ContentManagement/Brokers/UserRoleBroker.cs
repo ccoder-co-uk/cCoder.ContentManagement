@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.Security;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +14,7 @@ internal class UserRoleBroker(ICoreContextFactory coreContextFactory) : IUserRol
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
         IQueryable<UserRole> result;
+
         if (!ignoreFilters)
         {
             IQueryable<UserRole> userRoles = coreDataContext.UserRoles;
@@ -19,13 +24,14 @@ internal class UserRoleBroker(ICoreContextFactory coreContextFactory) : IUserRol
         {
             result = coreDataContext.UserRoles.IgnoreQueryFilters();
         }
+
         return result;
     }
 
     public async ValueTask<UserRole> AddUserRoleAsync(UserRole entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        UserRole result = (await coreDataContext.UserRoles.AddAsync(entity)).Entity;
+        UserRole result = (await coreDataContext.UserRoles.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -33,17 +39,19 @@ internal class UserRoleBroker(ICoreContextFactory coreContextFactory) : IUserRol
     public async ValueTask<int> DeleteUserRoleAsync(UserRole entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.UserRoles.Remove(entity);
+        coreDataContext.UserRoles.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllUserRolesAsync(IEnumerable<UserRole> items)
     {
         if (items == null || !items.Any())
+        {
             return;
+        }
 
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.UserRoles.RemoveRange(items);
+        coreDataContext.UserRoles.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 }

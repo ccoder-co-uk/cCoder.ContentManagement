@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -9,35 +13,50 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
 {
     public Layout Get(int id, bool ignoreFilters = false)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Layout i) => i.Id == id);
+        {
+            return GetAll(ignoreFilters: true)
+                        .FirstOrDefault(predicate: (Layout i) => i.Id == id);
+        }
 
-        Layout layout = GetAll().FirstOrDefault((Layout i) => i.Id == id);
+        Layout layout = GetAll()
+            .FirstOrDefault(predicate: (Layout i) => i.Id == id);
+
         if (layout != null)
+        {
             return layout;
+        }
 
-        Layout layout2 = GetAll(ignoreFilters: true).FirstOrDefault((Layout i) => i.Id == id);
+        Layout layout2 = GetAll(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Layout i) => i.Id == id);
+
         if (layout2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
     }
 
     public IQueryable<Layout> GetAll(bool ignoreFilters = false) =>
-        layoutBroker.GetAllLayouts(ignoreFilters);
+        layoutBroker.GetAllLayouts(ignoreFilters: ignoreFilters);
 
     public async ValueTask<Layout> AddAsync(Layout layout)
     {
-        ValidateLayout(layout, "layout");
-        authorizationBroker.Authorize(layout.AppId, "Layout_create");
-        Layout newLayout = CreateStorageLayout(layout);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateLayout(layout: layout, parameterName: "layout");
+        authorizationBroker.Authorize(appId: layout.AppId, privilege: "Layout_create");
+        Layout newLayout = CreateStorageLayout(layout: layout);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = (newLayout.CreatedOn = DateTimeOffset.UtcNow);
         newLayout.CreatedBy = currentUserId;
         newLayout.LastUpdated = now;
         newLayout.LastUpdatedBy = currentUserId;
-        Layout result = await layoutBroker.AddLayoutAsync(newLayout);
+        Layout result = await layoutBroker.AddLayoutAsync(entity: newLayout);
         layout.Id = result.Id;
         layout.Name = result.Name;
         layout.Description = result.Description;
@@ -54,14 +73,17 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
 
     public async ValueTask<Layout> UpdateAsync(Layout layout)
     {
-        ValidateLayout(layout, "layout");
-        authorizationBroker.Authorize(layout.AppId, "Layout_update");
-        Layout updateLayout = CreateStorageLayout(layout);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateLayout(layout: layout, parameterName: "layout");
+        authorizationBroker.Authorize(appId: layout.AppId, privilege: "Layout_update");
+        Layout updateLayout = CreateStorageLayout(layout: layout);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateLayout.LastUpdated = now;
         updateLayout.LastUpdatedBy = currentUserId;
-        Layout result = await layoutBroker.UpdateLayoutAsync(updateLayout);
+        Layout result = await layoutBroker.UpdateLayoutAsync(entity: updateLayout);
         layout.Id = result.Id;
         layout.Name = result.Name;
         layout.Description = result.Description;
@@ -78,28 +100,33 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
 
     public async ValueTask DeleteAsync(int id)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
         Layout layout;
+
         try
         {
-            layout = Get(id);
+            layout = Get(id: id);
         }
         catch (SecurityException)
         {
-            layout = Get(id, ignoreFilters: true);
+            layout = Get(id: id, ignoreFilters: true);
         }
 
         if (layout == null)
+        {
             return;
+        }
 
-        authorizationBroker.Authorize(layout.AppId, "Layout_delete");
-        await layoutBroker.DeleteLayoutAsync(CreateStorageLayout(layout));
+        authorizationBroker.Authorize(appId: layout.AppId, privilege: "Layout_delete");
+        await layoutBroker.DeleteLayoutAsync(entity: CreateStorageLayout(layout: layout));
     }
 
     private static Layout CreateStorageLayout(Layout layout)
     {
         if (layout == null)
+        {
             return null;
+        }
 
         return new Layout
         {

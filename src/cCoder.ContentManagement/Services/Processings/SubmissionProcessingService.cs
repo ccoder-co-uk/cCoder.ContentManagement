@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
@@ -9,41 +13,43 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
 {
     public Submission Get(Guid id)
     {
-        ValidateId(id, "id");
-        return service.Get(id);
+        ValidateId(id: id, parameterName: "id");
+        return service.Get(id: id);
     }
 
     public IQueryable<Submission> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters);
+        service.GetAll(ignoreFilters: ignoreFilters);
 
     public ValueTask<Submission> AddAsync(Submission entity)
     {
-        ValidateSubmission(entity, "entity");
-        return service.AddAsync(entity);
+        ValidateSubmission(submission: entity, parameterName: "entity");
+        return service.AddAsync(submission: entity);
     }
 
     public ValueTask<Submission> UpdateAsync(Submission entity)
     {
-        ValidateSubmission(entity, "entity");
-        return service.UpdateAsync(entity);
+        ValidateSubmission(submission: entity, parameterName: "entity");
+        return service.UpdateAsync(submission: entity);
     }
 
     public ValueTask DeleteAsync(Guid id)
     {
-        ValidateId(id, "id");
-        return service.DeleteAsync(id);
+        ValidateId(id: id, parameterName: "id");
+        return service.DeleteAsync(id: id);
     }
 
     public async ValueTask<IEnumerable<Result<Submission>>> AddOrUpdate(IEnumerable<Submission> items)
     {
-        ValidateSubmissions(items, "items");
+        ValidateSubmissions(submissions: items, parameterName: "items");
         List<Result<Submission>> results = new List<Result<Submission>>();
+
         foreach (Submission item in items)
         {
             try
             {
-                Submission savedItem = item.Id == Guid.Empty ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new Result<Submission>
+                Submission savedItem = item.Id == Guid.Empty ? await AddAsync(entity: item) : await UpdateAsync(entity: item);
+
+                results.Add(item: new Result<Submission>
                 {
                     Success = true,
                     Item = savedItem,
@@ -52,7 +58,7 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
             }
             catch (Exception ex)
             {
-                results.Add(new Result<Submission>
+                results.Add(item: new Result<Submission>
                 {
                     Success = false,
                     Item = item,
@@ -60,28 +66,34 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
                 });
             }
         }
+
         return results;
     }
 
     public async ValueTask DeleteAllAsync(IEnumerable<Submission> items)
     {
-        ValidateSubmissions(items, "items");
+        ValidateSubmissions(submissions: items, parameterName: "items");
+
         foreach (Submission item in items)
-            await DeleteAsync(item.Id);
+        {
+            await DeleteAsync(id: item.Id);
+        }
     }
 
     private static void ValidateId(Guid id, string parameterName) =>
-        ThrowIf(id == Guid.Empty, parameterName + " is required.");
+        ThrowIf(condition: id == Guid.Empty, message: parameterName + " is required.");
 
     private static void ValidateSubmission(Submission submission, string parameterName) =>
-        ThrowIf(submission == null, parameterName + " is required.");
+        ThrowIf(condition: submission == null, message: parameterName + " is required.");
 
     private static void ValidateSubmissions(IEnumerable<Submission> submissions, string parameterName) =>
-        ThrowIf(submissions == null, parameterName + " is required.");
+        ThrowIf(condition: submissions == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

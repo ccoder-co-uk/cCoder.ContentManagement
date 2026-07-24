@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -9,35 +13,50 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
 {
     public Resource Get(int id, bool ignoreFilters = false)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Resource i) => i.Id == id);
+        {
+            return GetAll(ignoreFilters: true)
+                        .FirstOrDefault(predicate: (Resource i) => i.Id == id);
+        }
 
-        Resource resource = GetAll().FirstOrDefault((Resource i) => i.Id == id);
+        Resource resource = GetAll()
+            .FirstOrDefault(predicate: (Resource i) => i.Id == id);
+
         if (resource != null)
+        {
             return resource;
+        }
 
-        Resource resource2 = GetAll(ignoreFilters: true).FirstOrDefault((Resource i) => i.Id == id);
+        Resource resource2 = GetAll(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Resource i) => i.Id == id);
+
         if (resource2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
     }
 
     public IQueryable<Resource> GetAll(bool ignoreFilters = false) =>
-        resourceBroker.GetAllResources(ignoreFilters);
+        resourceBroker.GetAllResources(ignoreFilters: ignoreFilters);
 
     public async ValueTask<Resource> AddAsync(Resource resource)
     {
-        ValidateResource(resource, "resource");
-        authorizationBroker.Authorize(resource.AppId, "Resource_create");
-        Resource newResource = CreateStorageResource(resource);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateResource(resource: resource, parameterName: "resource");
+        authorizationBroker.Authorize(appId: resource.AppId, privilege: "Resource_create");
+        Resource newResource = CreateStorageResource(resource: resource);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = (newResource.CreatedOn = DateTimeOffset.UtcNow);
         newResource.CreatedBy = currentUserId;
         newResource.LastUpdated = now;
         newResource.LastUpdatedBy = currentUserId;
-        Resource result = await resourceBroker.AddResourceAsync(newResource);
+        Resource result = await resourceBroker.AddResourceAsync(entity: newResource);
         resource.Id = result.Id;
         resource.Name = result.Name;
         resource.Description = result.Description;
@@ -55,14 +74,17 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
 
     public async ValueTask<Resource> UpdateAsync(Resource resource)
     {
-        ValidateResource(resource, "resource");
-        authorizationBroker.Authorize(resource.AppId, "Resource_update");
-        Resource updateResource = CreateStorageResource(resource);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateResource(resource: resource, parameterName: "resource");
+        authorizationBroker.Authorize(appId: resource.AppId, privilege: "Resource_update");
+        Resource updateResource = CreateStorageResource(resource: resource);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateResource.LastUpdated = now;
         updateResource.LastUpdatedBy = currentUserId;
-        Resource result = await resourceBroker.UpdateResourceAsync(updateResource);
+        Resource result = await resourceBroker.UpdateResourceAsync(entity: updateResource);
         resource.Id = result.Id;
         resource.Name = result.Name;
         resource.Description = result.Description;
@@ -80,28 +102,33 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
 
     public async ValueTask DeleteAsync(int id)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
         Resource resource;
+
         try
         {
-            resource = Get(id);
+            resource = Get(id: id);
         }
         catch (SecurityException)
         {
-            resource = Get(id, ignoreFilters: true);
+            resource = Get(id: id, ignoreFilters: true);
         }
 
         if (resource == null)
+        {
             return;
+        }
 
-        authorizationBroker.Authorize(resource.AppId, "Resource_delete");
-        await resourceBroker.DeleteResourceAsync(CreateStorageResource(resource));
+        authorizationBroker.Authorize(appId: resource.AppId, privilege: "Resource_delete");
+        await resourceBroker.DeleteResourceAsync(entity: CreateStorageResource(resource: resource));
     }
 
     private static Resource CreateStorageResource(Resource resource)
     {
         if (resource == null)
+        {
             return null;
+        }
 
         return new Resource
         {

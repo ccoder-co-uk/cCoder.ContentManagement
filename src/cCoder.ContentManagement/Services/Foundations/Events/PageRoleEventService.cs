@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker, IC
             },
             Data = entity
         };
-        await pageRoleEventBroker.RaisePageRoleAddEventAsync(message);
+
+        await pageRoleEventBroker.RaisePageRoleAddEventAsync(message: message);
     }
 
     public async ValueTask RaisePageRoleDeleteEventAsync(PageRole entity)
@@ -30,6 +35,7 @@ internal class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker, IC
             },
             Data = entity
         };
-        await pageRoleEventBroker.RaisePageRoleDeleteEventAsync(message);
+
+        await pageRoleEventBroker.RaisePageRoleDeleteEventAsync(message: message);
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -9,7 +13,8 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker, ICoreA
 {
     public async ValueTask RaisePageAddEventAsync(Page entity)
     {
-        ValidatePage(entity, "entity");
+        ValidatePage(page: entity, parameterName: "entity");
+
         EventMessage<Page> message = new EventMessage<Page>
         {
             AuthInfo = new EventAuthInfo
@@ -18,12 +23,14 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker, ICoreA
             },
             Data = entity
         };
-        await pageEventBroker.RaisePageAddEventAsync(message);
+
+        await pageEventBroker.RaisePageAddEventAsync(message: message);
     }
 
     public async ValueTask RaisePageUpdateEventAsync(Page entity)
     {
-        ValidatePage(entity, "entity");
+        ValidatePage(page: entity, parameterName: "entity");
+
         EventMessage<Page> message = new EventMessage<Page>
         {
             AuthInfo = new EventAuthInfo
@@ -32,12 +39,14 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker, ICoreA
             },
             Data = entity
         };
-        await pageEventBroker.RaisePageUpdateEventAsync(message);
+
+        await pageEventBroker.RaisePageUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaisePageDeleteEventAsync(Page entity)
     {
-        ValidatePage(entity, "entity");
+        ValidatePage(page: entity, parameterName: "entity");
+
         EventMessage<Page> message = new EventMessage<Page>
         {
             AuthInfo = new EventAuthInfo
@@ -46,6 +55,7 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker, ICoreA
             },
             Data = entity
         };
-        await pageEventBroker.RaisePageDeleteEventAsync(message);
+
+        await pageEventBroker.RaisePageDeleteEventAsync(message: message);
     }
 }

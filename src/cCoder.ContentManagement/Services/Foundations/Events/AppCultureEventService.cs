@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal partial class AppCultureEventService(IAppCultureEventBroker appCultureE
             },
             Data = entity
         };
-        await appCultureEventBroker.RaiseAppCultureAddEventAsync(message);
+
+        await appCultureEventBroker.RaiseAppCultureAddEventAsync(message: message);
     }
 
     public async ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity)
@@ -30,6 +35,7 @@ internal partial class AppCultureEventService(IAppCultureEventBroker appCultureE
             },
             Data = entity
         };
-        await appCultureEventBroker.RaiseAppCultureDeleteEventAsync(message);
+
+        await appCultureEventBroker.RaiseAppCultureDeleteEventAsync(message: message);
     }
 }

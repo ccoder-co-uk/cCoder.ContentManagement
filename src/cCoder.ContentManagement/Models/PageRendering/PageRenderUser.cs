@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 namespace cCoder.ContentManagement.Rendering.Models;
 
 internal sealed class PageRenderUser
@@ -18,9 +22,11 @@ internal sealed class PageRenderUser
         string normalizedOperation = operation?.ToLowerInvariant() ?? string.Empty;
 
         if (!appId.HasValue)
-            return AppPrivileges.Values.Any(privileges => privileges.Contains(normalizedOperation));
+        {
+            return AppPrivileges.Values.Any(predicate: privileges => privileges.Contains(item: normalizedOperation));
+        }
 
-        return AppPrivileges.TryGetValue(appId.Value, out ISet<string> value)
-            && value.Contains(normalizedOperation);
+        return AppPrivileges.TryGetValue(key: appId.Value, value: out ISet<string> value)
+            && value.Contains(item: normalizedOperation);
     }
 }

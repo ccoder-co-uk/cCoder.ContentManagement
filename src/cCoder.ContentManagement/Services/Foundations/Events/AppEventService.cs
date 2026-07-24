@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
@@ -9,7 +13,8 @@ internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuth
 {
     public async ValueTask RaiseAppAddEventAsync(App app)
     {
-        ValidateApp(app, "app");
+        ValidateApp(app: app, parameterName: "app");
+
         EventMessage<App> message = new EventMessage<App>
         {
             AuthInfo = new EventAuthInfo
@@ -18,12 +23,14 @@ internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuth
             },
             Data = app
         };
-        await appEventBroker.RaiseAppAddEventAsync(message);
+
+        await appEventBroker.RaiseAppAddEventAsync(message: message);
     }
 
     public async ValueTask RaiseAppUpdateEventAsync(App app)
     {
-        ValidateApp(app, "app");
+        ValidateApp(app: app, parameterName: "app");
+
         EventMessage<App> message = new EventMessage<App>
         {
             AuthInfo = new EventAuthInfo
@@ -32,12 +39,14 @@ internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuth
             },
             Data = app
         };
-        await appEventBroker.RaiseAppUpdateEventAsync(message);
+
+        await appEventBroker.RaiseAppUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaiseAppDeleteEventAsync(App app)
     {
-        ValidateApp(app, "app");
+        ValidateApp(app: app, parameterName: "app");
+
         EventMessage<App> message = new EventMessage<App>
         {
             AuthInfo = new EventAuthInfo
@@ -46,6 +55,7 @@ internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuth
             },
             Data = app
         };
-        await appEventBroker.RaiseAppDeleteEventAsync(message);
+
+        await appEventBroker.RaiseAppDeleteEventAsync(message: message);
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
@@ -10,37 +14,42 @@ internal class AppCultureOrchestrationService(
     IAppCultureEventProcessingService eventService) : IAppCultureOrchestrationService
 {
     public IQueryable<AppCulture> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters);
+        processingService.GetAll(ignoreFilters: ignoreFilters);
 
     public async ValueTask<AppCulture> AddAsync(AppCulture entity)
     {
-        ValidateAppCulture(entity, "entity");
+        ValidateAppCulture(appCulture: entity, parameterName: "entity");
 
-        AppCulture result = await processingService.AddAsync(entity);
-        await eventService.RaiseAppCultureAddEventAsync(result);
+        AppCulture result = await processingService.AddAsync(entity: entity);
+        await eventService.RaiseAppCultureAddEventAsync(entity: result);
         return result;
     }
 
     public async ValueTask DeleteAsync(AppCulture entity)
     {
-        ValidateAppCulture(entity, "entity");
+        ValidateAppCulture(appCulture: entity, parameterName: "entity");
 
-        await eventService.RaiseAppCultureDeleteEventAsync(entity);
-        await processingService.DeleteAsync(entity);
+        await eventService.RaiseAppCultureDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(entity: entity);
     }
 
     public async ValueTask DeleteByAppIdAsync(int appId)
     {
         AppCulture[] appCulturesToDelete =
-            [.. GetAll(ignoreFilters: true).Where(appCulture => appCulture.AppId == appId)];
+            [.. GetAll(ignoreFilters: true)
+            .Where(predicate: appCulture => appCulture.AppId == appId)];
 
         foreach (AppCulture appCulture in appCulturesToDelete)
-            await DeleteAsync(appCulture);
+        {
+            await DeleteAsync(entity: appCulture);
+        }
     }
 
     public async ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdate(IEnumerable<AppCulture> items)
     {
-        AppCulture[] appCultures = ValidateAppCultures(items, "items").ToArray();
+        AppCulture[] appCultures = ValidateAppCultures(appCultures: items, parameterName: "items")
+            .ToArray();
+
         List<Result<AppCulture>> results = new();
 
         foreach (AppCulture appCulture in appCultures)
@@ -48,13 +57,13 @@ internal class AppCultureOrchestrationService(
             try
             {
                 AppCulture existingAppCulture = GetAll(ignoreFilters: true)
-                    .FirstOrDefault(existing =>
+                    .FirstOrDefault(predicate: existing =>
                         existing.AppId == appCulture.AppId &&
                         existing.CultureId == appCulture.CultureId);
 
                 if (existingAppCulture != null)
                 {
-                    results.Add(new Result<AppCulture>
+                    results.Add(item: new Result<AppCulture>
                     {
                         Id = $"{appCulture.AppId}:{appCulture.CultureId}",
                         Success = true,
@@ -65,8 +74,9 @@ internal class AppCultureOrchestrationService(
                     continue;
                 }
 
-                AppCulture result = await AddAsync(appCulture);
-                results.Add(new Result<AppCulture>
+                AppCulture result = await AddAsync(entity: appCulture);
+
+                results.Add(item: new Result<AppCulture>
                 {
                     Id = $"{appCulture.AppId}:{appCulture.CultureId}",
                     Success = true,
@@ -76,7 +86,7 @@ internal class AppCultureOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(new Result<AppCulture>
+                results.Add(item: new Result<AppCulture>
                 {
                     Id = $"{appCulture.AppId}:{appCulture.CultureId}",
                     Success = false,
@@ -91,16 +101,21 @@ internal class AppCultureOrchestrationService(
 
     public async ValueTask DeleteAllAsync(IEnumerable<AppCulture> items)
     {
-        AppCulture[] appCultures = ValidateAppCultures(items, "items").ToArray();
+        AppCulture[] appCultures = ValidateAppCultures(appCultures: items, parameterName: "items")
+            .ToArray();
 
         foreach (AppCulture appCulture in appCultures)
-            await DeleteAsync(appCulture);
+        {
+            await DeleteAsync(entity: appCulture);
+        }
     }
 
     private static AppCulture ValidateAppCulture(AppCulture appCulture, string parameterName)
     {
         if (appCulture == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return appCulture;
     }
@@ -108,7 +123,9 @@ internal class AppCultureOrchestrationService(
     private static IEnumerable<AppCulture> ValidateAppCultures(IEnumerable<AppCulture> appCultures, string parameterName)
     {
         if (appCultures == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return appCultures;
     }

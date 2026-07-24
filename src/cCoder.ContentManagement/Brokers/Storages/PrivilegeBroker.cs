@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.Security;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +20,8 @@ public class PrivilegeBroker(ICoreContextFactory coreContextFactory) : IPrivileg
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
         return ignoreFilters
-            ? coreDataContext.Set<Privilege>().IgnoreQueryFilters()
+            ? coreDataContext.Set<Privilege>()
+            .IgnoreQueryFilters()
             : coreDataContext.Set<Privilege>();
     }
 }

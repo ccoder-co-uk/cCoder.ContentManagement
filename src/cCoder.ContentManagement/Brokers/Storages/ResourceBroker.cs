@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +22,7 @@ public class ResourceBroker(ICoreContextFactory coreContextFactory) : IResourceB
     public async ValueTask<Resource> AddResourceAsync(Resource entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Resource result = (await coreDataContext.Resources.AddAsync(entity)).Entity;
+        Resource result = (await coreDataContext.Resources.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -26,7 +30,10 @@ public class ResourceBroker(ICoreContextFactory coreContextFactory) : IResourceB
     public async ValueTask<Resource> UpdateResourceAsync(Resource entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Resource result = coreDataContext.Resources.Update(entity).Entity;
+
+        Resource result = coreDataContext.Resources.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -34,14 +41,14 @@ public class ResourceBroker(ICoreContextFactory coreContextFactory) : IResourceB
     public async ValueTask<int> DeleteResourceAsync(Resource entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Resources.Remove(entity);
+        coreDataContext.Resources.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllResourcesAsync(IEnumerable<Resource> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Resources.RemoveRange(items);
+        coreDataContext.Resources.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 

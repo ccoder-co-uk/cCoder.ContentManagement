@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
@@ -24,13 +28,14 @@ public class ScriptController : ODataController
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Script)) : new MetadataContainer(typeof(Script), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Script)) : new MetadataContainer(type: typeof(Script), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Script> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: Service.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -39,8 +44,10 @@ public class ScriptController : ODataController
     {
         try
         {
-            IQueryable<Script> result = Service.GetAll().Where(script => script.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<Script> result = Service.GetAll()
+                .Where(predicate: script => script.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -53,9 +60,11 @@ public class ScriptController : ODataController
     public async Task<IActionResult> Post([FromBody] Script entity)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.AddAsync(entity));
+        return Ok(value: await Service.AddAsync(entity: entity));
     }
 
     [HttpPut]
@@ -63,26 +72,31 @@ public class ScriptController : ODataController
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Script entity)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.UpdateAsync(entity));
+        return Ok(value: await Service.UpdateAsync(entity: entity));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<Script> delta)
     {
-        Script originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Script originalEntity = Service.Get(id: key);
 
-        delta.Patch(originalEntity);
-        return Ok(await Service.UpdateAsync(originalEntity));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        delta.Patch(original: originalEntity);
+        return Ok(value: await Service.UpdateAsync(entity: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(key);
+        await Service.DeleteAsync(id: key);
         return Ok();
     }
 }

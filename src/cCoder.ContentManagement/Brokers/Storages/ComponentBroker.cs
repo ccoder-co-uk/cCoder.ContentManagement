@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +22,7 @@ public class ComponentBroker(ICoreContextFactory coreContextFactory) : IComponen
     public async ValueTask<Component> AddComponentAsync(Component entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Component result = (await coreDataContext.Components.AddAsync(entity)).Entity;
+        Component result = (await coreDataContext.Components.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -26,7 +30,10 @@ public class ComponentBroker(ICoreContextFactory coreContextFactory) : IComponen
     public async ValueTask<Component> UpdateComponentAsync(Component entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Component result = coreDataContext.Components.Update(entity).Entity;
+
+        Component result = coreDataContext.Components.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -34,14 +41,14 @@ public class ComponentBroker(ICoreContextFactory coreContextFactory) : IComponen
     public async ValueTask<int> DeleteComponentAsync(Component entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Components.Remove(entity);
+        coreDataContext.Components.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllComponentsAsync(IEnumerable<Component> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Components.RemoveRange(items);
+        coreDataContext.Components.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 

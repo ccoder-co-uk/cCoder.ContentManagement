@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
@@ -25,13 +29,14 @@ public class SubmissionController : ODataController
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Submission)) : new MetadataContainer(typeof(Submission), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Submission)) : new MetadataContainer(type: typeof(Submission), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Submission> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: Service.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -40,8 +45,10 @@ public class SubmissionController : ODataController
     {
         try
         {
-            IQueryable<Submission> result = Service.GetAll().Where(submission => submission.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<Submission> result = Service.GetAll()
+                .Where(predicate: submission => submission.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -54,9 +61,11 @@ public class SubmissionController : ODataController
     public async Task<IActionResult> Post([FromBody] Submission entity)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return new JsonResult(CreateResponseSubmission(await Service.AddAsync(entity)));
+        return new JsonResult(value: CreateResponseSubmission(submission: await Service.AddAsync(entity: entity)));
     }
 
     [HttpPut]
@@ -64,33 +73,40 @@ public class SubmissionController : ODataController
     public async Task<IActionResult> Put([FromRoute] Guid key, [FromBody] Submission entity)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return new JsonResult(CreateResponseSubmission(await Service.UpdateAsync(entity)));
+        return new JsonResult(value: CreateResponseSubmission(submission: await Service.UpdateAsync(entity: entity)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] Guid key, Delta<Submission> delta)
     {
-        Submission originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Submission originalEntity = Service.Get(id: key);
 
-        delta.Patch(originalEntity);
-        return new JsonResult(CreateResponseSubmission(await Service.UpdateAsync(originalEntity)));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        delta.Patch(original: originalEntity);
+        return new JsonResult(value: CreateResponseSubmission(submission: await Service.UpdateAsync(entity: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] Guid key)
     {
-        await Service.DeleteAsync(key);
+        await Service.DeleteAsync(id: key);
         return Ok();
     }
 
     private static Submission CreateResponseSubmission(Submission submission)
     {
         if (submission == null)
+        {
             return null;
+        }
 
         return new Submission
         {

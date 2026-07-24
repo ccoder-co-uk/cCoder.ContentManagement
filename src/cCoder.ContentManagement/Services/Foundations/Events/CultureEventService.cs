@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
             },
             Data = entity
         };
-        await cultureEventBroker.RaiseCultureAddEventAsync(message);
+
+        await cultureEventBroker.RaiseCultureAddEventAsync(message: message);
     }
 
     public async ValueTask RaiseCultureUpdateEventAsync(Culture entity)
@@ -30,7 +35,8 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
             },
             Data = entity
         };
-        await cultureEventBroker.RaiseCultureUpdateEventAsync(message);
+
+        await cultureEventBroker.RaiseCultureUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaiseCultureDeleteEventAsync(Culture entity)
@@ -43,6 +49,7 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
             },
             Data = entity
         };
-        await cultureEventBroker.RaiseCultureDeleteEventAsync(message);
+
+        await cultureEventBroker.RaiseCultureDeleteEventAsync(message: message);
     }
 }

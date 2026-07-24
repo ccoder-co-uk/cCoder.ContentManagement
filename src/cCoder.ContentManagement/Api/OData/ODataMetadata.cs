@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -14,12 +18,14 @@ public class MetadataContainerSet
 
     public ExtendedMetadataContainer[] Types { get; set; }
 
-    public MetadataContainerSet Resource(string culture, IEnumerable<Resource> resources) => new()
-    {
-        Name = Name,
-        UriBase = UriBase,
-        Types = Types.Select(type => type.Resource(Name, culture, resources)).ToArray()
-    };
+    public MetadataContainerSet Resource(string culture, IEnumerable<Resource> resources) =>
+        new()
+        {
+            Name = Name,
+            UriBase = UriBase,
+            Types = Types.Select(selector: type => type.Resource(setName: Name, culture: culture, resources: resources))
+        .ToArray()
+        };
 }
 
 public class MetadataContainer
@@ -43,15 +49,18 @@ public class MetadataContainer
     public MetadataContainer(Type type)
     {
         IsValueType = type.IsValueType || type == typeof(string);
-        Type = GetTypeName(type);
+        Type = GetTypeName(type: type);
         Name = type.Name;
         DisplayName = type.Name;
         Description = type.Name;
         ServerType = type.AssemblyQualifiedName;
         ServerTypeName = type.GetCSharpTypeName();
+
         Properties = type.IsValueType || type == typeof(string)
             ? []
-            : type.GetProperties().Select(PropertyInfoFor).ToArray();
+            : type.GetProperties()
+            .Select(selector: PropertyInfoFor)
+            .ToArray();
     }
 
     public MetadataContainer(Type type, bool isEntity, bool hasEndpoint)
@@ -64,8 +73,10 @@ public class MetadataContainer
 
     public MetadataContainer Resource(string setName, string culture, IEnumerable<Resource> resources)
     {
-        string cacheKey = $"{setName}|{ServerTypeName.Split('.').Last()}";
-        Resource resource = MetadataResourceLookup.ForKeyAndCulture(resources, cacheKey, culture);
+        string cacheKey = $"{setName}|{ServerTypeName.Split(separator: '.')
+            .Last()}";
+
+        Resource resource = MetadataResourceLookup.ForKeyAndCulture(resources: resources, key: cacheKey, culture: culture);
 
         return new MetadataContainer
         {
@@ -81,7 +92,8 @@ public class MetadataContainer
             Name = Name,
             DisplayName = resource?.DisplayName ?? DisplayName,
             Description = resource?.Description ?? Description,
-            Properties = Properties.Select(property => property.Resource(cacheKey, culture, resources)).ToArray(),
+            Properties = Properties.Select(selector: property => property.Resource(keyContext: cacheKey, culture: culture, resources: resources))
+            .ToArray(),
         };
     }
 
@@ -89,7 +101,7 @@ public class MetadataContainer
         new()
         {
             Name = property.Name,
-            Type = GetTypeName(property.PropertyType),
+            Type = GetTypeName(type: property.PropertyType),
             ServerType = property.PropertyType.ToString(),
             ServerTypeName = property.PropertyType.GetCSharpTypeName(),
             IsValueType = property.PropertyType.IsValueType || property.PropertyType == typeof(string),
@@ -109,12 +121,16 @@ public class MetadataContainer
     private static string GetTypeName(Type type)
     {
         if (type == typeof(string))
+        {
             return "string";
+        }
 
-        if (typeof(IEnumerable).IsAssignableFrom(type))
+        if (typeof(IEnumerable).IsAssignableFrom(c: type))
+        {
             return "array";
+        }
 
-        return Lookup.TryGetValue(type, out string name) ? name : "object";
+        return Lookup.TryGetValue(key: type, value: out string name) ? name : "object";
     }
 
     private static readonly Dictionary<Type, string> Lookup = new()
@@ -164,8 +180,10 @@ public class ExtendedMetadataContainer : MetadataContainer
 
     public new ExtendedMetadataContainer Resource(string setName, string culture, IEnumerable<Resource> resources)
     {
-        string cacheKey = $"{setName}|{ServerTypeName.Split('.').Last()}";
-        Resource resource = MetadataResourceLookup.ForKeyAndCulture(resources, cacheKey, culture);
+        string cacheKey = $"{setName}|{ServerTypeName.Split(separator: '.')
+            .Last()}";
+
+        Resource resource = MetadataResourceLookup.ForKeyAndCulture(resources: resources, key: cacheKey, culture: culture);
 
         return new ExtendedMetadataContainer
         {
@@ -181,7 +199,8 @@ public class ExtendedMetadataContainer : MetadataContainer
             Name = Name,
             DisplayName = resource?.DisplayName ?? DisplayName,
             Description = resource?.Description ?? Description,
-            Properties = Properties.Select(property => property.Resource(cacheKey, culture, resources)).ToArray(),
+            Properties = Properties.Select(selector: property => property.Resource(keyContext: cacheKey, culture: culture, resources: resources))
+            .ToArray(),
             Operations = Operations,
         };
     }
@@ -205,7 +224,7 @@ public class PropertyContainer
 
     public PropertyContainer Resource(string keyContext, string culture, IEnumerable<Resource> resources)
     {
-        Resource resource = MetadataResourceLookup.ForKeyAndCulture(resources, $"{keyContext}.{Name}", culture);
+        Resource resource = MetadataResourceLookup.ForKeyAndCulture(resources: resources, key: $"{keyContext}.{Name}", culture: culture);
 
         return new PropertyContainer
         {
@@ -242,13 +261,13 @@ internal static class MetadataResourceLookup
     internal static Resource ForKeyAndCulture(IEnumerable<Resource> resources, string key, string culture)
     {
         Resource[] candidates = resources?
-            .Where(resource => string.Equals(resource.Key, key, StringComparison.OrdinalIgnoreCase))
+            .Where(predicate: resource => string.Equals(a: resource.Key, b: key, comparisonType: StringComparison.OrdinalIgnoreCase))
             .ToArray() ?? [];
 
         return candidates
-            .Where(resource => string.Equals(resource.Culture ?? string.Empty, culture ?? string.Empty, StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(resource => resource.Culture?.Length ?? 0)
+            .Where(predicate: resource => string.Equals(a: resource.Culture ?? string.Empty, b: culture ?? string.Empty, comparisonType: StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(keySelector: resource => resource.Culture?.Length ?? 0)
             .FirstOrDefault()
-            ?? candidates.FirstOrDefault(resource => string.IsNullOrEmpty(resource.Culture));
+            ?? candidates.FirstOrDefault(predicate: resource => string.IsNullOrEmpty(value: resource.Culture));
     }
 }

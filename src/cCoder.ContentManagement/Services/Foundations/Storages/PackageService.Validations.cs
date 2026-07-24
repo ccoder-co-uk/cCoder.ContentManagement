@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.Packaging;
 
@@ -8,7 +12,9 @@ internal partial class PackageService
     private static Guid ValidateId(Guid id, string parameterName)
     {
         if (id == Guid.Empty)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return id;
     }
@@ -16,7 +22,9 @@ internal partial class PackageService
     private static Package ValidatePackage(Package package, string parameterName)
     {
         if (package == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return package;
     }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using System.Text.Json;
@@ -21,31 +25,36 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     public IActionResult Latest(string type) =>
-        Ok(Service.Latest(type));
+        Ok(value: Service.Latest(type: type));
 
     [HttpPost]
     public async Task<IActionResult> ImportAsync([FromBody] JsonElement payload)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        IEnumerable<CommonObject> items = DeserializeCommonObjects(payload);
+        IEnumerable<CommonObject> items = DeserializeCommonObjects(payload: payload);
 
         if (items == null)
-            return BadRequest("A common object payload is required.");
+        {
+            return BadRequest(message: "A common object payload is required.");
+        }
 
-        return Ok(await Service.ImportAsync(items));
+        return Ok(value: await Service.ImportAsync(items: items));
     }
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(CommonObject)) : new MetadataContainer(typeof(CommonObject), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(CommonObject)) : new MetadataContainer(type: typeof(CommonObject), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<CommonObject> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: Service.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -54,8 +63,10 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     {
         try
         {
-            IQueryable<CommonObject> result = Service.GetAll().Where(commonObject => commonObject.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<CommonObject> result = Service.GetAll()
+                .Where(predicate: commonObject => commonObject.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -68,9 +79,11 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     public async Task<IActionResult> Post([FromBody] CommonObject entity)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.AddAsync(entity));
+        return Ok(value: await Service.AddAsync(entity: entity));
     }
 
     [HttpPut]
@@ -78,42 +91,47 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] CommonObject entity)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
         entity.Id = key;
-        return Ok(await Service.UpdateAsync(entity));
+        return Ok(value: await Service.UpdateAsync(entity: entity));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<CommonObject> delta)
     {
-        CommonObject originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        CommonObject originalEntity = Service.Get(id: key);
 
-        delta.Patch(originalEntity);
-        return Ok(await Service.UpdateAsync(originalEntity));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        delta.Patch(original: originalEntity);
+        return Ok(value: await Service.UpdateAsync(entity: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(key);
+        await Service.DeleteAsync(id: key);
         return Ok();
     }
 
     private static IEnumerable<CommonObject> DeserializeCommonObjects(JsonElement payload)
     {
         JsonElement itemsPayload = payload.ValueKind == JsonValueKind.Object &&
-                                   payload.TryGetProperty("value", out JsonElement valueElement)
+                                   payload.TryGetProperty(propertyName: "value", value: out JsonElement valueElement)
             ? valueElement
             : payload;
 
         return itemsPayload.ValueKind switch
         {
             JsonValueKind.Array => JsonSerializer.Deserialize<CommonObject[]>(
-                itemsPayload.GetRawText(),
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
+json: itemsPayload.GetRawText(),
+options: new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
             JsonValueKind.Null => null,
             var ignoredRequest => null
         };

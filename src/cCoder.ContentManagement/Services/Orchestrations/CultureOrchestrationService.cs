@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
@@ -9,48 +13,51 @@ internal class CultureOrchestrationService(
     ICultureProcessingService processingService,
     ICultureEventProcessingService eventService) : ICultureOrchestrationService
 {
-    public Culture Get(string id) => processingService.Get(ValidateId(id, "id"));
+    public Culture Get(string id) =>
+        processingService.Get(id: ValidateId(id: id, parameterName: "id"));
 
     public IQueryable<Culture> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters);
+        processingService.GetAll(ignoreFilters: ignoreFilters);
 
     public async ValueTask<Culture> AddAsync(Culture entity)
     {
-        ValidateCulture(entity, "entity");
+        ValidateCulture(culture: entity, parameterName: "entity");
 
-        Culture result = await processingService.AddAsync(entity);
-        await eventService.RaiseCultureAddEventAsync(result);
+        Culture result = await processingService.AddAsync(entity: entity);
+        await eventService.RaiseCultureAddEventAsync(entity: result);
         return result;
     }
 
     public async ValueTask<Culture> UpdateAsync(Culture entity)
     {
-        ValidateCulture(entity, "entity");
+        ValidateCulture(culture: entity, parameterName: "entity");
 
-        Culture result = await processingService.UpdateAsync(entity);
-        await eventService.RaiseCultureUpdateEventAsync(result);
+        Culture result = await processingService.UpdateAsync(entity: entity);
+        await eventService.RaiseCultureUpdateEventAsync(entity: result);
         return result;
     }
 
     public async ValueTask DeleteAsync(string id)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
 
-        Culture entity = processingService.Get(id);
-        await eventService.RaiseCultureDeleteEventAsync(entity);
-        await processingService.DeleteAsync(id);
+        Culture entity = processingService.Get(id: id);
+        await eventService.RaiseCultureDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(id: id);
     }
 
     public ValueTask<IEnumerable<Result<Culture>>> AddOrUpdate(IEnumerable<Culture> items) =>
-        processingService.AddOrUpdate(ValidateCultures(items, "items"));
+        processingService.AddOrUpdate(items: ValidateCultures(cultures: items, parameterName: "items"));
 
     public ValueTask DeleteAllAsync(IEnumerable<Culture> items) =>
-        processingService.DeleteAllAsync(ValidateCultures(items, "items"));
+        processingService.DeleteAllAsync(items: ValidateCultures(cultures: items, parameterName: "items"));
 
     private static string ValidateId(string id, string parameterName)
     {
-        if (string.IsNullOrWhiteSpace(id))
-            throw new ValidationException(parameterName + " is required.");
+        if (string.IsNullOrWhiteSpace(value: id))
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return id;
     }
@@ -58,7 +65,9 @@ internal class CultureOrchestrationService(
     private static Culture ValidateCulture(Culture culture, string parameterName)
     {
         if (culture == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return culture;
     }
@@ -66,7 +75,9 @@ internal class CultureOrchestrationService(
     private static IEnumerable<Culture> ValidateCultures(IEnumerable<Culture> cultures, string parameterName)
     {
         if (cultures == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return cultures;
     }

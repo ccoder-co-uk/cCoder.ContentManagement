@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.CMS;
@@ -8,31 +12,33 @@ internal class ScriptEventProcessingService(IScriptEventService eventService) : 
 {
     public ValueTask RaiseScriptAddEventAsync(Script entity)
     {
-        ValidateScript(entity, "entity");
+        ValidateScript(script: entity, parameterName: "entity");
 
-        return eventService.RaiseScriptAddEventAsync(entity);
+        return eventService.RaiseScriptAddEventAsync(entity: entity);
     }
 
     public ValueTask RaiseScriptUpdateEventAsync(Script entity)
     {
-        ValidateScript(entity, "entity");
+        ValidateScript(script: entity, parameterName: "entity");
 
-        return eventService.RaiseScriptUpdateEventAsync(entity);
+        return eventService.RaiseScriptUpdateEventAsync(entity: entity);
     }
 
     public ValueTask RaiseScriptDeleteEventAsync(Script entity)
     {
-        ValidateScript(entity, "entity");
+        ValidateScript(script: entity, parameterName: "entity");
 
-        return eventService.RaiseScriptDeleteEventAsync(entity);
+        return eventService.RaiseScriptDeleteEventAsync(entity: entity);
     }
 
     private static void ValidateScript(Script script, string parameterName) =>
-        ThrowIf(script == null, parameterName + " is required.");
+        ThrowIf(condition: script == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

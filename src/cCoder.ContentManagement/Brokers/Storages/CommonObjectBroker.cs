@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -20,29 +24,34 @@ public class CommonObjectBroker(ICoreContextFactory coreContextFactory) : ICommo
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
         int num = 0;
         List<CommonObject> list = new List<CommonObject>();
+
         while (true)
         {
             CommonObject[] array = coreDataContext.CommonObjects
                 .AsNoTracking()
-                .GroupBy(commonObject => new { commonObject.Name, commonObject.Culture, commonObject.Key, commonObject.Type })
-                .Select(group => group.OrderByDescending(version => version.Version).First())
-                .Skip(num)
-                .Take(pageSize)
+                .GroupBy(keySelector: commonObject => new { commonObject.Name, commonObject.Culture, commonObject.Key, commonObject.Type })
+                .Select(selector: group => group.OrderByDescending(keySelector: version => version.Version)
+                .First())
+                .Skip(count: num)
+                .Take(count: pageSize)
                 .ToArray();
 
             if (array.Length == 0)
+            {
                 break;
+            }
 
-            list.AddRange(array);
+            list.AddRange(collection: array);
             num += pageSize;
         }
+
         return list.ToArray();
     }
 
     public async ValueTask<CommonObject> AddCommonObjectAsync(CommonObject entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        CommonObject result = (await coreDataContext.CommonObjects.AddAsync(entity)).Entity;
+        CommonObject result = (await coreDataContext.CommonObjects.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -50,7 +59,10 @@ public class CommonObjectBroker(ICoreContextFactory coreContextFactory) : ICommo
     public async ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        CommonObject result = coreDataContext.CommonObjects.Update(entity).Entity;
+
+        CommonObject result = coreDataContext.CommonObjects.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -58,14 +70,14 @@ public class CommonObjectBroker(ICoreContextFactory coreContextFactory) : ICommo
     public async ValueTask<int> DeleteCommonObjectAsync(CommonObject entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.CommonObjects.Remove(entity);
+        coreDataContext.CommonObjects.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllCommonObjectsAsync(IEnumerable<CommonObject> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.CommonObjects.RemoveRange(items);
+        coreDataContext.CommonObjects.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 

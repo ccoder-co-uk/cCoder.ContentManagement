@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -13,160 +17,200 @@ internal class AppRenderableCoordinationService(
 {
     public async ValueTask HandleAppAddAsync(App app)
     {
-        ValidateApp(app, "app");
-        StampChildrenWithApp(app);
+        ValidateApp(app: app, parameterName: "app");
+        StampChildrenWithApp(app: app);
 
         if (app.Templates != null)
-            await templateOrchestrationService.AddOrUpdate(app.Templates);
+        {
+            await templateOrchestrationService.AddOrUpdate(items: app.Templates);
+        }
 
         if (app.Layouts != null)
-            await layoutOrchestrationService.AddOrUpdate(app.Layouts);
+        {
+            await layoutOrchestrationService.AddOrUpdate(items: app.Layouts);
+        }
 
         if (app.Components != null)
-            await AddOrUpdateComponentsAsync(app);
+        {
+            await AddOrUpdateComponentsAsync(app: app);
+        }
 
         if (app.Pages != null)
-            await pageOrchestrationService.AddOrUpdate(app.Pages);
+        {
+            await pageOrchestrationService.AddOrUpdate(items: app.Pages);
+        }
     }
 
     public async ValueTask HandleAppUpdateAsync(App app)
     {
-        ValidateApp(app, "app");
-        StampChildrenWithApp(app);
+        ValidateApp(app: app, parameterName: "app");
+        StampChildrenWithApp(app: app);
 
         if (app.Templates != null)
         {
-            await DeleteMissingTemplatesAsync(app);
-            await templateOrchestrationService.AddOrUpdate(app.Templates);
+            await DeleteMissingTemplatesAsync(app: app);
+            await templateOrchestrationService.AddOrUpdate(items: app.Templates);
         }
 
         if (app.Layouts != null)
         {
-            await DeleteMissingLayoutsAsync(app);
-            await layoutOrchestrationService.AddOrUpdate(app.Layouts);
+            await DeleteMissingLayoutsAsync(app: app);
+            await layoutOrchestrationService.AddOrUpdate(items: app.Layouts);
         }
 
         if (app.Components != null)
         {
-            await DeleteMissingComponentsAsync(app);
-            await AddOrUpdateComponentsAsync(app);
+            await DeleteMissingComponentsAsync(app: app);
+            await AddOrUpdateComponentsAsync(app: app);
         }
 
         if (app.Pages != null)
         {
-            await DeleteMissingPagesAsync(app);
-            await pageOrchestrationService.AddOrUpdate(app.Pages);
+            await DeleteMissingPagesAsync(app: app);
+            await pageOrchestrationService.AddOrUpdate(items: app.Pages);
         }
     }
 
     public async ValueTask HandleAppDeleteAsync(App app)
     {
-        ValidateApp(app, "app");
-        await pageOrchestrationService.DeleteByAppIdAsync(app.Id);
-        await componentOrchestrationService.DeleteByAppIdAsync(app.Id);
-        await templateOrchestrationService.DeleteByAppIdAsync(app.Id);
-        await layoutOrchestrationService.DeleteByAppIdAsync(app.Id);
+        ValidateApp(app: app, parameterName: "app");
+        await pageOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
+        await componentOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
+        await templateOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
+        await layoutOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
     }
 
     private static void StampChildrenWithApp(App app)
     {
         if (app.Pages != null)
+        {
             foreach (Page item in app.Pages)
+            {
                 item.AppId = app.Id;
+            }
+        }
 
         if (app.Components != null)
+        {
             foreach (Component item2 in app.Components)
+            {
                 item2.AppId = app.Id;
+            }
+        }
 
         if (app.Templates != null)
+        {
             foreach (Template item3 in app.Templates)
+            {
                 item3.AppId = app.Id;
+            }
+        }
 
         if (app.Layouts != null)
+        {
             foreach (Layout item4 in app.Layouts)
+            {
                 item4.AppId = app.Id;
+            }
+        }
     }
 
     private async ValueTask DeleteMissingPagesAsync(App app)
     {
         int[] incomingPageIds = app.Pages
-            .Where(page => page.Id > 0)
-            .Select(page => page.Id)
+            .Where(predicate: page => page.Id > 0)
+            .Select(selector: page => page.Id)
             .ToArray();
 
         Page[] pagesToDelete = pageOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(page => page.AppId == app.Id && !((ReadOnlySpan<int>)incomingPageIds).Contains(page.Id))
+            .Where(predicate: page => page.AppId == app.Id && !((ReadOnlySpan<int>)incomingPageIds).Contains(value: page.Id))
             .ToArray();
 
         if (pagesToDelete.Length > 0)
-            await pageOrchestrationService.DeleteAllAsync(pagesToDelete);
+        {
+            await pageOrchestrationService.DeleteAllAsync(items: pagesToDelete);
+        }
     }
 
     private async ValueTask DeleteMissingComponentsAsync(App app)
     {
         int[] incomingComponentIds = app.Components
-            .Where(component => component.Id > 0)
-            .Select(component => component.Id)
+            .Where(predicate: component => component.Id > 0)
+            .Select(selector: component => component.Id)
             .ToArray();
 
         Component[] componentsToDelete = componentOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(component => component.AppId == app.Id && !((ReadOnlySpan<int>)incomingComponentIds).Contains(component.Id))
+            .Where(predicate: component => component.AppId == app.Id && !((ReadOnlySpan<int>)incomingComponentIds).Contains(value: component.Id))
             .ToArray();
 
         if (componentsToDelete.Length > 0)
-            await componentOrchestrationService.DeleteAllAsync(componentsToDelete);
+        {
+            await componentOrchestrationService.DeleteAllAsync(items: componentsToDelete);
+        }
     }
 
     private async ValueTask DeleteMissingTemplatesAsync(App app)
     {
         int[] incomingTemplateIds = app.Templates
-            .Where(template => template.Id > 0)
-            .Select(template => template.Id)
+            .Where(predicate: template => template.Id > 0)
+            .Select(selector: template => template.Id)
             .ToArray();
 
         Template[] templatesToDelete = templateOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(template => template.AppId == app.Id && !((ReadOnlySpan<int>)incomingTemplateIds).Contains(template.Id))
+            .Where(predicate: template => template.AppId == app.Id && !((ReadOnlySpan<int>)incomingTemplateIds).Contains(value: template.Id))
             .ToArray();
 
         if (templatesToDelete.Length > 0)
-            await templateOrchestrationService.DeleteAllAsync(templatesToDelete);
+        {
+            await templateOrchestrationService.DeleteAllAsync(items: templatesToDelete);
+        }
     }
 
     private async ValueTask DeleteMissingLayoutsAsync(App app)
     {
         int[] incomingLayoutIds = app.Layouts
-            .Where(layout => layout.Id > 0)
-            .Select(layout => layout.Id)
+            .Where(predicate: layout => layout.Id > 0)
+            .Select(selector: layout => layout.Id)
             .ToArray();
 
         Layout[] layoutsToDelete = layoutOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(layout => layout.AppId == app.Id && !((ReadOnlySpan<int>)incomingLayoutIds).Contains(layout.Id))
+            .Where(predicate: layout => layout.AppId == app.Id && !((ReadOnlySpan<int>)incomingLayoutIds).Contains(value: layout.Id))
             .ToArray();
 
         if (layoutsToDelete.Length > 0)
-            await layoutOrchestrationService.DeleteAllAsync(layoutsToDelete);
+        {
+            await layoutOrchestrationService.DeleteAllAsync(items: layoutsToDelete);
+        }
     }
 
     private async ValueTask AddOrUpdateComponentsAsync(App app)
     {
         HashSet<int> existingComponentIds = componentOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(component => component.AppId == app.Id)
-            .Select(component => component.Id)
+            .Where(predicate: component => component.AppId == app.Id)
+            .Select(selector: component => component.Id)
             .ToHashSet();
 
         foreach (Component component in app.Components)
-            if (existingComponentIds.Contains(component.Id))
-                await componentOrchestrationService.UpdateAsync(component);
+        {
+            if (existingComponentIds.Contains(item: component.Id))
+            {
+                await componentOrchestrationService.UpdateAsync(entity: component);
+            }
             else
-                await componentOrchestrationService.AddAsync(component);
+            {
+                await componentOrchestrationService.AddAsync(entity: component);
+            }
+        }
     }
 
     private static void ValidateApp(App app, string parameterName) =>
-        ThrowIf(app == null, parameterName + " is required.");
+        ThrowIf(condition: app == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

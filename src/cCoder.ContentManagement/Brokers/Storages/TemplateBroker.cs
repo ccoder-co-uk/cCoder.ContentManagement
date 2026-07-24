@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +22,7 @@ public class TemplateBroker(ICoreContextFactory coreContextFactory) : ITemplateB
     public async ValueTask<Template> AddTemplateAsync(Template entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Template result = (await coreDataContext.Templates.AddAsync(entity)).Entity;
+        Template result = (await coreDataContext.Templates.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -26,7 +30,10 @@ public class TemplateBroker(ICoreContextFactory coreContextFactory) : ITemplateB
     public async ValueTask<Template> UpdateTemplateAsync(Template entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Template result = coreDataContext.Templates.Update(entity).Entity;
+
+        Template result = coreDataContext.Templates.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -34,14 +41,14 @@ public class TemplateBroker(ICoreContextFactory coreContextFactory) : ITemplateB
     public async ValueTask<int> DeleteTemplateAsync(Template entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Templates.Remove(entity);
+        coreDataContext.Templates.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllTemplatesAsync(IEnumerable<Template> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Templates.RemoveRange(items);
+        coreDataContext.Templates.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 

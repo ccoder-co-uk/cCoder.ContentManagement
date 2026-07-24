@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Text.RegularExpressions;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
@@ -15,8 +19,11 @@ internal class CoreResourceProvider : IResourceProvider
 
     public Resource GetResource(string key, string culture)
     {
-        string text = key.Split('.').Last();
-        string text2 = Regex.Replace(text.Replace("Id", ""), "(?<!_)([A-Z])", " $1");
+        string text = key.Split(separator: '.')
+            .Last();
+
+        string text2 = Regex.Replace(input: text.Replace(oldValue: "Id", newValue: ""), pattern: "(?<!_)([A-Z])", replacement: " $1");
+
         return new Resource
         {
             Culture = string.Empty,

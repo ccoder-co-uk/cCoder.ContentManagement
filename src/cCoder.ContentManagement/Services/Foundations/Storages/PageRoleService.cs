@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.Security;
@@ -10,13 +14,13 @@ internal partial class PageRoleService(
     IAuthorizationBroker authorizationBroker) : IPageRoleService
 {
     public IQueryable<PageRole> GetAll(bool ignoreFilters = false) =>
-        pageRoleBroker.GetAllPageRoles(ignoreFilters);
+        pageRoleBroker.GetAllPageRoles(ignoreFilters: ignoreFilters);
 
     public async ValueTask<PageRole> AddAsync(PageRole pageRole)
     {
-        ValidatePageRole(pageRole, "pageRole");
-        authorizationBroker.Authorize(GetAppId(pageRole.PageId), "PageRole_create");
-        PageRole result = await pageRoleBroker.AddPageRoleAsync(CreateStoragePageRole(pageRole));
+        ValidatePageRole(pageRole: pageRole, parameterName: "pageRole");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: pageRole.PageId), privilege: "PageRole_create");
+        PageRole result = await pageRoleBroker.AddPageRoleAsync(entity: CreateStoragePageRole(pageRole: pageRole));
         pageRole.PageId = result.PageId;
         pageRole.RoleId = result.RoleId;
         return pageRole;
@@ -24,15 +28,17 @@ internal partial class PageRoleService(
 
     public async ValueTask DeleteAsync(PageRole pageRole)
     {
-        ValidatePageRole(pageRole, "pageRole");
-        authorizationBroker.Authorize(GetAppId(pageRole.PageId), "PageRole_delete");
-        await pageRoleBroker.DeletePageRoleAsync(CreateStoragePageRole(pageRole));
+        ValidatePageRole(pageRole: pageRole, parameterName: "pageRole");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: pageRole.PageId), privilege: "PageRole_delete");
+        await pageRoleBroker.DeletePageRoleAsync(entity: CreateStoragePageRole(pageRole: pageRole));
     }
 
     private static PageRole CreateStoragePageRole(PageRole pageRole)
     {
         if (pageRole == null)
+        {
             return null;
+        }
 
         return new PageRole
         {
@@ -44,8 +50,8 @@ internal partial class PageRoleService(
     private int? GetAppId(int pageId)
     {
         return pageBroker.GetAllPages(ignoreFilters: true)
-            .Where(page => page.Id == pageId)
-            .Select(page => (int?)page.AppId)
+            .Where(predicate: page => page.Id == pageId)
+            .Select(selector: page => (int?)page.AppId)
             .FirstOrDefault();
     }
 }

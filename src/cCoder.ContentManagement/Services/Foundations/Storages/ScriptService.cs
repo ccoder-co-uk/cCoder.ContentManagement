@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -9,35 +13,50 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
 {
     public Script Get(int id, bool ignoreFilters = false)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Script i) => i.Id == id);
+        {
+            return GetAll(ignoreFilters: true)
+                        .FirstOrDefault(predicate: (Script i) => i.Id == id);
+        }
 
-        Script script = GetAll().FirstOrDefault((Script i) => i.Id == id);
+        Script script = GetAll()
+            .FirstOrDefault(predicate: (Script i) => i.Id == id);
+
         if (script != null)
+        {
             return script;
+        }
 
-        Script script2 = GetAll(ignoreFilters: true).FirstOrDefault((Script i) => i.Id == id);
+        Script script2 = GetAll(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Script i) => i.Id == id);
+
         if (script2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
     }
 
     public IQueryable<Script> GetAll(bool ignoreFilters = false) =>
-        scriptBroker.GetAllScripts(ignoreFilters);
+        scriptBroker.GetAllScripts(ignoreFilters: ignoreFilters);
 
     public async ValueTask<Script> AddAsync(Script script)
     {
-        ValidateScript(script, "script");
-        authorizationBroker.Authorize(script.AppId, "Script_create");
-        Script newScript = CreateStorageScript(script);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateScript(script: script, parameterName: "script");
+        authorizationBroker.Authorize(appId: script.AppId, privilege: "Script_create");
+        Script newScript = CreateStorageScript(script: script);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = (newScript.CreatedOn = DateTimeOffset.UtcNow);
         newScript.CreatedBy = currentUserId;
         newScript.LastUpdated = now;
         newScript.LastUpdatedBy = currentUserId;
-        Script result = await scriptBroker.AddScriptAsync(newScript);
+        Script result = await scriptBroker.AddScriptAsync(entity: newScript);
         script.Id = result.Id;
         script.Name = result.Name;
         script.Description = result.Description;
@@ -53,14 +72,17 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
 
     public async ValueTask<Script> UpdateAsync(Script script)
     {
-        ValidateScript(script, "script");
-        authorizationBroker.Authorize(script.AppId, "Script_update");
-        Script updateScript = CreateStorageScript(script);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateScript(script: script, parameterName: "script");
+        authorizationBroker.Authorize(appId: script.AppId, privilege: "Script_update");
+        Script updateScript = CreateStorageScript(script: script);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateScript.LastUpdated = now;
         updateScript.LastUpdatedBy = currentUserId;
-        Script result = await scriptBroker.UpdateScriptAsync(updateScript);
+        Script result = await scriptBroker.UpdateScriptAsync(entity: updateScript);
         script.Id = result.Id;
         script.Name = result.Name;
         script.Description = result.Description;
@@ -76,28 +98,33 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
 
     public async ValueTask DeleteAsync(int id)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
         Script script;
+
         try
         {
-            script = Get(id);
+            script = Get(id: id);
         }
         catch (SecurityException)
         {
-            script = Get(id, ignoreFilters: true);
+            script = Get(id: id, ignoreFilters: true);
         }
 
         if (script == null)
+        {
             return;
+        }
 
-        authorizationBroker.Authorize(script.AppId, "Script_delete");
-        await scriptBroker.DeleteScriptAsync(CreateStorageScript(script));
+        authorizationBroker.Authorize(appId: script.AppId, privilege: "Script_delete");
+        await scriptBroker.DeleteScriptAsync(entity: CreateStorageScript(script: script));
     }
 
     private static Script CreateStorageScript(Script script)
     {
         if (script == null)
+        {
             return null;
+        }
 
         return new Script
         {

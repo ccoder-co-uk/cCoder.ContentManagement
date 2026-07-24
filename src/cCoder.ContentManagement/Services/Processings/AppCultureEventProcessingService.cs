@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.CMS;
@@ -8,24 +12,26 @@ internal class AppCultureEventProcessingService(IAppCultureEventService eventSer
 {
     public ValueTask RaiseAppCultureAddEventAsync(AppCulture entity)
     {
-        ValidateAppCulture(entity, "entity");
+        ValidateAppCulture(appCulture: entity, parameterName: "entity");
 
-        return eventService.RaiseAppCultureAddEventAsync(entity);
+        return eventService.RaiseAppCultureAddEventAsync(entity: entity);
     }
 
     public ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity)
     {
-        ValidateAppCulture(entity, "entity");
+        ValidateAppCulture(appCulture: entity, parameterName: "entity");
 
-        return eventService.RaiseAppCultureDeleteEventAsync(entity);
+        return eventService.RaiseAppCultureDeleteEventAsync(entity: entity);
     }
 
     private static void ValidateAppCulture(AppCulture appCulture, string parameterName) =>
-        ThrowIf(appCulture == null, parameterName + " is required.");
+        ThrowIf(condition: appCulture == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

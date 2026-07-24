@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -9,35 +13,50 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
 {
     public Component Get(int id, bool ignoreFilters = false)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Component i) => i.Id == id);
+        {
+            return GetAll(ignoreFilters: true)
+                        .FirstOrDefault(predicate: (Component i) => i.Id == id);
+        }
 
-        Component component = GetAll().FirstOrDefault((Component i) => i.Id == id);
+        Component component = GetAll()
+            .FirstOrDefault(predicate: (Component i) => i.Id == id);
+
         if (component != null)
+        {
             return component;
+        }
 
-        Component component2 = GetAll(ignoreFilters: true).FirstOrDefault((Component i) => i.Id == id);
+        Component component2 = GetAll(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Component i) => i.Id == id);
+
         if (component2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
     }
 
     public IQueryable<Component> GetAll(bool ignoreFilters = false) =>
-        componentBroker.GetAllComponents(ignoreFilters);
+        componentBroker.GetAllComponents(ignoreFilters: ignoreFilters);
 
     public async ValueTask<Component> AddAsync(Component component)
     {
-        ValidateComponent(component, "component");
-        authorizationBroker.Authorize(component.AppId, "Component_create");
-        Component newComponent = CreateStorageComponent(component);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateComponent(component: component, parameterName: "component");
+        authorizationBroker.Authorize(appId: component.AppId, privilege: "Component_create");
+        Component newComponent = CreateStorageComponent(component: component);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = (newComponent.CreatedOn = DateTimeOffset.UtcNow);
         newComponent.CreatedBy = currentUserId;
         newComponent.LastUpdated = now;
         newComponent.LastUpdatedBy = currentUserId;
-        Component result = await componentBroker.AddComponentAsync(newComponent);
+        Component result = await componentBroker.AddComponentAsync(entity: newComponent);
         component.Id = result.Id;
         component.Name = result.Name;
         component.Description = result.Description;
@@ -55,14 +74,17 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
 
     public async ValueTask<Component> UpdateAsync(Component component)
     {
-        ValidateComponent(component, "component");
-        authorizationBroker.Authorize(component.AppId, "Component_update");
-        Component updateComponent = CreateStorageComponent(component);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateComponent(component: component, parameterName: "component");
+        authorizationBroker.Authorize(appId: component.AppId, privilege: "Component_update");
+        Component updateComponent = CreateStorageComponent(component: component);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateComponent.LastUpdated = now;
         updateComponent.LastUpdatedBy = currentUserId;
-        Component result = await componentBroker.UpdateComponentAsync(updateComponent);
+        Component result = await componentBroker.UpdateComponentAsync(entity: updateComponent);
         component.Id = result.Id;
         component.Name = result.Name;
         component.Description = result.Description;
@@ -80,28 +102,33 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
 
     public async ValueTask DeleteAsync(int id)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
         Component component;
+
         try
         {
-            component = Get(id);
+            component = Get(id: id);
         }
         catch (SecurityException)
         {
-            component = Get(id, ignoreFilters: true);
+            component = Get(id: id, ignoreFilters: true);
         }
 
         if (component == null)
+        {
             return;
+        }
 
-        authorizationBroker.Authorize(component.AppId, "Component_delete");
-        await componentBroker.DeleteComponentAsync(CreateStorageComponent(component));
+        authorizationBroker.Authorize(appId: component.AppId, privilege: "Component_delete");
+        await componentBroker.DeleteComponentAsync(entity: CreateStorageComponent(component: component));
     }
 
     private static Component CreateStorageComponent(Component component)
     {
         if (component == null)
+        {
             return null;
+        }
 
         return new Component
         {

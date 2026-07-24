@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, 
             },
             Data = entity
         };
-        await layoutEventBroker.RaiseLayoutAddEventAsync(message);
+
+        await layoutEventBroker.RaiseLayoutAddEventAsync(message: message);
     }
 
     public async ValueTask RaiseLayoutUpdateEventAsync(Layout entity)
@@ -30,7 +35,8 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, 
             },
             Data = entity
         };
-        await layoutEventBroker.RaiseLayoutUpdateEventAsync(message);
+
+        await layoutEventBroker.RaiseLayoutUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaiseLayoutDeleteEventAsync(Layout entity)
@@ -43,6 +49,7 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, 
             },
             Data = entity
         };
-        await layoutEventBroker.RaiseLayoutDeleteEventAsync(message);
+
+        await layoutEventBroker.RaiseLayoutDeleteEventAsync(message: message);
     }
 }

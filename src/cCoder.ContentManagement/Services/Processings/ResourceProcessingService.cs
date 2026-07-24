@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
@@ -9,68 +13,77 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal class ResourceProcessingService(IResourceService service, IAuthorizationBroker authorizationBroker) : IResourceProcessingService
 {
-    private User User => authorizationBroker.GetCurrentUser();
+    private User User =>
+        authorizationBroker.GetCurrentUser();
 
     public Resource Get(int id)
     {
-        ValidateId(id, "id");
-        return service.Get(id);
+        ValidateId(id: id, parameterName: "id");
+        return service.Get(id: id);
     }
 
     public IQueryable<Resource> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters);
+        service.GetAll(ignoreFilters: ignoreFilters);
 
     public ValueTask<Resource> AddAsync(Resource entity)
     {
-        ValidateResource(entity, "entity");
+        ValidateResource(resource: entity, parameterName: "entity");
         entity.CreatedOn = DateTimeOffset.Now;
         entity.CreatedBy = User.Id;
         entity.LastUpdated = entity.CreatedOn;
         entity.LastUpdatedBy = User.Id;
-        return service.AddAsync(entity);
+        return service.AddAsync(resource: entity);
     }
 
     public ValueTask<Resource> UpdateAsync(Resource entity)
     {
-        ValidateResource(entity, "entity");
+        ValidateResource(resource: entity, parameterName: "entity");
         entity.LastUpdated = DateTimeOffset.Now;
         entity.LastUpdatedBy = User.Id;
-        return service.UpdateAsync(entity);
+        return service.UpdateAsync(resource: entity);
     }
 
     public async ValueTask DeleteAsync(int id)
     {
-        ValidateId(id, "id");
-        Resource resource = Get(id);
-        if (resource == null)
-            return;
+        ValidateId(id: id, parameterName: "id");
+        Resource resource = Get(id: id);
 
-        if (string.IsNullOrEmpty(resource.Culture))
+        if (resource == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(value: resource.Culture))
         {
             Resource[] allVersions = GetAll()
-                .Where(item => item.AppId == resource.AppId && item.Key == resource.Key && item.Name == resource.Name)
+                .Where(predicate: item => item.AppId == resource.AppId && item.Key == resource.Key && item.Name == resource.Name)
                 .ToArray();
 
             Resource[] array = allVersions;
+
             foreach (Resource version in array)
-                await service.DeleteAsync(version.Id);
+            {
+                await service.DeleteAsync(id: version.Id);
+            }
         }
         else
         {
-            await service.DeleteAsync(id);
+            await service.DeleteAsync(id: id);
         }
     }
 
     public async ValueTask<IEnumerable<Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items)
     {
-        ValidateResources(items, "items");
+        ValidateResources(resources: items, parameterName: "items");
         List<Result<Resource>> results = new List<Result<Resource>>();
+
         foreach (Resource item in items)
         {
             try
             {
-                Resource savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new Result<Resource>
+                Resource savedItem = item.Id < 1 ? await AddAsync(entity: item) : await UpdateAsync(entity: item);
+
+                results.Add(item: new Result<Resource>
                 {
                     Success = true,
                     Item = savedItem,
@@ -79,7 +92,7 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
             }
             catch (Exception ex)
             {
-                results.Add(new Result<Resource>
+                results.Add(item: new Result<Resource>
                 {
                     Success = false,
                     Item = item,
@@ -87,49 +100,60 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
                 });
             }
         }
+
         return results;
     }
 
     public async ValueTask DeleteAllAsync(IEnumerable<Resource> items)
     {
-        ValidateResources(items, "items");
+        ValidateResources(resources: items, parameterName: "items");
         HashSet<string> deletedIds = new HashSet<string>();
+
         foreach (Resource item in items)
         {
             string itemId = item.Id.ToString();
-            if (deletedIds.Contains(itemId))
-                continue;
 
-            if (string.IsNullOrEmpty(item.Culture))
+            if (deletedIds.Contains(item: itemId))
+            {
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(value: item.Culture))
             {
                 Resource[] allVersions = GetAll()
-                    .Where(resource => resource.AppId == item.AppId && resource.Key == item.Key && resource.Name == item.Name)
+                    .Where(predicate: resource => resource.AppId == item.AppId && resource.Key == item.Key && resource.Name == item.Name)
                     .ToArray();
 
                 Resource[] array = allVersions;
+
                 foreach (Resource version in array)
-                    deletedIds.Add(version.Id.ToString());
+                {
+                    deletedIds.Add(item: version.Id.ToString());
+                }
             }
             else
             {
-                deletedIds.Add(itemId);
+                deletedIds.Add(item: itemId);
             }
-            await DeleteAsync(item.Id);
+
+            await DeleteAsync(id: item.Id);
         }
     }
 
     private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(id < 1, parameterName + " must be greater than 0.");
+        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateResource(Resource resource, string parameterName) =>
-        ThrowIf(resource == null, parameterName + " is required.");
+        ThrowIf(condition: resource == null, message: parameterName + " is required.");
 
     private static void ValidateResources(IEnumerable<Resource> resources, string parameterName) =>
-        ThrowIf(resources == null, parameterName + " is required.");
+        ThrowIf(condition: resources == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

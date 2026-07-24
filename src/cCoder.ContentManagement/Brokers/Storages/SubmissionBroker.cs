@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +22,7 @@ public class SubmissionBroker(ICoreContextFactory coreContextFactory) : ISubmiss
     public async ValueTask<Submission> AddSubmissionAsync(Submission entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Submission result = (await coreDataContext.Submissions.AddAsync(entity)).Entity;
+        Submission result = (await coreDataContext.Submissions.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -26,7 +30,10 @@ public class SubmissionBroker(ICoreContextFactory coreContextFactory) : ISubmiss
     public async ValueTask<Submission> UpdateSubmissionAsync(Submission entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Submission result = coreDataContext.Submissions.Update(entity).Entity;
+
+        Submission result = coreDataContext.Submissions.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -34,14 +41,14 @@ public class SubmissionBroker(ICoreContextFactory coreContextFactory) : ISubmiss
     public async ValueTask<int> DeleteSubmissionAsync(Submission entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Submissions.Remove(entity);
+        coreDataContext.Submissions.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllSubmissionsAsync(IEnumerable<Submission> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Submissions.RemoveRange(items);
+        coreDataContext.Submissions.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 

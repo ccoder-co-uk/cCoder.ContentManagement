@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Events;
@@ -38,12 +42,12 @@ public static partial class IServiceCollectionExtensions
         this IServiceCollection services,
         Action<ContentManagementConfiguration> configure = null,
         ODataConventionModelBuilder builder = null) =>
-        services.AddConfiguredContentManagementWeb((_, configuration) => configure?.Invoke(configuration), builder);
+        services.AddConfiguredContentManagementWeb(configure: (_, configuration) => configure?.Invoke(obj: configuration), builder: builder);
 
     public static void AddContentManagementHostedServices(
         this IServiceCollection services,
         Action<ContentManagementConfiguration> configure = null) =>
-        services.AddConfiguredContentManagement((_, configuration) => configure?.Invoke(configuration));
+        services.AddConfiguredContentManagement(configure: (_, configuration) => configure?.Invoke(obj: configuration));
 
     private static void AddContentManagement(this IServiceCollection services)
     {
@@ -203,7 +207,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IResourceProvider, CoreResourceProvider>();
         services.AddSingleton<ICommonObjectCache, CommonObjectCache>();
         services.AddSingleton<MetadataCache>();
-        services.AddSingleton<IMetadataCache>(serviceProvider => serviceProvider.GetRequiredService<MetadataCache>());
+        services.AddSingleton<IMetadataCache>(implementationFactory: serviceProvider => serviceProvider.GetRequiredService<MetadataCache>());
     }
 
     private static void AddOrchestrations(this IServiceCollection services)

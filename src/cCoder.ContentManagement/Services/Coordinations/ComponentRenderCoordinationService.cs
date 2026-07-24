@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.Security;
@@ -8,16 +12,17 @@ internal sealed partial class ComponentRenderCoordinationService(
     IAuthorizationBroker authorizationBroker,
     IComponentRenderOrchestrationService componentRenderOrchestrationService) : IComponentRenderCoordinationService
 {
-    private User User => authorizationBroker.GetCurrentUser();
+    private User User =>
+        authorizationBroker.GetCurrentUser();
 
     public string Render(int appId, string name, string culture, string theme)
     {
-        ValidateAppId(appId, "appId");
-        ValidateName(name, "name");
-        ValidateTheme(theme, "theme");
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidateName(name: name, parameterName: "name");
+        ValidateTheme(theme: theme, parameterName: "theme");
 
         culture ??= User.DefaultCultureId;
 
-        return componentRenderOrchestrationService.Render(appId, name, User, culture, theme);
+        return componentRenderOrchestrationService.Render(appId: appId, name: name, user: User, culture: culture, theme: theme);
     }
 }

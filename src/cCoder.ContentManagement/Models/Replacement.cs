@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 namespace cCoder.ContentManagement.Models;
 
 public class Replacement
@@ -6,7 +10,8 @@ public class Replacement
 
     public string Old { get; }
 
-    public string New => newString ?? ReplaceFunction(Old);
+    public string New =>
+        newString ?? ReplaceFunction(arg: Old);
 
     public Func<string, string> ReplaceFunction { get; } = (string source) => source;
 
@@ -19,7 +24,10 @@ public class Replacement
     public Replacement(string old, Func<string, string> replacer)
     {
         Old = old;
+
         if (replacer != null)
+        {
             ReplaceFunction = replacer;
+        }
     }
 }

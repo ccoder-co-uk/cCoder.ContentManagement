@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
             },
             Data = entity
         };
-        await templateEventBroker.RaiseTemplateAddEventAsync(message);
+
+        await templateEventBroker.RaiseTemplateAddEventAsync(message: message);
     }
 
     public async ValueTask RaiseTemplateUpdateEventAsync(Template entity)
@@ -30,7 +35,8 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
             },
             Data = entity
         };
-        await templateEventBroker.RaiseTemplateUpdateEventAsync(message);
+
+        await templateEventBroker.RaiseTemplateUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaiseTemplateDeleteEventAsync(Template entity)
@@ -43,6 +49,7 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
             },
             Data = entity
         };
-        await templateEventBroker.RaiseTemplateDeleteEventAsync(message);
+
+        await templateEventBroker.RaiseTemplateDeleteEventAsync(message: message);
     }
 }

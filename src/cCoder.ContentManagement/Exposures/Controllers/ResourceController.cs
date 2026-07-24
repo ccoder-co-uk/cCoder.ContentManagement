@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
@@ -24,13 +28,14 @@ public class ResourceController : ODataController
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Resource)) : new MetadataContainer(typeof(Resource), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Resource)) : new MetadataContainer(type: typeof(Resource), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Resource> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: Service.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -39,8 +44,10 @@ public class ResourceController : ODataController
     {
         try
         {
-            IQueryable<Resource> result = Service.GetAll().Where(resource => resource.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<Resource> result = Service.GetAll()
+                .Where(predicate: resource => resource.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -53,9 +60,11 @@ public class ResourceController : ODataController
     public async Task<IActionResult> Post([FromBody] Resource entity)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.AddAsync(entity));
+        return Ok(value: await Service.AddAsync(entity: entity));
     }
 
     [HttpPut]
@@ -63,26 +72,31 @@ public class ResourceController : ODataController
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Resource entity)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.UpdateAsync(entity));
+        return Ok(value: await Service.UpdateAsync(entity: entity));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<Resource> delta)
     {
-        Resource originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Resource originalEntity = Service.Get(id: key);
 
-        delta.Patch(originalEntity);
-        return Ok(await Service.UpdateAsync(originalEntity));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        delta.Patch(original: originalEntity);
+        return Ok(value: await Service.UpdateAsync(entity: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(key);
+        await Service.DeleteAsync(id: key);
         return Ok();
     }
 }

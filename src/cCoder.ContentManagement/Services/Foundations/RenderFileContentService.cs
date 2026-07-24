@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Text;
 using cCoder.ContentManagement.Brokers.Storages;
 
@@ -7,10 +11,10 @@ internal partial class RenderFileContentService(IRenderFileContentBroker broker)
 {
     public string GetLatestTextContent(int appId, string path)
     {
-        ValidateAppId(appId, "appId");
-        ValidatePath(path, "path");
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePath(path: path, parameterName: "path");
         path = path?.ToLowerInvariant() ?? string.Empty;
-        byte[] latestRawData = broker.GetLatestRawData(appId, path);
-        return (latestRawData != null && latestRawData.Length != 0) ? Encoding.UTF8.GetString(latestRawData) : string.Empty;
+        byte[] latestRawData = broker.GetLatestRawData(appId: appId, path: path);
+        return (latestRawData != null && latestRawData.Length != 0) ? Encoding.UTF8.GetString(bytes: latestRawData) : string.Empty;
     }
 }

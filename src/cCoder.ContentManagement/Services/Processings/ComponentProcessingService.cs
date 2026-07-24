@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
@@ -8,30 +12,32 @@ namespace cCoder.ContentManagement.Services.Processings;
 internal class ComponentProcessingService(IComponentService service) : IComponentProcessingService
 {
     public Component Get(int id) =>
-        service.Get(id);
+        service.Get(id: id);
 
     public IQueryable<Component> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters);
+        service.GetAll(ignoreFilters: ignoreFilters);
 
     public ValueTask<Component> AddAsync(Component entity) =>
-        service.AddAsync(entity);
+        service.AddAsync(component: entity);
 
     public ValueTask<Component> UpdateAsync(Component entity) =>
-        service.UpdateAsync(entity);
+        service.UpdateAsync(component: entity);
 
     public ValueTask DeleteAsync(int id) =>
-        service.DeleteAsync(id);
+        service.DeleteAsync(id: id);
 
     public async ValueTask<IEnumerable<Result<Component>>> AddOrUpdate(IEnumerable<Component> items)
     {
-        ValidateComponents(items, "items");
+        ValidateComponents(components: items, parameterName: "items");
         List<Result<Component>> results = new List<Result<Component>>();
+
         foreach (Component item in items)
         {
             try
             {
-                Component savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new Result<Component>
+                Component savedItem = item.Id < 1 ? await AddAsync(entity: item) : await UpdateAsync(entity: item);
+
+                results.Add(item: new Result<Component>
                 {
                     Success = true,
                     Item = savedItem,
@@ -40,7 +46,7 @@ internal class ComponentProcessingService(IComponentService service) : IComponen
             }
             catch (Exception ex)
             {
-                results.Add(new Result<Component>
+                results.Add(item: new Result<Component>
                 {
                     Success = false,
                     Item = item,
@@ -48,22 +54,28 @@ internal class ComponentProcessingService(IComponentService service) : IComponen
                 });
             }
         }
+
         return results;
     }
 
     public async ValueTask DeleteAllAsync(IEnumerable<Component> items)
     {
-        ValidateComponents(items, "items");
+        ValidateComponents(components: items, parameterName: "items");
+
         foreach (Component item in items)
-            await DeleteAsync(item.Id);
+        {
+            await DeleteAsync(id: item.Id);
+        }
     }
 
     private static void ValidateComponents(IEnumerable<Component> components, string parameterName) =>
-        ThrowIf(components == null, parameterName + " is required.");
+        ThrowIf(condition: components == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

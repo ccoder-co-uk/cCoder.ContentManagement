@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +22,7 @@ public class PageInfoBroker(ICoreContextFactory coreContextFactory) : IPageInfoB
     public async ValueTask<PageInfo> AddPageInfoAsync(PageInfo entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        PageInfo result = (await coreDataContext.PageInfo.AddAsync(entity)).Entity;
+        PageInfo result = (await coreDataContext.PageInfo.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -26,7 +30,10 @@ public class PageInfoBroker(ICoreContextFactory coreContextFactory) : IPageInfoB
     public async ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        PageInfo result = coreDataContext.PageInfo.Update(entity).Entity;
+
+        PageInfo result = coreDataContext.PageInfo.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -34,14 +41,14 @@ public class PageInfoBroker(ICoreContextFactory coreContextFactory) : IPageInfoB
     public async ValueTask<int> DeletePageInfoAsync(PageInfo entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.PageInfo.Remove(entity);
+        coreDataContext.PageInfo.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllPageInfoAsync(IEnumerable<PageInfo> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.PageInfo.RemoveRange(items);
+        coreDataContext.PageInfo.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 }

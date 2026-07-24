@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -12,17 +16,19 @@ using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
-public class ContentController(IContentOrchestrationService contentOrchestrationService, ILogger<ContentController> log) : ODataController
+public class ContentController(IContentOrchestrationService contentOrchestrationService)
+    : ODataController
 {
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Content)) : new MetadataContainer(typeof(Content), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Content)) : new MetadataContainer(type: typeof(Content), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Content> queryOptions) =>
-        Ok(contentOrchestrationService.GetAll());
+        Ok(value: contentOrchestrationService.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -32,8 +38,9 @@ public class ContentController(IContentOrchestrationService contentOrchestration
         try
         {
             IQueryable<Content> result = contentOrchestrationService.GetAll()
-                .Where(content => content.Id == key);
-            return Ok(SingleResult.Create(result));
+                .Where(predicate: content => content.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -46,9 +53,11 @@ public class ContentController(IContentOrchestrationService contentOrchestration
     public async Task<IActionResult> Post([FromBody] Content entity)
     {
         if (!ModelState.IsValid)
-            return new BadRequestResult(ModelState);
+        {
+            return new BadRequestResult(modelState: ModelState);
+        }
 
-        return Ok(await contentOrchestrationService.AddAsync(entity));
+        return Ok(value: await contentOrchestrationService.AddAsync(entity: entity));
     }
 
     [HttpPut]
@@ -56,27 +65,32 @@ public class ContentController(IContentOrchestrationService contentOrchestration
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Content entity)
     {
         if (!ModelState.IsValid)
-            return new BadRequestResult(ModelState);
+        {
+            return new BadRequestResult(modelState: ModelState);
+        }
 
         entity.Id = key;
-        return Ok(await contentOrchestrationService.UpdateAsync(entity));
+        return Ok(value: await contentOrchestrationService.UpdateAsync(entity: entity));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<Content> delta)
     {
-        Content originalEntity = contentOrchestrationService.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Content originalEntity = contentOrchestrationService.Get(id: key);
 
-        delta.Patch(originalEntity);
-        return Ok(await contentOrchestrationService.UpdateAsync(originalEntity));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        delta.Patch(original: originalEntity);
+        return Ok(value: await contentOrchestrationService.UpdateAsync(entity: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await contentOrchestrationService.DeleteAsync(key);
+        await contentOrchestrationService.DeleteAsync(id: key);
         return Ok();
     }
 }

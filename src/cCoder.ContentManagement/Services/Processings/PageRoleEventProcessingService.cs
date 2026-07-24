@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.Security;
@@ -8,24 +12,26 @@ internal class PageRoleEventProcessingService(IPageRoleEventService eventService
 {
     public ValueTask RaisePageRoleAddEventAsync(PageRole entity)
     {
-        ValidatePageRole(entity, "entity");
+        ValidatePageRole(pageRole: entity, parameterName: "entity");
 
-        return eventService.RaisePageRoleAddEventAsync(entity);
+        return eventService.RaisePageRoleAddEventAsync(entity: entity);
     }
 
     public ValueTask RaisePageRoleDeleteEventAsync(PageRole entity)
     {
-        ValidatePageRole(entity, "entity");
+        ValidatePageRole(pageRole: entity, parameterName: "entity");
 
-        return eventService.RaisePageRoleDeleteEventAsync(entity);
+        return eventService.RaisePageRoleDeleteEventAsync(entity: entity);
     }
 
     private static void ValidatePageRole(PageRole pageRole, string parameterName) =>
-        ThrowIf(pageRole == null, parameterName + " is required.");
+        ThrowIf(condition: pageRole == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

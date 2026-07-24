@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
             },
             Data = entity
         };
-        await resourceEventBroker.RaiseResourceAddEventAsync(message);
+
+        await resourceEventBroker.RaiseResourceAddEventAsync(message: message);
     }
 
     public async ValueTask RaiseResourceUpdateEventAsync(Resource entity)
@@ -30,7 +35,8 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
             },
             Data = entity
         };
-        await resourceEventBroker.RaiseResourceUpdateEventAsync(message);
+
+        await resourceEventBroker.RaiseResourceUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaiseResourceDeleteEventAsync(Resource entity)
@@ -43,6 +49,7 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
             },
             Data = entity
         };
-        await resourceEventBroker.RaiseResourceDeleteEventAsync(message);
+
+        await resourceEventBroker.RaiseResourceDeleteEventAsync(message: message);
     }
 }

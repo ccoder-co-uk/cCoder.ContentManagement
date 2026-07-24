@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Linq.Expressions;
 using cCoder.ContentManagement.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -41,8 +45,13 @@ internal class ContentManagementModelBuilder : ODataModelBuilder
     {
         AddCommonComplextypes();
         base.Builder.ComplexType<RenderResult>();
-        base.Builder.EntityType<App>().Ignore(i => i.Config);
-        base.Builder.EntityType<Submission>().Ignore(i => i.Data);
+
+        base.Builder.EntityType<App>()
+            .Ignore(propertyExpression: i => i.Config);
+
+        base.Builder.EntityType<Submission>()
+            .Ignore(propertyExpression: i => i.Data);
+
         AddSet<App, int>();
         AddSet<Layout, int>();
         AddSet<Template, int>();
@@ -56,21 +65,60 @@ internal class ContentManagementModelBuilder : ODataModelBuilder
         AddSet<Resource, int>();
         AddSet<Submission, Guid>();
         AddSet<Culture, string>();
-        AddJoinSet((Expression<Func<AppCulture, object>>)((AppCulture i) => new { i.AppId, i.CultureId }));
-        AddJoinSet((Expression<Func<PageRole, object>>)((PageRole i) => new { i.PageId, i.RoleId }));
+        AddJoinSet(key: (Expression<Func<AppCulture, object>>)((AppCulture i) => new { i.AppId, i.CultureId }));
+        AddJoinSet(key: (Expression<Func<PageRole, object>>)((PageRole i) => new { i.PageId, i.RoleId }));
         base.Builder.Namespace = "";
-        base.Builder.EntityType<App>().Function("Users").ReturnsCollection<User>();
-        base.Builder.EntityType<App>().Action("UpdatePageOrder").Parameter<App>("app");
-        base.Builder.EntityType<App>().Function("IsAdmin").Returns<bool>();
-        base.Builder.EntityType<Page>().Action("AddContent").Parameter<Content>("content");
-        base.Builder.EntityType<Page>().Function("RootFor").ReturnsFromEntitySet<Page>("Page");
-        base.Builder.EntityType<Page>().Function("Menu").Returns<Result<string>>();
-        base.Builder.EntityType<Page>().Collection.Function("Render").Returns<RenderResult>();
-        base.Builder.EntityType<Resource>().Collection.Function("GetAll").ReturnsCollectionFromEntitySet<Resource>("Resource");
-        base.Builder.EntityType<Component>().Collection.Function("Render").Returns<string>();
-        base.Builder.EntityType<Template>().Collection.Action("Render").Returns<string>();
-        base.Builder.EntityType<Template>().Collection.Action("HtmlToPdf").Returns<FileContentResult>();
-        base.Builder.EntityType<CommonObject>().Collection.Function("Latest").ReturnsFromEntitySet<CommonObject>("CommonObject");
-        base.Builder.EntityType<CommonObject>().Collection.Action("Import").ReturnsCollectionFromEntitySet<Result<CommonObject>>("ImportCommonObjectResults");
+
+        base.Builder.EntityType<App>()
+            .Function(name: "Users")
+            .ReturnsCollection<User>();
+
+        base.Builder.EntityType<App>()
+            .Action(name: "UpdatePageOrder")
+            .Parameter<App>(name: "app");
+
+        base.Builder.EntityType<App>()
+            .Function(name: "IsAdmin")
+            .Returns<bool>();
+
+        base.Builder.EntityType<Page>()
+            .Action(name: "AddContent")
+            .Parameter<Content>(name: "content");
+
+        base.Builder.EntityType<Page>()
+            .Function(name: "RootFor")
+            .ReturnsFromEntitySet<Page>(entitySetName: "Page");
+
+        base.Builder.EntityType<Page>()
+            .Function(name: "Menu")
+            .Returns<Result<string>>();
+
+        base.Builder.EntityType<Page>()
+            .Collection.Function(name: "Render")
+            .Returns<RenderResult>();
+
+        base.Builder.EntityType<Resource>()
+            .Collection.Function(name: "GetAll")
+            .ReturnsCollectionFromEntitySet<Resource>(entitySetName: "Resource");
+
+        base.Builder.EntityType<Component>()
+            .Collection.Function(name: "Render")
+            .Returns<string>();
+
+        base.Builder.EntityType<Template>()
+            .Collection.Action(name: "Render")
+            .Returns<string>();
+
+        base.Builder.EntityType<Template>()
+            .Collection.Action(name: "HtmlToPdf")
+            .Returns<FileContentResult>();
+
+        base.Builder.EntityType<CommonObject>()
+            .Collection.Function(name: "Latest")
+            .ReturnsFromEntitySet<CommonObject>(entitySetName: "CommonObject");
+
+        base.Builder.EntityType<CommonObject>()
+            .Collection.Action(name: "Import")
+            .ReturnsCollectionFromEntitySet<Result<CommonObject>>(entitySetName: "ImportCommonObjectResults");
     }
 }

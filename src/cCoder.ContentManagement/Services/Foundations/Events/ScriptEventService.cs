@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, 
             },
             Data = entity
         };
-        await scriptEventBroker.RaiseScriptAddEventAsync(message);
+
+        await scriptEventBroker.RaiseScriptAddEventAsync(message: message);
     }
 
     public async ValueTask RaiseScriptUpdateEventAsync(Script entity)
@@ -30,7 +35,8 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, 
             },
             Data = entity
         };
-        await scriptEventBroker.RaiseScriptUpdateEventAsync(message);
+
+        await scriptEventBroker.RaiseScriptUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaiseScriptDeleteEventAsync(Script entity)
@@ -43,6 +49,7 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, 
             },
             Data = entity
         };
-        await scriptEventBroker.RaiseScriptDeleteEventAsync(message);
+
+        await scriptEventBroker.RaiseScriptDeleteEventAsync(message: message);
     }
 }

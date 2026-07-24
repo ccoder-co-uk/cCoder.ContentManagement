@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Collections.Concurrent;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -39,7 +43,7 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
         Config = config;
         this.serviceScopeFactory = serviceScopeFactory;
         this.log = log;
-        ExpiryTimeInMinutes = (config.Settings.ContainsKey("CacheExpiry") ? int.Parse(config.Settings["CacheExpiry"]) : 30);
+        ExpiryTimeInMinutes = (config.Settings.ContainsKey(key: "CacheExpiry") ? int.Parse(s: config.Settings["CacheExpiry"]) : 30);
         timer.Elapsed += ScanForExpiredItems;
         timer.Interval = ExpiryTimeInMinutes * 60 * 1000;
         timer.Start();
@@ -48,48 +52,57 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
     public void Refresh()
     {
         LatestSet = Array.Empty<CommonObject>();
-        if (!Config.Settings.ContainsKey("CacheSource") || !Config.Settings.ContainsKey("CacheSourceAppId"))
-            log.LogInformation("Common object cache source settings are missing, loading from local data.");
+
+        if (!Config.Settings.ContainsKey(key: "CacheSource") || !Config.Settings.ContainsKey(key: "CacheSourceAppId"))
+        {
+            log.LogInformation(message: "Common object cache source settings are missing, loading from local data.");
+        }
 
         List<object> list = new List<object>();
+
         try
         {
-            log.LogInformation("{Now} - Processing common object cache", DateTimeOffset.Now);
+            log.LogInformation(message: "{Now} - Processing common object cache", args: DateTimeOffset.Now);
             using IServiceScope serviceScope = serviceScopeFactory.CreateScope();
             ICommonObjectBroker requiredService = serviceScope.ServiceProvider.GetRequiredService<ICommonObjectBroker>();
             IJsonBroker jsonBroker = serviceScope.ServiceProvider.GetRequiredService<IJsonBroker>();
             CommonObject[] latestCommonObjectsPaged = requiredService.GetLatestCommonObjectsPaged();
+
             CommonObject[] array = latestCommonObjectsPaged
-                .Where(commonObject => commonObject.Type == "Core/Component")
+                .Where(predicate: commonObject => commonObject.Type == "Core/Component")
                 .ToArray();
 
             CommonObject[] array2 = latestCommonObjectsPaged
-                .Where(commonObject => commonObject.Type == "Core/Resource")
+                .Where(predicate: commonObject => commonObject.Type == "Core/Resource")
                 .ToArray();
 
             CommonObject[] array3 = latestCommonObjectsPaged
-                .Where(commonObject => commonObject.Type == "Core/Script")
+                .Where(predicate: commonObject => commonObject.Type == "Core/Script")
                 .ToArray();
 
-            LatestSet = array.Union(array2).Union(array3).ToArray();
-            list.AddRange(array2.AsParallel()
-                .WithDegreeOfParallelism(8)
-                .Select(commonObject => jsonBroker.ParseJson<Resource>(commonObject.Json)));
+            LatestSet = array.Union(second: array2)
+                .Union(second: array3)
+                .ToArray();
 
-            list.AddRange(array.AsParallel()
-                .WithDegreeOfParallelism(8)
-                .Select(commonObject => jsonBroker.ParseJson<Component>(commonObject.Json)));
+            list.AddRange(collection: array2.AsParallel()
+                .WithDegreeOfParallelism(degreeOfParallelism: 8)
+                .Select(selector: commonObject => jsonBroker.ParseJson<Resource>(json: commonObject.Json)));
 
-            list.AddRange(array3.AsParallel()
-                .WithDegreeOfParallelism(8)
-                .Select(commonObject => jsonBroker.ParseJson<Script>(commonObject.Json)));
+            list.AddRange(collection: array.AsParallel()
+                .WithDegreeOfParallelism(degreeOfParallelism: 8)
+                .Select(selector: commonObject => jsonBroker.ParseJson<Component>(json: commonObject.Json)));
 
-            log.LogInformation("{Now} - Processed common object cache", DateTimeOffset.Now);
+            list.AddRange(collection: array3.AsParallel()
+                .WithDegreeOfParallelism(degreeOfParallelism: 8)
+                .Select(selector: commonObject => jsonBroker.ParseJson<Script>(json: commonObject.Json)));
+
+            log.LogInformation(message: "{Now} - Processed common object cache", args: DateTimeOffset.Now);
         }
         catch (Exception ex)
         {
-            log.LogError("{Message} - {StackTrace}", ex.Message, ex.StackTrace);
+            log.LogError(message: "{Message} - {StackTrace}", ex.Message, ex.StackTrace);
         }
+
         data.Clear();
 
         foreach (object item in list)
@@ -97,13 +110,13 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
             switch (item)
             {
                 case Resource resource:
-                    Set($"resource|{resource.Key?.ToLower() ?? string.Empty}-{resource.Name?.ToLower() ?? string.Empty}-{resource.Culture?.ToLower() ?? string.Empty}", resource);
+                    Set(key: $"resource|{resource.Key?.ToLower() ?? string.Empty}-{resource.Name?.ToLower() ?? string.Empty}-{resource.Culture?.ToLower() ?? string.Empty}", item: resource);
                     break;
                 case Component component:
-                    Set("component|" + component.Name.ToLower(), component);
+                    Set(key: "component|" + component.Name.ToLower(), item: component);
                     break;
                 case Script script:
-                    Set("script|" + script.Name.ToLower(), script);
+                    Set(key: "script|" + script.Name.ToLower(), item: script);
                     break;
             }
         }
@@ -112,26 +125,27 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
     public T[] GetAll<T>()
     {
         return data.Values.AsParallel()
-            .Where(entry => entry.Key.StartsWith(typeof(T).Name.ToLowerInvariant()))
-            .Select(entry => (T)entry.Value)
+            .Where(predicate: entry => entry.Key.StartsWith(value: typeof(T).Name.ToLowerInvariant()))
+            .Select(selector: entry => (T)entry.Value)
             .ToArray();
     }
 
     public T Get<T>(string key)
     {
-        object obj = Get(key.ToLowerInvariant());
+        object obj = Get(key: key.ToLowerInvariant());
         return (obj != null) ? ((T)obj) : default(T);
     }
 
     public void Set(string key, object item)
     {
         string normalizedKey = key.ToLowerInvariant();
-        data.AddOrUpdate(normalizedKey, (string _) => new CacheEntry
+
+        data.AddOrUpdate(key: normalizedKey, addValueFactory: (string _) => new CacheEntry
         {
             Key = normalizedKey,
             AddedOn = DateTime.Now,
             Value = item
-        }, (string _, CacheEntry _) => new CacheEntry
+        }, updateValueFactory: (string _, CacheEntry _) => new CacheEntry
         {
             Key = normalizedKey,
             AddedOn = DateTime.Now,
@@ -142,26 +156,30 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
     public void Dispose()
     {
         Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        GC.SuppressFinalize(obj: this);
     }
 
     private object Get(string key)
     {
         CacheEntry value;
-        return data.TryGetValue(key, out value) ? value.Value : null;
+        return data.TryGetValue(key: key, value: out value) ? value.Value : null;
     }
 
     private void ScanForExpiredItems(object sender, System.Timers.ElapsedEventArgs e)
     {
-        DateTime expiryCutoff = DateTime.Now.AddMinutes(-ExpiryTimeInMinutes);
+        DateTime expiryCutoff = DateTime.Now.AddMinutes(value: -ExpiryTimeInMinutes);
+
         string[] array = data.Values
-            .Where(entry => entry.AddedOn < expiryCutoff)
-            .Select(entry => entry.Key)
+            .Where(predicate: entry => entry.AddedOn < expiryCutoff)
+            .Select(selector: entry => entry.Key)
             .ToArray();
 
         string[] array2 = array;
+
         foreach (string key in array2)
-            data.TryRemove(key, out CacheEntry _);
+        {
+            data.TryRemove(key: key, value: out CacheEntry _);
+        }
     }
 
     private void Dispose(bool disposing)

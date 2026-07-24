@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.CMS;
@@ -8,31 +12,33 @@ internal class ComponentEventProcessingService(IComponentEventService eventServi
 {
     public ValueTask RaiseComponentAddEventAsync(Component entity)
     {
-        ValidateComponent(entity, "entity");
+        ValidateComponent(component: entity, parameterName: "entity");
 
-        return eventService.RaiseComponentAddEventAsync(entity);
+        return eventService.RaiseComponentAddEventAsync(entity: entity);
     }
 
     public ValueTask RaiseComponentUpdateEventAsync(Component entity)
     {
-        ValidateComponent(entity, "entity");
+        ValidateComponent(component: entity, parameterName: "entity");
 
-        return eventService.RaiseComponentUpdateEventAsync(entity);
+        return eventService.RaiseComponentUpdateEventAsync(entity: entity);
     }
 
     public ValueTask RaiseComponentDeleteEventAsync(Component entity)
     {
-        ValidateComponent(entity, "entity");
+        ValidateComponent(component: entity, parameterName: "entity");
 
-        return eventService.RaiseComponentDeleteEventAsync(entity);
+        return eventService.RaiseComponentDeleteEventAsync(entity: entity);
     }
 
     private static void ValidateComponent(Component component, string parameterName) =>
-        ThrowIf(component == null, parameterName + " is required.");
+        ThrowIf(condition: component == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

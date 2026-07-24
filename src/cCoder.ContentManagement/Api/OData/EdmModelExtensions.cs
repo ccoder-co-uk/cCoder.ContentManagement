@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 
@@ -8,74 +12,90 @@ public static class EdmModelExtensions
     public static IEnumerable<ExtendedMetadataContainer> GetMetadata(this IEdmModel model, string contextName)
     {
         List<ExtendedMetadataContainer> list = new List<ExtendedMetadataContainer>();
+
         foreach (IEdmEntitySet item in model.EntityContainer.EntitySets())
         {
-            Type clrType = GetClrType(model, item.EntityType);
+            Type clrType = GetClrType(model: model, edmType: item.EntityType);
+
             if ((object)clrType != null)
-                list.Add(model.GetExtendedMetadataForType(contextName, clrType));
+            {
+                list.Add(item: model.GetExtendedMetadataForType(context: contextName, type: clrType));
+            }
         }
+
         foreach (IEdmSchemaType item2 in model.SchemaElements.OfType<IEdmSchemaType>())
         {
             if (item2 is IEdmComplexType || item2 is IEdmEntityType)
             {
-                Type clrType2 = GetClrType(model, item2);
+                Type clrType2 = GetClrType(model: model, edmType: item2);
+
                 if ((object)clrType2 != null)
                 {
-                    bool hasEndpoint = model.EntityContainer.FindEntitySet(clrType2.Name) != null;
-                    list.Add(model.GetExtendedMetadataForType(contextName, clrType2, hasEndpoint));
+                    bool hasEndpoint = model.EntityContainer.FindEntitySet(setName: clrType2.Name) != null;
+                    list.Add(item: model.GetExtendedMetadataForType(context: contextName, type: clrType2, hasEndpoint: hasEndpoint));
                 }
             }
         }
-        return list.DistinctBy((ExtendedMetadataContainer type) => type.ServerTypeName);
+
+        return list.DistinctBy(keySelector: (ExtendedMetadataContainer type) => type.ServerTypeName);
     }
 
     public static ExtendedMetadataContainer GetExtendedMetadataForType(this IEdmModel model, string context, Type type, bool hasEndpoint = true)
     {
-        ExtendedMetadataContainer result = new ExtendedMetadataContainer(type, isEntity: true, hasEndpoint)
+        ExtendedMetadataContainer result = new ExtendedMetadataContainer(type: type, isEntity: true, hasEndpoint: hasEndpoint)
         {
             Category = context
         };
-        IEdmEntitySet edmEntitySet = model.EntityContainer.FindEntitySet(type.Name);
+
+        IEdmEntitySet edmEntitySet = model.EntityContainer.FindEntitySet(setName: type.Name);
+
         if (edmEntitySet == null)
         {
             result.HasEndpoint = false;
             return result;
         }
-        IEnumerable<OperationContainer> second = model.FindDeclaredBoundOperations(edmEntitySet.Type)
-            .Select(operation => new OperationContainer
+
+        IEnumerable<OperationContainer> second = model.FindDeclaredBoundOperations(bindingType: edmEntitySet.Type)
+            .Select(selector: operation => new OperationContainer
             {
                 Name = operation.Name,
                 Url = $"{result.Category}/{type.Name}/{operation.Name}()",
                 Queryable = operation.IsFunction(),
                 HttpVerb = (operation.IsFunction() ? "GET" : "POST"),
-                ReturnType = BuildMetaFor(operation.GetReturn()?.Type?.Definition),
+                ReturnType = BuildMetaFor(definition: operation.GetReturn()?.Type?.Definition),
                 Parameters = operation.Parameters?
-                    .Where(parameter => parameter.Name != "bindingParameter")
-                    .Select(parameter => new
-                    {
-                        Name = parameter.Name,
-                        TypeName = parameter.Type.FullName()
-                    })
-                    .ToDictionary(item => item.Name, item => item.TypeName)
+                    .Where(predicate: parameter => parameter.Name != "bindingParameter")
+            .Select(selector: parameter => new
+            {
+                Name = parameter.Name,
+                TypeName = parameter.Type.FullName()
+            })
+            .ToDictionary(keySelector: item => item.Name, elementSelector: item => item.TypeName)
             });
-        result.Operations = GetBaseCrudOperations(result).Union(second).ToList();
+
+        result.Operations = GetBaseCrudOperations(type: result)
+            .Union(second: second)
+            .ToList();
+
         return result;
     }
 
     private static Type GetClrType(IEdmModel model, IEdmSchemaType edmType) =>
-        model.GetAnnotationValue<ClrTypeAnnotation>(edmType)?.ClrType;
+        model.GetAnnotationValue<ClrTypeAnnotation>(element: edmType)?.ClrType;
 
     private static MetadataContainer BuildMetaFor(IEdmType definition)
     {
         if (definition == null || definition.TypeKind != EdmTypeKind.Collection)
+        {
             return null;
+        }
 
-        Type type = Type.GetType(definition.FullTypeName(), throwOnError: false);
-        return ((object)type == null) ? null : new MetadataContainer(type, isEntity: true, hasEndpoint: true);
+        Type type = Type.GetType(typeName: definition.FullTypeName(), throwOnError: false);
+        return ((object)type == null) ? null : new MetadataContainer(type: type, isEntity: true, hasEndpoint: true);
     }
 
     private static IEnumerable<OperationContainer> GetBaseCrudOperations(MetadataContainer type) =>
-        type.IsJoinEntity ? GetBaseCrudOperationsForJoinEntity(type) : GetBaseCrudOperationsForEntity(type);
+        type.IsJoinEntity ? GetBaseCrudOperationsForJoinEntity(type: type) : GetBaseCrudOperationsForEntity(type: type);
 
     private static IEnumerable<OperationContainer> GetBaseCrudOperationsForJoinEntity(MetadataContainer type)
     {
@@ -100,7 +120,8 @@ public static class EdmModelExtensions
                 Parameters = new Dictionary<string, string> {
                 {
                     "odata:key",
-                    Type.GetType(type.ServerType)?.GetIdProperty()?.GetType().FullName
+                    Type.GetType(typeName: type.ServerType)?.GetIdProperty()?.GetType()
+            .FullName
                 } }
             },
             new OperationContainer
@@ -144,7 +165,8 @@ public static class EdmModelExtensions
                 {
                     {
                         "odata:key",
-                        Type.GetType(type.ServerType)?.GetIdProperty()?.GetType().FullName
+                        Type.GetType(typeName: type.ServerType)?.GetIdProperty()?.GetType()
+            .FullName
                     },
                     { "body:entity", type.ServerType }
                 }
@@ -159,7 +181,8 @@ public static class EdmModelExtensions
                 Parameters = new Dictionary<string, string> {
                 {
                     "odata:key",
-                    Type.GetType(type.ServerType)?.GetIdProperty()?.GetType().FullName
+                    Type.GetType(typeName: type.ServerType)?.GetIdProperty()?.GetType()
+            .FullName
                 } }
             },
             new OperationContainer

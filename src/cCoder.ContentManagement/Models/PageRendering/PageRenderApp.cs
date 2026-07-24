@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 namespace cCoder.ContentManagement.Rendering.Models;
 
 internal sealed class PageRenderApp
@@ -15,7 +19,7 @@ internal sealed class PageRenderApp
     public object Config { get; set; }
 
     public IReadOnlyDictionary<string, PageRenderTemplate> TemplatesByName { get; set; } =
-        new Dictionary<string, PageRenderTemplate>(StringComparer.OrdinalIgnoreCase);
+        new Dictionary<string, PageRenderTemplate>(comparer: StringComparer.OrdinalIgnoreCase);
 
     public IReadOnlyDictionary<int, PageRenderPage> PagesById { get; set; } =
         new Dictionary<int, PageRenderPage>();

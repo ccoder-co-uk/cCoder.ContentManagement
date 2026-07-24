@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
@@ -10,63 +14,73 @@ internal class ScriptOrchestrationService(
     IScriptProcessingService processingService,
     IScriptEventProcessingService eventService) : IScriptOrchestrationService
 {
-    public Script Get(int id) => processingService.Get(ValidateId(id, "id"));
+    public Script Get(int id) =>
+        processingService.Get(id: ValidateId(id: id, parameterName: "id"));
 
     public IQueryable<Script> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters);
+        processingService.GetAll(ignoreFilters: ignoreFilters);
 
     public async ValueTask<Script> AddAsync(Script entity)
     {
-        ValidateScript(entity, "entity");
+        ValidateScript(script: entity, parameterName: "entity");
 
-        Script result = await processingService.AddAsync(entity);
-        await eventService.RaiseScriptAddEventAsync(result);
+        Script result = await processingService.AddAsync(entity: entity);
+        await eventService.RaiseScriptAddEventAsync(entity: result);
         return result;
     }
 
     public async ValueTask<Script> UpdateAsync(Script entity)
     {
-        ValidateScript(entity, "entity");
+        ValidateScript(script: entity, parameterName: "entity");
 
-        Script result = await processingService.UpdateAsync(entity);
-        await eventService.RaiseScriptUpdateEventAsync(result);
+        Script result = await processingService.UpdateAsync(entity: entity);
+        await eventService.RaiseScriptUpdateEventAsync(entity: result);
         return result;
     }
 
     public async ValueTask DeleteAsync(int id)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
 
         Script entity;
+
         try
         {
-            entity = processingService.Get(id);
+            entity = processingService.Get(id: id);
         }
         catch (SecurityException)
         {
             entity = processingService.GetAll(ignoreFilters: true)
-                .FirstOrDefault(script => script.Id == id);
+                .FirstOrDefault(predicate: script => script.Id == id);
         }
 
         if (entity == null)
+        {
             return;
+        }
 
-        await eventService.RaiseScriptDeleteEventAsync(entity);
-        await processingService.DeleteAsync(id);
+        await eventService.RaiseScriptDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(id: id);
     }
 
     public async ValueTask DeleteByAppIdAsync(int appId)
     {
-        ValidateAppId(appId, "appId");
-        Script[] scriptsToDelete = [.. GetAll(ignoreFilters: true).Where(script => script.AppId == appId)];
+        ValidateAppId(appId: appId, parameterName: "appId");
+
+        Script[] scriptsToDelete = [.. GetAll(ignoreFilters: true)
+            .Where(predicate: script => script.AppId == appId)];
 
         if (scriptsToDelete.Length > 0)
-            await DeleteAllAsync(scriptsToDelete);
+        {
+            await DeleteAllAsync(items: scriptsToDelete);
+        }
     }
 
     public async ValueTask<IEnumerable<Result<Script>>> AddOrUpdate(IEnumerable<Script> items)
     {
-        Script[] scripts = ValidateScripts(items, "items").ToArray();
+        Script[] scripts = ValidateScripts(scripts: items, parameterName: "items")
+            .ToArray();
+
         List<Result<Script>> results = new();
 
         foreach (Script script in scripts)
@@ -74,10 +88,10 @@ internal class ScriptOrchestrationService(
             try
             {
                 Script result = script.Id <= 0
-                    ? await AddAsync(script)
-                    : await UpdateAsync(script);
+                    ? await AddAsync(entity: script)
+                    : await UpdateAsync(entity: script);
 
-                results.Add(new Result<Script>
+                results.Add(item: new Result<Script>
                 {
                     Success = true,
                     Item = result,
@@ -86,7 +100,7 @@ internal class ScriptOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(new Result<Script>
+                results.Add(item: new Result<Script>
                 {
                     Success = false,
                     Item = script,
@@ -100,38 +114,47 @@ internal class ScriptOrchestrationService(
 
     public async ValueTask ImportScriptsAsync(int appId, Script[] items)
     {
-        ValidateAppId(appId, "appId");
+        ValidateAppId(appId: appId, parameterName: "appId");
 
-        Script[] validatedItems = ValidateScripts(items, "items").ToArray();
-        string[] names = validatedItems.Select(script => script.Name.ToLower()).ToArray();
-
-        var dbVersions = processingService.GetAll()
-            .Where(script => script.AppId == appId && ((ReadOnlySpan<string>)names).Contains(script.Name.ToLower()))
-            .Select(script => new { script.Id, script.Name })
+        Script[] validatedItems = ValidateScripts(scripts: items, parameterName: "items")
             .ToArray();
 
-        Array.ForEach(validatedItems, script =>
+        string[] names = validatedItems.Select(selector: script => script.Name.ToLower())
+            .ToArray();
+
+        var dbVersions = processingService.GetAll()
+            .Where(predicate: script => script.AppId == appId && ((ReadOnlySpan<string>)names).Contains(value: script.Name.ToLower()))
+            .Select(selector: script => new { script.Id, script.Name })
+            .ToArray();
+
+        Array.ForEach(array: validatedItems, action: script =>
         {
             script.AppId = appId;
-            script.Id = dbVersions.FirstOrDefault(existing =>
-                existing.Name.Equals(script.Name, StringComparison.OrdinalIgnoreCase))?.Id ?? 0;
+
+            script.Id = dbVersions.FirstOrDefault(predicate: existing =>
+                existing.Name.Equals(value: script.Name, comparisonType: StringComparison.OrdinalIgnoreCase))?.Id ?? 0;
         });
 
-        await AddOrUpdate(validatedItems);
+        await AddOrUpdate(items: validatedItems);
     }
 
     public async ValueTask DeleteAllAsync(IEnumerable<Script> items)
     {
-        Script[] scripts = ValidateScripts(items, "items").ToArray();
+        Script[] scripts = ValidateScripts(scripts: items, parameterName: "items")
+            .ToArray();
 
         foreach (Script script in scripts)
-            await DeleteAsync(script.Id);
+        {
+            await DeleteAsync(id: script.Id);
+        }
     }
 
     private static int ValidateId(int id, string parameterName)
     {
         if (id < 1)
-            throw new ValidationException(parameterName + " must be greater than 0.");
+        {
+            throw new ValidationException(message: parameterName + " must be greater than 0.");
+        }
 
         return id;
     }
@@ -139,7 +162,9 @@ internal class ScriptOrchestrationService(
     private static int ValidateAppId(int appId, string parameterName)
     {
         if (appId < 1)
-            throw new ValidationException(parameterName + " must be greater than 0.");
+        {
+            throw new ValidationException(message: parameterName + " must be greater than 0.");
+        }
 
         return appId;
     }
@@ -147,7 +172,9 @@ internal class ScriptOrchestrationService(
     private static Script ValidateScript(Script script, string parameterName)
     {
         if (script == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return script;
     }
@@ -155,7 +182,9 @@ internal class ScriptOrchestrationService(
     private static IEnumerable<Script> ValidateScripts(IEnumerable<Script> scripts, string parameterName)
     {
         if (scripts == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return scripts;
     }

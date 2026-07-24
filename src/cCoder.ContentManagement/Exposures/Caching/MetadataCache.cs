@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Models;
 using cCoder.Data;
@@ -29,8 +33,9 @@ internal class MetadataCache : IMetadataCache
     public string GetAll(string culture = "")
     {
         EnsureSynchronized();
-        return "[" + string.Join(',', GetTypeSets()
-            .Select(typeSet => metaSerialized[culture][typeSet.Name.ToLower()])
+
+        return "[" + string.Join(separator: ',', value: GetTypeSets()
+            .Select(selector: typeSet => metaSerialized[culture][typeSet.Name.ToLower()])
             .ToArray()) + "]";
     }
 
@@ -38,18 +43,23 @@ internal class MetadataCache : IMetadataCache
     {
         metaSerialized.Clear();
         Resource[] resources = resourceCache.GetAll<Resource>();
+
         foreach (var culture in Cultures.Known)
         {
-            metaSerialized.Add(culture.Id, new Dictionary<string, string>());
+            metaSerialized.Add(key: culture.Id, value: new Dictionary<string, string>());
             MetadataContainerSet[] typeSets = GetTypeSets();
+
             foreach (MetadataContainerSet metadataContainerSet in typeSets)
             {
-                MetadataContainerSet metadataContainerSet2 = metadataContainerSet.Resource(culture.Id, resources);
+                MetadataContainerSet metadataContainerSet2 = metadataContainerSet.Resource(culture: culture.Id, resources: resources);
                 ExtendedMetadataContainer[] types = metadataContainerSet2.Types;
-                foreach (ExtendedMetadataContainer extendedMetadataContainer in types)
-                    Set(metadataContainerSet.Name.ToLower() + "/" + extendedMetadataContainer.Name.ToLower(), ToJsonForOData(extendedMetadataContainer), culture.Id);
 
-                Set(metadataContainerSet2.Name.ToLower(), ToJsonForOData(metadataContainerSet2), culture.Id);
+                foreach (ExtendedMetadataContainer extendedMetadataContainer in types)
+                {
+                    Set(key: metadataContainerSet.Name.ToLower() + "/" + extendedMetadataContainer.Name.ToLower(), value: ToJsonForOData(model: extendedMetadataContainer), culture: culture.Id);
+                }
+
+                Set(key: metadataContainerSet2.Name.ToLower(), value: ToJsonForOData(model: metadataContainerSet2), culture: culture.Id);
             }
         }
 
@@ -58,40 +68,43 @@ internal class MetadataCache : IMetadataCache
 
     public void Set(string key, string value, string culture)
     {
-        if (metaSerialized[culture].ContainsKey(key))
+        if (metaSerialized[culture].ContainsKey(key: key))
+        {
             metaSerialized[culture][key] = value;
-
+        }
         else
         {
-            metaSerialized[culture].Add(new KeyValuePair<string, string>(key, value));
+            metaSerialized[culture].Add(item: new KeyValuePair<string, string>(key: key, value: value));
         }
     }
 
     public string ToJson(string culture)
     {
         EnsureSynchronized();
-        return ToJsonForOData(metaSerialized[culture]);
+        return ToJsonForOData(model: metaSerialized[culture]);
     }
 
     public string Get(string key, string culture)
     {
         EnsureSynchronized();
-        return metaSerialized[culture].ContainsKey(key) ? metaSerialized[culture][key] : string.Empty;
+        return metaSerialized[culture].ContainsKey(key: key) ? metaSerialized[culture][key] : string.Empty;
     }
 
     private void EnsureSynchronized()
     {
-        if (!string.Equals(metadataSignature, ComputeMetadataSignature(), StringComparison.Ordinal))
+        if (!string.Equals(a: metadataSignature, b: ComputeMetadataSignature(), comparisonType: StringComparison.Ordinal))
+        {
             Rebuild();
+        }
     }
 
     private MetadataContainerSet[] GetTypeSets()
     {
         return metadataTypeCache.GetAll()
-            .Select(payload => JsonConvert.DeserializeObject<MetadataContainerSet>(payload))
-            .GroupBy(typeSet => typeSet.Name, StringComparer.OrdinalIgnoreCase)
-            .Select(MergeTypeSetGroup)
-            .OrderBy(typeSet => typeSet.Name)
+            .Select(selector: payload => JsonConvert.DeserializeObject<MetadataContainerSet>(value: payload))
+            .GroupBy(keySelector: typeSet => typeSet.Name, comparer: StringComparer.OrdinalIgnoreCase)
+            .Select(selector: MergeTypeSetGroup)
+            .OrderBy(keySelector: typeSet => typeSet.Name)
             .ToArray();
     }
 
@@ -105,27 +118,27 @@ internal class MetadataCache : IMetadataCache
         {
             Name = lastTypeSet.Name,
             UriBase = typeSets
-                .Select(typeSet => typeSet.UriBase)
-                .LastOrDefault(uriBase => !string.IsNullOrWhiteSpace(uriBase)),
+                .Select(selector: typeSet => typeSet.UriBase)
+            .LastOrDefault(predicate: uriBase => !string.IsNullOrWhiteSpace(value: uriBase)),
             Types = typeSets
-                .SelectMany(typeSet => typeSet.Types ?? [])
-                .GroupBy(type => type.ServerTypeName, StringComparer.OrdinalIgnoreCase)
-                .Select(types => types.Last())
-                .OrderBy(type => type.Name)
-                .ToArray(),
+                .SelectMany(selector: typeSet => typeSet.Types ?? [])
+            .GroupBy(keySelector: type => type.ServerTypeName, comparer: StringComparer.OrdinalIgnoreCase)
+            .Select(selector: types => types.Last())
+            .OrderBy(keySelector: type => type.Name)
+            .ToArray(),
         };
     }
 
     private string ComputeMetadataSignature() =>
         string.Join(
-            "\u001f",
-            metadataTypeCache
+separator: "\u001f",
+values: metadataTypeCache
                 .GetAll()
-                .OrderBy(payload => payload, StringComparer.Ordinal));
+        .OrderBy(keySelector: payload => payload, comparer: StringComparer.Ordinal));
 
     private static string ToJsonForOData(object model)
     {
-        return JsonConvert.SerializeObject(model, Formatting.None, new JsonSerializerSettings
+        return JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             TypeNameHandling = TypeNameHandling.None,

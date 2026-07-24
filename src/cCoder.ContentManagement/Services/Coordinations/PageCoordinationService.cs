@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
@@ -13,11 +17,11 @@ internal class PageCoordinationService(
 {
     public async ValueTask HandlePageAddAsync(Page page)
     {
-        ValidatePage(page, "page");
+        ValidatePage(page: page, parameterName: "page");
 
         if (page.PageInfo != null)
         {
-            PageInfo[] pageInfos = page.PageInfo.Select((PageInfo pageInfo) => new PageInfo
+            PageInfo[] pageInfos = page.PageInfo.Select(selector: (PageInfo pageInfo) => new PageInfo
             {
                 Id = pageInfo.Id,
                 PageId = page.Id,
@@ -25,65 +29,67 @@ internal class PageCoordinationService(
                 Title = pageInfo.Title,
                 Description = pageInfo.Description,
                 Keywords = pageInfo.Keywords
-            }).ToArray();
+            })
+                .ToArray();
 
-            await pageInfoOrchestrationService.AddOrUpdate(pageInfos);
+            await pageInfoOrchestrationService.AddOrUpdate(items: pageInfos);
         }
 
         if (page.Contents != null)
         {
             Content[] contents = page.Contents
-                .Select(content =>
+                .Select(selector: content =>
                 {
                     content.PageId = page.Id;
                     return content;
                 })
                 .ToArray();
 
-            await contentOrchestrationService.AddOrUpdate(contents);
+            await contentOrchestrationService.AddOrUpdate(items: contents);
         }
 
         if (page.Roles != null)
         {
-            PageRole[] pageRoles = page.Roles.Select(pageRole => new PageRole
+            PageRole[] pageRoles = page.Roles.Select(selector: pageRole => new PageRole
             {
                 PageId = page.Id,
                 RoleId = pageRole.RoleId
-            }).ToArray();
+            })
+                .ToArray();
 
-            await pageRoleOrchestrationService.AddOrUpdate(pageRoles);
+            await pageRoleOrchestrationService.AddOrUpdate(items: pageRoles);
         }
     }
 
     public async ValueTask HandlePageUpdateAsync(Page page)
     {
-        ValidatePage(page, "page");
+        ValidatePage(page: page, parameterName: "page");
 
         if (page.PageInfo != null)
         {
             PageInfo[] existingPageInfos = pageInfoOrchestrationService.GetAll(ignoreFilters: true)
-                .Where(pageInfo => pageInfo.PageId == page.Id)
+                .Where(predicate: pageInfo => pageInfo.PageId == page.Id)
                 .ToArray();
 
-            await SyncPageInfoAsync(page.Id, existingPageInfos, page.PageInfo);
+            await SyncPageInfoAsync(pageId: page.Id, existingItems: existingPageInfos, incomingItems: page.PageInfo);
         }
 
         if (page.Contents != null)
         {
             Content[] existingContents = contentOrchestrationService.GetAll(ignoreFilters: true)
-                .Where(content => content.PageId == page.Id)
+                .Where(predicate: content => content.PageId == page.Id)
                 .ToArray();
 
-            await SyncContentsAsync(page.Id, existingContents, page.Contents);
+            await SyncContentsAsync(pageId: page.Id, existingItems: existingContents, incomingItems: page.Contents);
         }
 
         if (page.Roles != null)
         {
             PageRole[] existingPageRoles = pageRoleOrchestrationService.GetAll(ignoreFilters: true)
-                .Where(pageRole => pageRole.PageId == page.Id)
+                .Where(predicate: pageRole => pageRole.PageId == page.Id)
                 .ToArray();
 
-            await SyncRolesAsync(page.Id, existingPageRoles, page.Roles);
+            await SyncRolesAsync(pageId: page.Id, existingItems: existingPageRoles, incomingItems: page.Roles);
         }
 
         int[] providedChildIds = [];
@@ -91,7 +97,7 @@ internal class PageCoordinationService(
         if (page.Pages != null)
         {
             Page[] providedChildren = page.Pages
-                .Select(child =>
+                .Select(selector: child =>
                 {
                     child.ParentId = page.Id;
                     child.AppId = page.AppId;
@@ -100,16 +106,18 @@ internal class PageCoordinationService(
                 .ToArray();
 
             if (providedChildren.Length != 0)
-                await pageOrchestrationService.AddOrUpdate(providedChildren);
+            {
+                await pageOrchestrationService.AddOrUpdate(items: providedChildren);
+            }
 
             providedChildIds = providedChildren
-                .Where(child => child.Id != 0)
-                .Select(child => child.Id)
+                .Where(predicate: child => child.Id != 0)
+                .Select(selector: child => child.Id)
                 .ToArray();
         }
 
         Page[] existingChildrenToRecompute = pageOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(child => child.ParentId == (int?)page.Id && !((ReadOnlySpan<int>)providedChildIds).Contains(child.Id))
+            .Where(predicate: child => child.ParentId == (int?)page.Id && !((ReadOnlySpan<int>)providedChildIds).Contains(value: child.Id))
             .ToArray();
 
         foreach (Page child in existingChildrenToRecompute)
@@ -119,33 +127,38 @@ internal class PageCoordinationService(
         }
 
         if (existingChildrenToRecompute.Length != 0)
-            await pageOrchestrationService.AddOrUpdate(existingChildrenToRecompute);
+        {
+            await pageOrchestrationService.AddOrUpdate(items: existingChildrenToRecompute);
+        }
     }
 
     public async ValueTask HandlePageDeleteAsync(Page page)
     {
-        ValidatePage(page, "page");
+        ValidatePage(page: page, parameterName: "page");
+
         IEnumerable<PageRole> pageRolesToDelete = pageRoleOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(pageRole => pageRole.PageId == page.Id)
+            .Where(predicate: pageRole => pageRole.PageId == page.Id)
             .ToArray();
 
         IEnumerable<PageInfo> pageInfosToDelete = pageInfoOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(pageInfo => pageInfo.PageId == page.Id)
+            .Where(predicate: pageInfo => pageInfo.PageId == page.Id)
             .ToArray();
 
         IEnumerable<Content> contentsToDelete = contentOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(content => content.PageId == page.Id)
+            .Where(predicate: content => content.PageId == page.Id)
             .ToArray();
 
-        await pageRoleOrchestrationService.DeleteAllAsync(pageRolesToDelete);
-        await pageInfoOrchestrationService.DeleteAllAsync(pageInfosToDelete);
-        await contentOrchestrationService.DeleteAllAsync(contentsToDelete);
+        await pageRoleOrchestrationService.DeleteAllAsync(items: pageRolesToDelete);
+        await pageInfoOrchestrationService.DeleteAllAsync(items: pageInfosToDelete);
+        await contentOrchestrationService.DeleteAllAsync(items: contentsToDelete);
     }
 
     private static Page ValidatePage(Page page, string parameterName)
     {
         if (page == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return page;
     }
@@ -160,12 +173,12 @@ internal class PageCoordinationService(
 
         foreach (PageInfo incoming in incomingArray)
         {
-            PageInfo existing = existingArray.FirstOrDefault(item =>
-                string.Equals(item.CultureId, incoming.CultureId, StringComparison.Ordinal));
+            PageInfo existing = existingArray.FirstOrDefault(predicate: item =>
+                string.Equals(a: item.CultureId, b: incoming.CultureId, comparisonType: StringComparison.Ordinal));
 
             if (existing == null)
             {
-                await pageInfoOrchestrationService.AddAsync(new PageInfo
+                await pageInfoOrchestrationService.AddAsync(entity: new PageInfo
                 {
                     PageId = pageId,
                     CultureId = incoming.CultureId,
@@ -177,7 +190,7 @@ internal class PageCoordinationService(
                 continue;
             }
 
-            await pageInfoOrchestrationService.UpdateAsync(new PageInfo
+            await pageInfoOrchestrationService.UpdateAsync(entity: new PageInfo
             {
                 Id = existing.Id,
                 PageId = pageId,
@@ -189,9 +202,11 @@ internal class PageCoordinationService(
         }
 
         foreach (PageInfo existing in existingArray
-            .Where(item => item.CultureId != string.Empty && !incomingArray.Any(incoming =>
-                string.Equals(incoming.CultureId, item.CultureId, StringComparison.Ordinal))))
-            await pageInfoOrchestrationService.DeleteAsync(existing.Id);
+            .Where(predicate: item => item.CultureId != string.Empty && !incomingArray.Any(predicate: incoming =>
+                string.Equals(a: incoming.CultureId, b: item.CultureId, comparisonType: StringComparison.Ordinal))))
+        {
+            await pageInfoOrchestrationService.DeleteAsync(id: existing.Id);
+        }
     }
 
     private async ValueTask SyncContentsAsync(
@@ -204,13 +219,13 @@ internal class PageCoordinationService(
 
         foreach (Content incoming in incomingArray)
         {
-            Content existing = existingArray.FirstOrDefault(item =>
-                string.Equals(item.Name, incoming.Name, StringComparison.Ordinal) &&
-                string.Equals(item.CultureId, incoming.CultureId, StringComparison.Ordinal));
+            Content existing = existingArray.FirstOrDefault(predicate: item =>
+                string.Equals(a: item.Name, b: incoming.Name, comparisonType: StringComparison.Ordinal) &&
+                string.Equals(a: item.CultureId, b: incoming.CultureId, comparisonType: StringComparison.Ordinal));
 
             if (existing == null)
             {
-                await contentOrchestrationService.AddAsync(new Content
+                await contentOrchestrationService.AddAsync(entity: new Content
                 {
                     PageId = pageId,
                     CultureId = incoming.CultureId,
@@ -221,7 +236,7 @@ internal class PageCoordinationService(
                 continue;
             }
 
-            await contentOrchestrationService.UpdateAsync(new Content
+            await contentOrchestrationService.UpdateAsync(entity: new Content
             {
                 Id = existing.Id,
                 PageId = pageId,
@@ -232,10 +247,12 @@ internal class PageCoordinationService(
         }
 
         foreach (Content existing in existingArray
-            .Where(item => item.CultureId != string.Empty && !incomingArray.Any(incoming =>
-                string.Equals(incoming.Name, item.Name, StringComparison.Ordinal) &&
-                string.Equals(incoming.CultureId, item.CultureId, StringComparison.Ordinal))))
-            await contentOrchestrationService.DeleteAsync(existing.Id);
+            .Where(predicate: item => item.CultureId != string.Empty && !incomingArray.Any(predicate: incoming =>
+                string.Equals(a: incoming.Name, b: item.Name, comparisonType: StringComparison.Ordinal) &&
+                string.Equals(a: incoming.CultureId, b: item.CultureId, comparisonType: StringComparison.Ordinal))))
+        {
+            await contentOrchestrationService.DeleteAsync(id: existing.Id);
+        }
     }
 
     private async ValueTask SyncRolesAsync(
@@ -247,9 +264,9 @@ internal class PageCoordinationService(
         PageRole[] incomingArray = incomingItems.ToArray();
 
         foreach (PageRole incoming in incomingArray
-            .Where(item => !existingArray.Any(existing => existing.RoleId == item.RoleId)))
+            .Where(predicate: item => !existingArray.Any(predicate: existing => existing.RoleId == item.RoleId)))
         {
-            await pageRoleOrchestrationService.AddAsync(new PageRole
+            await pageRoleOrchestrationService.AddAsync(entity: new PageRole
             {
                 PageId = pageId,
                 RoleId = incoming.RoleId
@@ -257,9 +274,9 @@ internal class PageCoordinationService(
         }
 
         foreach (PageRole existing in existingArray
-            .Where(item => !incomingArray.Any(incoming => incoming.RoleId == item.RoleId)))
+            .Where(predicate: item => !incomingArray.Any(predicate: incoming => incoming.RoleId == item.RoleId)))
         {
-            await pageRoleOrchestrationService.DeleteAsync(new PageRole
+            await pageRoleOrchestrationService.DeleteAsync(entity: new PageRole
             {
                 PageId = pageId,
                 RoleId = existing.RoleId

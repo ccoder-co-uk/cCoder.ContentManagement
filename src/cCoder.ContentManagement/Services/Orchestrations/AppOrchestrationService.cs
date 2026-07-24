@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
@@ -15,87 +19,97 @@ internal class AppOrchestrationService(
 {
     public App Get(int id)
     {
-        ValidateId(id, "id");
-        return processingService.Get(id);
+        ValidateId(id: id, parameterName: "id");
+        return processingService.Get(id: id);
     }
 
     public App GetByDomain(string domain, bool ignoreFilters = false)
     {
-        ValidateDomain(domain, "domain");
-        return processingService.GetByDomain(domain, ignoreFilters);
+        ValidateDomain(domain: domain, parameterName: "domain");
+        return processingService.GetByDomain(domain: domain, ignoreFilters: ignoreFilters);
     }
 
     public IQueryable<App> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters);
+        processingService.GetAll(ignoreFilters: ignoreFilters);
 
     public async ValueTask<App> AddAsync(App entity)
     {
-        ValidateApp(entity, "entity");
-        App result = await processingService.AddAsync(entity);
-        await eventService.RaiseAppAddEventAsync(result);
+        ValidateApp(app: entity, parameterName: "entity");
+        App result = await processingService.AddAsync(entity: entity);
+        await eventService.RaiseAppAddEventAsync(app: result);
         return result;
     }
 
     public async ValueTask<App> UpdateAsync(App entity)
     {
-        ValidateApp(entity, "entity");
-        App result = await processingService.UpdateAsync(entity);
-        ReflectUpdatedApp(result, entity);
-        await eventService.RaiseAppUpdateEventAsync(entity);
+        ValidateApp(app: entity, parameterName: "entity");
+        App result = await processingService.UpdateAsync(entity: entity);
+        ReflectUpdatedApp(source: result, target: entity);
+        await eventService.RaiseAppUpdateEventAsync(app: entity);
         return result;
     }
 
     public async ValueTask DeleteAsync(int id)
     {
-        ValidateId(id, "id");
+        ValidateId(id: id, parameterName: "id");
+
         App app = processingService.GetAll(ignoreFilters: true)
-            .Include(foundApp => foundApp.Roles)
-            .FirstOrDefault(foundApp => foundApp.Id == id);
+            .Include(navigationPropertyPath: foundApp => foundApp.Roles)
+            .FirstOrDefault(predicate: foundApp => foundApp.Id == id);
 
         if (app?.Roles?.Any() == true)
-            authorizationBroker.Authorize(id, "app_delete");
+        {
+            authorizationBroker.Authorize(appId: id, privilege: "app_delete");
+        }
 
         if (app != null)
-            await eventService.RaiseAppDeleteEventAsync(app);
+        {
+            await eventService.RaiseAppDeleteEventAsync(app: app);
+        }
 
-        await processingService.DeleteAsync(id);
+        await processingService.DeleteAsync(id: id);
     }
 
     public ValueTask<IEnumerable<Result<App>>> AddOrUpdate(IEnumerable<App> items) =>
-        processingService.AddOrUpdate(ValidateApps(items, "items"));
+        processingService.AddOrUpdate(items: ValidateApps(apps: items, parameterName: "items"));
 
     public ValueTask DeleteAllAsync(IEnumerable<App> items) =>
-        processingService.DeleteAllAsync(ValidateApps(items, "items"));
+        processingService.DeleteAllAsync(items: ValidateApps(apps: items, parameterName: "items"));
 
     public IQueryable<User> GetAppUsers(int appId)
     {
-        ValidateId(appId, "appId");
-        return processingService.GetAppUsers(appId);
+        ValidateId(id: appId, parameterName: "appId");
+        return processingService.GetAppUsers(appId: appId);
     }
 
     public ValueTask UpdatePageOrderAsync(int key, App app) =>
-        processingService.UpdatePageOrderAsync(key, ValidateApp(app, "app"));
+        processingService.UpdatePageOrderAsync(key: key, app: ValidateApp(app: app, parameterName: "app"));
 
-    public App ResolveCurrentApp() => processingService.ResolveCurrentApp();
+    public App ResolveCurrentApp() =>
+        processingService.ResolveCurrentApp();
 
     private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(id < 1, parameterName + " must be greater than 0.");
+        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
 
     private static App ValidateApp(App app, string parameterName)
     {
         if (app == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return app;
     }
 
     private static void ValidateDomain(string domain, string parameterName) =>
-        ThrowIf(string.IsNullOrWhiteSpace(domain), parameterName + " is required.");
+        ThrowIf(condition: string.IsNullOrWhiteSpace(value: domain), message: parameterName + " is required.");
 
     private static IEnumerable<App> ValidateApps(IEnumerable<App> apps, string parameterName)
     {
         if (apps == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return apps;
     }
@@ -122,6 +136,8 @@ internal class AppOrchestrationService(
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

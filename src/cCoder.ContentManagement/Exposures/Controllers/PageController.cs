@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Models;
@@ -34,21 +38,21 @@ public class PageController : ODataController
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     public IActionResult Get(ODataQueryOptions<Page> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: Service.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     public IActionResult RootFor([FromRoute] int key) =>
-        Ok(CreateResponsePage(Service.GetRoot(key)));
+        Ok(value: CreateResponsePage(page: Service.GetRoot(id: key)));
 
     [HttpGet]
     public IActionResult Menu([FromRoute] int key, string culture)
     {
-        return Ok(new Result<string>
+        return Ok(value: new Result<string>
         {
             Id = key.ToString(),
-            Item = Service.MenuFor(key, culture),
+            Item = Service.MenuFor(id: key, culture: culture),
             Success = true
         });
     }
@@ -56,11 +60,12 @@ public class PageController : ODataController
     [HttpGet]
     [AllowAnonymous]
     public IActionResult Render(int appId, string path, string theme, string culture) =>
-        Ok(RenderService.Render(appId, path, theme, culture));
+        Ok(value: RenderService.Render(appId: appId, path: path, theme: theme, culture: culture));
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Page)) : new MetadataContainer(typeof(Page), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Page)) : new MetadataContainer(type: typeof(Page), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [AllowAnonymous]
@@ -69,8 +74,10 @@ public class PageController : ODataController
     {
         try
         {
-            IQueryable<Page> result = Service.GetAll().Where(page => page.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<Page> result = Service.GetAll()
+                .Where(predicate: page => page.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -83,9 +90,11 @@ public class PageController : ODataController
     public async Task<IActionResult> Post([FromBody] Page entity)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(CreateResponsePage(await Service.AddAsync(entity)));
+        return Ok(value: CreateResponsePage(page: await Service.AddAsync(entity: entity)));
     }
 
     [HttpPut]
@@ -93,34 +102,41 @@ public class PageController : ODataController
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Page entity)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
         entity.Id = key;
-        return Ok(CreateResponsePage(await Service.UpdateAsync(entity)));
+        return Ok(value: CreateResponsePage(page: await Service.UpdateAsync(entity: entity)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<Page> delta)
     {
-        Page originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Page originalEntity = Service.Get(id: key);
 
-        delta.Patch(originalEntity);
-        return Ok(CreateResponsePage(await Service.UpdateAsync(originalEntity)));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        delta.Patch(original: originalEntity);
+        return Ok(value: CreateResponsePage(page: await Service.UpdateAsync(entity: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(key);
+        await Service.DeleteAsync(id: key);
         return Ok();
     }
 
     private static Page CreateResponsePage(Page page)
     {
         if (page == null)
+        {
             return null;
+        }
 
         return new Page
         {

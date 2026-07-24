@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +22,7 @@ public class AppCultureBroker(ICoreContextFactory coreContextFactory) : IAppCult
     public async ValueTask<AppCulture> AddAppCultureAsync(AppCulture entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        AppCulture result = (await coreDataContext.AppCultures.AddAsync(entity)).Entity;
+        AppCulture result = (await coreDataContext.AppCultures.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -26,14 +30,14 @@ public class AppCultureBroker(ICoreContextFactory coreContextFactory) : IAppCult
     public async ValueTask<int> DeleteAppCultureAsync(AppCulture entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.AppCultures.Remove(entity);
+        coreDataContext.AppCultures.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllAppCulturesAsync(IEnumerable<AppCulture> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.AppCultures.RemoveRange(items);
+        coreDataContext.AppCultures.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 }

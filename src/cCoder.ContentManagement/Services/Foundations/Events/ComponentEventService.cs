@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal partial class ComponentEventService(IComponentEventBroker componentEven
             },
             Data = entity
         };
-        await componentEventBroker.RaiseComponentAddEventAsync(message);
+
+        await componentEventBroker.RaiseComponentAddEventAsync(message: message);
     }
 
     public async ValueTask RaiseComponentUpdateEventAsync(Component entity)
@@ -30,7 +35,8 @@ internal partial class ComponentEventService(IComponentEventBroker componentEven
             },
             Data = entity
         };
-        await componentEventBroker.RaiseComponentUpdateEventAsync(message);
+
+        await componentEventBroker.RaiseComponentUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaiseComponentDeleteEventAsync(Component entity)
@@ -43,6 +49,7 @@ internal partial class ComponentEventService(IComponentEventBroker componentEven
             },
             Data = entity
         };
-        await componentEventBroker.RaiseComponentDeleteEventAsync(message);
+
+        await componentEventBroker.RaiseComponentDeleteEventAsync(message: message);
     }
 }

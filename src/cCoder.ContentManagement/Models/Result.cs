@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 
 namespace cCoder.ContentManagement.Models;
@@ -20,7 +24,9 @@ public class Result<T> : Result
         get
         {
             if (id != null)
+            {
                 return id;
+            }
 
             try
             {
@@ -31,7 +37,8 @@ public class Result<T> : Result
                 return null;
             }
         }
-        set => id = value;
+        set =>
+        id = value;
     }
 
     public T Item { get; set; }

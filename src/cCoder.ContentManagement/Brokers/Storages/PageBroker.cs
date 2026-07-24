@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +22,7 @@ public class PageBroker(ICoreContextFactory coreContextFactory) : IPageBroker
     public async ValueTask<Page> AddPageAsync(Page entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Page result = (await coreDataContext.Pages.AddAsync(entity)).Entity;
+        Page result = (await coreDataContext.Pages.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -26,7 +30,10 @@ public class PageBroker(ICoreContextFactory coreContextFactory) : IPageBroker
     public async ValueTask<Page> UpdatePageAsync(Page entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Page result = coreDataContext.Pages.Update(entity).Entity;
+
+        Page result = coreDataContext.Pages.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -34,14 +41,14 @@ public class PageBroker(ICoreContextFactory coreContextFactory) : IPageBroker
     public async ValueTask<int> DeletePageAsync(Page entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Pages.Remove(entity);
+        coreDataContext.Pages.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllPagesAsync(IEnumerable<Page> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Pages.RemoveRange(items);
+        coreDataContext.Pages.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 }

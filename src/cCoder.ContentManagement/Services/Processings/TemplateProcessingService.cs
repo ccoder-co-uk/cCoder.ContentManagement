@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
@@ -9,41 +13,43 @@ internal class TemplateProcessingService(ITemplateService service) : ITemplatePr
 {
     public Template Get(int id)
     {
-        ValidateId(id, "id");
-        return service.Get(id);
+        ValidateId(id: id, parameterName: "id");
+        return service.Get(id: id);
     }
 
     public IQueryable<Template> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters);
+        service.GetAll(ignoreFilters: ignoreFilters);
 
     public ValueTask<Template> AddAsync(Template entity)
     {
-        ValidateTemplate(entity, "entity");
-        return service.AddAsync(entity);
+        ValidateTemplate(template: entity, parameterName: "entity");
+        return service.AddAsync(template: entity);
     }
 
     public ValueTask<Template> UpdateAsync(Template entity)
     {
-        ValidateTemplate(entity, "entity");
-        return service.UpdateAsync(entity);
+        ValidateTemplate(template: entity, parameterName: "entity");
+        return service.UpdateAsync(template: entity);
     }
 
     public ValueTask DeleteAsync(int id)
     {
-        ValidateId(id, "id");
-        return service.DeleteAsync(id);
+        ValidateId(id: id, parameterName: "id");
+        return service.DeleteAsync(id: id);
     }
 
     public async ValueTask<IEnumerable<Result<Template>>> AddOrUpdate(IEnumerable<Template> items)
     {
-        ValidateTemplates(items, "items");
+        ValidateTemplates(templates: items, parameterName: "items");
         List<Result<Template>> results = new List<Result<Template>>();
+
         foreach (Template item in items)
         {
             try
             {
-                Template savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new Result<Template>
+                Template savedItem = item.Id < 1 ? await AddAsync(entity: item) : await UpdateAsync(entity: item);
+
+                results.Add(item: new Result<Template>
                 {
                     Success = true,
                     Item = savedItem,
@@ -52,7 +58,7 @@ internal class TemplateProcessingService(ITemplateService service) : ITemplatePr
             }
             catch (Exception ex)
             {
-                results.Add(new Result<Template>
+                results.Add(item: new Result<Template>
                 {
                     Success = false,
                     Item = item,
@@ -60,28 +66,34 @@ internal class TemplateProcessingService(ITemplateService service) : ITemplatePr
                 });
             }
         }
+
         return results;
     }
 
     public async ValueTask DeleteAllAsync(IEnumerable<Template> items)
     {
-        ValidateTemplates(items, "items");
+        ValidateTemplates(templates: items, parameterName: "items");
+
         foreach (Template item in items)
-            await DeleteAsync(item.Id);
+        {
+            await DeleteAsync(id: item.Id);
+        }
     }
 
     private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(id < 1, parameterName + " must be greater than 0.");
+        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateTemplate(Template template, string parameterName) =>
-        ThrowIf(template == null, parameterName + " is required.");
+        ThrowIf(condition: template == null, message: parameterName + " is required.");
 
     private static void ValidateTemplates(IEnumerable<Template> templates, string parameterName) =>
-        ThrowIf(templates == null, parameterName + " is required.");
+        ThrowIf(condition: templates == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

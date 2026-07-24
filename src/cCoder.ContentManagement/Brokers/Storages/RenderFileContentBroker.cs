@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.DMS;
 using DmsFile = cCoder.Data.Models.DMS.File;
@@ -10,18 +14,22 @@ internal sealed class RenderFileContentBroker(ICoreContextFactory coreContextFac
     public byte[] GetLatestRawData(int appId, string path)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
         DmsFile file = coreDataContext
             .Set<DmsFile>()
             .AsNoTracking()
-            .FirstOrDefault(foundFile => foundFile.Folder.AppId == appId && foundFile.Path == path);
+            .FirstOrDefault(predicate: foundFile => foundFile.Folder.AppId == appId && foundFile.Path == path);
+
         if (file == null)
+        {
             return Array.Empty<byte>();
+        }
 
         return coreDataContext.Set<FileContent>()
             .AsNoTracking()
-            .Where(foundContent => foundContent.FileId == file.Id)
-            .OrderByDescending(foundContent => foundContent.Version)
-            .Select(foundContent => foundContent.RawData)
+            .Where(predicate: foundContent => foundContent.FileId == file.Id)
+            .OrderByDescending(keySelector: foundContent => foundContent.Version)
+            .Select(selector: foundContent => foundContent.RawData)
             .FirstOrDefault() ?? Array.Empty<byte>();
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Rendering.Models;
 using cCoder.Data.Models.CMS;
@@ -9,50 +13,65 @@ internal sealed class CommonObjectReaderBroker(ICommonObjectCache commonObjectCa
     public IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup()
     {
         return commonObjectCache.GetAll<Resource>()
-            .GroupBy(resource => BuildResourceLookupKey(resource.Key ?? string.Empty, resource.Name ?? string.Empty, resource.Culture ?? string.Empty), StringComparer.OrdinalIgnoreCase)
+            .GroupBy(keySelector: resource => BuildResourceLookupKey(key: resource.Key ?? string.Empty, name: resource.Name ?? string.Empty, culture: resource.Culture ?? string.Empty), comparer: StringComparer.OrdinalIgnoreCase)
             .ToDictionary(
-                group => group.Key,
-                group => new PageRenderResource
-                {
-                    Key = group.First().Key ?? string.Empty,
-                    Culture = group.First().Culture ?? string.Empty,
-                    Name = group.First().Name ?? string.Empty,
-                    DisplayName = group.First().DisplayName ?? group.First().Name ?? string.Empty,
-                    ShortDisplayName = group.First().ShortDisplayName ?? group.First().Name ?? string.Empty,
-                    Description = group.First().Description ?? string.Empty
-                },
-                StringComparer.OrdinalIgnoreCase);
+keySelector: group => group.Key,
+elementSelector: group => new PageRenderResource
+{
+    Key = group.First()
+            .Key ?? string.Empty,
+    Culture = group.First()
+            .Culture ?? string.Empty,
+    Name = group.First()
+            .Name ?? string.Empty,
+    DisplayName = group.First()
+            .DisplayName ?? group.First()
+            .Name ?? string.Empty,
+    ShortDisplayName = group.First()
+            .ShortDisplayName ?? group.First()
+            .Name ?? string.Empty,
+    Description = group.First()
+            .Description ?? string.Empty
+},
+comparer: StringComparer.OrdinalIgnoreCase);
     }
 
     public IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName()
     {
         return commonObjectCache.GetAll<Component>()
-            .GroupBy(component => component.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(keySelector: component => component.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
             .ToDictionary(
-                group => group.Key,
-                group => new PageRenderComponent
-                {
-                    Id = group.First().Id,
-                    Name = group.First().Name ?? string.Empty,
-                    ResourceKey = group.First().ResourceKey ?? string.Empty,
-                    Content = group.First().Content ?? string.Empty,
-                    Script = group.First().Script ?? string.Empty
-                },
-                StringComparer.OrdinalIgnoreCase);
+keySelector: group => group.Key,
+elementSelector: group => new PageRenderComponent
+{
+    Id = group.First()
+            .Id,
+    Name = group.First()
+            .Name ?? string.Empty,
+    ResourceKey = group.First()
+            .ResourceKey ?? string.Empty,
+    Content = group.First()
+            .Content ?? string.Empty,
+    Script = group.First()
+            .Script ?? string.Empty
+},
+comparer: StringComparer.OrdinalIgnoreCase);
     }
 
     public IReadOnlyDictionary<string, PageRenderScript> GetScriptsByName()
     {
         return commonObjectCache.GetAll<Script>()
-            .GroupBy(script => script.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(keySelector: script => script.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
             .ToDictionary(
-                group => group.Key,
-                group => new PageRenderScript
-                {
-                    Name = group.First().Name ?? string.Empty,
-                    Content = group.First().Content ?? string.Empty
-                },
-                StringComparer.OrdinalIgnoreCase);
+keySelector: group => group.Key,
+elementSelector: group => new PageRenderScript
+{
+    Name = group.First()
+            .Name ?? string.Empty,
+    Content = group.First()
+            .Content ?? string.Empty
+},
+comparer: StringComparer.OrdinalIgnoreCase);
     }
 
     private static string BuildResourceLookupKey(string key, string name, string culture) =>

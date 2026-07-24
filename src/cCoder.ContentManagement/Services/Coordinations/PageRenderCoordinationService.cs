@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Runtime.InteropServices;
 using System.Security;
 using cCoder.ContentManagement.Brokers;
@@ -25,16 +29,17 @@ internal sealed partial class PageRenderCoordinationService(
     IPageRoleOrchestrationService pageRoleOrchestrationService,
     IPageRenderOrchestrationService pageRenderOrchestrationService) : IPageRenderCoordinationService
 {
-    private User User => authorizationBroker.GetCurrentUser();
+    private User User =>
+        authorizationBroker.GetCurrentUser();
 
     public PageRenderResponse Render(PageRenderRequest request)
     {
-        ValidateRequest(request, "request");
+        ValidateRequest(request: request, parameterName: "request");
 
         try
         {
-            ResolvedPageRenderDefaults defaults = ResolveDefaults(request);
-            RenderResult page = Render(defaults.App.Id, request.Path ?? string.Empty, defaults.Theme, defaults.Culture, request.Edit);
+            ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
+            RenderResult page = Render(appId: defaults.App.Id, path: request.Path ?? string.Empty, theme: defaults.Theme, culture: defaults.Culture, edit: request.Edit);
 
             return new PageRenderResponse
             {
@@ -48,21 +53,21 @@ internal sealed partial class PageRenderCoordinationService(
         catch (Exception exception)
         {
             request.Exception = exception;
-            return RenderError(request);
+            return RenderError(request: request);
         }
     }
 
     public PageRenderResponse RenderError(PageRenderRequest request)
     {
-        ValidateRequest(request, "request");
-        ValidateException(request.Exception, "Exception");
+        ValidateRequest(request: request, parameterName: "request");
+        ValidateException(exception: request.Exception, parameterName: "Exception");
 
-        ResolvedPageRenderDefaults defaults = ResolveDefaults(request);
-        RenderResult page = Render(defaults.App.Id, "Error", defaults.Theme, defaults.Culture);
+        ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
+        RenderResult page = Render(appId: defaults.App.Id, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
 
-        page.BodyHtml = page.BodyHtml.Replace("[problem[message]]", request.Exception.Message);
-        page.BodyHtml = page.BodyHtml.Replace("[problem[detail]]", request.Exception.StackTrace ?? string.Empty);
-        page.BodyHtml = page.BodyHtml.Replace("[problem[url]]", request.RequestUrl ?? string.Empty);
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[message]]", newValue: request.Exception.Message);
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[detail]]", newValue: request.Exception.StackTrace ?? string.Empty);
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[url]]", newValue: request.RequestUrl ?? string.Empty);
 
         return new PageRenderResponse
         {
@@ -76,73 +81,78 @@ internal sealed partial class PageRenderCoordinationService(
 
     public RenderResult Render(int appId, string path, string theme, string culture, bool edit = false)
     {
-        ValidateAppId(appId, "appId");
-        ValidateTheme(theme, "theme");
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidateTheme(theme: theme, parameterName: "theme");
 
         path ??= string.Empty;
         culture ??= User.DefaultCultureId;
 
-        App app = ResolveAppById(appId);
+        App app = ResolveAppById(appId: appId);
 
         if (app == null)
-            throw new SecurityException("Unknown Domain!");
+        {
+            throw new SecurityException(message: "Unknown Domain!");
+        }
 
         string normalizedPath = path.ToLowerInvariant();
+
         Page page = pageOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(existingPage => existingPage.AppId == appId && existingPage.Path.ToLower() == normalizedPath)
+            .Where(predicate: existingPage => existingPage.AppId == appId && existingPage.Path.ToLower() == normalizedPath)
             .FirstOrDefault();
 
         if (page != null)
         {
             page.App = app;
-            HydratePageForRender(page);
+            HydratePageForRender(page: page);
         }
 
         if (page == null)
         {
             RenderResult renderResult = pageRenderOrchestrationService.Render(
-                CreateMissingPage(app, path, culture),
-                User,
-                theme,
-                culture);
+page: CreateMissingPage(app: app, path: path, culture: culture),
+user: User,
+theme: theme,
+culture: culture);
 
             renderResult.StatusCode = 404;
             return renderResult;
         }
 
-        if (!ContentManagementModelLogic.UserCan(page, User, "page_read") && !authorizationBroker.IsAdminOfApp(appId))
+        if (!ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "page_read") && !authorizationBroker.IsAdminOfApp(appId: appId))
         {
-            Page gatedPage = CreateGatedPage(page);
+            Page gatedPage = CreateGatedPage(page: page);
             gatedPage.App = app;
 
-            return pageRenderOrchestrationService.Render(gatedPage, User, theme, culture);
+            return pageRenderOrchestrationService.Render(page: gatedPage, user: User, theme: theme, culture: culture);
         }
 
         return pageRenderOrchestrationService.Render(
-            page,
-            User,
-            theme,
-            culture,
-            edit && ContentManagementModelLogic.UserCan(page, User, "page_update"));
+page: page,
+user: User,
+theme: theme,
+culture: culture,
+edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "page_update"));
     }
 
     private ResolvedPageRenderDefaults ResolveDefaults(PageRenderRequest request)
     {
-        ValidateHost(request.Host);
+        ValidateHost(host: request.Host);
 
-        App app = ResolveAppByDomain(request.Host)
-            ?? throw new InvalidOperationException("Domain Not found!");
+        App app = ResolveAppByDomain(domain: request.Host)
+            ?? throw new InvalidOperationException(message: "Domain Not found!");
 
         if (app.Id < 1)
-            throw new InvalidOperationException("Domain Not found!");
+        {
+            throw new InvalidOperationException(message: "Domain Not found!");
+        }
 
         return new ResolvedPageRenderDefaults
         {
             App = app,
-            Theme = string.IsNullOrWhiteSpace(request.Theme)
+            Theme = string.IsNullOrWhiteSpace(value: request.Theme)
                 ? app.DefaultTheme ?? "Default"
                 : request.Theme,
-            Culture = string.IsNullOrWhiteSpace(request.Culture)
+            Culture = string.IsNullOrWhiteSpace(value: request.Culture)
                 ? app.DefaultCultureId ?? string.Empty
                 : request.Culture
         };
@@ -151,8 +161,8 @@ internal sealed partial class PageRenderCoordinationService(
     private App ResolveAppByDomain(string domain)
     {
         App app = appOrchestrationService.GetAll(ignoreFilters: false)
-            .Where(existingApp => existingApp.Domain == domain)
-            .Select(existingApp => new App
+            .Where(predicate: existingApp => existingApp.Domain == domain)
+            .Select(selector: existingApp => new App
             {
                 Id = existingApp.Id,
                 DefaultCultureId = existingApp.DefaultCultureId,
@@ -165,7 +175,9 @@ internal sealed partial class PageRenderCoordinationService(
             .FirstOrDefault();
 
         if (app != null)
-            PopulateRenderCollections(app);
+        {
+            PopulateRenderCollections(app: app);
+        }
 
         return app;
     }
@@ -173,8 +185,8 @@ internal sealed partial class PageRenderCoordinationService(
     private App ResolveAppById(int appId)
     {
         App app = appOrchestrationService.GetAll(ignoreFilters: false)
-            .Where(existingApp => existingApp.Id == appId)
-            .Select(existingApp => new App
+            .Where(predicate: existingApp => existingApp.Id == appId)
+            .Select(selector: existingApp => new App
             {
                 Id = existingApp.Id,
                 DefaultCultureId = existingApp.DefaultCultureId,
@@ -187,7 +199,9 @@ internal sealed partial class PageRenderCoordinationService(
             .FirstOrDefault();
 
         if (app != null)
-            PopulateRenderCollections(app);
+        {
+            PopulateRenderCollections(app: app);
+        }
 
         return app;
     }
@@ -195,28 +209,28 @@ internal sealed partial class PageRenderCoordinationService(
     private void PopulateRenderCollections(App app)
     {
         app.Layouts = layoutOrchestrationService.GetAll(ignoreFilters: false)
-            .Where(layout => layout.AppId == app.Id)
+            .Where(predicate: layout => layout.AppId == app.Id)
             .ToArray();
 
         app.Templates = templateOrchestrationService.GetAll(ignoreFilters: false)
-            .Where(template => template.AppId == app.Id)
+            .Where(predicate: template => template.AppId == app.Id)
             .ToArray();
 
         app.Resources = resourceOrchestrationService.GetAll(ignoreFilters: false)
-            .Where(resource => resource.AppId == app.Id)
+            .Where(predicate: resource => resource.AppId == app.Id)
             .ToArray();
 
         app.Components = componentOrchestrationService.GetAll(ignoreFilters: false)
-            .Where(component => component.AppId == app.Id)
+            .Where(predicate: component => component.AppId == app.Id)
             .ToArray();
 
         app.Scripts = scriptOrchestrationService.GetAll(ignoreFilters: false)
-            .Where(script => script.AppId == app.Id)
+            .Where(predicate: script => script.AppId == app.Id)
             .ToArray();
 
         app.Pages = pageOrchestrationService.GetAll(ignoreFilters: false)
-            .Where(page => page.AppId == app.Id)
-            .Select(page => new Page
+            .Where(predicate: page => page.AppId == app.Id)
+            .Select(selector: page => new Page
             {
                 Id = page.Id,
                 ParentId = page.ParentId,
@@ -235,15 +249,15 @@ internal sealed partial class PageRenderCoordinationService(
     private void HydratePageForRender(Page page)
     {
         page.PageInfo ??= pageInfoOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(pageInfo => pageInfo.PageId == page.Id)
+            .Where(predicate: pageInfo => pageInfo.PageId == page.Id)
             .ToArray();
 
         page.Contents ??= contentOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(content => content.PageId == page.Id)
+            .Where(predicate: content => content.PageId == page.Id)
             .ToArray();
 
         page.Roles ??= pageRoleOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(pageRole => pageRole.PageId == page.Id)
+            .Where(predicate: pageRole => pageRole.PageId == page.Id)
             .ToArray();
     }
 
@@ -276,21 +290,23 @@ internal sealed partial class PageRenderCoordinationService(
     private static Page CreateGatedPage(Page page)
     {
         string[] contentNames = page.Contents?
-            .Select(content => content.Name)
-            .Where(name => !string.IsNullOrWhiteSpace(name))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Select(selector: content => content.Name)
+            .Where(predicate: name => !string.IsNullOrWhiteSpace(value: name))
+            .Distinct(comparer: StringComparer.OrdinalIgnoreCase)
             .ToArray()
             ?? [];
 
         if (contentNames.Length == 0)
+        {
             contentNames = ["body"];
+        }
 
-        List<Content> gatedContents = new(contentNames.Length);
-        CollectionsMarshal.SetCount(gatedContents, contentNames.Length);
+        List<Content> gatedContents = new(capacity: contentNames.Length);
+        CollectionsMarshal.SetCount(list: gatedContents, count: contentNames.Length);
 
         for (int index = 0; index < contentNames.Length; index++)
         {
-            CollectionsMarshal.AsSpan(gatedContents)[index] = new Content
+            CollectionsMarshal.AsSpan(list: gatedContents)[index] = new Content
             {
                 CultureId = string.Empty,
                 Html = "[component[login]]",

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker, IC
             },
             Data = entity
         };
-        await pageInfoEventBroker.RaisePageInfoAddEventAsync(message);
+
+        await pageInfoEventBroker.RaisePageInfoAddEventAsync(message: message);
     }
 
     public async ValueTask RaisePageInfoUpdateEventAsync(PageInfo entity)
@@ -30,7 +35,8 @@ internal class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker, IC
             },
             Data = entity
         };
-        await pageInfoEventBroker.RaisePageInfoUpdateEventAsync(message);
+
+        await pageInfoEventBroker.RaisePageInfoUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaisePageInfoDeleteEventAsync(PageInfo entity)
@@ -43,6 +49,7 @@ internal class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker, IC
             },
             Data = entity
         };
-        await pageInfoEventBroker.RaisePageInfoDeleteEventAsync(message);
+
+        await pageInfoEventBroker.RaisePageInfoDeleteEventAsync(message: message);
     }
 }

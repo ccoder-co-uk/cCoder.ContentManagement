@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +22,7 @@ public class LayoutBroker(ICoreContextFactory coreContextFactory) : ILayoutBroke
     public async ValueTask<Layout> AddLayoutAsync(Layout entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Layout result = (await coreDataContext.Layouts.AddAsync(entity)).Entity;
+        Layout result = (await coreDataContext.Layouts.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -26,7 +30,10 @@ public class LayoutBroker(ICoreContextFactory coreContextFactory) : ILayoutBroke
     public async ValueTask<Layout> UpdateLayoutAsync(Layout entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Layout result = coreDataContext.Layouts.Update(entity).Entity;
+
+        Layout result = coreDataContext.Layouts.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -34,14 +41,14 @@ public class LayoutBroker(ICoreContextFactory coreContextFactory) : ILayoutBroke
     public async ValueTask<int> DeleteLayoutAsync(Layout entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Layouts.Remove(entity);
+        coreDataContext.Layouts.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllLayoutsAsync(IEnumerable<Layout> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Layouts.RemoveRange(items);
+        coreDataContext.Layouts.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 

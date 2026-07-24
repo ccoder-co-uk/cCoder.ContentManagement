@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal class CommonObjectEventService(ICommonObjectEventBroker commonObjectEve
             },
             Data = entity
         };
-        await commonObjectEventBroker.RaiseCommonObjectAddEventAsync(message);
+
+        await commonObjectEventBroker.RaiseCommonObjectAddEventAsync(message: message);
     }
 
     public async ValueTask RaiseCommonObjectUpdateEventAsync(CommonObject entity)
@@ -30,7 +35,8 @@ internal class CommonObjectEventService(ICommonObjectEventBroker commonObjectEve
             },
             Data = entity
         };
-        await commonObjectEventBroker.RaiseCommonObjectUpdateEventAsync(message);
+
+        await commonObjectEventBroker.RaiseCommonObjectUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaiseCommonObjectDeleteEventAsync(CommonObject entity)
@@ -43,6 +49,7 @@ internal class CommonObjectEventService(ICommonObjectEventBroker commonObjectEve
             },
             Data = entity
         };
-        await commonObjectEventBroker.RaiseCommonObjectDeleteEventAsync(message);
+
+        await commonObjectEventBroker.RaiseCommonObjectDeleteEventAsync(message: message);
     }
 }

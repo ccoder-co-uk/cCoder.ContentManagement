@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Models;
@@ -12,23 +16,25 @@ internal sealed class TemplateRenderOrchestrationService(
 {
     public string Render(int appId, string name, string culture, dynamic model, User user)
     {
-        ValidateAppId(appId, "appId");
-        ValidateTemplateName(name, "name");
-        ValidateUser(user, "user");
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidateTemplateName(name: name, parameterName: "name");
+        ValidateUser(user: user, parameterName: "user");
 
-        return templateRenderProcessingService.Render(appId, name, model, user, culture, config, log);
+        return templateRenderProcessingService.Render(appId: appId, name: name, model: model, user: user, culture: culture, config: config, log: log);
     }
 
     private static void ValidateAppId(int appId, string parameterName) =>
-        ThrowIf(appId < 1, parameterName + " must be greater than 0.");
+        ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateTemplateName(string name, string parameterName) =>
-        ThrowIf(string.IsNullOrWhiteSpace(name), parameterName + " is required.");
+        ThrowIf(condition: string.IsNullOrWhiteSpace(value: name), message: parameterName + " is required.");
 
     private static User ValidateUser(User user, string parameterName)
     {
         if (user == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return user;
     }
@@ -36,6 +42,8 @@ internal sealed class TemplateRenderOrchestrationService(
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

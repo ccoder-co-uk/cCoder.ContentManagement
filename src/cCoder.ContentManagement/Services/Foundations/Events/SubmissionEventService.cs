@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -17,7 +21,8 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
             },
             Data = entity
         };
-        await submissionEventBroker.RaiseSubmissionAddEventAsync(message);
+
+        await submissionEventBroker.RaiseSubmissionAddEventAsync(message: message);
     }
 
     public async ValueTask RaiseSubmissionUpdateEventAsync(Submission entity)
@@ -30,7 +35,8 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
             },
             Data = entity
         };
-        await submissionEventBroker.RaiseSubmissionUpdateEventAsync(message);
+
+        await submissionEventBroker.RaiseSubmissionUpdateEventAsync(message: message);
     }
 
     public async ValueTask RaiseSubmissionDeleteEventAsync(Submission entity)
@@ -43,6 +49,7 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
             },
             Data = entity
         };
-        await submissionEventBroker.RaiseSubmissionDeleteEventAsync(message);
+
+        await submissionEventBroker.RaiseSubmissionDeleteEventAsync(message: message);
     }
 }

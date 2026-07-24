@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
@@ -19,7 +23,7 @@ public class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
     public async ValueTask<App> AddAppAsync(App entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        App result = (await coreDataContext.Apps.AddAsync(entity)).Entity;
+        App result = (await coreDataContext.Apps.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -27,7 +31,10 @@ public class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
     public async ValueTask<App> UpdateAppAsync(App entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        App result = coreDataContext.Apps.Update(entity).Entity;
+
+        App result = coreDataContext.Apps.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -35,7 +42,7 @@ public class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
     public async ValueTask<int> DeleteAppAsync(App entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Apps.Remove(entity);
+        coreDataContext.Apps.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
@@ -45,27 +52,31 @@ public class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
 
         UserRole[] userRolesToDelete =
             [.. entity.Roles?
-                .SelectMany(role => role.Users ?? [])
-                .GroupBy(userRole => new { userRole.RoleId, userRole.UserId })
-                .Select(group => group.First())
+                .SelectMany(selector: role => role.Users ?? [])
+            .GroupBy(keySelector: userRole => new { userRole.RoleId, userRole.UserId })
+            .Select(selector: group => group.First())
                 ?? []];
 
         if (userRolesToDelete.Length > 0)
-            coreDataContext.UserRoles.RemoveRange(userRolesToDelete);
+        {
+            coreDataContext.UserRoles.RemoveRange(entities: userRolesToDelete);
+        }
 
         Role[] rolesToDelete = [.. entity.Roles ?? []];
 
         if (rolesToDelete.Length > 0)
-            coreDataContext.Roles.RemoveRange(rolesToDelete);
+        {
+            coreDataContext.Roles.RemoveRange(entities: rolesToDelete);
+        }
 
-        coreDataContext.Apps.Remove(entity);
+        coreDataContext.Apps.Remove(entity: entity);
         await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllAppsAsync(IEnumerable<App> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Apps.RemoveRange(items);
+        coreDataContext.Apps.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 }

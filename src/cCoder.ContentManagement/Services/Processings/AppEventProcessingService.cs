@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Services.Foundations.Events;
@@ -8,31 +12,33 @@ internal class AppEventProcessingService(IAppEventService eventService) : IAppEv
 {
     public ValueTask RaiseAppAddEventAsync(App app)
     {
-        ValidateApp(app, "app");
+        ValidateApp(app: app, parameterName: "app");
 
-        return eventService.RaiseAppAddEventAsync(app);
+        return eventService.RaiseAppAddEventAsync(app: app);
     }
 
     public ValueTask RaiseAppDeleteEventAsync(App app)
     {
-        ValidateApp(app, "app");
+        ValidateApp(app: app, parameterName: "app");
 
-        return eventService.RaiseAppDeleteEventAsync(app);
+        return eventService.RaiseAppDeleteEventAsync(app: app);
     }
 
     public ValueTask RaiseAppUpdateEventAsync(App app)
     {
-        ValidateApp(app, "app");
+        ValidateApp(app: app, parameterName: "app");
 
-        return eventService.RaiseAppUpdateEventAsync(app);
+        return eventService.RaiseAppUpdateEventAsync(app: app);
     }
 
     private static void ValidateApp(App app, string parameterName) =>
-        ThrowIf(app == null, parameterName + " is required.");
+        ThrowIf(condition: app == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

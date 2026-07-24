@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +22,7 @@ public class ContentBroker(ICoreContextFactory coreContextFactory) : IContentBro
     public async ValueTask<Content> AddContentAsync(Content entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Content result = (await coreDataContext.Contents.AddAsync(entity)).Entity;
+        Content result = (await coreDataContext.Contents.AddAsync(entity: entity)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -26,7 +30,10 @@ public class ContentBroker(ICoreContextFactory coreContextFactory) : IContentBro
     public async ValueTask<Content> UpdateContentAsync(Content entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Content result = coreDataContext.Contents.Update(entity).Entity;
+
+        Content result = coreDataContext.Contents.Update(entity: entity)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
@@ -34,14 +41,14 @@ public class ContentBroker(ICoreContextFactory coreContextFactory) : IContentBro
     public async ValueTask<int> DeleteContentAsync(Content entity)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Contents.Remove(entity);
+        coreDataContext.Contents.Remove(entity: entity);
         return await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask DeleteAllContentsAsync(IEnumerable<Content> items)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Contents.RemoveRange(items);
+        coreDataContext.Contents.RemoveRange(entities: items);
         await coreDataContext.SaveChangesAsync();
     }
 }
