@@ -139,6 +139,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
         services.AddTransient<IComponentRenderCoordinationService, ComponentRenderCoordinationService>();
         services.AddTransient<IPageCoordinationService, PageCoordinationService>();
+        services.AddTransient<IPageStructureCoordinationService, PageStructureCoordinationService>();
         services.AddTransient<ITemplateRenderCoordinationService, TemplateRenderCoordinationService>();
     }
 

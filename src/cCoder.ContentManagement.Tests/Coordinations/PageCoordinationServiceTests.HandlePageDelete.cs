@@ -91,6 +91,7 @@ public partial class PageCoordinationServiceTests
 
         // When
         await coordinationService.HandlePageDeleteAsync(page: page);
+        await structureCoordinationService.HandlePageDeleteAsync(page: page);
 
         // Then
         pageRoleOrchestrationServiceMock.Verify(expression: service => service.GetAllPageRole(ignoreFilters: true), times: Times.Once);

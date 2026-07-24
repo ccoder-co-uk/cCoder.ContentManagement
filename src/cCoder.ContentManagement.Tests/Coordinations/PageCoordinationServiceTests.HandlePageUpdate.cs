@@ -43,6 +43,7 @@ public partial class PageCoordinationServiceTests
 
         // When
         await coordinationService.HandlePageUpdateAsync(page: page);
+        await structureCoordinationService.HandlePageUpdateAsync(page: page);
 
         // Then
         pageInfoOrchestrationServiceMock.VerifyNoOtherCalls();
@@ -199,6 +200,7 @@ public partial class PageCoordinationServiceTests
 
         // When
         await coordinationService.HandlePageUpdateAsync(page: page);
+        await structureCoordinationService.HandlePageUpdateAsync(page: page);
 
         // Then
         pageInfoOrchestrationServiceMock.Verify(expression: service => service.GetAllPageInfo(ignoreFilters: true), times: Times.Once);

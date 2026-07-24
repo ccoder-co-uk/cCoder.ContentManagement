@@ -29,6 +29,7 @@ public partial class PageCoordinationServiceTests
     private readonly Mock<IPageRoleOrchestrationService> pageRoleOrchestrationServiceMock;
     private readonly Mock<IPageOrchestrationService> pageOrchestrationServiceMock;
     private readonly PageCoordinationService coordinationService;
+    private readonly PageStructureCoordinationService structureCoordinationService;
 
     public PageCoordinationServiceTests()
     {
@@ -48,7 +49,10 @@ behavior: MockBehavior.Strict
 
         coordinationService = new PageCoordinationService(
 pageInfoOrchestrationService: pageInfoOrchestrationServiceMock.Object,
-contentOrchestrationService: contentOrchestrationServiceMock.Object,
+contentOrchestrationService: contentOrchestrationServiceMock.Object
+        );
+
+        structureCoordinationService = new PageStructureCoordinationService(
 pageRoleOrchestrationService: pageRoleOrchestrationServiceMock.Object,
 pageOrchestrationService: pageOrchestrationServiceMock.Object
         );

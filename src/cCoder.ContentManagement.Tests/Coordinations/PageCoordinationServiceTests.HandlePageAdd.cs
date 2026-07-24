@@ -77,6 +77,7 @@ newPageRole: It.Is<IEnumerable<LocalPageRole>>(match: items =>
 
         // When
         await coordinationService.HandlePageAddAsync(page: page);
+        await structureCoordinationService.HandlePageAddAsync(page: page);
 
         // Then
 

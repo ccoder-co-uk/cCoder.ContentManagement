@@ -11,9 +11,7 @@ namespace cCoder.ContentManagement.Services.Coordinations;
 
 internal partial class PageCoordinationService(
     IPageInfoOrchestrationService pageInfoOrchestrationService,
-    IContentOrchestrationService contentOrchestrationService,
-    IPageRoleOrchestrationService pageRoleOrchestrationService,
-    IPageOrchestrationService pageOrchestrationService) : IPageCoordinationService
+    IContentOrchestrationService contentOrchestrationService) : IPageCoordinationService
 {
     public ValueTask HandlePageAddAsync(Page page) =>
         TryCatch(operation: async () =>
@@ -50,18 +48,6 @@ internal partial class PageCoordinationService(
             await contentOrchestrationService.AddOrUpdateContentResult(newContent: contents);
         }
 
-        if (page.Roles != null)
-        {
-            PageRole[] pageRoles = page.Roles.Select(selector: pageRole => new PageRole
-            {
-                PageId = page.Id,
-                RoleId = pageRole.RoleId
-            })
-                .ToArray();
-
-            await pageRoleOrchestrationService.AddOrUpdatePageRoleResult(newPageRole: pageRoles);
-        }
-
     }, isValueTask: true);
 
     public ValueTask HandlePageUpdateAsync(Page page) =>
@@ -88,54 +74,6 @@ internal partial class PageCoordinationService(
             await SyncContentsAsync(pageId: page.Id, existingItems: existingContents, incomingItems: page.Contents);
         }
 
-        if (page.Roles != null)
-        {
-            PageRole[] existingPageRoles = pageRoleOrchestrationService.GetAllPageRole(ignoreFilters: true)
-                .Where(predicate: pageRole => pageRole.PageId == page.Id)
-                .ToArray();
-
-            await SyncRolesAsync(pageId: page.Id, existingItems: existingPageRoles, incomingItems: page.Roles);
-        }
-
-        int[] providedChildIds = [];
-
-        if (page.Pages != null)
-        {
-            Page[] providedChildren = page.Pages
-                .Select(selector: child =>
-                {
-                    child.ParentId = page.Id;
-                    child.AppId = page.AppId;
-                    return child;
-                })
-                .ToArray();
-
-            if (providedChildren.Length != 0)
-            {
-                await pageOrchestrationService.AddOrUpdatePageResult(newPage: providedChildren);
-            }
-
-            providedChildIds = providedChildren
-                .Where(predicate: child => child.Id != 0)
-                .Select(selector: child => child.Id)
-                .ToArray();
-        }
-
-        Page[] existingChildrenToRecompute = pageOrchestrationService.GetAllPage(ignoreFilters: true)
-            .Where(predicate: child => child.ParentId == (int?)page.Id && !((ReadOnlySpan<int>)providedChildIds).Contains(value: child.Id))
-            .ToArray();
-
-        foreach (Page child in existingChildrenToRecompute)
-        {
-            child.ParentId = page.Id;
-            child.AppId = page.AppId;
-        }
-
-        if (existingChildrenToRecompute.Length != 0)
-        {
-            await pageOrchestrationService.AddOrUpdatePageResult(newPage: existingChildrenToRecompute);
-        }
-
     }, isValueTask: true);
 
     public ValueTask HandlePageDeleteAsync(Page page) =>
@@ -143,10 +81,6 @@ internal partial class PageCoordinationService(
     {
         ValidateHandlePageDeleteAsync(inputs: [page]);
         ValidatePage(page: page, parameterName: "page");
-
-        IEnumerable<PageRole> pageRolesToDelete = pageRoleOrchestrationService.GetAllPageRole(ignoreFilters: true)
-            .Where(predicate: pageRole => pageRole.PageId == page.Id)
-            .ToArray();
 
         IEnumerable<PageInfo> pageInfosToDelete = pageInfoOrchestrationService.GetAllPageInfo(ignoreFilters: true)
             .Where(predicate: pageInfo => pageInfo.PageId == page.Id)
@@ -156,7 +90,6 @@ internal partial class PageCoordinationService(
             .Where(predicate: content => content.PageId == page.Id)
             .ToArray();
 
-        await pageRoleOrchestrationService.DeleteAllPageRoleAsync(deletedPageRole: pageRolesToDelete);
         await pageInfoOrchestrationService.DeleteAllPageInfoAsync(deletedPageInfo: pageInfosToDelete);
         await contentOrchestrationService.DeleteAllContentAsync(deletedContent: contentsToDelete);
 
@@ -264,32 +197,4 @@ internal partial class PageCoordinationService(
         }
     }
 
-    private async ValueTask SyncRolesAsync(
-        int pageId,
-        IEnumerable<PageRole> existingItems,
-        IEnumerable<PageRole> incomingItems)
-    {
-        PageRole[] existingArray = existingItems.ToArray();
-        PageRole[] incomingArray = incomingItems.ToArray();
-
-        foreach (PageRole incoming in incomingArray
-            .Where(predicate: item => !existingArray.Any(predicate: existing => existing.RoleId == item.RoleId)))
-        {
-            await pageRoleOrchestrationService.AddPageRoleAsync(newPageRole: new PageRole
-            {
-                PageId = pageId,
-                RoleId = incoming.RoleId
-            });
-        }
-
-        foreach (PageRole existing in existingArray
-            .Where(predicate: item => !incomingArray.Any(predicate: incoming => incoming.RoleId == item.RoleId)))
-        {
-            await pageRoleOrchestrationService.DeletePageRoleAsync(deletedPageRole: new PageRole
-            {
-                PageId = pageId,
-                RoleId = existing.RoleId
-            });
-        }
-    }
 }

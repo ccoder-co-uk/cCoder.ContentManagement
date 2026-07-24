@@ -61,14 +61,26 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppPageComponentCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
     }
 
-    private void ListenToPageAddEvents() =>
+    private void ListenToPageAddEvents()
+    {
         eventHubBroker.ListenToEvent(eventName: "page_add", handler: (IPageCoordinationService service, Page page) => service.HandlePageAddAsync(page: page));
 
-    private void ListenToPageUpdateEvents() =>
+        eventHubBroker.ListenToEvent(eventName: "page_add", handler: (IPageStructureCoordinationService service, Page page) => service.HandlePageAddAsync(page: page));
+    }
+
+    private void ListenToPageUpdateEvents()
+    {
         eventHubBroker.ListenToEvent(eventName: "page_update", handler: (IPageCoordinationService service, Page page) => service.HandlePageUpdateAsync(page: page));
 
-    private void ListenToPageDeleteEvents() =>
+        eventHubBroker.ListenToEvent(eventName: "page_update", handler: (IPageStructureCoordinationService service, Page page) => service.HandlePageUpdateAsync(page: page));
+    }
+
+    private void ListenToPageDeleteEvents()
+    {
         eventHubBroker.ListenToEvent(eventName: "page_delete", handler: (IPageCoordinationService service, Page page) => service.HandlePageDeleteAsync(page: page));
+
+        eventHubBroker.ListenToEvent(eventName: "page_delete", handler: (IPageStructureCoordinationService service, Page page) => service.HandlePageDeleteAsync(page: page));
+    }
 
     private void ListenToPackageImportEvents() =>
         eventHubBroker.ListenToEvent(eventName: "package_import", handler: (IContentManagementMigrationAggregationService service, (int appId, Package package) args) => service.ImportPackageAsync(appId: args.appId, package: args.package));

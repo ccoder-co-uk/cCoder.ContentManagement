@@ -36,6 +36,10 @@ handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
 eventName: "page_delete",
 handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
 
+        SetupPageStructureEventRegistration(eventName: "page_add");
+        SetupPageStructureEventRegistration(eventName: "page_update");
+        SetupPageStructureEventRegistration(eventName: "page_delete");
+
         eventHubBrokerMock
             .Setup(expression: x => x.ListenToEvent<(int appId, Package package), IContentManagementMigrationAggregationService>(
 eventName: "package_import",
@@ -65,5 +69,11 @@ handler: It.IsAny<Func<IAppRenderableCoordinationService, App, ValueTask>>()));
 eventName: eventName,
 handler: It.IsAny<Func<IAppPageComponentCoordinationService, App, ValueTask>>()));
     }
+
+    private void SetupPageStructureEventRegistration(string eventName) =>
+        eventHubBrokerMock
+            .Setup(expression: broker => broker.ListenToEvent<Page, IPageStructureCoordinationService>(
+eventName: eventName,
+handler: It.IsAny<Func<IPageStructureCoordinationService, Page, ValueTask>>()));
 
 }
