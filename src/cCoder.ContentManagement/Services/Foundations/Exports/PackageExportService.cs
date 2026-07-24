@@ -5,6 +5,7 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Models.Exports;
 using cCoder.Data.Extensions;
 using Newtonsoft.Json;
 using cCoder.Data.Models.Packaging;
@@ -21,36 +22,6 @@ internal partial class PackageExportService(
     IResourceBroker resourceBroker,
     IPageBroker pageBroker) : IPackageExportService
 {
-    private sealed class ExportPage
-    {
-        public int Id { get; init; }
-        public int? ParentId { get; init; }
-        public string Path { get; set; }
-        public string Name { get; init; }
-        public string ResourceKey { get; init; }
-        public bool ShowOnMenus { get; init; }
-        public int Order { get; init; }
-        public DateTimeOffset LastUpdated { get; init; }
-        public string Layout { get; init; }
-        public ExportContent[] Contents { get; init; }
-        public ExportPageInfo[] PageInfo { get; init; }
-    }
-
-    private sealed class ExportContent
-    {
-        public string CultureId { get; init; }
-        public string Name { get; init; }
-        public string Html { get; init; }
-    }
-
-    private sealed class ExportPageInfo
-    {
-        public string CultureId { get; init; }
-        public string Description { get; init; }
-        public string Keywords { get; init; }
-        public string Title { get; init; }
-    }
-
     public Package ExportRolesPackage(int appId) =>
         TryCatch<Package>(operation: () =>
     {
