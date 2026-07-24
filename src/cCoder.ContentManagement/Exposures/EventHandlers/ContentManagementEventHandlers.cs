@@ -8,8 +8,7 @@ namespace cCoder.ContentManagement.Exposures.EventHandlers;
 
 internal class ContentManagementEventHandlers(IEventHandlerService eventHandlerService) : IContentManagementEventHandlers
 {
-    public void ListenToAllEvents()
-    {
+    public void ListenToAllEvents() =>
         eventHandlerService.ListenToAllEvents();
-    }
+
 }

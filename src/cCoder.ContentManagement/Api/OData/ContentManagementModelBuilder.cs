@@ -20,20 +20,16 @@ internal class ContentManagementModelBuilder : ODataModelBuilder
     {
     }
 
-    public override ODataModel Build()
+    public override ODataModel Build() =>
+        new ODataModel
     {
-        return new ODataModel
-        {
-            Context = "Core",
-            Description = "Content Management endpoints for the platform.",
-            EDMModel = BuildEdmModel()
-        };
-    }
+        Context = "Core",
+        Description = "Content Management endpoints for the platform.",
+        EDMModel = BuildEdmModel()
+    };
 
-    public void Configure()
-    {
+    public void Configure() =>
         ConfigureModel();
-    }
 
     private IEdmModel BuildEdmModel()
     {

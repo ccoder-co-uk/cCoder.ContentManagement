@@ -10,9 +10,8 @@ namespace cCoder.ContentManagement.Rendering.Brokers;
 
 internal sealed class CommonObjectReaderBroker(ICommonObjectCache commonObjectCache) : ICommonObjectReaderBroker
 {
-    public IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup()
-    {
-        return commonObjectCache.GetAll<Resource>()
+    public IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup() =>
+        commonObjectCache.GetAll<Resource>()
             .GroupBy(keySelector: resource => BuildResourceLookupKey(key: resource.Key ?? string.Empty, name: resource.Name ?? string.Empty, culture: resource.Culture ?? string.Empty), comparer: StringComparer.OrdinalIgnoreCase)
             .ToDictionary(
 keySelector: group => group.Key,
@@ -34,11 +33,9 @@ elementSelector: group => new PageRenderResource
             .Description ?? string.Empty
 },
 comparer: StringComparer.OrdinalIgnoreCase);
-    }
 
-    public IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName()
-    {
-        return commonObjectCache.GetAll<Component>()
+    public IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName() =>
+        commonObjectCache.GetAll<Component>()
             .GroupBy(keySelector: component => component.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
             .ToDictionary(
 keySelector: group => group.Key,
@@ -56,11 +53,9 @@ elementSelector: group => new PageRenderComponent
             .Script ?? string.Empty
 },
 comparer: StringComparer.OrdinalIgnoreCase);
-    }
 
-    public IReadOnlyDictionary<string, PageRenderScript> GetScriptsByName()
-    {
-        return commonObjectCache.GetAll<Script>()
+    public IReadOnlyDictionary<string, PageRenderScript> GetScriptsByName() =>
+        commonObjectCache.GetAll<Script>()
             .GroupBy(keySelector: script => script.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
             .ToDictionary(
 keySelector: group => group.Key,
@@ -72,7 +67,6 @@ elementSelector: group => new PageRenderScript
             .Content ?? string.Empty
 },
 comparer: StringComparer.OrdinalIgnoreCase);
-    }
 
     private static string BuildResourceLookupKey(string key, string name, string culture) =>
         $"{key}|{name}|{culture}";

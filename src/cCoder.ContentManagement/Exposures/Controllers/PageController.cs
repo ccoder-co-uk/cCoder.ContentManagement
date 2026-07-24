@@ -49,15 +49,13 @@ public class PageController : ODataController
 
     [HttpGet]
     [ActionName("Menu")]
-    public IActionResult GetMenu([FromRoute] int key, string culture)
+    public IActionResult GetMenu([FromRoute] int key, string culture) =>
+        Ok(value: new Result<string>
     {
-        return Ok(value: new Result<string>
-        {
-            Id = key.ToString(),
-            Item = Service.MenuFor(pageId: key, culture: culture),
-            Success = true
-        });
-    }
+        Id = key.ToString(),
+        Item = Service.MenuFor(pageId: key, culture: culture),
+        Success = true
+    });
 
     [HttpGet]
     [AllowAnonymous]

@@ -61,11 +61,8 @@ public static partial class IServiceCollectionExtensions
         services.AddRendering();
     }
 
-    private static void AddContentManagementWeb(this IServiceCollection services, ODataConventionModelBuilder builder = null)
-    {
+    private static void AddContentManagementWeb(this IServiceCollection services, ODataConventionModelBuilder builder = null) =>
         services.AddContentManagement();
-
-    }
 
     private static void AddEventingTypes(this IServiceCollection services)
     {

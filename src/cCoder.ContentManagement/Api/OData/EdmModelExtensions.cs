@@ -97,9 +97,8 @@ public static class EdmModelExtensions
     private static IEnumerable<OperationContainer> GetBaseCrudOperations(MetadataContainer type) =>
         type.IsJoinEntity ? GetBaseCrudOperationsForJoinEntity(type: type) : GetBaseCrudOperationsForEntity(type: type);
 
-    private static IEnumerable<OperationContainer> GetBaseCrudOperationsForJoinEntity(MetadataContainer type)
-    {
-        return new OperationContainer[4]
+    private static IEnumerable<OperationContainer> GetBaseCrudOperationsForJoinEntity(MetadataContainer type) =>
+        new OperationContainer[4]
         {
             new OperationContainer
             {
@@ -139,11 +138,9 @@ public static class EdmModelExtensions
                 HttpVerb = "DELETE"
             }
         };
-    }
 
-    private static IEnumerable<OperationContainer> GetBaseCrudOperationsForEntity(MetadataContainer type)
-    {
-        return new OperationContainer[5]
+    private static IEnumerable<OperationContainer> GetBaseCrudOperationsForEntity(MetadataContainer type) =>
+        new OperationContainer[5]
         {
             new OperationContainer
             {
@@ -200,5 +197,5 @@ public static class EdmModelExtensions
                 HttpVerb = "DELETE"
             }
         };
-    }
+
 }

@@ -6,8 +6,7 @@ namespace cCoder.ContentManagement.Dependencies;
 
 internal static class ValidationRulesEngine
 {
-    internal static void Validate(params object[] inputs)
-    {
+    internal static void Validate(params object[] inputs) =>
         _ = inputs;
-    }
+
 }

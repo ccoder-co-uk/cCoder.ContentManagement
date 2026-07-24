@@ -122,13 +122,11 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
         }
     }
 
-    public T[] GetAll<T>()
-    {
-        return data.Values.AsParallel()
+    public T[] GetAll<T>() =>
+        data.Values.AsParallel()
             .Where(predicate: entry => entry.Key.StartsWith(value: typeof(T).Name.ToLowerInvariant()))
             .Select(selector: entry => (T)entry.Value)
             .ToArray();
-    }
 
     public T Get<T>(string key)
     {

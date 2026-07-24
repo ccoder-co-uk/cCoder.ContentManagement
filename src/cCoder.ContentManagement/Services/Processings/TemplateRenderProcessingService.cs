@@ -240,35 +240,31 @@ internal partial class TemplateRenderProcessingService(
         return (type: array[1].ToLower(), name: array2[0].ToLower(), options: array2[1].Split(separator: "|", options: StringSplitOptions.RemoveEmptyEntries));
     }
 
-    private void Script(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements)
-    {
+    private void Script(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[script\\[[A-Za-z\\d_/. \\-]*\\]\\]", action: match =>
-        {
-            string name = match.Value.Replace(oldValue: "[script[", newValue: "")
-                .Replace(oldValue: "]]", newValue: "")
-                .ToLower();
+                                                                                                                               {
+                                                                                                                                   string name = match.Value.Replace(oldValue: "[script[", newValue: "")
+                                                                                                                                       .Replace(oldValue: "]]", newValue: "")
+                                                                                                                                       .ToLower();
 
-            Script script = objectCache.Get<Script>(key: "script|" + name);
+                                                                                                                                   Script script = objectCache.Get<Script>(key: "script|" + name);
 
-            if (script != null)
-            {
-                Script obj = renderParams.App?.Scripts?.FirstOrDefault(predicate: (Script s) => s.Name.Equals(value: name, comparisonType: StringComparison.CurrentCultureIgnoreCase));
-                return ProcessContentString(key: key, renderParams: renderParams, content: obj?.Content ?? script.Content, replacements: replacements);
-            }
+                                                                                                                                   if (script != null)
+                                                                                                                                   {
+                                                                                                                                       Script obj = renderParams.App?.Scripts?.FirstOrDefault(predicate: (Script s) => s.Name.Equals(value: name, comparisonType: StringComparison.CurrentCultureIgnoreCase));
+                                                                                                                                       return ProcessContentString(key: key, renderParams: renderParams, content: obj?.Content ?? script.Content, replacements: replacements);
+                                                                                                                                   }
 
-            return string.Empty;
-        });
-    }
+                                                                                                                                   return string.Empty;
+                                                                                                                               });
 
-    private void Component(string key, RenderParams renderParams, IEnumerable<Replacement> replacements, StringBuilder result)
-    {
+    private void Component(string key, RenderParams renderParams, IEnumerable<Replacement> replacements, StringBuilder result) =>
         RegexReplace(source: result, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "component"), action: match =>
-        {
-            (string _, string name, string[] options) tag = SplitMatch(match: match);
-            Component component = renderParams.App?.Components?.FirstOrDefault(predicate: (Component c) => c.Name.Equals(value: tag.name, comparisonType: StringComparison.CurrentCultureIgnoreCase)) ?? objectCache.Get<Component>(key: "component|" + tag.name);
-            return (component == null) ? ("[[Missing Component:" + tag.name + "]]") : ProcessContentString(key: key, renderParams: renderParams, content: BuildComponentMarkup(component: component, tag: tag, replacements: replacements, renderParams: renderParams), replacements: replacements);
-        });
-    }
+                                                                                                                                  {
+                                                                                                                                      (string _, string name, string[] options) tag = SplitMatch(match: match);
+                                                                                                                                      Component component = renderParams.App?.Components?.FirstOrDefault(predicate: (Component c) => c.Name.Equals(value: tag.name, comparisonType: StringComparison.CurrentCultureIgnoreCase)) ?? objectCache.Get<Component>(key: "component|" + tag.name);
+                                                                                                                                      return (component == null) ? ("[[Missing Component:" + tag.name + "]]") : ProcessContentString(key: key, renderParams: renderParams, content: BuildComponentMarkup(component: component, tag: tag, replacements: replacements, renderParams: renderParams), replacements: replacements);
+                                                                                                                                  });
 
     private string BuildComponentMarkup(Component component, (string type, string name, string[] options) tag, IEnumerable<Replacement> replacements, RenderParams renderParams)
     {
@@ -280,55 +276,51 @@ internal partial class TemplateRenderProcessingService(
         return ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: content, replacements: replacements);
     }
 
-    private void ExecuteAsync(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements)
-    {
+    private void ExecuteAsync(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[execute\\](.*?)\\[/execute\\]", action: match =>
-        {
-            string value = match.Groups[1].Value;
+                                                                                                                                     {
+                                                                                                                                         string value = match.Groups[1].Value;
 
-            using HttpClient httpClient = new HttpClient(handler: new HttpClientHandler
-            {
-                AutomaticDecompression = (DecompressionMethods.GZip | DecompressionMethods.Deflate)
-            })
-            {
-                BaseAddress = new Uri(uriString: replacements.First(predicate: (Replacement r) => r.Old == "[api[workflow]]")
-                .New),
-                Timeout = TimeSpan.FromMinutes(minutes: 10L)
-            };
+                                                                                                                                         using HttpClient httpClient = new HttpClient(handler: new HttpClientHandler
+                                                                                                                                         {
+                                                                                                                                             AutomaticDecompression = (DecompressionMethods.GZip | DecompressionMethods.Deflate)
+                                                                                                                                         })
+                                                                                                                                         {
+                                                                                                                                             BaseAddress = new Uri(uriString: replacements.First(predicate: (Replacement r) => r.Old == "[api[workflow]]")
+                                                                                                                                             .New),
+                                                                                                                                             Timeout = TimeSpan.FromMinutes(minutes: 10L)
+                                                                                                                                         };
 
-            string content = SerializeForOData(model: new
-            {
-                Script = value,
-                Model = jsonBroker.ParseJson(json: replacements.First(predicate: (Replacement r) => r.Old == "[model]")
-                .New)
-            });
+                                                                                                                                         string content = SerializeForOData(model: new
+                                                                                                                                         {
+                                                                                                                                             Script = value,
+                                                                                                                                             Model = jsonBroker.ParseJson(json: replacements.First(predicate: (Replacement r) => r.Old == "[model]")
+                                                                                                                                             .New)
+                                                                                                                                         });
 
-            Task<string> task = httpClient.PostAsync(requestUri: "ExecuteScript?useDetails=true", content: new StringContent(content: content, encoding: Encoding.UTF8, mediaType: "text/plain"))
-                .ContinueWith(continuationFunction: (Task<HttpResponseMessage> t) => t.Result.Content.ReadAsStringAsync())
-                .Unwrap();
+                                                                                                                                         Task<string> task = httpClient.PostAsync(requestUri: "ExecuteScript?useDetails=true", content: new StringContent(content: content, encoding: Encoding.UTF8, mediaType: "text/plain"))
+                                                                                                                                             .ContinueWith(continuationFunction: (Task<HttpResponseMessage> t) => t.Result.Content.ReadAsStringAsync())
+                                                                                                                                             .Unwrap();
 
-            task.Wait();
-            return ProcessContentString(key: key, renderParams: renderParams, content: task.Result, replacements: replacements);
-        });
-    }
+                                                                                                                                         task.Wait();
+                                                                                                                                         return ProcessContentString(key: key, renderParams: renderParams, content: task.Result, replacements: replacements);
+                                                                                                                                     });
 
-    private static string SerializeForOData(object model)
+    private static string SerializeForOData(object model) =>
+        JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
     {
-        return JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        TypeNameHandling = TypeNameHandling.None,
+        Formatting = Formatting.None,
+        DateFormatHandling = DateFormatHandling.IsoDateFormat,
+        NullValueHandling = NullValueHandling.Ignore,
+        DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+        ContractResolver = new DefaultContractResolver
         {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.None,
-            Formatting = Formatting.None,
-            DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            NullValueHandling = NullValueHandling.Ignore,
-            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-            ContractResolver = new DefaultContractResolver
-            {
-                IgnoreSerializableAttribute = true
-            },
-            MaxDepth = 4
-        });
-    }
+            IgnoreSerializableAttribute = true
+        },
+        MaxDepth = 4
+    });
 
     private void Resource(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements)
     {
@@ -463,16 +455,14 @@ internal partial class TemplateRenderProcessingService(
         return resource ?? potentials.FirstOrDefault(predicate: (Resource resource2) => string.IsNullOrEmpty(value: resource2.Culture));
     }
 
-    private void Meta(StringBuilder source, string culture)
-    {
+    private void Meta(StringBuilder source, string culture) =>
         RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "meta"), action: match =>
-        {
-            string value = match.Value;
-            string text = value.Substring(startIndex: 6, length: value.Length - 6);
-            string key = text[..text.IndexOf(value: ']')].ToLowerInvariant();
-            return metadataCache.Get(key: key, culture: culture);
-        });
-    }
+                                                               {
+                                                                   string value = match.Value;
+                                                                   string text = value.Substring(startIndex: 6, length: value.Length - 6);
+                                                                   string key = text[..text.IndexOf(value: ']')].ToLowerInvariant();
+                                                                   return metadataCache.Get(key: key, culture: culture);
+                                                               });
 
     private static bool TryGetThemeDictionary(dynamic config, out IDictionary<string, object> themeDictionary)
     {
@@ -536,9 +526,8 @@ internal partial class TemplateRenderProcessingService(
         return list;
     }
 
-    private IEnumerable<Replacement> BuildIEnumerableThemeReplacements<T>(T model, string prefix)
-    {
-        return model.GetType()
+    private IEnumerable<Replacement> BuildIEnumerableThemeReplacements<T>(T model, string prefix) =>
+        model.GetType()
             .GetProperties()
             .SelectMany(selector: property =>
             {
@@ -576,7 +565,6 @@ internal partial class TemplateRenderProcessingService(
                 return result;
             })
             .Where(predicate: replacement => replacement.Old != null && replacement.New != null);
-    }
 
     private IEnumerable<Replacement> BuildJObjectThemeReplacements<T>(T model, string prefix)
     {
@@ -674,9 +662,8 @@ internal partial class TemplateRenderProcessingService(
         return list;
     }
 
-    private IEnumerable<Replacement> BuildModelReplacementsForObject(object model, string prefix)
-    {
-        return model.GetType()
+    private IEnumerable<Replacement> BuildModelReplacementsForObject(object model, string prefix) =>
+        model.GetType()
             .GetProperties()
             .SelectMany(selector: property =>
             {
@@ -708,7 +695,6 @@ internal partial class TemplateRenderProcessingService(
             })
             .Where(predicate: replacement => replacement.Old != null && replacement.New != null)
             .ToList();
-    }
 
     private IEnumerable<Replacement> BuildModelReplacementsForJObject(object model, string prefix)
     {

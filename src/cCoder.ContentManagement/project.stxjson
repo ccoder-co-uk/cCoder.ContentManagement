@@ -4217,6 +4217,99 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Models.Exports.ExportContent",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "CultureId",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Html",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.Exports.ExportPage",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "Contents",
+          "Type": "cCoder.ContentManagement.Models.Exports.ExportContent[]"
+        },
+        {
+          "Name": "Id",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "LastUpdated",
+          "Type": "System.DateTimeOffset"
+        },
+        {
+          "Name": "Layout",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Order",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "PageInfo",
+          "Type": "cCoder.ContentManagement.Models.Exports.ExportPageInfo[]"
+        },
+        {
+          "Name": "ParentId",
+          "Type": "System.Int32?"
+        },
+        {
+          "Name": "Path",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ResourceKey",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ShowOnMenus",
+          "Type": "System.Boolean"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.Exports.ExportPageInfo",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "CultureId",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Description",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Keywords",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Title",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Models.ModelStateError",
       "StandardElementType": "Model",
       "Properties": [
@@ -6121,99 +6214,6 @@
           "ReturnType": "Package"
         }
       ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent",
-      "StandardElementType": "FoundationService",
-      "Properties": [
-        {
-          "Name": "CultureId",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Html",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "StandardElementType": "FoundationService",
-      "Properties": [
-        {
-          "Name": "Contents",
-          "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent[]"
-        },
-        {
-          "Name": "Id",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "LastUpdated",
-          "Type": "System.DateTimeOffset"
-        },
-        {
-          "Name": "Layout",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Order",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "PageInfo",
-          "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo[]"
-        },
-        {
-          "Name": "ParentId",
-          "Type": "System.Int32?"
-        },
-        {
-          "Name": "Path",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ResourceKey",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ShowOnMenus",
-          "Type": "System.Boolean"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "StandardElementType": "FoundationService",
-      "Properties": [
-        {
-          "Name": "CultureId",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Description",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Keywords",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Title",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
     },
     {
       "Name": "cCoder.ContentManagement.Services.Foundations.RenderFileContentService",
@@ -12073,7 +12073,7 @@
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.AuthorizationBroker",
-      "LineNumber": 85
+      "LineNumber": 83
     },
     {
       "Code": "STXB002",
@@ -12321,60 +12321,53 @@
       "LineNumber": 110
     },
     {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
+      "Code": "STXE001",
+      "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 125
+      "LineNumber": 134
+    },
+    {
+      "Code": "STXE005",
+      "Description": "An exposure must not sequence multiple routine calls.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
+      "LineNumber": 137
+    },
+    {
+      "Code": "STXE005",
+      "Description": "An exposure must not sequence multiple routine calls.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
+      "LineNumber": 154
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 136
+      "LineNumber": 163
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 139
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 156
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 165
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 168
+      "LineNumber": 166
     },
     {
       "Code": "STXE002",
       "Description": "An exposure must not contain loops.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 179
+      "LineNumber": 177
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 187
+      "LineNumber": 185
     },
     {
       "Code": "STX0002",
@@ -12475,25 +12468,11 @@
       "LineNumber": 95
     },
     {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 101
-    },
-    {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 111
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 139
+      "LineNumber": 109
     },
     {
       "Code": "STXE003",
@@ -12599,13 +12578,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
       "LineNumber": 26
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 50
     },
     {
       "Code": "STX0002",
@@ -12865,27 +12837,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Models.Result\u003CT\u003E",
       "LineNumber": 46
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker",
-      "LineNumber": 61
     },
     {
       "Code": "STXM002",
@@ -13483,83 +13434,6 @@
       "LineNumber": 21
     },
     {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 108
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 184
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 224
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 237
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 271
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 493
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 513
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 526
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 594
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 618
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 631
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
@@ -13655,7 +13529,7 @@
       "Description": "Creation method names must include the concrete type they create.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Foundations.ContentManagementMetadataTypeService",
-      "LineNumber": 104
+      "LineNumber": 100
     },
     {
       "Code": "STXF002",
@@ -13774,287 +13648,7 @@
       "Description": "Creation method names must include the concrete type they create.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService",
-      "LineNumber": 303
-    },
-    {
-      "Code": "STX0008",
-      "Description": "A service must declare its validations in a Validations partial.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STX0009",
-      "Description": "A service must declare TryCatch handling in an Exceptions partial.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STX0013",
-      "Description": "A service must implement a local interface.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STXEX001",
-      "Description": "Every TryCatch overload must classify, wrap, and preserve validation exceptions.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STXEX002",
-      "Description": "Every TryCatch overload must classify, wrap, and preserve dependency exceptions.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STXEX003",
-      "Description": "Every TryCatch overload must wrap and preserve unclassified exceptions.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent",
-      "LineNumber": 41
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent",
-      "LineNumber": 42
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportContent",
-      "LineNumber": 43
-    },
-    {
-      "Code": "STX0008",
-      "Description": "A service must declare its validations in a Validations partial.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0009",
-      "Description": "A service must declare TryCatch handling in an Exceptions partial.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0013",
-      "Description": "A service must implement a local interface.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STXEX001",
-      "Description": "Every TryCatch overload must classify, wrap, and preserve validation exceptions.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STXEX002",
-      "Description": "Every TryCatch overload must classify, wrap, and preserve dependency exceptions.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STXEX003",
-      "Description": "Every TryCatch overload must wrap and preserve unclassified exceptions.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 26
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 27
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 28
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 29
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 30
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 31
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 32
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 33
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 34
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 35
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPage",
-      "LineNumber": 36
-    },
-    {
-      "Code": "STX0008",
-      "Description": "A service must declare its validations in a Validations partial.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "LineNumber": 46
-    },
-    {
-      "Code": "STX0009",
-      "Description": "A service must declare TryCatch handling in an Exceptions partial.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "LineNumber": 46
-    },
-    {
-      "Code": "STX0013",
-      "Description": "A service must implement a local interface.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "LineNumber": 46
-    },
-    {
-      "Code": "STXEX001",
-      "Description": "Every TryCatch overload must classify, wrap, and preserve validation exceptions.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "LineNumber": 46
-    },
-    {
-      "Code": "STXEX002",
-      "Description": "Every TryCatch overload must classify, wrap, and preserve dependency exceptions.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "LineNumber": 46
-    },
-    {
-      "Code": "STXEX003",
-      "Description": "Every TryCatch overload must wrap and preserve unclassified exceptions.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "LineNumber": 46
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "LineNumber": 48
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "LineNumber": 49
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "LineNumber": 50
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService.ExportPageInfo",
-      "LineNumber": 51
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService",
-      "LineNumber": 131
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService",
-      "LineNumber": 107
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService",
-      "LineNumber": 134
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PageRoleService",
-      "LineNumber": 60
+      "LineNumber": 272
     },
     {
       "Code": "STXO001",
@@ -14134,55 +13728,6 @@
       "LineNumber": 25
     },
     {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 240
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 260
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 280
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 312
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 330
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 418
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 491
-    },
-    {
       "Code": "STX0004",
       "Description": "A service must not depend on another service at the same layer.",
       "Severity": "Warning",
@@ -14216,41 +13761,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
       "LineNumber": 15
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
-      "LineNumber": 170
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
-      "LineNumber": 219
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
-      "LineNumber": 234
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
-      "LineNumber": 260
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
-      "LineNumber": 282
     },
     {
       "Code": "STX0007",
@@ -14309,60 +13819,11 @@
       "LineNumber": 105
     },
     {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 243
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 263
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 283
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 315
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 466
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 539
-    },
-    {
-      "Code": "STXFORMAT006",
-      "Description": "A single multiline method call must be expressed as an expression-bodied method.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 677
-    },
-    {
       "Code": "STXFORMAT005",
       "Description": "Method call arguments must declare their parameter names.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 869
+      "LineNumber": 855
     }
   ]
 }

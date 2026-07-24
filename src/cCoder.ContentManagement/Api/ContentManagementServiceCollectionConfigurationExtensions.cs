@@ -114,36 +114,34 @@ builder: builder);
         IServiceCollection services,
         string documentName,
         ContentManagementConfiguration newContentManagementConfiguration,
-        bool useFullSchemaIds)
-    {
-        services.AddSwaggerGen(setupAction: options =>
-        {
-            options.ResolveConflictingActions(resolver: apiDescriptions => apiDescriptions.First());
-            AddSwaggerDocuments(options: options, documentName: documentName, newContentManagementConfiguration: newContentManagementConfiguration);
+        bool useFullSchemaIds) =>
+            services.AddSwaggerGen(setupAction: options =>
+                                  {
+                                      options.ResolveConflictingActions(resolver: apiDescriptions => apiDescriptions.First());
+                                      AddSwaggerDocuments(options: options, documentName: documentName, newContentManagementConfiguration: newContentManagementConfiguration);
 
-            options.DocInclusionPredicate(
-predicate: (swaggerDocumentName, apiDescription) =>
-                    ShouldIncludeInDocument(
-swaggerDocumentName: swaggerDocumentName,
-relativePath: apiDescription.RelativePath,
-documentName: documentName,
-configuration: newContentManagementConfiguration));
+                                      options.DocInclusionPredicate(
+                          predicate: (swaggerDocumentName, apiDescription) =>
+                                              ShouldIncludeInDocument(
+                          swaggerDocumentName: swaggerDocumentName,
+                          relativePath: apiDescription.RelativePath,
+                          documentName: documentName,
+                          configuration: newContentManagementConfiguration));
 
-            if (useFullSchemaIds)
-            {
-                options.CustomSchemaIds(schemaIdSelector: type => type.FullName?.Replace(oldChar: '+', newChar: '.') ?? type.Name);
-            }
+                                      if (useFullSchemaIds)
+                                      {
+                                          options.CustomSchemaIds(schemaIdSelector: type => type.FullName?.Replace(oldChar: '+', newChar: '.') ?? type.Name);
+                                      }
 
-            //options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
-            //{
-            //    Description = @"Authorization header using the Bearer scheme.",
-            //    Name = "Authorization",
-            //    In = ParameterLocation.Header,
-            //    Type = SecuritySchemeType.ApiKey,
-            //    Scheme = "bearer",
-            //});
-        });
-    }
+                                      //options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+                                      //{
+                                      //    Description = @"Authorization header using the Bearer scheme.",
+                                      //    Name = "Authorization",
+                                      //    In = ParameterLocation.Header,
+                                      //    Type = SecuritySchemeType.ApiKey,
+                                      //    Scheme = "bearer",
+                                      //});
+                                  });
 
     private static void AddSwaggerDocuments(
         Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options,

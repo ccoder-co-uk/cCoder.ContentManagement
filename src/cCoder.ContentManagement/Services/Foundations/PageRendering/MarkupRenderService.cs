@@ -105,36 +105,34 @@ internal sealed partial class MarkupRenderService(
         return result.ToString();
     }
 
-    private void Content(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements)
-    {
+    private void Content(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements) =>
         RegexReplace(source: source, regex: syntax.ContentRegex, action: match =>
-        {
-            string name = GetName(match: match);
-            string[] options = GetOptions(match: match);
-            PageRenderContent pageRenderContent = null;
+                                                                                                                                        {
+                                                                                                                                            string name = GetName(match: match);
+                                                                                                                                            string[] options = GetOptions(match: match);
+                                                                                                                                            PageRenderContent pageRenderContent = null;
 
-            if (session.Page != null && session.Page.ContentByName.TryGetValue(key: name, value: out PageRenderContent value))
-            {
-                pageRenderContent = value;
-            }
+                                                                                                                                            if (session.Page != null && session.Page.ContentByName.TryGetValue(key: name, value: out PageRenderContent value))
+                                                                                                                                            {
+                                                                                                                                                pageRenderContent = value;
+                                                                                                                                            }
 
-            string optionalClass = string.Join(separator: " ", values: options.Where(predicate: option => option.StartsWith(value: "class="))
-                .Select(selector: option => option.Replace(oldValue: "class=", newValue: string.Empty)));
+                                                                                                                                            string optionalClass = string.Join(separator: " ", values: options.Where(predicate: option => option.StartsWith(value: "class="))
+                                                                                                                                                .Select(selector: option => option.Replace(oldValue: "class=", newValue: string.Empty)));
 
-            string contentEditable = session.Request.Edit ? "contenteditable" : string.Empty;
+                                                                                                                                            string contentEditable = session.Request.Edit ? "contenteditable" : string.Empty;
 
-            if (pageRenderContent == null)
-            {
-                return "[[Missing Content:" + name + "]]";
-            }
+                                                                                                                                            if (pageRenderContent == null)
+                                                                                                                                            {
+                                                                                                                                                return "[[Missing Content:" + name + "]]";
+                                                                                                                                            }
 
-            string html = $"<section name='{name}' class='content {optionalClass}' data-id='{pageRenderContent.Id}' {contentEditable} {string.Join(separator: " ", values: options.Where(predicate: option => !option.StartsWith(value: "class=")))}>\n                        {(session.Request.Edit ? pageRenderContent.Html : RenderMarkup(key: key, content: pageRenderContent.Html, session: session, replacements: replacements))}\n                    </section>";
+                                                                                                                                            string html = $"<section name='{name}' class='content {optionalClass}' data-id='{pageRenderContent.Id}' {contentEditable} {string.Join(separator: " ", values: options.Where(predicate: option => !option.StartsWith(value: "class=")))}>\n                        {(session.Request.Edit ? pageRenderContent.Html : RenderMarkup(key: key, content: pageRenderContent.Html, session: session, replacements: replacements))}\n                    </section>";
 
-            return session.Request.Edit
-                ? html
-                : RenderMarkup(key: key, content: html, session: session, replacements: replacements, allowContentTags: false);
-        });
-    }
+                                                                                                                                            return session.Request.Edit
+                                                                                                                                                ? html
+                                                                                                                                                : RenderMarkup(key: key, content: html, session: session, replacements: replacements, allowContentTags: false);
+                                                                                                                                        });
 
     private void Nav(StringBuilder source, PageRenderSession session)
     {
@@ -181,18 +179,16 @@ values: session.App.PagesById.Values
         }
     }
 
-    private void Dms(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements)
-    {
+    private void Dms(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements) =>
         RegexReplace(source: source, regex: syntax.DmsRegex, action: match =>
-        {
-            string name = GetName(match: match);
-            string latestTextContent = renderFileContentService.GetLatestTextContent(appId: session.App?.Id ?? 0, path: name);
+                                                                                                                                    {
+                                                                                                                                        string name = GetName(match: match);
+                                                                                                                                        string latestTextContent = renderFileContentService.GetLatestTextContent(appId: session.App?.Id ?? 0, path: name);
 
-            return string.IsNullOrEmpty(value: latestTextContent)
-                ? string.Empty
-                : RenderMarkup(key: key, content: latestTextContent, session: session, replacements: replacements, allowContentTags: false);
-        });
-    }
+                                                                                                                                        return string.IsNullOrEmpty(value: latestTextContent)
+                                                                                                                                            ? string.Empty
+                                                                                                                                            : RenderMarkup(key: key, content: latestTextContent, session: session, replacements: replacements, allowContentTags: false);
+                                                                                                                                    });
 
     private void Component(string key, PageRenderSession session, IReadOnlyCollection<Replacement> replacements, StringBuilder result)
     {
@@ -221,75 +217,67 @@ values: session.App.PagesById.Values
         });
     }
 
-    private void Script(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements)
-    {
+    private void Script(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements) =>
         RegexReplace(source: source, regex: syntax.ScriptRegex, action: match =>
-        {
-            string name = GetName(match: match);
-            PageRenderScript script = ResolveScript(session: session, name: name);
+                                                                                                                                       {
+                                                                                                                                           string name = GetName(match: match);
+                                                                                                                                           PageRenderScript script = ResolveScript(session: session, name: name);
 
-            return script == null
-                ? string.Empty
-                : RenderMarkup(key: key, content: script.Content, session: session, replacements: replacements, allowContentTags: false);
-        });
-    }
+                                                                                                                                           return script == null
+                                                                                                                                               ? string.Empty
+                                                                                                                                               : RenderMarkup(key: key, content: script.Content, session: session, replacements: replacements, allowContentTags: false);
+                                                                                                                                       });
 
-    private void ExecuteAsync(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements)
-    {
+    private void ExecuteAsync(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements) =>
         RegexReplace(source: source, regex: syntax.ExecuteRegex, action: match =>
-        {
-            string code = match.Groups[1].Value;
-            string json = replacements.FirstOrDefault(predicate: replacement => replacement.Old == "[model]")?.New ?? "{}";
+                                                                                                                                             {
+                                                                                                                                                 string code = match.Groups[1].Value;
+                                                                                                                                                 string json = replacements.FirstOrDefault(predicate: replacement => replacement.Old == "[model]")?.New ?? "{}";
 
-            using HttpClient httpClient = new(handler: new HttpClientHandler
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            })
-            {
-                BaseAddress = new Uri(uriString: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]")
-                .New),
-                Timeout = TimeSpan.FromMinutes(minutes: 10)
-            };
+                                                                                                                                                 using HttpClient httpClient = new(handler: new HttpClientHandler
+                                                                                                                                                 {
+                                                                                                                                                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                                                                                                                                                 })
+                                                                                                                                                 {
+                                                                                                                                                     BaseAddress = new Uri(uriString: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]")
+                                                                                                                                                     .New),
+                                                                                                                                                     Timeout = TimeSpan.FromMinutes(minutes: 10)
+                                                                                                                                                 };
 
-            string content = SerializeForOData(model: new
-            {
-                Script = code,
-                Model = jsonBroker.ParseJson(json: json)
-            });
+                                                                                                                                                 string content = SerializeForOData(model: new
+                                                                                                                                                 {
+                                                                                                                                                     Script = code,
+                                                                                                                                                     Model = jsonBroker.ParseJson(json: json)
+                                                                                                                                                 });
 
-            Task<string> task = httpClient
-                .PostAsync(requestUri: "ExecuteScript?useDetails=true", content: new StringContent(content: content, encoding: Encoding.UTF8, mediaType: "text/plain"))
-                .ContinueWith(continuationFunction: responseTask => responseTask.Result.Content.ReadAsStringAsync())
-                .Unwrap();
+                                                                                                                                                 Task<string> task = httpClient
+                                                                                                                                                     .PostAsync(requestUri: "ExecuteScript?useDetails=true", content: new StringContent(content: content, encoding: Encoding.UTF8, mediaType: "text/plain"))
+                                                                                                                                                     .ContinueWith(continuationFunction: responseTask => responseTask.Result.Content.ReadAsStringAsync())
+                                                                                                                                                     .Unwrap();
 
-            task.Wait();
+                                                                                                                                                 task.Wait();
 
-            return RenderMarkup(key: key, content: task.Result, session: session, replacements: replacements, allowContentTags: false);
-        });
-    }
+                                                                                                                                                 return RenderMarkup(key: key, content: task.Result, session: session, replacements: replacements, allowContentTags: false);
+                                                                                                                                             });
 
-    private static string SerializeForOData(object model)
+    private static string SerializeForOData(object model) =>
+        JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
     {
-        return JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        TypeNameHandling = TypeNameHandling.None,
+        Formatting = Formatting.None,
+        DateFormatHandling = DateFormatHandling.IsoDateFormat,
+        NullValueHandling = NullValueHandling.Ignore,
+        DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+        ContractResolver = new DefaultContractResolver
         {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.None,
-            Formatting = Formatting.None,
-            DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            NullValueHandling = NullValueHandling.Ignore,
-            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-            ContractResolver = new DefaultContractResolver
-            {
-                IgnoreSerializableAttribute = true
-            },
-            MaxDepth = 4
-        });
-    }
+            IgnoreSerializableAttribute = true
+        },
+        MaxDepth = 4
+    });
 
-    private void Meta(StringBuilder source, PageRenderSession session)
-    {
+    private void Meta(StringBuilder source, PageRenderSession session) =>
         RegexReplace(source: source, regex: syntax.MetaRegex, action: match => session.MetadataResolver(arg: GetName(match: match)) ?? string.Empty);
-    }
 
     private void Resource(StringBuilder source, PageRenderSession session, string key, IReadOnlyCollection<Replacement> replacements)
     {
@@ -490,9 +478,8 @@ values: session.App.PagesById.Values
         return replacements;
     }
 
-    private IEnumerable<Replacement> BuildObjectReplacements(object model, string prefix)
-    {
-        return model.GetType()
+    private IEnumerable<Replacement> BuildObjectReplacements(object model, string prefix) =>
+        model.GetType()
             .GetProperties()
             .SelectMany(selector: property =>
             {
@@ -508,11 +495,9 @@ values: session.App.PagesById.Values
                     ? BuildModelReplacements(model: value, prefix: bindingExpression)
                     : Array.Empty<Replacement>();
             });
-    }
 
-    private IEnumerable<Replacement> BuildJObjectReplacements(JObject model, string prefix)
-    {
-        return model.Properties()
+    private IEnumerable<Replacement> BuildJObjectReplacements(JObject model, string prefix) =>
+        model.Properties()
             .SelectMany(selector: property =>
         {
             string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
@@ -521,26 +506,23 @@ values: session.App.PagesById.Values
                 ? [new Replacement(old: "[model[" + bindingExpression + "]]", @new: value.ToString())]
                 : BuildModelReplacements(model: property.Value, prefix: bindingExpression);
         });
-    }
 
-    private IEnumerable<Replacement> BuildDynamicReplacements(IDictionary<string, object> model, string prefix)
-    {
-        return model.Keys.SelectMany(selector: key =>
-        {
-            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
-            object value = model[key];
+    private IEnumerable<Replacement> BuildDynamicReplacements(IDictionary<string, object> model, string prefix) =>
+        model.Keys.SelectMany(selector: key =>
+                                                                                                                           {
+                                                                                                                               string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
+                                                                                                                               object value = model[key];
 
-            List<Replacement> replacements = [new(old: "[model[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
+                                                                                                                               List<Replacement> replacements = [new(old: "[model[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
 
-            if (value != null && !value.GetType()
-                .IsValueType && value is not string)
-            {
-                replacements.AddRange(collection: BuildModelReplacements(model: value, prefix: bindingExpression));
-            }
+                                                                                                                               if (value != null && !value.GetType()
+                                                                                                                                   .IsValueType && value is not string)
+                                                                                                                               {
+                                                                                                                                   replacements.AddRange(collection: BuildModelReplacements(model: value, prefix: bindingExpression));
+                                                                                                                               }
 
-            return replacements;
-        });
-    }
+                                                                                                                               return replacements;
+                                                                                                                           });
 
     private IEnumerable<Replacement> BuildThemeReplacements(object model, string prefix = "")
     {
@@ -591,9 +573,8 @@ values: session.App.PagesById.Values
         return replacements;
     }
 
-    private IEnumerable<Replacement> BuildThemeObjectReplacements(object model, string prefix)
-    {
-        return model.GetType()
+    private IEnumerable<Replacement> BuildThemeObjectReplacements(object model, string prefix) =>
+        model.GetType()
             .GetProperties()
             .SelectMany(selector: property =>
             {
@@ -613,11 +594,9 @@ values: session.App.PagesById.Values
                     ? BuildThemeReplacements(model: value, prefix: bindingExpression)
                     : Array.Empty<Replacement>();
             });
-    }
 
-    private IEnumerable<Replacement> BuildThemeJObjectReplacements(JObject model, string prefix)
-    {
-        return model.Properties()
+    private IEnumerable<Replacement> BuildThemeJObjectReplacements(JObject model, string prefix) =>
+        model.Properties()
             .SelectMany(selector: property =>
         {
             string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
@@ -626,26 +605,23 @@ values: session.App.PagesById.Values
                 ? [new Replacement(old: "[theme[" + bindingExpression + "]]", @new: value.ToString())]
                 : BuildThemeReplacements(model: property.Value, prefix: bindingExpression);
         });
-    }
 
-    private IEnumerable<Replacement> BuildThemeDynamicReplacements(IDictionary<string, object> model, string prefix)
-    {
-        return model.Keys.SelectMany(selector: key =>
-        {
-            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
-            object value = model[key];
+    private IEnumerable<Replacement> BuildThemeDynamicReplacements(IDictionary<string, object> model, string prefix) =>
+        model.Keys.SelectMany(selector: key =>
+                                                                                                                                {
+                                                                                                                                    string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
+                                                                                                                                    object value = model[key];
 
-            List<Replacement> replacements = [new(old: "[theme[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
+                                                                                                                                    List<Replacement> replacements = [new(old: "[theme[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
 
-            if (value != null && !value.GetType()
-                .IsValueType)
-            {
-                replacements.AddRange(collection: BuildThemeReplacements(model: value, prefix: bindingExpression));
-            }
+                                                                                                                                    if (value != null && !value.GetType()
+                                                                                                                                        .IsValueType)
+                                                                                                                                    {
+                                                                                                                                        replacements.AddRange(collection: BuildThemeReplacements(model: value, prefix: bindingExpression));
+                                                                                                                                    }
 
-            return replacements;
-        });
-    }
+                                                                                                                                    return replacements;
+                                                                                                                                });
 
     private static bool TryGetThemeDictionary(object config, out IDictionary<string, object> themeDictionary)
     {
@@ -716,12 +692,10 @@ values: session.App.PagesById.Values
         return FindIndexedResource(lookup: session.CommonResourcesByLookup, key: key, name: name, culture: string.Empty);
     }
 
-    private static PageRenderResource FindIndexedResource(IReadOnlyDictionary<string, PageRenderResource> lookup, string key, string name, string culture)
-    {
-        return lookup.TryGetValue(key: BuildResourceLookupKey(key: key, name: name, culture: culture), value: out PageRenderResource value)
+    private static PageRenderResource FindIndexedResource(IReadOnlyDictionary<string, PageRenderResource> lookup, string key, string name, string culture) =>
+        lookup.TryGetValue(key: BuildResourceLookupKey(key: key, name: name, culture: culture), value: out PageRenderResource value)
             ? value
             : null;
-    }
 
     private PageRenderComponent ResolveComponent(PageRenderSession session, string name)
     {
