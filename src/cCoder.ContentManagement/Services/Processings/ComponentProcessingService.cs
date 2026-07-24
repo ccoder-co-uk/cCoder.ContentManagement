@@ -46,12 +46,12 @@ internal partial class ComponentProcessingService(IComponentService service) : I
         return service.DeleteAsync(componentId: componentId);
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent) =>
-        TryCatch<IEnumerable<Result<Component>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent) =>
+        TryCatch<IEnumerable<OperationResult<Component>>>(operation: async () =>
     {
         ValidateOrUpdateComponentResultOnAdd(inputs: [newComponent]);
         ValidateComponents(components: newComponent, parameterName: "items");
-        List<Result<Component>> results = new List<Result<Component>>();
+        List<OperationResult<Component>> results = new List<OperationResult<Component>>();
 
         foreach (Component item in newComponent)
         {
@@ -59,7 +59,7 @@ internal partial class ComponentProcessingService(IComponentService service) : I
             {
                 Component savedItem = item.Id < 1 ? await ExecuteAddComponentAsync(newComponent: item) : await ExecuteUpdateComponentAsync(updatedComponent: item);
 
-                results.Add(item: new Result<Component>
+                results.Add(item: new OperationResult<Component>
                 {
                     Success = true,
                     Item = savedItem,
@@ -68,7 +68,7 @@ internal partial class ComponentProcessingService(IComponentService service) : I
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Component>
+                results.Add(item: new OperationResult<Component>
                 {
                     Success = false,
                     Item = item,

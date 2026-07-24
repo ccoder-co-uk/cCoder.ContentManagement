@@ -63,8 +63,8 @@ internal partial class SubmissionOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission) =>
-        TryCatch<IEnumerable<Result<Submission>>>(operation: () =>
+    public ValueTask<IEnumerable<OperationResult<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission) =>
+        TryCatch<IEnumerable<OperationResult<Submission>>>(operation: () =>
     {
         ValidateOrUpdateSubmissionResultOnAdd(inputs: [newSubmission]);
         return processingService.AddOrUpdateSubmissionResult(newSubmission: ValidateSubmissions(submissions: newSubmission, parameterName: "items"));

@@ -19,7 +19,7 @@ public interface IPackageOrchestrationService
 
     ValueTask DeleteAsync(Guid packageId);
 
-    ValueTask<IEnumerable<Result<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage);
+    ValueTask<IEnumerable<OperationResult<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage);
 
     ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage);
 }

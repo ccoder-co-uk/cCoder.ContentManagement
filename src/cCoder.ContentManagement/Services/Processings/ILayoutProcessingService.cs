@@ -19,7 +19,7 @@ public interface ILayoutProcessingService
 
     ValueTask DeleteAsync(int layoutId);
 
-    ValueTask<IEnumerable<Result<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout);
+    ValueTask<IEnumerable<OperationResult<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout);
 
     ValueTask DeleteAllLayoutAsync(IEnumerable<Layout> deletedLayout);
 }

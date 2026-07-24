@@ -19,7 +19,7 @@ public interface IContentOrchestrationService
 
     ValueTask DeleteAsync(int contentId);
 
-    ValueTask<IEnumerable<Result<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent);
+    ValueTask<IEnumerable<OperationResult<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent);
 
     ValueTask DeleteAllContentAsync(IEnumerable<Content> deletedContent);
 }

@@ -60,8 +60,8 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject) =>
-        TryCatch<IEnumerable<Result<CommonObject>>>(operation: () =>
+    public ValueTask<IEnumerable<OperationResult<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject) =>
+        TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: () =>
     {
         ValidateOrUpdateCommonObjectResultOnAdd(inputs: [newCommonObject]);
         return processingService.AddOrUpdateCommonObjectResult(newCommonObject: ValidateCommonObjects(commonObjects: newCommonObject, parameterName: "items"));
@@ -83,8 +83,8 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
 
     });
 
-    public ValueTask<IEnumerable<Result<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items) =>
-        TryCatch<IEnumerable<Result<CommonObject>>>(operation: () =>
+    public ValueTask<IEnumerable<OperationResult<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items) =>
+        TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: () =>
     {
         ValidateImportCommonObjectResultAsync(inputs: [items]);
         return processingService.ImportCommonObjectResultAsync(items: ValidateCommonObjects(commonObjects: items, parameterName: "items"));

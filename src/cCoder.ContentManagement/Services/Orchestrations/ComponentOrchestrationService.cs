@@ -98,15 +98,15 @@ internal partial class ComponentOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent) =>
-        TryCatch<IEnumerable<Result<Component>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent) =>
+        TryCatch<IEnumerable<OperationResult<Component>>>(operation: async () =>
     {
         ValidateOrUpdateComponentResultOnAdd(inputs: [newComponent]);
 
         Component[] components = ValidateComponents(components: newComponent, parameterName: "items")
             .ToArray();
 
-        List<Result<Component>> results = new();
+        List<OperationResult<Component>> results = new();
 
         foreach (Component component in components)
         {
@@ -116,7 +116,7 @@ internal partial class ComponentOrchestrationService(
                     ? await ExecuteAddComponentAsync(newComponent: component)
                     : await ExecuteUpdateComponentAsync(updatedComponent: component);
 
-                results.Add(item: new Result<Component>
+                results.Add(item: new OperationResult<Component>
                 {
                     Success = true,
                     Item = result,
@@ -125,7 +125,7 @@ internal partial class ComponentOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Component>
+                results.Add(item: new OperationResult<Component>
                 {
                     Success = false,
                     Item = component,
@@ -225,12 +225,12 @@ internal partial class ComponentOrchestrationService(
         return result;
     }
 
-    private async ValueTask<IEnumerable<Result<Component>>> ExecuteAddOrUpdateComponentResult(IEnumerable<Component> newComponent)
+    private async ValueTask<IEnumerable<OperationResult<Component>>> ExecuteAddOrUpdateComponentResult(IEnumerable<Component> newComponent)
     {
         Component[] components = ValidateComponents(components: newComponent, parameterName: "items")
             .ToArray();
 
-        List<Result<Component>> results = new();
+        List<OperationResult<Component>> results = new();
 
         foreach (Component component in components)
         {
@@ -240,7 +240,7 @@ internal partial class ComponentOrchestrationService(
                     ? await ExecuteAddComponentAsync(newComponent: component)
                     : await ExecuteUpdateComponentAsync(updatedComponent: component);
 
-                results.Add(item: new Result<Component>
+                results.Add(item: new OperationResult<Component>
                 {
                     Success = true,
                     Item = result,
@@ -249,7 +249,7 @@ internal partial class ComponentOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Component>
+                results.Add(item: new OperationResult<Component>
                 {
                     Success = false,
                     Item = component,

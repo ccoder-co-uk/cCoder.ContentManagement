@@ -54,12 +54,12 @@ internal partial class CultureProcessingService(ICultureService service) : ICult
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Culture>>> AddOrUpdateCultureResult(IEnumerable<Culture> newCulture) =>
-        TryCatch<IEnumerable<Result<Culture>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Culture>>> AddOrUpdateCultureResult(IEnumerable<Culture> newCulture) =>
+        TryCatch<IEnumerable<OperationResult<Culture>>>(operation: async () =>
     {
         ValidateOrUpdateCultureResultOnAdd(inputs: [newCulture]);
         ValidateCultures(cultures: newCulture, parameterName: "items");
-        List<Result<Culture>> results = new List<Result<Culture>>();
+        List<OperationResult<Culture>> results = new List<OperationResult<Culture>>();
 
         foreach (Culture item in newCulture)
         {
@@ -67,7 +67,7 @@ internal partial class CultureProcessingService(ICultureService service) : ICult
             {
                 Culture savedItem = string.IsNullOrWhiteSpace(value: item.Id) ? await ExecuteAddCultureAsync(newCulture: item) : await ExecuteUpdateCultureAsync(updatedCulture: item);
 
-                results.Add(item: new Result<Culture>
+                results.Add(item: new OperationResult<Culture>
                 {
                     Success = true,
                     Item = savedItem,
@@ -76,7 +76,7 @@ internal partial class CultureProcessingService(ICultureService service) : ICult
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Culture>
+                results.Add(item: new OperationResult<Culture>
                 {
                     Success = false,
                     Item = item,

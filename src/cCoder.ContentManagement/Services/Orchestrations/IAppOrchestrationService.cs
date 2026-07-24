@@ -24,7 +24,7 @@ public interface IAppOrchestrationService
 
     ValueTask DeleteAsync(int appId);
 
-    ValueTask<IEnumerable<Result<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp);
+    ValueTask<IEnumerable<OperationResult<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp);
 
     ValueTask DeleteAllAppAsync(IEnumerable<App> deletedApp);
 

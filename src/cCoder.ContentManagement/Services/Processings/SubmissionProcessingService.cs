@@ -54,12 +54,12 @@ internal partial class SubmissionProcessingService(ISubmissionService service) :
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission) =>
-        TryCatch<IEnumerable<Result<Submission>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission) =>
+        TryCatch<IEnumerable<OperationResult<Submission>>>(operation: async () =>
     {
         ValidateOrUpdateSubmissionResultOnAdd(inputs: [newSubmission]);
         ValidateSubmissions(submissions: newSubmission, parameterName: "items");
-        List<Result<Submission>> results = new List<Result<Submission>>();
+        List<OperationResult<Submission>> results = new List<OperationResult<Submission>>();
 
         foreach (Submission item in newSubmission)
         {
@@ -67,7 +67,7 @@ internal partial class SubmissionProcessingService(ISubmissionService service) :
             {
                 Submission savedItem = item.Id == Guid.Empty ? await ExecuteAddSubmissionAsync(newSubmission: item) : await ExecuteUpdateSubmissionAsync(updatedSubmission: item);
 
-                results.Add(item: new Result<Submission>
+                results.Add(item: new OperationResult<Submission>
                 {
                     Success = true,
                     Item = savedItem,
@@ -76,7 +76,7 @@ internal partial class SubmissionProcessingService(ISubmissionService service) :
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Submission>
+                results.Add(item: new OperationResult<Submission>
                 {
                     Success = false,
                     Item = item,

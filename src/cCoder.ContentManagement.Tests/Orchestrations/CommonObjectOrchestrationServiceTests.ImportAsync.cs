@@ -26,13 +26,13 @@ public partial class CommonObjectOrchestrationServiceTests
     {
         // Given
         CommonObject[] items = [CreateRandomCommonObject()];
-        cCoder.ContentManagement.Models.Result<CommonObject>[] expectedResults = [];
+        OperationResult<CommonObject>[] expectedResults = [];
 
         commonObjectProcessingServiceMock.Setup(expression: x => x.ImportCommonObjectResultAsync(items: items))
             .ReturnsAsync(value: expectedResults);
 
         // When
-        IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>> result = await orchestrationService.ImportCommonObjectResultAsync(items: items);
+        IEnumerable<OperationResult<CommonObject>> result = await orchestrationService.ImportCommonObjectResultAsync(items: items);
 
         // Then
         result.Should()

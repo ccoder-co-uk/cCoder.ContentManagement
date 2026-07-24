@@ -19,7 +19,7 @@ public interface IPageInfoProcessingService
 
     ValueTask DeleteAsync(int pageInfoId);
 
-    ValueTask<IEnumerable<Result<PageInfo>>> AddOrUpdatePageInfoResult(IEnumerable<PageInfo> newPageInfo);
+    ValueTask<IEnumerable<OperationResult<PageInfo>>> AddOrUpdatePageInfoResult(IEnumerable<PageInfo> newPageInfo);
 
     ValueTask DeleteAllPageInfoAsync(IEnumerable<PageInfo> deletedPageInfo);
 }

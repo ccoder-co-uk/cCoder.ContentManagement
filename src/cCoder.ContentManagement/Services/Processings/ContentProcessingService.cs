@@ -54,12 +54,12 @@ internal partial class ContentProcessingService(IContentService service) : ICont
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent) =>
-        TryCatch<IEnumerable<Result<Content>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent) =>
+        TryCatch<IEnumerable<OperationResult<Content>>>(operation: async () =>
     {
         ValidateOrUpdateContentResultOnAdd(inputs: [newContent]);
         ValidateContents(contents: newContent, parameterName: "items");
-        List<Result<Content>> results = new List<Result<Content>>();
+        List<OperationResult<Content>> results = new List<OperationResult<Content>>();
 
         foreach (Content item in newContent)
         {
@@ -67,7 +67,7 @@ internal partial class ContentProcessingService(IContentService service) : ICont
             {
                 Content savedItem = item.Id < 1 ? await ExecuteAddContentAsync(newContent: item) : await ExecuteUpdateContentAsync(updatedContent: item);
 
-                results.Add(item: new Result<Content>
+                results.Add(item: new OperationResult<Content>
                 {
                     Success = true,
                     Item = savedItem,
@@ -76,7 +76,7 @@ internal partial class ContentProcessingService(IContentService service) : ICont
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Content>
+                results.Add(item: new OperationResult<Content>
                 {
                     Success = false,
                     Item = item,

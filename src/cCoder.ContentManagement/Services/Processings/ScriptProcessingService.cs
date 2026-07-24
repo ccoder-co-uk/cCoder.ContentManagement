@@ -54,12 +54,12 @@ internal partial class ScriptProcessingService(IScriptService service) : IScript
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript) =>
-        TryCatch<IEnumerable<Result<Script>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript) =>
+        TryCatch<IEnumerable<OperationResult<Script>>>(operation: async () =>
     {
         ValidateOrUpdateScriptResultOnAdd(inputs: [newScript]);
         ValidateScripts(scripts: newScript, parameterName: "items");
-        List<Result<Script>> results = new List<Result<Script>>();
+        List<OperationResult<Script>> results = new List<OperationResult<Script>>();
 
         foreach (Script item in newScript)
         {
@@ -67,7 +67,7 @@ internal partial class ScriptProcessingService(IScriptService service) : IScript
             {
                 Script savedItem = item.Id < 1 ? await ExecuteAddScriptAsync(newScript: item) : await ExecuteUpdateScriptAsync(updatedScript: item);
 
-                results.Add(item: new Result<Script>
+                results.Add(item: new OperationResult<Script>
                 {
                     Success = true,
                     Item = savedItem,
@@ -76,7 +76,7 @@ internal partial class ScriptProcessingService(IScriptService service) : IScript
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Script>
+                results.Add(item: new OperationResult<Script>
                 {
                     Success = false,
                     Item = item,

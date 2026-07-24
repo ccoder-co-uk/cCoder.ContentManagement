@@ -65,7 +65,7 @@ type: "Core/Other"
             .ReturnsAsync(value: commonObject);
 
         // When
-        cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
+        OperationResult<CommonObject>[] results = (
             await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { commonObject })
         ).ToArray();
 
@@ -150,7 +150,7 @@ type: "Core/Other"
             .ReturnsAsync(value: incoming);
 
         // When
-        cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
+        OperationResult<CommonObject>[] results = (
             await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { incoming })
         ).ToArray();
 
@@ -222,7 +222,7 @@ type: "Core/Other"
         } });
 
         // When
-        cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
+        OperationResult<CommonObject>[] results = (
             await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { incoming })
         ).ToArray();
 

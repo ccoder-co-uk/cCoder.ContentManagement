@@ -19,7 +19,7 @@ public interface ITemplateProcessingService
 
     ValueTask DeleteAsync(int templateId);
 
-    ValueTask<IEnumerable<Result<Template>>> AddOrUpdateTemplateResult(IEnumerable<Template> newTemplate);
+    ValueTask<IEnumerable<OperationResult<Template>>> AddOrUpdateTemplateResult(IEnumerable<Template> newTemplate);
 
     ValueTask DeleteAllTemplateAsync(IEnumerable<Template> deletedTemplate);
 }

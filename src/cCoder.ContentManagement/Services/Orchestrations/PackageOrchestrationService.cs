@@ -65,8 +65,8 @@ internal partial class PackageOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage) =>
-        TryCatch<IEnumerable<Result<Package>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage) =>
+        TryCatch<IEnumerable<OperationResult<Package>>>(operation: async () =>
     {
         ValidateOrUpdatePackageResultOnAdd(inputs: [newPackage]);
 
@@ -77,7 +77,7 @@ internal partial class PackageOrchestrationService(
             .Select(selector: package => package.Id != Guid.Empty)
             .ToArray();
 
-        Result<Package>[] results = (
+        OperationResult<Package>[] results = (
             await processingService.AddOrUpdatePackageResult(newPackage: packages))
             .ToArray();
 

@@ -45,8 +45,8 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
 
     });
 
-    public ValueTask<IEnumerable<Result<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items) =>
-        TryCatch<IEnumerable<Result<CommonObject>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items) =>
+        TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: async () =>
     {
         ValidateImportCommonObjectResultAsync(inputs: [items]);
         ValidateCommonObjects(commonObjects: items, parameterName: "items");
@@ -55,7 +55,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
         IEnumerable<string> types = commonObjects.Select(selector: (CommonObject i) => i.Type)
             .Distinct();
 
-        List<Result<CommonObject>> results = new List<Result<CommonObject>>();
+        List<OperationResult<CommonObject>> results = new List<OperationResult<CommonObject>>();
         List<CommonObject> adds = new List<CommonObject>();
         List<CommonObject> updates = new List<CommonObject>();
 
@@ -208,12 +208,12 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject) =>
-        TryCatch<IEnumerable<Result<CommonObject>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject) =>
+        TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: async () =>
     {
         ValidateOrUpdateCommonObjectResultOnAdd(inputs: [newCommonObject]);
         ValidateCommonObjects(commonObjects: newCommonObject, parameterName: "items");
-        List<Result<CommonObject>> results = new List<Result<CommonObject>>();
+        List<OperationResult<CommonObject>> results = new List<OperationResult<CommonObject>>();
 
         foreach (CommonObject item in newCommonObject)
         {
@@ -221,7 +221,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
             {
                 CommonObject savedItem = item.Id < 1 ? await ExecuteAddCommonObjectAsync(newCommonObject: item) : await ExecuteUpdateCommonObjectAsync(updatedCommonObject: item);
 
-                results.Add(item: new Result<CommonObject>
+                results.Add(item: new OperationResult<CommonObject>
                 {
                     Success = true,
                     Item = savedItem,
@@ -230,7 +230,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<CommonObject>
+                results.Add(item: new OperationResult<CommonObject>
                 {
                     Success = false,
                     Item = item,
@@ -283,10 +283,10 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
         return await service.AddCommonObjectAsync(newCommonObject: newCommonObject);
     }
 
-    private async ValueTask<IEnumerable<Result<CommonObject>>> ExecuteAddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject)
+    private async ValueTask<IEnumerable<OperationResult<CommonObject>>> ExecuteAddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject)
     {
         ValidateCommonObjects(commonObjects: newCommonObject, parameterName: "items");
-        List<Result<CommonObject>> results = new List<Result<CommonObject>>();
+        List<OperationResult<CommonObject>> results = new List<OperationResult<CommonObject>>();
 
         foreach (CommonObject item in newCommonObject)
         {
@@ -294,7 +294,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
             {
                 CommonObject savedItem = item.Id < 1 ? await ExecuteAddCommonObjectAsync(newCommonObject: item) : await ExecuteUpdateCommonObjectAsync(updatedCommonObject: item);
 
-                results.Add(item: new Result<CommonObject>
+                results.Add(item: new OperationResult<CommonObject>
                 {
                     Success = true,
                     Item = savedItem,
@@ -303,7 +303,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<CommonObject>
+                results.Add(item: new OperationResult<CommonObject>
                 {
                     Success = false,
                     Item = item,

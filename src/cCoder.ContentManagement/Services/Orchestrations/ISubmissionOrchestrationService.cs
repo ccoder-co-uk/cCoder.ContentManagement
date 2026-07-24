@@ -19,7 +19,7 @@ public interface ISubmissionOrchestrationService
 
     ValueTask DeleteAsync(Guid submissionId);
 
-    ValueTask<IEnumerable<Result<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission);
+    ValueTask<IEnumerable<OperationResult<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission);
 
     ValueTask DeleteAllSubmissionAsync(IEnumerable<Submission> deletedSubmission);
 }

@@ -76,15 +76,15 @@ internal partial class PageInfoOrchestrationService(IPageInfoProcessingService p
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<PageInfo>>> AddOrUpdatePageInfoResult(IEnumerable<PageInfo> newPageInfo) =>
-        TryCatch<IEnumerable<Result<PageInfo>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<PageInfo>>> AddOrUpdatePageInfoResult(IEnumerable<PageInfo> newPageInfo) =>
+        TryCatch<IEnumerable<OperationResult<PageInfo>>>(operation: async () =>
     {
         ValidateOrUpdatePageInfoResultOnAdd(inputs: [newPageInfo]);
 
         PageInfo[] pageInfos = ValidatePageInfos(pageInfos: newPageInfo, parameterName: "items")
             .ToArray();
 
-        List<Result<PageInfo>> results = new();
+        List<OperationResult<PageInfo>> results = new();
 
         foreach (PageInfo pageInfo in pageInfos)
         {
@@ -94,7 +94,7 @@ internal partial class PageInfoOrchestrationService(IPageInfoProcessingService p
                     ? await ExecuteAddPageInfoAsync(newPageInfo: pageInfo)
                     : await ExecuteUpdatePageInfoAsync(updatedPageInfo: pageInfo);
 
-                results.Add(item: new Result<PageInfo>
+                results.Add(item: new OperationResult<PageInfo>
                 {
                     Success = true,
                     Item = result,
@@ -103,7 +103,7 @@ internal partial class PageInfoOrchestrationService(IPageInfoProcessingService p
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<PageInfo>
+                results.Add(item: new OperationResult<PageInfo>
                 {
                     Success = false,
                     Item = pageInfo,

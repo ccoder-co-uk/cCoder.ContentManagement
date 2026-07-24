@@ -19,7 +19,7 @@ public interface IPageProcessingService
 
     ValueTask DeleteAsync(int pageId);
 
-    ValueTask<IEnumerable<Result<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage);
+    ValueTask<IEnumerable<OperationResult<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage);
 
     ValueTask DeleteAllPageAsync(IEnumerable<Page> deletedPage);
 

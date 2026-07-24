@@ -59,15 +59,15 @@ internal partial class AppCultureOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture) =>
-        TryCatch<IEnumerable<Result<AppCulture>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture) =>
+        TryCatch<IEnumerable<OperationResult<AppCulture>>>(operation: async () =>
     {
         ValidateOrUpdateAppCultureResultOnAdd(inputs: [newAppCulture]);
 
         AppCulture[] appCultures = ValidateAppCultures(appCultures: newAppCulture, parameterName: "items")
             .ToArray();
 
-        List<Result<AppCulture>> results = new();
+        List<OperationResult<AppCulture>> results = new();
 
         foreach (AppCulture appCulture in appCultures)
         {
@@ -80,7 +80,7 @@ internal partial class AppCultureOrchestrationService(
 
                 if (existingAppCulture != null)
                 {
-                    results.Add(item: new Result<AppCulture>
+                    results.Add(item: new OperationResult<AppCulture>
                     {
                         Id = $"{appCulture.AppId}:{appCulture.CultureId}",
                         Success = true,
@@ -93,7 +93,7 @@ internal partial class AppCultureOrchestrationService(
 
                 AppCulture result = await ExecuteAddAppCultureAsync(newAppCulture: appCulture);
 
-                results.Add(item: new Result<AppCulture>
+                results.Add(item: new OperationResult<AppCulture>
                 {
                     Id = $"{appCulture.AppId}:{appCulture.CultureId}",
                     Success = true,
@@ -103,7 +103,7 @@ internal partial class AppCultureOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<AppCulture>
+                results.Add(item: new OperationResult<AppCulture>
                 {
                     Id = $"{appCulture.AppId}:{appCulture.CultureId}",
                     Success = false,

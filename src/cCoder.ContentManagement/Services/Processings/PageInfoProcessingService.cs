@@ -54,12 +54,12 @@ internal partial class PageInfoProcessingService(IPageInfoService service) : IPa
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<PageInfo>>> AddOrUpdatePageInfoResult(IEnumerable<PageInfo> newPageInfo) =>
-        TryCatch<IEnumerable<Result<PageInfo>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<PageInfo>>> AddOrUpdatePageInfoResult(IEnumerable<PageInfo> newPageInfo) =>
+        TryCatch<IEnumerable<OperationResult<PageInfo>>>(operation: async () =>
     {
         ValidateOrUpdatePageInfoResultOnAdd(inputs: [newPageInfo]);
         ValidatePageInfos(pageInfos: newPageInfo, parameterName: "items");
-        List<Result<PageInfo>> results = new List<Result<PageInfo>>();
+        List<OperationResult<PageInfo>> results = new List<OperationResult<PageInfo>>();
 
         foreach (PageInfo item in newPageInfo)
         {
@@ -67,7 +67,7 @@ internal partial class PageInfoProcessingService(IPageInfoService service) : IPa
             {
                 PageInfo savedItem = item.Id < 1 ? await ExecuteAddPageInfoAsync(newPageInfo: item) : await ExecuteUpdatePageInfoAsync(updatedPageInfo: item);
 
-                results.Add(item: new Result<PageInfo>
+                results.Add(item: new OperationResult<PageInfo>
                 {
                     Success = true,
                     Item = savedItem,
@@ -76,7 +76,7 @@ internal partial class PageInfoProcessingService(IPageInfoService service) : IPa
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<PageInfo>
+                results.Add(item: new OperationResult<PageInfo>
                 {
                     Success = false,
                     Item = item,

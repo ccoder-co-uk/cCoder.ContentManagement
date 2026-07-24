@@ -54,12 +54,12 @@ internal partial class TemplateProcessingService(ITemplateService service) : ITe
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Template>>> AddOrUpdateTemplateResult(IEnumerable<Template> newTemplate) =>
-        TryCatch<IEnumerable<Result<Template>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Template>>> AddOrUpdateTemplateResult(IEnumerable<Template> newTemplate) =>
+        TryCatch<IEnumerable<OperationResult<Template>>>(operation: async () =>
     {
         ValidateOrUpdateTemplateResultOnAdd(inputs: [newTemplate]);
         ValidateTemplates(templates: newTemplate, parameterName: "items");
-        List<Result<Template>> results = new List<Result<Template>>();
+        List<OperationResult<Template>> results = new List<OperationResult<Template>>();
 
         foreach (Template item in newTemplate)
         {
@@ -67,7 +67,7 @@ internal partial class TemplateProcessingService(ITemplateService service) : ITe
             {
                 Template savedItem = item.Id < 1 ? await ExecuteAddTemplateAsync(newTemplate: item) : await ExecuteUpdateTemplateAsync(updatedTemplate: item);
 
-                results.Add(item: new Result<Template>
+                results.Add(item: new OperationResult<Template>
                 {
                     Success = true,
                     Item = savedItem,
@@ -76,7 +76,7 @@ internal partial class TemplateProcessingService(ITemplateService service) : ITe
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Template>
+                results.Add(item: new OperationResult<Template>
                 {
                     Success = false,
                     Item = item,

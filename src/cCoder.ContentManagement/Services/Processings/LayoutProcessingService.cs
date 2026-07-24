@@ -54,12 +54,12 @@ internal partial class LayoutProcessingService(ILayoutService service) : ILayout
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout) =>
-        TryCatch<IEnumerable<Result<Layout>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout) =>
+        TryCatch<IEnumerable<OperationResult<Layout>>>(operation: async () =>
     {
         ValidateOrUpdateLayoutResultOnAdd(inputs: [newLayout]);
         ValidateLayouts(layouts: newLayout, parameterName: "items");
-        List<Result<Layout>> results = new List<Result<Layout>>();
+        List<OperationResult<Layout>> results = new List<OperationResult<Layout>>();
 
         foreach (Layout item in newLayout)
         {
@@ -67,7 +67,7 @@ internal partial class LayoutProcessingService(ILayoutService service) : ILayout
             {
                 Layout savedItem = item.Id < 1 ? await ExecuteAddLayoutAsync(newLayout: item) : await ExecuteUpdateLayoutAsync(updatedLayout: item);
 
-                results.Add(item: new Result<Layout>
+                results.Add(item: new OperationResult<Layout>
                 {
                     Success = true,
                     Item = savedItem,
@@ -76,7 +76,7 @@ internal partial class LayoutProcessingService(ILayoutService service) : ILayout
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Layout>
+                results.Add(item: new OperationResult<Layout>
                 {
                     Success = false,
                     Item = item,

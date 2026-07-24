@@ -62,12 +62,12 @@ internal partial class PackageProcessingService(
         return service.DeleteAsync(packageId: ValidateId(packageId: packageId, parameterName: "id"));
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage) =>
-        TryCatch<IEnumerable<Result<Package>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage) =>
+        TryCatch<IEnumerable<OperationResult<Package>>>(operation: async () =>
     {
         ValidateOrUpdatePackageResultOnAdd(inputs: [newPackage]);
         ValidatePackages(packages: newPackage, parameterName: "items");
-        List<Result<Package>> results = new List<Result<Package>>();
+        List<OperationResult<Package>> results = new List<OperationResult<Package>>();
 
         foreach (Package item in newPackage)
         {
@@ -75,7 +75,7 @@ internal partial class PackageProcessingService(
             {
                 Package savedItem = item.Id == Guid.Empty ? await ExecuteAddPackageAsync(newPackage: item) : await ExecuteUpdatePackageAsync(updatedPackage: item);
 
-                results.Add(item: new Result<Package>
+                results.Add(item: new OperationResult<Package>
                 {
                     Success = true,
                     Item = savedItem,
@@ -84,7 +84,7 @@ internal partial class PackageProcessingService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Package>
+                results.Add(item: new OperationResult<Package>
                 {
                     Success = false,
                     Item = item,

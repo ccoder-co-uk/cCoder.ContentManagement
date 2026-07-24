@@ -96,15 +96,15 @@ internal partial class ScriptOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript) =>
-        TryCatch<IEnumerable<Result<Script>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript) =>
+        TryCatch<IEnumerable<OperationResult<Script>>>(operation: async () =>
     {
         ValidateOrUpdateScriptResultOnAdd(inputs: [newScript]);
 
         Script[] scripts = ValidateScripts(scripts: newScript, parameterName: "items")
             .ToArray();
 
-        List<Result<Script>> results = new();
+        List<OperationResult<Script>> results = new();
 
         foreach (Script script in scripts)
         {
@@ -114,7 +114,7 @@ internal partial class ScriptOrchestrationService(
                     ? await ExecuteAddScriptAsync(newScript: script)
                     : await ExecuteUpdateScriptAsync(updatedScript: script);
 
-                results.Add(item: new Result<Script>
+                results.Add(item: new OperationResult<Script>
                 {
                     Success = true,
                     Item = result,
@@ -123,7 +123,7 @@ internal partial class ScriptOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Script>
+                results.Add(item: new OperationResult<Script>
                 {
                     Success = false,
                     Item = script,
@@ -220,12 +220,12 @@ internal partial class ScriptOrchestrationService(
         return scripts;
     }
 
-    private async ValueTask<IEnumerable<Result<Script>>> ExecuteAddOrUpdateScriptResult(IEnumerable<Script> newScript)
+    private async ValueTask<IEnumerable<OperationResult<Script>>> ExecuteAddOrUpdateScriptResult(IEnumerable<Script> newScript)
     {
         Script[] scripts = ValidateScripts(scripts: newScript, parameterName: "items")
             .ToArray();
 
-        List<Result<Script>> results = new();
+        List<OperationResult<Script>> results = new();
 
         foreach (Script script in scripts)
         {
@@ -235,7 +235,7 @@ internal partial class ScriptOrchestrationService(
                     ? await ExecuteAddScriptAsync(newScript: script)
                     : await ExecuteUpdateScriptAsync(updatedScript: script);
 
-                results.Add(item: new Result<Script>
+                results.Add(item: new OperationResult<Script>
                 {
                     Success = true,
                     Item = result,
@@ -244,7 +244,7 @@ internal partial class ScriptOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Script>
+                results.Add(item: new OperationResult<Script>
                 {
                     Success = false,
                     Item = script,

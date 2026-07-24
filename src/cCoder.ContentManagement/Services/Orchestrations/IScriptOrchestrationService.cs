@@ -21,7 +21,7 @@ public interface IScriptOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<Result<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript);
+    ValueTask<IEnumerable<OperationResult<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript);
 
     ValueTask ImportScriptsAsync(int appId, Script[] items);
 

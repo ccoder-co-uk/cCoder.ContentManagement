@@ -103,8 +103,8 @@ internal partial class AppOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp) =>
-        TryCatch<IEnumerable<Result<App>>>(operation: () =>
+    public ValueTask<IEnumerable<OperationResult<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp) =>
+        TryCatch<IEnumerable<OperationResult<App>>>(operation: () =>
     {
         ValidateOrUpdateAppResultOnAdd(inputs: [newApp]);
         return processingService.AddOrUpdateAppResult(newApp: ValidateApps(apps: newApp, parameterName: "items"));

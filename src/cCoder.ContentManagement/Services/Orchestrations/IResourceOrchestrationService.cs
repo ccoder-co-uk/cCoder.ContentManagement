@@ -21,7 +21,7 @@ public interface IResourceOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<Result<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource);
+    ValueTask<IEnumerable<OperationResult<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource);
 
     ValueTask ImportResourcesAsync(int appId, Resource[] items);
 

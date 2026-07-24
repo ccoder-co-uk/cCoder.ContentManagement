@@ -56,8 +56,8 @@ internal partial class PackageItemOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdatePackageItemResult(IEnumerable<PackageItem> newPackageItem) =>
-        TryCatch<IEnumerable<Result<PackageItem>>>(operation: () =>
+    public ValueTask<IEnumerable<OperationResult<PackageItem>>> AddOrUpdatePackageItemResult(IEnumerable<PackageItem> newPackageItem) =>
+        TryCatch<IEnumerable<OperationResult<PackageItem>>>(operation: () =>
     {
         ValidateOrUpdatePackageItemResultOnAdd(inputs: [newPackageItem]);
         return processingService.AddOrUpdatePackageItemResult(newPackageItem: newPackageItem);

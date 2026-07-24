@@ -69,8 +69,8 @@ internal partial class PageRoleProcessingService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole) =>
-        TryCatch<IEnumerable<Result<PageRole>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole) =>
+        TryCatch<IEnumerable<OperationResult<PageRole>>>(operation: async () =>
     {
         ValidateOrUpdatePageRoleResultOnAdd(inputs: [newPageRole]);
         ValidatePageRoles(pageRoles: newPageRole, parameterName: "items");
@@ -85,7 +85,7 @@ internal partial class PageRoleProcessingService(
             .Where(predicate: item => ((ReadOnlySpan<int>)leftIds).Contains(value: item.PageId))
             .ToArray();
 
-        List<Result<PageRole>> results = new List<Result<PageRole>>();
+        List<OperationResult<PageRole>> results = new List<OperationResult<PageRole>>();
 
         foreach (IGrouping<int, PageRole> group in itemArray.GroupBy(keySelector: item => item.PageId))
         {
@@ -101,7 +101,7 @@ internal partial class PageRoleProcessingService(
             {
                 try
                 {
-                    results.Add(item: new Result<PageRole>
+                    results.Add(item: new OperationResult<PageRole>
                     {
                         Id = $"{item.PageId}:{item.RoleId}",
                         Success = true,
@@ -111,7 +111,7 @@ internal partial class PageRoleProcessingService(
                 }
                 catch (Exception ex)
                 {
-                    results.Add(item: new Result<PageRole>
+                    results.Add(item: new OperationResult<PageRole>
                     {
                         Id = $"{item.PageId}:{item.RoleId}",
                         Success = false,

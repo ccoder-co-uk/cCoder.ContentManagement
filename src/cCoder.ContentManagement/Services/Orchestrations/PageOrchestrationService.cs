@@ -121,8 +121,8 @@ internal partial class PageOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage) =>
-        TryCatch<IEnumerable<Result<Page>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage) =>
+        TryCatch<IEnumerable<OperationResult<Page>>>(operation: async () =>
     {
         ValidateOrUpdatePageResultOnAdd(inputs: [newPage]);
 
@@ -130,7 +130,7 @@ internal partial class PageOrchestrationService(
             .OrderBy(keySelector: page => GetPathDepth(path: page.Path))
             .ThenBy(keySelector: page => page.Order)];
 
-        List<Result<Page>> results = new();
+        List<OperationResult<Page>> results = new();
 
         foreach (Page page in pages)
         {
@@ -140,7 +140,7 @@ internal partial class PageOrchestrationService(
                     ? await ExecuteAddPageAsync(newPage: page)
                     : await ExecuteUpdatePageAsync(updatedPage: page);
 
-                results.Add(item: new Result<Page>
+                results.Add(item: new OperationResult<Page>
                 {
                     Success = true,
                     Item = result,
@@ -149,7 +149,7 @@ internal partial class PageOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Page>
+                results.Add(item: new OperationResult<Page>
                 {
                     Success = false,
                     Item = page,
@@ -346,13 +346,13 @@ comparison: (left, right) => left.Path.Split(separator: '/')
         }
     }
 
-    private async ValueTask<IEnumerable<Result<Page>>> ExecuteAddOrUpdatePageResult(IEnumerable<Page> newPage)
+    private async ValueTask<IEnumerable<OperationResult<Page>>> ExecuteAddOrUpdatePageResult(IEnumerable<Page> newPage)
     {
         Page[] pages = [.. ValidatePages(pages: newPage, parameterName: "items")
             .OrderBy(keySelector: page => GetPathDepth(path: page.Path))
             .ThenBy(keySelector: page => page.Order)];
 
-        List<Result<Page>> results = new();
+        List<OperationResult<Page>> results = new();
 
         foreach (Page page in pages)
         {
@@ -362,7 +362,7 @@ comparison: (left, right) => left.Path.Split(separator: '/')
                     ? await ExecuteAddPageAsync(newPage: page)
                     : await ExecuteUpdatePageAsync(updatedPage: page);
 
-                results.Add(item: new Result<Page>
+                results.Add(item: new OperationResult<Page>
                 {
                     Success = true,
                     Item = result,
@@ -371,7 +371,7 @@ comparison: (left, right) => left.Path.Split(separator: '/')
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Page>
+                results.Add(item: new OperationResult<Page>
                 {
                     Success = false,
                     Item = page,

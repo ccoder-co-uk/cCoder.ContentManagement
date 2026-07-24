@@ -39,15 +39,15 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole) =>
-        TryCatch<IEnumerable<Result<PageRole>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole) =>
+        TryCatch<IEnumerable<OperationResult<PageRole>>>(operation: async () =>
     {
         ValidateOrUpdatePageRoleResultOnAdd(inputs: [newPageRole]);
 
         PageRole[] pageRoles = ValidatePageRoles(pageRoles: newPageRole, parameterName: "items")
             .ToArray();
 
-        List<Result<PageRole>> results = new();
+        List<OperationResult<PageRole>> results = new();
 
         foreach (PageRole pageRole in pageRoles)
         {
@@ -60,7 +60,7 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
 
                 if (existingPageRole != null)
                 {
-                    results.Add(item: new Result<PageRole>
+                    results.Add(item: new OperationResult<PageRole>
                     {
                         Id = $"{pageRole.PageId}:{pageRole.RoleId}",
                         Success = true,
@@ -73,7 +73,7 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
 
                 PageRole result = await ExecuteAddPageRoleAsync(newPageRole: pageRole);
 
-                results.Add(item: new Result<PageRole>
+                results.Add(item: new OperationResult<PageRole>
                 {
                     Id = $"{pageRole.PageId}:{pageRole.RoleId}",
                     Success = true,
@@ -83,7 +83,7 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<PageRole>
+                results.Add(item: new OperationResult<PageRole>
                 {
                     Id = $"{pageRole.PageId}:{pageRole.RoleId}",
                     Success = false,

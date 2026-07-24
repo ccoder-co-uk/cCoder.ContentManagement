@@ -88,12 +88,12 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource) =>
-        TryCatch<IEnumerable<Result<Resource>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource) =>
+        TryCatch<IEnumerable<OperationResult<Resource>>>(operation: async () =>
     {
         ValidateOrUpdateResourceResultOnAdd(inputs: [newResource]);
         ValidateResources(resources: newResource, parameterName: "items");
-        List<Result<Resource>> results = new List<Result<Resource>>();
+        List<OperationResult<Resource>> results = new List<OperationResult<Resource>>();
 
         foreach (Resource item in newResource)
         {
@@ -101,7 +101,7 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
             {
                 Resource savedItem = item.Id < 1 ? await ExecuteAddResourceAsync(newResource: item) : await ExecuteUpdateResourceAsync(updatedResource: item);
 
-                results.Add(item: new Result<Resource>
+                results.Add(item: new OperationResult<Resource>
                 {
                     Success = true,
                     Item = savedItem,
@@ -110,7 +110,7 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Resource>
+                results.Add(item: new OperationResult<Resource>
                 {
                     Success = false,
                     Item = item,

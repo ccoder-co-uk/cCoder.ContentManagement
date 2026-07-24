@@ -19,7 +19,7 @@ public interface IResourceProcessingService
 
     ValueTask DeleteAsync(int resourceId);
 
-    ValueTask<IEnumerable<Result<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource);
+    ValueTask<IEnumerable<OperationResult<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource);
 
     ValueTask DeleteAllResourceAsync(IEnumerable<Resource> deletedResource);
 }

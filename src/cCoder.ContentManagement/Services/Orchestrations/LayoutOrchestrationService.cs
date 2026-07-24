@@ -96,15 +96,15 @@ internal partial class LayoutOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout) =>
-        TryCatch<IEnumerable<Result<Layout>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout) =>
+        TryCatch<IEnumerable<OperationResult<Layout>>>(operation: async () =>
     {
         ValidateOrUpdateLayoutResultOnAdd(inputs: [newLayout]);
 
         Layout[] layouts = ValidateLayouts(layouts: newLayout, parameterName: "items")
             .ToArray();
 
-        List<Result<Layout>> results = new();
+        List<OperationResult<Layout>> results = new();
 
         foreach (Layout layout in layouts)
         {
@@ -114,7 +114,7 @@ internal partial class LayoutOrchestrationService(
                     ? await ExecuteAddLayoutAsync(newLayout: layout)
                     : await ExecuteUpdateLayoutAsync(updatedLayout: layout);
 
-                results.Add(item: new Result<Layout>
+                results.Add(item: new OperationResult<Layout>
                 {
                     Success = true,
                     Item = result,
@@ -123,7 +123,7 @@ internal partial class LayoutOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Layout>
+                results.Add(item: new OperationResult<Layout>
                 {
                     Success = false,
                     Item = layout,
@@ -229,12 +229,12 @@ internal partial class LayoutOrchestrationService(
         return result;
     }
 
-    private async ValueTask<IEnumerable<Result<Layout>>> ExecuteAddOrUpdateLayoutResult(IEnumerable<Layout> newLayout)
+    private async ValueTask<IEnumerable<OperationResult<Layout>>> ExecuteAddOrUpdateLayoutResult(IEnumerable<Layout> newLayout)
     {
         Layout[] layouts = ValidateLayouts(layouts: newLayout, parameterName: "items")
             .ToArray();
 
-        List<Result<Layout>> results = new();
+        List<OperationResult<Layout>> results = new();
 
         foreach (Layout layout in layouts)
         {
@@ -244,7 +244,7 @@ internal partial class LayoutOrchestrationService(
                     ? await ExecuteAddLayoutAsync(newLayout: layout)
                     : await ExecuteUpdateLayoutAsync(updatedLayout: layout);
 
-                results.Add(item: new Result<Layout>
+                results.Add(item: new OperationResult<Layout>
                 {
                     Success = true,
                     Item = result,
@@ -253,7 +253,7 @@ internal partial class LayoutOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Layout>
+                results.Add(item: new OperationResult<Layout>
                 {
                     Success = false,
                     Item = layout,

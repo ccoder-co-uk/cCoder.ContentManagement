@@ -96,15 +96,15 @@ internal partial class ResourceOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource) =>
-        TryCatch<IEnumerable<Result<Resource>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource) =>
+        TryCatch<IEnumerable<OperationResult<Resource>>>(operation: async () =>
     {
         ValidateOrUpdateResourceResultOnAdd(inputs: [newResource]);
 
         Resource[] resources = ValidateResources(resources: newResource, parameterName: "items")
             .ToArray();
 
-        List<Result<Resource>> results = new();
+        List<OperationResult<Resource>> results = new();
 
         foreach (Resource resource in resources)
         {
@@ -114,7 +114,7 @@ internal partial class ResourceOrchestrationService(
                     ? await ExecuteAddResourceAsync(newResource: resource)
                     : await ExecuteUpdateResourceAsync(updatedResource: resource);
 
-                results.Add(item: new Result<Resource>
+                results.Add(item: new OperationResult<Resource>
                 {
                     Success = true,
                     Item = result,
@@ -123,7 +123,7 @@ internal partial class ResourceOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Resource>
+                results.Add(item: new OperationResult<Resource>
                 {
                     Success = false,
                     Item = resource,
@@ -221,12 +221,12 @@ internal partial class ResourceOrchestrationService(
         return resources;
     }
 
-    private async ValueTask<IEnumerable<Result<Resource>>> ExecuteAddOrUpdateResourceResult(IEnumerable<Resource> newResource)
+    private async ValueTask<IEnumerable<OperationResult<Resource>>> ExecuteAddOrUpdateResourceResult(IEnumerable<Resource> newResource)
     {
         Resource[] resources = ValidateResources(resources: newResource, parameterName: "items")
             .ToArray();
 
-        List<Result<Resource>> results = new();
+        List<OperationResult<Resource>> results = new();
 
         foreach (Resource resource in resources)
         {
@@ -236,7 +236,7 @@ internal partial class ResourceOrchestrationService(
                     ? await ExecuteAddResourceAsync(newResource: resource)
                     : await ExecuteUpdateResourceAsync(updatedResource: resource);
 
-                results.Add(item: new Result<Resource>
+                results.Add(item: new OperationResult<Resource>
                 {
                     Success = true,
                     Item = result,
@@ -245,7 +245,7 @@ internal partial class ResourceOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Resource>
+                results.Add(item: new OperationResult<Resource>
                 {
                     Success = false,
                     Item = resource,

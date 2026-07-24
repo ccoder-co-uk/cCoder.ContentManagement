@@ -236,12 +236,12 @@ internal partial class AppProcessingService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp) =>
-        TryCatch<IEnumerable<Result<App>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp) =>
+        TryCatch<IEnumerable<OperationResult<App>>>(operation: async () =>
     {
         ValidateOrUpdateAppResultOnAdd(inputs: [newApp]);
         ValidateApps(apps: newApp, parameterName: "items");
-        List<Result<App>> results = [];
+        List<OperationResult<App>> results = [];
 
         foreach (App item in newApp)
         {
@@ -251,7 +251,7 @@ internal partial class AppProcessingService(
                     ? await ExecuteAddAppAsync(newApp: item)
                     : await ExecuteUpdateAppAsync(app: item);
 
-                results.Add(item: new Result<App>
+                results.Add(item: new OperationResult<App>
                 {
                     Success = true,
                     Item = app,
@@ -260,7 +260,7 @@ internal partial class AppProcessingService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<App>
+                results.Add(item: new OperationResult<App>
                 {
                     Success = false,
                     Item = item,

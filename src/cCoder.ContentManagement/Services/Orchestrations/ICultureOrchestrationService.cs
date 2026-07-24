@@ -19,7 +19,7 @@ public interface ICultureOrchestrationService
 
     ValueTask DeleteAsync(string cultureId);
 
-    ValueTask<IEnumerable<Result<Culture>>> AddOrUpdateCultureResult(IEnumerable<Culture> newCulture);
+    ValueTask<IEnumerable<OperationResult<Culture>>> AddOrUpdateCultureResult(IEnumerable<Culture> newCulture);
 
     ValueTask DeleteAllCultureAsync(IEnumerable<Culture> deletedCulture);
 }

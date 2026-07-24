@@ -94,12 +94,12 @@ internal partial class TemplateOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Template>>> AddOrUpdateTemplateResult(IEnumerable<Template> newTemplate) =>
-        TryCatch<IEnumerable<Result<Template>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Template>>> AddOrUpdateTemplateResult(IEnumerable<Template> newTemplate) =>
+        TryCatch<IEnumerable<OperationResult<Template>>>(operation: async () =>
     {
         ValidateOrUpdateTemplateResultOnAdd(inputs: [newTemplate]);
         Template[] templates = (newTemplate ?? []).ToArray();
-        List<Result<Template>> results = new();
+        List<OperationResult<Template>> results = new();
 
         foreach (Template template in templates)
         {
@@ -109,7 +109,7 @@ internal partial class TemplateOrchestrationService(
                     ? await ExecuteAddTemplateAsync(newTemplate: template)
                     : await ExecuteUpdateTemplateAsync(updatedTemplate: template);
 
-                results.Add(item: new Result<Template>
+                results.Add(item: new OperationResult<Template>
                 {
                     Success = true,
                     Item = result,
@@ -118,7 +118,7 @@ internal partial class TemplateOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Template>
+                results.Add(item: new OperationResult<Template>
                 {
                     Success = false,
                     Item = template,
@@ -178,10 +178,10 @@ internal partial class TemplateOrchestrationService(
         return template;
     }
 
-    private async ValueTask<IEnumerable<Result<Template>>> ExecuteAddOrUpdateTemplateResult(IEnumerable<Template> newTemplate)
+    private async ValueTask<IEnumerable<OperationResult<Template>>> ExecuteAddOrUpdateTemplateResult(IEnumerable<Template> newTemplate)
     {
         Template[] templates = (newTemplate ?? []).ToArray();
-        List<Result<Template>> results = new();
+        List<OperationResult<Template>> results = new();
 
         foreach (Template template in templates)
         {
@@ -191,7 +191,7 @@ internal partial class TemplateOrchestrationService(
                     ? await ExecuteAddTemplateAsync(newTemplate: template)
                     : await ExecuteUpdateTemplateAsync(updatedTemplate: template);
 
-                results.Add(item: new Result<Template>
+                results.Add(item: new OperationResult<Template>
                 {
                     Success = true,
                     Item = result,
@@ -200,7 +200,7 @@ internal partial class TemplateOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Template>
+                results.Add(item: new OperationResult<Template>
                 {
                     Success = false,
                     Item = template,

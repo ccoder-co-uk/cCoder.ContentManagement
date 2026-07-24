@@ -19,7 +19,7 @@ public interface IPackageItemProcessingService
 
     ValueTask DeleteAsync(Guid packageItemId);
 
-    ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdatePackageItemResult(IEnumerable<PackageItem> newPackageItem);
+    ValueTask<IEnumerable<OperationResult<PackageItem>>> AddOrUpdatePackageItemResult(IEnumerable<PackageItem> newPackageItem);
 
     ValueTask DeleteAllPackageItemAsync(IEnumerable<PackageItem> deletedPackageItem);
 }

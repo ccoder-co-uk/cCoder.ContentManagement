@@ -63,8 +63,8 @@ internal partial class CultureOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Culture>>> AddOrUpdateCultureResult(IEnumerable<Culture> newCulture) =>
-        TryCatch<IEnumerable<Result<Culture>>>(operation: () =>
+    public ValueTask<IEnumerable<OperationResult<Culture>>> AddOrUpdateCultureResult(IEnumerable<Culture> newCulture) =>
+        TryCatch<IEnumerable<OperationResult<Culture>>>(operation: () =>
     {
         ValidateOrUpdateCultureResultOnAdd(inputs: [newCulture]);
         return processingService.AddOrUpdateCultureResult(newCulture: ValidateCultures(cultures: newCulture, parameterName: "items"));

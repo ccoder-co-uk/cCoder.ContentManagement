@@ -50,11 +50,11 @@ internal partial class AppCultureProcessingService(IAppCultureService service) :
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture) =>
-        TryCatch<IEnumerable<Result<AppCulture>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture) =>
+        TryCatch<IEnumerable<OperationResult<AppCulture>>>(operation: async () =>
     {
         ValidateOrUpdateAppCultureResultOnAdd(inputs: [newAppCulture]);
-        List<Result<AppCulture>> results = [];
+        List<OperationResult<AppCulture>> results = [];
 
         foreach (AppCulture item in newAppCulture)
         {
@@ -62,7 +62,7 @@ internal partial class AppCultureProcessingService(IAppCultureService service) :
             {
                 AppCulture existing = service.GetAppCulture(appId: item.AppId, cultureId: item.CultureId, ignoreFilters: true);
 
-                results.Add(item: new Result<AppCulture>
+                results.Add(item: new OperationResult<AppCulture>
                 {
                     Id = $"{item.AppId}:{item.CultureId}",
                     Success = true,
@@ -72,7 +72,7 @@ internal partial class AppCultureProcessingService(IAppCultureService service) :
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<AppCulture>
+                results.Add(item: new OperationResult<AppCulture>
                 {
                     Id = $"{item.AppId}:{item.CultureId}",
                     Success = false,

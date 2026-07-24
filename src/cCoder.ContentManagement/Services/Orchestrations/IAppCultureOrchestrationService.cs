@@ -17,7 +17,7 @@ public interface IAppCultureOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture);
+    ValueTask<IEnumerable<OperationResult<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture);
 
     ValueTask DeleteAllAppCultureAsync(IEnumerable<AppCulture> deletedAppCulture);
 }

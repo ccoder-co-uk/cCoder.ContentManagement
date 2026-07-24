@@ -80,15 +80,15 @@ internal partial class ContentOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent) =>
-        TryCatch<IEnumerable<Result<Content>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent) =>
+        TryCatch<IEnumerable<OperationResult<Content>>>(operation: async () =>
     {
         ValidateOrUpdateContentResultOnAdd(inputs: [newContent]);
 
         Content[] contents = ValidateContents(contents: newContent, parameterName: "items")
             .ToArray();
 
-        List<Result<Content>> results = new();
+        List<OperationResult<Content>> results = new();
 
         foreach (Content content in contents)
         {
@@ -98,7 +98,7 @@ internal partial class ContentOrchestrationService(
                     ? await ExecuteAddContentAsync(newContent: content)
                     : await ExecuteUpdateContentAsync(updatedContent: content);
 
-                results.Add(item: new Result<Content>
+                results.Add(item: new OperationResult<Content>
                 {
                     Success = true,
                     Item = result,
@@ -107,7 +107,7 @@ internal partial class ContentOrchestrationService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Content>
+                results.Add(item: new OperationResult<Content>
                 {
                     Success = false,
                     Item = content,

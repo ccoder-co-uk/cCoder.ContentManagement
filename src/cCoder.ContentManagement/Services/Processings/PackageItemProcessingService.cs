@@ -45,11 +45,11 @@ internal partial class PackageItemProcessingService(IPackageItemService service)
         return service.DeleteAsync(packageItemId: packageItemId);
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdatePackageItemResult(IEnumerable<PackageItem> newPackageItem) =>
-        TryCatch<IEnumerable<Result<PackageItem>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<PackageItem>>> AddOrUpdatePackageItemResult(IEnumerable<PackageItem> newPackageItem) =>
+        TryCatch<IEnumerable<OperationResult<PackageItem>>>(operation: async () =>
     {
         ValidateOrUpdatePackageItemResultOnAdd(inputs: [newPackageItem]);
-        List<Result<PackageItem>> results = new List<Result<PackageItem>>();
+        List<OperationResult<PackageItem>> results = new List<OperationResult<PackageItem>>();
 
         foreach (PackageItem item in newPackageItem)
         {
@@ -57,7 +57,7 @@ internal partial class PackageItemProcessingService(IPackageItemService service)
             {
                 PackageItem savedItem = item.Id == Guid.Empty ? await ExecuteAddPackageItemAsync(newPackageItem: item) : await ExecuteUpdatePackageItemAsync(updatedPackageItem: item);
 
-                results.Add(item: new Result<PackageItem>
+                results.Add(item: new OperationResult<PackageItem>
                 {
                     Success = true,
                     Item = savedItem,
@@ -66,7 +66,7 @@ internal partial class PackageItemProcessingService(IPackageItemService service)
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<PackageItem>
+                results.Add(item: new OperationResult<PackageItem>
                 {
                     Success = false,
                     Item = item,

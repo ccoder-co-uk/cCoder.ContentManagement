@@ -19,7 +19,7 @@ public interface IComponentProcessingService
 
     ValueTask DeleteAsync(int componentId);
 
-    ValueTask<IEnumerable<Result<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent);
+    ValueTask<IEnumerable<OperationResult<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent);
 
     ValueTask DeleteAllComponentAsync(IEnumerable<Component> deletedComponent);
 }

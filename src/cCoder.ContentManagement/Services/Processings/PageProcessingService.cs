@@ -221,12 +221,12 @@ internal partial class PageProcessingService(
 
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<Result<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage) =>
-        TryCatch<IEnumerable<Result<Page>>>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage) =>
+        TryCatch<IEnumerable<OperationResult<Page>>>(operation: async () =>
     {
         ValidateOrUpdatePageResultOnAdd(inputs: [newPage]);
         ValidatePages(pages: newPage, parameterName: "items");
-        List<Result<Page>> results = new List<Result<Page>>();
+        List<OperationResult<Page>> results = new List<OperationResult<Page>>();
 
         foreach (Page item in newPage)
         {
@@ -234,7 +234,7 @@ internal partial class PageProcessingService(
             {
                 Page savedItem = item.Id < 1 ? await ExecuteAddPageAsync(page: item) : await ExecuteUpdatePageAsync(updatedPage: item);
 
-                results.Add(item: new Result<Page>
+                results.Add(item: new OperationResult<Page>
                 {
                     Success = true,
                     Item = savedItem,
@@ -243,7 +243,7 @@ internal partial class PageProcessingService(
             }
             catch (Exception ex)
             {
-                results.Add(item: new Result<Page>
+                results.Add(item: new OperationResult<Page>
                 {
                     Success = false,
                     Item = item,

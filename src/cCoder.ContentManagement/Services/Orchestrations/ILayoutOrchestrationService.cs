@@ -21,7 +21,7 @@ public interface ILayoutOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<Result<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout);
+    ValueTask<IEnumerable<OperationResult<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout);
 
     ValueTask ImportLayoutsAsync(int appId, Layout[] items);
 

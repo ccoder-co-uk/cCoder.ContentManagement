@@ -19,7 +19,7 @@ public interface IScriptProcessingService
 
     ValueTask DeleteAsync(int scriptId);
 
-    ValueTask<IEnumerable<Result<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript);
+    ValueTask<IEnumerable<OperationResult<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript);
 
     ValueTask DeleteAllScriptAsync(IEnumerable<Script> deletedScript);
 }

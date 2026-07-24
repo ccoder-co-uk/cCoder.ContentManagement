@@ -19,11 +19,11 @@ public interface ICommonObjectProcessingService
 
     ValueTask DeleteAsync(int commonObjectId);
 
-    ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject);
+    ValueTask<IEnumerable<OperationResult<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject);
 
     ValueTask DeleteAllCommonObjectAsync(IEnumerable<CommonObject> deletedCommonObject);
 
     IEnumerable<CommonObject> LatestCommonObject(string type);
 
-    ValueTask<IEnumerable<Result<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items);
+    ValueTask<IEnumerable<OperationResult<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items);
 }

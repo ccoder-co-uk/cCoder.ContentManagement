@@ -21,7 +21,7 @@ public interface IComponentOrchestrationService
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<Result<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent);
+    ValueTask<IEnumerable<OperationResult<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent);
 
     ValueTask ImportComponentsAsync(int appId, Component[] items);
 

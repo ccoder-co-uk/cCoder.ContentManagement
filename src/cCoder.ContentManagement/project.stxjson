@@ -2234,6 +2234,40 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Dependencies.Results.OperationResult",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Id",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Message",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Success",
+          "Type": "System.Boolean"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Results.OperationResult\u003CT\u003E",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Id",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Item",
+          "Type": "T"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Exposures.AppManager",
       "StandardElementType": "Exposure",
       "Properties": [],
@@ -4788,35 +4822,13 @@
     {
       "Name": "cCoder.ContentManagement.Models.Result",
       "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "Id",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Message",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Success",
-          "Type": "System.Boolean"
-        }
-      ],
+      "Properties": [],
       "Methods": []
     },
     {
       "Name": "cCoder.ContentManagement.Models.Result\u003CT\u003E",
       "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "Id",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Item",
-          "Type": "T"
-        }
-      ],
+      "Properties": [],
       "Methods": []
     },
     {
@@ -7672,7 +7684,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CAppCulture\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CAppCulture\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CAppCulture\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllAppCultureAsync",
@@ -7739,7 +7751,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CApp\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CApp\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CApp\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllAppAsync",
@@ -7873,7 +7885,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CCommonObject\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllCommonObjectAsync",
@@ -7923,7 +7935,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CCommonObject\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E"
         },
         {
           "Name": "LatestCommonObject",
@@ -7970,7 +7982,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CComponent\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CComponent\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CComponent\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllComponentAsync",
@@ -8126,7 +8138,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CContent\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CContent\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CContent\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllContentAsync",
@@ -8203,7 +8215,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CCulture\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CCulture\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CCulture\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllCultureAsync",
@@ -8280,7 +8292,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CLayout\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CLayout\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CLayout\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllLayoutAsync",
@@ -8402,7 +8414,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CPackageItem\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CPackageItem\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CPackageItem\u003E\u003E\u003E"
         },
         {
           "Name": "AddPackageItemAsync",
@@ -8479,7 +8491,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CPackage\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CPackage\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CPackage\u003E\u003E\u003E"
         },
         {
           "Name": "AddPackageAsync",
@@ -8556,7 +8568,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CPageInfo\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CPageInfo\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CPageInfo\u003E\u003E\u003E"
         },
         {
           "Name": "AddPageInfoAsync",
@@ -8633,7 +8645,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CPage\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CPage\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CPage\u003E\u003E\u003E"
         },
         {
           "Name": "AddPageAsync",
@@ -8867,7 +8879,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CPageRole\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CPageRole\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CPageRole\u003E\u003E\u003E"
         },
         {
           "Name": "AddPageRoleAsync",
@@ -8938,7 +8950,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CResource\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CResource\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CResource\u003E\u003E\u003E"
         },
         {
           "Name": "AddResourceAsync",
@@ -9039,7 +9051,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CScript\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CScript\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CScript\u003E\u003E\u003E"
         },
         {
           "Name": "AddScriptAsync",
@@ -9140,7 +9152,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CSubmission\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CSubmission\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CSubmission\u003E\u003E\u003E"
         },
         {
           "Name": "AddSubmissionAsync",
@@ -9217,7 +9229,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CTemplate\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CTemplate\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CTemplate\u003E\u003E\u003E"
         },
         {
           "Name": "AddTemplateAsync",
@@ -9410,7 +9422,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CAppCulture\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CAppCulture\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CAppCulture\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllAppCultureAsync",
@@ -9504,7 +9516,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CApp\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CApp\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CApp\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllAppAsync",
@@ -9730,7 +9742,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CCommonObject\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllCommonObjectAsync",
@@ -9780,7 +9792,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CCommonObject\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E"
         },
         {
           "Name": "LatestCommonObject",
@@ -9864,7 +9876,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CComponent\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CComponent\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CComponent\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllComponentAsync",
@@ -10025,7 +10037,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CContent\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CContent\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CContent\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllContentAsync",
@@ -10139,7 +10151,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CCulture\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CCulture\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CCulture\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllCultureAsync",
@@ -10282,7 +10294,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CLayout\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CLayout\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CLayout\u003E\u003E\u003E"
         },
         {
           "Name": "DeleteAllLayoutAsync",
@@ -10458,7 +10470,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CPackageItem\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CPackageItem\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CPackageItem\u003E\u003E\u003E"
         },
         {
           "Name": "AddPackageItemAsync",
@@ -10535,7 +10547,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CPackage\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CPackage\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CPackage\u003E\u003E\u003E"
         },
         {
           "Name": "AddPackageAsync",
@@ -10686,7 +10698,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CPageInfo\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CPageInfo\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CPageInfo\u003E\u003E\u003E"
         },
         {
           "Name": "AddPageInfoAsync",
@@ -10763,7 +10775,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CPage\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CPage\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CPage\u003E\u003E\u003E"
         },
         {
           "Name": "AddPageAsync",
@@ -10944,7 +10956,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CPageRole\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CPageRole\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CPageRole\u003E\u003E\u003E"
         },
         {
           "Name": "AddPageRoleAsync",
@@ -11052,7 +11064,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CResource\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CResource\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CResource\u003E\u003E\u003E"
         },
         {
           "Name": "AddResourceAsync",
@@ -11166,7 +11178,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CScript\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CScript\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CScript\u003E\u003E\u003E"
         },
         {
           "Name": "AddScriptAsync",
@@ -11280,7 +11292,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CSubmission\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CSubmission\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CSubmission\u003E\u003E\u003E"
         },
         {
           "Name": "AddSubmissionAsync",
@@ -11394,7 +11406,7 @@
               "Type": "System.Collections.Generic.IEnumerable\u003CTemplate\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Result\u003CTemplate\u003E\u003E\u003E"
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Dependencies.Results.OperationResult\u003CTemplate\u003E\u003E\u003E"
         },
         {
           "Name": "AddTemplateAsync",
@@ -12585,6 +12597,34 @@
   ],
   "AnalysisItems": [
     {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.AuditResultByProperty",
+      "LineNumber": 51
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.AuditResultsByUser",
+      "LineNumber": 51
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.Result",
+      "LineNumber": 51
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.Result\u003CT\u003E",
+      "LineNumber": 51
+    },
+    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
@@ -12610,20 +12650,6 @@
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
-      "LineNumber": 16
-    },
-    {
-      "Code": "STX0007",
-      "Description": "A service public API must use one model contract or primitive types.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STX0007",
-      "Description": "A service public API must use one model contract or primitive types.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "LineNumber": 16
     }
   ]
