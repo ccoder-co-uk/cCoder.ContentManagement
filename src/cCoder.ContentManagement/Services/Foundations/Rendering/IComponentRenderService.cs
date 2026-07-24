@@ -2,9 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-namespace cCoder.ContentManagement.Services.Foundations.ServiceProviders;
+namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
-internal interface IServiceProviderExecutionService
+internal interface IComponentRenderService
 {
     TResult Execute<TService, TResult>(
         string name,

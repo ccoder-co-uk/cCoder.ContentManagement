@@ -4,9 +4,9 @@
 
 using cCoder.ContentManagement.Models.Exceptions;
 
-namespace cCoder.ContentManagement.Services.Foundations.ServiceProviders;
+namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
-internal sealed partial class ServiceProviderExecutionService
+internal sealed partial class TemplateRenderService
 {
     private static TResult TryCatch<TResult>(
         Func<TResult> operation)

@@ -2,12 +2,12 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies;
 using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Dependencies;
 
-namespace cCoder.ContentManagement.Services.Foundations.ServiceProviders;
+namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
-internal sealed partial class ServiceProviderExecutionService
+internal sealed partial class PageRenderService
 {
     private static void ValidateExecute(object[] inputs) =>
         ValidationRulesEngine.Validate(

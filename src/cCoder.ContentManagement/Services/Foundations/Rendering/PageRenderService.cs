@@ -4,11 +4,10 @@
 
 using cCoder.ContentManagement.Brokers.ServiceProviders;
 
-namespace cCoder.ContentManagement.Services.Foundations.ServiceProviders;
+namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
-internal sealed partial class ServiceProviderExecutionService(
-    IServiceProviderBroker serviceProviderBroker)
-        : IServiceProviderExecutionService
+internal sealed partial class PageRenderService(
+    IServiceProviderBroker serviceProviderBroker) : IPageRenderService
 {
     public TResult Execute<TService, TResult>(
         string name,

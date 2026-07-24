@@ -6603,6 +6603,69 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
+      "StandardElementType": "FoundationService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Execute",
+          "Inputs": [
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "operation",
+              "Type": "System.Func\u003CTService, TResult\u003E"
+            }
+          ],
+          "ReturnType": "TResult"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
+      "StandardElementType": "FoundationService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Execute",
+          "Inputs": [
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "operation",
+              "Type": "System.Func\u003CTService, TResult\u003E"
+            }
+          ],
+          "ReturnType": "TResult"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService",
+      "StandardElementType": "FoundationService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Execute",
+          "Inputs": [
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "operation",
+              "Type": "System.Func\u003CTService, TResult\u003E"
+            }
+          ],
+          "ReturnType": "TResult"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Foundations.Serialization.JsonService",
       "StandardElementType": "FoundationService",
       "Properties": [],
@@ -11932,6 +11995,18 @@
       "ToType": "cCoder.ContentManagement.Brokers.Storages.RenderFileContentBroker"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
+      "ToType": "cCoder.ContentManagement.Brokers.ServiceProviders.ServiceProviderBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
+      "ToType": "cCoder.ContentManagement.Brokers.ServiceProviders.ServiceProviderBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService",
+      "ToType": "cCoder.ContentManagement.Brokers.ServiceProviders.ServiceProviderBroker"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Serialization.JsonService",
       "ToType": "cCoder.ContentManagement.Brokers.JsonBroker"
     },
@@ -12345,23 +12420,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.RenderFileContentService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.AppService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService"
+      "ToType": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ContentEventProcessingService",
@@ -12441,7 +12500,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Rendering.Services.Orchestrations.PageRenderExecutionOrchestrationService"
+      "ToType": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleEventProcessingService",
@@ -12521,23 +12580,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.AppService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService"
+      "ToType": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService"
     }
   ],
   "AnalysisItems": [
@@ -12580,6 +12623,69 @@
       "Code": "STXFORMAT001",
       "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
+      "LineNumber": 28
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
+      "LineNumber": 33
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
+      "LineNumber": 49
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
+      "LineNumber": 28
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
+      "LineNumber": 33
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
+      "LineNumber": 49
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService",
+      "LineNumber": 28
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService",
+      "LineNumber": 33
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService",
+      "LineNumber": 49
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService",
       "LineNumber": 29
     },
@@ -12612,20 +12718,6 @@
       "LineNumber": 16
     },
     {
-      "Code": "STXP001",
-      "Description": "A processing service may use only one foundation service and no higher-level service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 25
-    },
-    {
-      "Code": "STXP001",
-      "Description": "A processing service may use only one foundation service and no higher-level service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
-      "LineNumber": 15
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
@@ -12638,13 +12730,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "LineNumber": 16
-    },
-    {
-      "Code": "STXP001",
-      "Description": "A processing service may use only one foundation service and no higher-level service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 24
     }
   ]
 }

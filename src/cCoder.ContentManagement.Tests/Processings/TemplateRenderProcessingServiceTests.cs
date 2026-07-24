@@ -14,6 +14,8 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
+using cCoder.ContentManagement.Brokers.ServiceProviders;
 using Moq;
 using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
@@ -32,12 +34,21 @@ public partial class TemplateRenderProcessingServiceTests
     private readonly Mock<IMetadataCache> metadataCacheMock = new();
     private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
 
-    private TemplateRenderProcessingService CreateSut(RenderConfig config) =>
-        new(
+    private TemplateRenderProcessingService CreateSut(RenderConfig config)
+    {
+        Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
+
+        TemplateRenderService templateRenderService =
+            new(
+                serviceProviderBroker: serviceProviderBrokerMock.Object);
+
+        return new TemplateRenderProcessingService(
             metadataCache: metadataCacheMock.Object,
             objectCache: commonObjectCacheMock.Object,
             jsonBroker: new JsonBroker(),
+            templateRenderService: templateRenderService,
             config: config);
+    }
 
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()

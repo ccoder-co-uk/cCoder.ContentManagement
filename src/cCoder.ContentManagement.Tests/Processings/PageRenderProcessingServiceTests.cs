@@ -18,7 +18,9 @@ using cCoder.ContentManagement.Rendering.Models;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Services.Foundations;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
@@ -44,17 +46,36 @@ public partial class PageRenderProcessingServiceTests
     private readonly TestScriptReaderBroker scriptReaderBroker = new();
     private readonly Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new();
 
-    private PageRenderProcessingService CreateSut(RenderConfig config) =>
-        new(
-executionOrchestrationService: new PageRenderExecutionOrchestrationService(
-metadataCacheService: new MetadataCacheService(broker: metadataReaderBroker),
-commonObjectCacheService: new CommonObjectCacheService(broker: commonObjectReaderBrokerMock.Object),
-markupRenderService: new MarkupRenderService(
-componentReaderBroker: componentReaderBroker,
-scriptReaderBroker: scriptReaderBroker,
-jsonBroker: new JsonBroker(),
-renderFileContentBroker: renderFileContentBrokerMock.Object)),
-config: config);
+    private PageRenderProcessingService CreateSut(RenderConfig config)
+    {
+        PageRenderExecutionOrchestrationService executionOrchestrationService =
+            new(
+                metadataCacheService: new MetadataCacheService(
+                    broker: metadataReaderBroker),
+                commonObjectCacheService: new CommonObjectCacheService(
+                    broker: commonObjectReaderBrokerMock.Object),
+                markupRenderService: new MarkupRenderService(
+                    componentReaderBroker: componentReaderBroker,
+                    scriptReaderBroker: scriptReaderBroker,
+                    jsonBroker: new JsonBroker(),
+                    renderFileContentBroker: renderFileContentBrokerMock.Object));
+
+        Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
+
+        serviceProviderBrokerMock
+            .Setup(expression: broker =>
+                broker.GetRequiredService<IPageRenderExecutionOrchestrationService>(
+                    name: "PageRenderExecution"))
+            .Returns(value: executionOrchestrationService);
+
+        PageRenderService pageRenderService =
+            new(
+                serviceProviderBroker: serviceProviderBrokerMock.Object);
+
+        return new PageRenderProcessingService(
+            pageRenderService: pageRenderService,
+            config: config);
+    }
 
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()

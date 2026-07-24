@@ -25,6 +25,7 @@ using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Foundations.Serialization;
 using cCoder.ContentManagement.Services.Foundations.ServiceProviders;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
@@ -96,6 +97,41 @@ public static partial class IServiceCollectionExtensions
             serviceKey: "PageRender",
             implementationFactory: (serviceProvider, _) =>
                 serviceProvider.GetRequiredService<IPageRenderAggregationService>());
+
+        services.AddKeyedTransient<IPageRenderExecutionOrchestrationService>(
+            serviceKey: "PageRenderExecution",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IPageRenderExecutionOrchestrationService>());
+
+        services.AddKeyedTransient<IAppService>(
+            serviceKey: "AppStorage",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IAppService>());
+
+        services.AddKeyedTransient<IComponentService>(
+            serviceKey: "ComponentStorage",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IComponentService>());
+
+        services.AddKeyedTransient<IResourceService>(
+            serviceKey: "ResourceStorage",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IResourceService>());
+
+        services.AddKeyedTransient<IScriptService>(
+            serviceKey: "ScriptStorage",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IScriptService>());
+
+        services.AddKeyedTransient<ITemplateService>(
+            serviceKey: "TemplateStorage",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<ITemplateService>());
+
+        services.AddKeyedTransient<IRenderFileContentService>(
+            serviceKey: "RenderFileContent",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IRenderFileContentService>());
 
         services.AddKeyedTransient<ITemplateOrchestrationService>(
             serviceKey: "Template",
@@ -259,6 +295,9 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ICurrentAppResolver, CurrentAppManager>();
         services.AddTransient<IContentManagementMetadataTypeService, ContentManagementMetadataTypeService>();
         services.AddTransient<IRenderFileContentService, RenderFileContentService>();
+        services.AddTransient<IComponentRenderService, ComponentRenderService>();
+        services.AddTransient<IPageRenderService, PageRenderService>();
+        services.AddTransient<ITemplateRenderService, TemplateRenderService>();
         services.AddTransient<IResourceProvider, CoreResourceBroker>();
         services.AddSingleton<ICommonObjectCache, CommonObjectCacheDependency>();
         services.AddSingleton<MetadataCacheDependency>();

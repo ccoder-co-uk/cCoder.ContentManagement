@@ -14,6 +14,8 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Foundations;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
+using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
 using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
@@ -34,17 +36,39 @@ public partial class ComponentRenderProcessingServiceTests
     private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
     private readonly Mock<IRenderFileContentService> renderFileContentServiceMock = new();
 
-    private ComponentRenderProcessingService CreateSut(string workflowBaseUrl) =>
-        new(
-metadataCache: metadataCacheMock.Object,
-objectCache: commonObjectCacheMock.Object,
-jsonBroker: new JsonBroker(),
-config: new RenderConfig
-{
-    Settings = new Dictionary<string, string> { ["sslPort"] = "443" },
-    Services = new Dictionary<string, string> { ["Workflow"] = workflowBaseUrl },
-},
-renderFileContentService: renderFileContentServiceMock.Object);
+    private ComponentRenderProcessingService CreateSut(string workflowBaseUrl)
+    {
+        Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
+
+        serviceProviderBrokerMock
+            .Setup(expression: broker =>
+                broker.GetRequiredService<IRenderFileContentService>(
+                    name: "RenderFileContent"))
+            .Returns(value: renderFileContentServiceMock.Object);
+
+        ComponentRenderService componentRenderService =
+            new(
+                serviceProviderBroker: serviceProviderBrokerMock.Object);
+
+        RenderConfig config = new()
+        {
+            Settings = new Dictionary<string, string>
+            {
+                ["sslPort"] = "443",
+            },
+            Services = new Dictionary<string, string>
+            {
+                ["Workflow"] = workflowBaseUrl,
+            },
+        };
+
+        return new ComponentRenderProcessingService(
+            metadataCache: metadataCacheMock.Object,
+            objectCache: commonObjectCacheMock.Object,
+            jsonBroker: new JsonBroker(),
+            config: config,
+            componentRenderService: componentRenderService);
+    }
 
     private static (RenderApp app, RenderUser user, RenderComponent component, RenderComponentParams renderParams) CreateComponentRenderContext()
     {

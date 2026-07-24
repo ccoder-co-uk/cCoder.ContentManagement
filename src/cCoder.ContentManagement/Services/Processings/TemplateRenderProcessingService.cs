@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -25,11 +26,7 @@ internal partial class TemplateRenderProcessingService(
     IMetadataReaderBroker metadataCache,
     ICommonObjectReaderBroker objectCache,
     IJsonBroker jsonBroker,
-    IAppService appService = null,
-    IComponentService componentService = null,
-    IResourceService resourceService = null,
-    IScriptService scriptService = null,
-    ITemplateService templateService = null,
+    ITemplateRenderService templateRenderService,
     Config config = null,
     ILogger<TemplateRenderProcessingService> log = null)
         : ITemplateRenderProcessingService
@@ -49,9 +46,12 @@ internal partial class TemplateRenderProcessingService(
         ValidateTemplateName(name: name, parameterName: "name");
         ValidateModel(model: model, parameterName: "model");
         ValidateUser(user: user, parameterName: "user");
-        EnsureRenderDependenciesConfigured();
 
-        App app = appService.GetAllApp(ignoreFilters: true)
+        App app = templateRenderService
+            .Execute<IAppService, IQueryable<App>>(
+                name: "AppStorage",
+                operation: service => service.GetAllApp(
+                    ignoreFilters: true))
             .Where(predicate: existingApp => existingApp.Id == appId)
             .Select(selector: existingApp => new App
             {
@@ -70,19 +70,35 @@ internal partial class TemplateRenderProcessingService(
             throw new InvalidOperationException(message: $"App '{appId}' was not found.");
         }
 
-        app.Components = componentService.GetAllComponent(ignoreFilters: true)
+        app.Components = templateRenderService
+            .Execute<IComponentService, IQueryable<Component>>(
+                name: "ComponentStorage",
+                operation: service => service.GetAllComponent(
+                    ignoreFilters: true))
             .Where(predicate: existingComponent => existingComponent.AppId == appId)
             .ToArray();
 
-        app.Resources = resourceService.GetAllResource(ignoreFilters: true)
+        app.Resources = templateRenderService
+            .Execute<IResourceService, IQueryable<Resource>>(
+                name: "ResourceStorage",
+                operation: service => service.GetAllResource(
+                    ignoreFilters: true))
             .Where(predicate: existingResource => existingResource.AppId == appId)
             .ToArray();
 
-        app.Scripts = scriptService.GetAllScript(ignoreFilters: true)
+        app.Scripts = templateRenderService
+            .Execute<IScriptService, IQueryable<Script>>(
+                name: "ScriptStorage",
+                operation: service => service.GetAllScript(
+                    ignoreFilters: true))
             .Where(predicate: existingScript => existingScript.AppId == appId)
             .ToArray();
 
-        Template template = templateService.GetAllTemplate(ignoreFilters: true)
+        Template template = templateRenderService
+            .Execute<ITemplateService, IQueryable<Template>>(
+                name: "TemplateStorage",
+                operation: service => service.GetAllTemplate(
+                    ignoreFilters: true))
             .Where(predicate: existingTemplate => existingTemplate.AppId == appId)
             .ToArray()
             .FirstOrDefault(predicate: existingTemplate =>
@@ -807,18 +823,6 @@ internal partial class TemplateRenderProcessingService(
         }
 
         return user;
-    }
-
-    private void EnsureRenderDependenciesConfigured()
-    {
-        if (appService == null ||
-            componentService == null ||
-            resourceService == null ||
-            scriptService == null ||
-            templateService == null)
-        {
-            throw new InvalidOperationException(message: "Render storage services are not configured.");
-        }
     }
 
     private static void RegexReplace(StringBuilder source, string matchExpression, Func<Match, string> action)

@@ -2,10 +2,12 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-namespace cCoder.ContentManagement.Brokers.ServiceProviders;
+namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
-internal interface IServiceProviderBroker
+internal interface ITemplateRenderService
 {
-    TService GetRequiredService<TService>(string name)
+    TResult Execute<TService, TResult>(
+        string name,
+        Func<TService, TResult> operation)
         where TService : notnull;
 }

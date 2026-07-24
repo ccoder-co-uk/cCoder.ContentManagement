@@ -7,13 +7,14 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Models;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
 using cCoder.ContentManagement.Services;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class PageRenderProcessingService(
-    IPageRenderExecutionOrchestrationService executionOrchestrationService,
+    IPageRenderService pageRenderService,
     Config config) : IPageRenderProcessingService
 {
     public RenderResult RenderPageUserRenderResult(
@@ -29,8 +30,23 @@ internal sealed partial class PageRenderProcessingService(
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");
 
-        PageRenderSession session = BuildSession(page: page, user: user, config: config, theme: theme, culture: culture, edit: edit);
-        PageRenderResult pageRenderResult = executionOrchestrationService.RenderPageRenderSessionPageRenderResult(session: session);
+        PageRenderSession session =
+            BuildSession(
+                page: page,
+                user: user,
+                config: config,
+                theme: theme,
+                culture: culture,
+                edit: edit);
+
+        PageRenderResult pageRenderResult =
+            pageRenderService.Execute<
+                IPageRenderExecutionOrchestrationService,
+                PageRenderResult>(
+                    name: "PageRenderExecution",
+                    operation: service =>
+                        service.RenderPageRenderSessionPageRenderResult(
+                            session: session));
 
         return new RenderResult
         {

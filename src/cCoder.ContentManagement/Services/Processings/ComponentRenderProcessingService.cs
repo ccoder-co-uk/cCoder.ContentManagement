@@ -13,6 +13,7 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -27,11 +28,8 @@ internal partial class ComponentRenderProcessingService(
     ICommonObjectReaderBroker objectCache,
     IJsonBroker jsonBroker,
     Config config,
-    IRenderFileContentService renderFileContentService,
-    IAppService appService = null,
-    IComponentService componentService = null,
-    IResourceService resourceService = null,
-    IScriptService scriptService = null) : IComponentRenderProcessingService
+    IComponentRenderService componentRenderService)
+        : IComponentRenderProcessingService
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
 
@@ -43,11 +41,13 @@ internal partial class ComponentRenderProcessingService(
         ValidateName(name: name, parameterName: "name");
         ValidateTheme(theme: theme, parameterName: "theme");
         ValidateUser(user: user, parameterName: "user");
-        EnsureRenderDependenciesConfigured();
-
         culture ??= user.DefaultCultureId;
 
-        App app = appService.GetAllApp(ignoreFilters: true)
+        App app = componentRenderService
+            .Execute<IAppService, IQueryable<App>>(
+                name: "AppStorage",
+                operation: service => service.GetAllApp(
+                    ignoreFilters: true))
             .Where(predicate: existingApp => existingApp.Id == appId)
             .Select(selector: existingApp => new App
             {
@@ -63,15 +63,27 @@ internal partial class ComponentRenderProcessingService(
 
         if (app != null)
         {
-            app.Components = componentService.GetAllComponent(ignoreFilters: true)
+            app.Components = componentRenderService
+                .Execute<IComponentService, IQueryable<Component>>(
+                    name: "ComponentStorage",
+                    operation: service => service.GetAllComponent(
+                        ignoreFilters: true))
                 .Where(predicate: existingComponent => existingComponent.AppId == appId)
                 .ToArray();
 
-            app.Resources = resourceService.GetAllResource(ignoreFilters: true)
+            app.Resources = componentRenderService
+                .Execute<IResourceService, IQueryable<Resource>>(
+                    name: "ResourceStorage",
+                    operation: service => service.GetAllResource(
+                        ignoreFilters: true))
                 .Where(predicate: existingResource => existingResource.AppId == appId)
                 .ToArray();
 
-            app.Scripts = scriptService.GetAllScript(ignoreFilters: true)
+            app.Scripts = componentRenderService
+                .Execute<IScriptService, IQueryable<Script>>(
+                    name: "ScriptStorage",
+                    operation: service => service.GetAllScript(
+                        ignoreFilters: true))
                 .Where(predicate: existingScript => existingScript.AppId == appId)
                 .ToArray();
         }
@@ -326,7 +338,12 @@ internal partial class ComponentRenderProcessingService(
                                                                                                                                              .Replace(oldValue: "]]", newValue: "")
                                                                                                                                              .ToLowerInvariant();
 
-                                                                                                                                         string latestTextContent = renderFileContentService.GetLatestTextContent(appId: renderParams.App.Id, path: path);
+                                                                                                                                         string latestTextContent = componentRenderService.Execute<IRenderFileContentService, string>(
+                                                                                                                                             name: "RenderFileContent",
+                                                                                                                                             operation: service => service.GetLatestTextContent(
+                                                                                                                                                 appId: renderParams.App.Id,
+                                                                                                                                                 path: path));
+
                                                                                                                                          return string.IsNullOrEmpty(value: latestTextContent) ? string.Empty : ProcessContentString(key: key, renderParams: renderParams, content: latestTextContent, replacements: replacements);
                                                                                                                                      });
 
@@ -605,17 +622,6 @@ internal partial class ComponentRenderProcessingService(
         }
 
         return user;
-    }
-
-    private void EnsureRenderDependenciesConfigured()
-    {
-        if (appService == null ||
-            componentService == null ||
-            resourceService == null ||
-            scriptService == null)
-        {
-            throw new InvalidOperationException(message: "Render storage services are not configured.");
-        }
     }
 
     private static void RegexReplace(StringBuilder source, string matchExpression, Func<Match, string> action)
