@@ -140,7 +140,7 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
         IComponentOrchestrationService componentOrchestrationService = null,
         ILayoutOrchestrationService layoutOrchestrationService = null,
         IPageOrchestrationService pageOrchestrationService = null,
-        IPageRoleOrchestrationService pageRoleOrchestrationService = null,
+        IPageRoleImportOrchestrationService pageRoleImportOrchestrationService = null,
         IResourceOrchestrationService resourceOrchestrationService = null,
         ITemplateOrchestrationService templateOrchestrationService = null,
         IScriptOrchestrationService scriptOrchestrationService = null)
@@ -153,7 +153,9 @@ packageExportProcessingService: packageExportProcessingService ?? Mock.Of<IPacka
 componentOrchestrationService: componentOrchestrationService ?? Mock.Of<IComponentOrchestrationService>(),
 layoutOrchestrationService: layoutOrchestrationService ?? Mock.Of<ILayoutOrchestrationService>(),
 pageOrchestrationService: pageOrchestrationService ?? Mock.Of<IPageOrchestrationService>(),
-pageRoleOrchestrationService: pageRoleOrchestrationService ?? Mock.Of<IPageRoleOrchestrationService>(),
+pageRoleImportOrchestrationService:
+    pageRoleImportOrchestrationService
+    ?? Mock.Of<IPageRoleImportOrchestrationService>(),
 resourceOrchestrationService: resourceOrchestrationService ?? Mock.Of<IResourceOrchestrationService>(),
 templateOrchestrationService: templateOrchestrationService ?? Mock.Of<ITemplateOrchestrationService>(),
 scriptOrchestrationService: scriptOrchestrationService ?? Mock.Of<IScriptOrchestrationService>());

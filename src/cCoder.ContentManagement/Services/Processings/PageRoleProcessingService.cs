@@ -15,7 +15,6 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PageRoleProcessingService(
     IPageRoleService service,
-    IPageRoleBroker pageRoleBroker,
     IRoleBroker roleBroker,
     IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IPageRoleProcessingService
@@ -126,68 +125,6 @@ internal partial class PageRoleProcessingService(
 
     }, isValueTask: true);
 
-    public ValueTask ImportPageRoleInfosAsync(int appId, PageRoleInfo[] items) =>
-        TryCatch(operation: async () =>
-    {
-        ValidateImportPageRoleInfosAsync(inputs: [appId, items]);
-        ValidateAppId(appId: appId, parameterName: "appId");
-        ValidatePageRoleInfos(pageRoleInfos: items, parameterName: "items");
-
-        Role[] roles = roleBroker.GetAllRoles(ignoreFilters: true)
-            .Where(predicate: role => role.AppId == appId)
-            .ToArray();
-
-        Page[] pages = pageBroker.GetAllPages(ignoreFilters: true)
-            .Where(predicate: page => page.AppId == appId)
-            .ToArray();
-
-        PageRole[] pageRoles = items
-            .Select(selector: pageRoleInfo =>
-            {
-                Page page = pages.FirstOrDefault(predicate: existing => existing.Path == pageRoleInfo.Path);
-                Role role = roles.FirstOrDefault(predicate: existing => existing.Name == pageRoleInfo.Role);
-
-                return new PageRole
-                {
-                    PageId = (page?.Id ?? 0),
-                    RoleId = (role?.Id ?? Guid.Empty)
-                };
-            })
-            .Where(predicate: pageRole => pageRole.PageId != 0 && pageRole.RoleId != Guid.Empty)
-            .GroupBy(keySelector: pageRole => new { pageRole.PageId, pageRole.RoleId })
-            .Select(selector: group => group.First())
-            .ToArray();
-
-        int[] pageIds = pageRoles
-            .Select(selector: pageRole => pageRole.PageId)
-            .Distinct()
-            .ToArray();
-
-        PageRole[] existingPageRoles = pageRoleBroker.GetAllPageRoles(ignoreFilters: true)
-            .Where(predicate: pageRole => ((ReadOnlySpan<int>)pageIds).Contains(value: pageRole.PageId))
-            .ToArray();
-
-        PageRole[] pageRolesToDelete = existingPageRoles
-            .Where(predicate: existing => !pageRoles.Any(predicate: incoming =>
-                incoming.PageId == existing.PageId
-                && incoming.RoleId == existing.RoleId))
-            .ToArray();
-
-        if (pageRolesToDelete.Length > 0)
-        {
-            await pageRoleBroker.DeleteAllPageRolesAsync(deletedPageRole: pageRolesToDelete);
-        }
-
-        foreach (PageRole pageRole in pageRoles
-            .Where(predicate: incoming => !existingPageRoles.Any(predicate: existing =>
-                existing.PageId == incoming.PageId
-                && existing.RoleId == incoming.RoleId)))
-        {
-            await pageRoleBroker.AddPageRoleAsync(newPageRole: pageRole);
-        }
-
-    }, isValueTask: true);
-
     public ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole) =>
         TryCatch(operation: async () =>
     {
@@ -242,9 +179,6 @@ internal partial class PageRoleProcessingService(
             ValidatePageRole(pageRole: pageRole, parameterName: parameterName);
         }
     }
-
-    private static void ValidatePageRoleInfos(IEnumerable<PageRoleInfo> pageRoleInfos, string parameterName) =>
-        ThrowIf(condition: pageRoleInfos == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {

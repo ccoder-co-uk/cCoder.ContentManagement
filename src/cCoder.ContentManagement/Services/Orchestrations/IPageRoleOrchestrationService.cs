@@ -17,7 +17,5 @@ public interface IPageRoleOrchestrationService
 
     ValueTask<IEnumerable<OperationResult<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole);
 
-    ValueTask ImportPageRoleInfosAsync(int appId, PageRoleInfo[] items);
-
     ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole);
 }

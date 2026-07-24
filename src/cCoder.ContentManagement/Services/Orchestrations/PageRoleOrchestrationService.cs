@@ -97,20 +97,6 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
 
     }, isValueTask: true);
 
-    public ValueTask ImportPageRoleInfosAsync(int appId, PageRoleInfo[] items) =>
-        TryCatch(operation: () =>
-    {
-        ValidateImportPageRoleInfosAsync(inputs: [appId, items]);
-
-        return processingService.ImportPageRoleInfosAsync(
-            appId: ValidateAppId(
-                appId: appId,
-                parameterName: "appId"),
-            items: ValidatePageRoleInfos(
-                pageRoleInfos: items,
-                parameterName: "items"));
-    }, isValueTask: true);
-
     public ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole) =>
         TryCatch(operation: async () =>
     {
@@ -154,16 +140,6 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
         }
 
         return pageRoles;
-    }
-
-    private static PageRoleInfo[] ValidatePageRoleInfos(PageRoleInfo[] pageRoleInfos, string parameterName)
-    {
-        if (pageRoleInfos == null)
-        {
-            throw new ValidationException(message: parameterName + " is required.");
-        }
-
-        return pageRoleInfos;
     }
 
     private async ValueTask<PageRole> ExecuteAddPageRoleAsync(PageRole newPageRole)

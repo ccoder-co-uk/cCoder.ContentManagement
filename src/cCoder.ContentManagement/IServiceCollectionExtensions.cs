@@ -333,6 +333,9 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageInfoOrchestrationService, PageInfoOrchestrationService>();
         services.AddTransient<IPageOrchestrationService, PageOrchestrationService>();
         services.AddTransient<IPageRoleOrchestrationService, PageRoleOrchestrationService>();
+        services.AddTransient<
+            IPageRoleImportOrchestrationService,
+            PageRoleImportOrchestrationService>();
         services.AddTransient<IResourceOrchestrationService, ResourceOrchestrationService>();
         services.AddTransient<IScriptOrchestrationService, ScriptOrchestrationService>();
         services.AddTransient<ISubmissionOrchestrationService, SubmissionOrchestrationService>();
@@ -371,6 +374,12 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageProcessingService, PageProcessingService>();
         services.AddTransient<IPageRoleEventProcessingService, PageRoleEventProcessingService>();
         services.AddTransient<IPageRoleProcessingService, PageRoleProcessingService>();
+        services.AddTransient<
+            IPageRoleImportLookupProcessingService,
+            PageRoleImportLookupProcessingService>();
+        services.AddTransient<
+            IPageRoleImportPersistenceProcessingService,
+            PageRoleImportPersistenceProcessingService>();
         services.AddTransient<IResourceEventProcessingService, ResourceEventProcessingService>();
         services.AddTransient<IResourceProcessingService, ResourceProcessingService>();
         services.AddTransient<IScriptEventProcessingService, ScriptEventProcessingService>();

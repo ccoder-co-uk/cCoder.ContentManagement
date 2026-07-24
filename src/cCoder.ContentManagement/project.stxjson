@@ -8895,6 +8895,27 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Orchestrations.PageRoleImportOrchestrationService",
+      "StandardElementType": "OrchestrationService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "ImportPageRoleInfosAsync",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "pageRoleInfos",
+              "Type": "cCoder.ContentManagement.Models.PageRoleInfo[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService",
       "StandardElementType": "OrchestrationService",
       "Properties": [],
@@ -8948,20 +8969,6 @@
             }
           ],
           "ReturnType": "System.Linq.IQueryable\u003CPageRole\u003E"
-        },
-        {
-          "Name": "ImportPageRoleInfosAsync",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "items",
-              "Type": "cCoder.ContentManagement.Models.PageRoleInfo[]"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask"
         }
       ]
     },
@@ -10979,6 +10986,48 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Processings.PageRoleImportLookupProcessingService",
+      "StandardElementType": "ProcessingService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "ResolvePageRole",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "path",
+              "Type": "System.String"
+            },
+            {
+              "Name": "roleName",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "PageRole"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Processings.PageRoleImportPersistenceProcessingService",
+      "StandardElementType": "ProcessingService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "SynchronizePageRolesAsync",
+          "Inputs": [
+            {
+              "Name": "pageRoles",
+              "Type": "PageRole[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "StandardElementType": "ProcessingService",
       "Properties": [],
@@ -11032,20 +11081,6 @@
             }
           ],
           "ReturnType": "System.Linq.IQueryable\u003CPageRole\u003E"
-        },
-        {
-          "Name": "ImportPageRoleInfosAsync",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "items",
-              "Type": "cCoder.ContentManagement.Models.PageRoleInfo[]"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask"
         }
       ]
     },
@@ -11831,7 +11866,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService"
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageRoleImportOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
@@ -12330,6 +12365,14 @@
       "ToType": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.PageRoleImportOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.PageRoleImportLookupProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.PageRoleImportOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.PageRoleImportPersistenceProcessingService"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.PageRoleEventProcessingService"
     },
@@ -12558,6 +12601,18 @@
       "ToType": "cCoder.ContentManagement.Services.Foundations.Events.PageRoleEventService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleImportLookupProcessingService",
+      "ToType": "cCoder.ContentManagement.Brokers.RoleBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleImportLookupProcessingService",
+      "ToType": "cCoder.ContentManagement.Brokers.Storages.PageBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleImportPersistenceProcessingService",
+      "ToType": "cCoder.ContentManagement.Brokers.Storages.PageRoleBroker"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
     },
@@ -12568,10 +12623,6 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PageBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "ToType": "cCoder.ContentManagement.Brokers.Storages.PageRoleBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
@@ -12636,74 +12687,11 @@
   ],
   "AnalysisItems": [
     {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.AppManager",
-      "LineNumber": 91
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.AppController",
-      "LineNumber": 142
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
       "LineNumber": 16
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService",
-      "LineNumber": 43
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService",
-      "LineNumber": 189
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
-      "LineNumber": 43
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
-      "LineNumber": 767
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppUserProcessingService",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppUserProcessingService",
-      "LineNumber": 55
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppUserProcessingService",
-      "LineNumber": 58
     }
   ]
 }

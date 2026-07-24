@@ -29,7 +29,6 @@ public partial class PageRoleProcessingServiceTests
     private readonly Mock<IPageBroker> pageBrokerMock = new();
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPageRoleService> pageRoleServiceMock = new();
-    private readonly Mock<IPageRoleBroker> pageRoleBrokerMock = new();
     private readonly Mock<IRoleBroker> roleBrokerMock = new();
     private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
     private readonly PageRoleProcessingService pageRoleProcessingService;
@@ -38,7 +37,6 @@ public partial class PageRoleProcessingServiceTests
     {
         pageRoleProcessingService = new PageRoleProcessingService(
 service: pageRoleServiceMock.Object,
-pageRoleBroker: pageRoleBrokerMock.Object,
 roleBroker: roleBrokerMock.Object,
 pageBroker: pageBrokerMock.Object,
 authorizationBroker: authorizationBrokerMock.Object
