@@ -58,6 +58,9 @@ expression: x => x.RaisePageDeleteEventAsync(message: It.IsAny<EventMessage<CmsD
 times: Times.Once
         );
 
+        pageEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         pageEventBrokerMock.VerifyNoOtherCalls();
     }
 

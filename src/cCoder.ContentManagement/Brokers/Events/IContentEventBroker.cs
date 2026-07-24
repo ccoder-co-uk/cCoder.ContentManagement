@@ -7,7 +7,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface IContentEventBroker
+public interface IContentEventBroker : IAuthenticatedEventBroker
 {
     ValueTask RaiseContentAddEventAsync(EventMessage<Content> message);
 

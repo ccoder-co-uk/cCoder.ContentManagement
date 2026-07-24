@@ -56,6 +56,9 @@ expression: x => x.RaiseCommonObjectAddEventAsync(message: It.IsAny<EventMessage
 times: Times.Once
         );
 
+        commonObjectEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         commonObjectEventBrokerMock.VerifyNoOtherCalls();
     }
 

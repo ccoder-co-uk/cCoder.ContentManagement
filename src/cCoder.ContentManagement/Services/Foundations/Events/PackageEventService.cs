@@ -10,7 +10,7 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class PackageEventService(IPackageEventBroker packageEventBroker, ICoreAuthInfo authInfo) : IPackageEventService
+internal partial class PackageEventService(IPackageEventBroker packageEventBroker) : IPackageEventService
 {
     public ValueTask RaisePackageImportEventAsync(int appId, Package package) =>
         TryCatch(operation: async () =>
@@ -21,7 +21,7 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = packageEventBroker.GetCurrentUserId()
             },
             Data = (appId, package)
         };
@@ -39,7 +39,7 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = packageEventBroker.GetCurrentUserId()
             },
             Data = package
         };
@@ -57,7 +57,7 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = packageEventBroker.GetCurrentUserId()
             },
             Data = package
         };
@@ -75,7 +75,7 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = packageEventBroker.GetCurrentUserId()
             },
             Data = package
         };

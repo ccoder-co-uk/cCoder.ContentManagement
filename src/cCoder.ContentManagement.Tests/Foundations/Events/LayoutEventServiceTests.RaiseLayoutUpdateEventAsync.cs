@@ -58,6 +58,9 @@ expression: x => x.RaiseLayoutUpdateEventAsync(message: It.IsAny<EventMessage<Cm
 times: Times.Once
         );
 
+        layoutEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         layoutEventBrokerMock.VerifyNoOtherCalls();
     }
 

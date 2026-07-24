@@ -8,14 +8,15 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class LayoutEventBroker(IEventHub eventHub) : ILayoutEventBroker
+internal sealed class LayoutEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
+    : AuthenticatedEventBroker(eventInfrastructureDependency), ILayoutEventBroker
 {
     public ValueTask RaiseLayoutAddEventAsync(EventMessage<Layout> message) =>
-        eventHub.RaiseEventAsync(name: "layout_add", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "layout_add", message: message);
 
     public ValueTask RaiseLayoutUpdateEventAsync(EventMessage<Layout> message) =>
-        eventHub.RaiseEventAsync(name: "layout_update", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "layout_update", message: message);
 
     public ValueTask RaiseLayoutDeleteEventAsync(EventMessage<Layout> message) =>
-        eventHub.RaiseEventAsync(name: "layout_delete", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "layout_delete", message: message);
 }

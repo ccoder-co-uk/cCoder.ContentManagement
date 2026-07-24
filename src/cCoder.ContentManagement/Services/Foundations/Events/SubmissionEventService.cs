@@ -9,7 +9,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class SubmissionEventService(ISubmissionEventBroker submissionEventBroker, ICoreAuthInfo authInfo) : ISubmissionEventService
+internal partial class SubmissionEventService(ISubmissionEventBroker submissionEventBroker) : ISubmissionEventService
 {
     public ValueTask RaiseSubmissionAddEventAsync(Submission entity) =>
         TryCatch(operation: async () =>
@@ -20,7 +20,7 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = submissionEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -38,7 +38,7 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = submissionEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -56,7 +56,7 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = submissionEventBroker.GetCurrentUserId()
             },
             Data = entity
         };

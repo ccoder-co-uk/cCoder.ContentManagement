@@ -9,7 +9,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class ContentEventService(IContentEventBroker contentEventBroker, ICoreAuthInfo authInfo) : IContentEventService
+internal partial class ContentEventService(IContentEventBroker contentEventBroker) : IContentEventService
 {
     public ValueTask RaiseContentAddEventAsync(Content entity) =>
         TryCatch(operation: async () =>
@@ -20,7 +20,7 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = contentEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -38,7 +38,7 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = contentEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -56,7 +56,7 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = contentEventBroker.GetCurrentUserId()
             },
             Data = entity
         };

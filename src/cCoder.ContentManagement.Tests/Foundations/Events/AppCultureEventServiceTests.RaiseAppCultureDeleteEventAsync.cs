@@ -58,6 +58,9 @@ expression: x => x.RaiseAppCultureDeleteEventAsync(message: It.IsAny<EventMessag
 times: Times.Once
         );
 
+        appCultureEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         appCultureEventBrokerMock.VerifyNoOtherCalls();
     }
 

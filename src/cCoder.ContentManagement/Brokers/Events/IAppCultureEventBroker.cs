@@ -7,7 +7,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface IAppCultureEventBroker
+public interface IAppCultureEventBroker : IAuthenticatedEventBroker
 {
     ValueTask RaiseAppCultureAddEventAsync(EventMessage<AppCulture> message);
 

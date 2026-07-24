@@ -9,7 +9,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class CultureEventService(ICultureEventBroker cultureEventBroker, ICoreAuthInfo authInfo) : ICultureEventService
+internal partial class CultureEventService(ICultureEventBroker cultureEventBroker) : ICultureEventService
 {
     public ValueTask RaiseCultureAddEventAsync(Culture entity) =>
         TryCatch(operation: async () =>
@@ -20,7 +20,7 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = cultureEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -38,7 +38,7 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = cultureEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -56,7 +56,7 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = cultureEventBroker.GetCurrentUserId()
             },
             Data = entity
         };

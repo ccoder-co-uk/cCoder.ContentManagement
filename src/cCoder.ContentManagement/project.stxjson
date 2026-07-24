@@ -362,6 +362,18 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Brokers.Events.AuthenticatedEventBroker",
+      "StandardElementType": "Broker",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "GetCurrentUserId",
+          "Inputs": [],
+          "ReturnType": "System.String"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Brokers.Events.CommonObjectEventBroker",
       "StandardElementType": "Broker",
       "Properties": [],
@@ -2171,6 +2183,32 @@
       "StandardElementType": "Dependency",
       "Properties": [],
       "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "GetCurrentUserId",
+          "Inputs": [],
+          "ReturnType": "System.String"
+        },
+        {
+          "Name": "RaiseEventAsync",
+          "Inputs": [
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "message",
+              "Type": "EventMessage\u003CT\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask"
+        }
+      ]
     },
     {
       "Name": "cCoder.ContentManagement.Dependencies.QueryFilterDependency",
@@ -10925,6 +10963,74 @@
   ],
   "Links": [
     {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.AppCultureEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.AppEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.AuthenticatedEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.CommonObjectEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.ComponentEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.ContentEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.CultureEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.LayoutEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.PackageItemEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.PageEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.PageInfoEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.PageRoleEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.ResourceEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.ScriptEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.SubmissionEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.TemplateEventBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.Events.EventInfrastructureDependency"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency",
       "ToType": "cCoder.ContentManagement.Models.Config"
     },
@@ -11919,6 +12025,13 @@
   ],
   "AnalysisItems": [
     {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Brokers.Events.AuthenticatedEventBroker",
+      "LineNumber": 20
+    },
+    {
       "Code": "STXE003",
       "Description": "An exposure may communicate with only one business service.",
       "Severity": "Warning",
@@ -12043,118 +12156,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Coordinations.TemplateRenderCoordinationService",
       "LineNumber": 11
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.AppCultureEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.AppEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.CommonObjectEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.ComponentEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.ContentEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.CultureEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.LayoutEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.PackageItemEventService",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.PageEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.PageInfoEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.PageRoleEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.ResourceEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.ScriptEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.SubmissionEventService",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Events.TemplateEventService",
-      "LineNumber": 12
     },
     {
       "Code": "STXO001",

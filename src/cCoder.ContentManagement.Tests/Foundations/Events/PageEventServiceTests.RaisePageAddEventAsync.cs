@@ -58,6 +58,9 @@ expression: x => x.RaisePageAddEventAsync(message: It.IsAny<EventMessage<CmsData
 times: Times.Once
         );
 
+        pageEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         pageEventBrokerMock.VerifyNoOtherCalls();
     }
 

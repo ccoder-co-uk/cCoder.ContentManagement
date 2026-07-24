@@ -23,23 +23,19 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Events;
 public partial class CultureEventServiceTests
 {
     private readonly Mock<ICultureEventBroker> cultureEventBrokerMock;
-    private readonly Mock<ICoreAuthInfo> authInfoMock;
     private readonly cCoder.ContentManagement.Services.Foundations.Events.CultureEventService service;
     private const string CurrentUserId = "test-user";
 
     public CultureEventServiceTests()
     {
         cultureEventBrokerMock = new Mock<ICultureEventBroker>(behavior: MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(behavior: MockBehavior.Strict);
         cultureEventBrokerMock = new(behavior: MockBehavior.Strict);
-        authInfoMock = new();
 
-        authInfoMock.SetupGet(expression: x => x.SSOUserId)
+        cultureEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
             .Returns(value: CurrentUserId);
 
         service = new cCoder.ContentManagement.Services.Foundations.Events.CultureEventService(
-cultureEventBroker: cultureEventBrokerMock.Object,
-authInfo: authInfoMock.Object
+cultureEventBroker: cultureEventBrokerMock.Object
         );
     }
 }

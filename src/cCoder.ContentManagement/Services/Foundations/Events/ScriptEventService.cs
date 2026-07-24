@@ -9,7 +9,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, ICoreAuthInfo authInfo) : IScriptEventService
+internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker) : IScriptEventService
 {
     public ValueTask RaiseScriptAddEventAsync(Script entity) =>
         TryCatch(operation: async () =>
@@ -20,7 +20,7 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, 
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = scriptEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -38,7 +38,7 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, 
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = scriptEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -56,7 +56,7 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, 
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = scriptEventBroker.GetCurrentUserId()
             },
             Data = entity
         };

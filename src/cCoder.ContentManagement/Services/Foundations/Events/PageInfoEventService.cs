@@ -9,7 +9,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker, ICoreAuthInfo authInfo) : IPageInfoEventService
+internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker) : IPageInfoEventService
 {
     public ValueTask RaisePageInfoAddEventAsync(PageInfo entity) =>
         TryCatch(operation: async () =>
@@ -20,7 +20,7 @@ internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = pageInfoEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -38,7 +38,7 @@ internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = pageInfoEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -56,7 +56,7 @@ internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = pageInfoEventBroker.GetCurrentUserId()
             },
             Data = entity
         };

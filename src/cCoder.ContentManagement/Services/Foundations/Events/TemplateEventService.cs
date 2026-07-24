@@ -9,7 +9,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class TemplateEventService(ITemplateEventBroker templateEventBroker, ICoreAuthInfo authInfo) : ITemplateEventService
+internal partial class TemplateEventService(ITemplateEventBroker templateEventBroker) : ITemplateEventService
 {
     public ValueTask RaiseTemplateAddEventAsync(Template entity) =>
         TryCatch(operation: async () =>
@@ -20,7 +20,7 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = templateEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -38,7 +38,7 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = templateEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -56,7 +56,7 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = templateEventBroker.GetCurrentUserId()
             },
             Data = entity
         };

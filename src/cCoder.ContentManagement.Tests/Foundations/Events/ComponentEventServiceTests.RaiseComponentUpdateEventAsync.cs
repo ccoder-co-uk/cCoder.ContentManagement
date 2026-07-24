@@ -58,6 +58,9 @@ expression: x => x.RaiseComponentUpdateEventAsync(message: It.IsAny<EventMessage
 times: Times.Once
         );
 
+        componentEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         componentEventBrokerMock.VerifyNoOtherCalls();
     }
 

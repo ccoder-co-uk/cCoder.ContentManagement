@@ -8,11 +8,12 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class AppCultureEventBroker(IEventHub eventHub) : IAppCultureEventBroker
+internal sealed class AppCultureEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
+    : AuthenticatedEventBroker(eventInfrastructureDependency), IAppCultureEventBroker
 {
     public ValueTask RaiseAppCultureAddEventAsync(EventMessage<AppCulture> message) =>
-        eventHub.RaiseEventAsync(name: "app_culture_add", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "app_culture_add", message: message);
 
     public ValueTask RaiseAppCultureDeleteEventAsync(EventMessage<AppCulture> message) =>
-        eventHub.RaiseEventAsync(name: "app_culture_delete", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "app_culture_delete", message: message);
 }

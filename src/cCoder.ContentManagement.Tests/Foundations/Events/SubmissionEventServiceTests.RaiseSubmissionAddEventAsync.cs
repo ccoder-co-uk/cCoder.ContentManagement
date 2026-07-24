@@ -58,6 +58,9 @@ expression: x => x.RaiseSubmissionAddEventAsync(message: It.IsAny<EventMessage<C
 times: Times.Once
         );
 
+        submissionEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         submissionEventBrokerMock.VerifyNoOtherCalls();
     }
 

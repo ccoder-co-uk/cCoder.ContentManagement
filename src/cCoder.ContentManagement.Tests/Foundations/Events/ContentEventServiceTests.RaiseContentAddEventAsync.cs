@@ -58,6 +58,9 @@ expression: x => x.RaiseContentAddEventAsync(message: It.IsAny<EventMessage<CmsD
 times: Times.Once
         );
 
+        contentEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         contentEventBrokerMock.VerifyNoOtherCalls();
     }
 

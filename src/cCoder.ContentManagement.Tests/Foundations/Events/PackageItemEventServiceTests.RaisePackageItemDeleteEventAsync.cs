@@ -58,6 +58,9 @@ expression: x => x.RaisePackageItemDeleteEventAsync(message: It.IsAny<EventMessa
 times: Times.Once
         );
 
+        packageItemEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         packageItemEventBrokerMock.VerifyNoOtherCalls();
     }
 

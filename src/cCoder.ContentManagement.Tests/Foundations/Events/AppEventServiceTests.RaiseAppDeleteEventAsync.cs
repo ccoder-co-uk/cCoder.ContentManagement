@@ -58,6 +58,9 @@ expression: x => x.RaiseAppDeleteEventAsync(message: It.IsAny<EventMessage<CmsDa
 times: Times.Once
         );
 
+        appEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         appEventBrokerMock.VerifyNoOtherCalls();
     }
 

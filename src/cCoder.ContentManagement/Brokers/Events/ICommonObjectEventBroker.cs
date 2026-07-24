@@ -7,7 +7,7 @@ using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface ICommonObjectEventBroker
+public interface ICommonObjectEventBroker : IAuthenticatedEventBroker
 {
     ValueTask RaiseCommonObjectAddEventAsync(EventMessage<CommonObject> message);
 

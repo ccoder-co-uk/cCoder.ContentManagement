@@ -58,6 +58,9 @@ expression: x => x.RaiseTemplateDeleteEventAsync(message: It.IsAny<EventMessage<
 times: Times.Once
         );
 
+        templateEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         templateEventBrokerMock.VerifyNoOtherCalls();
     }
 

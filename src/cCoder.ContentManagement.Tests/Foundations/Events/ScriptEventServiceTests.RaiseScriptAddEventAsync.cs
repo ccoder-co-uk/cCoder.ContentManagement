@@ -58,6 +58,9 @@ expression: x => x.RaiseScriptAddEventAsync(message: It.IsAny<EventMessage<CmsDa
 times: Times.Once
         );
 
+        scriptEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         scriptEventBrokerMock.VerifyNoOtherCalls();
     }
 

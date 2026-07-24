@@ -23,23 +23,19 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Events;
 public partial class LayoutEventServiceTests
 {
     private readonly Mock<ILayoutEventBroker> layoutEventBrokerMock;
-    private readonly Mock<ICoreAuthInfo> authInfoMock;
     private readonly cCoder.ContentManagement.Services.Foundations.Events.LayoutEventService service;
     private const string CurrentUserId = "test-user";
 
     public LayoutEventServiceTests()
     {
         layoutEventBrokerMock = new Mock<ILayoutEventBroker>(behavior: MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(behavior: MockBehavior.Strict);
         layoutEventBrokerMock = new(behavior: MockBehavior.Strict);
-        authInfoMock = new();
 
-        authInfoMock.SetupGet(expression: x => x.SSOUserId)
+        layoutEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
             .Returns(value: CurrentUserId);
 
         service = new cCoder.ContentManagement.Services.Foundations.Events.LayoutEventService(
-layoutEventBroker: layoutEventBrokerMock.Object,
-authInfo: authInfoMock.Object
+layoutEventBroker: layoutEventBrokerMock.Object
         );
     }
 }

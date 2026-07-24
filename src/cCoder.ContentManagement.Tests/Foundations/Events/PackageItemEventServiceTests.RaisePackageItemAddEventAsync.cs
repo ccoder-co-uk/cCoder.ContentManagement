@@ -58,6 +58,9 @@ expression: x => x.RaisePackageItemAddEventAsync(message: It.IsAny<EventMessage<
 times: Times.Once
         );
 
+        packageItemEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         packageItemEventBrokerMock.VerifyNoOtherCalls();
     }
 

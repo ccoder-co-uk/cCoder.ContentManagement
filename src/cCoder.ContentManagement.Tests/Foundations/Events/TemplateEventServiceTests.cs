@@ -23,23 +23,19 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Events;
 public partial class TemplateEventServiceTests
 {
     private readonly Mock<ITemplateEventBroker> templateEventBrokerMock;
-    private readonly Mock<ICoreAuthInfo> authInfoMock;
     private readonly cCoder.ContentManagement.Services.Foundations.Events.TemplateEventService service;
     private const string CurrentUserId = "test-user";
 
     public TemplateEventServiceTests()
     {
         templateEventBrokerMock = new Mock<ITemplateEventBroker>(behavior: MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(behavior: MockBehavior.Strict);
         templateEventBrokerMock = new(behavior: MockBehavior.Strict);
-        authInfoMock = new();
 
-        authInfoMock.SetupGet(expression: x => x.SSOUserId)
+        templateEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
             .Returns(value: CurrentUserId);
 
         service = new cCoder.ContentManagement.Services.Foundations.Events.TemplateEventService(
-templateEventBroker: templateEventBrokerMock.Object,
-authInfo: authInfoMock.Object
+templateEventBroker: templateEventBrokerMock.Object
         );
     }
 }

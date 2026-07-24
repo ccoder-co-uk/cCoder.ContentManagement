@@ -23,23 +23,19 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Events;
 public partial class PackageEventServiceTests
 {
     private readonly Mock<IPackageEventBroker> packageEventBrokerMock;
-    private readonly Mock<ICoreAuthInfo> authInfoMock;
     private readonly cCoder.ContentManagement.Services.Foundations.Events.PackageEventService service;
     private const string CurrentUserId = "test-user";
 
     public PackageEventServiceTests()
     {
         packageEventBrokerMock = new Mock<IPackageEventBroker>(behavior: MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(behavior: MockBehavior.Strict);
         packageEventBrokerMock = new(behavior: MockBehavior.Strict);
-        authInfoMock = new();
 
-        authInfoMock.SetupGet(expression: x => x.SSOUserId)
+        packageEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
             .Returns(value: CurrentUserId);
 
         service = new cCoder.ContentManagement.Services.Foundations.Events.PackageEventService(
-packageEventBroker: packageEventBrokerMock.Object,
-authInfo: authInfoMock.Object
+packageEventBroker: packageEventBrokerMock.Object
         );
     }
 }

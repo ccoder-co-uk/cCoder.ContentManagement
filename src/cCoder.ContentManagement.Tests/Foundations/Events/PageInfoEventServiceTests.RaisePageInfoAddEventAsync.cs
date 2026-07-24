@@ -57,6 +57,9 @@ expression: x => x.RaisePageInfoAddEventAsync(message: It.IsAny<EventMessage<Pag
 times: Times.Once
         );
 
+        pageInfoEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         pageInfoEventBrokerMock.VerifyNoOtherCalls();
     }
 

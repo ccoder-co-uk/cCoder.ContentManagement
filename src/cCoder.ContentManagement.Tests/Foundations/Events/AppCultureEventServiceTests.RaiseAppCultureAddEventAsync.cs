@@ -58,6 +58,9 @@ expression: x => x.RaiseAppCultureAddEventAsync(message: It.IsAny<EventMessage<C
 times: Times.Once
         );
 
+        appCultureEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         appCultureEventBrokerMock.VerifyNoOtherCalls();
     }
 

@@ -58,6 +58,9 @@ expression: x => x.RaiseContentDeleteEventAsync(message: It.IsAny<EventMessage<C
 times: Times.Once
         );
 
+        contentEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         contentEventBrokerMock.VerifyNoOtherCalls();
     }
 

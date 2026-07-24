@@ -9,7 +9,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker, ICoreAuthInfo authInfo) : IPageRoleEventService
+internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker) : IPageRoleEventService
 {
     public ValueTask RaisePageRoleAddEventAsync(PageRole entity) =>
         TryCatch(operation: async () =>
@@ -20,7 +20,7 @@ internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = pageRoleEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -38,7 +38,7 @@ internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = pageRoleEventBroker.GetCurrentUserId()
             },
             Data = entity
         };

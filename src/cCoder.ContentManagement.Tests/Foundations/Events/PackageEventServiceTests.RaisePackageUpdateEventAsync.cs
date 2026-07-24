@@ -58,6 +58,9 @@ expression: x => x.RaisePackageUpdateEventAsync(message: It.IsAny<EventMessage<c
 times: Times.Once
         );
 
+        packageEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         packageEventBrokerMock.VerifyNoOtherCalls();
     }
 

@@ -23,23 +23,19 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Events;
 public partial class ResourceEventServiceTests
 {
     private readonly Mock<IResourceEventBroker> resourceEventBrokerMock;
-    private readonly Mock<ICoreAuthInfo> authInfoMock;
     private readonly cCoder.ContentManagement.Services.Foundations.Events.ResourceEventService service;
     private const string CurrentUserId = "test-user";
 
     public ResourceEventServiceTests()
     {
         resourceEventBrokerMock = new Mock<IResourceEventBroker>(behavior: MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(behavior: MockBehavior.Strict);
         resourceEventBrokerMock = new(behavior: MockBehavior.Strict);
-        authInfoMock = new();
 
-        authInfoMock.SetupGet(expression: x => x.SSOUserId)
+        resourceEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
             .Returns(value: CurrentUserId);
 
         service = new cCoder.ContentManagement.Services.Foundations.Events.ResourceEventService(
-resourceEventBroker: resourceEventBrokerMock.Object,
-authInfo: authInfoMock.Object
+resourceEventBroker: resourceEventBrokerMock.Object
         );
     }
 }

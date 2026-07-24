@@ -58,6 +58,9 @@ expression: x => x.RaiseResourceUpdateEventAsync(message: It.IsAny<EventMessage<
 times: Times.Once
         );
 
+        resourceEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         resourceEventBrokerMock.VerifyNoOtherCalls();
     }
 

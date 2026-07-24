@@ -7,7 +7,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface IScriptEventBroker
+public interface IScriptEventBroker : IAuthenticatedEventBroker
 {
     ValueTask RaiseScriptAddEventAsync(EventMessage<Script> message);
 

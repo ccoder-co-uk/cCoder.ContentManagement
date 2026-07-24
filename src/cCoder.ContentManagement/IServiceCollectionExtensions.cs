@@ -9,6 +9,7 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Dependencies.Caching;
+using cCoder.ContentManagement.Dependencies.Events;
 using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
@@ -90,6 +91,7 @@ public static partial class IServiceCollectionExtensions
     private static void AddBrokers(this IServiceCollection services)
     {
         services.AddTransient<IEventHubBroker, EventHubBroker>();
+        services.AddTransient<IEventInfrastructureDependency, EventInfrastructureDependency>();
         services.AddTransient<IAppCultureEventBroker, AppCultureEventBroker>();
         services.AddTransient<IAppEventBroker, AppEventBroker>();
         services.AddTransient<ICommonObjectEventBroker, CommonObjectEventBroker>();

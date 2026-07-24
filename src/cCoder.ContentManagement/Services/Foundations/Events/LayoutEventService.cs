@@ -9,7 +9,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, ICoreAuthInfo authInfo) : ILayoutEventService
+internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker) : ILayoutEventService
 {
     public ValueTask RaiseLayoutAddEventAsync(Layout entity) =>
         TryCatch(operation: async () =>
@@ -20,7 +20,7 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, 
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = layoutEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -38,7 +38,7 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, 
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = layoutEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -56,7 +56,7 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, 
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = layoutEventBroker.GetCurrentUserId()
             },
             Data = entity
         };

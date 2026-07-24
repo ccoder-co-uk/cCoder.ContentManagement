@@ -57,6 +57,9 @@ expression: x => x.RaisePageRoleAddEventAsync(message: It.IsAny<EventMessage<Pag
 times: Times.Once
         );
 
+        pageRoleEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         pageRoleEventBrokerMock.VerifyNoOtherCalls();
     }
 

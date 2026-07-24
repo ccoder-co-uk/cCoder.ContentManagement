@@ -9,7 +9,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuthInfo authInfo) : IAppEventService
+internal partial class AppEventService(IAppEventBroker appEventBroker) : IAppEventService
 {
     public ValueTask RaiseAppAddEventAsync(App app) =>
         TryCatch(operation: async () =>
@@ -21,7 +21,7 @@ internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuth
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = appEventBroker.GetCurrentUserId()
             },
             Data = app
         };
@@ -40,7 +40,7 @@ internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuth
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = appEventBroker.GetCurrentUserId()
             },
             Data = app
         };
@@ -59,7 +59,7 @@ internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuth
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = appEventBroker.GetCurrentUserId()
             },
             Data = app
         };

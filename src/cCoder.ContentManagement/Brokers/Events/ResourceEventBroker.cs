@@ -8,14 +8,15 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class ResourceEventBroker(IEventHub eventHub) : IResourceEventBroker
+internal sealed class ResourceEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
+    : AuthenticatedEventBroker(eventInfrastructureDependency), IResourceEventBroker
 {
     public ValueTask RaiseResourceAddEventAsync(EventMessage<Resource> message) =>
-        eventHub.RaiseEventAsync(name: "resource_add", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "resource_add", message: message);
 
     public ValueTask RaiseResourceUpdateEventAsync(EventMessage<Resource> message) =>
-        eventHub.RaiseEventAsync(name: "resource_update", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "resource_update", message: message);
 
     public ValueTask RaiseResourceDeleteEventAsync(EventMessage<Resource> message) =>
-        eventHub.RaiseEventAsync(name: "resource_delete", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "resource_delete", message: message);
 }

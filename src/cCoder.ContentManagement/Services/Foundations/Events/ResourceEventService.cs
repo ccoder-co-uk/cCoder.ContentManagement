@@ -9,7 +9,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class ResourceEventService(IResourceEventBroker resourceEventBroker, ICoreAuthInfo authInfo) : IResourceEventService
+internal partial class ResourceEventService(IResourceEventBroker resourceEventBroker) : IResourceEventService
 {
     public ValueTask RaiseResourceAddEventAsync(Resource entity) =>
         TryCatch(operation: async () =>
@@ -20,7 +20,7 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = resourceEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -38,7 +38,7 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = resourceEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
@@ -56,7 +56,7 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = resourceEventBroker.GetCurrentUserId()
             },
             Data = entity
         };

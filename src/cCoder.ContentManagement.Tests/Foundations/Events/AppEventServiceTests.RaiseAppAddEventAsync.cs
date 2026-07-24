@@ -58,6 +58,9 @@ expression: x => x.RaiseAppAddEventAsync(message: It.IsAny<EventMessage<CmsDataM
 times: Times.Once
         );
 
+        appEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         appEventBrokerMock.VerifyNoOtherCalls();
     }
 

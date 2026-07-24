@@ -7,7 +7,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface ISubmissionEventBroker
+public interface ISubmissionEventBroker : IAuthenticatedEventBroker
 {
     ValueTask RaiseSubmissionAddEventAsync(EventMessage<Submission> message);
 

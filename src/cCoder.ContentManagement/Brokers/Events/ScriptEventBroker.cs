@@ -8,14 +8,15 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class ScriptEventBroker(IEventHub eventHub) : IScriptEventBroker
+internal sealed class ScriptEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
+    : AuthenticatedEventBroker(eventInfrastructureDependency), IScriptEventBroker
 {
     public ValueTask RaiseScriptAddEventAsync(EventMessage<Script> message) =>
-        eventHub.RaiseEventAsync(name: "script_add", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "script_add", message: message);
 
     public ValueTask RaiseScriptUpdateEventAsync(EventMessage<Script> message) =>
-        eventHub.RaiseEventAsync(name: "script_update", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "script_update", message: message);
 
     public ValueTask RaiseScriptDeleteEventAsync(EventMessage<Script> message) =>
-        eventHub.RaiseEventAsync(name: "script_delete", message: message);
+        eventInfrastructureDependency.RaiseEventAsync(name: "script_delete", message: message);
 }

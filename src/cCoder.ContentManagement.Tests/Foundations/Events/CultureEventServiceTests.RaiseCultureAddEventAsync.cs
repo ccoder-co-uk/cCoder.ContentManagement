@@ -58,6 +58,9 @@ expression: x => x.RaiseCultureAddEventAsync(message: It.IsAny<EventMessage<CmsD
 times: Times.Once
         );
 
+        cultureEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         cultureEventBrokerMock.VerifyNoOtherCalls();
     }
 

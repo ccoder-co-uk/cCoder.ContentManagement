@@ -58,6 +58,9 @@ expression: x => x.RaiseTemplateAddEventAsync(message: It.IsAny<EventMessage<Cms
 times: Times.Once
         );
 
+        templateEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         templateEventBrokerMock.VerifyNoOtherCalls();
     }
 

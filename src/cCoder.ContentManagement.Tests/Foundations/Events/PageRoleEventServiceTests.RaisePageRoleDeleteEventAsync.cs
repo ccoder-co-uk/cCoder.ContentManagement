@@ -57,6 +57,9 @@ expression: x => x.RaisePageRoleDeleteEventAsync(message: It.IsAny<EventMessage<
 times: Times.Once
         );
 
+        pageRoleEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         pageRoleEventBrokerMock.VerifyNoOtherCalls();
     }
 
