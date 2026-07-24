@@ -4387,6 +4387,21 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Models.RenderAuthorization",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "Culture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "User",
+          "Type": "User"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Models.RenderParams",
       "StandardElementType": "Model",
       "Properties": [
@@ -5418,35 +5433,6 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Services.Coordinations.ComponentRenderCoordinationService",
-      "StandardElementType": "CoordinationService",
-      "Properties": [],
-      "Methods": [
-        {
-          "Name": "Render",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "name",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            },
-            {
-              "Name": "theme",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "System.String"
-        }
-      ]
-    },
-    {
       "Name": "cCoder.ContentManagement.Services.Coordinations.PageCoordinationService",
       "StandardElementType": "CoordinationService",
       "Properties": [],
@@ -5574,31 +5560,14 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Services.Coordinations.TemplateRenderCoordinationService",
-      "StandardElementType": "CoordinationService",
+      "Name": "cCoder.ContentManagement.Services.Foundations.Authorization.AuthorizationService",
+      "StandardElementType": "FoundationService",
       "Properties": [],
       "Methods": [
         {
-          "Name": "Render",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "name",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            },
-            {
-              "Name": "model",
-              "Type": "dynamic"
-            }
-          ],
-          "ReturnType": "System.String"
+          "Name": "GetCurrentUser",
+          "Inputs": [],
+          "ReturnType": "User"
         }
       ]
     },
@@ -7671,6 +7640,28 @@
       "Properties": [],
       "Methods": [
         {
+          "Name": "Render",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "theme",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.String"
+        },
+        {
           "Name": "RenderUser",
           "Inputs": [
             {
@@ -8819,6 +8810,28 @@
       "Properties": [],
       "Methods": [
         {
+          "Name": "Render",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "model",
+              "Type": "dynamic"
+            }
+          ],
+          "ReturnType": "System.String"
+        },
+        {
           "Name": "RenderUser",
           "Inputs": [
             {
@@ -9098,6 +9111,23 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService",
+      "StandardElementType": "ProcessingService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "ResolveRenderAuthorization",
+          "Inputs": [
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "cCoder.ContentManagement.Models.RenderAuthorization"
         }
       ]
     },
@@ -11062,7 +11092,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.ComponentRenderer",
-      "ToType": "cCoder.ContentManagement.Services.Coordinations.ComponentRenderCoordinationService"
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentRenderOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.ContentManagementPackageManager",
@@ -11150,7 +11180,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.TemplateRenderer",
-      "ToType": "cCoder.ContentManagement.Services.Coordinations.TemplateRenderCoordinationService"
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker",
@@ -11261,14 +11291,6 @@
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.ComponentRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.ComponentRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentRenderOrchestrationService"
-    },
-    {
       "FromType": "cCoder.ContentManagement.Services.Coordinations.PageCoordinationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ContentOrchestrationService"
     },
@@ -11333,12 +11355,8 @@
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.TemplateRenderCoordinationService",
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Authorization.AuthorizationService",
       "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.TemplateRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Events.AppCultureEventService",
@@ -11626,6 +11644,10 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.ComponentRenderOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.ComponentRenderOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService"
     },
     {
@@ -11746,6 +11768,10 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService"
     },
     {
@@ -11787,6 +11813,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService",
+      "ToType": "cCoder.ContentManagement.Services.Foundations.Authorization.AuthorizationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.CommonObjectEventProcessingService",
@@ -12075,13 +12105,6 @@
       "LineNumber": 16
     },
     {
-      "Code": "STXC001",
-      "Description": "The service must have two or three OrchestrationService dependencies.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Coordinations.ComponentRenderCoordinationService",
-      "LineNumber": 11
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
@@ -12096,25 +12119,11 @@
       "LineNumber": 18
     },
     {
-      "Code": "STXC001",
-      "Description": "The service must have two or three OrchestrationService dependencies.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Coordinations.TemplateRenderCoordinationService",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXO001",
       "Description": "An orchestration must have two or three foundation or processing dependencies and must not mix them.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService",
       "LineNumber": 15
-    },
-    {
-      "Code": "STXO001",
-      "Description": "An orchestration must have two or three foundation or processing dependencies and must not mix them.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ComponentRenderOrchestrationService",
-      "LineNumber": 11
     },
     {
       "Code": "STXO001",

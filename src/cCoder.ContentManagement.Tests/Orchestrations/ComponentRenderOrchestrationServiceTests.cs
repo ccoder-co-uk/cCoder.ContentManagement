@@ -23,12 +23,15 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class ComponentRenderOrchestrationServiceTests
 {
     private readonly Mock<IComponentRenderProcessingService> componentRenderProcessingServiceMock = new();
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock = new();
     private readonly ComponentRenderOrchestrationService renderOrchestrationService;
 
     public ComponentRenderOrchestrationServiceTests()
     {
         renderOrchestrationService = new ComponentRenderOrchestrationService(
 componentRenderProcessingService: componentRenderProcessingServiceMock.Object
+,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 

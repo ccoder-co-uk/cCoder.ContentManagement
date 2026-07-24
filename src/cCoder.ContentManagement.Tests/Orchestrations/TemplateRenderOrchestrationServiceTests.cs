@@ -23,16 +23,19 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class TemplateRenderOrchestrationServiceTests
 {
     private readonly Mock<ITemplateRenderProcessingService> templateRenderProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly Mock<ILogger<TemplateRenderOrchestrationService>> loggerMock;
     private readonly TemplateRenderOrchestrationService renderOrchestrationService;
 
     public TemplateRenderOrchestrationServiceTests()
     {
         templateRenderProcessingServiceMock = new Mock<ITemplateRenderProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new Mock<IAuthorizationProcessingService>(behavior: MockBehavior.Strict);
         loggerMock = new Mock<ILogger<TemplateRenderOrchestrationService>>(behavior: MockBehavior.Loose);
 
         renderOrchestrationService = new TemplateRenderOrchestrationService(
 templateRenderProcessingService: templateRenderProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object,
 config: new Config(),
 log: loggerMock.Object
         );

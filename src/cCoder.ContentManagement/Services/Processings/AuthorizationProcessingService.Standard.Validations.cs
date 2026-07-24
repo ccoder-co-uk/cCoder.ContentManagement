@@ -4,10 +4,10 @@
 
 using cCoder.ContentManagement.Dependencies;
 
-namespace cCoder.ContentManagement.Services.Coordinations;
+namespace cCoder.ContentManagement.Services.Processings;
 
-internal sealed partial class TemplateRenderCoordinationService
+internal partial class AuthorizationProcessingService
 {
-    private static void ValidateRender(object[] inputs) =>
+    private static void ValidateResolveRenderAuthorization(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 }

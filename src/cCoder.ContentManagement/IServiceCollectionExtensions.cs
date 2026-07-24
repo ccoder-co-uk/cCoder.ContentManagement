@@ -18,6 +18,7 @@ using cCoder.ContentManagement.Services;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Foundations;
+using cCoder.ContentManagement.Services.Foundations.Authorization;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
@@ -137,10 +138,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppRenderableCoordinationService, AppRenderableCoordinationService>();
         services.AddTransient<IAppPageComponentCoordinationService, AppPageComponentCoordinationService>();
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
-        services.AddTransient<IComponentRenderCoordinationService, ComponentRenderCoordinationService>();
         services.AddTransient<IPageCoordinationService, PageCoordinationService>();
         services.AddTransient<IPageStructureCoordinationService, PageStructureCoordinationService>();
-        services.AddTransient<ITemplateRenderCoordinationService, TemplateRenderCoordinationService>();
     }
 
     private static void AddEventHandlers(this IServiceCollection services)
@@ -171,6 +170,7 @@ public static partial class IServiceCollectionExtensions
     private static void AddFoundations(this IServiceCollection services)
     {
         services.AddTransient<IEventHandlerService, EventHandlerService>();
+        services.AddTransient<IAuthorizationService, AuthorizationService>();
         services.AddTransient<IAppCultureEventService, AppCultureEventService>();
         services.AddTransient<IAppEventService, AppEventService>();
         services.AddTransient<ICommonObjectEventService, CommonObjectEventService>();
@@ -244,6 +244,7 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddProcessings(this IServiceCollection services)
     {
+        services.AddTransient<IAuthorizationProcessingService, AuthorizationProcessingService>();
         services.AddTransient<IAppCultureEventProcessingService, AppCultureEventProcessingService>();
         services.AddTransient<IAppCultureProcessingService, AppCultureProcessingService>();
         services.AddTransient<IAppEventProcessingService, AppEventProcessingService>();

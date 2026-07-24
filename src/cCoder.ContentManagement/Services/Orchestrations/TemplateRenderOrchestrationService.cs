@@ -11,9 +11,29 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class TemplateRenderOrchestrationService(
     ITemplateRenderProcessingService templateRenderProcessingService,
+    IAuthorizationProcessingService authorizationProcessingService,
     Config config,
     ILogger<TemplateRenderOrchestrationService> log) : ITemplateRenderOrchestrationService
 {
+    public string Render(int appId, string name, string culture, dynamic model) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateRender(inputs: [appId, name, culture, model]);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidateTemplateName(name: name, parameterName: "name");
+
+        RenderAuthorization authorization = authorizationProcessingService
+            .ResolveRenderAuthorization(culture: culture);
+
+        return ExecuteRenderUser(
+            appId: appId,
+            name: name,
+            culture: authorization.Culture,
+            model: model,
+            user: authorization.User);
+
+    });
+
     public string RenderUser(int appId, string name, string culture, dynamic model, User user) =>
         TryCatch<string>(operation: () =>
     {
@@ -22,9 +42,29 @@ internal sealed partial class TemplateRenderOrchestrationService(
         ValidateTemplateName(name: name, parameterName: "name");
         ValidateUser(user: user, parameterName: "user");
 
-        return templateRenderProcessingService.RenderUserConfig(appId: appId, name: name, model: model, user: user, culture: culture, config: config, log: log);
+        return ExecuteRenderUser(
+            appId: appId,
+            name: name,
+            culture: culture,
+            model: model,
+            user: user);
 
     });
+
+    private string ExecuteRenderUser(
+        int appId,
+        string name,
+        string culture,
+        dynamic model,
+        User user) =>
+        templateRenderProcessingService.RenderUserConfig(
+            appId: appId,
+            name: name,
+            model: model,
+            user: user,
+            culture: culture,
+            config: config,
+            log: log);
 
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
