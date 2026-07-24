@@ -13,16 +13,17 @@ public class Replacement
     public string New =>
         newString ?? ReplaceFunction(arg: Old);
 
-    public Func<string, string> ReplaceFunction { get; } = (string source) => source;
-
+    public Func<string, string> ReplaceFunction { get; }
     public Replacement(string old, string @new)
     {
+        this.ReplaceFunction = (string source) => source;
         Old = old;
         newString = @new;
     }
 
     public Replacement(string old, Func<string, string> replacer)
     {
+        this.ReplaceFunction = (string source) => source;
         Old = old;
 
         if (replacer != null)

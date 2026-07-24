@@ -8,9 +8,15 @@ namespace cCoder.ContentManagement.Api.OData;
 
 public class ODataModel
 {
-    public string Context { get; set; } = string.Empty;
+    public string Context { get; set; }
+    public string Description { get; set; }
+    public IEdmModel EDMModel { get; set; }
 
-    public string Description { get; set; } = string.Empty;
-
-    public IEdmModel EDMModel { get; set; } = null;
+    public ODataModel
+()
+    {
+        this.Context = string.Empty;
+        this.Description = string.Empty;
+        this.EDMModel = null;
+    }
 }

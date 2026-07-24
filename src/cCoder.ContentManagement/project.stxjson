@@ -11974,27 +11974,6 @@
       "LineNumber": 9
     },
     {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Api.OData.ODataModel",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Api.OData.ODataModel",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Api.OData.ODataModel",
-      "LineNumber": 15
-    },
-    {
       "Code": "STX0001",
       "Description": "The type is not a valid Standard element type.",
       "Severity": "Warning",
@@ -12244,7 +12223,7 @@
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 39
+      "LineNumber": 38
     },
     {
       "Code": "STXE001",
@@ -12608,7 +12587,21 @@
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
+      "LineNumber": 10
+    },
+    {
+      "Code": "STX0002",
+      "Description": "Properties may only be declared on models.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
       "LineNumber": 11
+    },
+    {
+      "Code": "STX0002",
+      "Description": "Properties may only be declared on models.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
+      "LineNumber": 12
     },
     {
       "Code": "STX0002",
@@ -12629,21 +12622,7 @@
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "LineNumber": 19
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "LineNumber": 21
+      "LineNumber": 16
     },
     {
       "Code": "STX0002",
@@ -12688,109 +12667,18 @@
       "LineNumber": 18
     },
     {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.Config",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.Config",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.Config",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.ContentManagementConfiguration",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.ContentManagementConfiguration",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.ContentManagementConfiguration",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.ContentManagementConfiguration",
-      "LineNumber": 16
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.ContentManagementConfiguration",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.ContentManagementConfiguration",
-      "LineNumber": 18
-    },
-    {
       "Code": "STXM001",
       "Description": "Models must not declare methods.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Models.ContentManagementConfiguration",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.ModelStateError",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.ModelStateError",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.RenderResult",
-      "LineNumber": 39
+      "LineNumber": 19
     },
     {
       "Code": "STXM001",
       "Description": "Models must not declare methods.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Models.RenderResult",
-      "LineNumber": 41
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.Replacement",
-      "LineNumber": 16
+      "LineNumber": 40
     },
     {
       "Code": "STXM001",
@@ -12800,403 +12688,11 @@
       "LineNumber": 46
     },
     {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageCacheSlice",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageCacheSlice",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageCacheSlice",
-      "LineNumber": 15
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderApp",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderApp",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderApp",
-      "LineNumber": 15
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderApp",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderApp",
-      "LineNumber": 21
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderApp",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderComponent",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderComponent",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderComponent",
-      "LineNumber": 15
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderComponent",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderContent",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderContent",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderEngineRequest",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderEngineRequest",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderEngineRequest",
-      "LineNumber": 15
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderEngineRequest",
-      "LineNumber": 19
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderLayout",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderLayout",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderLayout",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderPage",
-      "LineNumber": 19
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderPage",
-      "LineNumber": 21
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderPage",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderPage",
-      "LineNumber": 25
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderPage",
-      "LineNumber": 27
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderPage",
-      "LineNumber": 29
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderPage",
-      "LineNumber": 31
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderPage",
-      "LineNumber": 33
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResource",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResource",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResource",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResource",
-      "LineNumber": 15
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResource",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResource",
-      "LineNumber": 19
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "LineNumber": 15
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "LineNumber": 21
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "LineNumber": 25
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "LineNumber": 27
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "LineNumber": 29
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "LineNumber": 31
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "LineNumber": 33
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "LineNumber": 35
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderScript",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderScript",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXM003",
       "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
       "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
-      "LineNumber": 25
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
-      "LineNumber": 28
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
-      "LineNumber": 31
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
-      "LineNumber": 34
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
-      "LineNumber": 36
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
-      "LineNumber": 42
     },
     {
       "Code": "STXM003",
@@ -13281,69 +12777,13 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
       "LineNumber": 33
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderTemplate",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderTemplate",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderTemplate",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderUser",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderUser",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderUser",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderUser",
-      "LineNumber": 15
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderUser",
-      "LineNumber": 17
     },
     {
       "Code": "STXM001",
       "Description": "Models must not declare methods.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderUser",
-      "LineNumber": 20
+      "LineNumber": 14
     },
     {
       "Code": "STXM003",

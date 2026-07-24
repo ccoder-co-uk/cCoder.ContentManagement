@@ -8,11 +8,17 @@ internal sealed class PageRenderComponent
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
+    public string ResourceKey { get; set; }
+    public string Content { get; set; }
+    public string Script { get; set; }
 
-    public string ResourceKey { get; set; } = string.Empty;
-
-    public string Content { get; set; } = string.Empty;
-
-    public string Script { get; set; } = string.Empty;
+    internal PageRenderComponent
+()
+    {
+        this.Name = string.Empty;
+        this.ResourceKey = string.Empty;
+        this.Content = string.Empty;
+        this.Script = string.Empty;
+    }
 }

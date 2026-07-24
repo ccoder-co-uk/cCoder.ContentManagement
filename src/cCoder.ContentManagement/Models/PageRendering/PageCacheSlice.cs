@@ -6,12 +6,15 @@ namespace cCoder.ContentManagement.Rendering.Models;
 
 internal sealed class PageCacheSlice
 {
-    public IReadOnlyDictionary<string, PageRenderResource> CommonResourcesByLookup { get; init; } =
-        new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
+    public IReadOnlyDictionary<string, PageRenderResource> CommonResourcesByLookup { get; init; }
+    public IReadOnlyDictionary<string, PageRenderComponent> CommonComponentsByName { get; init; }
+    public IReadOnlyDictionary<string, PageRenderScript> CommonScriptsByName { get; init; }
 
-    public IReadOnlyDictionary<string, PageRenderComponent> CommonComponentsByName { get; init; } =
-        new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
-
-    public IReadOnlyDictionary<string, PageRenderScript> CommonScriptsByName { get; init; } =
-        new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
+    internal PageCacheSlice
+()
+    {
+        this.CommonResourcesByLookup = new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
+        this.CommonComponentsByName = new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
+        this.CommonScriptsByName = new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
+    }
 }

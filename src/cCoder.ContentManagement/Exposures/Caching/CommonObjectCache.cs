@@ -34,12 +34,12 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
 
     protected Config Config { get; }
 
-    public IEnumerable<CommonObject> LatestSet { get; set; } = Array.Empty<CommonObject>();
-
+    public IEnumerable<CommonObject> LatestSet { get; set; }
     private int ExpiryTimeInMinutes { get; }
 
     public CommonObjectCache(Config config, IServiceScopeFactory serviceScopeFactory, ILogger<CommonObjectCache> log)
     {
+        this.LatestSet = Array.Empty<CommonObject>();
         Config = config;
         this.serviceScopeFactory = serviceScopeFactory;
         this.log = log;

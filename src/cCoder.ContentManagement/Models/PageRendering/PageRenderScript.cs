@@ -6,7 +6,13 @@ namespace cCoder.ContentManagement.Rendering.Models;
 
 internal sealed class PageRenderScript
 {
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
+    public string Content { get; set; }
 
-    public string Content { get; set; } = string.Empty;
+    internal PageRenderScript
+()
+    {
+        this.Name = string.Empty;
+        this.Content = string.Empty;
+    }
 }

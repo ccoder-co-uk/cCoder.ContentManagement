@@ -20,25 +20,25 @@ internal sealed class PageRenderSession
 
     public PageRenderLayout Layout { get; set; }
 
-    public IReadOnlyList<PageRenderResource> Resources { get; set; } = Array.Empty<PageRenderResource>();
+    public IReadOnlyList<PageRenderResource> Resources { get; set; }
+    public IReadOnlyDictionary<string, PageRenderResource> ResourcesByLookup { get; set; }
+    public IDictionary<string, PageRenderComponent> ComponentsByName { get; set; }
+    public IDictionary<string, PageRenderScript> ScriptsByName { get; set; }
+    public Func<string, string> MetadataResolver { get; set; }
+    public IReadOnlyDictionary<string, PageRenderResource> CommonResourcesByLookup { get; set; }
+    public IReadOnlyDictionary<string, PageRenderComponent> CommonComponentsByName { get; set; }
+    public IReadOnlyDictionary<string, PageRenderScript> CommonScriptsByName { get; set; }
 
-    public IReadOnlyDictionary<string, PageRenderResource> ResourcesByLookup { get; set; } =
-        new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
-
-    public IDictionary<string, PageRenderComponent> ComponentsByName { get; set; } =
-        new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
-
-    public IDictionary<string, PageRenderScript> ScriptsByName { get; set; } =
-        new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
-
-    public Func<string, string> MetadataResolver { get; set; } = static unusedKey => string.Empty;
-
-    public IReadOnlyDictionary<string, PageRenderResource> CommonResourcesByLookup { get; set; } =
-        new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
-
-    public IReadOnlyDictionary<string, PageRenderComponent> CommonComponentsByName { get; set; } =
-        new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
-
-    public IReadOnlyDictionary<string, PageRenderScript> CommonScriptsByName { get; set; } =
-        new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
+    internal PageRenderSession
+()
+    {
+        this.Resources = Array.Empty<PageRenderResource>();
+        this.ResourcesByLookup = new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
+        this.ComponentsByName = new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
+        this.ScriptsByName = new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
+        this.MetadataResolver = static unusedKey => string.Empty;
+        this.CommonResourcesByLookup = new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
+        this.CommonComponentsByName = new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
+        this.CommonScriptsByName = new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
+    }
 }
