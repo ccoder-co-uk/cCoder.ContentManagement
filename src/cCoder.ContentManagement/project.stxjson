@@ -179,7 +179,7 @@
         {
           "Name": "Build",
           "Inputs": [],
-          "ReturnType": "cCoder.ContentManagement.Api.OData.ODataModel"
+          "ReturnType": "cCoder.ContentManagement.Models.OData.ODataModel"
         },
         {
           "Name": "Configure",
@@ -213,7 +213,7 @@
               "Type": "System.Boolean"
             }
           ],
-          "ReturnType": "cCoder.ContentManagement.Api.OData.ExtendedMetadataContainer"
+          "ReturnType": "cCoder.ContentManagement.Models.OData.ExtendedMetadataContainer"
         },
         {
           "Name": "GetMetadata",
@@ -227,181 +227,14 @@
               "Type": "System.String"
             }
           ],
-          "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Api.OData.ExtendedMetadataContainer\u003E"
+          "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.OData.ExtendedMetadataContainer\u003E"
         }
       ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Api.OData.ExtendedMetadataContainer",
-      "StandardElementType": "Unknown",
-      "Properties": [
-        {
-          "Name": "Operations",
-          "Type": "System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Api.OData.OperationContainer\u003E"
-        }
-      ],
-      "Methods": [
-        {
-          "Name": "Resource",
-          "Inputs": [
-            {
-              "Name": "setName",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            },
-            {
-              "Name": "resources",
-              "Type": "System.Collections.Generic.IEnumerable\u003CResource\u003E"
-            }
-          ],
-          "ReturnType": "cCoder.ContentManagement.Api.OData.ExtendedMetadataContainer"
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Api.OData.MetadataContainer",
-      "StandardElementType": "Unknown",
-      "Properties": [
-        {
-          "Name": "Category",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Description",
-          "Type": "System.String"
-        },
-        {
-          "Name": "DisplayName",
-          "Type": "System.String"
-        },
-        {
-          "Name": "HasEndpoint",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "IsEntity",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "IsJoinEntity",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "IsSystemManaged",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "IsValueType",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Properties",
-          "Type": "System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Api.OData.PropertyContainer\u003E"
-        },
-        {
-          "Name": "ServerType",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ServerTypeName",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Type",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": [
-        {
-          "Name": "Resource",
-          "Inputs": [
-            {
-              "Name": "setName",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            },
-            {
-              "Name": "resources",
-              "Type": "System.Collections.Generic.IEnumerable\u003CResource\u003E"
-            }
-          ],
-          "ReturnType": "cCoder.ContentManagement.Api.OData.MetadataContainer"
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Api.OData.MetadataContainerSet",
-      "StandardElementType": "Unknown",
-      "Properties": [
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Types",
-          "Type": "cCoder.ContentManagement.Api.OData.ExtendedMetadataContainer[]"
-        },
-        {
-          "Name": "UriBase",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": [
-        {
-          "Name": "Resource",
-          "Inputs": [
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            },
-            {
-              "Name": "resources",
-              "Type": "System.Collections.Generic.IEnumerable\u003CResource\u003E"
-            }
-          ],
-          "ReturnType": "cCoder.ContentManagement.Api.OData.MetadataContainerSet"
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Api.OData.MetadataResourceLookup",
-      "StandardElementType": "Dependency",
-      "Properties": [],
-      "Methods": []
     },
     {
       "Name": "cCoder.ContentManagement.Api.OData.ODataCollectionExtensions",
       "StandardElementType": "Dependency",
       "Properties": [],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Api.OData.ODataModel",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "Context",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Description",
-          "Type": "System.String"
-        },
-        {
-          "Name": "EDMModel",
-          "Type": "IEdmModel"
-        }
-      ],
       "Methods": []
     },
     {
@@ -412,7 +245,7 @@
         {
           "Name": "Build",
           "Inputs": [],
-          "ReturnType": "cCoder.ContentManagement.Api.OData.ODataModel"
+          "ReturnType": "cCoder.ContentManagement.Models.OData.ODataModel"
         }
       ]
     },
@@ -421,119 +254,6 @@
       "StandardElementType": "Dependency",
       "Properties": [],
       "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Api.OData.OperationContainer",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "Definition",
-          "Type": "System.String"
-        },
-        {
-          "Name": "HttpVerb",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Parameters",
-          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, System.String\u003E"
-        },
-        {
-          "Name": "Queryable",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "ReturnType",
-          "Type": "cCoder.ContentManagement.Api.OData.MetadataContainer"
-        },
-        {
-          "Name": "Url",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Api.OData.PropertyContainer",
-      "StandardElementType": "Unknown",
-      "Properties": [
-        {
-          "Name": "Description",
-          "Type": "System.String"
-        },
-        {
-          "Name": "DisplayName",
-          "Type": "System.String"
-        },
-        {
-          "Name": "IsGeneric",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "IsReadOnly",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "IsRequired",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "IsSystemManaged",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "IsValueType",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ServerType",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ServerTypeName",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ShortDisplayName",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Template",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Type",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": [
-        {
-          "Name": "Resource",
-          "Inputs": [
-            {
-              "Name": "keyContext",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            },
-            {
-              "Name": "resources",
-              "Type": "System.Collections.Generic.IEnumerable\u003CResource\u003E"
-            }
-          ],
-          "ReturnType": "cCoder.ContentManagement.Api.OData.PropertyContainer"
-        }
-      ]
     },
     {
       "Name": "cCoder.ContentManagement.Brokers.AuthorizationBroker",
@@ -4318,6 +4038,226 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Models.OData.ExtendedMetadataContainer",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "Operations",
+          "Type": "System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.OData.OperationContainer\u003E"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.OData.MetadataContainer",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "Category",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Description",
+          "Type": "System.String"
+        },
+        {
+          "Name": "DisplayName",
+          "Type": "System.String"
+        },
+        {
+          "Name": "HasEndpoint",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "IsEntity",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "IsJoinEntity",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "IsSystemManaged",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "IsValueType",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Properties",
+          "Type": "System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.OData.PropertyContainer\u003E"
+        },
+        {
+          "Name": "ServerType",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ServerTypeName",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Type",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.OData.MetadataContainerSet",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Types",
+          "Type": "cCoder.ContentManagement.Models.OData.ExtendedMetadataContainer[]"
+        },
+        {
+          "Name": "UriBase",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.OData.MetadataResourceDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.OData.MetadataTypeDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.OData.ODataMetadataDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.OData.ODataModel",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "Context",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Description",
+          "Type": "System.String"
+        },
+        {
+          "Name": "EDMModel",
+          "Type": "IEdmModel"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.OData.OperationContainer",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "Definition",
+          "Type": "System.String"
+        },
+        {
+          "Name": "HttpVerb",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Parameters",
+          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, System.String\u003E"
+        },
+        {
+          "Name": "Queryable",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "ReturnType",
+          "Type": "cCoder.ContentManagement.Models.OData.MetadataContainer"
+        },
+        {
+          "Name": "Url",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.OData.PropertyContainer",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "Description",
+          "Type": "System.String"
+        },
+        {
+          "Name": "DisplayName",
+          "Type": "System.String"
+        },
+        {
+          "Name": "IsGeneric",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "IsReadOnly",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "IsRequired",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "IsSystemManaged",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "IsValueType",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ServerType",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ServerTypeName",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ShortDisplayName",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Template",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Type",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Models.ODataCollection\u003CTCollectionType\u003E",
       "StandardElementType": "Model",
       "Properties": [
@@ -5483,7 +5423,7 @@
         {
           "Name": "GetKnownMetadata",
           "Inputs": [],
-          "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Api.OData.MetadataContainerSet\u003E"
+          "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.OData.MetadataContainerSet\u003E"
         }
       ]
     },
@@ -11906,50 +11846,8 @@
       "Code": "STX0001",
       "Description": "The type is not a valid Standard element type.",
       "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Api.OData.ExtendedMetadataContainer",
-      "LineNumber": 172
-    },
-    {
-      "Code": "STX0001",
-      "Description": "The type is not a valid Standard element type.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Api.OData.MetadataContainer",
-      "LineNumber": 31
-    },
-    {
-      "Code": "STX0001",
-      "Description": "The type is not a valid Standard element type.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Api.OData.MetadataContainerSet",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STXSTRUCT001",
-      "Description": "The source file must live in the standard folder for its element type.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Api.OData.ODataModel",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STX0001",
-      "Description": "The type is not a valid Standard element type.",
-      "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Api.OData.ODataModelBuilder",
       "LineNumber": 11
-    },
-    {
-      "Code": "STXSTRUCT001",
-      "Description": "The source file must live in the standard folder for its element type.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Api.OData.OperationContainer",
-      "LineNumber": 248
-    },
-    {
-      "Code": "STX0001",
-      "Description": "The type is not a valid Standard element type.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Api.OData.PropertyContainer",
-      "LineNumber": 209
     },
     {
       "Code": "STXB002",
@@ -12617,11 +12515,46 @@
       "LineNumber": 20
     },
     {
-      "Code": "STXAPP001",
-      "Description": "Program.cs, IServiceCollectionExtensions.cs, and WebApplicationExtensions.cs must live at the project root.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.IServiceCollectionExtensions",
-      "LineNumber": 18
+      "Type": "cCoder.ContentManagement.Models.OData.ExtendedMetadataContainer",
+      "LineNumber": 100
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.OData.MetadataContainer",
+      "LineNumber": 100
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.OData.MetadataContainerSet",
+      "LineNumber": 100
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.OData.ODataModel",
+      "LineNumber": 21
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.OData.OperationContainer",
+      "LineNumber": 100
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.OData.PropertyContainer",
+      "LineNumber": 100
     },
     {
       "Code": "STX0007",

@@ -6,6 +6,7 @@ using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models.OData;
 using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
 using Config = cCoder.ContentManagement.Models.Config;
 using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;

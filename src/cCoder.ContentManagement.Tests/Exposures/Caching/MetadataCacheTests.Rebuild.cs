@@ -8,6 +8,7 @@ using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
 using System.Text.Json;
 using cCoder.ContentManagement.Api.OData;
+using cCoder.ContentManagement.Models.OData;
 using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
 using Config = cCoder.ContentManagement.Models.Config;
 using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;

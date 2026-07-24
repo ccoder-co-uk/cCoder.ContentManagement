@@ -4,7 +4,7 @@
 
 using Microsoft.OData.Edm;
 
-namespace cCoder.ContentManagement.Api.OData;
+namespace cCoder.ContentManagement.Models.OData;
 
 public class ODataModel
 {
@@ -12,11 +12,10 @@ public class ODataModel
     public string Description { get; set; }
     public IEdmModel EDMModel { get; set; }
 
-    public ODataModel
-()
+    public ODataModel()
     {
-        this.Context = string.Empty;
-        this.Description = string.Empty;
-        this.EDMModel = null;
+        Context = string.Empty;
+        Description = string.Empty;
+        EDMModel = null;
     }
 }
