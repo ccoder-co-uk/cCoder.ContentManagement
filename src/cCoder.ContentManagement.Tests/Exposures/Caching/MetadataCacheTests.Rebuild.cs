@@ -17,6 +17,7 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Exposures.Caching;
+using cCoder.ContentManagement.Dependencies.Caching;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -41,7 +42,7 @@ public partial class MetadataCacheTests
             Types = [new ExtendedMetadataContainer(type: typeof(int)) { Category = "Workflow" }],
         };
 
-        MetadataCache subject = CreateSubject(core, workflow);
+        MetadataCacheDependency subject = CreateSubject(core, workflow);
 
         string result = subject.GetAll(culture: "en-GB");
 
@@ -88,7 +89,9 @@ times: Times.Once
             .Returns(value: [])
             .Verifiable();
 
-        MetadataCache subject = new(metadataTypeCache: metadataTypeCacheMock.Object, resourceCache: commonObjectCacheMock.Object);
+        MetadataCacheDependency subject = new(
+            metadataTypeCache: metadataTypeCacheMock.Object,
+            resourceCache: commonObjectCacheMock.Object);
 
         currentTypeSetPayloads = [JsonSerializer.Serialize(value: updated)];
         subject.Rebuild();
@@ -127,7 +130,7 @@ times: Times.Exactly(callCount: 2)
             Types = [new ExtendedMetadataContainer(type: typeof(Role)) { Category = "Core" }],
         };
 
-        MetadataCache subject = CreateSubject(contentManagement, appSecurity);
+        MetadataCacheDependency subject = CreateSubject(contentManagement, appSecurity);
 
         string result = subject.GetAll(culture: "en-GB");
 

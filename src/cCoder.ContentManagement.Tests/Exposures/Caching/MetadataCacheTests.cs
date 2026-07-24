@@ -17,6 +17,7 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Exposures.Caching;
+using cCoder.ContentManagement.Dependencies.Caching;
 using Moq;
 using cCoder.Data.Exposures;
 
@@ -34,7 +35,7 @@ public partial class MetadataCacheTests
         commonObjectCacheMock = new Mock<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache>(behavior: MockBehavior.Strict);
     }
 
-    private MetadataCache CreateSubject(params MetadataContainerSet[] typeSets)
+    private MetadataCacheDependency CreateSubject(params MetadataContainerSet[] typeSets)
     {
         metadataTypeCacheMock
             .Setup(expression: cache => cache.GetAll())
@@ -45,6 +46,8 @@ public partial class MetadataCacheTests
             .Setup(expression: cache => cache.GetAll<Resource>())
             .Returns(value: []);
 
-        return new MetadataCache(metadataTypeCache: metadataTypeCacheMock.Object, resourceCache: commonObjectCacheMock.Object);
+        return new MetadataCacheDependency(
+            metadataTypeCache: metadataTypeCacheMock.Object,
+            resourceCache: commonObjectCacheMock.Object);
     }
 }

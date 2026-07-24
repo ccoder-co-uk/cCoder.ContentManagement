@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Api.OData;
+using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Models;
 using cCoder.Data;
 using cCoder.Data.Exposures;
@@ -10,16 +11,18 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using cCoder.Data.Models.CMS;
 
-namespace cCoder.ContentManagement.Exposures.Caching;
+namespace cCoder.ContentManagement.Dependencies.Caching;
 
-internal class MetadataCache : IMetadataCache
+internal class MetadataCacheDependency : IMetadataCache
 {
     private readonly IDictionary<string, IDictionary<string, string>> metaSerialized;
     private readonly IMetadataTypeCache metadataTypeCache;
     private readonly ICommonObjectCache resourceCache;
     private string metadataSignature;
 
-    public MetadataCache(IMetadataTypeCache metadataTypeCache, ICommonObjectCache resourceCache)
+    public MetadataCacheDependency(
+        IMetadataTypeCache metadataTypeCache,
+        ICommonObjectCache resourceCache)
     {
         metaSerialized = new Dictionary<string, IDictionary<string, string>>();
         this.metadataTypeCache = metadataTypeCache;

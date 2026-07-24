@@ -7,12 +7,13 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Caching;
+using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models;
 
-namespace cCoder.ContentManagement.Exposures.Caching;
+namespace cCoder.ContentManagement.Dependencies.Caching;
 
-internal class CommonObjectCache : ICommonObjectCache, IDisposable
+internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
 {
     private readonly ILogger log;
 
@@ -30,7 +31,10 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
 
     private readonly int expiryTimeInMinutes;
 
-    public CommonObjectCache(Config config, IServiceScopeFactory serviceScopeFactory, ILogger<CommonObjectCache> log)
+    public CommonObjectCacheDependency(
+        Config config,
+        IServiceScopeFactory serviceScopeFactory,
+        ILogger<CommonObjectCacheDependency> log)
     {
         latestSet = Array.Empty<CommonObject>();
         this.config = config;

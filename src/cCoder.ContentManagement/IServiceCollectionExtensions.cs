@@ -8,6 +8,7 @@ using cCoder.ContentManagement.Brokers.Events;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Caching;
+using cCoder.ContentManagement.Dependencies.Caching;
 using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
@@ -207,9 +208,11 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentManagementMetadataTypeService, ContentManagementMetadataTypeService>();
         services.AddTransient<IRenderFileContentService, RenderFileContentService>();
         services.AddTransient<IResourceProvider, CoreResourceBroker>();
-        services.AddSingleton<ICommonObjectCache, CommonObjectCache>();
-        services.AddSingleton<MetadataCache>();
-        services.AddSingleton<IMetadataCache>(implementationFactory: serviceProvider => serviceProvider.GetRequiredService<MetadataCache>());
+        services.AddSingleton<ICommonObjectCache, CommonObjectCacheDependency>();
+        services.AddSingleton<MetadataCacheDependency>();
+        services.AddSingleton<IMetadataCache>(
+            implementationFactory: serviceProvider =>
+                serviceProvider.GetRequiredService<MetadataCacheDependency>());
     }
 
     private static void AddOrchestrations(this IServiceCollection services)

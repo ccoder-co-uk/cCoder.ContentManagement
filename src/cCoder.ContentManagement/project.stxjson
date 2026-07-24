@@ -2047,6 +2047,126 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Dispose",
+          "Inputs": [],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "Get",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "T"
+        },
+        {
+          "Name": "GetAll",
+          "Inputs": [],
+          "ReturnType": "T[]"
+        },
+        {
+          "Name": "GetLatestSet",
+          "Inputs": [],
+          "ReturnType": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
+        },
+        {
+          "Name": "Refresh",
+          "Inputs": [],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "Set",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            },
+            {
+              "Name": "item",
+              "Type": "System.Object"
+            }
+          ],
+          "ReturnType": "System.Void"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Caching.MetadataCacheDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Dispose",
+          "Inputs": [],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "Get",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.String"
+        },
+        {
+          "Name": "GetAll",
+          "Inputs": [
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.String"
+        },
+        {
+          "Name": "Rebuild",
+          "Inputs": [],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "Set",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            },
+            {
+              "Name": "value",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "ToJson",
+          "Inputs": [
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.String"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Dependencies.CommonObjectQueryDependency",
       "StandardElementType": "Dependency",
       "Properties": [],
@@ -2130,126 +2250,6 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CApp\u003E"
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "StandardElementType": "Exposure",
-      "Properties": [],
-      "Methods": [
-        {
-          "Name": "Dispose",
-          "Inputs": [],
-          "ReturnType": "System.Void"
-        },
-        {
-          "Name": "Get",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "T"
-        },
-        {
-          "Name": "GetAll",
-          "Inputs": [],
-          "ReturnType": "T[]"
-        },
-        {
-          "Name": "GetLatestSet",
-          "Inputs": [],
-          "ReturnType": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
-        },
-        {
-          "Name": "Refresh",
-          "Inputs": [],
-          "ReturnType": "System.Void"
-        },
-        {
-          "Name": "Set",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.String"
-            },
-            {
-              "Name": "item",
-              "Type": "System.Object"
-            }
-          ],
-          "ReturnType": "System.Void"
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "StandardElementType": "Exposure",
-      "Properties": [],
-      "Methods": [
-        {
-          "Name": "Dispose",
-          "Inputs": [],
-          "ReturnType": "System.Void"
-        },
-        {
-          "Name": "Get",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "System.String"
-        },
-        {
-          "Name": "GetAll",
-          "Inputs": [
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "System.String"
-        },
-        {
-          "Name": "Rebuild",
-          "Inputs": [],
-          "ReturnType": "System.Void"
-        },
-        {
-          "Name": "Set",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.String"
-            },
-            {
-              "Name": "value",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "System.Void"
-        },
-        {
-          "Name": "ToJson",
-          "Inputs": [
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "System.String"
         }
       ]
     },
@@ -10877,16 +10877,16 @@
   ],
   "Links": [
     {
-      "FromType": "cCoder.ContentManagement.Exposures.AppManager",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
+      "FromType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency",
       "ToType": "cCoder.ContentManagement.Models.Config"
     },
     {
-      "FromType": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "ToType": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache"
+      "FromType": "cCoder.ContentManagement.Dependencies.Caching.MetadataCacheDependency",
+      "ToType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.AppManager",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.ComponentRenderer",
@@ -10986,11 +10986,11 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker",
-      "ToType": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache"
+      "ToType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency"
     },
     {
       "FromType": "cCoder.ContentManagement.Rendering.Brokers.MetadataReaderBroker",
-      "ToType": "cCoder.ContentManagement.Exposures.Caching.MetadataCache"
+      "ToType": "cCoder.ContentManagement.Dependencies.Caching.MetadataCacheDependency"
     },
     {
       "FromType": "cCoder.ContentManagement.Rendering.Services.Foundations.CommonObjectCacheService",
@@ -11646,7 +11646,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "ToType": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache"
+      "ToType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
@@ -11666,11 +11666,11 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache"
+      "ToType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Exposures.Caching.MetadataCache"
+      "ToType": "cCoder.ContentManagement.Dependencies.Caching.MetadataCacheDependency"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
@@ -11842,11 +11842,11 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache"
+      "ToType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Exposures.Caching.MetadataCache"
+      "ToType": "cCoder.ContentManagement.Dependencies.Caching.MetadataCacheDependency"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
@@ -11871,179 +11871,11 @@
   ],
   "AnalysisItems": [
     {
-      "Code": "STXFORMAT008",
-      "Description": "Wrapped statements must be separated from adjacent method statements by an empty line.",
+      "Code": "STXD001",
+      "Description": "Dependency elements may only be consumed by brokers.",
       "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.AuthorizationBroker",
-      "LineNumber": 40
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.RenderFileContentBroker",
-      "LineNumber": 28
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 45
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 49
-    },
-    {
-      "Code": "STXE002",
-      "Description": "An exposure must not contain loops.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 103
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 105
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 132
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 135
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 152
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 161
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 164
-    },
-    {
-      "Code": "STXE002",
-      "Description": "An exposure must not contain loops.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 175
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 183
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 31
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 40
-    },
-    {
-      "Code": "STXE002",
-      "Description": "An exposure must not contain loops.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 45
-    },
-    {
-      "Code": "STXE002",
-      "Description": "An exposure must not contain loops.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 50
-    },
-    {
-      "Code": "STXE002",
-      "Description": "An exposure must not contain loops.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 55
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 69
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 79
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 85
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 88
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 93
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 107
+      "Type": "cCoder.ContentManagement.Dependencies.Caching.MetadataCacheDependency",
+      "LineNumber": 16
     },
     {
       "Code": "STXE003",
@@ -12333,6 +12165,20 @@
       "LineNumber": 16
     },
     {
+      "Code": "STXD001",
+      "Description": "Dependency elements may only be consumed by brokers.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
+      "LineNumber": 16
+    },
+    {
+      "Code": "STXD001",
+      "Description": "Dependency elements may only be consumed by brokers.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
+      "LineNumber": 25
+    },
+    {
       "Code": "STXP001",
       "Description": "A processing service may use only one foundation service and no higher-level service.",
       "Severity": "Warning",
@@ -12384,6 +12230,13 @@
     {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
+      "LineNumber": 24
+    },
+    {
+      "Code": "STXD001",
+      "Description": "Dependency elements may only be consumed by brokers.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
       "LineNumber": 24
