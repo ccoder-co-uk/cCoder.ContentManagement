@@ -15,21 +15,15 @@ public class ContentManagementConfiguration
     public bool LogSQL { get; set; }
     public string RootPath { get; set; }
     public bool IncludeLegacyCoreContext { get; set; }
-    public EventProvider[] EventProviders { get; private set; }
-    public ContentManagementConfiguration WithEventProviders(params EventProvider[] eventProviders)
-    {
-        EventProviders = eventProviders ?? [];
-        return this;
-    }
+    public EventProvider[] EventProviders { get; set; }
 
-    public ContentManagementConfiguration
-    ()
+    public ContentManagementConfiguration()
     {
-        this.ConnectionStrings = new Dictionary<string, string>();
-        this.Settings = new Dictionary<string, string>();
-        this.Services = new Dictionary<string, string>();
-        this.RootPath = "Api/ContentManagement";
-        this.IncludeLegacyCoreContext = true;
-        this.EventProviders = [];
+        ConnectionStrings = new Dictionary<string, string>();
+        Settings = new Dictionary<string, string>();
+        Services = new Dictionary<string, string>();
+        RootPath = "Api/ContentManagement";
+        IncludeLegacyCoreContext = true;
+        EventProviders = [];
     }
 }

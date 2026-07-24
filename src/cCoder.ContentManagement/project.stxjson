@@ -4173,18 +4173,7 @@
           "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, System.String\u003E"
         }
       ],
-      "Methods": [
-        {
-          "Name": "WithEventProviders",
-          "Inputs": [
-            {
-              "Name": "eventProviders",
-              "Type": "EventProvider[]"
-            }
-          ],
-          "ReturnType": "cCoder.ContentManagement.Models.ContentManagementConfiguration"
-        }
-      ]
+      "Methods": []
     },
     {
       "Name": "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
@@ -4461,13 +4450,7 @@
           "Type": "System.String"
         }
       ],
-      "Methods": [
-        {
-          "Name": "KeyInfo",
-          "Inputs": [],
-          "ReturnType": "dynamic"
-        }
-      ]
+      "Methods": []
     },
     {
       "Name": "cCoder.ContentManagement.Models.Replacement",
@@ -4520,18 +4503,7 @@
           "Type": "T"
         }
       ],
-      "Methods": [
-        {
-          "Name": "ToNew",
-          "Inputs": [
-            {
-              "Name": "item",
-              "Type": "TNew"
-            }
-          ],
-          "ReturnType": "cCoder.ContentManagement.Models.Result\u003CTNew\u003E"
-        }
-      ]
+      "Methods": []
     },
     {
       "Name": "cCoder.ContentManagement.Models.TemplateRenderParams",
@@ -5132,22 +5104,7 @@
           "Type": "System.String"
         }
       ],
-      "Methods": [
-        {
-          "Name": "Can",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32?"
-            },
-            {
-              "Name": "operation",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "System.Boolean"
-        }
-      ]
+      "Methods": []
     },
     {
       "Name": "cCoder.ContentManagement.Rendering.Models.ResolvedPageRenderDefaults",
@@ -12665,146 +12622,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.IServiceCollectionExtensions",
       "LineNumber": 18
-    },
-    {
-      "Code": "STXM001",
-      "Description": "Models must not declare methods.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.ContentManagementConfiguration",
-      "LineNumber": 19
-    },
-    {
-      "Code": "STXM001",
-      "Description": "Models must not declare methods.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.RenderResult",
-      "LineNumber": 40
-    },
-    {
-      "Code": "STXM001",
-      "Description": "Models must not declare methods.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.Result\u003CT\u003E",
-      "LineNumber": 46
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 15
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 19
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 21
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 25
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 27
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 29
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 31
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "LineNumber": 33
-    },
-    {
-      "Code": "STXM001",
-      "Description": "Models must not declare methods.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderUser",
-      "LineNumber": 14
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.ResolvedPageRenderDefaults",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.ResolvedPageRenderDefaults",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STXM003",
-      "Description": "Model properties must not use framework validation attributes or the required modifier; validation belongs in service collectors.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Models.ResolvedPageRenderDefaults",
-      "LineNumber": 15
     },
     {
       "Code": "STX0007",

@@ -37,12 +37,9 @@ public class RenderResult
     public string BodyHtml { get; set; }
 
     public int StatusCode { get; set; }
-    public dynamic KeyInfo() =>
-        new { AppId, PageId, ParentId };
 
-    public RenderResult
-    ()
+    public RenderResult()
     {
-        this.StatusCode = 200;
+        StatusCode = 200;
     }
 }

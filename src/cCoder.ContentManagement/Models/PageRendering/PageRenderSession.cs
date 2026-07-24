@@ -8,7 +8,7 @@ namespace cCoder.ContentManagement.Rendering.Models;
 
 internal sealed class PageRenderSession
 {
-    public required PageRenderEngineRequest Request { get; init; }
+    public PageRenderEngineRequest Request { get; init; }
 
     public Config Config { get; set; }
 
@@ -29,16 +29,15 @@ internal sealed class PageRenderSession
     public IReadOnlyDictionary<string, PageRenderComponent> CommonComponentsByName { get; set; }
     public IReadOnlyDictionary<string, PageRenderScript> CommonScriptsByName { get; set; }
 
-    internal PageRenderSession
-()
+    internal PageRenderSession()
     {
-        this.Resources = Array.Empty<PageRenderResource>();
-        this.ResourcesByLookup = new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
-        this.ComponentsByName = new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
-        this.ScriptsByName = new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
-        this.MetadataResolver = static unusedKey => string.Empty;
-        this.CommonResourcesByLookup = new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
-        this.CommonComponentsByName = new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
-        this.CommonScriptsByName = new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
+        Resources = Array.Empty<PageRenderResource>();
+        ResourcesByLookup = new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
+        ComponentsByName = new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
+        ScriptsByName = new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
+        MetadataResolver = static unusedKey => string.Empty;
+        CommonResourcesByLookup = new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
+        CommonComponentsByName = new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
+        CommonScriptsByName = new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
     }
 }

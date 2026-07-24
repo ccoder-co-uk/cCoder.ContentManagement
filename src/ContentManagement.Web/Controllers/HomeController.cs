@@ -125,7 +125,12 @@ request: new PageRenderRequest
             app.Config
         };
 
-        session.page = page.KeyInfo();
+        session.page = new
+        {
+            page.AppId,
+            page.PageId,
+            page.ParentId
+        };
 
         ViewData["Session"] = session;
         ViewData["Edit"] = response.Edit;

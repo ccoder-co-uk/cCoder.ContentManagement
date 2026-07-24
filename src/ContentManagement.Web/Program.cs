@@ -84,10 +84,17 @@ connectionString: coreConnection);
         });
 
         builder.Services.AddContentManagementWeb(newContentManagementConfiguration: contentManagementConfiguration =>
-            contentManagementConfiguration.WithEventProviders(
-                CreateReceiveProvider<App>(eventNames: ["app_add", "app_update", "app_delete"]),
-                CreateReceiveProvider<Page>(eventNames: ["page_add", "page_update", "page_delete"]),
-                CreateReceiveProvider<(int appId, Package package)>(eventNames: ["package_import"])));
+        {
+            contentManagementConfiguration.EventProviders =
+            [
+                CreateReceiveProvider<App>(
+                    eventNames: ["app_add", "app_update", "app_delete"]),
+                CreateReceiveProvider<Page>(
+                    eventNames: ["page_add", "page_update", "page_delete"]),
+                CreateReceiveProvider<(int appId, Package package)>(
+                    eventNames: ["package_import"])
+            ];
+        });
 
         builder.Logging.ClearProviders();
 

@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Rendering.Models;
 
 internal sealed class ResolvedPageRenderDefaults
 {
-    public required App App { get; init; }
+    public App App { get; init; }
 
-    public required string Theme { get; init; }
+    public string Theme { get; init; }
 
-    public required string Culture { get; init; }
+    public string Culture { get; init; }
 }

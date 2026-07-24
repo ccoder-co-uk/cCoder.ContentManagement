@@ -11,26 +11,13 @@ internal sealed class PageRenderUser
     public string DisplayName { get; set; }
     public string Email { get; set; }
     public IReadOnlyDictionary<int, ISet<string>> AppPrivileges { get; set; }
-    public bool Can(int? appId, string operation)
+
+    internal PageRenderUser()
     {
-        string normalizedOperation = operation?.ToLowerInvariant() ?? string.Empty;
-
-        if (!appId.HasValue)
-        {
-            return AppPrivileges.Values.Any(predicate: privileges => privileges.Contains(item: normalizedOperation));
-        }
-
-        return AppPrivileges.TryGetValue(key: appId.Value, value: out ISet<string> value)
-            && value.Contains(item: normalizedOperation);
-    }
-
-    internal PageRenderUser
-    ()
-    {
-        this.Id = string.Empty;
-        this.DefaultCultureId = string.Empty;
-        this.DisplayName = string.Empty;
-        this.Email = string.Empty;
-        this.AppPrivileges = new Dictionary<int, ISet<string>>();
+        Id = string.Empty;
+        DefaultCultureId = string.Empty;
+        DisplayName = string.Empty;
+        Email = string.Empty;
+        AppPrivileges = new Dictionary<int, ISet<string>>();
     }
 }

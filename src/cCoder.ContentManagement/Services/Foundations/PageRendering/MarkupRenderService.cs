@@ -331,7 +331,14 @@ values: session.App.PagesById.Values
             new(old: "[page[path]]", @new: session.Page?.Path ?? string.Empty),
             new(old: "[page[url]]", @new: string.IsNullOrWhiteSpace(value: session.Page?.Path) ? "https://" + session.App?.Domain + "/" : "https://" + session.App?.Domain + "/" + session.Page?.Path),
             new(old: "[theme[name]]", @new: session.Request.Theme ?? string.Empty),
-            new(old: "[[editlink]]", @new: user.Can(appId: session.App?.Id, operation: "page_update") ? "<p style='cursor:pointer' onclick=\"setQueryParameter('edit', true)\">Edit</p>" : string.Empty)
+            new(
+                old: "[[editlink]]",
+                @new: CanPageRenderUser(
+                    user: user,
+                    appId: session.App?.Id,
+                    operation: "page_update")
+                        ? "<p style='cursor:pointer' onclick=\"setQueryParameter('edit', true)\">Edit</p>"
+                        : string.Empty)
         ];
 
         replacements.AddRange(collection: BuildConfiguredReplacements(session: session));
@@ -750,6 +757,27 @@ values: session.App.PagesById.Values
 
     private static string BuildResourceLookupKey(string key, string name, string culture) =>
         $"{key}|{name}|{culture}";
+
+    private static bool CanPageRenderUser(
+        PageRenderUser user,
+        int? appId,
+        string operation)
+    {
+        string normalizedOperation =
+            operation?.ToLowerInvariant() ?? string.Empty;
+
+        if (!appId.HasValue)
+        {
+            return user.AppPrivileges.Values.Any(
+                predicate: privileges =>
+                    privileges.Contains(item: normalizedOperation));
+        }
+
+        return user.AppPrivileges.TryGetValue(
+            key: appId.Value,
+            value: out ISet<string> value)
+            && value.Contains(item: normalizedOperation);
+    }
 
     private static string ResolveCulture(PageRenderSession session) =>
         !string.IsNullOrWhiteSpace(value: session.Request.Culture)
