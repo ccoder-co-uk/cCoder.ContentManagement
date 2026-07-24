@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 
-using cCoder.ContentManagement.Rendering.Models;
+using cCoder.ContentManagement.Dependencies.Rendering;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 

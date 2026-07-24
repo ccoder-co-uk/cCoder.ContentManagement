@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Rendering.Models;
+using cCoder.ContentManagement.Dependencies.Rendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 

@@ -2234,6 +2234,515 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageCacheSlice",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "CommonComponentsByName",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderComponent\u003E"
+        },
+        {
+          "Name": "CommonResourcesByLookup",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderResource\u003E"
+        },
+        {
+          "Name": "CommonScriptsByName",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderScript\u003E"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderApp",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Config",
+          "Type": "System.Object"
+        },
+        {
+          "Name": "DefaultCulture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "DefaultTheme",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Domain",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Id",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "PagesById",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.Int32, cCoder.ContentManagement.Dependencies.Rendering.PageRenderPage\u003E"
+        },
+        {
+          "Name": "TemplatesByName",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderTemplate\u003E"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderComponent",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Content",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Id",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ResourceKey",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Script",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderContent",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Html",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Id",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderEngineRequest",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "AppId",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "Culture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Edit",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "Exception",
+          "Type": "System.Exception"
+        },
+        {
+          "Name": "Path",
+          "Type": "System.String"
+        },
+        {
+          "Name": "RequestUrl",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Theme",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderLayout",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "BodyHtml",
+          "Type": "System.String"
+        },
+        {
+          "Name": "HeaderHtml",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderPage",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "AppId",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "ContentByName",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderContent\u003E"
+        },
+        {
+          "Name": "Description",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Id",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "Keywords",
+          "Type": "System.String"
+        },
+        {
+          "Name": "LayoutName",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Order",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "ParentId",
+          "Type": "System.Int32?"
+        },
+        {
+          "Name": "Path",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ResourceKey",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ShowOnMenus",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "Title",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderResource",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Culture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Description",
+          "Type": "System.String"
+        },
+        {
+          "Name": "DisplayName",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Key",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ShortDisplayName",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderResult",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "AppId",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "BodyHtml",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Culture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Description",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Edit",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "HeaderHtml",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Keywords",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Layout",
+          "Type": "System.String"
+        },
+        {
+          "Name": "PageId",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "ParentId",
+          "Type": "System.Int32?"
+        },
+        {
+          "Name": "Path",
+          "Type": "System.String"
+        },
+        {
+          "Name": "StatusCode",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "Theme",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Title",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderScript",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Content",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderSession",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "App",
+          "Type": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderApp"
+        },
+        {
+          "Name": "CommonComponentsByName",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderComponent\u003E"
+        },
+        {
+          "Name": "CommonResourcesByLookup",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderResource\u003E"
+        },
+        {
+          "Name": "CommonScriptsByName",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderScript\u003E"
+        },
+        {
+          "Name": "ComponentsByName",
+          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderComponent\u003E"
+        },
+        {
+          "Name": "Config",
+          "Type": "cCoder.ContentManagement.Models.Config"
+        },
+        {
+          "Name": "Layout",
+          "Type": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderLayout"
+        },
+        {
+          "Name": "MetadataResolver",
+          "Type": "System.Func\u003CSystem.String, System.String\u003E"
+        },
+        {
+          "Name": "Page",
+          "Type": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderPage"
+        },
+        {
+          "Name": "Request",
+          "Type": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderEngineRequest"
+        },
+        {
+          "Name": "Resources",
+          "Type": "System.Collections.Generic.IReadOnlyList\u003CcCoder.ContentManagement.Dependencies.Rendering.PageRenderResource\u003E"
+        },
+        {
+          "Name": "ResourcesByLookup",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderResource\u003E"
+        },
+        {
+          "Name": "ScriptsByName",
+          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderScript\u003E"
+        },
+        {
+          "Name": "User",
+          "Type": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderUser"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderSyntax",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "ComponentRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "ContentRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "CultureLinkRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "DmsRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "ExecuteRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "MetaRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "NavExpandedRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "NavRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "ResourceDescriptionRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "ResourceDisplayNameRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "ResourceShortDisplayNameRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        },
+        {
+          "Name": "ScriptRegex",
+          "Type": "System.Text.RegularExpressions.Regex"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderTemplate",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "RawString",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ResourceKey",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderUser",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "AppPrivileges",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.Int32, System.Collections.Generic.ISet\u003CSystem.String\u003E\u003E"
+        },
+        {
+          "Name": "DefaultCultureId",
+          "Type": "System.String"
+        },
+        {
+          "Name": "DisplayName",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Email",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Id",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Rendering.ResolvedPageRenderDefaults",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "App",
+          "Type": "App"
+        },
+        {
+          "Name": "Culture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Theme",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Dependencies.Results.OperationResult",
       "StandardElementType": "Dependency",
       "Properties": [
@@ -4860,7 +5369,7 @@
         {
           "Name": "GetComponentsByName",
           "Inputs": [],
-          "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderComponent\u003E"
+          "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderComponent\u003E"
         },
         {
           "Name": "GetLatestSet",
@@ -4870,12 +5379,12 @@
         {
           "Name": "GetResourcesByLookup",
           "Inputs": [],
-          "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderResource\u003E"
+          "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderResource\u003E"
         },
         {
           "Name": "GetScriptsByName",
           "Inputs": [],
-          "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderScript\u003E"
+          "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Dependencies.Rendering.PageRenderScript\u003E"
         },
         {
           "Name": "Set",
@@ -4991,515 +5500,6 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageCacheSlice",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "CommonComponentsByName",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderComponent\u003E"
-        },
-        {
-          "Name": "CommonResourcesByLookup",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderResource\u003E"
-        },
-        {
-          "Name": "CommonScriptsByName",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderScript\u003E"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderApp",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "Config",
-          "Type": "System.Object"
-        },
-        {
-          "Name": "DefaultCulture",
-          "Type": "System.String"
-        },
-        {
-          "Name": "DefaultTheme",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Domain",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Id",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "PagesById",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.Int32, cCoder.ContentManagement.Rendering.Models.PageRenderPage\u003E"
-        },
-        {
-          "Name": "TemplatesByName",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderTemplate\u003E"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderComponent",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "Content",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Id",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ResourceKey",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Script",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderContent",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "Html",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Id",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderEngineRequest",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "AppId",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "Culture",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Edit",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "Exception",
-          "Type": "System.Exception"
-        },
-        {
-          "Name": "Path",
-          "Type": "System.String"
-        },
-        {
-          "Name": "RequestUrl",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Theme",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderLayout",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "BodyHtml",
-          "Type": "System.String"
-        },
-        {
-          "Name": "HeaderHtml",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderPage",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "AppId",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "ContentByName",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderContent\u003E"
-        },
-        {
-          "Name": "Description",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Id",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "Keywords",
-          "Type": "System.String"
-        },
-        {
-          "Name": "LayoutName",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Order",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "ParentId",
-          "Type": "System.Int32?"
-        },
-        {
-          "Name": "Path",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ResourceKey",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ShowOnMenus",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "Title",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderResource",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "Culture",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Description",
-          "Type": "System.String"
-        },
-        {
-          "Name": "DisplayName",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Key",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ShortDisplayName",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderResult",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "AppId",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "BodyHtml",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Culture",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Description",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Edit",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "HeaderHtml",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Keywords",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Layout",
-          "Type": "System.String"
-        },
-        {
-          "Name": "PageId",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "ParentId",
-          "Type": "System.Int32?"
-        },
-        {
-          "Name": "Path",
-          "Type": "System.String"
-        },
-        {
-          "Name": "StatusCode",
-          "Type": "System.Int32"
-        },
-        {
-          "Name": "Theme",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Title",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderScript",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "Content",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderSession",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "App",
-          "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderApp"
-        },
-        {
-          "Name": "CommonComponentsByName",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderComponent\u003E"
-        },
-        {
-          "Name": "CommonResourcesByLookup",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderResource\u003E"
-        },
-        {
-          "Name": "CommonScriptsByName",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderScript\u003E"
-        },
-        {
-          "Name": "ComponentsByName",
-          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderComponent\u003E"
-        },
-        {
-          "Name": "Config",
-          "Type": "cCoder.ContentManagement.Models.Config"
-        },
-        {
-          "Name": "Layout",
-          "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderLayout"
-        },
-        {
-          "Name": "MetadataResolver",
-          "Type": "System.Func\u003CSystem.String, System.String\u003E"
-        },
-        {
-          "Name": "Page",
-          "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderPage"
-        },
-        {
-          "Name": "Request",
-          "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderEngineRequest"
-        },
-        {
-          "Name": "Resources",
-          "Type": "System.Collections.Generic.IReadOnlyList\u003CcCoder.ContentManagement.Rendering.Models.PageRenderResource\u003E"
-        },
-        {
-          "Name": "ResourcesByLookup",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderResource\u003E"
-        },
-        {
-          "Name": "ScriptsByName",
-          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderScript\u003E"
-        },
-        {
-          "Name": "User",
-          "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderUser"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderSyntax",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "ComponentRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "ContentRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "CultureLinkRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "DmsRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "ExecuteRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "MetaRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "NavExpandedRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "NavRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "ResourceDescriptionRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "ResourceDisplayNameRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "ResourceShortDisplayNameRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        },
-        {
-          "Name": "ScriptRegex",
-          "Type": "System.Text.RegularExpressions.Regex"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderTemplate",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "RawString",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ResourceKey",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.PageRenderUser",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "AppPrivileges",
-          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.Int32, System.Collections.Generic.ISet\u003CSystem.String\u003E\u003E"
-        },
-        {
-          "Name": "DefaultCultureId",
-          "Type": "System.String"
-        },
-        {
-          "Name": "DisplayName",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Email",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Id",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Rendering.Models.ResolvedPageRenderDefaults",
-      "StandardElementType": "Model",
-      "Properties": [
-        {
-          "Name": "App",
-          "Type": "App"
-        },
-        {
-          "Name": "Culture",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Theme",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
       "Name": "cCoder.ContentManagement.Rendering.Services.Foundations.CommonObjectCacheService",
       "StandardElementType": "FoundationService",
       "Properties": [],
@@ -5509,10 +5509,10 @@
           "Inputs": [
             {
               "Name": "request",
-              "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderEngineRequest"
+              "Type": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderEngineRequest"
             }
           ],
-          "ReturnType": "cCoder.ContentManagement.Rendering.Models.PageCacheSlice"
+          "ReturnType": "cCoder.ContentManagement.Dependencies.Rendering.PageCacheSlice"
         }
       ]
     },
@@ -5526,10 +5526,10 @@
           "Inputs": [
             {
               "Name": "session",
-              "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession"
+              "Type": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderSession"
             }
           ],
-          "ReturnType": "cCoder.ContentManagement.Rendering.Models.PageRenderResult"
+          "ReturnType": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderResult"
         }
       ]
     },
@@ -5560,10 +5560,10 @@
           "Inputs": [
             {
               "Name": "session",
-              "Type": "cCoder.ContentManagement.Rendering.Models.PageRenderSession"
+              "Type": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderSession"
             }
           ],
-          "ReturnType": "cCoder.ContentManagement.Rendering.Models.PageRenderResult"
+          "ReturnType": "cCoder.ContentManagement.Dependencies.Rendering.PageRenderResult"
         }
       ]
     },
@@ -12596,55 +12596,6 @@
     }
   ],
   "AnalysisItems": [
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.AuditResultByProperty",
-      "LineNumber": 51
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.AuditResultsByUser",
-      "LineNumber": 51
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.Result",
-      "LineNumber": 51
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Models.Result\u003CT\u003E",
-      "LineNumber": 51
-    },
-    {
-      "Code": "STX0007",
-      "Description": "A service public API must use one model contract or primitive types.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.CommonObjectCacheService",
-      "LineNumber": 10
-    },
-    {
-      "Code": "STX0007",
-      "Description": "A service public API must use one model contract or primitive types.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 22
-    },
-    {
-      "Code": "STX0007",
-      "Description": "A service public API must use one model contract or primitive types.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Orchestrations.PageRenderExecutionOrchestrationService",
-      "LineNumber": 10
-    },
     {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",

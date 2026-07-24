@@ -4,7 +4,7 @@
 
 using System.Text.RegularExpressions;
 
-namespace cCoder.ContentManagement.Rendering.Models;
+namespace cCoder.ContentManagement.Dependencies.Rendering;
 
 internal sealed class PageRenderSyntax
 {

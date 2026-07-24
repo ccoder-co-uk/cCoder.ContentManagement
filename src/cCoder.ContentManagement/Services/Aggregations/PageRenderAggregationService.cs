@@ -5,7 +5,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 using cCoder.ContentManagement.Exposures;
-using cCoder.ContentManagement.Rendering.Models;
+using cCoder.ContentManagement.Dependencies.Rendering;
 using cCoder.ContentManagement.Services;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Models;

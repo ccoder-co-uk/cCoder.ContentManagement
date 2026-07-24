@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Rendering.Models;
+using cCoder.ContentManagement.Dependencies.Rendering;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 
 namespace cCoder.ContentManagement.Rendering.Services.Orchestrations;

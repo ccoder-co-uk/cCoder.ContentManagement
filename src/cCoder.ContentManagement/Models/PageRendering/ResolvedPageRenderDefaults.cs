@@ -4,7 +4,7 @@
 
 using cCoder.Data.Models.CMS;
 
-namespace cCoder.ContentManagement.Rendering.Models;
+namespace cCoder.ContentManagement.Dependencies.Rendering;
 
 internal sealed class ResolvedPageRenderDefaults
 {

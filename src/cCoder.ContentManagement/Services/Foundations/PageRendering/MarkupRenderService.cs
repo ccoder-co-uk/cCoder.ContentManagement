@@ -11,7 +11,7 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Rendering.Models;
+using cCoder.ContentManagement.Dependencies.Rendering;
 using cCoder.ContentManagement.Services.Foundations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

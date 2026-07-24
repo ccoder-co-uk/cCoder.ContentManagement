@@ -4,7 +4,7 @@
 
 using cCoder.ContentManagement.Models;
 
-namespace cCoder.ContentManagement.Rendering.Models;
+namespace cCoder.ContentManagement.Dependencies.Rendering;
 
 internal sealed class PageRenderSession
 {

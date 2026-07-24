@@ -4,7 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Rendering.Models;
+using cCoder.ContentManagement.Dependencies.Rendering;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
 using cCoder.ContentManagement.Services;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
