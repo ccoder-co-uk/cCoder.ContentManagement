@@ -14,6 +14,7 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Models;
 
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,55 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class TemplateRenderOrchestrationServiceTests
 {
+    [Fact]
+    public void ShouldResolveAuthorizationAndRenderTemplate()
+    {
+        // Given
+        User user = new()
+        {
+            DefaultCultureId = "en-GB"
+        };
+
+        RenderAuthorization authorization = new()
+        {
+            Culture = "en-GB",
+            User = user
+        };
+
+        object model = new { Name = "Ward" };
+        string expectedHtml = "<main>template</main>";
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.ResolveRenderAuthorization(
+                culture: null))
+            .Returns(value: authorization);
+
+        templateRenderProcessingServiceMock
+            .Setup(expression: service => service.RenderUserConfig(
+                appId: 1,
+                name: "Welcome",
+                model: model,
+                user: user,
+                culture: "en-GB",
+                config: It.IsAny<Config>(),
+                log: It.IsAny<ILogger>()))
+            .Returns(value: expectedHtml);
+
+        // When
+        string result = renderOrchestrationService.Render(
+            appId: 1,
+            name: "Welcome",
+            culture: null,
+            model: model);
+
+        // Then
+        result.Should()
+            .Be(expected: expectedHtml);
+
+        authorizationProcessingServiceMock.VerifyAll();
+        templateRenderProcessingServiceMock.VerifyAll();
+    }
+
     [Fact]
     public void ShouldRenderTemplateThroughProcessingService()
     {
