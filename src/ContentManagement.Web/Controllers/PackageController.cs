@@ -15,14 +15,17 @@ public sealed class PackageController(
     IContentManagementMigrationAggregationService contentManagementMigrationAggregationService) : ControllerBase
 {
     [HttpPost("Import")]
-    public async Task<IActionResult> ImportAsync([FromQuery] int appId, [FromBody] Package package)
+    public async Task<IActionResult> PostImportAsync([FromQuery] int appId, [FromBody] Package newPackage)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(modelState: ModelState);
         }
 
-        await contentManagementMigrationAggregationService.ImportPackageAsync(appId: appId, package: package);
+        await contentManagementMigrationAggregationService.ImportPackageAsync(
+            appId: appId,
+            package: newPackage);
+
         return Ok();
     }
 }

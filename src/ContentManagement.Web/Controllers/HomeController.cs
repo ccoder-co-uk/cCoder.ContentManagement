@@ -14,34 +14,39 @@ namespace ContentManagement.Web.Controllers;
 
 public sealed class HomeController(IPageRenderer PageRenderer) : Controller
 {
-    private string Host =>
+    private string GetHost() =>
         Request.Host.Host.Replace(oldValue: "www.", newValue: "")
         .ToLowerInvariant();
 
-    private dynamic DynamicSessionObject
+    private ExpandoObject CreateSessionExpandoObject()
     {
-        get
-        {
-            dynamic result = new ExpandoObject();
+        dynamic result = new ExpandoObject();
 
-            result.apiRoot = (Request.Host.Port is not 443 and not 80)
-                ? $"{Request.Scheme}://{Host}:{Request.Host.Port}/Api/"
-                : $"{Request.Scheme}://{Host}/Api/";
+        string host = GetHost();
 
-            foreach (string key in HttpContext.Session.Keys)
-            {
-                if (key != "ssoUser")
-                {
-                    ((IDictionary<string, object>)result).Add(key: key, value: GetSessionValue(key: key));
-                }
-            }
+        result.apiRoot = (Request.Host.Port is not 443 and not 80)
+            ? $"{Request.Scheme}://{host}:{Request.Host.Port}/Api/"
+            : $"{Request.Scheme}://{host}/Api/";
 
-            return result;
-        }
+        IDictionary<string, object> sessionValues =
+            HttpContext.Session.Keys
+                .Where(predicate: key => key != "ssoUser")
+                .ToDictionary(
+                    keySelector: key => key,
+                    elementSelector: key => (object)GetSessionValue(key: key));
+
+        sessionValues
+            .ToList()
+            .ForEach(action: item =>
+                ((IDictionary<string, object>)result).Add(
+                    key: item.Key,
+                    value: item.Value));
+
+        return (ExpandoObject)result;
     }
 
     [HttpGet]
-    public IActionResult Index(string path = null, string theme = null, string culture = null, bool edit = false)
+    public IActionResult Get(string path = null, string theme = null, string culture = null, bool edit = false)
     {
         try
         {
@@ -87,7 +92,7 @@ public sealed class HomeController(IPageRenderer PageRenderer) : Controller
             PageRenderResponse response = PageRenderer.Render(
 request: new PageRenderRequest
 {
-    Host = Host,
+    Host = GetHost(),
     Path = path,
     Theme = theme,
     Culture = culture,
@@ -111,7 +116,7 @@ request: new PageRenderRequest
 
     private void SetupViewBag(PageRenderResponse response)
     {
-        dynamic session = DynamicSessionObject;
+        dynamic session = CreateSessionExpandoObject();
 
         RenderApp app = response.App;
         RenderResult page = response.Page;

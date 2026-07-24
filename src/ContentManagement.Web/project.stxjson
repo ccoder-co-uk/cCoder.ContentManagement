@@ -172,7 +172,7 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "Index",
+          "Name": "Get",
           "Inputs": [
             {
               "Name": "path",
@@ -201,14 +201,14 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "ImportAsync",
+          "Name": "PostImportAsync",
           "Inputs": [
             {
               "Name": "appId",
               "Type": "System.Int32"
             },
             {
-              "Name": "package",
+              "Name": "newPackage",
               "Type": "cCoder.Data.Models.Packaging.Package"
             }
           ],
@@ -265,72 +265,39 @@
           "ReturnType": "System.Void"
         }
       ]
+    },
+    {
+      "Name": "ContentManagement.Web.WebApplicationExtensions",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "AddContentManagementApplication",
+          "Inputs": [
+            {
+              "Name": "services",
+              "Type": "IServiceCollection"
+            },
+            {
+              "Name": "builder",
+              "Type": "WebApplicationBuilder"
+            }
+          ],
+          "ReturnType": "IServiceCollection"
+        },
+        {
+          "Name": "UseContentManagementApplication",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            }
+          ],
+          "ReturnType": "WebApplication"
+        }
+      ]
     }
   ],
   "Links": [],
-  "AnalysisItems": [
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "Apps.Shared.Models.Config",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "Apps.Shared.Models.Config",
-      "LineNumber": 10
-    },
-    {
-      "Code": "STXM002",
-      "Description": "Model properties must not declare default values.",
-      "Severity": "Warning",
-      "Type": "Apps.Shared.Models.Config",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "ContentManagement.Web.Controllers.HomeController",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "ContentManagement.Web.Controllers.HomeController",
-      "LineNumber": 21
-    },
-    {
-      "Code": "STXE002",
-      "Description": "An exposure must not contain loops.",
-      "Severity": "Warning",
-      "Type": "ContentManagement.Web.Controllers.HomeController",
-      "LineNumber": 31
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "ContentManagement.Web.Controllers.HomeController",
-      "LineNumber": 43
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "ContentManagement.Web.Controllers.PackageController",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXAPP005",
-      "Description": "Program.cs must compose the app through IServiceCollection using SDK namespaces and one local composition namespace only.",
-      "Severity": "Warning",
-      "Type": "ContentManagement.Web.Program",
-      "LineNumber": 31
-    }
-  ]
+  "AnalysisItems": []
 }
