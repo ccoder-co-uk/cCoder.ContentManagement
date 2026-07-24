@@ -20,11 +20,11 @@ internal partial class ContentService(
 
         if (ignoreFilters)
         {
-            return GetAllContent(ignoreFilters: true)
+            return ExecuteGetAllContent(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
         }
 
-        Content content = GetAllContent()
+        Content content = ExecuteGetAllContent()
             .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
 
         if (content != null)
@@ -32,7 +32,7 @@ internal partial class ContentService(
             return content;
         }
 
-        Content content2 = GetAllContent(ignoreFilters: true)
+        Content content2 = ExecuteGetAllContent(ignoreFilters: true)
             .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
 
         if (content2 != null)
@@ -79,11 +79,11 @@ internal partial class ContentService(
 
         try
         {
-            content = GetContent(contentId: contentId);
+            content = ExecuteGetContent(contentId: contentId);
         }
         catch (SecurityException)
         {
-            content = GetContent(contentId: contentId, ignoreFilters: true);
+            content = ExecuteGetContent(contentId: contentId, ignoreFilters: true);
         }
 
         if (content == null)
@@ -118,5 +118,37 @@ internal partial class ContentService(
             .Where(predicate: page => page.Id == pageId)
             .Select(selector: page => (int?)page.AppId)
             .FirstOrDefault();
+    }
+
+    private IQueryable<Content> ExecuteGetAllContent(bool ignoreFilters = false) =>
+        contentBroker.GetAllContents(ignoreFilters: ignoreFilters);
+
+    private Content ExecuteGetContent(int contentId, bool ignoreFilters = false)
+    {
+        ValidateId(contentId: contentId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllContent(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
+        }
+
+        Content content = ExecuteGetAllContent()
+            .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
+
+        if (content != null)
+        {
+            return content;
+        }
+
+        Content content2 = ExecuteGetAllContent(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
+
+        if (content2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

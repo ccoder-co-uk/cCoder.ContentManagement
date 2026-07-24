@@ -17,11 +17,11 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
 
         if (ignoreFilters)
         {
-            return GetAllCommonObject(ignoreFilters: true)
+            return ExecuteGetAllCommonObject(ignoreFilters: true)
                 .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
         }
 
-        CommonObject commonObject = GetAllCommonObject()
+        CommonObject commonObject = ExecuteGetAllCommonObject()
             .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
 
         if (commonObject != null)
@@ -29,7 +29,7 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
             return commonObject;
         }
 
-        CommonObject commonObject2 = GetAllCommonObject(ignoreFilters: true)
+        CommonObject commonObject2 = ExecuteGetAllCommonObject(ignoreFilters: true)
             .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
 
         if (commonObject2 != null)
@@ -103,7 +103,7 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
     public async ValueTask DeleteAsync(int commonObjectId)
     {
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
-        CommonObject commonObject = GetCommonObject(commonObjectId: commonObjectId);
+        CommonObject commonObject = ExecuteGetCommonObject(commonObjectId: commonObjectId);
         CommonObject dataCommonObject = CreateStorageCommonObject(newCommonObject: commonObject);
         authorizationBroker.Authorize(appId: commonObjectBroker.GetAppId(entity: dataCommonObject), privilege: "CommonObject_delete");
         await commonObjectBroker.DeleteCommonObjectAsync(deletedCommonObject: dataCommonObject);
@@ -131,5 +131,37 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
             Json = newCommonObject.Json,
             Culture = newCommonObject.Culture
         };
+    }
+
+    private IQueryable<CommonObject> ExecuteGetAllCommonObject(bool ignoreFilters = false) =>
+        commonObjectBroker.GetAllCommonObjects(ignoreFilters: ignoreFilters);
+
+    private CommonObject ExecuteGetCommonObject(int commonObjectId, bool ignoreFilters = false)
+    {
+        ValidateId(commonObjectId: commonObjectId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllCommonObject(ignoreFilters: true)
+                .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
+        }
+
+        CommonObject commonObject = ExecuteGetAllCommonObject()
+            .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
+
+        if (commonObject != null)
+        {
+            return commonObject;
+        }
+
+        CommonObject commonObject2 = ExecuteGetAllCommonObject(ignoreFilters: true)
+            .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
+
+        if (commonObject2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

@@ -20,11 +20,11 @@ internal partial class CultureService(
 
         if (ignoreFilters)
         {
-            return GetAllCulture(ignoreFilters: true)
+            return ExecuteGetAllCulture(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
         }
 
-        Culture culture = GetAllCulture()
+        Culture culture = ExecuteGetAllCulture()
             .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
 
         if ((object)culture != null)
@@ -32,7 +32,7 @@ internal partial class CultureService(
             return culture;
         }
 
-        Culture culture2 = GetAllCulture(ignoreFilters: true)
+        Culture culture2 = ExecuteGetAllCulture(ignoreFilters: true)
             .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
 
         if ((object)culture2 != null)
@@ -69,7 +69,7 @@ internal partial class CultureService(
     public async ValueTask DeleteAsync(string cultureId)
     {
         ValidateId(cultureId: cultureId, parameterName: "id");
-        Culture culture = GetCulture(cultureId: cultureId);
+        Culture culture = ExecuteGetCulture(cultureId: cultureId);
         authorizationBroker.Authorize(appId: GetAppId(cultureId: culture.Id), privilege: "Culture_delete");
         await cultureBroker.DeleteCultureAsync(deletedCulture: CreateStorageCulture(newCulture: culture));
     }
@@ -94,5 +94,37 @@ internal partial class CultureService(
             .Where(predicate: appCulture => appCulture.CultureId == cultureId)
             .Select(selector: appCulture => (int?)appCulture.AppId)
             .FirstOrDefault();
+    }
+
+    private IQueryable<Culture> ExecuteGetAllCulture(bool ignoreFilters = false) =>
+        cultureBroker.GetAllCultures(ignoreFilters: ignoreFilters);
+
+    private Culture ExecuteGetCulture(string cultureId, bool ignoreFilters = false)
+    {
+        ValidateId(cultureId: cultureId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllCulture(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
+        }
+
+        Culture culture = ExecuteGetAllCulture()
+            .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
+
+        if ((object)culture != null)
+        {
+            return culture;
+        }
+
+        Culture culture2 = ExecuteGetAllCulture(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
+
+        if ((object)culture2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

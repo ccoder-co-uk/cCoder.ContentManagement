@@ -53,7 +53,7 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
                 {
                     Id = $"{item.AppId}:{item.CultureId}",
                     Success = true,
-                    Item = existing ?? await AddAppCultureAsync(newAppCulture: item),
+                    Item = existing ?? await ExecuteAddAppCultureAsync(newAppCulture: item),
                     Message = existing == null ? "Added Successfully" : "Already Exists"
                 });
             }
@@ -76,7 +76,32 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
     {
         foreach (AppCulture item in deletedAppCulture)
         {
-            await DeleteAppCultureAsync(deletedAppCulture: item);
+            await ExecuteDeleteAppCultureAsync(deletedAppCulture: item);
         }
+    }
+
+    private async ValueTask<AppCulture> ExecuteAddAppCultureAsync(AppCulture newAppCulture)
+    {
+        try
+        {
+            return await service.AddAppCultureAsync(newAppCulture: newAppCulture);
+        }
+        catch (DbUpdateException ex) when (
+            ex.InnerException?.Message.Contains(value: "FOREIGN KEY", comparisonType: StringComparison.OrdinalIgnoreCase) == true)
+        {
+            throw new InvalidOperationException(message: "The app culture must reference an existing app and culture.", innerException: ex);
+        }
+    }
+
+    private async ValueTask ExecuteDeleteAppCultureAsync(AppCulture deletedAppCulture)
+    {
+        AppCulture dbVersion = service.GetAppCulture(appId: deletedAppCulture.AppId, cultureId: deletedAppCulture.CultureId);
+
+        if (dbVersion == null)
+        {
+            throw new InvalidOperationException(message: "The app culture does not exist.");
+        }
+
+        await service.DeleteAppCultureAsync(deletedAppCulture: dbVersion);
     }
 }

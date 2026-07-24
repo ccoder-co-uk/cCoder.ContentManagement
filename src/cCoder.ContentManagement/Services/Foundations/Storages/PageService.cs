@@ -109,11 +109,11 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
 
         try
         {
-            page = GetPage(pageId: pageId);
+            page = ExecuteGetPage(pageId: pageId);
         }
         catch (SecurityException)
         {
-            page = GetPage(pageId: pageId, ignoreFilters: true);
+            page = ExecuteGetPage(pageId: pageId, ignoreFilters: true);
         }
 
         if (page == null)
@@ -148,5 +148,34 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
             ResourceKey = newPage.ResourceKey,
             Layout = newPage.Layout
         };
+    }
+
+    private Page ExecuteGetPage(int pageId, bool ignoreFilters = false)
+    {
+        ValidateId(pageId: pageId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return pageBroker.GetAllPages(ignoreFilters: true)
+                .FirstOrDefault(predicate: page => page.Id == pageId);
+        }
+
+        Page result = pageBroker.GetAllPages(ignoreFilters: false)
+            .FirstOrDefault(predicate: page => page.Id == pageId);
+
+        if (result != null)
+        {
+            return result;
+        }
+
+        result = pageBroker.GetAllPages(ignoreFilters: true)
+            .FirstOrDefault(predicate: foundPage => foundPage.Id == pageId);
+
+        if (result != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

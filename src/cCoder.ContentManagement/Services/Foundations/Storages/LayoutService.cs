@@ -17,11 +17,11 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
 
         if (ignoreFilters)
         {
-            return GetAllLayout(ignoreFilters: true)
+            return ExecuteGetAllLayout(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
         }
 
-        Layout layout = GetAllLayout()
+        Layout layout = ExecuteGetAllLayout()
             .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
 
         if (layout != null)
@@ -29,7 +29,7 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
             return layout;
         }
 
-        Layout layout2 = GetAllLayout(ignoreFilters: true)
+        Layout layout2 = ExecuteGetAllLayout(ignoreFilters: true)
             .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
 
         if (layout2 != null)
@@ -105,11 +105,11 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
 
         try
         {
-            layout = GetLayout(layoutId: layoutId);
+            layout = ExecuteGetLayout(layoutId: layoutId);
         }
         catch (SecurityException)
         {
-            layout = GetLayout(layoutId: layoutId, ignoreFilters: true);
+            layout = ExecuteGetLayout(layoutId: layoutId, ignoreFilters: true);
         }
 
         if (layout == null)
@@ -142,5 +142,37 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
             Html = newLayout.Html,
             Script = newLayout.Script
         };
+    }
+
+    private IQueryable<Layout> ExecuteGetAllLayout(bool ignoreFilters = false) =>
+        layoutBroker.GetAllLayouts(ignoreFilters: ignoreFilters);
+
+    private Layout ExecuteGetLayout(int layoutId, bool ignoreFilters = false)
+    {
+        ValidateId(layoutId: layoutId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllLayout(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
+        }
+
+        Layout layout = ExecuteGetAllLayout()
+            .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
+
+        if (layout != null)
+        {
+            return layout;
+        }
+
+        Layout layout2 = ExecuteGetAllLayout(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
+
+        if (layout2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

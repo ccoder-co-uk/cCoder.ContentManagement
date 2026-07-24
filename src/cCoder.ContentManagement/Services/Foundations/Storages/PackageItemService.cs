@@ -15,11 +15,11 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
     {
         if (ignoreFilters)
         {
-            return GetAllPackageItem(ignoreFilters: true)
+            return ExecuteGetAllPackageItem(ignoreFilters: true)
                 .FirstOrDefault(predicate: (PackageItem i) => i.Id == packageItemId);
         }
 
-        PackageItem packageItem = GetAllPackageItem()
+        PackageItem packageItem = ExecuteGetAllPackageItem()
             .FirstOrDefault(predicate: (PackageItem i) => i.Id == packageItemId);
 
         if (packageItem != null)
@@ -27,7 +27,7 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
             return packageItem;
         }
 
-        PackageItem packageItem2 = GetAllPackageItem(ignoreFilters: true)
+        PackageItem packageItem2 = ExecuteGetAllPackageItem(ignoreFilters: true)
             .FirstOrDefault(predicate: (PackageItem i) => i.Id == packageItemId);
 
         if (packageItem2 != null)
@@ -67,7 +67,7 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
 
     public async ValueTask DeleteAsync(Guid packageItemId)
     {
-        PackageItem packageItem = GetPackageItem(packageItemId: packageItemId);
+        PackageItem packageItem = ExecuteGetPackageItem(packageItemId: packageItemId);
         PackageItem dataPackageItem = CreateStoragePackageItem(newPackageItem: packageItem);
         authorizationBroker.Authorize(appId: packageItemBroker.GetAppId(entity: dataPackageItem), privilege: "PackageItem_delete");
         await packageItemBroker.DeletePackageItemAsync(deletedPackageItem: dataPackageItem);
@@ -87,5 +87,35 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
             Type = newPackageItem.Type,
             Data = newPackageItem.Data
         };
+    }
+
+    private IQueryable<PackageItem> ExecuteGetAllPackageItem(bool ignoreFilters = false) =>
+        packageItemBroker.GetAllPackageItems(ignoreFilters: ignoreFilters);
+
+    private PackageItem ExecuteGetPackageItem(Guid packageItemId, bool ignoreFilters = false)
+    {
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllPackageItem(ignoreFilters: true)
+                .FirstOrDefault(predicate: (PackageItem i) => i.Id == packageItemId);
+        }
+
+        PackageItem packageItem = ExecuteGetAllPackageItem()
+            .FirstOrDefault(predicate: (PackageItem i) => i.Id == packageItemId);
+
+        if (packageItem != null)
+        {
+            return packageItem;
+        }
+
+        PackageItem packageItem2 = ExecuteGetAllPackageItem(ignoreFilters: true)
+            .FirstOrDefault(predicate: (PackageItem i) => i.Id == packageItemId);
+
+        if (packageItem2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

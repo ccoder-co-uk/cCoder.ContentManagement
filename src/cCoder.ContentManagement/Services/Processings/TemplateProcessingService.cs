@@ -47,7 +47,7 @@ internal class TemplateProcessingService(ITemplateService service) : ITemplatePr
         {
             try
             {
-                Template savedItem = item.Id < 1 ? await AddTemplateAsync(newTemplate: item) : await UpdateTemplateAsync(updatedTemplate: item);
+                Template savedItem = item.Id < 1 ? await ExecuteAddTemplateAsync(newTemplate: item) : await ExecuteUpdateTemplateAsync(updatedTemplate: item);
 
                 results.Add(item: new Result<Template>
                 {
@@ -76,7 +76,7 @@ internal class TemplateProcessingService(ITemplateService service) : ITemplatePr
 
         foreach (Template item in deletedTemplate)
         {
-            await DeleteAsync(templateId: item.Id);
+            await ExecuteDeleteAsync(templateId: item.Id);
         }
     }
 
@@ -95,5 +95,23 @@ internal class TemplateProcessingService(ITemplateService service) : ITemplatePr
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private ValueTask<Template> ExecuteAddTemplateAsync(Template newTemplate)
+    {
+        ValidateTemplate(template: newTemplate, parameterName: "entity");
+        return service.AddTemplateAsync(newTemplate: newTemplate);
+    }
+
+    private ValueTask ExecuteDeleteAsync(int templateId)
+    {
+        ValidateId(templateId: templateId, parameterName: "id");
+        return service.DeleteAsync(templateId: templateId);
+    }
+
+    private ValueTask<Template> ExecuteUpdateTemplateAsync(Template updatedTemplate)
+    {
+        ValidateTemplate(template: updatedTemplate, parameterName: "entity");
+        return service.UpdateTemplateAsync(updatedTemplate: updatedTemplate);
     }
 }

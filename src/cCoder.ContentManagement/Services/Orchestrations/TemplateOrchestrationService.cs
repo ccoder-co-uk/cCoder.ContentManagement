@@ -64,12 +64,12 @@ internal class TemplateOrchestrationService(
 
     public async ValueTask DeleteByAppIdAsync(int appId)
     {
-        Template[] templatesToDelete = [.. GetAllTemplate(ignoreFilters: true)
+        Template[] templatesToDelete = [.. ExecuteGetAllTemplate(ignoreFilters: true)
             .Where(predicate: template => template.AppId == appId)];
 
         if (templatesToDelete.Length > 0)
         {
-            await DeleteAllTemplateAsync(deletedTemplate: templatesToDelete);
+            await ExecuteDeleteAllTemplateAsync(deletedTemplate: templatesToDelete);
         }
     }
 
@@ -83,8 +83,8 @@ internal class TemplateOrchestrationService(
             try
             {
                 Template result = template.Id <= 0
-                    ? await AddTemplateAsync(newTemplate: template)
-                    : await UpdateTemplateAsync(updatedTemplate: template);
+                    ? await ExecuteAddTemplateAsync(newTemplate: template)
+                    : await ExecuteUpdateTemplateAsync(updatedTemplate: template);
 
                 results.Add(item: new Result<Template>
                 {
@@ -125,7 +125,7 @@ internal class TemplateOrchestrationService(
             template.Id = dbVersions.FirstOrDefault(predicate: existing => existing.Name == template.Name)?.Id ?? 0;
         });
 
-        await AddOrUpdateTemplateResult(newTemplate: validatedItems);
+        await ExecuteAddOrUpdateTemplateResult(newTemplate: validatedItems);
     }
 
     public async ValueTask DeleteAllTemplateAsync(IEnumerable<Template> deletedTemplate)
@@ -134,7 +134,7 @@ internal class TemplateOrchestrationService(
 
         foreach (Template template in templates)
         {
-            await DeleteAsync(templateId: template.Id);
+            await ExecuteDeleteAsync(templateId: template.Id);
         }
     }
 
@@ -146,5 +146,93 @@ internal class TemplateOrchestrationService(
         }
 
         return template;
+    }
+
+    private async ValueTask<IEnumerable<Result<Template>>> ExecuteAddOrUpdateTemplateResult(IEnumerable<Template> newTemplate)
+    {
+        Template[] templates = (newTemplate ?? []).ToArray();
+        List<Result<Template>> results = new();
+
+        foreach (Template template in templates)
+        {
+            try
+            {
+                Template result = template.Id <= 0
+                    ? await ExecuteAddTemplateAsync(newTemplate: template)
+                    : await ExecuteUpdateTemplateAsync(updatedTemplate: template);
+
+                results.Add(item: new Result<Template>
+                {
+                    Success = true,
+                    Item = result,
+                    Message = template.Id <= 0 ? "Added Successfully" : "Updated Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                results.Add(item: new Result<Template>
+                {
+                    Success = false,
+                    Item = template,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        return results;
+    }
+
+    private async ValueTask<Template> ExecuteAddTemplateAsync(Template newTemplate)
+    {
+        ValidateTemplate(template: newTemplate, parameterName: "entity");
+
+        Template result = await processingService.AddTemplateAsync(newTemplate: newTemplate);
+        await eventService.RaiseTemplateAddEventAsync(entity: result);
+        return result;
+    }
+
+    private async ValueTask ExecuteDeleteAllTemplateAsync(IEnumerable<Template> deletedTemplate)
+    {
+        Template[] templates = (deletedTemplate ?? []).ToArray();
+
+        foreach (Template template in templates)
+        {
+            await ExecuteDeleteAsync(templateId: template.Id);
+        }
+    }
+
+    private async ValueTask ExecuteDeleteAsync(int templateId)
+    {
+        Template entity;
+
+        try
+        {
+            entity = processingService.GetTemplate(templateId: templateId);
+        }
+        catch (SecurityException)
+        {
+            entity = processingService.GetAllTemplate(ignoreFilters: true)
+                .FirstOrDefault(predicate: template => template.Id == templateId);
+        }
+
+        if (entity == null)
+        {
+            return;
+        }
+
+        await eventService.RaiseTemplateDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(templateId: templateId);
+    }
+
+    private IQueryable<Template> ExecuteGetAllTemplate(bool ignoreFilters = false) =>
+        processingService.GetAllTemplate(ignoreFilters: ignoreFilters);
+
+    private async ValueTask<Template> ExecuteUpdateTemplateAsync(Template updatedTemplate)
+    {
+        ValidateTemplate(template: updatedTemplate, parameterName: "entity");
+
+        Template result = await processingService.UpdateTemplateAsync(updatedTemplate: updatedTemplate);
+        await eventService.RaiseTemplateUpdateEventAsync(entity: result);
+        return result;
     }
 }

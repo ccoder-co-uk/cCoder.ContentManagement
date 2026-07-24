@@ -71,8 +71,8 @@ internal class PageInfoOrchestrationService(IPageInfoProcessingService processin
             try
             {
                 PageInfo result = pageInfo.Id <= 0
-                    ? await AddPageInfoAsync(newPageInfo: pageInfo)
-                    : await UpdatePageInfoAsync(updatedPageInfo: pageInfo);
+                    ? await ExecuteAddPageInfoAsync(newPageInfo: pageInfo)
+                    : await ExecuteUpdatePageInfoAsync(updatedPageInfo: pageInfo);
 
                 results.Add(item: new Result<PageInfo>
                 {
@@ -102,7 +102,7 @@ internal class PageInfoOrchestrationService(IPageInfoProcessingService processin
 
         foreach (PageInfo pageInfo in pageInfos)
         {
-            await DeleteAsync(pageInfoId: pageInfo.Id);
+            await ExecuteDeleteAsync(pageInfoId: pageInfo.Id);
         }
     }
 
@@ -134,5 +134,46 @@ internal class PageInfoOrchestrationService(IPageInfoProcessingService processin
         }
 
         return pageInfos;
+    }
+
+    private async ValueTask<PageInfo> ExecuteAddPageInfoAsync(PageInfo newPageInfo)
+    {
+        ValidatePageInfo(pageInfo: newPageInfo, parameterName: "entity");
+        PageInfo result = await processingService.AddPageInfoAsync(newPageInfo: newPageInfo);
+        await eventService.RaisePageInfoAddEventAsync(entity: result);
+        return result;
+    }
+
+    private async ValueTask ExecuteDeleteAsync(int pageInfoId)
+    {
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
+
+        PageInfo entity;
+
+        try
+        {
+            entity = processingService.GetPageInfo(pageInfoId: pageInfoId);
+        }
+        catch (SecurityException)
+        {
+            entity = processingService.GetAllPageInfo(ignoreFilters: true)
+                .FirstOrDefault(predicate: pageInfo => pageInfo.Id == pageInfoId);
+        }
+
+        if (entity == null)
+        {
+            return;
+        }
+
+        await eventService.RaisePageInfoDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(pageInfoId: pageInfoId);
+    }
+
+    private async ValueTask<PageInfo> ExecuteUpdatePageInfoAsync(PageInfo updatedPageInfo)
+    {
+        ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "entity");
+        PageInfo result = await processingService.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo);
+        await eventService.RaisePageInfoUpdateEventAsync(entity: result);
+        return result;
     }
 }

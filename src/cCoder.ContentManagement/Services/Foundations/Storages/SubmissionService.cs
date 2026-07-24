@@ -17,11 +17,11 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
 
         if (ignoreFilters)
         {
-            return GetAllSubmission(ignoreFilters: true)
+            return ExecuteGetAllSubmission(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
         }
 
-        Submission submission = GetAllSubmission()
+        Submission submission = ExecuteGetAllSubmission()
             .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
 
         if (submission != null)
@@ -29,7 +29,7 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
             return submission;
         }
 
-        Submission submission2 = GetAllSubmission(ignoreFilters: true)
+        Submission submission2 = ExecuteGetAllSubmission(ignoreFilters: true)
             .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
 
         if (submission2 != null)
@@ -98,7 +98,7 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
     public async ValueTask DeleteAsync(Guid submissionId)
     {
         ValidateId(submissionId: submissionId, parameterName: "id");
-        Submission submission = GetSubmission(submissionId: submissionId);
+        Submission submission = ExecuteGetSubmission(submissionId: submissionId);
         authorizationBroker.Authorize(appId: submission.AppId, privilege: "Submission_delete");
         await submissionBroker.DeleteSubmissionAsync(deletedSubmission: CreateStorageSubmission(newSubmission: submission));
     }
@@ -122,5 +122,37 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
             State = newSubmission.State,
             DataJson = newSubmission.DataJson
         };
+    }
+
+    private IQueryable<Submission> ExecuteGetAllSubmission(bool ignoreFilters = false) =>
+        submissionBroker.GetAllSubmissions(ignoreFilters: ignoreFilters);
+
+    private Submission ExecuteGetSubmission(Guid submissionId, bool ignoreFilters = false)
+    {
+        ValidateId(submissionId: submissionId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllSubmission(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
+        }
+
+        Submission submission = ExecuteGetAllSubmission()
+            .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
+
+        if (submission != null)
+        {
+            return submission;
+        }
+
+        Submission submission2 = ExecuteGetAllSubmission(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
+
+        if (submission2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

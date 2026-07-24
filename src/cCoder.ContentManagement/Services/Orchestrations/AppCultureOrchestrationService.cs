@@ -36,12 +36,12 @@ internal class AppCultureOrchestrationService(
     public async ValueTask DeleteByAppIdAsync(int appId)
     {
         AppCulture[] appCulturesToDelete =
-            [.. GetAllAppCulture(ignoreFilters: true)
+            [.. ExecuteGetAllAppCulture(ignoreFilters: true)
             .Where(predicate: appCulture => appCulture.AppId == appId)];
 
         foreach (AppCulture appCulture in appCulturesToDelete)
         {
-            await DeleteAppCultureAsync(deletedAppCulture: appCulture);
+            await ExecuteDeleteAppCultureAsync(deletedAppCulture: appCulture);
         }
     }
 
@@ -56,7 +56,7 @@ internal class AppCultureOrchestrationService(
         {
             try
             {
-                AppCulture existingAppCulture = GetAllAppCulture(ignoreFilters: true)
+                AppCulture existingAppCulture = ExecuteGetAllAppCulture(ignoreFilters: true)
                     .FirstOrDefault(predicate: existing =>
                         existing.AppId == appCulture.AppId &&
                         existing.CultureId == appCulture.CultureId);
@@ -74,7 +74,7 @@ internal class AppCultureOrchestrationService(
                     continue;
                 }
 
-                AppCulture result = await AddAppCultureAsync(newAppCulture: appCulture);
+                AppCulture result = await ExecuteAddAppCultureAsync(newAppCulture: appCulture);
 
                 results.Add(item: new Result<AppCulture>
                 {
@@ -106,7 +106,7 @@ internal class AppCultureOrchestrationService(
 
         foreach (AppCulture appCulture in appCultures)
         {
-            await DeleteAppCultureAsync(deletedAppCulture: appCulture);
+            await ExecuteDeleteAppCultureAsync(deletedAppCulture: appCulture);
         }
     }
 
@@ -129,4 +129,24 @@ internal class AppCultureOrchestrationService(
 
         return appCultures;
     }
+
+    private async ValueTask<AppCulture> ExecuteAddAppCultureAsync(AppCulture newAppCulture)
+    {
+        ValidateAppCulture(appCulture: newAppCulture, parameterName: "entity");
+
+        AppCulture result = await processingService.AddAppCultureAsync(newAppCulture: newAppCulture);
+        await eventService.RaiseAppCultureAddEventAsync(entity: result);
+        return result;
+    }
+
+    private async ValueTask ExecuteDeleteAppCultureAsync(AppCulture deletedAppCulture)
+    {
+        ValidateAppCulture(appCulture: deletedAppCulture, parameterName: "entity");
+
+        await eventService.RaiseAppCultureDeleteEventAsync(entity: deletedAppCulture);
+        await processingService.DeleteAppCultureAsync(deletedAppCulture: deletedAppCulture);
+    }
+
+    private IQueryable<AppCulture> ExecuteGetAllAppCulture(bool ignoreFilters = false) =>
+        processingService.GetAllAppCulture(ignoreFilters: ignoreFilters);
 }

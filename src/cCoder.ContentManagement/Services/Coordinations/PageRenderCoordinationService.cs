@@ -39,7 +39,7 @@ internal sealed partial class PageRenderCoordinationService(
         try
         {
             ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
-            RenderResult page = RenderRenderResult(appId: defaults.App.Id, path: request.Path ?? string.Empty, theme: defaults.Theme, culture: defaults.Culture, edit: request.Edit);
+            RenderResult page = ExecuteRenderRenderResult(appId: defaults.App.Id, path: request.Path ?? string.Empty, theme: defaults.Theme, culture: defaults.Culture, edit: request.Edit);
 
             return new PageRenderResponse
             {
@@ -53,7 +53,7 @@ internal sealed partial class PageRenderCoordinationService(
         catch (Exception exception)
         {
             request.Exception = exception;
-            return RenderError(request: request);
+            return ExecuteRenderError(request: request);
         }
     }
 
@@ -63,7 +63,7 @@ internal sealed partial class PageRenderCoordinationService(
         ValidateException(exception: request.Exception, parameterName: "Exception");
 
         ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
-        RenderResult page = RenderRenderResult(appId: defaults.App.Id, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
+        RenderResult page = ExecuteRenderRenderResult(appId: defaults.App.Id, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
 
         page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[message]]", newValue: request.Exception.Message);
         page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[detail]]", newValue: request.Exception.StackTrace ?? string.Empty);
@@ -331,5 +331,82 @@ edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privil
             Roles = newPage.Roles,
             Pages = newPage.Pages
         };
+    }
+
+    private PageRenderResponse ExecuteRenderError(PageRenderRequest request)
+    {
+        ValidateRequest(request: request, parameterName: "request");
+        ValidateException(exception: request.Exception, parameterName: "Exception");
+
+        ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
+        RenderResult page = ExecuteRenderRenderResult(appId: defaults.App.Id, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
+
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[message]]", newValue: request.Exception.Message);
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[detail]]", newValue: request.Exception.StackTrace ?? string.Empty);
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[url]]", newValue: request.RequestUrl ?? string.Empty);
+
+        return new PageRenderResponse
+        {
+            App = defaults.App,
+            Page = page,
+            Theme = defaults.Theme,
+            Culture = defaults.Culture,
+            Edit = false
+        };
+    }
+
+    private RenderResult ExecuteRenderRenderResult(int appId, string path, string theme, string culture, bool edit = false)
+    {
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidateTheme(theme: theme, parameterName: "theme");
+
+        path ??= string.Empty;
+        culture ??= User.DefaultCultureId;
+
+        App app = ResolveAppById(appId: appId);
+
+        if (app == null)
+        {
+            throw new SecurityException(message: "Unknown Domain!");
+        }
+
+        string normalizedPath = path.ToLowerInvariant();
+
+        Page page = pageOrchestrationService.GetAllPage(ignoreFilters: true)
+            .Where(predicate: existingPage => existingPage.AppId == appId && existingPage.Path.ToLower() == normalizedPath)
+            .FirstOrDefault();
+
+        if (page != null)
+        {
+            page.App = app;
+            HydratePageForRender(page: page);
+        }
+
+        if (page == null)
+        {
+            RenderResult renderResult = pageRenderOrchestrationService.RenderPageUserRenderResult(
+page: CreateMissingPage(newApp: app, path: path, culture: culture),
+user: User,
+theme: theme,
+culture: culture);
+
+            renderResult.StatusCode = 404;
+            return renderResult;
+        }
+
+        if (!ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "page_read") && !authorizationBroker.IsAdminOfApp(appId: appId))
+        {
+            Page gatedPage = CreateGatedPage(newPage: page);
+            gatedPage.App = app;
+
+            return pageRenderOrchestrationService.RenderPageUserRenderResult(page: gatedPage, user: User, theme: theme, culture: culture);
+        }
+
+        return pageRenderOrchestrationService.RenderPageUserRenderResult(
+page: page,
+user: User,
+theme: theme,
+culture: culture,
+edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "page_update"));
     }
 }

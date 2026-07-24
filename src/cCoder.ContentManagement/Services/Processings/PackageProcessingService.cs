@@ -42,7 +42,7 @@ internal class PackageProcessingService(
     public Package[] ExportPackages(int appId, string[] packageNames)
     {
         return ValidatePackageNames(packageNames: packageNames, parameterName: "packageNames")
-            .Select(selector: name => ExportPackage(appId: appId, packageName: name))
+            .Select(selector: name => ExecuteExportPackage(appId: appId, packageName: name))
             .ToArray();
     }
 
@@ -102,7 +102,7 @@ internal class PackageProcessingService(
         {
             try
             {
-                Package savedItem = item.Id == Guid.Empty ? await AddPackageAsync(newPackage: item) : await UpdatePackageAsync(updatedPackage: item);
+                Package savedItem = item.Id == Guid.Empty ? await ExecuteAddPackageAsync(newPackage: item) : await ExecuteUpdatePackageAsync(updatedPackage: item);
 
                 results.Add(item: new Result<Package>
                 {
@@ -131,7 +131,7 @@ internal class PackageProcessingService(
 
         foreach (Package item in deletedPackage)
         {
-            await DeleteAsync(packageId: item.Id);
+            await ExecuteDeleteAsync(packageId: item.Id);
         }
     }
 
@@ -193,5 +193,69 @@ internal class PackageProcessingService(
         }
 
         return packageNames;
+    }
+
+    private ValueTask<Package> ExecuteAddPackageAsync(Package newPackage)
+    {
+        ValidatePackage(package: newPackage, parameterName: "entity");
+
+        if (newPackage.Items != null && newPackage.Items.Any())
+        {
+            newPackage.Items.ForEach(action: item =>
+            {
+                item.PackageId = newPackage.Id;
+                item.Package = null;
+            });
+        }
+
+        return service.AddPackageAsync(newPackage: newPackage);
+    }
+
+    private ValueTask ExecuteDeleteAsync(Guid packageId) =>
+        service.DeleteAsync(packageId: ValidateId(packageId: packageId, parameterName: "id"));
+
+    private Package ExecuteExportPackage(int appId, string packageName)
+    {
+        string text = ValidatePackageName(packageName: packageName, parameterName: "packageName");
+
+        Package result = text switch
+        {
+            "Roles" => packageExportService.ExportRolesPackage(appId: ValidateAppId(appId: appId, parameterName: "appId")),
+            "Layouts" => packageExportService.ExportLayoutsPackage(appId: ValidateAppId(appId: appId, parameterName: "appId")),
+            "Templates" => packageExportService.ExportTemplatesPackage(appId: ValidateAppId(appId: appId, parameterName: "appId")),
+            "Components" => packageExportService.ExportComponentsPackage(appId: ValidateAppId(appId: appId, parameterName: "appId")),
+            "Scripts" => packageExportService.ExportScriptsPackage(appId: ValidateAppId(appId: appId, parameterName: "appId")),
+            "Resources" => packageExportService.ExportResourcesPackage(appId: ValidateAppId(appId: appId, parameterName: "appId")),
+            "Pages" => packageExportService.ExportPagesPackage(appId: ValidateAppId(appId: appId, parameterName: "appId")),
+            "PageRoles" => packageExportService.ExportPageRolesPackage(appId: ValidateAppId(appId: appId, parameterName: "appId")),
+            var ignoredPackage => new Package(name: packageName)
+            {
+                Items = Array.Empty<PackageItem>()
+            },
+        };
+
+        return result;
+    }
+
+    private async ValueTask<Package> ExecuteUpdatePackageAsync(Package updatedPackage)
+    {
+        ValidatePackage(package: updatedPackage, parameterName: "entity");
+        Package result = await service.UpdatePackageAsync(updatedPackage: updatedPackage);
+
+        if (updatedPackage.Items != null)
+        {
+            await packageItemService.DeleteAllPackageItemAsync(deletedPackageItem: packageItemService.GetAllPackageItem()
+                .Where(predicate: item => item.PackageId == result.Id)
+                .ToArray());
+
+            updatedPackage.Items.ForEach(action: item => item.PackageId = result.Id);
+
+            if (updatedPackage.Items.Any())
+            {
+                await packageItemService.AddOrUpdatePackageItemResult(newPackageItem: updatedPackage.Items);
+            }
+        }
+
+        return result;
     }
 }

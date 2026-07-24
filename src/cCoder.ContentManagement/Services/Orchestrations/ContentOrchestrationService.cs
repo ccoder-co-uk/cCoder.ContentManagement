@@ -75,8 +75,8 @@ internal class ContentOrchestrationService(
             try
             {
                 Content result = content.Id <= 0
-                    ? await AddContentAsync(newContent: content)
-                    : await UpdateContentAsync(updatedContent: content);
+                    ? await ExecuteAddContentAsync(newContent: content)
+                    : await ExecuteUpdateContentAsync(updatedContent: content);
 
                 results.Add(item: new Result<Content>
                 {
@@ -106,7 +106,7 @@ internal class ContentOrchestrationService(
 
         foreach (Content content in contents)
         {
-            await DeleteAsync(contentId: content.Id);
+            await ExecuteDeleteAsync(contentId: content.Id);
         }
     }
 
@@ -138,5 +138,48 @@ internal class ContentOrchestrationService(
         }
 
         return contents;
+    }
+
+    private async ValueTask<Content> ExecuteAddContentAsync(Content newContent)
+    {
+        ValidateContent(content: newContent, parameterName: "entity");
+
+        Content result = await processingService.AddContentAsync(newContent: newContent);
+        await eventService.RaiseContentAddEventAsync(entity: result);
+        return result;
+    }
+
+    private async ValueTask ExecuteDeleteAsync(int contentId)
+    {
+        ValidateId(contentId: contentId, parameterName: "id");
+
+        Content entity;
+
+        try
+        {
+            entity = processingService.GetContent(contentId: contentId);
+        }
+        catch (SecurityException)
+        {
+            entity = processingService.GetAllContent(ignoreFilters: true)
+                .FirstOrDefault(predicate: content => content.Id == contentId);
+        }
+
+        if (entity == null)
+        {
+            return;
+        }
+
+        await eventService.RaiseContentDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(contentId: contentId);
+    }
+
+    private async ValueTask<Content> ExecuteUpdateContentAsync(Content updatedContent)
+    {
+        ValidateContent(content: updatedContent, parameterName: "entity");
+
+        Content result = await processingService.UpdateContentAsync(updatedContent: updatedContent);
+        await eventService.RaiseContentUpdateEventAsync(entity: result);
+        return result;
     }
 }

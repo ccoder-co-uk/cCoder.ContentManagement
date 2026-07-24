@@ -47,7 +47,7 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
         {
             try
             {
-                Submission savedItem = item.Id == Guid.Empty ? await AddSubmissionAsync(newSubmission: item) : await UpdateSubmissionAsync(updatedSubmission: item);
+                Submission savedItem = item.Id == Guid.Empty ? await ExecuteAddSubmissionAsync(newSubmission: item) : await ExecuteUpdateSubmissionAsync(updatedSubmission: item);
 
                 results.Add(item: new Result<Submission>
                 {
@@ -76,7 +76,7 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
 
         foreach (Submission item in deletedSubmission)
         {
-            await DeleteAsync(submissionId: item.Id);
+            await ExecuteDeleteAsync(submissionId: item.Id);
         }
     }
 
@@ -95,5 +95,23 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private ValueTask<Submission> ExecuteAddSubmissionAsync(Submission newSubmission)
+    {
+        ValidateSubmission(submission: newSubmission, parameterName: "entity");
+        return service.AddSubmissionAsync(newSubmission: newSubmission);
+    }
+
+    private ValueTask ExecuteDeleteAsync(Guid submissionId)
+    {
+        ValidateId(submissionId: submissionId, parameterName: "id");
+        return service.DeleteAsync(submissionId: submissionId);
+    }
+
+    private ValueTask<Submission> ExecuteUpdateSubmissionAsync(Submission updatedSubmission)
+    {
+        ValidateSubmission(submission: updatedSubmission, parameterName: "entity");
+        return service.UpdateSubmissionAsync(updatedSubmission: updatedSubmission);
     }
 }

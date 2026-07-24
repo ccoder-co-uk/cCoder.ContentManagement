@@ -44,11 +44,11 @@ internal partial class PageProcessingService(
     public Page GetRootPage(int pageId)
     {
         ValidateId(pageId: pageId, parameterName: "id");
-        Page page = GetPage(pageId: pageId);
+        Page page = ExecuteGetPage(pageId: pageId);
 
         while (page.ParentId.HasValue)
         {
-            Page page2 = GetPage(pageId: page.ParentId.Value);
+            Page page2 = ExecuteGetPage(pageId: page.ParentId.Value);
             page = page2 ?? page;
         }
 
@@ -59,7 +59,7 @@ internal partial class PageProcessingService(
     {
         ValidateId(pageId: pageId, parameterName: "id");
 
-        return GetAllPage()
+        return ExecuteGetAllPage()
             .Where(predicate: page => page.ParentId == (int?)pageId);
     }
 
@@ -205,7 +205,7 @@ internal partial class PageProcessingService(
         {
             try
             {
-                Page savedItem = item.Id < 1 ? await AddPageAsync(page: item) : await UpdatePageAsync(updatedPage: item);
+                Page savedItem = item.Id < 1 ? await ExecuteAddPageAsync(page: item) : await ExecuteUpdatePageAsync(updatedPage: item);
 
                 results.Add(item: new Result<Page>
                 {
@@ -234,7 +234,7 @@ internal partial class PageProcessingService(
 
         foreach (Page item in deletedPage)
         {
-            await DeleteAsync(pageId: item.Id);
+            await ExecuteDeleteAsync(pageId: item.Id);
         }
     }
 
@@ -356,5 +356,147 @@ internal partial class PageProcessingService(
         {
             throw new ValidationException(message: $"A page already exists for app {page.AppId} with path '{page.Path ?? string.Empty}'.");
         }
+    }
+
+    private async ValueTask<Page> ExecuteAddPageAsync(Page page)
+    {
+        ValidatePage(page: page, parameterName: "page");
+
+        if (!authorizationBroker.IsAdminOfApp(appId: page.AppId) && page.ParentId.HasValue)
+        {
+            UserCan(privKey: "page_create", pageId: page.ParentId.Value);
+        }
+
+        Page parent = null;
+
+        if (page.ParentId.HasValue)
+        {
+            parent = service.GetAllPage(ignoreFilters: false)
+                .Where(predicate: existingPage => existingPage.Id == page.ParentId.Value)
+                .FirstOrDefault();
+        }
+        else
+        {
+            if (page.Path != null && page.Path.Contains(value: '/'))
+            {
+                string parentPath = GetParentPath(path: page.Path);
+
+                string normalizedParentPath = parentPath.TrimStart(trimChar: '/')
+                    .ToLower();
+
+                parent = service.GetAllPage(ignoreFilters: false)
+                    .Where(predicate: existingPage =>
+                        existingPage.AppId == page.AppId &&
+                        existingPage.Path.ToLower() == normalizedParentPath)
+                    .FirstOrDefault();
+            }
+        }
+
+        page.Path = BuildPath(pageName: page.Name, parentPath: parent?.Path);
+        page.ParentId = parent?.Id;
+        ValidatePathDoesNotExistForApp(page: page);
+
+        Page newPage = new Page
+        {
+            ParentId = page.ParentId,
+            AppId = page.AppId,
+            Order = page.Order,
+            ShowOnMenus = page.ShowOnMenus,
+            Name = page.Name,
+            LastUpdated = page.LastUpdated,
+            LastUpdatedBy = page.LastUpdatedBy,
+            CreatedBy = page.CreatedBy,
+            Path = page.Path,
+            ResourceKey = page.ResourceKey,
+            Layout = page.Layout
+        };
+
+        newPage.ParentId = parent?.Id;
+        newPage.Parent = null;
+
+        newPage.PageInfo = page.PageInfo.Select(selector: (PageInfo info) => new PageInfo
+        {
+            Id = 0,
+            CultureId = info.CultureId,
+            Description = info.Description,
+            Keywords = info.Keywords,
+            Title = info.Title
+        })
+            .ToList();
+
+        newPage.Contents = (page.Contents ?? new List<Content>()).Select(selector: (Content content) => new Content
+        {
+            Id = 0,
+            CultureId = content.CultureId,
+            Name = content.Name,
+            Html = content.Html
+        })
+            .ToList();
+
+        newPage.Roles = ResolveRolesForNewPage(page: page, parent: parent)
+            .Select(selector: role => new PageRole
+            {
+                RoleId = role.RoleId
+            })
+            .ToList();
+
+        return await service.AddPageAsync(newPage: newPage);
+    }
+
+    private ValueTask ExecuteDeleteAsync(int pageId)
+    {
+        ValidateId(pageId: pageId, parameterName: "id");
+
+        if (!UserCan(privKey: "page_delete", pageId: pageId))
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return service.DeleteAsync(pageId: pageId);
+    }
+
+    private IQueryable<Page> ExecuteGetAllPage(bool ignoreFilters = false) =>
+        service.GetAllPage(ignoreFilters: ignoreFilters);
+
+    private Page ExecuteGetPage(int pageId)
+    {
+        ValidateId(pageId: pageId, parameterName: "id");
+        return service.GetPage(pageId: pageId);
+    }
+
+    private async ValueTask<Page> ExecuteUpdatePageAsync(Page updatedPage)
+    {
+        ValidatePage(page: updatedPage, parameterName: "page");
+
+        Page dbVersion = service.GetAllPage(ignoreFilters: true)
+            .Where(predicate: existingPage => existingPage.Id == updatedPage.Id)
+            .FirstOrDefault();
+
+        if (dbVersion == null || !UserCan(privKey: "page_update", pageId: dbVersion.Id))
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        Page parent = updatedPage.ParentId.HasValue
+            ? service.GetAllPage(ignoreFilters: true)
+            .Where(predicate: existingPage => existingPage.Id == updatedPage.ParentId.Value)
+            .FirstOrDefault()
+            : null;
+
+        if (updatedPage.ParentId.HasValue && parent == null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        dbVersion.ParentId = updatedPage.ParentId;
+        dbVersion.AppId = updatedPage.AppId;
+        dbVersion.Order = updatedPage.Order;
+        dbVersion.ShowOnMenus = updatedPage.ShowOnMenus;
+        dbVersion.Name = updatedPage.Name;
+        dbVersion.ResourceKey = updatedPage.ResourceKey;
+        dbVersion.Layout = updatedPage.Layout;
+        dbVersion.Path = BuildPath(pageName: updatedPage.Name, parentPath: parent?.Path);
+
+        return await service.UpdatePageAsync(updatedPage: dbVersion);
     }
 }

@@ -47,7 +47,7 @@ internal class LayoutProcessingService(ILayoutService service) : ILayoutProcessi
         {
             try
             {
-                Layout savedItem = item.Id < 1 ? await AddLayoutAsync(newLayout: item) : await UpdateLayoutAsync(updatedLayout: item);
+                Layout savedItem = item.Id < 1 ? await ExecuteAddLayoutAsync(newLayout: item) : await ExecuteUpdateLayoutAsync(updatedLayout: item);
 
                 results.Add(item: new Result<Layout>
                 {
@@ -76,7 +76,7 @@ internal class LayoutProcessingService(ILayoutService service) : ILayoutProcessi
 
         foreach (Layout item in deletedLayout)
         {
-            await DeleteAsync(layoutId: item.Id);
+            await ExecuteDeleteAsync(layoutId: item.Id);
         }
     }
 
@@ -95,5 +95,23 @@ internal class LayoutProcessingService(ILayoutService service) : ILayoutProcessi
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private ValueTask<Layout> ExecuteAddLayoutAsync(Layout newLayout)
+    {
+        ValidateLayout(layout: newLayout, parameterName: "entity");
+        return service.AddLayoutAsync(newLayout: newLayout);
+    }
+
+    private ValueTask ExecuteDeleteAsync(int layoutId)
+    {
+        ValidateId(layoutId: layoutId, parameterName: "id");
+        return service.DeleteAsync(layoutId: layoutId);
+    }
+
+    private ValueTask<Layout> ExecuteUpdateLayoutAsync(Layout updatedLayout)
+    {
+        ValidateLayout(layout: updatedLayout, parameterName: "entity");
+        return service.UpdateLayoutAsync(updatedLayout: updatedLayout);
     }
 }

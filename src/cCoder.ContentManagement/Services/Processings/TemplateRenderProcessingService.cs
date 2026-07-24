@@ -80,7 +80,7 @@ internal class TemplateRenderProcessingService(
             ?? throw new InvalidOperationException(message: "Template '" + name + "' was not found.");
 
         TemplateRenderParams templateRenderParams = new(app: app, user: user, culture: culture);
-        return RenderTemplateRenderParamsConfig(template: template, model: model, renderParams: templateRenderParams, config: config, log: log);
+        return ExecuteRenderTemplateRenderParamsConfig(template: template, model: model, renderParams: templateRenderParams, config: config, log: log);
     }
 
     public string RenderTemplateRenderParamsConfig(Template template, object model, RenderParams renderParams, Config config, ILogger log = null)
@@ -844,5 +844,25 @@ internal class TemplateRenderProcessingService(
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private string ExecuteRenderTemplateRenderParamsConfig(Template template, object model, RenderParams renderParams, Config config, ILogger log = null)
+    {
+        ValidateTemplate(template: template, parameterName: "template");
+        ValidateModel(model: model, parameterName: "model");
+        ValidateRenderParamsArgument(renderParams: renderParams, parameterName: "renderParams");
+
+        List<Replacement> list = DefaultReplacements(renderParams: renderParams, config: config)
+            .ToList();
+
+        list.Add(item: new Replacement(old: "[model]", @new: jsonBroker.Serialize(value: model)));
+        list.AddRange(collection: BuildModelReplacements(model: model));
+
+        if (log != null && log.IsEnabled(logLevel: LogLevel.Debug))
+        {
+            log.LogDebug(message: "Rendering template {Template} with {ReplacementCount} replacements.", template.Name, list.Count);
+        }
+
+        return ProcessContentString(key: template.ResourceKey, renderParams: renderParams, content: template.RawString, replacements: list);
     }
 }

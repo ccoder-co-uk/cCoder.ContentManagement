@@ -82,7 +82,7 @@ internal class ComponentRenderProcessingService(
             ?? throw new InvalidOperationException(message: "Component '" + name + "' was not found.");
 
         ComponentRenderParams renderParams = new(theme: theme, app: app, user: user, culture: culture);
-        return RenderComponentComponentRenderParams(component: component, renderParams: renderParams);
+        return ExecuteRenderComponentComponentRenderParams(component: component, renderParams: renderParams);
     }
 
     public string RenderComponentComponentRenderParams(Component component, ComponentRenderParams renderParams)
@@ -361,7 +361,7 @@ internal class ComponentRenderProcessingService(
 
         List<Resource> list = known;
         List<Resource> list2 = new List<Resource>();
-        list2.AddRange(collection: SectionForCultureResource(potentials: renderParams.App.Resources, key: key, culture: renderParams.Culture ?? string.Empty));
+        list2.AddRange(collection: ExecuteSectionForCultureResource(potentials: renderParams.App.Resources, key: key, culture: renderParams.Culture ?? string.Empty));
         list.AddRange(collection: list2);
         string key2 = key.ToLowerInvariant();
         string culture = renderParams.Culture.ToLowerInvariant();
@@ -584,7 +584,7 @@ internal class ComponentRenderProcessingService(
             .Where(predicate: resource => string.Equals(a: resource.Key, b: key, comparisonType: StringComparison.OrdinalIgnoreCase))
             .GroupBy(keySelector: resource => resource.Name.ToLowerInvariant()))
         {
-            Resource closestCulturalMatch = GetClosestCulturalMatchResource(potentials: item, culture: culture);
+            Resource closestCulturalMatch = ExecuteGetClosestCulturalMatchResource(potentials: item, culture: culture);
 
             if (closestCulturalMatch != null)
             {
@@ -699,5 +699,58 @@ internal class ComponentRenderProcessingService(
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private static Resource ExecuteGetClosestCulturalMatchResource(IEnumerable<Resource> potentials, string culture)
+    {
+        Resource resource = null;
+
+        List<string> list = (culture ?? string.Empty).ToLowerInvariant()
+            .Split(separator: '-')
+            .ToList();
+
+        int num = list.Count;
+        string resultCulture = string.Empty;
+
+        while (resource == null && resultCulture != null)
+        {
+            resultCulture = string.Join(separator: "-", values: list.Take(count: num));
+            resource = potentials.FirstOrDefault(predicate: (Resource resource2) => string.Equals(a: resource2.Culture, b: resultCulture, comparisonType: StringComparison.OrdinalIgnoreCase));
+            num--;
+
+            if (num == 0)
+            {
+                resultCulture = null;
+            }
+        }
+
+        return resource ?? potentials.FirstOrDefault(predicate: (Resource resource2) => string.IsNullOrEmpty(value: resource2.Culture));
+    }
+
+    private string ExecuteRenderComponentComponentRenderParams(Component component, ComponentRenderParams renderParams)
+    {
+        ValidateComponent(component: component, parameterName: "component");
+        ValidateComponentRenderParams(renderParams: renderParams, parameterName: "renderParams");
+        ICollection<Replacement> replacements = DefaultReplacements(renderParams: renderParams);
+        return $"<section name='{component.Name}' class='component' data-id='{component.Id}' data-resource-key='{component.ResourceKey}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}<script type='text/javascript'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script></section>";
+    }
+
+    private static IEnumerable<Resource> ExecuteSectionForCultureResource(IEnumerable<Resource> potentials, string key, string culture)
+    {
+        List<Resource> list = new List<Resource>();
+
+        foreach (IGrouping<string, Resource> item in potentials
+            .Where(predicate: resource => string.Equals(a: resource.Key, b: key, comparisonType: StringComparison.OrdinalIgnoreCase))
+            .GroupBy(keySelector: resource => resource.Name.ToLowerInvariant()))
+        {
+            Resource closestCulturalMatch = ExecuteGetClosestCulturalMatchResource(potentials: item, culture: culture);
+
+            if (closestCulturalMatch != null)
+            {
+                list.Add(item: closestCulturalMatch);
+            }
+        }
+
+        return list;
     }
 }

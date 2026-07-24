@@ -17,11 +17,11 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
 
         if (ignoreFilters)
         {
-            return GetAllScript(ignoreFilters: true)
+            return ExecuteGetAllScript(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
         }
 
-        Script script = GetAllScript()
+        Script script = ExecuteGetAllScript()
             .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
 
         if (script != null)
@@ -29,7 +29,7 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
             return script;
         }
 
-        Script script2 = GetAllScript(ignoreFilters: true)
+        Script script2 = ExecuteGetAllScript(ignoreFilters: true)
             .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
 
         if (script2 != null)
@@ -103,11 +103,11 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
 
         try
         {
-            script = GetScript(scriptId: scriptId);
+            script = ExecuteGetScript(scriptId: scriptId);
         }
         catch (SecurityException)
         {
-            script = GetScript(scriptId: scriptId, ignoreFilters: true);
+            script = ExecuteGetScript(scriptId: scriptId, ignoreFilters: true);
         }
 
         if (script == null)
@@ -139,5 +139,37 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
             AppId = newScript.AppId,
             Content = newScript.Content
         };
+    }
+
+    private IQueryable<Script> ExecuteGetAllScript(bool ignoreFilters = false) =>
+        scriptBroker.GetAllScripts(ignoreFilters: ignoreFilters);
+
+    private Script ExecuteGetScript(int scriptId, bool ignoreFilters = false)
+    {
+        ValidateId(scriptId: scriptId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllScript(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
+        }
+
+        Script script = ExecuteGetAllScript()
+            .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
+
+        if (script != null)
+        {
+            return script;
+        }
+
+        Script script2 = ExecuteGetAllScript(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
+
+        if (script2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

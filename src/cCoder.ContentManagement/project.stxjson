@@ -2618,12 +2618,7 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "GetMetadata",
-          "Inputs": [],
-          "ReturnType": "IActionResult"
-        },
-        {
-          "Name": "IsAdmin",
+          "Name": "GetIsAdmin",
           "Inputs": [
             {
               "Name": "key",
@@ -2637,18 +2632,19 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
+          "Name": "GetMetadata",
+          "Inputs": [],
+          "ReturnType": "IActionResult"
+        },
+        {
+          "Name": "GetUsers",
           "Inputs": [
             {
               "Name": "key",
               "Type": "System.Int32"
-            },
-            {
-              "Name": "delta",
-              "Type": "Delta\u003CApp\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+          "ReturnType": "IActionResult"
         },
         {
           "Name": "Post",
@@ -2656,6 +2652,20 @@
             {
               "Name": "newApp",
               "Type": "App"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        },
+        {
+          "Name": "PostUpdatePageOrderAsync",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "p",
+              "Type": "ODataActionParameters"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -2675,28 +2685,18 @@
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
         },
         {
-          "Name": "UpdatePageOrderAsync",
+          "Name": "PutPatch",
           "Inputs": [
             {
               "Name": "key",
               "Type": "System.Int32"
             },
             {
-              "Name": "p",
-              "Type": "ODataActionParameters"
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CApp\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
-        },
-        {
-          "Name": "Users",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "IActionResult"
         }
       ]
     },
@@ -2785,22 +2785,7 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "GetMetadata",
-          "Inputs": [],
-          "ReturnType": "IActionResult"
-        },
-        {
-          "Name": "ImportAsync",
-          "Inputs": [
-            {
-              "Name": "payload",
-              "Type": "System.Text.Json.JsonElement"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
-        },
-        {
-          "Name": "Latest",
+          "Name": "GetLatest",
           "Inputs": [
             {
               "Name": "type",
@@ -2810,18 +2795,9 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "delta",
-              "Type": "Delta\u003CCommonObject\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+          "Name": "GetMetadata",
+          "Inputs": [],
+          "ReturnType": "IActionResult"
         },
         {
           "Name": "Post",
@@ -2829,6 +2805,16 @@
             {
               "Name": "newCommonObject",
               "Type": "CommonObject"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        },
+        {
+          "Name": "PostImportAsync",
+          "Inputs": [
+            {
+              "Name": "payload",
+              "Type": "System.Text.Json.JsonElement"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -2843,6 +2829,20 @@
             {
               "Name": "updatedCommonObject",
               "Type": "CommonObject"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        },
+        {
+          "Name": "PutPatch",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CCommonObject\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -2890,18 +2890,26 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
+          "Name": "GetRender",
           "Inputs": [
             {
-              "Name": "key",
+              "Name": "appId",
               "Type": "System.Int32"
             },
             {
-              "Name": "delta",
-              "Type": "Delta\u003CComponent\u003E"
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "theme",
+              "Type": "System.String"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+          "ReturnType": "IActionResult"
         },
         {
           "Name": "Post",
@@ -2928,26 +2936,18 @@
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
         },
         {
-          "Name": "Render",
+          "Name": "PutPatch",
           "Inputs": [
             {
-              "Name": "appId",
+              "Name": "key",
               "Type": "System.Int32"
             },
             {
-              "Name": "name",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            },
-            {
-              "Name": "theme",
-              "Type": "System.String"
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CComponent\u003E"
             }
           ],
-          "ReturnType": "IActionResult"
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
         }
       ]
     },
@@ -2992,20 +2992,6 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "delta",
-              "Type": "Delta\u003CContent\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
-        },
-        {
           "Name": "Post",
           "Inputs": [
             {
@@ -3025,6 +3011,20 @@
             {
               "Name": "updatedContent",
               "Type": "Content"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        },
+        {
+          "Name": "PutPatch",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CContent\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -3072,20 +3072,6 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.String"
-            },
-            {
-              "Name": "delta",
-              "Type": "Delta\u003CCulture\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
-        },
-        {
           "Name": "Post",
           "Inputs": [
             {
@@ -3105,6 +3091,20 @@
             {
               "Name": "updatedCulture",
               "Type": "Culture"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        },
+        {
+          "Name": "PutPatch",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            },
+            {
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CCulture\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -3152,20 +3152,6 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "delta",
-              "Type": "Delta\u003CLayout\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
-        },
-        {
           "Name": "Post",
           "Inputs": [
             {
@@ -3185,6 +3171,20 @@
             {
               "Name": "updatedLayout",
               "Type": "Layout"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        },
+        {
+          "Name": "PutPatch",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CLayout\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -3227,12 +3227,7 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "GetMetadata",
-          "Inputs": [],
-          "ReturnType": "IActionResult"
-        },
-        {
-          "Name": "Menu",
+          "Name": "GetMenu",
           "Inputs": [
             {
               "Name": "key",
@@ -3246,18 +3241,41 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
+          "Name": "GetMetadata",
+          "Inputs": [],
+          "ReturnType": "IActionResult"
+        },
+        {
+          "Name": "GetRender",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "path",
+              "Type": "System.String"
+            },
+            {
+              "Name": "theme",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "IActionResult"
+        },
+        {
+          "Name": "GetRootFor",
           "Inputs": [
             {
               "Name": "key",
               "Type": "System.Int32"
-            },
-            {
-              "Name": "delta",
-              "Type": "Delta\u003CPage\u003E"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+          "ReturnType": "IActionResult"
         },
         {
           "Name": "Post",
@@ -3284,36 +3302,18 @@
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
         },
         {
-          "Name": "Render",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "path",
-              "Type": "System.String"
-            },
-            {
-              "Name": "theme",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "IActionResult"
-        },
-        {
-          "Name": "RootFor",
+          "Name": "PutPatch",
           "Inputs": [
             {
               "Name": "key",
               "Type": "System.Int32"
+            },
+            {
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CPage\u003E"
             }
           ],
-          "ReturnType": "IActionResult"
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
         }
       ]
     },
@@ -3358,20 +3358,6 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "delta",
-              "Type": "Delta\u003CPageInfo\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
-        },
-        {
           "Name": "Post",
           "Inputs": [
             {
@@ -3391,6 +3377,20 @@
             {
               "Name": "updatedPageInfo",
               "Type": "PageInfo"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        },
+        {
+          "Name": "PutPatch",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CPageInfo\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -3475,20 +3475,6 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "delta",
-              "Type": "Delta\u003CResource\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
-        },
-        {
           "Name": "Post",
           "Inputs": [
             {
@@ -3508,6 +3494,20 @@
             {
               "Name": "updatedResource",
               "Type": "Resource"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        },
+        {
+          "Name": "PutPatch",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CResource\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -3555,20 +3555,6 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "delta",
-              "Type": "Delta\u003CScript\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
-        },
-        {
           "Name": "Post",
           "Inputs": [
             {
@@ -3588,6 +3574,20 @@
             {
               "Name": "updatedScript",
               "Type": "Script"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        },
+        {
+          "Name": "PutPatch",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CScript\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -3635,20 +3635,6 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "Patch",
-          "Inputs": [
-            {
-              "Name": "key",
-              "Type": "System.Guid"
-            },
-            {
-              "Name": "delta",
-              "Type": "Delta\u003CSubmission\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
-        },
-        {
           "Name": "Post",
           "Inputs": [
             {
@@ -3668,6 +3654,20 @@
             {
               "Name": "updatedSubmission",
               "Type": "Submission"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        },
+        {
+          "Name": "PutPatch",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.Guid"
+            },
+            {
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CSubmission\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -3710,12 +3710,7 @@
           "ReturnType": "IActionResult"
         },
         {
-          "Name": "GetMetadata",
-          "Inputs": [],
-          "ReturnType": "IActionResult"
-        },
-        {
-          "Name": "HtmlToPdf",
+          "Name": "GetHtmlToPdf",
           "Inputs": [
             {
               "Name": "name",
@@ -3725,15 +3720,24 @@
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
         },
         {
-          "Name": "Patch",
+          "Name": "GetMetadata",
+          "Inputs": [],
+          "ReturnType": "IActionResult"
+        },
+        {
+          "Name": "GetRender",
           "Inputs": [
             {
-              "Name": "key",
+              "Name": "appId",
               "Type": "System.Int32"
             },
             {
-              "Name": "delta",
-              "Type": "Delta\u003CTemplate\u003E"
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -3763,19 +3767,15 @@
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
         },
         {
-          "Name": "Render",
+          "Name": "PutPatch",
           "Inputs": [
             {
-              "Name": "appId",
+              "Name": "key",
               "Type": "System.Int32"
             },
             {
-              "Name": "name",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
+              "Name": "updatedDelta",
+              "Type": "Delta\u003CTemplate\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
@@ -12494,34 +12494,6 @@
       "LineNumber": 27
     },
     {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.AppController",
-      "LineNumber": 35
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.AppController",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.AppController",
-      "LineNumber": 44
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.AppController",
-      "LineNumber": 106
-    },
-    {
       "Code": "STX0002",
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
@@ -12541,27 +12513,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
       "LineNumber": 23
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 25
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 30
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 102
     },
     {
       "Code": "STXAPI001",
@@ -12585,27 +12536,6 @@
       "LineNumber": 23
     },
     {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
-      "LineNumber": 34
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
-      "LineNumber": 92
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.ContentController",
-      "LineNumber": 76
-    },
-    {
       "Code": "STX0002",
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
@@ -12613,25 +12543,11 @@
       "LineNumber": 23
     },
     {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.CultureController",
-      "LineNumber": 83
-    },
-    {
       "Code": "STX0002",
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.LayoutController",
       "LineNumber": 22
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.LayoutController",
-      "LineNumber": 82
     },
     {
       "Code": "STXAPI001",
@@ -12655,39 +12571,11 @@
       "LineNumber": 26
     },
     {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 43
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 49
-    },
-    {
       "Code": "STXFORMAT006",
       "Description": "A single multiline method call must be expressed as an expression-bodied method.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 49
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 60
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 113
+      "LineNumber": 50
     },
     {
       "Code": "STX0002",
@@ -12695,13 +12583,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController",
       "LineNumber": 22
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController",
-      "LineNumber": 82
     },
     {
       "Code": "STX0002",
@@ -12718,13 +12599,6 @@
       "LineNumber": 22
     },
     {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.ResourceController",
-      "LineNumber": 82
-    },
-    {
       "Code": "STX0002",
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
@@ -12732,25 +12606,11 @@
       "LineNumber": 22
     },
     {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.ScriptController",
-      "LineNumber": 82
-    },
-    {
       "Code": "STX0002",
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController",
       "LineNumber": 23
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController",
-      "LineNumber": 83
     },
     {
       "Code": "STXAPI001",
@@ -12772,27 +12632,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
       "LineNumber": 26
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
-      "LineNumber": 37
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
-      "LineNumber": 46
-    },
-    {
-      "Code": "STXAPI004",
-      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
-      "LineNumber": 110
     },
     {
       "Code": "STX0002",
@@ -14221,13 +14060,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
       "LineNumber": 32
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "LineNumber": 56
     },
     {
       "Code": "STX0009",
@@ -15777,34 +15609,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService",
-      "LineNumber": 32
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService",
-      "LineNumber": 106
-    },
-    {
       "Code": "STX0009",
       "Description": "A service must declare TryCatch handling in an Exceptions partial.",
       "Severity": "Warning",
@@ -15861,41 +15665,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService",
-      "LineNumber": 32
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService",
-      "LineNumber": 110
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService",
-      "LineNumber": 114
-    },
-    {
       "Code": "STX0009",
       "Description": "A service must declare TryCatch handling in an Exceptions partial.",
       "Severity": "Warning",
@@ -15950,41 +15719,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService",
-      "LineNumber": 27
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService",
-      "LineNumber": 35
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService",
-      "LineNumber": 82
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService",
-      "LineNumber": 86
     },
     {
       "Code": "STXFORMAT006",
@@ -16050,34 +15784,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService",
-      "LineNumber": 27
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService",
-      "LineNumber": 35
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService",
-      "LineNumber": 72
-    },
-    {
       "Code": "STXFORMAT006",
       "Description": "A single multiline method call must be expressed as an expression-bodied method.",
       "Severity": "Warning",
@@ -16139,41 +15845,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService",
-      "LineNumber": 32
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService",
-      "LineNumber": 108
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService",
-      "LineNumber": 112
     },
     {
       "Code": "STX0008",
@@ -16239,34 +15910,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PackageItemService",
-      "LineNumber": 18
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PackageItemService",
-      "LineNumber": 22
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PackageItemService",
-      "LineNumber": 30
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PackageItemService",
-      "LineNumber": 70
-    },
-    {
       "Code": "STX0009",
       "Description": "A service must declare TryCatch handling in an Exceptions partial.",
       "Severity": "Warning",
@@ -16323,34 +15966,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PackageService",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PackageService",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PackageService",
-      "LineNumber": 32
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PackageService",
-      "LineNumber": 75
-    },
-    {
       "Code": "STX0009",
       "Description": "A service must declare TryCatch handling in an Exceptions partial.",
       "Severity": "Warning",
@@ -16405,41 +16020,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService",
-      "LineNumber": 27
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService",
-      "LineNumber": 35
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService",
-      "LineNumber": 84
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService",
-      "LineNumber": 88
     },
     {
       "Code": "STXFORMAT006",
@@ -16568,20 +16148,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PageService",
-      "LineNumber": 112
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.PageService",
-      "LineNumber": 116
-    },
-    {
       "Code": "STX0009",
       "Description": "A service must declare TryCatch handling in an Exceptions partial.",
       "Severity": "Warning",
@@ -16636,41 +16202,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService",
-      "LineNumber": 32
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService",
-      "LineNumber": 110
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService",
-      "LineNumber": 114
     },
     {
       "Code": "STX0009",
@@ -16729,41 +16260,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService",
-      "LineNumber": 32
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService",
-      "LineNumber": 106
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService",
-      "LineNumber": 110
-    },
-    {
       "Code": "STX0009",
       "Description": "A service must declare TryCatch handling in an Exceptions partial.",
       "Severity": "Warning",
@@ -16820,34 +16316,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.SubmissionService",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.SubmissionService",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.SubmissionService",
-      "LineNumber": 32
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.SubmissionService",
-      "LineNumber": 101
-    },
-    {
       "Code": "STX0009",
       "Description": "A service must declare TryCatch handling in an Exceptions partial.",
       "Severity": "Warning",
@@ -16902,41 +16370,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService",
-      "LineNumber": 32
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService",
-      "LineNumber": 106
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService",
-      "LineNumber": 110
     },
     {
       "Code": "STX0008",
@@ -16986,41 +16419,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService",
-      "LineNumber": 44
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService",
-      "LineNumber": 59
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService",
-      "LineNumber": 77
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService",
-      "LineNumber": 109
     },
     {
       "Code": "STX0008",
@@ -17177,34 +16575,6 @@
       "LineNumber": 13
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService",
-      "LineNumber": 73
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService",
-      "LineNumber": 94
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService",
-      "LineNumber": 95
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService",
-      "LineNumber": 141
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -17310,20 +16680,6 @@
       "LineNumber": 13
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ContentOrchestrationService",
-      "LineNumber": 78
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ContentOrchestrationService",
-      "LineNumber": 79
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -17420,41 +16776,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService",
       "LineNumber": 13
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService",
-      "LineNumber": 70
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService",
-      "LineNumber": 75
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService",
-      "LineNumber": 91
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService",
-      "LineNumber": 92
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService",
-      "LineNumber": 138
     },
     {
       "Code": "STX0008",
@@ -17618,20 +16939,6 @@
       "LineNumber": 13
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageInfoOrchestrationService",
-      "LineNumber": 74
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageInfoOrchestrationService",
-      "LineNumber": 75
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -17679,41 +16986,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService",
       "LineNumber": 13
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService",
-      "LineNumber": 93
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService",
-      "LineNumber": 101
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService",
-      "LineNumber": 118
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService",
-      "LineNumber": 119
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService",
-      "LineNumber": 176
     },
     {
       "Code": "STX0008",
@@ -17828,13 +17100,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService",
-      "LineNumber": 61
-    },
-    {
       "Code": "STX0018",
       "Description": "Service method names must include each model type they operate on.",
       "Severity": "Warning",
@@ -17842,13 +17107,6 @@
       "LineNumber": 86
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService",
-      "LineNumber": 96
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -17898,41 +17156,6 @@
       "LineNumber": 13
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService",
-      "LineNumber": 70
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService",
-      "LineNumber": 75
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService",
-      "LineNumber": 91
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService",
-      "LineNumber": 92
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService",
-      "LineNumber": 139
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -17980,41 +17203,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService",
       "LineNumber": 13
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService",
-      "LineNumber": 70
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService",
-      "LineNumber": 75
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService",
-      "LineNumber": 91
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService",
-      "LineNumber": 92
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService",
-      "LineNumber": 138
     },
     {
       "Code": "STX0008",
@@ -18113,41 +17301,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService",
       "LineNumber": 13
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService",
-      "LineNumber": 67
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService",
-      "LineNumber": 72
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService",
-      "LineNumber": 86
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService",
-      "LineNumber": 87
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService",
-      "LineNumber": 128
     },
     {
       "Code": "STX0008",
@@ -18297,20 +17450,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppCultureProcessingService",
-      "LineNumber": 56
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppCultureProcessingService",
-      "LineNumber": 79
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -18407,34 +17546,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
       "LineNumber": 16
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
-      "LineNumber": 226
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
-      "LineNumber": 227
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
-      "LineNumber": 263
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
-      "LineNumber": 295
     },
     {
       "Code": "STX0008",
@@ -18535,41 +17646,6 @@
       "LineNumber": 18
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "LineNumber": 52
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "LineNumber": 80
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "LineNumber": 81
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "LineNumber": 190
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "LineNumber": 190
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -18661,18 +17737,18 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
+      "Code": "STXFORMAT004",
+      "Description": "Adjacent methods must have exactly one empty line between them.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.ComponentProcessingService",
-      "LineNumber": 38
+      "LineNumber": 84
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
+      "Code": "STXFORMAT004",
+      "Description": "Adjacent methods must have exactly one empty line between them.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.ComponentProcessingService",
-      "LineNumber": 38
+      "LineNumber": 86
     },
     {
       "Code": "STX0008",
@@ -18738,13 +17814,6 @@
       "LineNumber": 25
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 85
-    },
-    {
       "Code": "STXFORMAT006",
       "Description": "A single multiline method call must be expressed as an expression-bodied method.",
       "Severity": "Warning",
@@ -18794,13 +17863,6 @@
       "LineNumber": 485
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 587
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -18890,20 +17952,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.ContentProcessingService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ContentProcessingService",
-      "LineNumber": 50
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ContentProcessingService",
-      "LineNumber": 50
     },
     {
       "Code": "STX0008",
@@ -18997,20 +18045,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.CultureProcessingService",
-      "LineNumber": 50
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.CultureProcessingService",
-      "LineNumber": 50
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -19100,20 +18134,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.LayoutProcessingService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.LayoutProcessingService",
-      "LineNumber": 50
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.LayoutProcessingService",
-      "LineNumber": 50
     },
     {
       "Code": "STX0003",
@@ -19326,18 +18346,18 @@
       "LineNumber": 11
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
+      "Code": "STXFORMAT004",
+      "Description": "Adjacent methods must have exactly one empty line between them.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PackageItemProcessingService",
-      "LineNumber": 36
+      "LineNumber": 69
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
+      "Code": "STXFORMAT004",
+      "Description": "Adjacent methods must have exactly one empty line between them.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PackageItemProcessingService",
-      "LineNumber": 36
+      "LineNumber": 71
     },
     {
       "Code": "STX0004",
@@ -19410,27 +18430,6 @@
       "LineNumber": 42
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PackageProcessingService",
-      "LineNumber": 45
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PackageProcessingService",
-      "LineNumber": 105
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PackageProcessingService",
-      "LineNumber": 105
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -19562,20 +18561,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PageInfoProcessingService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageInfoProcessingService",
-      "LineNumber": 50
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageInfoProcessingService",
-      "LineNumber": 50
     },
     {
       "Code": "STX0009",
@@ -19625,34 +18610,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PageProcessingService",
       "LineNumber": 19
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageProcessingService",
-      "LineNumber": 47
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageProcessingService",
-      "LineNumber": 62
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageProcessingService",
-      "LineNumber": 208
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageProcessingService",
-      "LineNumber": 208
     },
     {
       "Code": "STX0007",
@@ -19865,39 +18822,11 @@
       "LineNumber": 23
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "LineNumber": 72
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "LineNumber": 86
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "LineNumber": 96
-    },
-    {
       "Code": "STX0018",
       "Description": "Service method names must include each model type they operate on.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "LineNumber": 116
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "LineNumber": 181
     },
     {
       "Code": "STX0008",
@@ -19998,41 +18927,6 @@
       "LineNumber": 16
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ResourceProcessingService",
-      "LineNumber": 49
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ResourceProcessingService",
-      "LineNumber": 58
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ResourceProcessingService",
-      "LineNumber": 84
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ResourceProcessingService",
-      "LineNumber": 84
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ResourceProcessingService",
-      "LineNumber": 123
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -20122,20 +19016,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.ScriptProcessingService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ScriptProcessingService",
-      "LineNumber": 50
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ScriptProcessingService",
-      "LineNumber": 50
     },
     {
       "Code": "STX0008",
@@ -20229,20 +19109,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.SubmissionProcessingService",
-      "LineNumber": 50
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.SubmissionProcessingService",
-      "LineNumber": 50
-    },
-    {
       "Code": "STX0008",
       "Description": "A service must declare its validations in a Validations partial.",
       "Severity": "Warning",
@@ -20332,20 +19198,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.TemplateProcessingService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateProcessingService",
-      "LineNumber": 50
-    },
-    {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateProcessingService",
-      "LineNumber": 50
     },
     {
       "Code": "STX0007",
@@ -20411,13 +19263,6 @@
       "LineNumber": 24
     },
     {
-      "Code": "STX0005",
-      "Description": "A public service method must not call another public method on the same service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 83
-    },
-    {
       "Code": "STXFORMAT005",
       "Description": "Method call arguments must declare their parameter names.",
       "Severity": "Warning",
@@ -20472,6 +19317,13 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
       "LineNumber": 671
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
+      "LineNumber": 863
     }
   ]
 }

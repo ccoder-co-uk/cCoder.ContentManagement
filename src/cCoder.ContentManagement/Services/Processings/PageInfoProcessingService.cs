@@ -47,7 +47,7 @@ internal class PageInfoProcessingService(IPageInfoService service) : IPageInfoPr
         {
             try
             {
-                PageInfo savedItem = item.Id < 1 ? await AddPageInfoAsync(newPageInfo: item) : await UpdatePageInfoAsync(updatedPageInfo: item);
+                PageInfo savedItem = item.Id < 1 ? await ExecuteAddPageInfoAsync(newPageInfo: item) : await ExecuteUpdatePageInfoAsync(updatedPageInfo: item);
 
                 results.Add(item: new Result<PageInfo>
                 {
@@ -76,7 +76,7 @@ internal class PageInfoProcessingService(IPageInfoService service) : IPageInfoPr
 
         foreach (PageInfo item in deletedPageInfo)
         {
-            await DeleteAsync(pageInfoId: item.Id);
+            await ExecuteDeleteAsync(pageInfoId: item.Id);
         }
     }
 
@@ -95,5 +95,23 @@ internal class PageInfoProcessingService(IPageInfoService service) : IPageInfoPr
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private ValueTask<PageInfo> ExecuteAddPageInfoAsync(PageInfo newPageInfo)
+    {
+        ValidatePageInfo(pageInfo: newPageInfo, parameterName: "entity");
+        return service.AddPageInfoAsync(newPageInfo: newPageInfo);
+    }
+
+    private ValueTask ExecuteDeleteAsync(int pageInfoId)
+    {
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
+        return service.DeleteAsync(pageInfoId: pageInfoId);
+    }
+
+    private ValueTask<PageInfo> ExecuteUpdatePageInfoAsync(PageInfo updatedPageInfo)
+    {
+        ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "entity");
+        return service.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo);
     }
 }

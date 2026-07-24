@@ -67,12 +67,12 @@ internal class ResourceOrchestrationService(
     {
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        Resource[] resourcesToDelete = [.. GetAllResource(ignoreFilters: true)
+        Resource[] resourcesToDelete = [.. ExecuteGetAllResource(ignoreFilters: true)
             .Where(predicate: resource => resource.AppId == appId)];
 
         if (resourcesToDelete.Length > 0)
         {
-            await DeleteAllResourceAsync(deletedResource: resourcesToDelete);
+            await ExecuteDeleteAllResourceAsync(deletedResource: resourcesToDelete);
         }
     }
 
@@ -88,8 +88,8 @@ internal class ResourceOrchestrationService(
             try
             {
                 Resource result = resource.Id <= 0
-                    ? await AddResourceAsync(newResource: resource)
-                    : await UpdateResourceAsync(updatedResource: resource);
+                    ? await ExecuteAddResourceAsync(newResource: resource)
+                    : await ExecuteUpdateResourceAsync(updatedResource: resource);
 
                 results.Add(item: new Result<Resource>
                 {
@@ -136,7 +136,7 @@ internal class ResourceOrchestrationService(
                 $"{resource.Key}_{resource.Name}_{resource.Culture}" == existing.Match)?.Id ?? 0;
         });
 
-        await AddOrUpdateResourceResult(newResource: validatedItems);
+        await ExecuteAddOrUpdateResourceResult(newResource: validatedItems);
     }
 
     public async ValueTask DeleteAllResourceAsync(IEnumerable<Resource> deletedResource)
@@ -146,7 +146,7 @@ internal class ResourceOrchestrationService(
 
         foreach (Resource resource in resources)
         {
-            await DeleteAsync(resourceId: resource.Id);
+            await ExecuteDeleteAsync(resourceId: resource.Id);
         }
     }
 
@@ -188,5 +188,98 @@ internal class ResourceOrchestrationService(
         }
 
         return resources;
+    }
+
+    private async ValueTask<IEnumerable<Result<Resource>>> ExecuteAddOrUpdateResourceResult(IEnumerable<Resource> newResource)
+    {
+        Resource[] resources = ValidateResources(resources: newResource, parameterName: "items")
+            .ToArray();
+
+        List<Result<Resource>> results = new();
+
+        foreach (Resource resource in resources)
+        {
+            try
+            {
+                Resource result = resource.Id <= 0
+                    ? await ExecuteAddResourceAsync(newResource: resource)
+                    : await ExecuteUpdateResourceAsync(updatedResource: resource);
+
+                results.Add(item: new Result<Resource>
+                {
+                    Success = true,
+                    Item = result,
+                    Message = resource.Id <= 0 ? "Added Successfully" : "Updated Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                results.Add(item: new Result<Resource>
+                {
+                    Success = false,
+                    Item = resource,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        return results;
+    }
+
+    private async ValueTask<Resource> ExecuteAddResourceAsync(Resource newResource)
+    {
+        ValidateResource(resource: newResource, parameterName: "entity");
+
+        Resource result = await processingService.AddResourceAsync(newResource: newResource);
+        await eventService.RaiseResourceAddEventAsync(entity: result);
+        return result;
+    }
+
+    private async ValueTask ExecuteDeleteAllResourceAsync(IEnumerable<Resource> deletedResource)
+    {
+        Resource[] resources = ValidateResources(resources: deletedResource, parameterName: "items")
+            .ToArray();
+
+        foreach (Resource resource in resources)
+        {
+            await ExecuteDeleteAsync(resourceId: resource.Id);
+        }
+    }
+
+    private async ValueTask ExecuteDeleteAsync(int resourceId)
+    {
+        ValidateId(resourceId: resourceId, parameterName: "id");
+
+        Resource entity;
+
+        try
+        {
+            entity = processingService.GetResource(resourceId: resourceId);
+        }
+        catch (SecurityException)
+        {
+            entity = processingService.GetAllResource(ignoreFilters: true)
+                .FirstOrDefault(predicate: resource => resource.Id == resourceId);
+        }
+
+        if (entity == null)
+        {
+            return;
+        }
+
+        await eventService.RaiseResourceDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(resourceId: resourceId);
+    }
+
+    private IQueryable<Resource> ExecuteGetAllResource(bool ignoreFilters = false) =>
+        processingService.GetAllResource(ignoreFilters: ignoreFilters);
+
+    private async ValueTask<Resource> ExecuteUpdateResourceAsync(Resource updatedResource)
+    {
+        ValidateResource(resource: updatedResource, parameterName: "entity");
+
+        Resource result = await processingService.UpdateResourceAsync(updatedResource: updatedResource);
+        await eventService.RaiseResourceUpdateEventAsync(entity: result);
+        return result;
     }
 }

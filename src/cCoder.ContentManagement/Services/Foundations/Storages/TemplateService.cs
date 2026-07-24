@@ -17,11 +17,11 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
 
         if (ignoreFilters)
         {
-            return GetAllTemplate(ignoreFilters: true)
+            return ExecuteGetAllTemplate(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
         }
 
-        Template template = GetAllTemplate()
+        Template template = ExecuteGetAllTemplate()
             .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
 
         if (template != null)
@@ -29,7 +29,7 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
             return template;
         }
 
-        Template template2 = GetAllTemplate(ignoreFilters: true)
+        Template template2 = ExecuteGetAllTemplate(ignoreFilters: true)
             .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
 
         if (template2 != null)
@@ -103,11 +103,11 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
 
         try
         {
-            template = GetTemplate(templateId: templateId);
+            template = ExecuteGetTemplate(templateId: templateId);
         }
         catch (SecurityException)
         {
-            template = GetTemplate(templateId: templateId, ignoreFilters: true);
+            template = ExecuteGetTemplate(templateId: templateId, ignoreFilters: true);
         }
 
         if (template == null)
@@ -139,5 +139,37 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
             RawString = newTemplate.RawString,
             AppId = newTemplate.AppId
         };
+    }
+
+    private IQueryable<Template> ExecuteGetAllTemplate(bool ignoreFilters = false) =>
+        templateBroker.GetAllTemplates(ignoreFilters: ignoreFilters);
+
+    private Template ExecuteGetTemplate(int templateId, bool ignoreFilters = false)
+    {
+        ValidateId(templateId: templateId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllTemplate(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
+        }
+
+        Template template = ExecuteGetAllTemplate()
+            .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
+
+        if (template != null)
+        {
+            return template;
+        }
+
+        Template template2 = ExecuteGetAllTemplate(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
+
+        if (template2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

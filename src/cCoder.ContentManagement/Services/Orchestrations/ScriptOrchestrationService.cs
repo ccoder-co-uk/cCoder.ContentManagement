@@ -67,12 +67,12 @@ internal class ScriptOrchestrationService(
     {
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        Script[] scriptsToDelete = [.. GetAllScript(ignoreFilters: true)
+        Script[] scriptsToDelete = [.. ExecuteGetAllScript(ignoreFilters: true)
             .Where(predicate: script => script.AppId == appId)];
 
         if (scriptsToDelete.Length > 0)
         {
-            await DeleteAllScriptAsync(deletedScript: scriptsToDelete);
+            await ExecuteDeleteAllScriptAsync(deletedScript: scriptsToDelete);
         }
     }
 
@@ -88,8 +88,8 @@ internal class ScriptOrchestrationService(
             try
             {
                 Script result = script.Id <= 0
-                    ? await AddScriptAsync(newScript: script)
-                    : await UpdateScriptAsync(updatedScript: script);
+                    ? await ExecuteAddScriptAsync(newScript: script)
+                    : await ExecuteUpdateScriptAsync(updatedScript: script);
 
                 results.Add(item: new Result<Script>
                 {
@@ -135,7 +135,7 @@ internal class ScriptOrchestrationService(
                 existing.Name.Equals(value: script.Name, comparisonType: StringComparison.OrdinalIgnoreCase))?.Id ?? 0;
         });
 
-        await AddOrUpdateScriptResult(newScript: validatedItems);
+        await ExecuteAddOrUpdateScriptResult(newScript: validatedItems);
     }
 
     public async ValueTask DeleteAllScriptAsync(IEnumerable<Script> deletedScript)
@@ -145,7 +145,7 @@ internal class ScriptOrchestrationService(
 
         foreach (Script script in scripts)
         {
-            await DeleteAsync(scriptId: script.Id);
+            await ExecuteDeleteAsync(scriptId: script.Id);
         }
     }
 
@@ -187,5 +187,98 @@ internal class ScriptOrchestrationService(
         }
 
         return scripts;
+    }
+
+    private async ValueTask<IEnumerable<Result<Script>>> ExecuteAddOrUpdateScriptResult(IEnumerable<Script> newScript)
+    {
+        Script[] scripts = ValidateScripts(scripts: newScript, parameterName: "items")
+            .ToArray();
+
+        List<Result<Script>> results = new();
+
+        foreach (Script script in scripts)
+        {
+            try
+            {
+                Script result = script.Id <= 0
+                    ? await ExecuteAddScriptAsync(newScript: script)
+                    : await ExecuteUpdateScriptAsync(updatedScript: script);
+
+                results.Add(item: new Result<Script>
+                {
+                    Success = true,
+                    Item = result,
+                    Message = script.Id <= 0 ? "Added Successfully" : "Updated Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                results.Add(item: new Result<Script>
+                {
+                    Success = false,
+                    Item = script,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        return results;
+    }
+
+    private async ValueTask<Script> ExecuteAddScriptAsync(Script newScript)
+    {
+        ValidateScript(script: newScript, parameterName: "entity");
+
+        Script result = await processingService.AddScriptAsync(newScript: newScript);
+        await eventService.RaiseScriptAddEventAsync(entity: result);
+        return result;
+    }
+
+    private async ValueTask ExecuteDeleteAllScriptAsync(IEnumerable<Script> deletedScript)
+    {
+        Script[] scripts = ValidateScripts(scripts: deletedScript, parameterName: "items")
+            .ToArray();
+
+        foreach (Script script in scripts)
+        {
+            await ExecuteDeleteAsync(scriptId: script.Id);
+        }
+    }
+
+    private async ValueTask ExecuteDeleteAsync(int scriptId)
+    {
+        ValidateId(scriptId: scriptId, parameterName: "id");
+
+        Script entity;
+
+        try
+        {
+            entity = processingService.GetScript(scriptId: scriptId);
+        }
+        catch (SecurityException)
+        {
+            entity = processingService.GetAllScript(ignoreFilters: true)
+                .FirstOrDefault(predicate: script => script.Id == scriptId);
+        }
+
+        if (entity == null)
+        {
+            return;
+        }
+
+        await eventService.RaiseScriptDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(scriptId: scriptId);
+    }
+
+    private IQueryable<Script> ExecuteGetAllScript(bool ignoreFilters = false) =>
+        processingService.GetAllScript(ignoreFilters: ignoreFilters);
+
+    private async ValueTask<Script> ExecuteUpdateScriptAsync(Script updatedScript)
+    {
+        ValidateScript(script: updatedScript, parameterName: "entity");
+
+        Script result = await processingService.UpdateScriptAsync(updatedScript: updatedScript);
+        await eventService.RaiseScriptUpdateEventAsync(entity: result);
+        return result;
     }
 }

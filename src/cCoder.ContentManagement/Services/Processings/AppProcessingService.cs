@@ -223,8 +223,8 @@ internal class AppProcessingService(
             try
             {
                 App app = item.Id < 1
-                    ? await AddAppAsync(newApp: item)
-                    : await UpdateAppAsync(app: item);
+                    ? await ExecuteAddAppAsync(newApp: item)
+                    : await ExecuteUpdateAppAsync(app: item);
 
                 results.Add(item: new Result<App>
                 {
@@ -253,14 +253,14 @@ internal class AppProcessingService(
 
         foreach (App item in deletedApp)
         {
-            await DeleteAsync(appId: item.Id);
+            await ExecuteDeleteAsync(appId: item.Id);
         }
     }
 
     public IQueryable<User> GetAppUsers(int appId)
     {
         ValidateId(appId: appId, parameterName: "appId");
-        App app = GetApp(appId: appId);
+        App app = ExecuteGetApp(appId: appId);
 
         if (app != null)
         {
@@ -292,7 +292,7 @@ internal class AppProcessingService(
         }
 
         string domain = httpContext?.Request.Host.Host ?? string.Empty;
-        return GetByDomainApp(domain: domain);
+        return ExecuteGetByDomainApp(domain: domain);
     }
 
     public async ValueTask UpdatePageOrderAppAsync(int key, App updatedApp)
@@ -544,5 +544,183 @@ internal class AppProcessingService(
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private async ValueTask<App> ExecuteAddAppAsync(App newApp)
+    {
+        ValidateApp(app: newApp, parameterName: "inputApp");
+
+        if (string.IsNullOrEmpty(value: newApp.DefaultTheme))
+        {
+            newApp.DefaultTheme = "Default";
+        }
+
+        newApp.Cultures = BuildCulturesForApp(newApp: newApp);
+        newApp.Roles = BuildRolesForApp(app: newApp);
+        App storedApp = await service.AddAppAsync(newApp: newApp);
+
+        if (storedApp.Roles != null)
+        {
+            foreach (Role role in storedApp.Roles)
+            {
+                role.AppId = storedApp.Id;
+                role.App = null;
+
+                await roleBroker.AddRoleAsync(newRole: new Role
+                {
+                    Id = role.Id,
+                    AppId = role.AppId,
+                    Name = role.Name,
+                    Description = role.Description,
+                    Privs = role.Privs,
+                });
+
+                if (role.Users == null)
+                {
+                    continue;
+                }
+
+                foreach (UserRole user in role.Users)
+                {
+                    user.RoleId = role.Id;
+                    user.Role = null;
+
+                    await userRoleBroker.AddUserRoleAsync(newUserRole: new UserRole
+                    {
+                        RoleId = user.RoleId,
+                        UserId = user.UserId,
+                    });
+                }
+            }
+        }
+
+        StampAppChildren(app: storedApp);
+        return storedApp;
+    }
+
+    private async ValueTask ExecuteDeleteAsync(int appId)
+    {
+        ValidateId(appId: appId, parameterName: "id");
+        await service.DeleteAsync(appId: appId);
+    }
+
+    private App ExecuteGetApp(int appId)
+    {
+        ValidateId(appId: appId, parameterName: "id");
+        return service.GetApp(appId: appId);
+    }
+
+    private App ExecuteGetByDomainApp(string domain, bool ignoreFilters = false)
+    {
+        ValidateDomain(domain: domain, parameterName: "domain");
+
+        return service.GetAllApp(ignoreFilters: ignoreFilters)
+            .Where(predicate: app => app.Domain == domain)
+            .FirstOrDefault();
+    }
+
+    private async ValueTask<App> ExecuteUpdateAppAsync(App app)
+    {
+        ValidateApp(app: app, parameterName: "app");
+        App existingApp = service.GetApp(appId: app.Id, ignoreFilters: true);
+
+        if (existingApp == null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        existingApp.DefaultCultureId = app.DefaultCultureId;
+        existingApp.TenantId = app.TenantId;
+        existingApp.Name = app.Name;
+        existingApp.Domain = app.Domain;
+        existingApp.DefaultTheme = app.DefaultTheme;
+        existingApp.ConfigJson = app.ConfigJson;
+        existingApp.Cultures = app.Cultures ?? existingApp.Cultures;
+        existingApp.Pages = app.Pages ?? existingApp.Pages;
+        existingApp.Components = app.Components ?? existingApp.Components;
+        existingApp.Scripts = app.Scripts ?? existingApp.Scripts;
+        existingApp.Roles = app.Roles ?? existingApp.Roles;
+        existingApp.Templates = app.Templates ?? existingApp.Templates;
+        existingApp.Resources = app.Resources ?? existingApp.Resources;
+        existingApp.Layouts = app.Layouts ?? existingApp.Layouts;
+
+        if (app.Cultures != null)
+        {
+            existingApp.Cultures = BuildCulturesForApp(newApp: existingApp);
+        }
+
+        App updatedApp = await service.UpdateAppAsync(updatedApp: existingApp);
+
+        if (updatedApp.Roles != null)
+        {
+            Role[] existingRoles = roleBroker.GetAllRoles(ignoreFilters: true)
+                .Where(predicate: role => role.AppId == updatedApp.Id)
+                .ToArray();
+
+            foreach (Role role in updatedApp.Roles)
+            {
+                role.AppId = updatedApp.Id;
+                role.App = null;
+
+                if (existingRoles.Any(predicate: existingRole => existingRole.Id == role.Id))
+                {
+                    await roleBroker.UpdateRoleAsync(updatedRole: new Role
+                    {
+                        Id = role.Id,
+                        AppId = role.AppId,
+                        Name = role.Name,
+                        Description = role.Description,
+                        Privs = role.Privs,
+                    });
+                }
+                else
+                {
+                    await roleBroker.AddRoleAsync(newRole: new Role
+                    {
+                        Id = role.Id,
+                        AppId = role.AppId,
+                        Name = role.Name,
+                        Description = role.Description,
+                        Privs = role.Privs,
+                    });
+                }
+
+                UserRole[] existingUserRoles = userRoleBroker.GetAllUserRoles(ignoreFilters: true)
+                    .Where(predicate: userRole => userRole.RoleId == role.Id)
+                    .ToArray();
+
+                string[] incomingUserIds = (role.Users ?? Array.Empty<UserRole>())
+                    .Select(selector: userRole => userRole.UserId)
+                    .Where(predicate: userId => !string.IsNullOrWhiteSpace(value: userId))
+                    .Distinct(comparer: StringComparer.Ordinal)
+                    .ToArray();
+
+                UserRole[] userRolesToDelete = existingUserRoles
+                    .Where(predicate: userRole => !incomingUserIds.Contains(value: userRole.UserId, comparer: StringComparer.Ordinal))
+                    .ToArray();
+
+                if (userRolesToDelete.Length > 0)
+                {
+                    await userRoleBroker.DeleteAllUserRolesAsync(deletedUserRole: userRolesToDelete);
+                }
+
+                foreach (string userId in incomingUserIds)
+                {
+                    if (existingUserRoles.Any(predicate: userRole => string.Equals(a: userRole.UserId, b: userId, comparisonType: StringComparison.Ordinal)))
+                    {
+                        continue;
+                    }
+
+                    await userRoleBroker.AddUserRoleAsync(newUserRole: new UserRole
+                    {
+                        RoleId = role.Id,
+                        UserId = userId,
+                    });
+                }
+            }
+        }
+
+        StampAppChildren(app: updatedApp);
+        return updatedApp;
     }
 }

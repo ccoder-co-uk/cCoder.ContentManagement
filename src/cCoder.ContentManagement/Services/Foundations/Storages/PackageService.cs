@@ -17,11 +17,11 @@ internal partial class PackageService(IPackageBroker packageBroker, IAuthorizati
 
         if (ignoreFilters)
         {
-            return GetAllPackage(ignoreFilters: true)
+            return ExecuteGetAllPackage(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
         }
 
-        Package package = GetAllPackage()
+        Package package = ExecuteGetAllPackage()
             .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
 
         if (package != null)
@@ -29,7 +29,7 @@ internal partial class PackageService(IPackageBroker packageBroker, IAuthorizati
             return package;
         }
 
-        Package package2 = GetAllPackage(ignoreFilters: true)
+        Package package2 = ExecuteGetAllPackage(ignoreFilters: true)
             .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
 
         if (package2 != null)
@@ -72,7 +72,7 @@ internal partial class PackageService(IPackageBroker packageBroker, IAuthorizati
     public async ValueTask DeleteAsync(Guid packageId)
     {
         ValidateId(packageId: packageId, parameterName: "id");
-        Package package = GetPackage(packageId: packageId);
+        Package package = ExecuteGetPackage(packageId: packageId);
         authorizationBroker.Authorize(appId: null, privilege: "Package_delete");
         await packageBroker.DeletePackageAsync(deletedPackage: CreateStoragePackage(newPackage: package));
     }
@@ -92,5 +92,37 @@ internal partial class PackageService(IPackageBroker packageBroker, IAuthorizati
             Category = newPackage.Category,
             SourceApi = newPackage.SourceApi
         };
+    }
+
+    private IQueryable<Package> ExecuteGetAllPackage(bool ignoreFilters = false) =>
+        packageBroker.GetAllPackages(ignoreFilters: ignoreFilters);
+
+    private Package ExecuteGetPackage(Guid packageId, bool ignoreFilters = false)
+    {
+        ValidateId(packageId: packageId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllPackage(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
+        }
+
+        Package package = ExecuteGetAllPackage()
+            .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
+
+        if (package != null)
+        {
+            return package;
+        }
+
+        Package package2 = ExecuteGetAllPackage(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
+
+        if (package2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

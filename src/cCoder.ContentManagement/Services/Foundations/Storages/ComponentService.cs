@@ -17,11 +17,11 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
 
         if (ignoreFilters)
         {
-            return GetAllComponent(ignoreFilters: true)
+            return ExecuteGetAllComponent(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
         }
 
-        Component component = GetAllComponent()
+        Component component = ExecuteGetAllComponent()
             .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
 
         if (component != null)
@@ -29,7 +29,7 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
             return component;
         }
 
-        Component component2 = GetAllComponent(ignoreFilters: true)
+        Component component2 = ExecuteGetAllComponent(ignoreFilters: true)
             .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
 
         if (component2 != null)
@@ -107,11 +107,11 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
 
         try
         {
-            component = GetComponent(componentId: componentId);
+            component = ExecuteGetComponent(componentId: componentId);
         }
         catch (SecurityException)
         {
-            component = GetComponent(componentId: componentId, ignoreFilters: true);
+            component = ExecuteGetComponent(componentId: componentId, ignoreFilters: true);
         }
 
         if (component == null)
@@ -145,5 +145,37 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
             Script = newComponent.Script,
             Key = newComponent.Key
         };
+    }
+
+    private IQueryable<Component> ExecuteGetAllComponent(bool ignoreFilters = false) =>
+        componentBroker.GetAllComponents(ignoreFilters: ignoreFilters);
+
+    private Component ExecuteGetComponent(int componentId, bool ignoreFilters = false)
+    {
+        ValidateId(componentId: componentId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllComponent(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
+        }
+
+        Component component = ExecuteGetAllComponent()
+            .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
+
+        if (component != null)
+        {
+            return component;
+        }
+
+        Component component2 = ExecuteGetAllComponent(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
+
+        if (component2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

@@ -90,7 +90,7 @@ internal class PageOrchestrationService(
         ValidateAppId(appId: appId, parameterName: "appId");
 
         Page[] pagesToDelete =
-            [.. GetAllPage(ignoreFilters: true)
+            [.. ExecuteGetAllPage(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
             .ToArray()
             .OrderByDescending(keySelector: page => GetPathDepth(path: page.Path))
@@ -98,7 +98,7 @@ internal class PageOrchestrationService(
 
         if (pagesToDelete.Length > 0)
         {
-            await DeleteAllPageAsync(deletedPage: pagesToDelete);
+            await ExecuteDeleteAllPageAsync(deletedPage: pagesToDelete);
         }
     }
 
@@ -115,8 +115,8 @@ internal class PageOrchestrationService(
             try
             {
                 Page result = page.Id <= 0
-                    ? await AddPageAsync(newPage: page)
-                    : await UpdatePageAsync(updatedPage: page);
+                    ? await ExecuteAddPageAsync(newPage: page)
+                    : await ExecuteUpdatePageAsync(updatedPage: page);
 
                 results.Add(item: new Result<Page>
                 {
@@ -173,7 +173,7 @@ comparison: (left, right) => left.Path.Split(separator: '/')
                 existing.Path.Equals(value: page.Path.TrimStart(trimChar: '/'), comparisonType: StringComparison.OrdinalIgnoreCase)
                 && existing.AppId == appId)?.Id ?? 0;
 
-            await AddOrUpdatePageResult(newPage: [page]);
+            await ExecuteAddOrUpdatePageResult(newPage: [page]);
         }
     }
 
@@ -184,7 +184,7 @@ comparison: (left, right) => left.Path.Split(separator: '/')
 
         foreach (Page page in pages)
         {
-            await DeleteAsync(pageId: page.Id);
+            await ExecuteDeleteAsync(pageId: page.Id);
         }
     }
 
@@ -301,5 +301,117 @@ comparison: (left, right) => left.Path.Split(separator: '/')
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private async ValueTask<IEnumerable<Result<Page>>> ExecuteAddOrUpdatePageResult(IEnumerable<Page> newPage)
+    {
+        Page[] pages = [.. ValidatePages(pages: newPage, parameterName: "items")
+            .OrderBy(keySelector: page => GetPathDepth(path: page.Path))
+            .ThenBy(keySelector: page => page.Order)];
+
+        List<Result<Page>> results = new();
+
+        foreach (Page page in pages)
+        {
+            try
+            {
+                Page result = page.Id <= 0
+                    ? await ExecuteAddPageAsync(newPage: page)
+                    : await ExecuteUpdatePageAsync(updatedPage: page);
+
+                results.Add(item: new Result<Page>
+                {
+                    Success = true,
+                    Item = result,
+                    Message = page.Id <= 0 ? "Added Successfully" : "Updated Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                results.Add(item: new Result<Page>
+                {
+                    Success = false,
+                    Item = page,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        return results;
+    }
+
+    private async ValueTask<Page> ExecuteAddPageAsync(Page newPage)
+    {
+        ValidatePage(page: newPage, parameterName: "entity");
+        ValidateSinglePage(page: newPage, parameterName: "entity");
+        ValidatePageCollections(page: newPage, parameterName: "entity");
+        ValidateLayoutExistsForApp(page: newPage);
+
+        Page result = await processingService.AddPageAsync(newPage: newPage);
+        await eventService.RaisePageAddEventAsync(entity: result);
+        return result;
+    }
+
+    private async ValueTask ExecuteDeleteAllPageAsync(IEnumerable<Page> deletedPage)
+    {
+        Page[] pages = ValidatePages(pages: deletedPage, parameterName: "items")
+            .ToArray();
+
+        foreach (Page page in pages)
+        {
+            await ExecuteDeleteAsync(pageId: page.Id);
+        }
+    }
+
+    private async ValueTask ExecuteDeleteAsync(int pageId)
+    {
+        ValidateId(pageId: pageId, parameterName: "id");
+
+        Page entity;
+
+        try
+        {
+            entity = processingService.GetPage(pageId: pageId);
+        }
+        catch (SecurityException)
+        {
+            entity = processingService.GetAllPage(ignoreFilters: true)
+                .FirstOrDefault(predicate: page => page.Id == pageId);
+        }
+
+        if (entity == null)
+        {
+            return;
+        }
+
+        await eventService.RaisePageDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(pageId: pageId);
+    }
+
+    private IQueryable<Page> ExecuteGetAllPage(bool ignoreFilters = false) =>
+        processingService.GetAllPage(ignoreFilters: ignoreFilters);
+
+    private async ValueTask<Page> ExecuteUpdatePageAsync(Page updatedPage)
+    {
+        ValidatePage(page: updatedPage, parameterName: "entity");
+        ValidatePageLayout(page: updatedPage);
+        ValidateLayoutExistsForApp(page: updatedPage);
+
+        Page result = await processingService.UpdatePageAsync(updatedPage: updatedPage);
+        updatedPage.Id = result.Id;
+        updatedPage.AppId = result.AppId;
+        updatedPage.ParentId = result.ParentId;
+        updatedPage.Path = result.Path;
+        updatedPage.Name = result.Name;
+        updatedPage.Layout = result.Layout;
+        updatedPage.ResourceKey = result.ResourceKey;
+        updatedPage.Order = result.Order;
+        updatedPage.ShowOnMenus = result.ShowOnMenus;
+        updatedPage.CreatedBy = result.CreatedBy;
+        updatedPage.CreatedOn = result.CreatedOn;
+        updatedPage.LastUpdated = result.LastUpdated;
+        updatedPage.LastUpdatedBy = result.LastUpdatedBy;
+        await eventService.RaisePageUpdateEventAsync(entity: updatedPage);
+        return result;
     }
 }

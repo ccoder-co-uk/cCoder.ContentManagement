@@ -47,7 +47,7 @@ internal class ContentProcessingService(IContentService service) : IContentProce
         {
             try
             {
-                Content savedItem = item.Id < 1 ? await AddContentAsync(newContent: item) : await UpdateContentAsync(updatedContent: item);
+                Content savedItem = item.Id < 1 ? await ExecuteAddContentAsync(newContent: item) : await ExecuteUpdateContentAsync(updatedContent: item);
 
                 results.Add(item: new Result<Content>
                 {
@@ -76,7 +76,7 @@ internal class ContentProcessingService(IContentService service) : IContentProce
 
         foreach (Content item in deletedContent)
         {
-            await DeleteAsync(contentId: item.Id);
+            await ExecuteDeleteAsync(contentId: item.Id);
         }
     }
 
@@ -95,5 +95,23 @@ internal class ContentProcessingService(IContentService service) : IContentProce
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private ValueTask<Content> ExecuteAddContentAsync(Content newContent)
+    {
+        ValidateContent(content: newContent, parameterName: "entity");
+        return service.AddContentAsync(newContent: newContent);
+    }
+
+    private ValueTask ExecuteDeleteAsync(int contentId)
+    {
+        ValidateId(contentId: contentId, parameterName: "id");
+        return service.DeleteAsync(contentId: contentId);
+    }
+
+    private ValueTask<Content> ExecuteUpdateContentAsync(Content updatedContent)
+    {
+        ValidateContent(content: updatedContent, parameterName: "entity");
+        return service.UpdateContentAsync(updatedContent: updatedContent);
     }
 }

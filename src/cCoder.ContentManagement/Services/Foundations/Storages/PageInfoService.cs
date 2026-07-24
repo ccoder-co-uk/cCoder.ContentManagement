@@ -20,11 +20,11 @@ internal partial class PageInfoService(
 
         if (ignoreFilters)
         {
-            return GetAllPageInfo(ignoreFilters: true)
+            return ExecuteGetAllPageInfo(ignoreFilters: true)
                 .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
         }
 
-        PageInfo pageInfo = GetAllPageInfo()
+        PageInfo pageInfo = ExecuteGetAllPageInfo()
             .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
 
         if (pageInfo != null)
@@ -32,7 +32,7 @@ internal partial class PageInfoService(
             return pageInfo;
         }
 
-        PageInfo pageInfo2 = GetAllPageInfo(ignoreFilters: true)
+        PageInfo pageInfo2 = ExecuteGetAllPageInfo(ignoreFilters: true)
             .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
 
         if (pageInfo2 != null)
@@ -81,11 +81,11 @@ internal partial class PageInfoService(
 
         try
         {
-            pageInfo = GetPageInfo(pageInfoId: pageInfoId);
+            pageInfo = ExecuteGetPageInfo(pageInfoId: pageInfoId);
         }
         catch (SecurityException)
         {
-            pageInfo = GetPageInfo(pageInfoId: pageInfoId, ignoreFilters: true);
+            pageInfo = ExecuteGetPageInfo(pageInfoId: pageInfoId, ignoreFilters: true);
         }
 
         if (pageInfo == null)
@@ -121,5 +121,37 @@ internal partial class PageInfoService(
             .Where(predicate: page => page.Id == pageId)
             .Select(selector: page => (int?)page.AppId)
             .FirstOrDefault();
+    }
+
+    private IQueryable<PageInfo> ExecuteGetAllPageInfo(bool ignoreFilters = false) =>
+        pageInfoBroker.GetAllPageInfo(ignoreFilters: ignoreFilters);
+
+    private PageInfo ExecuteGetPageInfo(int pageInfoId, bool ignoreFilters = false)
+    {
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllPageInfo(ignoreFilters: true)
+                .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
+        }
+
+        PageInfo pageInfo = ExecuteGetAllPageInfo()
+            .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
+
+        if (pageInfo != null)
+        {
+            return pageInfo;
+        }
+
+        PageInfo pageInfo2 = ExecuteGetAllPageInfo(ignoreFilters: true)
+            .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
+
+        if (pageInfo2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

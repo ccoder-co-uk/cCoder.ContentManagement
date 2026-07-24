@@ -47,7 +47,7 @@ internal class ScriptProcessingService(IScriptService service) : IScriptProcessi
         {
             try
             {
-                Script savedItem = item.Id < 1 ? await AddScriptAsync(newScript: item) : await UpdateScriptAsync(updatedScript: item);
+                Script savedItem = item.Id < 1 ? await ExecuteAddScriptAsync(newScript: item) : await ExecuteUpdateScriptAsync(updatedScript: item);
 
                 results.Add(item: new Result<Script>
                 {
@@ -76,7 +76,7 @@ internal class ScriptProcessingService(IScriptService service) : IScriptProcessi
 
         foreach (Script item in deletedScript)
         {
-            await DeleteAsync(scriptId: item.Id);
+            await ExecuteDeleteAsync(scriptId: item.Id);
         }
     }
 
@@ -95,5 +95,23 @@ internal class ScriptProcessingService(IScriptService service) : IScriptProcessi
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private ValueTask<Script> ExecuteAddScriptAsync(Script newScript)
+    {
+        ValidateScript(script: newScript, parameterName: "entity");
+        return service.AddScriptAsync(newScript: newScript);
+    }
+
+    private ValueTask ExecuteDeleteAsync(int scriptId)
+    {
+        ValidateId(scriptId: scriptId, parameterName: "id");
+        return service.DeleteAsync(scriptId: scriptId);
+    }
+
+    private ValueTask<Script> ExecuteUpdateScriptAsync(Script updatedScript)
+    {
+        ValidateScript(script: updatedScript, parameterName: "entity");
+        return service.UpdateScriptAsync(updatedScript: updatedScript);
     }
 }

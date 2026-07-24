@@ -58,7 +58,7 @@ internal class PageRoleOrchestrationService(IPageRoleProcessingService processin
                     continue;
                 }
 
-                PageRole result = await AddPageRoleAsync(newPageRole: pageRole);
+                PageRole result = await ExecuteAddPageRoleAsync(newPageRole: pageRole);
 
                 results.Add(item: new Result<PageRole>
                 {
@@ -93,7 +93,7 @@ internal class PageRoleOrchestrationService(IPageRoleProcessingService processin
 
         foreach (PageRole pageRole in pageRoles)
         {
-            await DeletePageRoleAsync(deletedPageRole: pageRole);
+            await ExecuteDeletePageRoleAsync(deletedPageRole: pageRole);
         }
     }
 
@@ -135,5 +135,20 @@ internal class PageRoleOrchestrationService(IPageRoleProcessingService processin
         }
 
         return pageRoleInfos;
+    }
+
+    private async ValueTask<PageRole> ExecuteAddPageRoleAsync(PageRole newPageRole)
+    {
+        ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
+        PageRole result = await processingService.AddPageRoleAsync(newPageRole: newPageRole);
+        await eventService.RaisePageRoleAddEventAsync(entity: result);
+        return result;
+    }
+
+    private async ValueTask ExecuteDeletePageRoleAsync(PageRole deletedPageRole)
+    {
+        ValidatePageRole(pageRole: deletedPageRole, parameterName: "entity");
+        await eventService.RaisePageRoleDeleteEventAsync(entity: deletedPageRole);
+        await processingService.DeletePageRoleAsync(deletedPageRole: deletedPageRole);
     }
 }

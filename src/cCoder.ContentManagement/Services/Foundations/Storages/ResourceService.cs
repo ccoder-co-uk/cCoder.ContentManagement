@@ -17,11 +17,11 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
 
         if (ignoreFilters)
         {
-            return GetAllResource(ignoreFilters: true)
+            return ExecuteGetAllResource(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
         }
 
-        Resource resource = GetAllResource()
+        Resource resource = ExecuteGetAllResource()
             .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
 
         if (resource != null)
@@ -29,7 +29,7 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
             return resource;
         }
 
-        Resource resource2 = GetAllResource(ignoreFilters: true)
+        Resource resource2 = ExecuteGetAllResource(ignoreFilters: true)
             .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
 
         if (resource2 != null)
@@ -107,11 +107,11 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
 
         try
         {
-            resource = GetResource(resourceId: resourceId);
+            resource = ExecuteGetResource(resourceId: resourceId);
         }
         catch (SecurityException)
         {
-            resource = GetResource(resourceId: resourceId, ignoreFilters: true);
+            resource = ExecuteGetResource(resourceId: resourceId, ignoreFilters: true);
         }
 
         if (resource == null)
@@ -145,5 +145,37 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
             DisplayName = newResource.DisplayName,
             ShortDisplayName = newResource.ShortDisplayName
         };
+    }
+
+    private IQueryable<Resource> ExecuteGetAllResource(bool ignoreFilters = false) =>
+        resourceBroker.GetAllResources(ignoreFilters: ignoreFilters);
+
+    private Resource ExecuteGetResource(int resourceId, bool ignoreFilters = false)
+    {
+        ValidateId(resourceId: resourceId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllResource(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
+        }
+
+        Resource resource = ExecuteGetAllResource()
+            .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
+
+        if (resource != null)
+        {
+            return resource;
+        }
+
+        Resource resource2 = ExecuteGetAllResource(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
+
+        if (resource2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }
