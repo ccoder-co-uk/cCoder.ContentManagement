@@ -12,6 +12,13 @@ internal partial class AuthorizationProcessingService(
     IAuthorizationService authorizationService)
         : IAuthorizationProcessingService
 {
+    public bool IsAdminOfApp(int appId) =>
+        TryCatch<bool>(operation: () =>
+    {
+        ValidateIsAdminOfApp(inputs: [appId]);
+        return authorizationService.IsAdminOfApp(appId: appId);
+    });
+
     public RenderAuthorization ResolveRenderAuthorization(string culture) =>
         TryCatch<RenderAuthorization>(operation: () =>
     {

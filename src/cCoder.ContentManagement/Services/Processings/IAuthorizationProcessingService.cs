@@ -9,4 +9,6 @@ namespace cCoder.ContentManagement.Services.Processings;
 public interface IAuthorizationProcessingService
 {
     RenderAuthorization ResolveRenderAuthorization(string culture);
+
+    bool IsAdminOfApp(int appId);
 }

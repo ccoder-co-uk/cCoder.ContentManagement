@@ -14,17 +14,18 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Coordinations;
+using cCoder.ContentManagement.Services.Aggregations;
+using cCoder.ContentManagement.Services;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Moq;
 using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
 using IPageRenderOrchestrationService = cCoder.ContentManagement.Services.Orchestrations.IPageRenderOrchestrationService;
 
-namespace cCoder.Core.Services.Tests.CMS.Coordinations;
+namespace cCoder.Core.Services.Tests.CMS.Aggregations;
 
-public partial class PageRenderCoordinationServiceTests
+public partial class PageRenderAggregationServiceTests
 {
     private User currentUser = TestUsers.WithoutPrivileges();
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
     private readonly Mock<IAppOrchestrationService> appOrchestrationServiceMock = new();
     private readonly Mock<ILayoutOrchestrationService> layoutOrchestrationServiceMock = new();
     private readonly Mock<ITemplateOrchestrationService> templateOrchestrationServiceMock = new();
@@ -36,12 +37,25 @@ public partial class PageRenderCoordinationServiceTests
     private readonly Mock<IPageInfoOrchestrationService> pageInfoOrchestrationServiceMock = new();
     private readonly Mock<IPageRoleOrchestrationService> pageRoleOrchestrationServiceMock = new();
     private readonly Mock<IPageRenderOrchestrationService> pageRenderOrchestrationServiceMock = new();
-    private readonly PageRenderCoordinationService coordinationService;
+    private readonly PageRenderAggregationService aggregationService;
 
-    public PageRenderCoordinationServiceTests()
+    public PageRenderAggregationServiceTests()
     {
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
+        pageRenderOrchestrationServiceMock
+            .Setup(expression: service => service.ResolveCulture(
+                culture: It.IsAny<string>()))
+            .Returns(valueFunction: (string culture) =>
+                culture ?? currentUser.DefaultCultureId);
+
+        pageRenderOrchestrationServiceMock
+            .Setup(expression: service => service.UserCanPage(
+                page: It.IsAny<Page>(),
+                privilege: It.IsAny<string>()))
+            .Returns(valueFunction: (Page page, string privilege) =>
+                ContentManagementModelLogic.UserCan(
+                    page: page,
+                    user: currentUser,
+                    privilege: privilege));
 
         layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
             .Returns(value: Array.Empty<Layout>()
@@ -83,8 +97,7 @@ public partial class PageRenderCoordinationServiceTests
             .Returns(value: Array.Empty<PageRole>()
             .AsQueryable());
 
-        coordinationService = new PageRenderCoordinationService(
-authorizationBroker: authorizationBrokerMock.Object,
+        aggregationService = new PageRenderAggregationService(
 appOrchestrationService: appOrchestrationServiceMock.Object,
 layoutOrchestrationService: layoutOrchestrationServiceMock.Object,
 templateOrchestrationService: templateOrchestrationServiceMock.Object,

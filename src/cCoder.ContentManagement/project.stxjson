@@ -5316,6 +5316,59 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "StandardElementType": "AggregationService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "RenderErrorPageRenderRequestPageRenderResponse",
+          "Inputs": [
+            {
+              "Name": "request",
+              "Type": "cCoder.ContentManagement.Models.PageRenderRequest"
+            }
+          ],
+          "ReturnType": "cCoder.ContentManagement.Models.PageRenderResponse"
+        },
+        {
+          "Name": "RenderPageRenderRequestPageRenderResponse",
+          "Inputs": [
+            {
+              "Name": "request",
+              "Type": "cCoder.ContentManagement.Models.PageRenderRequest"
+            }
+          ],
+          "ReturnType": "cCoder.ContentManagement.Models.PageRenderResponse"
+        },
+        {
+          "Name": "RenderRenderResult",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "path",
+              "Type": "System.String"
+            },
+            {
+              "Name": "theme",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "edit",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "cCoder.ContentManagement.Models.RenderResult"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.ContentManagementModelLogic",
       "StandardElementType": "Dependency",
       "Properties": [],
@@ -5470,59 +5523,6 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "StandardElementType": "CoordinationService",
-      "Properties": [],
-      "Methods": [
-        {
-          "Name": "RenderErrorPageRenderRequestPageRenderResponse",
-          "Inputs": [
-            {
-              "Name": "request",
-              "Type": "cCoder.ContentManagement.Models.PageRenderRequest"
-            }
-          ],
-          "ReturnType": "cCoder.ContentManagement.Models.PageRenderResponse"
-        },
-        {
-          "Name": "RenderPageRenderRequestPageRenderResponse",
-          "Inputs": [
-            {
-              "Name": "request",
-              "Type": "cCoder.ContentManagement.Models.PageRenderRequest"
-            }
-          ],
-          "ReturnType": "cCoder.ContentManagement.Models.PageRenderResponse"
-        },
-        {
-          "Name": "RenderRenderResult",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "path",
-              "Type": "System.String"
-            },
-            {
-              "Name": "theme",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            },
-            {
-              "Name": "edit",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "cCoder.ContentManagement.Models.RenderResult"
-        }
-      ]
-    },
-    {
       "Name": "cCoder.ContentManagement.Services.Coordinations.PageStructureCoordinationService",
       "StandardElementType": "CoordinationService",
       "Properties": [],
@@ -5568,6 +5568,16 @@
           "Name": "GetCurrentUser",
           "Inputs": [],
           "ReturnType": "User"
+        },
+        {
+          "Name": "IsAdminOfApp",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Boolean"
         }
       ]
     },
@@ -8326,6 +8336,38 @@
       "Properties": [],
       "Methods": [
         {
+          "Name": "IsAdminOfApp",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        },
+        {
+          "Name": "RenderPageRenderResult",
+          "Inputs": [
+            {
+              "Name": "page",
+              "Type": "Page"
+            },
+            {
+              "Name": "theme",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "edit",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "cCoder.ContentManagement.Models.RenderResult"
+        },
+        {
           "Name": "RenderPageUserRenderResult",
           "Inputs": [
             {
@@ -8350,6 +8392,30 @@
             }
           ],
           "ReturnType": "cCoder.ContentManagement.Models.RenderResult"
+        },
+        {
+          "Name": "ResolveCulture",
+          "Inputs": [
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.String"
+        },
+        {
+          "Name": "UserCanPage",
+          "Inputs": [
+            {
+              "Name": "page",
+              "Type": "Page"
+            },
+            {
+              "Name": "privilege",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Boolean"
         }
       ]
     },
@@ -9119,6 +9185,16 @@
       "StandardElementType": "ProcessingService",
       "Properties": [],
       "Methods": [
+        {
+          "Name": "IsAdminOfApp",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        },
         {
           "Name": "ResolveRenderAuthorization",
           "Inputs": [
@@ -11132,7 +11208,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "ToType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService"
+      "ToType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.PageController",
@@ -11176,7 +11252,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.PageRenderer",
-      "ToType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService"
+      "ToType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.TemplateRenderer",
@@ -11263,6 +11339,50 @@
       "ToType": "cCoder.ContentManagement.Services.Processings.PackageExportProcessingService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ContentOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageInfoOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageRenderOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Coordinations.AppPageComponentCoordinationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService"
     },
@@ -11297,54 +11417,6 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Coordinations.PageCoordinationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageInfoOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ContentOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageInfoOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageRenderOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Coordinations.PageStructureCoordinationService",
@@ -11720,6 +11792,10 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.PageRenderOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.PageRenderOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService"
     },
     {
@@ -12067,7 +12143,7 @@
       "Description": "An API controller must have exactly one business dependency.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 23
+      "LineNumber": 24
     },
     {
       "Code": "STXAPI001",
@@ -12108,15 +12184,8 @@
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "LineNumber": 18
-    },
-    {
-      "Code": "STXC001",
-      "Description": "The service must have two or three OrchestrationService dependencies.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "LineNumber": 18
+      "Type": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
+      "LineNumber": 16
     },
     {
       "Code": "STXO001",

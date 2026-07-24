@@ -4,9 +4,9 @@
 
 using cCoder.ContentManagement.Dependencies;
 
-namespace cCoder.ContentManagement.Services.Coordinations;
+namespace cCoder.ContentManagement.Services.Aggregations;
 
-internal sealed partial class PageRenderCoordinationService
+internal sealed partial class PageRenderAggregationService
 {
     private static void ValidateRender(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);

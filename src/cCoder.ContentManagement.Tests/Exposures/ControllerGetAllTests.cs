@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Exposures.Controllers;
+using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
@@ -82,7 +83,7 @@ log: Mock.Of<ILogger<CultureController>>());
         // When
         PageController controller = new(
 service: serviceMock.Object,
-renderService: Mock.Of<IPageRenderCoordinationService>(),
+renderService: Mock.Of<IPageRenderAggregationService>(),
 log: Mock.Of<ILogger<PageController>>());
 
         // Then

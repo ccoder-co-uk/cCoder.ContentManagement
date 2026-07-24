@@ -8,7 +8,7 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.Data.Extensions;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using cCoder.ContentManagement.Services.Coordinations;
+using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,11 +23,11 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class PageController : ODataController
 {
     private readonly IPageOrchestrationService service;
-    private readonly IPageRenderCoordinationService renderService;
+    private readonly IPageRenderAggregationService renderService;
 
     public PageController(
         IPageOrchestrationService service,
-        IPageRenderCoordinationService renderService,
+        IPageRenderAggregationService renderService,
         ILogger<PageController> log)
     {
         this.service = service;

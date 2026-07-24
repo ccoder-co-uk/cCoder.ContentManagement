@@ -154,7 +154,7 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddRendering(this IServiceCollection services)
     {
-        services.AddTransient<IPageRenderCoordinationService, PageRenderCoordinationService>();
+        services.AddTransient<IPageRenderAggregationService, PageRenderAggregationService>();
         services.AddTransient<IPageRenderOrchestrationService, PageRenderOrchestrationService>();
         services.AddTransient<IPageRenderProcessingService, PageRenderProcessingService>();
         services.AddTransient<IPageRenderExecutionOrchestrationService, PageRenderExecutionOrchestrationService>();

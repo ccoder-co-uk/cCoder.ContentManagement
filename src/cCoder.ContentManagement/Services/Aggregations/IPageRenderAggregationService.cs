@@ -5,9 +5,9 @@
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Models;
 
-namespace cCoder.ContentManagement.Services.Coordinations;
+namespace cCoder.ContentManagement.Services.Aggregations;
 
-public interface IPageRenderCoordinationService
+public interface IPageRenderAggregationService
 {
     PageRenderResponse RenderPageRenderRequestPageRenderResponse(PageRenderRequest request);
 

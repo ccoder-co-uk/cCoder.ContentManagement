@@ -4,9 +4,9 @@
 
 using cCoder.ContentManagement.Models.Exceptions;
 
-namespace cCoder.ContentManagement.Services.Coordinations;
+namespace cCoder.ContentManagement.Services.Aggregations;
 
-internal sealed partial class PageRenderCoordinationService
+internal sealed partial class PageRenderAggregationService
 {
     private static void TryCatch(Action operation)
     {

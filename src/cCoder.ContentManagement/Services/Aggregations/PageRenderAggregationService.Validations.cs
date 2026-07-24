@@ -5,9 +5,9 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Exposures;
 
-namespace cCoder.ContentManagement.Services.Coordinations;
+namespace cCoder.ContentManagement.Services.Aggregations;
 
-internal sealed partial class PageRenderCoordinationService
+internal sealed partial class PageRenderAggregationService
 {
     private static void ValidateRequest(PageRenderRequest request, string parameterName) =>
         ThrowIf(condition: request == null, message: parameterName + " is required.");

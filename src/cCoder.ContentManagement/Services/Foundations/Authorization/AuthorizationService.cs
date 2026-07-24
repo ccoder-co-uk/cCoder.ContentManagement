@@ -13,4 +13,11 @@ internal partial class AuthorizationService(
     public User GetCurrentUser() =>
         TryCatch<User>(operation: () =>
             authorizationBroker.GetCurrentUser());
+
+    public bool IsAdminOfApp(int appId) =>
+        TryCatch<bool>(operation: () =>
+    {
+        ValidateIsAdminOfApp(inputs: [appId]);
+        return authorizationBroker.IsAdminOfApp(appId: appId);
+    });
 }

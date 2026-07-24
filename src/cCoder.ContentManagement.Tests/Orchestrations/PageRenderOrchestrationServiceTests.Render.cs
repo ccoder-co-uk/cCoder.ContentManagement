@@ -57,7 +57,12 @@ public partial class PageRenderOrchestrationServiceTests
         User user = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
         RenderResult expected = new() { StatusCode = 200 };
         Mock<IPageRenderProcessingService> processingServiceMock = new();
-        PageRenderOrchestrationService orchestrationService = new(config: new Config(), pageRenderProcessingService: processingServiceMock.Object);
+        Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock = new();
+
+        PageRenderOrchestrationService orchestrationService = new(
+            config: new Config(),
+            pageRenderProcessingService: processingServiceMock.Object,
+            authorizationProcessingService: authorizationProcessingServiceMock.Object);
 
         processingServiceMock
             .Setup(expression: x => x.RenderPageUserConfigRenderResult(page: page, user: user, config: It.IsAny<Config>(), theme: "Default", culture: string.Empty, edit: true))
