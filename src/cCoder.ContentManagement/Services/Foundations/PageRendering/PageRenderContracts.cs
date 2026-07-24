@@ -14,10 +14,10 @@ internal interface IMetadataCacheService
 
 internal interface ICommonObjectCacheService
 {
-    PageCacheSlice Get(PageRenderEngineRequest request);
+    PageCacheSlice GetPageRenderEngineRequestPageCacheSlice(PageRenderEngineRequest request);
 }
 
 internal interface IMarkupRenderService
 {
-    PageRenderResult Render(PageRenderSession session);
+    PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session);
 }

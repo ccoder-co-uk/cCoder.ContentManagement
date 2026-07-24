@@ -25,7 +25,7 @@ public partial class PageRoleProcessingServiceTests
         LocalPageRole link = new() { PageId = Random.Shared.Next(1, 1000), RoleId = Guid.NewGuid() };
 
         // When
-        Func<Task> act = async () => await pageRoleProcessingService.DeleteAllAsync(new[] { link });
+        Func<Task> act = async () => await pageRoleProcessingService.DeleteAllPageRoleAsync(new[] { link });
 
         // Then
         await act.Should().ThrowAsync<System.Security.SecurityException>();

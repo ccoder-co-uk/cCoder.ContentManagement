@@ -22,46 +22,46 @@ internal class AppProcessingService(
     IUserRoleBroker userRoleBroker,
     HttpContext httpContext = null) : IAppProcessingService
 {
-    public App Get(int id)
+    public App GetApp(int appId)
     {
-        ValidateId(id: id, parameterName: "id");
-        return service.Get(id: id);
+        ValidateId(appId: appId, parameterName: "id");
+        return service.GetApp(appId: appId);
     }
 
-    public string GetDomain(int id, bool ignoreFilters = false)
+    public string GetDomain(int appId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(appId: appId, parameterName: "id");
 
-        return service.GetAll(ignoreFilters: ignoreFilters)
-            .Where(predicate: app => app.Id == id)
+        return service.GetAllApp(ignoreFilters: ignoreFilters)
+            .Where(predicate: app => app.Id == appId)
             .Select(selector: app => app.Domain)
             .FirstOrDefault();
     }
 
-    public App GetByDomain(string domain, bool ignoreFilters = false)
+    public App GetByDomainApp(string domain, bool ignoreFilters = false)
     {
         ValidateDomain(domain: domain, parameterName: "domain");
 
-        return service.GetAll(ignoreFilters: ignoreFilters)
+        return service.GetAllApp(ignoreFilters: ignoreFilters)
             .Where(predicate: app => app.Domain == domain)
             .FirstOrDefault();
     }
 
-    public IQueryable<App> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<App> GetAllApp(bool ignoreFilters = false) =>
+        service.GetAllApp(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<App> AddAsync(App inputApp)
+    public async ValueTask<App> AddAppAsync(App newApp)
     {
-        ValidateApp(app: inputApp, parameterName: "inputApp");
+        ValidateApp(app: newApp, parameterName: "inputApp");
 
-        if (string.IsNullOrEmpty(value: inputApp.DefaultTheme))
+        if (string.IsNullOrEmpty(value: newApp.DefaultTheme))
         {
-            inputApp.DefaultTheme = "Default";
+            newApp.DefaultTheme = "Default";
         }
 
-        inputApp.Cultures = BuildCulturesForApp(newApp: inputApp);
-        inputApp.Roles = BuildRolesForApp(app: inputApp);
-        App storedApp = await service.AddAsync(app: inputApp);
+        newApp.Cultures = BuildCulturesForApp(newApp: newApp);
+        newApp.Roles = BuildRolesForApp(app: newApp);
+        App storedApp = await service.AddAppAsync(newApp: newApp);
 
         if (storedApp.Roles != null)
         {
@@ -70,7 +70,7 @@ internal class AppProcessingService(
                 role.AppId = storedApp.Id;
                 role.App = null;
 
-                await roleBroker.AddRoleAsync(entity: new Role
+                await roleBroker.AddRoleAsync(newRole: new Role
                 {
                     Id = role.Id,
                     AppId = role.AppId,
@@ -89,7 +89,7 @@ internal class AppProcessingService(
                     user.RoleId = role.Id;
                     user.Role = null;
 
-                    await userRoleBroker.AddUserRoleAsync(entity: new UserRole
+                    await userRoleBroker.AddUserRoleAsync(newUserRole: new UserRole
                     {
                         RoleId = user.RoleId,
                         UserId = user.UserId,
@@ -102,10 +102,10 @@ internal class AppProcessingService(
         return storedApp;
     }
 
-    public async ValueTask<App> UpdateAsync(App app)
+    public async ValueTask<App> UpdateAppAsync(App app)
     {
         ValidateApp(app: app, parameterName: "app");
-        App existingApp = service.Get(id: app.Id, ignoreFilters: true);
+        App existingApp = service.GetApp(appId: app.Id, ignoreFilters: true);
 
         if (existingApp == null)
         {
@@ -132,7 +132,7 @@ internal class AppProcessingService(
             existingApp.Cultures = BuildCulturesForApp(newApp: existingApp);
         }
 
-        App updatedApp = await service.UpdateAsync(app: existingApp);
+        App updatedApp = await service.UpdateAppAsync(updatedApp: existingApp);
 
         if (updatedApp.Roles != null)
         {
@@ -147,7 +147,7 @@ internal class AppProcessingService(
 
                 if (existingRoles.Any(predicate: existingRole => existingRole.Id == role.Id))
                 {
-                    await roleBroker.UpdateRoleAsync(entity: new Role
+                    await roleBroker.UpdateRoleAsync(updatedRole: new Role
                     {
                         Id = role.Id,
                         AppId = role.AppId,
@@ -158,7 +158,7 @@ internal class AppProcessingService(
                 }
                 else
                 {
-                    await roleBroker.AddRoleAsync(entity: new Role
+                    await roleBroker.AddRoleAsync(newRole: new Role
                     {
                         Id = role.Id,
                         AppId = role.AppId,
@@ -184,7 +184,7 @@ internal class AppProcessingService(
 
                 if (userRolesToDelete.Length > 0)
                 {
-                    await userRoleBroker.DeleteAllUserRolesAsync(items: userRolesToDelete);
+                    await userRoleBroker.DeleteAllUserRolesAsync(deletedUserRole: userRolesToDelete);
                 }
 
                 foreach (string userId in incomingUserIds)
@@ -194,7 +194,7 @@ internal class AppProcessingService(
                         continue;
                     }
 
-                    await userRoleBroker.AddUserRoleAsync(entity: new UserRole
+                    await userRoleBroker.AddUserRoleAsync(newUserRole: new UserRole
                     {
                         RoleId = role.Id,
                         UserId = userId,
@@ -207,24 +207,24 @@ internal class AppProcessingService(
         return updatedApp;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int appId)
     {
-        ValidateId(id: id, parameterName: "id");
-        await service.DeleteAsync(id: id);
+        ValidateId(appId: appId, parameterName: "id");
+        await service.DeleteAsync(appId: appId);
     }
 
-    public async ValueTask<IEnumerable<Result<App>>> AddOrUpdate(IEnumerable<App> items)
+    public async ValueTask<IEnumerable<Result<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp)
     {
-        ValidateApps(apps: items, parameterName: "items");
+        ValidateApps(apps: newApp, parameterName: "items");
         List<Result<App>> results = [];
 
-        foreach (App item in items)
+        foreach (App item in newApp)
         {
             try
             {
                 App app = item.Id < 1
-                    ? await AddAsync(inputApp: item)
-                    : await UpdateAsync(app: item);
+                    ? await AddAppAsync(newApp: item)
+                    : await UpdateAppAsync(app: item);
 
                 results.Add(item: new Result<App>
                 {
@@ -247,25 +247,25 @@ internal class AppProcessingService(
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<App> items)
+    public async ValueTask DeleteAllAppAsync(IEnumerable<App> deletedApp)
     {
-        ValidateApps(apps: items, parameterName: "items");
+        ValidateApps(apps: deletedApp, parameterName: "items");
 
-        foreach (App item in items)
+        foreach (App item in deletedApp)
         {
-            await DeleteAsync(id: item.Id);
+            await DeleteAsync(appId: item.Id);
         }
     }
 
     public IQueryable<User> GetAppUsers(int appId)
     {
-        ValidateId(id: appId, parameterName: "appId");
-        App app = Get(id: appId);
+        ValidateId(appId: appId, parameterName: "appId");
+        App app = GetApp(appId: appId);
 
         if (app != null)
         {
             return app.Roles.SelectMany(selector: (Role role) => role.Users.Select(selector: (UserRole userRole) => userRole.User))
-                        .AsQueryable();
+                .AsQueryable();
         }
 
         throw new SecurityException(message: "Access Denied!");
@@ -286,20 +286,20 @@ internal class AppProcessingService(
 
                 if (int.TryParse(s: text.Substring(startIndex: num3, length: num2 - num3), result: out var result))
                 {
-                    return service.Get(id: result);
+                    return service.GetApp(appId: result);
                 }
             }
         }
 
         string domain = httpContext?.Request.Host.Host ?? string.Empty;
-        return GetByDomain(domain: domain);
+        return GetByDomainApp(domain: domain);
     }
 
-    public async ValueTask UpdatePageOrderAsync(int key, App app)
+    public async ValueTask UpdatePageOrderAppAsync(int key, App updatedApp)
     {
-        ValidateId(id: key, parameterName: "key");
-        ValidateApp(app: app, parameterName: "app");
-        await service.UpdatePageOrderAsync(id: key, pages: app.Pages ?? new List<Page>());
+        ValidateId(appId: key, parameterName: "key");
+        ValidateApp(app: updatedApp, parameterName: "app");
+        await service.UpdatePageOrderAsync(appId: key, updatedPage: updatedApp.Pages ?? new List<Page>());
     }
 
     private ICollection<AppCulture> BuildCulturesForApp(App newApp)
@@ -309,7 +309,7 @@ internal class AppProcessingService(
         string[] requestedCultureIds = enumerable.Distinct()
             .ToArray();
 
-        AppCulture[] culturesForApp = cultureService.GetAll(ignoreFilters: false)
+        AppCulture[] culturesForApp = cultureService.GetAllCulture(ignoreFilters: false)
             .Where(predicate: culture => culture.Id == string.Empty || requestedCultureIds.Contains(value: culture.Id))
             .Select(selector: culture => new AppCulture
             {
@@ -330,7 +330,7 @@ internal class AppProcessingService(
         List<Role> list = (app.Roles ?? new List<Role>()).ToList();
         string currentUserId = authorizationBroker.GetCurrentUser()?.Id;
 
-        bool isFirstApp = !service.GetAll(ignoreFilters: true)
+        bool isFirstApp = !service.GetAllApp(ignoreFilters: true)
             .Any();
 
         string defaultUserId = string.IsNullOrWhiteSpace(value: currentUserId) ? "Guest" : currentUserId;
@@ -511,8 +511,8 @@ internal class AppProcessingService(
         }
     }
 
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int appId, string parameterName) =>
+        ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateApp(App app, string parameterName)
     {

@@ -31,7 +31,7 @@ public partial class ContentServiceTests
         contentBrokerMock.Setup(x => x.GetAllContents(false)).Returns(contents);
 
         // When
-        IQueryable<Content> result = contentService.GetAll();
+        IQueryable<Content> result = contentService.GetAllContent();
 
         // Then
         result.Should().BeEquivalentTo(expectedItems);

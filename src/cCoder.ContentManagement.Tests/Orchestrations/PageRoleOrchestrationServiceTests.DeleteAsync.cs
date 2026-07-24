@@ -22,17 +22,17 @@ public partial class PageRoleOrchestrationServiceTests
     {
         // Given
         PageRole pageRole = CreateRandomPageRole();
-        pageRoleProcessingServiceMock.Setup(x => x.DeleteAsync(pageRole)).Returns(ValueTask.CompletedTask);
+        pageRoleProcessingServiceMock.Setup(x => x.DeletePageRoleAsync(pageRole)).Returns(ValueTask.CompletedTask);
 
         pageRoleEventProcessingServiceMock
             .Setup(x => x.RaisePageRoleDeleteEventAsync(pageRole))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(pageRole);
+        await orchestrationService.DeletePageRoleAsync(pageRole);
 
         // Then
-        pageRoleProcessingServiceMock.Verify(x => x.DeleteAsync(pageRole), Times.Once);
+        pageRoleProcessingServiceMock.Verify(x => x.DeletePageRoleAsync(pageRole), Times.Once);
         pageRoleEventProcessingServiceMock.Verify(x => x.RaisePageRoleDeleteEventAsync(pageRole), Times.Once);
     }
 

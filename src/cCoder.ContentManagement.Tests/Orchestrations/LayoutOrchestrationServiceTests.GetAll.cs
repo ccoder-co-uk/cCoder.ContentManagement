@@ -23,14 +23,14 @@ public partial class LayoutOrchestrationServiceTests
     {
         // Given
         IQueryable<Layout> entities = new[] { CreateRandomLayout() }.AsQueryable();
-        layoutProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+        layoutProcessingServiceMock.Setup(x => x.GetAllLayout(true)).Returns(entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+        var result = orchestrationService.GetAllLayout(true).ToArray();
 
         // Then
         result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        layoutProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        layoutProcessingServiceMock.Verify(x => x.GetAllLayout(true), Times.Once);
         layoutProcessingServiceMock.VerifyNoOtherCalls();
         layoutEventProcessingServiceMock.VerifyNoOtherCalls();
     }

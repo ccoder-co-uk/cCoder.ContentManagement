@@ -46,7 +46,7 @@ public partial class SubmissionServiceTests
             .ReturnsAsync((CmsDataModels.Submission value) => value);
 
         // When
-        Submission result = await submissionService.AddAsync(submission);
+        Submission result = await submissionService.AddSubmissionAsync(submission);
 
         // Then
         result.Should().BeSameAs(submission);
@@ -151,7 +151,7 @@ public partial class SubmissionServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await submissionService.AddAsync(submission);
+        Func<Task> action = async () => await submissionService.AddSubmissionAsync(submission);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

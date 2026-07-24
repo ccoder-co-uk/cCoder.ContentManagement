@@ -14,44 +14,44 @@ internal class LayoutOrchestrationService(
     ILayoutProcessingService processingService,
     ILayoutEventProcessingService eventService) : ILayoutOrchestrationService
 {
-    public Layout Get(int id) =>
-        processingService.Get(id: ValidateId(id: id, parameterName: "id"));
+    public Layout GetLayout(int layoutId) =>
+        processingService.GetLayout(layoutId: ValidateId(layoutId: layoutId, parameterName: "id"));
 
-    public IQueryable<Layout> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Layout> GetAllLayout(bool ignoreFilters = false) =>
+        processingService.GetAllLayout(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Layout> AddAsync(Layout entity)
+    public async ValueTask<Layout> AddLayoutAsync(Layout newLayout)
     {
-        ValidateLayout(layout: entity, parameterName: "entity");
+        ValidateLayout(layout: newLayout, parameterName: "entity");
 
-        Layout result = await processingService.AddAsync(entity: entity);
+        Layout result = await processingService.AddLayoutAsync(newLayout: newLayout);
         await eventService.RaiseLayoutAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask<Layout> UpdateAsync(Layout entity)
+    public async ValueTask<Layout> UpdateLayoutAsync(Layout updatedLayout)
     {
-        ValidateLayout(layout: entity, parameterName: "entity");
+        ValidateLayout(layout: updatedLayout, parameterName: "entity");
 
-        Layout result = await processingService.UpdateAsync(entity: entity);
+        Layout result = await processingService.UpdateLayoutAsync(updatedLayout: updatedLayout);
         await eventService.RaiseLayoutUpdateEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int layoutId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(layoutId: layoutId, parameterName: "id");
 
         Layout entity;
 
         try
         {
-            entity = processingService.Get(id: id);
+            entity = processingService.GetLayout(layoutId: layoutId);
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAll(ignoreFilters: true)
-                .FirstOrDefault(predicate: layout => layout.Id == id);
+            entity = processingService.GetAllLayout(ignoreFilters: true)
+                .FirstOrDefault(predicate: layout => layout.Id == layoutId);
         }
 
         if (entity == null)
@@ -60,25 +60,25 @@ internal class LayoutOrchestrationService(
         }
 
         await eventService.RaiseLayoutDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(id: id);
+        await processingService.DeleteAsync(layoutId: layoutId);
     }
 
     public async ValueTask DeleteByAppIdAsync(int appId)
     {
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        Layout[] layoutsToDelete = [.. GetAll(ignoreFilters: true)
+        Layout[] layoutsToDelete = [.. GetAllLayout(ignoreFilters: true)
             .Where(predicate: layout => layout.AppId == appId)];
 
         if (layoutsToDelete.Length > 0)
         {
-            await DeleteAllAsync(items: layoutsToDelete);
+            await DeleteAllLayoutAsync(deletedLayout: layoutsToDelete);
         }
     }
 
-    public async ValueTask<IEnumerable<Result<Layout>>> AddOrUpdate(IEnumerable<Layout> items)
+    public async ValueTask<IEnumerable<Result<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout)
     {
-        Layout[] layouts = ValidateLayouts(layouts: items, parameterName: "items")
+        Layout[] layouts = ValidateLayouts(layouts: newLayout, parameterName: "items")
             .ToArray();
 
         List<Result<Layout>> results = new();
@@ -88,8 +88,8 @@ internal class LayoutOrchestrationService(
             try
             {
                 Layout result = layout.Id <= 0
-                    ? await AddAsync(entity: layout)
-                    : await UpdateAsync(entity: layout);
+                    ? await AddLayoutAsync(newLayout: layout)
+                    : await UpdateLayoutAsync(updatedLayout: layout);
 
                 results.Add(item: new Result<Layout>
                 {
@@ -122,7 +122,7 @@ internal class LayoutOrchestrationService(
         string[] names = validatedItems.Select(selector: layout => layout.Name.ToLower())
             .ToArray();
 
-        var dbVersions = processingService.GetAll()
+        var dbVersions = processingService.GetAllLayout()
             .Where(predicate: layout => layout.AppId == appId && ((ReadOnlySpan<string>)names).Contains(value: layout.Name.ToLower()))
             .Select(selector: layout => new { layout.Id, layout.Name })
             .ToArray();
@@ -135,28 +135,28 @@ internal class LayoutOrchestrationService(
                 existing.Name.Equals(value: layout.Name, comparisonType: StringComparison.OrdinalIgnoreCase))?.Id ?? 0;
         });
 
-        await AddOrUpdate(items: validatedItems);
+        await AddOrUpdateLayoutResult(newLayout: validatedItems);
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Layout> items)
+    public async ValueTask DeleteAllLayoutAsync(IEnumerable<Layout> deletedLayout)
     {
-        Layout[] layouts = ValidateLayouts(layouts: items, parameterName: "items")
+        Layout[] layouts = ValidateLayouts(layouts: deletedLayout, parameterName: "items")
             .ToArray();
 
         foreach (Layout layout in layouts)
         {
-            await DeleteAsync(id: layout.Id);
+            await DeleteAsync(layoutId: layout.Id);
         }
     }
 
-    private static int ValidateId(int id, string parameterName)
+    private static int ValidateId(int layoutId, string parameterName)
     {
-        if (id < 1)
+        if (layoutId < 1)
         {
             throw new ValidationException(message: parameterName + " must be greater than 0.");
         }
 
-        return id;
+        return layoutId;
     }
 
     private static int ValidateAppId(int appId, string parameterName)

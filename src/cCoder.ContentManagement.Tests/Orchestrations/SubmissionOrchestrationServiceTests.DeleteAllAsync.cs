@@ -22,13 +22,13 @@ public partial class SubmissionOrchestrationServiceTests
     {
         // Given
         Submission[] entities = [CreateRandomSubmission()];
-        submissionProcessingServiceMock.Setup(x => x.DeleteAllAsync(entities)).Returns(ValueTask.CompletedTask);
+        submissionProcessingServiceMock.Setup(x => x.DeleteAllSubmissionAsync(entities)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllSubmissionAsync(entities);
 
         // Then
-        submissionProcessingServiceMock.Verify(x => x.DeleteAllAsync(entities), Times.Once);
+        submissionProcessingServiceMock.Verify(x => x.DeleteAllSubmissionAsync(entities), Times.Once);
         submissionProcessingServiceMock.VerifyNoOtherCalls();
         submissionEventProcessingServiceMock.VerifyNoOtherCalls();
     }

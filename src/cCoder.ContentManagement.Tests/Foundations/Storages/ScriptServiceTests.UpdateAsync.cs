@@ -42,7 +42,7 @@ public partial class ScriptServiceTests
             .ReturnsAsync((CmsDataModels.Script value) => value);
 
         // When
-        Script result = await scriptService.UpdateAsync(script);
+        Script result = await scriptService.UpdateScriptAsync(script);
 
         // Then
         result.Should().BeSameAs(script);
@@ -139,7 +139,7 @@ public partial class ScriptServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await scriptService.UpdateAsync(script);
+        Func<Task> action = async () => await scriptService.UpdateScriptAsync(script);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

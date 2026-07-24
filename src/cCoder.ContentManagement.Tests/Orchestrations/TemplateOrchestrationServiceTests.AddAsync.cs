@@ -23,18 +23,18 @@ public partial class TemplateOrchestrationServiceTests
     {
         // Given
         Template entity = CreateRandomTemplate();
-        templateProcessingServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
+        templateProcessingServiceMock.Setup(x => x.AddTemplateAsync(entity)).ReturnsAsync(entity);
 
         templateEventProcessingServiceMock
             .Setup(x => x.RaiseTemplateAddEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Template result = await orchestrationService.AddAsync(entity);
+        Template result = await orchestrationService.AddTemplateAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        templateProcessingServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
+        templateProcessingServiceMock.Verify(x => x.AddTemplateAsync(entity), Times.Once);
         templateEventProcessingServiceMock.Verify(x => x.RaiseTemplateAddEventAsync(entity), Times.Once);
     }
 

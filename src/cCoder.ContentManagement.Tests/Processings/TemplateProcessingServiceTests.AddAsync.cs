@@ -26,14 +26,14 @@ public partial class TemplateProcessingServiceTests
     {
         // Given
         Template template = CreateRandomTemplate();
-        templateServiceMock.Setup(x => x.AddAsync(template)).ReturnsAsync(template);
+        templateServiceMock.Setup(x => x.AddTemplateAsync(template)).ReturnsAsync(template);
 
         // When
-        Template result = await templateProcessingService.AddAsync(template);
+        Template result = await templateProcessingService.AddTemplateAsync(template);
 
         // Then
         Assert.Same(template, result);
-        templateServiceMock.Verify(x => x.AddAsync(template), Times.Once);
+        templateServiceMock.Verify(x => x.AddTemplateAsync(template), Times.Once);
     }
 
     [Fact]
@@ -43,12 +43,12 @@ public partial class TemplateProcessingServiceTests
         Template template = CreateRandomTemplate();
 
         templateServiceMock
-            .Setup(x => x.AddAsync(template))
+            .Setup(x => x.AddTemplateAsync(template))
             .ThrowsAsync(new SecurityException("Access Denied!"));
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await templateProcessingService.AddAsync(template)
+            await templateProcessingService.AddTemplateAsync(template)
         );
 
         // Then

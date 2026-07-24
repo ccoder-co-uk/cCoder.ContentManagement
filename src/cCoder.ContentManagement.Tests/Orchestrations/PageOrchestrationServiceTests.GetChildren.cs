@@ -22,12 +22,12 @@ public partial class PageOrchestrationServiceTests
     public void ShouldReturnProcessingResultsWhenGetChildren()
     {
         Page[] expected = [CreateRandomPage()];
-        pageProcessingServiceMock.Setup(x => x.GetChildren(1)).Returns(expected);
+        pageProcessingServiceMock.Setup(x => x.GetChildrenPage(1)).Returns(expected);
 
-        var result = orchestrationService.GetChildren(1).ToArray();
+        var result = orchestrationService.GetChildrenPage(1).ToArray();
 
         result.Select(item => item.Id).Should().Equal(expected.Select(item => item.Id));
-        pageProcessingServiceMock.Verify(x => x.GetChildren(1), Times.Once);
+        pageProcessingServiceMock.Verify(x => x.GetChildrenPage(1), Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }

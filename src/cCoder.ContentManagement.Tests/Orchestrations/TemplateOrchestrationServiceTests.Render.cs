@@ -33,7 +33,7 @@ public partial class TemplateRenderOrchestrationServiceTests
         };
         templateRenderProcessingServiceMock
             .Setup(x =>
-                x.Render(
+                x.RenderUserConfig(
                     1,
                     "template",
                     model,
@@ -45,7 +45,7 @@ public partial class TemplateRenderOrchestrationServiceTests
             )
             .Returns("rendered");
 
-        string result = renderOrchestrationService.Render(1, "template", "en-GB", model, user);
+        string result = renderOrchestrationService.RenderUser(1, "template", "en-GB", model, user);
 
         result.Should().Be("rendered");
         templateRenderProcessingServiceMock.VerifyAll();

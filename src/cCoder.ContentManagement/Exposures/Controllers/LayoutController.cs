@@ -35,7 +35,7 @@ public class LayoutController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Layout> queryOptions) =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllLayout());
 
     [HttpGet]
     [AllowAnonymous]
@@ -44,7 +44,7 @@ public class LayoutController : ODataController
     {
         try
         {
-            IQueryable<Layout> result = Service.GetAll()
+            IQueryable<Layout> result = Service.GetAllLayout()
                 .Where(predicate: layout => layout.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -57,32 +57,32 @@ public class LayoutController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Layout entity)
+    public async Task<IActionResult> Post([FromBody] Layout newLayout)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddAsync(entity: entity));
+        return Ok(value: await Service.AddLayoutAsync(newLayout: newLayout));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Layout entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Layout updatedLayout)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdateAsync(entity: entity));
+        return Ok(value: await Service.UpdateLayoutAsync(updatedLayout: updatedLayout));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<Layout> delta)
     {
-        Layout originalEntity = Service.Get(id: key);
+        Layout originalEntity = Service.GetLayout(layoutId: key);
 
         if (originalEntity == null)
         {
@@ -90,13 +90,13 @@ public class LayoutController : ODataController
         }
 
         delta.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateAsync(entity: originalEntity));
+        return Ok(value: await Service.UpdateLayoutAsync(updatedLayout: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(id: key);
+        await Service.DeleteAsync(layoutId: key);
         return Ok();
     }
 }

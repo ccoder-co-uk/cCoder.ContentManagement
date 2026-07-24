@@ -27,7 +27,7 @@ public partial class ContentServiceTests
         contentBrokerMock.Setup(x => x.GetAllContents(false)).Returns(new[] { content }.AsQueryable());
 
         // When
-        Content result = contentService.Get(7);
+        Content result = contentService.GetContent(7);
 
         // Then
         result.Should().BeEquivalentTo(content);

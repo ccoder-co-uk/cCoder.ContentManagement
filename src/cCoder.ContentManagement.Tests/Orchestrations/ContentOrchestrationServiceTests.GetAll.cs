@@ -23,14 +23,14 @@ public partial class ContentOrchestrationServiceTests
     {
         // Given
         IQueryable<Content> entities = new[] { CreateRandomContent() }.AsQueryable();
-        contentProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+        contentProcessingServiceMock.Setup(x => x.GetAllContent(true)).Returns(entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+        var result = orchestrationService.GetAllContent(true).ToArray();
 
         // Then
         result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        contentProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        contentProcessingServiceMock.Verify(x => x.GetAllContent(true), Times.Once);
         contentProcessingServiceMock.VerifyNoOtherCalls();
         contentEventProcessingServiceMock.VerifyNoOtherCalls();
     }

@@ -24,14 +24,14 @@ public partial class AppCultureProcessingServiceTests
     {
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
-        appCultureServiceMock.Setup(x => x.AddAsync(appCulture)).ReturnsAsync(appCulture);
+        appCultureServiceMock.Setup(x => x.AddAppCultureAsync(appCulture)).ReturnsAsync(appCulture);
 
         // When
-        AppCulture result = await appCultureProcessingService.AddAsync(appCulture);
+        AppCulture result = await appCultureProcessingService.AddAppCultureAsync(appCulture);
 
         // Then
         Assert.Same(appCulture, result);
-        appCultureServiceMock.Verify(x => x.AddAsync(appCulture), Times.Once);
+        appCultureServiceMock.Verify(x => x.AddAppCultureAsync(appCulture), Times.Once);
     }
 
     [Fact]
@@ -40,12 +40,12 @@ public partial class AppCultureProcessingServiceTests
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
         appCultureServiceMock
-            .Setup(x => x.AddAsync(appCulture))
+            .Setup(x => x.AddAppCultureAsync(appCulture))
             .ThrowsAsync(new SecurityException("Access Denied!"));
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await appCultureProcessingService.AddAsync(appCulture)
+            await appCultureProcessingService.AddAppCultureAsync(appCulture)
         );
 
         // Then
@@ -61,12 +61,12 @@ public partial class AppCultureProcessingServiceTests
             new Exception("The INSERT statement conflicted with the FOREIGN KEY constraint."));
 
         appCultureServiceMock
-            .Setup(x => x.AddAsync(appCulture))
+            .Setup(x => x.AddAppCultureAsync(appCulture))
             .ThrowsAsync(exception);
 
         // When
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            await appCultureProcessingService.AddAsync(appCulture));
+            await appCultureProcessingService.AddAppCultureAsync(appCulture));
 
         // Then
     }

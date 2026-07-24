@@ -76,18 +76,18 @@ public partial class PageProcessingServiceTests
         dbPage.Roles = [];
 
         currentUser = actor;
-        pageServiceMock.Setup(x => x.GetAll(true))
+        pageServiceMock.Setup(x => x.GetAllPage(true))
             .Returns(new[] { dbPage }.AsQueryable());
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { dbPage }.AsQueryable());
-        pageServiceMock.Setup(x => x.UpdateAsync(It.IsAny<Page>())).ReturnsAsync(dbPage);
+        pageServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { dbPage }.AsQueryable());
+        pageServiceMock.Setup(x => x.UpdatePageAsync(It.IsAny<Page>())).ReturnsAsync(dbPage);
         // When
-        Page result = await pageProcessingService.UpdateAsync(page);
+        Page result = await pageProcessingService.UpdatePageAsync(page);
 
         // Then
         result.Should().BeSameAs(dbPage);
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
-        pageServiceMock.Verify(x => x.UpdateAsync(It.Is<Page>(updated =>
+        pageServiceMock.Verify(x => x.GetAllPage(false), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(true), Times.Once);
+        pageServiceMock.Verify(x => x.UpdatePageAsync(It.Is<Page>(updated =>
             updated.Id == page.Id &&
             updated.AppId == page.AppId &&
             updated.Name == page.Name)), Times.Once);
@@ -113,16 +113,16 @@ public partial class PageProcessingServiceTests
         authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
 
         Page page = CreateRandomPage();
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { page }.AsQueryable());
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { page }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { page }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { page }.AsQueryable());
 
         // When
-        Func<Task> act = async () => await pageProcessingService.UpdateAsync(page);
+        Func<Task> act = async () => await pageProcessingService.UpdatePageAsync(page);
 
         // Then
         await act.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(false), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(true), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
@@ -185,18 +185,18 @@ public partial class PageProcessingServiceTests
         page.Roles = [];
 
         currentUser = actor;
-        pageServiceMock.SetupSequence(x => x.GetAll(true))
+        pageServiceMock.SetupSequence(x => x.GetAllPage(true))
             .Returns(new[] { dbPage }.AsQueryable())
             .Returns(Array.Empty<Page>().AsQueryable());
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { dbPage }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { dbPage }.AsQueryable());
 
         // When
-        Func<Task> act = async () => await pageProcessingService.UpdateAsync(page);
+        Func<Task> act = async () => await pageProcessingService.UpdatePageAsync(page);
 
         // Then
         await act.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Exactly(2));
+        pageServiceMock.Verify(x => x.GetAllPage(false), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(true), Times.Exactly(2));
         pageServiceMock.VerifyNoOtherCalls();
     }
 

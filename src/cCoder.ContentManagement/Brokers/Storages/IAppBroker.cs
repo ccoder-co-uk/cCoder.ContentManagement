@@ -10,13 +10,13 @@ public interface IAppBroker
 {
     IQueryable<App> GetAllApps(bool ignoreFilters);
 
-    ValueTask<App> AddAppAsync(App entity);
+    ValueTask<App> AddAppAsync(App newApp);
 
-    ValueTask<App> UpdateAppAsync(App entity);
+    ValueTask<App> UpdateAppAsync(App updatedApp);
 
-    ValueTask<int> DeleteAppAsync(App entity);
+    ValueTask<int> DeleteAppAsync(App deletedApp);
 
-    ValueTask DeleteAppAggregateAsync(App entity);
+    ValueTask DeleteAppAggregateAsync(App deletedApp);
 
-    ValueTask DeleteAllAppsAsync(IEnumerable<App> items);
+    ValueTask DeleteAllAppsAsync(IEnumerable<App> deletedApp);
 }

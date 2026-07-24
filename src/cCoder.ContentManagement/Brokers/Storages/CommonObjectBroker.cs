@@ -48,36 +48,36 @@ public class CommonObjectBroker(ICoreContextFactory coreContextFactory) : ICommo
         return list.ToArray();
     }
 
-    public async ValueTask<CommonObject> AddCommonObjectAsync(CommonObject entity)
+    public async ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        CommonObject result = (await coreDataContext.CommonObjects.AddAsync(entity: entity)).Entity;
+        CommonObject result = (await coreDataContext.CommonObjects.AddAsync(entity: newCommonObject)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject entity)
+    public async ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        CommonObject result = coreDataContext.CommonObjects.Update(entity: entity)
+        CommonObject result = coreDataContext.CommonObjects.Update(entity: updatedCommonObject)
             .Entity;
 
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeleteCommonObjectAsync(CommonObject entity)
+    public async ValueTask<int> DeleteCommonObjectAsync(CommonObject deletedCommonObject)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.CommonObjects.Remove(entity: entity);
+        coreDataContext.CommonObjects.Remove(entity: deletedCommonObject);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllCommonObjectsAsync(IEnumerable<CommonObject> items)
+    public async ValueTask DeleteAllCommonObjectsAsync(IEnumerable<CommonObject> deletedCommonObject)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.CommonObjects.RemoveRange(entities: items);
+        coreDataContext.CommonObjects.RemoveRange(entities: deletedCommonObject);
         await coreDataContext.SaveChangesAsync();
     }
 

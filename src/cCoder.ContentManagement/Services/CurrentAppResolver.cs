@@ -24,14 +24,14 @@ internal class CurrentAppResolver(IAppService service, HttpContext httpContext =
 
                 if (int.TryParse(s: text.Substring(startIndex: num3, length: num2 - num3), result: out var result))
                 {
-                    return service.Get(id: result);
+                    return service.GetApp(appId: result);
                 }
             }
         }
 
         string host = httpContext?.Request.Host.Host ?? string.Empty;
 
-        return service.GetAll()
+        return service.GetAllApp()
             .FirstOrDefault(predicate: (App app) => app.Domain == host);
     }
 }

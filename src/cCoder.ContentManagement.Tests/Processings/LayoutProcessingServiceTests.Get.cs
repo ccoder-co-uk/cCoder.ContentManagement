@@ -24,14 +24,14 @@ public partial class LayoutProcessingServiceTests
         // Given
         Layout entity = CreateRandomLayout();
         var id = entity.Id;
-        layoutServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        layoutServiceMock.Setup(x => x.GetLayout(id)).Returns(entity);
 
         // When
-        Layout result = layoutProcessingService.Get(id);
+        Layout result = layoutProcessingService.GetLayout(id);
 
         // Then
         result.Should().BeSameAs(entity);
-        layoutServiceMock.Verify(x => x.Get(id), Times.Once);
+        layoutServiceMock.Verify(x => x.GetLayout(id), Times.Once);
         layoutServiceMock.VerifyNoOtherCalls();
     }
 

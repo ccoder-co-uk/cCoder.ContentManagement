@@ -23,18 +23,18 @@ public partial class AppCultureOrchestrationServiceTests
     {
         // Given
         AppCulture entity = CreateRandomAppCulture();
-        appCultureProcessingServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
+        appCultureProcessingServiceMock.Setup(x => x.AddAppCultureAsync(entity)).ReturnsAsync(entity);
 
         appCultureEventProcessingServiceMock
             .Setup(x => x.RaiseAppCultureAddEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        AppCulture result = await orchestrationService.AddAsync(entity);
+        AppCulture result = await orchestrationService.AddAppCultureAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        appCultureProcessingServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
+        appCultureProcessingServiceMock.Verify(x => x.AddAppCultureAsync(entity), Times.Once);
         appCultureEventProcessingServiceMock.Verify(x => x.RaiseAppCultureAddEventAsync(entity), Times.Once);
     }
 

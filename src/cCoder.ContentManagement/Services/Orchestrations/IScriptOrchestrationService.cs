@@ -9,21 +9,21 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IScriptOrchestrationService
 {
-    Script Get(int id);
+    Script GetScript(int scriptId);
 
-    IQueryable<Script> GetAll(bool ignoreFilters = false);
+    IQueryable<Script> GetAllScript(bool ignoreFilters = false);
 
-    ValueTask<Script> AddAsync(Script entity);
+    ValueTask<Script> AddScriptAsync(Script newScript);
 
-    ValueTask<Script> UpdateAsync(Script entity);
+    ValueTask<Script> UpdateScriptAsync(Script updatedScript);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int scriptId);
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<Result<Script>>> AddOrUpdate(IEnumerable<Script> items);
+    ValueTask<IEnumerable<Result<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript);
 
     ValueTask ImportScriptsAsync(int appId, Script[] items);
 
-    ValueTask DeleteAllAsync(IEnumerable<Script> items);
+    ValueTask DeleteAllScriptAsync(IEnumerable<Script> deletedScript);
 }

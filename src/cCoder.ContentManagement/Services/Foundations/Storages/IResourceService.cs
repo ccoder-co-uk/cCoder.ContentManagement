@@ -8,13 +8,13 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface IResourceService
 {
-    Resource Get(int id, bool ignoreFilters = false);
+    Resource GetResource(int resourceId, bool ignoreFilters = false);
 
-    IQueryable<Resource> GetAll(bool ignoreFilters = false);
+    IQueryable<Resource> GetAllResource(bool ignoreFilters = false);
 
-    ValueTask<Resource> AddAsync(Resource resource);
+    ValueTask<Resource> AddResourceAsync(Resource newResource);
 
-    ValueTask<Resource> UpdateAsync(Resource resource);
+    ValueTask<Resource> UpdateResourceAsync(Resource updatedResource);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int resourceId);
 }

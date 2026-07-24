@@ -31,7 +31,7 @@ public partial class PackageItemServiceTests
         packageItemBrokerMock.Setup(x => x.GetAllPackageItems(false)).Returns(packageItems);
 
         // When
-        IQueryable<PackageItem> result = packageItemService.GetAll();
+        IQueryable<PackageItem> result = packageItemService.GetAllPackageItem();
 
         // Then
         result.Should().BeEquivalentTo(expectedItems);

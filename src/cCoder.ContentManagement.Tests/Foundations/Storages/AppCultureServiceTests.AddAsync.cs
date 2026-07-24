@@ -45,7 +45,7 @@ public partial class AppCultureServiceTests
             .ReturnsAsync((CmsDataModels.AppCulture value) => value);
 
         // When
-        AppCulture result = await appCultureService.AddAsync(appCulture);
+        AppCulture result = await appCultureService.AddAppCultureAsync(appCulture);
 
         // Then
         result.Should().BeSameAs(appCulture);
@@ -81,7 +81,7 @@ public partial class AppCultureServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await appCultureService.AddAsync(appCulture);
+        Func<Task> action = async () => await appCultureService.AddAppCultureAsync(appCulture);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

@@ -24,14 +24,14 @@ public partial class AppOrchestrationServiceTests
         // Given
         int id = 1;
         App entity = CreateRandomApp();
-        appProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        appProcessingServiceMock.Setup(x => x.GetApp(id)).Returns(entity);
 
         // When
-        App result = orchestrationService.Get(id);
+        App result = orchestrationService.GetApp(id);
 
         // Then
         result.Should().BeEquivalentTo(entity, options => options.Excluding(app => app.Config));
-        appProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        appProcessingServiceMock.Verify(x => x.GetApp(id), Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }

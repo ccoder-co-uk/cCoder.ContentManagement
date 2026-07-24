@@ -63,7 +63,7 @@ public partial class AppProcessingServiceTests
                 ],
             },
         ];
-        appServiceMock.Setup(x => x.Get(app.Id)).Returns(app);
+        appServiceMock.Setup(x => x.GetApp(app.Id)).Returns(app);
 
         // When
         User[] result = appProcessingService.GetAppUsers(app.Id).ToArray();
@@ -71,7 +71,7 @@ public partial class AppProcessingServiceTests
         // Then
         result.Should().ContainSingle();
         result[0].Should().BeSameAs(appUser);
-        appServiceMock.Verify(x => x.Get(app.Id), Times.Once);
+        appServiceMock.Verify(x => x.GetApp(app.Id), Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 
@@ -93,14 +93,14 @@ public partial class AppProcessingServiceTests
 
         authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
 
-        appServiceMock.Setup(x => x.Get(1)).Returns((App)null!);
+        appServiceMock.Setup(x => x.GetApp(1)).Returns((App)null!);
 
         // When
         Action act = () => appProcessingService.GetAppUsers(1).ToArray();
 
         // Then
         act.Should().Throw<SecurityException>().WithMessage("Access Denied!");
-        appServiceMock.Verify(x => x.Get(1), Times.Once);
+        appServiceMock.Verify(x => x.GetApp(1), Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 

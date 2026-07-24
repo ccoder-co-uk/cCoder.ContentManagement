@@ -23,14 +23,14 @@ public partial class PageInfoProcessingServiceTests
     {
         // Given
         PageInfo entity = CreateRandomPageInfo();
-        pageInfoServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
+        pageInfoServiceMock.Setup(x => x.AddPageInfoAsync(entity)).ReturnsAsync(entity);
 
         // When
-        PageInfo result = await pageInfoProcessingService.AddAsync(entity);
+        PageInfo result = await pageInfoProcessingService.AddPageInfoAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        pageInfoServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
+        pageInfoServiceMock.Verify(x => x.AddPageInfoAsync(entity), Times.Once);
         pageInfoServiceMock.VerifyNoOtherCalls();
     }
 

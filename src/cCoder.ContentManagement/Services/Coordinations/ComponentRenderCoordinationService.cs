@@ -23,6 +23,6 @@ internal sealed partial class ComponentRenderCoordinationService(
 
         culture ??= User.DefaultCultureId;
 
-        return componentRenderOrchestrationService.Render(appId: appId, name: name, user: User, culture: culture, theme: theme);
+        return componentRenderOrchestrationService.RenderUser(appId: appId, name: name, user: User, culture: culture, theme: theme);
     }
 }

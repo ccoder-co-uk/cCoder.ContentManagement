@@ -10,9 +10,9 @@ public interface IPageRoleBroker
 {
     IQueryable<PageRole> GetAllPageRoles(bool ignoreFilters);
 
-    ValueTask<PageRole> AddPageRoleAsync(PageRole entity);
+    ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole);
 
-    ValueTask<int> DeletePageRoleAsync(PageRole entity);
+    ValueTask<int> DeletePageRoleAsync(PageRole deletedPageRole);
 
-    ValueTask DeleteAllPageRolesAsync(IEnumerable<PageRole> items);
+    ValueTask DeleteAllPageRolesAsync(IEnumerable<PageRole> deletedPageRole);
 }

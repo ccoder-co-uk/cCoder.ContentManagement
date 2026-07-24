@@ -37,16 +37,16 @@ public partial class PageRenderCoordinationServiceTests
     public PageRenderCoordinationServiceTests()
     {
         authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
-        layoutOrchestrationServiceMock.Setup(x => x.GetAll(false)).Returns(Array.Empty<Layout>().AsQueryable());
-        templateOrchestrationServiceMock.Setup(x => x.GetAll(false)).Returns(Array.Empty<Template>().AsQueryable());
-        resourceOrchestrationServiceMock.Setup(x => x.GetAll(false)).Returns(Array.Empty<Resource>().AsQueryable());
-        componentOrchestrationServiceMock.Setup(x => x.GetAll(false)).Returns(Array.Empty<Component>().AsQueryable());
-        scriptOrchestrationServiceMock.Setup(x => x.GetAll(false)).Returns(Array.Empty<Script>().AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAll(false)).Returns(Array.Empty<Page>().AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAll(true)).Returns(Array.Empty<Page>().AsQueryable());
-        contentOrchestrationServiceMock.Setup(x => x.GetAll(true)).Returns(Array.Empty<Content>().AsQueryable());
-        pageInfoOrchestrationServiceMock.Setup(x => x.GetAll(true)).Returns(Array.Empty<PageInfo>().AsQueryable());
-        pageRoleOrchestrationServiceMock.Setup(x => x.GetAll(true)).Returns(Array.Empty<PageRole>().AsQueryable());
+        layoutOrchestrationServiceMock.Setup(x => x.GetAllLayout(false)).Returns(Array.Empty<Layout>().AsQueryable());
+        templateOrchestrationServiceMock.Setup(x => x.GetAllTemplate(false)).Returns(Array.Empty<Template>().AsQueryable());
+        resourceOrchestrationServiceMock.Setup(x => x.GetAllResource(false)).Returns(Array.Empty<Resource>().AsQueryable());
+        componentOrchestrationServiceMock.Setup(x => x.GetAllComponent(false)).Returns(Array.Empty<Component>().AsQueryable());
+        scriptOrchestrationServiceMock.Setup(x => x.GetAllScript(false)).Returns(Array.Empty<Script>().AsQueryable());
+        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(false)).Returns(Array.Empty<Page>().AsQueryable());
+        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(true)).Returns(Array.Empty<Page>().AsQueryable());
+        contentOrchestrationServiceMock.Setup(x => x.GetAllContent(true)).Returns(Array.Empty<Content>().AsQueryable());
+        pageInfoOrchestrationServiceMock.Setup(x => x.GetAllPageInfo(true)).Returns(Array.Empty<PageInfo>().AsQueryable());
+        pageRoleOrchestrationServiceMock.Setup(x => x.GetAllPageRole(true)).Returns(Array.Empty<PageRole>().AsQueryable());
 
         coordinationService = new PageRenderCoordinationService(
             authorizationBrokerMock.Object,

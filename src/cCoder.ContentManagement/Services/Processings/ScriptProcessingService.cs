@@ -11,43 +11,43 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal class ScriptProcessingService(IScriptService service) : IScriptProcessingService
 {
-    public Script Get(int id)
+    public Script GetScript(int scriptId)
     {
-        ValidateId(id: id, parameterName: "id");
-        return service.Get(id: id);
+        ValidateId(scriptId: scriptId, parameterName: "id");
+        return service.GetScript(scriptId: scriptId);
     }
 
-    public IQueryable<Script> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Script> GetAllScript(bool ignoreFilters = false) =>
+        service.GetAllScript(ignoreFilters: ignoreFilters);
 
-    public ValueTask<Script> AddAsync(Script entity)
+    public ValueTask<Script> AddScriptAsync(Script newScript)
     {
-        ValidateScript(script: entity, parameterName: "entity");
-        return service.AddAsync(script: entity);
+        ValidateScript(script: newScript, parameterName: "entity");
+        return service.AddScriptAsync(newScript: newScript);
     }
 
-    public ValueTask<Script> UpdateAsync(Script entity)
+    public ValueTask<Script> UpdateScriptAsync(Script updatedScript)
     {
-        ValidateScript(script: entity, parameterName: "entity");
-        return service.UpdateAsync(script: entity);
+        ValidateScript(script: updatedScript, parameterName: "entity");
+        return service.UpdateScriptAsync(updatedScript: updatedScript);
     }
 
-    public ValueTask DeleteAsync(int id)
+    public ValueTask DeleteAsync(int scriptId)
     {
-        ValidateId(id: id, parameterName: "id");
-        return service.DeleteAsync(id: id);
+        ValidateId(scriptId: scriptId, parameterName: "id");
+        return service.DeleteAsync(scriptId: scriptId);
     }
 
-    public async ValueTask<IEnumerable<Result<Script>>> AddOrUpdate(IEnumerable<Script> items)
+    public async ValueTask<IEnumerable<Result<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript)
     {
-        ValidateScripts(scripts: items, parameterName: "items");
+        ValidateScripts(scripts: newScript, parameterName: "items");
         List<Result<Script>> results = new List<Result<Script>>();
 
-        foreach (Script item in items)
+        foreach (Script item in newScript)
         {
             try
             {
-                Script savedItem = item.Id < 1 ? await AddAsync(entity: item) : await UpdateAsync(entity: item);
+                Script savedItem = item.Id < 1 ? await AddScriptAsync(newScript: item) : await UpdateScriptAsync(updatedScript: item);
 
                 results.Add(item: new Result<Script>
                 {
@@ -70,18 +70,18 @@ internal class ScriptProcessingService(IScriptService service) : IScriptProcessi
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Script> items)
+    public async ValueTask DeleteAllScriptAsync(IEnumerable<Script> deletedScript)
     {
-        ValidateScripts(scripts: items, parameterName: "items");
+        ValidateScripts(scripts: deletedScript, parameterName: "items");
 
-        foreach (Script item in items)
+        foreach (Script item in deletedScript)
         {
-            await DeleteAsync(id: item.Id);
+            await DeleteAsync(scriptId: item.Id);
         }
     }
 
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int scriptId, string parameterName) =>
+        ThrowIf(condition: scriptId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateScript(Script script, string parameterName) =>
         ThrowIf(condition: script == null, message: parameterName + " is required.");

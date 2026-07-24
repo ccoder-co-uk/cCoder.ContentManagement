@@ -22,12 +22,12 @@ public partial class PageOrchestrationServiceTests
     public void ShouldReturnProcessingResultWhenGetRoot()
     {
         Page expected = CreateRandomPage();
-        pageProcessingServiceMock.Setup(x => x.GetRoot(1)).Returns(expected);
+        pageProcessingServiceMock.Setup(x => x.GetRootPage(1)).Returns(expected);
 
-        Page result = orchestrationService.GetRoot(1);
+        Page result = orchestrationService.GetRootPage(1);
 
         result.Should().BeEquivalentTo(expected);
-        pageProcessingServiceMock.Verify(x => x.GetRoot(1), Times.Once);
+        pageProcessingServiceMock.Verify(x => x.GetRootPage(1), Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }

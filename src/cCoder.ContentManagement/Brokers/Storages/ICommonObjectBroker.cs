@@ -12,13 +12,13 @@ public interface ICommonObjectBroker
 
     CommonObject[] GetLatestCommonObjectsPaged(int pageSize = 500);
 
-    ValueTask<CommonObject> AddCommonObjectAsync(CommonObject entity);
+    ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject);
 
-    ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject entity);
+    ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);
 
-    ValueTask<int> DeleteCommonObjectAsync(CommonObject entity);
+    ValueTask<int> DeleteCommonObjectAsync(CommonObject deletedCommonObject);
 
-    ValueTask DeleteAllCommonObjectsAsync(IEnumerable<CommonObject> items);
+    ValueTask DeleteAllCommonObjectsAsync(IEnumerable<CommonObject> deletedCommonObject);
 
     int? GetAppId(CommonObject entity);
 }

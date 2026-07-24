@@ -24,18 +24,18 @@ public partial class AppOrchestrationServiceTests
         // Given
         App entity = CreateRandomApp();
         appProcessingServiceMock
-            .Setup(x => x.AddAsync(entity))
+            .Setup(x => x.AddAppAsync(entity))
             .ReturnsAsync((App app) => app);
         appEventProcessingServiceMock
             .Setup(x => x.RaiseAppAddEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        App result = await orchestrationService.AddAsync(entity);
+        App result = await orchestrationService.AddAppAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        appProcessingServiceMock.Verify(x => x.AddAsync(It.IsAny<App>()), Times.Once);
+        appProcessingServiceMock.Verify(x => x.AddAppAsync(It.IsAny<App>()), Times.Once);
         appEventProcessingServiceMock.Verify(x => x.RaiseAppAddEventAsync(entity), Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();

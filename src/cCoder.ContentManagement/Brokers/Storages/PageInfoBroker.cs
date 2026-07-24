@@ -19,36 +19,36 @@ public class PageInfoBroker(ICoreContextFactory coreContextFactory) : IPageInfoB
             : coreDataContext.PageInfo;
     }
 
-    public async ValueTask<PageInfo> AddPageInfoAsync(PageInfo entity)
+    public async ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        PageInfo result = (await coreDataContext.PageInfo.AddAsync(entity: entity)).Entity;
+        PageInfo result = (await coreDataContext.PageInfo.AddAsync(entity: newPageInfo)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo entity)
+    public async ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        PageInfo result = coreDataContext.PageInfo.Update(entity: entity)
+        PageInfo result = coreDataContext.PageInfo.Update(entity: updatedPageInfo)
             .Entity;
 
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeletePageInfoAsync(PageInfo entity)
+    public async ValueTask<int> DeletePageInfoAsync(PageInfo deletedPageInfo)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.PageInfo.Remove(entity: entity);
+        coreDataContext.PageInfo.Remove(entity: deletedPageInfo);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllPageInfoAsync(IEnumerable<PageInfo> items)
+    public async ValueTask DeleteAllPageInfoAsync(IEnumerable<PageInfo> deletedPageInfo)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.PageInfo.RemoveRange(entities: items);
+        coreDataContext.PageInfo.RemoveRange(entities: deletedPageInfo);
         await coreDataContext.SaveChangesAsync();
     }
 }

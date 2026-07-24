@@ -26,14 +26,14 @@ public partial class CultureProcessingServiceTests
     {
         // Given
         Culture culture = CreateRandomCulture();
-        cultureServiceMock.Setup(x => x.AddAsync(culture)).ReturnsAsync(culture);
+        cultureServiceMock.Setup(x => x.AddCultureAsync(culture)).ReturnsAsync(culture);
 
         // When
-        Culture result = await cultureProcessingService.AddAsync(culture);
+        Culture result = await cultureProcessingService.AddCultureAsync(culture);
 
         // Then
         Assert.Same(culture, result);
-        cultureServiceMock.Verify(x => x.AddAsync(culture), Times.Once);
+        cultureServiceMock.Verify(x => x.AddCultureAsync(culture), Times.Once);
     }
 
     [Fact]
@@ -43,12 +43,12 @@ public partial class CultureProcessingServiceTests
         Culture culture = CreateRandomCulture();
 
         cultureServiceMock
-            .Setup(x => x.AddAsync(culture))
+            .Setup(x => x.AddCultureAsync(culture))
             .ThrowsAsync(new SecurityException("Access Denied!"));
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await cultureProcessingService.AddAsync(culture)
+            await cultureProcessingService.AddCultureAsync(culture)
         );
 
         // Then

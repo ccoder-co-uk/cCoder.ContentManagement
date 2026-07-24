@@ -42,7 +42,7 @@ public partial class PageServiceTests
             .ReturnsAsync((CmsDataModels.Page value) => value);
 
         // When
-        Page result = await pageService.AddAsync(page);
+        Page result = await pageService.AddPageAsync(page);
 
         // Then
         result.Should().BeSameAs(page);
@@ -150,7 +150,7 @@ public partial class PageServiceTests
             .ReturnsAsync((CmsDataModels.Page value) => value);
 
         // When
-        Page result = await pageService.AddAsync(page);
+        Page result = await pageService.AddPageAsync(page);
 
         // Then
         submitted.Should().NotBeNull();
@@ -176,7 +176,7 @@ public partial class PageServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await pageService.AddAsync(page);
+        Func<Task> action = async () => await pageService.AddPageAsync(page);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

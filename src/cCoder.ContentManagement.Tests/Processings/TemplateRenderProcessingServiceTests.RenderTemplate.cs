@@ -37,7 +37,7 @@ public partial class TemplateRenderProcessingServiceTests
             .Returns(new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
 
         string result = await RenderTestWorkflowServer.RunAsync(workflowBaseUrl =>
-            sut.RenderTemplate(template, new { Name = "Taylor" }, renderParams, CreateConfig(workflowBaseUrl)));
+            sut.RenderTemplateRenderParamsConfig(template, new { Name = "Taylor" }, renderParams, CreateConfig(workflowBaseUrl)));
 
         result.Should().Contain("App|Blue|Taylor|bootstrap-script|");
         result.Should().Contain("Hero Taylor");
@@ -54,7 +54,7 @@ public partial class TemplateRenderProcessingServiceTests
         TemplateRenderProcessingService sut = CreateSut();
         (RenderApp app, RenderUser user, _) = CreateTemplateRenderContext();
 
-        Action act = () => sut.RenderTemplate(null!, new { Name = "Taylor" }, new RenderTemplateParams(app, user, "en-GB"), CreateConfig("http://127.0.0.1/"));
+        Action act = () => sut.RenderTemplateRenderParamsConfig(null!, new { Name = "Taylor" }, new RenderTemplateParams(app, user, "en-GB"), CreateConfig("http://127.0.0.1/"));
 
         act.Should().Throw<ValidationException>();
     }

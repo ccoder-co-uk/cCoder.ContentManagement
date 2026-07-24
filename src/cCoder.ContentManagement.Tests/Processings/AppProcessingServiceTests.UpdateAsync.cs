@@ -49,16 +49,16 @@ public partial class AppProcessingServiceTests
         app.Cultures = null!;
 
         currentUser = admin;
-        appServiceMock.Setup(x => x.Get(dbApp.Id, true)).Returns(dbApp);
-        appServiceMock.Setup(x => x.UpdateAsync(dbApp)).ReturnsAsync(dbApp);
+        appServiceMock.Setup(x => x.GetApp(dbApp.Id, true)).Returns(dbApp);
+        appServiceMock.Setup(x => x.UpdateAppAsync(dbApp)).ReturnsAsync(dbApp);
 
         // When
-        App result = await appProcessingService.UpdateAsync(app);
+        App result = await appProcessingService.UpdateAppAsync(app);
 
         // Then
         result.Should().BeSameAs(dbApp);
-        appServiceMock.Verify(x => x.Get(dbApp.Id, true), Times.Once);
-        appServiceMock.Verify(x => x.UpdateAsync(dbApp), Times.Once);
+        appServiceMock.Verify(x => x.GetApp(dbApp.Id, true), Times.Once);
+        appServiceMock.Verify(x => x.UpdateAppAsync(dbApp), Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 
@@ -85,18 +85,18 @@ public partial class AppProcessingServiceTests
         app.Id = 1;
 
         currentUser = actor;
-        appServiceMock.Setup(x => x.Get(app.Id, true)).Returns(app);
+        appServiceMock.Setup(x => x.GetApp(app.Id, true)).Returns(app);
         appServiceMock
-            .Setup(x => x.UpdateAsync(It.IsAny<App>()))
+            .Setup(x => x.UpdateAppAsync(It.IsAny<App>()))
             .ThrowsAsync(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> act = async () => await appProcessingService.UpdateAsync(app);
+        Func<Task> act = async () => await appProcessingService.UpdateAppAsync(app);
 
         // Then
         await act.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        appServiceMock.Verify(x => x.Get(app.Id, true), Times.Once);
-        appServiceMock.Verify(x => x.UpdateAsync(It.IsAny<App>()), Times.Once);
+        appServiceMock.Verify(x => x.GetApp(app.Id, true), Times.Once);
+        appServiceMock.Verify(x => x.UpdateAppAsync(It.IsAny<App>()), Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 

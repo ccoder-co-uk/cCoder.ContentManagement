@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class ScriptService
 {
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int scriptId, string parameterName) =>
+        ThrowIf(condition: scriptId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateScript(Script script, string parameterName)
     {

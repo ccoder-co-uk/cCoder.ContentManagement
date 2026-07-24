@@ -11,31 +11,31 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal class ComponentProcessingService(IComponentService service) : IComponentProcessingService
 {
-    public Component Get(int id) =>
-        service.Get(id: id);
+    public Component GetComponent(int componentId) =>
+        service.GetComponent(componentId: componentId);
 
-    public IQueryable<Component> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Component> GetAllComponent(bool ignoreFilters = false) =>
+        service.GetAllComponent(ignoreFilters: ignoreFilters);
 
-    public ValueTask<Component> AddAsync(Component entity) =>
-        service.AddAsync(component: entity);
+    public ValueTask<Component> AddComponentAsync(Component newComponent) =>
+        service.AddComponentAsync(newComponent: newComponent);
 
-    public ValueTask<Component> UpdateAsync(Component entity) =>
-        service.UpdateAsync(component: entity);
+    public ValueTask<Component> UpdateComponentAsync(Component updatedComponent) =>
+        service.UpdateComponentAsync(updatedComponent: updatedComponent);
 
-    public ValueTask DeleteAsync(int id) =>
-        service.DeleteAsync(id: id);
+    public ValueTask DeleteAsync(int componentId) =>
+        service.DeleteAsync(componentId: componentId);
 
-    public async ValueTask<IEnumerable<Result<Component>>> AddOrUpdate(IEnumerable<Component> items)
+    public async ValueTask<IEnumerable<Result<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent)
     {
-        ValidateComponents(components: items, parameterName: "items");
+        ValidateComponents(components: newComponent, parameterName: "items");
         List<Result<Component>> results = new List<Result<Component>>();
 
-        foreach (Component item in items)
+        foreach (Component item in newComponent)
         {
             try
             {
-                Component savedItem = item.Id < 1 ? await AddAsync(entity: item) : await UpdateAsync(entity: item);
+                Component savedItem = item.Id < 1 ? await AddComponentAsync(newComponent: item) : await UpdateComponentAsync(updatedComponent: item);
 
                 results.Add(item: new Result<Component>
                 {
@@ -58,13 +58,13 @@ internal class ComponentProcessingService(IComponentService service) : IComponen
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Component> items)
+    public async ValueTask DeleteAllComponentAsync(IEnumerable<Component> deletedComponent)
     {
-        ValidateComponents(components: items, parameterName: "items");
+        ValidateComponents(components: deletedComponent, parameterName: "items");
 
-        foreach (Component item in items)
+        foreach (Component item in deletedComponent)
         {
-            await DeleteAsync(id: item.Id);
+            await DeleteAsync(componentId: item.Id);
         }
     }
 

@@ -25,14 +25,14 @@ public partial class PackageProcessingServiceTests
         Package package = CreateRandomPackage();
         package.Items = [CreateRandomPackageItem(), CreateRandomPackageItem()];
 
-        packageServiceMock.Setup(x => x.AddAsync(package)).ReturnsAsync(package);
+        packageServiceMock.Setup(x => x.AddPackageAsync(package)).ReturnsAsync(package);
 
         // When
-        Package result = await packageProcessingService.AddAsync(package);
+        Package result = await packageProcessingService.AddPackageAsync(package);
 
         // Then
         Assert.Same(package, result);
-        packageServiceMock.Verify(x => x.AddAsync(package), Times.Once);
+        packageServiceMock.Verify(x => x.AddPackageAsync(package), Times.Once);
         packageItemServiceMock.VerifyNoOtherCalls();
     }
 

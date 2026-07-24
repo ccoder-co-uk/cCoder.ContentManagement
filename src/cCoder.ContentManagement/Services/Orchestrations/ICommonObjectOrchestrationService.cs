@@ -9,21 +9,21 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface ICommonObjectOrchestrationService
 {
-    CommonObject Get(int id);
+    CommonObject GetCommonObject(int commonObjectId);
 
-    IQueryable<CommonObject> GetAll(bool ignoreFilters = false);
+    IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false);
 
-    ValueTask<CommonObject> AddAsync(CommonObject entity);
+    ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject);
 
-    ValueTask<CommonObject> UpdateAsync(CommonObject entity);
+    ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int commonObjectId);
 
-    ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdate(IEnumerable<CommonObject> items);
+    ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject);
 
-    ValueTask DeleteAllAsync(IEnumerable<CommonObject> items);
+    ValueTask DeleteAllCommonObjectAsync(IEnumerable<CommonObject> deletedCommonObject);
 
-    IEnumerable<CommonObject> Latest(string type);
+    IEnumerable<CommonObject> LatestCommonObject(string type);
 
-    ValueTask<IEnumerable<Result<CommonObject>>> ImportAsync(IEnumerable<CommonObject> items);
+    ValueTask<IEnumerable<Result<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items);
 }

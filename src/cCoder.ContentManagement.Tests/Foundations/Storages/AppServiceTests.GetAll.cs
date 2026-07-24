@@ -29,7 +29,7 @@ public partial class AppServiceTests
         appBrokerMock.Setup(x => x.GetAllApps(false)).Returns(apps);
 
         // When
-        IQueryable<App> result = appService.GetAll();
+        IQueryable<App> result = appService.GetAllApp();
 
         // Then
         result.Should().BeEquivalentTo(expectedApps);

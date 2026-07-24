@@ -22,13 +22,13 @@ public partial class CultureOrchestrationServiceTests
     {
         // Given
         Culture[] entities = [CreateRandomCulture()];
-        cultureProcessingServiceMock.Setup(x => x.DeleteAllAsync(entities)).Returns(ValueTask.CompletedTask);
+        cultureProcessingServiceMock.Setup(x => x.DeleteAllCultureAsync(entities)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllCultureAsync(entities);
 
         // Then
-        cultureProcessingServiceMock.Verify(x => x.DeleteAllAsync(entities), Times.Once);
+        cultureProcessingServiceMock.Verify(x => x.DeleteAllCultureAsync(entities), Times.Once);
         cultureProcessingServiceMock.VerifyNoOtherCalls();
         cultureEventProcessingServiceMock.VerifyNoOtherCalls();
     }

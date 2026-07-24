@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class SubmissionService
 {
-    private static void ValidateId(Guid id, string parameterName) =>
-        ThrowIf(condition: id == Guid.Empty, message: parameterName + " is required.");
+    private static void ValidateId(Guid submissionId, string parameterName) =>
+        ThrowIf(condition: submissionId == Guid.Empty, message: parameterName + " is required.");
 
     private static void ValidateSubmission(Submission submission, string parameterName)
     {

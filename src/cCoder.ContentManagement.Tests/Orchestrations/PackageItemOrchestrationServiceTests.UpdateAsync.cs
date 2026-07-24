@@ -23,15 +23,15 @@ public partial class PackageItemOrchestrationServiceTests
     public async Task ShouldCallProcessingThenRaiseUpdateEventAsyncWhenUpdateAsync()
     {
         PackageItem entity = CreateRandomPackageItem();
-        packageItemProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        packageItemProcessingServiceMock.Setup(x => x.UpdatePackageItemAsync(entity)).ReturnsAsync(entity);
         packageItemEventProcessingServiceMock
             .Setup(x => x.RaisePackageItemUpdateEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
-        PackageItem result = await orchestrationService.UpdateAsync(entity);
+        PackageItem result = await orchestrationService.UpdatePackageItemAsync(entity);
 
         result.Should().BeSameAs(entity);
-        packageItemProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        packageItemProcessingServiceMock.Verify(x => x.UpdatePackageItemAsync(entity), Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
         packageItemEventProcessingServiceMock.Verify(x => x.RaisePackageItemUpdateEventAsync(entity), Times.Once);
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();

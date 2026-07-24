@@ -42,14 +42,14 @@ public partial class CommonObjectProcessingServiceTests
 
         CommonObject commonObject = CreateRandomCommonObject();
         currentUser = TestUsers.WithPrivilege("commonobject_create");
-        commonObjectServiceMock.Setup(x => x.AddAsync(commonObject)).ReturnsAsync(commonObject);
+        commonObjectServiceMock.Setup(x => x.AddCommonObjectAsync(commonObject)).ReturnsAsync(commonObject);
         CommonObject result =
             // When
-            await commonObjectProcessingService.AddAsync(commonObject);
+            await commonObjectProcessingService.AddCommonObjectAsync(commonObject);
 
         // Then
         Assert.Same(commonObject, result);
-        commonObjectServiceMock.Verify(x => x.AddAsync(commonObject), Times.Once);
+        commonObjectServiceMock.Verify(x => x.AddCommonObjectAsync(commonObject), Times.Once);
     }
 
     [Fact]
@@ -74,12 +74,12 @@ public partial class CommonObjectProcessingServiceTests
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await commonObjectProcessingService.AddAsync(commonObject)
+            await commonObjectProcessingService.AddCommonObjectAsync(commonObject)
         );
 
         // Then
         commonObjectServiceMock.Verify(
-            x => x.AddAsync(It.IsAny<CommonObject>()),
+            x => x.AddCommonObjectAsync(It.IsAny<CommonObject>()),
             Times.Never
         );
     }

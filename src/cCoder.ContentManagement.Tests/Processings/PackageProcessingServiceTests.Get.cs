@@ -25,14 +25,14 @@ public partial class PackageProcessingServiceTests
         // Given
         Package entity = CreateRandomPackage();
         var id = entity.Id;
-        packageServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        packageServiceMock.Setup(x => x.GetPackage(id)).Returns(entity);
 
         // When
-        Package result = packageProcessingService.Get(id);
+        Package result = packageProcessingService.GetPackage(id);
 
         // Then
         result.Should().BeSameAs(entity);
-        packageServiceMock.Verify(x => x.Get(id), Times.Once);
+        packageServiceMock.Verify(x => x.GetPackage(id), Times.Once);
         packageServiceMock.VerifyNoOtherCalls();
     }
 

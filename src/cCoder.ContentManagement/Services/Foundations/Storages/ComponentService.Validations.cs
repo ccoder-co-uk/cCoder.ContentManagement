@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class ComponentService
 {
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int componentId, string parameterName) =>
+        ThrowIf(condition: componentId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateComponent(Component component, string parameterName)
     {

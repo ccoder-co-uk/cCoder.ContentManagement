@@ -26,14 +26,14 @@ public partial class PageInfoProcessingServiceTests
     {
         // Given
         PageInfo pageInfo = CreateRandomPageInfo();
-        pageInfoServiceMock.Setup(x => x.UpdateAsync(pageInfo)).ReturnsAsync(pageInfo);
+        pageInfoServiceMock.Setup(x => x.UpdatePageInfoAsync(pageInfo)).ReturnsAsync(pageInfo);
 
         // When
-        PageInfo result = await pageInfoProcessingService.UpdateAsync(pageInfo);
+        PageInfo result = await pageInfoProcessingService.UpdatePageInfoAsync(pageInfo);
 
         // Then
         Assert.Same(pageInfo, result);
-        pageInfoServiceMock.Verify(x => x.UpdateAsync(pageInfo), Times.Once);
+        pageInfoServiceMock.Verify(x => x.UpdatePageInfoAsync(pageInfo), Times.Once);
     }
 
     [Fact]
@@ -43,12 +43,12 @@ public partial class PageInfoProcessingServiceTests
         PageInfo pageInfo = CreateRandomPageInfo();
 
         pageInfoServiceMock
-            .Setup(x => x.UpdateAsync(pageInfo))
+            .Setup(x => x.UpdatePageInfoAsync(pageInfo))
             .ThrowsAsync(new SecurityException("Access Denied!"));
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await pageInfoProcessingService.UpdateAsync(pageInfo)
+            await pageInfoProcessingService.UpdatePageInfoAsync(pageInfo)
         );
 
         // Then

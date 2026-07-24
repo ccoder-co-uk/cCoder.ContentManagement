@@ -39,7 +39,7 @@ internal sealed partial class PageRenderCoordinationService(
         try
         {
             ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
-            RenderResult page = Render(appId: defaults.App.Id, path: request.Path ?? string.Empty, theme: defaults.Theme, culture: defaults.Culture, edit: request.Edit);
+            RenderResult page = RenderRenderResult(appId: defaults.App.Id, path: request.Path ?? string.Empty, theme: defaults.Theme, culture: defaults.Culture, edit: request.Edit);
 
             return new PageRenderResponse
             {
@@ -63,7 +63,7 @@ internal sealed partial class PageRenderCoordinationService(
         ValidateException(exception: request.Exception, parameterName: "Exception");
 
         ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
-        RenderResult page = Render(appId: defaults.App.Id, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
+        RenderResult page = RenderRenderResult(appId: defaults.App.Id, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
 
         page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[message]]", newValue: request.Exception.Message);
         page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[detail]]", newValue: request.Exception.StackTrace ?? string.Empty);
@@ -79,7 +79,7 @@ internal sealed partial class PageRenderCoordinationService(
         };
     }
 
-    public RenderResult Render(int appId, string path, string theme, string culture, bool edit = false)
+    public RenderResult RenderRenderResult(int appId, string path, string theme, string culture, bool edit = false)
     {
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateTheme(theme: theme, parameterName: "theme");
@@ -96,7 +96,7 @@ internal sealed partial class PageRenderCoordinationService(
 
         string normalizedPath = path.ToLowerInvariant();
 
-        Page page = pageOrchestrationService.GetAll(ignoreFilters: true)
+        Page page = pageOrchestrationService.GetAllPage(ignoreFilters: true)
             .Where(predicate: existingPage => existingPage.AppId == appId && existingPage.Path.ToLower() == normalizedPath)
             .FirstOrDefault();
 
@@ -108,8 +108,8 @@ internal sealed partial class PageRenderCoordinationService(
 
         if (page == null)
         {
-            RenderResult renderResult = pageRenderOrchestrationService.Render(
-page: CreateMissingPage(app: app, path: path, culture: culture),
+            RenderResult renderResult = pageRenderOrchestrationService.RenderPageUserRenderResult(
+page: CreateMissingPage(newApp: app, path: path, culture: culture),
 user: User,
 theme: theme,
 culture: culture);
@@ -120,13 +120,13 @@ culture: culture);
 
         if (!ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "page_read") && !authorizationBroker.IsAdminOfApp(appId: appId))
         {
-            Page gatedPage = CreateGatedPage(page: page);
+            Page gatedPage = CreateGatedPage(newPage: page);
             gatedPage.App = app;
 
-            return pageRenderOrchestrationService.Render(page: gatedPage, user: User, theme: theme, culture: culture);
+            return pageRenderOrchestrationService.RenderPageUserRenderResult(page: gatedPage, user: User, theme: theme, culture: culture);
         }
 
-        return pageRenderOrchestrationService.Render(
+        return pageRenderOrchestrationService.RenderPageUserRenderResult(
 page: page,
 user: User,
 theme: theme,
@@ -160,7 +160,7 @@ edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privil
 
     private App ResolveAppByDomain(string domain)
     {
-        App app = appOrchestrationService.GetAll(ignoreFilters: false)
+        App app = appOrchestrationService.GetAllApp(ignoreFilters: false)
             .Where(predicate: existingApp => existingApp.Domain == domain)
             .Select(selector: existingApp => new App
             {
@@ -184,7 +184,7 @@ edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privil
 
     private App ResolveAppById(int appId)
     {
-        App app = appOrchestrationService.GetAll(ignoreFilters: false)
+        App app = appOrchestrationService.GetAllApp(ignoreFilters: false)
             .Where(predicate: existingApp => existingApp.Id == appId)
             .Select(selector: existingApp => new App
             {
@@ -208,27 +208,27 @@ edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privil
 
     private void PopulateRenderCollections(App app)
     {
-        app.Layouts = layoutOrchestrationService.GetAll(ignoreFilters: false)
+        app.Layouts = layoutOrchestrationService.GetAllLayout(ignoreFilters: false)
             .Where(predicate: layout => layout.AppId == app.Id)
             .ToArray();
 
-        app.Templates = templateOrchestrationService.GetAll(ignoreFilters: false)
+        app.Templates = templateOrchestrationService.GetAllTemplate(ignoreFilters: false)
             .Where(predicate: template => template.AppId == app.Id)
             .ToArray();
 
-        app.Resources = resourceOrchestrationService.GetAll(ignoreFilters: false)
+        app.Resources = resourceOrchestrationService.GetAllResource(ignoreFilters: false)
             .Where(predicate: resource => resource.AppId == app.Id)
             .ToArray();
 
-        app.Components = componentOrchestrationService.GetAll(ignoreFilters: false)
+        app.Components = componentOrchestrationService.GetAllComponent(ignoreFilters: false)
             .Where(predicate: component => component.AppId == app.Id)
             .ToArray();
 
-        app.Scripts = scriptOrchestrationService.GetAll(ignoreFilters: false)
+        app.Scripts = scriptOrchestrationService.GetAllScript(ignoreFilters: false)
             .Where(predicate: script => script.AppId == app.Id)
             .ToArray();
 
-        app.Pages = pageOrchestrationService.GetAll(ignoreFilters: false)
+        app.Pages = pageOrchestrationService.GetAllPage(ignoreFilters: false)
             .Where(predicate: page => page.AppId == app.Id)
             .Select(selector: page => new Page
             {
@@ -248,23 +248,23 @@ edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privil
 
     private void HydratePageForRender(Page page)
     {
-        page.PageInfo ??= pageInfoOrchestrationService.GetAll(ignoreFilters: true)
+        page.PageInfo ??= pageInfoOrchestrationService.GetAllPageInfo(ignoreFilters: true)
             .Where(predicate: pageInfo => pageInfo.PageId == page.Id)
             .ToArray();
 
-        page.Contents ??= contentOrchestrationService.GetAll(ignoreFilters: true)
+        page.Contents ??= contentOrchestrationService.GetAllContent(ignoreFilters: true)
             .Where(predicate: content => content.PageId == page.Id)
             .ToArray();
 
-        page.Roles ??= pageRoleOrchestrationService.GetAll(ignoreFilters: true)
+        page.Roles ??= pageRoleOrchestrationService.GetAllPageRole(ignoreFilters: true)
             .Where(predicate: pageRole => pageRole.PageId == page.Id)
             .ToArray();
     }
 
-    private static Page CreateMissingPage(App app, string path, string culture) =>
+    private static Page CreateMissingPage(App newApp, string path, string culture) =>
         new()
         {
-            App = app,
+            App = newApp,
             Path = path,
             PageInfo =
             [
@@ -287,9 +287,9 @@ edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privil
             ]
         };
 
-    private static Page CreateGatedPage(Page page)
+    private static Page CreateGatedPage(Page newPage)
     {
-        string[] contentNames = page.Contents?
+        string[] contentNames = newPage.Contents?
             .Select(selector: content => content.Name)
             .Where(predicate: name => !string.IsNullOrWhiteSpace(value: name))
             .Distinct(comparer: StringComparer.OrdinalIgnoreCase)
@@ -316,20 +316,20 @@ edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privil
 
         return new Page
         {
-            Id = page.Id,
-            AppId = page.AppId,
-            ParentId = page.ParentId,
-            Path = page.Path,
-            Order = page.Order,
-            ShowOnMenus = page.ShowOnMenus,
-            Name = page.Name,
-            ResourceKey = page.ResourceKey,
-            Layout = page.Layout,
-            App = page.App,
-            PageInfo = page.PageInfo,
+            Id = newPage.Id,
+            AppId = newPage.AppId,
+            ParentId = newPage.ParentId,
+            Path = newPage.Path,
+            Order = newPage.Order,
+            ShowOnMenus = newPage.ShowOnMenus,
+            Name = newPage.Name,
+            ResourceKey = newPage.ResourceKey,
+            Layout = newPage.Layout,
+            App = newPage.App,
+            PageInfo = newPage.PageInfo,
             Contents = gatedContents,
-            Roles = page.Roles,
-            Pages = page.Pages
+            Roles = newPage.Roles,
+            Pages = newPage.Pages
         };
     }
 }

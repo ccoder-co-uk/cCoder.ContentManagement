@@ -1,6 +1,7 @@
 using cCoder.Data;
 using cCoder.Data.Models.Security;
 using cCoder.Security.Data.EF;
+using cCoder.Security.Data.EF.Dependencies;
 using cCoder.Security.Data.EF.Interfaces;
 using cCoder.Security.Objects;
 using Microsoft.AspNetCore.Mvc.Testing;

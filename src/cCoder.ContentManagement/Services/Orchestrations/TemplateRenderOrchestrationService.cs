@@ -14,13 +14,13 @@ internal sealed class TemplateRenderOrchestrationService(
     Config config,
     ILogger<TemplateRenderOrchestrationService> log) : ITemplateRenderOrchestrationService
 {
-    public string Render(int appId, string name, string culture, dynamic model, User user)
+    public string RenderUser(int appId, string name, string culture, dynamic model, User user)
     {
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateTemplateName(name: name, parameterName: "name");
         ValidateUser(user: user, parameterName: "user");
 
-        return templateRenderProcessingService.Render(appId: appId, name: name, model: model, user: user, culture: culture, config: config, log: log);
+        return templateRenderProcessingService.RenderUserConfig(appId: appId, name: name, model: model, user: user, culture: culture, config: config, log: log);
     }
 
     private static void ValidateAppId(int appId, string parameterName) =>

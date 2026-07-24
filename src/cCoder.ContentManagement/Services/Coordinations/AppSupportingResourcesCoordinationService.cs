@@ -24,17 +24,17 @@ internal class AppSupportingResourcesCoordinationService(
 
         if (app.Cultures != null)
         {
-            await AddOrUpdateCulturesAsync(app: app);
+            await AddOrUpdateCulturesAsync(newApp: app);
         }
 
         if (app.Resources != null)
         {
-            await AddOrUpdateResourcesAsync(app: app);
+            await AddOrUpdateResourcesAsync(newApp: app);
         }
 
         if (app.Scripts != null)
         {
-            await AddOrUpdateScriptsAsync(app: app);
+            await AddOrUpdateScriptsAsync(newApp: app);
         }
     }
 
@@ -45,20 +45,20 @@ internal class AppSupportingResourcesCoordinationService(
 
         if (app.Cultures != null)
         {
-            await DeleteMissingCulturesAsync(app: app);
-            await AddOrUpdateCulturesAsync(app: app);
+            await DeleteMissingCulturesAsync(deletedApp: app);
+            await AddOrUpdateCulturesAsync(newApp: app);
         }
 
         if (app.Resources != null)
         {
-            await DeleteMissingResourcesAsync(app: app);
-            await AddOrUpdateResourcesAsync(app: app);
+            await DeleteMissingResourcesAsync(deletedApp: app);
+            await AddOrUpdateResourcesAsync(newApp: app);
         }
 
         if (app.Scripts != null)
         {
-            await DeleteMissingScriptsAsync(app: app);
-            await AddOrUpdateScriptsAsync(app: app);
+            await DeleteMissingScriptsAsync(deletedApp: app);
+            await AddOrUpdateScriptsAsync(newApp: app);
         }
     }
 
@@ -100,108 +100,108 @@ internal class AppSupportingResourcesCoordinationService(
     private static void ValidateApp(App app, string parameterName) =>
         ThrowIf(condition: app == null, message: parameterName + " is required.");
 
-    private async ValueTask DeleteMissingCulturesAsync(App app)
+    private async ValueTask DeleteMissingCulturesAsync(App deletedApp)
     {
-        string[] incomingCultureIds = app.Cultures
+        string[] incomingCultureIds = deletedApp.Cultures
             .Select(selector: culture => culture.CultureId)
             .ToArray();
 
         AppCulture[] culturesToDelete = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
-            .Where(predicate: culture => culture.AppId == app.Id && !((ReadOnlySpan<string>)incomingCultureIds).Contains(value: culture.CultureId))
+            .Where(predicate: culture => culture.AppId == deletedApp.Id && !((ReadOnlySpan<string>)incomingCultureIds).Contains(value: culture.CultureId))
             .ToArray();
 
         if (culturesToDelete.Length > 0)
         {
-            await appCultureBroker.DeleteAllAppCulturesAsync(items: culturesToDelete);
+            await appCultureBroker.DeleteAllAppCulturesAsync(deletedAppCulture: culturesToDelete);
         }
     }
 
-    private async ValueTask DeleteMissingResourcesAsync(App app)
+    private async ValueTask DeleteMissingResourcesAsync(App deletedApp)
     {
-        int[] incomingResourceIds = app.Resources
+        int[] incomingResourceIds = deletedApp.Resources
             .Where(predicate: resource => resource.Id > 0)
             .Select(selector: resource => resource.Id)
             .ToArray();
 
         Resource[] resourcesToDelete = resourceBroker.GetAllResources(ignoreFilters: true)
-            .Where(predicate: resource => resource.AppId == app.Id && !((ReadOnlySpan<int>)incomingResourceIds).Contains(value: resource.Id))
+            .Where(predicate: resource => resource.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingResourceIds).Contains(value: resource.Id))
             .ToArray();
 
         if (resourcesToDelete.Length > 0)
         {
-            await resourceBroker.DeleteAllResourcesAsync(items: resourcesToDelete);
+            await resourceBroker.DeleteAllResourcesAsync(deletedResource: resourcesToDelete);
         }
     }
 
-    private async ValueTask DeleteMissingScriptsAsync(App app)
+    private async ValueTask DeleteMissingScriptsAsync(App deletedApp)
     {
-        int[] incomingScriptIds = app.Scripts
+        int[] incomingScriptIds = deletedApp.Scripts
             .Where(predicate: script => script.Id > 0)
             .Select(selector: script => script.Id)
             .ToArray();
 
         Script[] scriptsToDelete = scriptBroker.GetAllScripts(ignoreFilters: true)
-            .Where(predicate: script => script.AppId == app.Id && !((ReadOnlySpan<int>)incomingScriptIds).Contains(value: script.Id))
+            .Where(predicate: script => script.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingScriptIds).Contains(value: script.Id))
             .ToArray();
 
         if (scriptsToDelete.Length > 0)
         {
-            await scriptBroker.DeleteAllScriptsAsync(items: scriptsToDelete);
+            await scriptBroker.DeleteAllScriptsAsync(deletedScript: scriptsToDelete);
         }
     }
 
-    private async ValueTask AddOrUpdateCulturesAsync(App app)
+    private async ValueTask AddOrUpdateCulturesAsync(App newApp)
     {
         HashSet<string> existingCultureIds = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
-            .Where(predicate: culture => culture.AppId == app.Id)
+            .Where(predicate: culture => culture.AppId == newApp.Id)
             .Select(selector: culture => culture.CultureId)
             .ToHashSet(comparer: StringComparer.Ordinal);
 
-        foreach (AppCulture culture in app.Cultures)
+        foreach (AppCulture culture in newApp.Cultures)
         {
             if (!existingCultureIds.Contains(item: culture.CultureId))
             {
-                await appCultureBroker.AddAppCultureAsync(entity: culture);
+                await appCultureBroker.AddAppCultureAsync(newAppCulture: culture);
             }
         }
     }
 
-    private async ValueTask AddOrUpdateResourcesAsync(App app)
+    private async ValueTask AddOrUpdateResourcesAsync(App newApp)
     {
         HashSet<int> existingResourceIds = resourceBroker.GetAllResources(ignoreFilters: true)
-            .Where(predicate: resource => resource.AppId == app.Id)
+            .Where(predicate: resource => resource.AppId == newApp.Id)
             .Select(selector: resource => resource.Id)
             .ToHashSet();
 
-        foreach (Resource resource in app.Resources)
+        foreach (Resource resource in newApp.Resources)
         {
             if (existingResourceIds.Contains(item: resource.Id))
             {
-                await resourceBroker.UpdateResourceAsync(entity: resource);
+                await resourceBroker.UpdateResourceAsync(updatedResource: resource);
             }
             else
             {
-                await resourceBroker.AddResourceAsync(entity: resource);
+                await resourceBroker.AddResourceAsync(newResource: resource);
             }
         }
     }
 
-    private async ValueTask AddOrUpdateScriptsAsync(App app)
+    private async ValueTask AddOrUpdateScriptsAsync(App newApp)
     {
         HashSet<int> existingScriptIds = scriptBroker.GetAllScripts(ignoreFilters: true)
-            .Where(predicate: script => script.AppId == app.Id)
+            .Where(predicate: script => script.AppId == newApp.Id)
             .Select(selector: script => script.Id)
             .ToHashSet();
 
-        foreach (Script script in app.Scripts)
+        foreach (Script script in newApp.Scripts)
         {
             if (existingScriptIds.Contains(item: script.Id))
             {
-                await scriptBroker.UpdateScriptAsync(entity: script);
+                await scriptBroker.UpdateScriptAsync(updatedScript: script);
             }
             else
             {
-                await scriptBroker.AddScriptAsync(entity: script);
+                await scriptBroker.AddScriptAsync(newScript: script);
             }
         }
     }

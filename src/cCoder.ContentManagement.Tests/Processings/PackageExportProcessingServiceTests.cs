@@ -35,35 +35,35 @@ public partial class PackageExportProcessingServiceTests
         switch (packageName)
         {
             case "Roles":
-                packageExportServiceMock.Setup(x => x.ExportRoles(appId)).Returns(expectedPackage);
+                packageExportServiceMock.Setup(x => x.ExportRolesPackage(appId)).Returns(expectedPackage);
                 break;
             case "Layouts":
-                packageExportServiceMock.Setup(x => x.ExportLayouts(appId)).Returns(expectedPackage);
+                packageExportServiceMock.Setup(x => x.ExportLayoutsPackage(appId)).Returns(expectedPackage);
                 break;
             case "Templates":
                 packageExportServiceMock
-                    .Setup(x => x.ExportTemplates(appId))
+                    .Setup(x => x.ExportTemplatesPackage(appId))
                     .Returns(expectedPackage);
                 break;
             case "Components":
                 packageExportServiceMock
-                    .Setup(x => x.ExportComponents(appId))
+                    .Setup(x => x.ExportComponentsPackage(appId))
                     .Returns(expectedPackage);
                 break;
             case "Scripts":
-                packageExportServiceMock.Setup(x => x.ExportScripts(appId)).Returns(expectedPackage);
+                packageExportServiceMock.Setup(x => x.ExportScriptsPackage(appId)).Returns(expectedPackage);
                 break;
             case "Resources":
                 packageExportServiceMock
-                    .Setup(x => x.ExportResources(appId))
+                    .Setup(x => x.ExportResourcesPackage(appId))
                     .Returns(expectedPackage);
                 break;
             case "Pages":
-                packageExportServiceMock.Setup(x => x.ExportPages(appId)).Returns(expectedPackage);
+                packageExportServiceMock.Setup(x => x.ExportPagesPackage(appId)).Returns(expectedPackage);
                 break;
             case "PageRoles":
                 packageExportServiceMock
-                    .Setup(x => x.ExportPageRoles(appId))
+                    .Setup(x => x.ExportPageRolesPackage(appId))
                     .Returns(expectedPackage);
                 break;
         }

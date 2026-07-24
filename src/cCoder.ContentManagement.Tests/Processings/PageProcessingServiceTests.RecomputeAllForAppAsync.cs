@@ -57,9 +57,9 @@ public partial class PageProcessingServiceTests
         ];
 
         currentUser = actor;
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { page }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { page }.AsQueryable());
         pageServiceMock
-            .Setup(x => x.UpdateAsync(It.Is<Page>(updated => updated.Id == page.Id && updated.Path == string.Empty)))
+            .Setup(x => x.UpdatePageAsync(It.Is<Page>(updated => updated.Id == page.Id && updated.Path == string.Empty)))
             .Callback<Page>(updated => page.Path = updated.Path)
             .ReturnsAsync(page);
 
@@ -68,8 +68,8 @@ public partial class PageProcessingServiceTests
 
         // Then
         page.Path.Should().Be(string.Empty);
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
-        pageServiceMock.Verify(x => x.UpdateAsync(It.Is<Page>(updated => updated.Id == page.Id && updated.Path == string.Empty)), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(true), Times.Once);
+        pageServiceMock.Verify(x => x.UpdatePageAsync(It.Is<Page>(updated => updated.Id == page.Id && updated.Path == string.Empty)), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 

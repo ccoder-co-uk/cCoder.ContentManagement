@@ -63,7 +63,7 @@ public class TemplateController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Template> queryOptions) =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllTemplate());
 
     [HttpGet]
     [AllowAnonymous]
@@ -72,7 +72,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            IQueryable<Template> result = Service.GetAll()
+            IQueryable<Template> result = Service.GetAllTemplate()
                 .Where(predicate: template => template.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -85,32 +85,32 @@ public class TemplateController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Template entity)
+    public async Task<IActionResult> Post([FromBody] Template newTemplate)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddAsync(entity: entity));
+        return Ok(value: await Service.AddTemplateAsync(newTemplate: newTemplate));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Template entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Template updatedTemplate)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdateAsync(entity: entity));
+        return Ok(value: await Service.UpdateTemplateAsync(updatedTemplate: updatedTemplate));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<Template> delta)
     {
-        Template originalEntity = Service.Get(id: key);
+        Template originalEntity = Service.GetTemplate(templateId: key);
 
         if (originalEntity == null)
         {
@@ -118,13 +118,13 @@ public class TemplateController : ODataController
         }
 
         delta.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateAsync(entity: originalEntity));
+        return Ok(value: await Service.UpdateTemplateAsync(updatedTemplate: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(id: key);
+        await Service.DeleteAsync(templateId: key);
         return Ok();
     }
 }

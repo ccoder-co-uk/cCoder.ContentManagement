@@ -13,14 +13,14 @@ internal class PackageExportProcessingService(IPackageExportService packageExpor
     {
         Package result = packageName switch
         {
-            "Roles" => packageExportService.ExportRoles(appId: appId),
-            "Layouts" => packageExportService.ExportLayouts(appId: appId),
-            "Templates" => packageExportService.ExportTemplates(appId: appId),
-            "Components" => packageExportService.ExportComponents(appId: appId),
-            "Scripts" => packageExportService.ExportScripts(appId: appId),
-            "Resources" => packageExportService.ExportResources(appId: appId),
-            "Pages" => packageExportService.ExportPages(appId: appId),
-            "PageRoles" => packageExportService.ExportPageRoles(appId: appId),
+            "Roles" => packageExportService.ExportRolesPackage(appId: appId),
+            "Layouts" => packageExportService.ExportLayoutsPackage(appId: appId),
+            "Templates" => packageExportService.ExportTemplatesPackage(appId: appId),
+            "Components" => packageExportService.ExportComponentsPackage(appId: appId),
+            "Scripts" => packageExportService.ExportScriptsPackage(appId: appId),
+            "Resources" => packageExportService.ExportResourcesPackage(appId: appId),
+            "Pages" => packageExportService.ExportPagesPackage(appId: appId),
+            "PageRoles" => packageExportService.ExportPageRolesPackage(appId: appId),
             var ignoredPackage => new Package(name: packageName)
             {
                 Items = new List<PackageItem>()

@@ -23,14 +23,14 @@ public partial class ContentProcessingServiceTests
     {
         // Given
         IQueryable<Content> entities = new[] { CreateRandomContent() }.AsQueryable();
-        contentServiceMock.Setup(x => x.GetAll()).Returns(entities);
+        contentServiceMock.Setup(x => x.GetAllContent()).Returns(entities);
 
         // When
-        IQueryable<Content> result = contentProcessingService.GetAll();
+        IQueryable<Content> result = contentProcessingService.GetAllContent();
 
         // Then
         result.Should().BeSameAs(entities);
-        contentServiceMock.Verify(x => x.GetAll(), Times.Once);
+        contentServiceMock.Verify(x => x.GetAllContent(), Times.Once);
         contentServiceMock.VerifyNoOtherCalls();
     }
 

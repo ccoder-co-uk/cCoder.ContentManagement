@@ -38,7 +38,7 @@ public partial class TemplateRenderOrchestrationServiceTests
         string expectedHtml = "<main>template</main>";
 
         templateRenderProcessingServiceMock
-            .Setup(x => x.Render(
+            .Setup(x => x.RenderUserConfig(
                 1,
                 "Welcome",
                 model,
@@ -48,7 +48,7 @@ public partial class TemplateRenderOrchestrationServiceTests
                 It.IsAny<ILogger>()))
             .Returns(expectedHtml);
 
-        string result = renderOrchestrationService.Render(1, "Welcome", "en-GB", model, user);
+        string result = renderOrchestrationService.RenderUser(1, "Welcome", "en-GB", model, user);
 
         result.Should().Be(expectedHtml);
         templateRenderProcessingServiceMock.VerifyAll();
@@ -57,7 +57,7 @@ public partial class TemplateRenderOrchestrationServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionWhenUserIsNull()
     {
-        Action act = () => renderOrchestrationService.Render(1, "Welcome", "en-GB", new { }, null!);
+        Action act = () => renderOrchestrationService.RenderUser(1, "Welcome", "en-GB", new { }, null!);
 
         act.Should().Throw<ValidationException>().WithMessage("user is required.");
     }

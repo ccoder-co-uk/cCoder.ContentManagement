@@ -23,14 +23,14 @@ public partial class SubmissionProcessingServiceTests
     {
         // Given
         Submission entity = CreateRandomSubmission();
-        submissionServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        submissionServiceMock.Setup(x => x.UpdateSubmissionAsync(entity)).ReturnsAsync(entity);
 
         // When
-        Submission result = await submissionProcessingService.UpdateAsync(entity);
+        Submission result = await submissionProcessingService.UpdateSubmissionAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        submissionServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        submissionServiceMock.Verify(x => x.UpdateSubmissionAsync(entity), Times.Once);
         submissionServiceMock.VerifyNoOtherCalls();
     }
 

@@ -23,14 +23,14 @@ public partial class ScriptProcessingServiceTests
     {
         // Given
         IQueryable<Script> entities = new[] { CreateRandomScript() }.AsQueryable();
-        scriptServiceMock.Setup(x => x.GetAll()).Returns(entities);
+        scriptServiceMock.Setup(x => x.GetAllScript()).Returns(entities);
 
         // When
-        IQueryable<Script> result = scriptProcessingService.GetAll();
+        IQueryable<Script> result = scriptProcessingService.GetAllScript();
 
         // Then
         result.Should().BeSameAs(entities);
-        scriptServiceMock.Verify(x => x.GetAll(), Times.Once);
+        scriptServiceMock.Verify(x => x.GetAllScript(), Times.Once);
         scriptServiceMock.VerifyNoOtherCalls();
     }
 

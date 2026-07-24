@@ -42,26 +42,26 @@ public partial class CommonObjectProcessingServiceTests
         currentUser = actor;
 
         commonObjectServiceMock
-            .Setup(x => x.GetAll())
+            .Setup(x => x.GetAllCommonObject())
             .Returns(new[] { existingVersion }.AsQueryable());
 
         commonObjectServiceMock
-            .Setup(x => x.AddAsync(It.IsAny<CommonObject>()))
+            .Setup(x => x.AddCommonObjectAsync(It.IsAny<CommonObject>()))
             .ReturnsAsync((CommonObject item) => item);
 
         // When
         CommonObject result =
-            await commonObjectProcessingService.UpdateAsync(commonObject);
+            await commonObjectProcessingService.UpdateCommonObjectAsync(commonObject);
 
         // Then
         result.Id.Should().Be(0);
         result.Version.Should().Be(3);
         result.CreatedBy.Should().Be(actor.Id);
         result.LastUpdatedBy.Should().Be(actor.Id);
-        commonObjectServiceMock.Verify(x => x.GetAll(), Times.Exactly(2));
+        commonObjectServiceMock.Verify(x => x.GetAllCommonObject(), Times.Exactly(2));
         commonObjectServiceMock.Verify(
             x =>
-                x.AddAsync(
+                x.AddCommonObjectAsync(
                     It.Is<CommonObject>(item =>
                         item.Id == 0 && item.Version == 3
                     )

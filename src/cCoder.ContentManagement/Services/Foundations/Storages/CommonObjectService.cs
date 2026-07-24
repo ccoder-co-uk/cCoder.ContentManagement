@@ -11,26 +11,26 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroker, IAuthorizationBroker authorizationBroker) : ICommonObjectService
 {
-    public CommonObject Get(int id, bool ignoreFilters = false)
+    public CommonObject GetCommonObject(int commonObjectId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(commonObjectId: commonObjectId, parameterName: "id");
 
         if (ignoreFilters)
         {
-            return GetAll(ignoreFilters: true)
-                        .FirstOrDefault(predicate: (CommonObject i) => i.Id == id);
+            return GetAllCommonObject(ignoreFilters: true)
+                .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
         }
 
-        CommonObject commonObject = GetAll()
-            .FirstOrDefault(predicate: (CommonObject i) => i.Id == id);
+        CommonObject commonObject = GetAllCommonObject()
+            .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
 
         if (commonObject != null)
         {
             return commonObject;
         }
 
-        CommonObject commonObject2 = GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: (CommonObject i) => i.Id == id);
+        CommonObject commonObject2 = GetAllCommonObject(ignoreFilters: true)
+            .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
 
         if (commonObject2 != null)
         {
@@ -40,13 +40,13 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         return null;
     }
 
-    public IQueryable<CommonObject> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false) =>
         commonObjectBroker.GetAllCommonObjects(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<CommonObject> AddAsync(CommonObject commonObject)
+    public async ValueTask<CommonObject> AddCommonObjectAsync(CommonObject commonObject)
     {
         ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
-        CommonObject newCommonObject = CreateStorageCommonObject(commonObject: commonObject);
+        CommonObject newCommonObject = CreateStorageCommonObject(newCommonObject: commonObject);
         authorizationBroker.Authorize(appId: commonObjectBroker.GetAppId(entity: newCommonObject), privilege: "CommonObject_create");
 
         string currentUserId = authorizationBroker.GetCurrentUser()
@@ -56,7 +56,7 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         newCommonObject.CreatedBy = currentUserId;
         newCommonObject.LastUpdated = now;
         newCommonObject.LastUpdatedBy = currentUserId;
-        CommonObject result = await commonObjectBroker.AddCommonObjectAsync(entity: newCommonObject);
+        CommonObject result = await commonObjectBroker.AddCommonObjectAsync(newCommonObject: newCommonObject);
         commonObject.Id = result.Id;
         commonObject.Name = result.Name;
         commonObject.Description = result.Description;
@@ -72,10 +72,10 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         return commonObject;
     }
 
-    public async ValueTask<CommonObject> UpdateAsync(CommonObject commonObject)
+    public async ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject)
     {
-        ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
-        CommonObject updateCommonObject = CreateStorageCommonObject(commonObject: commonObject);
+        ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "commonObject");
+        CommonObject updateCommonObject = CreateStorageCommonObject(newCommonObject: updatedCommonObject);
         authorizationBroker.Authorize(appId: commonObjectBroker.GetAppId(entity: updateCommonObject), privilege: "CommonObject_update");
 
         string currentUserId = authorizationBroker.GetCurrentUser()
@@ -84,52 +84,52 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateCommonObject.LastUpdated = now;
         updateCommonObject.LastUpdatedBy = currentUserId;
-        CommonObject result = await commonObjectBroker.UpdateCommonObjectAsync(entity: updateCommonObject);
-        commonObject.Id = result.Id;
-        commonObject.Name = result.Name;
-        commonObject.Description = result.Description;
-        commonObject.LastUpdated = result.LastUpdated;
-        commonObject.LastUpdatedBy = result.LastUpdatedBy;
-        commonObject.CreatedOn = result.CreatedOn;
-        commonObject.CreatedBy = result.CreatedBy;
-        commonObject.Version = result.Version;
-        commonObject.Key = result.Key;
-        commonObject.Type = result.Type;
-        commonObject.Json = result.Json;
-        commonObject.Culture = result.Culture;
-        return commonObject;
+        CommonObject result = await commonObjectBroker.UpdateCommonObjectAsync(updatedCommonObject: updateCommonObject);
+        updatedCommonObject.Id = result.Id;
+        updatedCommonObject.Name = result.Name;
+        updatedCommonObject.Description = result.Description;
+        updatedCommonObject.LastUpdated = result.LastUpdated;
+        updatedCommonObject.LastUpdatedBy = result.LastUpdatedBy;
+        updatedCommonObject.CreatedOn = result.CreatedOn;
+        updatedCommonObject.CreatedBy = result.CreatedBy;
+        updatedCommonObject.Version = result.Version;
+        updatedCommonObject.Key = result.Key;
+        updatedCommonObject.Type = result.Type;
+        updatedCommonObject.Json = result.Json;
+        updatedCommonObject.Culture = result.Culture;
+        return updatedCommonObject;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int commonObjectId)
     {
-        ValidateId(id: id, parameterName: "id");
-        CommonObject commonObject = Get(id: id);
-        CommonObject dataCommonObject = CreateStorageCommonObject(commonObject: commonObject);
+        ValidateId(commonObjectId: commonObjectId, parameterName: "id");
+        CommonObject commonObject = GetCommonObject(commonObjectId: commonObjectId);
+        CommonObject dataCommonObject = CreateStorageCommonObject(newCommonObject: commonObject);
         authorizationBroker.Authorize(appId: commonObjectBroker.GetAppId(entity: dataCommonObject), privilege: "CommonObject_delete");
-        await commonObjectBroker.DeleteCommonObjectAsync(entity: dataCommonObject);
+        await commonObjectBroker.DeleteCommonObjectAsync(deletedCommonObject: dataCommonObject);
     }
 
-    private static CommonObject CreateStorageCommonObject(CommonObject commonObject)
+    private static CommonObject CreateStorageCommonObject(CommonObject newCommonObject)
     {
-        if (commonObject == null)
+        if (newCommonObject == null)
         {
             return null;
         }
 
         return new CommonObject
         {
-            Id = commonObject.Id,
-            Name = commonObject.Name,
-            Description = commonObject.Description,
-            LastUpdated = commonObject.LastUpdated,
-            LastUpdatedBy = commonObject.LastUpdatedBy,
-            CreatedOn = commonObject.CreatedOn,
-            CreatedBy = commonObject.CreatedBy,
-            Version = commonObject.Version,
-            Key = commonObject.Key,
-            Type = commonObject.Type,
-            Json = commonObject.Json,
-            Culture = commonObject.Culture
+            Id = newCommonObject.Id,
+            Name = newCommonObject.Name,
+            Description = newCommonObject.Description,
+            LastUpdated = newCommonObject.LastUpdated,
+            LastUpdatedBy = newCommonObject.LastUpdatedBy,
+            CreatedOn = newCommonObject.CreatedOn,
+            CreatedBy = newCommonObject.CreatedBy,
+            Version = newCommonObject.Version,
+            Key = newCommonObject.Key,
+            Type = newCommonObject.Type,
+            Json = newCommonObject.Json,
+            Culture = newCommonObject.Culture
         };
     }
 }

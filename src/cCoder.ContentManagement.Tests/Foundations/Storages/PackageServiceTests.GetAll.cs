@@ -31,7 +31,7 @@ public partial class PackageServiceTests
         packageBrokerMock.Setup(x => x.GetAllPackages(false)).Returns(packages);
 
         // When
-        IQueryable<Package> result = packageService.GetAll();
+        IQueryable<Package> result = packageService.GetAllPackage();
 
         // Then
         result.Should().BeEquivalentTo(expectedItems);

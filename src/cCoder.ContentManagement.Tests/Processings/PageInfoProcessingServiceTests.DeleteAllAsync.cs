@@ -26,7 +26,7 @@ public partial class PageInfoProcessingServiceTests
         pageInfoServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await pageInfoProcessingService.DeleteAllAsync(new[] { entity });
+        await pageInfoProcessingService.DeleteAllPageInfoAsync(new[] { entity });
 
         // Then
         pageInfoServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);

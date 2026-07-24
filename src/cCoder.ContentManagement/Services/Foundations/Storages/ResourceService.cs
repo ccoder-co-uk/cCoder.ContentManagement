@@ -11,26 +11,26 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class ResourceService(IResourceBroker resourceBroker, IAuthorizationBroker authorizationBroker) : IResourceService
 {
-    public Resource Get(int id, bool ignoreFilters = false)
+    public Resource GetResource(int resourceId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(resourceId: resourceId, parameterName: "id");
 
         if (ignoreFilters)
         {
-            return GetAll(ignoreFilters: true)
-                        .FirstOrDefault(predicate: (Resource i) => i.Id == id);
+            return GetAllResource(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
         }
 
-        Resource resource = GetAll()
-            .FirstOrDefault(predicate: (Resource i) => i.Id == id);
+        Resource resource = GetAllResource()
+            .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
 
         if (resource != null)
         {
             return resource;
         }
 
-        Resource resource2 = GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: (Resource i) => i.Id == id);
+        Resource resource2 = GetAllResource(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
 
         if (resource2 != null)
         {
@@ -40,14 +40,14 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
         return null;
     }
 
-    public IQueryable<Resource> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<Resource> GetAllResource(bool ignoreFilters = false) =>
         resourceBroker.GetAllResources(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Resource> AddAsync(Resource resource)
+    public async ValueTask<Resource> AddResourceAsync(Resource resource)
     {
         ValidateResource(resource: resource, parameterName: "resource");
         authorizationBroker.Authorize(appId: resource.AppId, privilege: "Resource_create");
-        Resource newResource = CreateStorageResource(resource: resource);
+        Resource newResource = CreateStorageResource(newResource: resource);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
@@ -56,7 +56,7 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
         newResource.CreatedBy = currentUserId;
         newResource.LastUpdated = now;
         newResource.LastUpdatedBy = currentUserId;
-        Resource result = await resourceBroker.AddResourceAsync(entity: newResource);
+        Resource result = await resourceBroker.AddResourceAsync(newResource: newResource);
         resource.Id = result.Id;
         resource.Name = result.Name;
         resource.Description = result.Description;
@@ -72,11 +72,11 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
         return resource;
     }
 
-    public async ValueTask<Resource> UpdateAsync(Resource resource)
+    public async ValueTask<Resource> UpdateResourceAsync(Resource updatedResource)
     {
-        ValidateResource(resource: resource, parameterName: "resource");
-        authorizationBroker.Authorize(appId: resource.AppId, privilege: "Resource_update");
-        Resource updateResource = CreateStorageResource(resource: resource);
+        ValidateResource(resource: updatedResource, parameterName: "resource");
+        authorizationBroker.Authorize(appId: updatedResource.AppId, privilege: "Resource_update");
+        Resource updateResource = CreateStorageResource(newResource: updatedResource);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
@@ -84,34 +84,34 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateResource.LastUpdated = now;
         updateResource.LastUpdatedBy = currentUserId;
-        Resource result = await resourceBroker.UpdateResourceAsync(entity: updateResource);
-        resource.Id = result.Id;
-        resource.Name = result.Name;
-        resource.Description = result.Description;
-        resource.LastUpdated = result.LastUpdated;
-        resource.LastUpdatedBy = result.LastUpdatedBy;
-        resource.CreatedOn = result.CreatedOn;
-        resource.CreatedBy = result.CreatedBy;
-        resource.AppId = result.AppId;
-        resource.Key = result.Key;
-        resource.Culture = result.Culture;
-        resource.DisplayName = result.DisplayName;
-        resource.ShortDisplayName = result.ShortDisplayName;
-        return resource;
+        Resource result = await resourceBroker.UpdateResourceAsync(updatedResource: updateResource);
+        updatedResource.Id = result.Id;
+        updatedResource.Name = result.Name;
+        updatedResource.Description = result.Description;
+        updatedResource.LastUpdated = result.LastUpdated;
+        updatedResource.LastUpdatedBy = result.LastUpdatedBy;
+        updatedResource.CreatedOn = result.CreatedOn;
+        updatedResource.CreatedBy = result.CreatedBy;
+        updatedResource.AppId = result.AppId;
+        updatedResource.Key = result.Key;
+        updatedResource.Culture = result.Culture;
+        updatedResource.DisplayName = result.DisplayName;
+        updatedResource.ShortDisplayName = result.ShortDisplayName;
+        return updatedResource;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int resourceId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(resourceId: resourceId, parameterName: "id");
         Resource resource;
 
         try
         {
-            resource = Get(id: id);
+            resource = GetResource(resourceId: resourceId);
         }
         catch (SecurityException)
         {
-            resource = Get(id: id, ignoreFilters: true);
+            resource = GetResource(resourceId: resourceId, ignoreFilters: true);
         }
 
         if (resource == null)
@@ -120,30 +120,30 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
         }
 
         authorizationBroker.Authorize(appId: resource.AppId, privilege: "Resource_delete");
-        await resourceBroker.DeleteResourceAsync(entity: CreateStorageResource(resource: resource));
+        await resourceBroker.DeleteResourceAsync(deletedResource: CreateStorageResource(newResource: resource));
     }
 
-    private static Resource CreateStorageResource(Resource resource)
+    private static Resource CreateStorageResource(Resource newResource)
     {
-        if (resource == null)
+        if (newResource == null)
         {
             return null;
         }
 
         return new Resource
         {
-            Id = resource.Id,
-            Name = resource.Name,
-            Description = resource.Description,
-            LastUpdated = resource.LastUpdated,
-            LastUpdatedBy = resource.LastUpdatedBy,
-            CreatedOn = resource.CreatedOn,
-            CreatedBy = resource.CreatedBy,
-            AppId = resource.AppId,
-            Key = resource.Key,
-            Culture = resource.Culture,
-            DisplayName = resource.DisplayName,
-            ShortDisplayName = resource.ShortDisplayName
+            Id = newResource.Id,
+            Name = newResource.Name,
+            Description = newResource.Description,
+            LastUpdated = newResource.LastUpdated,
+            LastUpdatedBy = newResource.LastUpdatedBy,
+            CreatedOn = newResource.CreatedOn,
+            CreatedBy = newResource.CreatedBy,
+            AppId = newResource.AppId,
+            Key = newResource.Key,
+            Culture = newResource.Culture,
+            DisplayName = newResource.DisplayName,
+            ShortDisplayName = newResource.ShortDisplayName
         };
     }
 }

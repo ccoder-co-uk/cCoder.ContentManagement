@@ -26,7 +26,7 @@ public partial class ContentProcessingServiceTests
         contentServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await contentProcessingService.DeleteAllAsync(new[] { entity });
+        await contentProcessingService.DeleteAllContentAsync(new[] { entity });
 
         // Then
         contentServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);

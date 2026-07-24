@@ -10,30 +10,30 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal class PackageItemProcessingService(IPackageItemService service) : IPackageItemProcessingService
 {
-    public PackageItem Get(Guid id) =>
-        service.Get(id: id);
+    public PackageItem GetPackageItem(Guid packageItemId) =>
+        service.GetPackageItem(packageItemId: packageItemId);
 
-    public IQueryable<PackageItem> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<PackageItem> GetAllPackageItem(bool ignoreFilters = false) =>
+        service.GetAllPackageItem(ignoreFilters: ignoreFilters);
 
-    public ValueTask<PackageItem> AddAsync(PackageItem entity) =>
-        service.AddAsync(packageItem: entity);
+    public ValueTask<PackageItem> AddPackageItemAsync(PackageItem newPackageItem) =>
+        service.AddPackageItemAsync(newPackageItem: newPackageItem);
 
-    public ValueTask<PackageItem> UpdateAsync(PackageItem entity) =>
-        service.UpdateAsync(packageItem: entity);
+    public ValueTask<PackageItem> UpdatePackageItemAsync(PackageItem updatedPackageItem) =>
+        service.UpdatePackageItemAsync(updatedPackageItem: updatedPackageItem);
 
-    public ValueTask DeleteAsync(Guid id) =>
-        service.DeleteAsync(id: id);
+    public ValueTask DeleteAsync(Guid packageItemId) =>
+        service.DeleteAsync(packageItemId: packageItemId);
 
-    public async ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdate(IEnumerable<PackageItem> items)
+    public async ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdatePackageItemResult(IEnumerable<PackageItem> newPackageItem)
     {
         List<Result<PackageItem>> results = new List<Result<PackageItem>>();
 
-        foreach (PackageItem item in items)
+        foreach (PackageItem item in newPackageItem)
         {
             try
             {
-                PackageItem savedItem = item.Id == Guid.Empty ? await AddAsync(entity: item) : await UpdateAsync(entity: item);
+                PackageItem savedItem = item.Id == Guid.Empty ? await AddPackageItemAsync(newPackageItem: item) : await UpdatePackageItemAsync(updatedPackageItem: item);
 
                 results.Add(item: new Result<PackageItem>
                 {
@@ -56,11 +56,11 @@ internal class PackageItemProcessingService(IPackageItemService service) : IPack
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<PackageItem> items)
+    public async ValueTask DeleteAllPackageItemAsync(IEnumerable<PackageItem> deletedPackageItem)
     {
-        foreach (PackageItem item in items)
+        foreach (PackageItem item in deletedPackageItem)
         {
-            await DeleteAsync(id: item.Id);
+            await DeleteAsync(packageItemId: item.Id);
         }
     }
 }

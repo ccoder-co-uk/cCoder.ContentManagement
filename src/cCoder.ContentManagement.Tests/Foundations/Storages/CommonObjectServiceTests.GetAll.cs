@@ -28,7 +28,7 @@ public partial class CommonObjectServiceTests
         commonObjectBrokerMock.Setup(x => x.GetAllCommonObjects(false)).Returns(commonObjects);
 
         // When
-        IQueryable<CommonObject> result = commonObjectService.GetAll();
+        IQueryable<CommonObject> result = commonObjectService.GetAllCommonObject();
 
         // Then
         result.Should().BeEquivalentTo([commonObject]);

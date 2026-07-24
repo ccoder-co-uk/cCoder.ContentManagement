@@ -14,44 +14,44 @@ internal class ResourceOrchestrationService(
     IResourceProcessingService processingService,
     IResourceEventProcessingService eventService) : IResourceOrchestrationService
 {
-    public Resource Get(int id) =>
-        processingService.Get(id: ValidateId(id: id, parameterName: "id"));
+    public Resource GetResource(int resourceId) =>
+        processingService.GetResource(resourceId: ValidateId(resourceId: resourceId, parameterName: "id"));
 
-    public IQueryable<Resource> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Resource> GetAllResource(bool ignoreFilters = false) =>
+        processingService.GetAllResource(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Resource> AddAsync(Resource entity)
+    public async ValueTask<Resource> AddResourceAsync(Resource newResource)
     {
-        ValidateResource(resource: entity, parameterName: "entity");
+        ValidateResource(resource: newResource, parameterName: "entity");
 
-        Resource result = await processingService.AddAsync(entity: entity);
+        Resource result = await processingService.AddResourceAsync(newResource: newResource);
         await eventService.RaiseResourceAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask<Resource> UpdateAsync(Resource entity)
+    public async ValueTask<Resource> UpdateResourceAsync(Resource updatedResource)
     {
-        ValidateResource(resource: entity, parameterName: "entity");
+        ValidateResource(resource: updatedResource, parameterName: "entity");
 
-        Resource result = await processingService.UpdateAsync(entity: entity);
+        Resource result = await processingService.UpdateResourceAsync(updatedResource: updatedResource);
         await eventService.RaiseResourceUpdateEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int resourceId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(resourceId: resourceId, parameterName: "id");
 
         Resource entity;
 
         try
         {
-            entity = processingService.Get(id: id);
+            entity = processingService.GetResource(resourceId: resourceId);
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAll(ignoreFilters: true)
-                .FirstOrDefault(predicate: resource => resource.Id == id);
+            entity = processingService.GetAllResource(ignoreFilters: true)
+                .FirstOrDefault(predicate: resource => resource.Id == resourceId);
         }
 
         if (entity == null)
@@ -60,25 +60,25 @@ internal class ResourceOrchestrationService(
         }
 
         await eventService.RaiseResourceDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(id: id);
+        await processingService.DeleteAsync(resourceId: resourceId);
     }
 
     public async ValueTask DeleteByAppIdAsync(int appId)
     {
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        Resource[] resourcesToDelete = [.. GetAll(ignoreFilters: true)
+        Resource[] resourcesToDelete = [.. GetAllResource(ignoreFilters: true)
             .Where(predicate: resource => resource.AppId == appId)];
 
         if (resourcesToDelete.Length > 0)
         {
-            await DeleteAllAsync(items: resourcesToDelete);
+            await DeleteAllResourceAsync(deletedResource: resourcesToDelete);
         }
     }
 
-    public async ValueTask<IEnumerable<Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items)
+    public async ValueTask<IEnumerable<Result<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource)
     {
-        Resource[] resources = ValidateResources(resources: items, parameterName: "items")
+        Resource[] resources = ValidateResources(resources: newResource, parameterName: "items")
             .ToArray();
 
         List<Result<Resource>> results = new();
@@ -88,8 +88,8 @@ internal class ResourceOrchestrationService(
             try
             {
                 Resource result = resource.Id <= 0
-                    ? await AddAsync(entity: resource)
-                    : await UpdateAsync(entity: resource);
+                    ? await AddResourceAsync(newResource: resource)
+                    : await UpdateResourceAsync(updatedResource: resource);
 
                 results.Add(item: new Result<Resource>
                 {
@@ -119,7 +119,7 @@ internal class ResourceOrchestrationService(
         Resource[] validatedItems = ValidateResources(resources: items, parameterName: "items")
             .ToArray();
 
-        var dbVersions = processingService.GetAll()
+        var dbVersions = processingService.GetAllResource()
             .Where(predicate: resource => resource.AppId == appId)
             .Select(selector: resource => new
             {
@@ -136,28 +136,28 @@ internal class ResourceOrchestrationService(
                 $"{resource.Key}_{resource.Name}_{resource.Culture}" == existing.Match)?.Id ?? 0;
         });
 
-        await AddOrUpdate(items: validatedItems);
+        await AddOrUpdateResourceResult(newResource: validatedItems);
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Resource> items)
+    public async ValueTask DeleteAllResourceAsync(IEnumerable<Resource> deletedResource)
     {
-        Resource[] resources = ValidateResources(resources: items, parameterName: "items")
+        Resource[] resources = ValidateResources(resources: deletedResource, parameterName: "items")
             .ToArray();
 
         foreach (Resource resource in resources)
         {
-            await DeleteAsync(id: resource.Id);
+            await DeleteAsync(resourceId: resource.Id);
         }
     }
 
-    private static int ValidateId(int id, string parameterName)
+    private static int ValidateId(int resourceId, string parameterName)
     {
-        if (id < 1)
+        if (resourceId < 1)
         {
             throw new ValidationException(message: parameterName + " must be greater than 0.");
         }
 
-        return id;
+        return resourceId;
     }
 
     private static int ValidateAppId(int appId, string parameterName)

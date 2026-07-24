@@ -35,7 +35,7 @@ public partial class SubmissionServiceTests
         submissionBrokerMock.Setup(x => x.GetAllSubmissions(false)).Returns(submissions);
 
         // When
-        IQueryable<Submission> result = submissionService.GetAll();
+        IQueryable<Submission> result = submissionService.GetAllSubmission();
 
         // Then
         result.Should().BeEquivalentTo(expectedItems);

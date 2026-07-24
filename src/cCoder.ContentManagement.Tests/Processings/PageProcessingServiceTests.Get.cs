@@ -21,12 +21,12 @@ public partial class PageProcessingServiceTests
     public void ShouldDelegateToFoundationServiceWhenGet()
     {
         Page page = CreateRandomPage();
-        pageServiceMock.Setup(x => x.Get(page.Id)).Returns(page);
+        pageServiceMock.Setup(x => x.GetPage(page.Id)).Returns(page);
 
-        Page result = pageProcessingService.Get(page.Id);
+        Page result = pageProcessingService.GetPage(page.Id);
 
         result.Should().BeSameAs(page);
-        pageServiceMock.Verify(x => x.Get(page.Id), Times.Once);
+        pageServiceMock.Verify(x => x.GetPage(page.Id), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

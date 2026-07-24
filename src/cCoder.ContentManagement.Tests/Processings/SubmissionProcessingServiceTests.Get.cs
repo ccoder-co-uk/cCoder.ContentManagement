@@ -24,14 +24,14 @@ public partial class SubmissionProcessingServiceTests
         // Given
         Submission entity = CreateRandomSubmission();
         var id = entity.Id;
-        submissionServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        submissionServiceMock.Setup(x => x.GetSubmission(id)).Returns(entity);
 
         // When
-        Submission result = submissionProcessingService.Get(id);
+        Submission result = submissionProcessingService.GetSubmission(id);
 
         // Then
         result.Should().BeSameAs(entity);
-        submissionServiceMock.Verify(x => x.Get(id), Times.Once);
+        submissionServiceMock.Verify(x => x.GetSubmission(id), Times.Once);
         submissionServiceMock.VerifyNoOtherCalls();
     }
 

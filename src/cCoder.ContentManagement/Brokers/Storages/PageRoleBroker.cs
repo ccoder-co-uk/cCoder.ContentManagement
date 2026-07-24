@@ -22,25 +22,25 @@ public class PageRoleBroker(ICoreContextFactory coreContextFactory) : IPageRoleB
                 .Include(navigationPropertyPath: pageRole => pageRole.Role);
     }
 
-    public async ValueTask<PageRole> AddPageRoleAsync(PageRole entity)
+    public async ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        PageRole result = (await coreDataContext.PageRoles.AddAsync(entity: entity)).Entity;
+        PageRole result = (await coreDataContext.PageRoles.AddAsync(entity: newPageRole)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeletePageRoleAsync(PageRole entity)
+    public async ValueTask<int> DeletePageRoleAsync(PageRole deletedPageRole)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.PageRoles.Remove(entity: entity);
+        coreDataContext.PageRoles.Remove(entity: deletedPageRole);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllPageRolesAsync(IEnumerable<PageRole> items)
+    public async ValueTask DeleteAllPageRolesAsync(IEnumerable<PageRole> deletedPageRole)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.PageRoles.RemoveRange(entities: items);
+        coreDataContext.PageRoles.RemoveRange(entities: deletedPageRole);
         await coreDataContext.SaveChangesAsync();
     }
 }

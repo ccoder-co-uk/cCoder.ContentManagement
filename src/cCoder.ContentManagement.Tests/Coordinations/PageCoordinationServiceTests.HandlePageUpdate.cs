@@ -32,7 +32,7 @@ public partial class PageCoordinationServiceTests
         page.Roles = null;
         page.Pages = null;
         pageOrchestrationServiceMock
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllPage(true))
             .Returns(Array.Empty<LocalPage>().AsQueryable());
 
         // When
@@ -42,7 +42,7 @@ public partial class PageCoordinationServiceTests
         pageInfoOrchestrationServiceMock.VerifyNoOtherCalls();
         contentOrchestrationServiceMock.VerifyNoOtherCalls();
         pageRoleOrchestrationServiceMock.VerifyNoOtherCalls();
-        pageOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        pageOrchestrationServiceMock.Verify(service => service.GetAllPage(true), Times.Once);
         pageOrchestrationServiceMock.VerifyNoOtherCalls();
     }
 
@@ -135,12 +135,12 @@ public partial class PageCoordinationServiceTests
         };
 
         pageInfoOrchestrationServiceMock
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllPageInfo(true))
             .Returns(existingPageInfos.AsQueryable());
 
         pageInfoOrchestrationServiceMock
             .Setup(service =>
-                service.UpdateAsync(It.Is<LocalPageInfo>(item =>
+                service.UpdatePageInfoAsync(It.Is<LocalPageInfo>(item =>
                     item.Id == existingPageInfos.Single().Id &&
                     item.PageId == page.Id &&
                     item.CultureId == string.Empty &&
@@ -150,11 +150,11 @@ public partial class PageCoordinationServiceTests
             .ReturnsAsync((LocalPageInfo item) => item);
 
         contentOrchestrationServiceMock
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllContent(true))
             .Returns(existingContents.AsQueryable());
 
         contentOrchestrationServiceMock
-            .Setup(service => service.UpdateAsync(It.Is<LocalContent>(item =>
+            .Setup(service => service.UpdateContentAsync(It.Is<LocalContent>(item =>
                 item.Id == existingContents.Single().Id &&
                 item.PageId == page.Id &&
                 item.Name == page.Contents.Single().Name &&
@@ -163,24 +163,24 @@ public partial class PageCoordinationServiceTests
             .ReturnsAsync((LocalContent item) => item);
 
         pageRoleOrchestrationServiceMock
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllPageRole(true))
             .Returns(existingPageRoles.AsQueryable());
 
         pageOrchestrationServiceMock
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllPage(true))
             .Returns(new[] { localExistingChild }.AsQueryable());
 
         pageOrchestrationServiceMock
-            .Setup(service => service.AddOrUpdate(It.Is<IEnumerable<LocalPage>>(pages => pages.Single().Id == existingChild.Id)))
+            .Setup(service => service.AddOrUpdatePageResult(It.Is<IEnumerable<LocalPage>>(pages => pages.Single().Id == existingChild.Id)))
             .ReturnsAsync([]);
 
         // When
         await coordinationService.HandlePageUpdateAsync(page);
 
         // Then
-        pageInfoOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        pageInfoOrchestrationServiceMock.Verify(service => service.GetAllPageInfo(true), Times.Once);
         pageInfoOrchestrationServiceMock.Verify(service =>
-            service.UpdateAsync(It.Is<LocalPageInfo>(item =>
+            service.UpdatePageInfoAsync(It.Is<LocalPageInfo>(item =>
                 item.Id == existingPageInfos.Single().Id &&
                 item.PageId == page.Id &&
                 item.CultureId == string.Empty &&
@@ -189,9 +189,9 @@ public partial class PageCoordinationServiceTests
                 item.Keywords == page.PageInfo.Single().Keywords)),
             Times.Once);
 
-        contentOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        contentOrchestrationServiceMock.Verify(service => service.GetAllContent(true), Times.Once);
         contentOrchestrationServiceMock.Verify(service =>
-            service.UpdateAsync(It.Is<LocalContent>(item =>
+            service.UpdateContentAsync(It.Is<LocalContent>(item =>
                 item.Id == existingContents.Single().Id &&
                 item.PageId == page.Id &&
                 item.Name == page.Contents.Single().Name &&
@@ -201,11 +201,11 @@ public partial class PageCoordinationServiceTests
 
         pageInfoOrchestrationServiceMock.VerifyNoOtherCalls();
         contentOrchestrationServiceMock.VerifyNoOtherCalls();
-        pageRoleOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        pageRoleOrchestrationServiceMock.Verify(service => service.GetAllPageRole(true), Times.Once);
         pageRoleOrchestrationServiceMock.VerifyNoOtherCalls();
-        pageOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        pageOrchestrationServiceMock.Verify(service => service.GetAllPage(true), Times.Once);
         pageOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdate(It.Is<IEnumerable<LocalPage>>(pages => pages.Single().Id == existingChild.Id)),
+            service => service.AddOrUpdatePageResult(It.Is<IEnumerable<LocalPage>>(pages => pages.Single().Id == existingChild.Id)),
             Times.Once
         );
         pageOrchestrationServiceMock.VerifyNoOtherCalls();

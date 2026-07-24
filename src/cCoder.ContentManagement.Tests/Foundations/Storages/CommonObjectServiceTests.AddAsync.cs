@@ -42,7 +42,7 @@ public partial class CommonObjectServiceTests
             .ReturnsAsync((DataCommonObject value) => value);
 
         // When
-        CommonObject result = await commonObjectService.AddAsync(commonObject);
+        CommonObject result = await commonObjectService.AddCommonObjectAsync(commonObject);
 
         // Then
         result.Should().BeSameAs(commonObject);
@@ -155,7 +155,7 @@ public partial class CommonObjectServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await commonObjectService.AddAsync(commonObject);
+        Func<Task> action = async () => await commonObjectService.AddCommonObjectAsync(commonObject);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

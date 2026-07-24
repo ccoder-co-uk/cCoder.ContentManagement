@@ -19,36 +19,36 @@ public class ResourceBroker(ICoreContextFactory coreContextFactory) : IResourceB
             : coreDataContext.Resources;
     }
 
-    public async ValueTask<Resource> AddResourceAsync(Resource entity)
+    public async ValueTask<Resource> AddResourceAsync(Resource newResource)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Resource result = (await coreDataContext.Resources.AddAsync(entity: entity)).Entity;
+        Resource result = (await coreDataContext.Resources.AddAsync(entity: newResource)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<Resource> UpdateResourceAsync(Resource entity)
+    public async ValueTask<Resource> UpdateResourceAsync(Resource updatedResource)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        Resource result = coreDataContext.Resources.Update(entity: entity)
+        Resource result = coreDataContext.Resources.Update(entity: updatedResource)
             .Entity;
 
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeleteResourceAsync(Resource entity)
+    public async ValueTask<int> DeleteResourceAsync(Resource deletedResource)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Resources.Remove(entity: entity);
+        coreDataContext.Resources.Remove(entity: deletedResource);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllResourcesAsync(IEnumerable<Resource> items)
+    public async ValueTask DeleteAllResourcesAsync(IEnumerable<Resource> deletedResource)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Resources.RemoveRange(entities: items);
+        coreDataContext.Resources.RemoveRange(entities: deletedResource);
         await coreDataContext.SaveChangesAsync();
     }
 

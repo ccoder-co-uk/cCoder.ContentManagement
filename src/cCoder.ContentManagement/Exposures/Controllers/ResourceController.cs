@@ -35,7 +35,7 @@ public class ResourceController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Resource> queryOptions) =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllResource());
 
     [HttpGet]
     [AllowAnonymous]
@@ -44,7 +44,7 @@ public class ResourceController : ODataController
     {
         try
         {
-            IQueryable<Resource> result = Service.GetAll()
+            IQueryable<Resource> result = Service.GetAllResource()
                 .Where(predicate: resource => resource.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -57,32 +57,32 @@ public class ResourceController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Resource entity)
+    public async Task<IActionResult> Post([FromBody] Resource newResource)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddAsync(entity: entity));
+        return Ok(value: await Service.AddResourceAsync(newResource: newResource));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Resource entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Resource updatedResource)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdateAsync(entity: entity));
+        return Ok(value: await Service.UpdateResourceAsync(updatedResource: updatedResource));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<Resource> delta)
     {
-        Resource originalEntity = Service.Get(id: key);
+        Resource originalEntity = Service.GetResource(resourceId: key);
 
         if (originalEntity == null)
         {
@@ -90,13 +90,13 @@ public class ResourceController : ODataController
         }
 
         delta.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateAsync(entity: originalEntity));
+        return Ok(value: await Service.UpdateResourceAsync(updatedResource: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(id: key);
+        await Service.DeleteAsync(resourceId: key);
         return Ok();
     }
 }

@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageService
 {
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int pageId, string parameterName) =>
+        ThrowIf(condition: pageId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidatePage(Page page, string parameterName)
     {

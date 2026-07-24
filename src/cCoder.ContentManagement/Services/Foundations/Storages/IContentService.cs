@@ -8,13 +8,13 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface IContentService
 {
-    Content Get(int id, bool ignoreFilters = false);
+    Content GetContent(int contentId, bool ignoreFilters = false);
 
-    IQueryable<Content> GetAll(bool ignoreFilters = false);
+    IQueryable<Content> GetAllContent(bool ignoreFilters = false);
 
-    ValueTask<Content> AddAsync(Content content);
+    ValueTask<Content> AddContentAsync(Content newContent);
 
-    ValueTask<Content> UpdateAsync(Content content);
+    ValueTask<Content> UpdateContentAsync(Content updatedContent);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int contentId);
 }

@@ -26,14 +26,14 @@ public partial class ComponentProcessingServiceTests
     {
         // Given
         Component component = CreateRandomComponent();
-        componentServiceMock.Setup(x => x.AddAsync(component)).ReturnsAsync(component);
+        componentServiceMock.Setup(x => x.AddComponentAsync(component)).ReturnsAsync(component);
 
         // When
-        Component result = await componentProcessingService.AddAsync(component);
+        Component result = await componentProcessingService.AddComponentAsync(component);
 
         // Then
         Assert.Same(component, result);
-        componentServiceMock.Verify(x => x.AddAsync(component), Times.Once);
+        componentServiceMock.Verify(x => x.AddComponentAsync(component), Times.Once);
     }
 
     [Fact]
@@ -43,12 +43,12 @@ public partial class ComponentProcessingServiceTests
         Component component = CreateRandomComponent();
 
         componentServiceMock
-            .Setup(x => x.AddAsync(component))
+            .Setup(x => x.AddComponentAsync(component))
             .ThrowsAsync(new SecurityException("Access Denied!"));
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await componentProcessingService.AddAsync(component)
+            await componentProcessingService.AddComponentAsync(component)
         );
 
         // Then

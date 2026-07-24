@@ -26,7 +26,7 @@ public partial class LayoutProcessingServiceTests
         layoutServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await layoutProcessingService.DeleteAllAsync(new[] { entity });
+        await layoutProcessingService.DeleteAllLayoutAsync(new[] { entity });
 
         // Then
         layoutServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);

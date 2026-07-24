@@ -24,14 +24,14 @@ public partial class ResourceProcessingServiceTests
         // Given
         Resource[] resources = [CreateRandomResource()];
         IQueryable<Resource> queryableResources = resources.AsQueryable();
-        resourceServiceMock.Setup(x => x.GetAll()).Returns(queryableResources);
+        resourceServiceMock.Setup(x => x.GetAllResource()).Returns(queryableResources);
 
         // When
-        IQueryable<Resource> result = resourceProcessingService.GetAll();
+        IQueryable<Resource> result = resourceProcessingService.GetAllResource();
 
         // Then
         result.Should().BeSameAs(queryableResources);
-        resourceServiceMock.Verify(x => x.GetAll(), Times.Once);
+        resourceServiceMock.Verify(x => x.GetAllResource(), Times.Once);
         resourceServiceMock.VerifyNoOtherCalls();
     }
 

@@ -19,23 +19,23 @@ public static partial class IServiceCollectionExtensions
 {
     private static ContentManagementConfiguration AddConfiguredContentManagement(
         this IServiceCollection services,
-        Action<IServiceCollection, ContentManagementConfiguration> configure)
+        Action<IServiceCollection, ContentManagementConfiguration> newContentManagementConfiguration)
     {
-        ContentManagementConfiguration configuration = CreateConfiguration(services: services, configure: configure);
+        ContentManagementConfiguration configuration = CreateConfiguration(services: services, newContentManagementConfiguration: newContentManagementConfiguration);
         services.AddContentManagement();
         return configuration;
     }
 
     private static ContentManagementConfiguration AddConfiguredContentManagementWeb(
         this IServiceCollection services,
-        Action<IServiceCollection, ContentManagementConfiguration> configure,
+        Action<IServiceCollection, ContentManagementConfiguration> newContentManagementConfiguration,
         ODataConventionModelBuilder builder = null)
     {
-        ContentManagementConfiguration configuration = CreateConfiguration(services: services, configure: configure);
+        ContentManagementConfiguration configuration = CreateConfiguration(services: services, newContentManagementConfiguration: newContentManagementConfiguration);
         services.AddContentManagementWeb(builder: builder);
 
         services.AddConfiguredApi(
-configuration: configuration,
+newContentManagementConfiguration: configuration,
 documentName: "ContentManagement",
 configureModel: static modelBuilder => modelBuilder.ConfigureContentManagementApiModel(),
 builder: builder);
@@ -48,10 +48,10 @@ builder: builder);
 
     private static ContentManagementConfiguration CreateConfiguration(
         IServiceCollection services,
-        Action<IServiceCollection, ContentManagementConfiguration> configure)
+        Action<IServiceCollection, ContentManagementConfiguration> newContentManagementConfiguration)
     {
         ContentManagementConfiguration configuration = new();
-        configure?.Invoke(arg1: services, arg2: configuration);
+        newContentManagementConfiguration?.Invoke(arg1: services, arg2: configuration);
         services.AddSingleton(implementationInstance: configuration);
         services.AddEventProviders(eventProviders: configuration.EventProviders);
         return configuration;
@@ -59,7 +59,7 @@ builder: builder);
 
     private static void AddConfiguredApi(
         this IServiceCollection services,
-        ContentManagementConfiguration configuration,
+        ContentManagementConfiguration newContentManagementConfiguration,
         string documentName,
         Action<ODataConventionModelBuilder> configureModel,
         ODataConventionModelBuilder builder = null,
@@ -76,15 +76,15 @@ builder: builder);
 
         if (builder is null)
         {
-            AddApiDocumentation(services: services, documentName: documentName, configuration: configuration, useFullSchemaIds: useFullSchemaIds);
+            AddApiDocumentation(services: services, documentName: documentName, newContentManagementConfiguration: newContentManagementConfiguration, useFullSchemaIds: useFullSchemaIds);
         }
 
         IEdmModel routeModel = BuildRouteModel(configureModel: configureModel);
         DefaultODataBatchHandler batchHandler = new();
 
-        string rootPath = string.IsNullOrWhiteSpace(value: configuration.RootPath)
+        string rootPath = string.IsNullOrWhiteSpace(value: newContentManagementConfiguration.RootPath)
             ? $"Api/{documentName}"
-            : configuration.RootPath;
+            : newContentManagementConfiguration.RootPath;
 
         services.AddControllers()
             .AddOData(setupAction: options =>
@@ -102,7 +102,7 @@ builder: builder);
                 .AddRouteComponents(routePrefix: rootPath, model: routeModel, batchHandler: batchHandler);
 
             if (builder is null
-                && configuration.IncludeLegacyCoreContext
+                && newContentManagementConfiguration.IncludeLegacyCoreContext
                 && !string.Equals(a: rootPath, b: "Api/Core", comparisonType: StringComparison.OrdinalIgnoreCase))
             {
                 options.AddRouteComponents(routePrefix: "Api/Core", model: routeModel, batchHandler: batchHandler);
@@ -113,13 +113,13 @@ builder: builder);
     private static void AddApiDocumentation(
         IServiceCollection services,
         string documentName,
-        ContentManagementConfiguration configuration,
+        ContentManagementConfiguration newContentManagementConfiguration,
         bool useFullSchemaIds)
     {
         services.AddSwaggerGen(setupAction: options =>
         {
             options.ResolveConflictingActions(resolver: apiDescriptions => apiDescriptions.First());
-            AddSwaggerDocuments(options: options, documentName: documentName, configuration: configuration);
+            AddSwaggerDocuments(options: options, documentName: documentName, newContentManagementConfiguration: newContentManagementConfiguration);
 
             options.DocInclusionPredicate(
 predicate: (swaggerDocumentName, apiDescription) =>
@@ -127,7 +127,7 @@ predicate: (swaggerDocumentName, apiDescription) =>
 swaggerDocumentName: swaggerDocumentName,
 relativePath: apiDescription.RelativePath,
 documentName: documentName,
-configuration: configuration));
+configuration: newContentManagementConfiguration));
 
             if (useFullSchemaIds)
             {
@@ -148,7 +148,7 @@ configuration: configuration));
     private static void AddSwaggerDocuments(
         Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options,
         string documentName,
-        ContentManagementConfiguration configuration)
+        ContentManagementConfiguration newContentManagementConfiguration)
     {
         options.SwaggerDoc(name: documentName, info: new OpenApiInfo
         {
@@ -156,7 +156,7 @@ configuration: configuration));
             Version = documentName,
         });
 
-        if (configuration.IncludeLegacyCoreContext)
+        if (newContentManagementConfiguration.IncludeLegacyCoreContext)
         {
             options.SwaggerDoc(name: "Core", info: new OpenApiInfo
             {

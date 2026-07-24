@@ -10,5 +10,5 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IPageRenderOrchestrationService
 {
-    RenderResult Render(Page page, User user, string theme, string culture, bool edit = false);
+    RenderResult RenderPageUserRenderResult(Page page, User user, string theme, string culture, bool edit = false);
 }

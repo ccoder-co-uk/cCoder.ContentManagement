@@ -10,5 +10,5 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface IPageRenderProcessingService
 {
-    RenderResult RenderPage(Page page, User user, Config config, string theme, string culture, bool edit = false);
+    RenderResult RenderPageUserConfigRenderResult(Page page, User user, Config config, string theme, string culture, bool edit = false);
 }

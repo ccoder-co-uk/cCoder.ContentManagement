@@ -9,21 +9,21 @@ namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class AppManager(IAppOrchestrationService appOrchestrationService) : IAppManager
 {
-    public App Get(int id, bool ignoreFilters = false) =>
-        appOrchestrationService.Get(id: id);
+    public App Get(int appManagerId, bool ignoreFilters = false) =>
+        appOrchestrationService.GetApp(appId: appManagerId);
 
     public App GetByDomain(string domain, bool ignoreFilters = false) =>
-        appOrchestrationService.GetByDomain(domain: domain, ignoreFilters: ignoreFilters);
+        appOrchestrationService.GetByDomainApp(domain: domain, ignoreFilters: ignoreFilters);
 
     public IQueryable<App> GetAll(bool ignoreFilters = false) =>
-        appOrchestrationService.GetAll(ignoreFilters: ignoreFilters);
+        appOrchestrationService.GetAllApp(ignoreFilters: ignoreFilters);
 
-    public ValueTask<App> AddAsync(App app) =>
-        appOrchestrationService.AddAsync(entity: app);
+    public ValueTask<App> AddAsync(App newApp) =>
+        appOrchestrationService.AddAppAsync(newApp: newApp);
 
-    public ValueTask<App> UpdateAsync(App app) =>
-        appOrchestrationService.UpdateAsync(entity: app);
+    public ValueTask<App> UpdateAsync(App updatedApp) =>
+        appOrchestrationService.UpdateAppAsync(updatedApp: updatedApp);
 
     public ValueTask DeleteAsync(int appId) =>
-        appOrchestrationService.DeleteAsync(id: appId);
+        appOrchestrationService.DeleteAsync(appId: appId);
 }

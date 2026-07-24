@@ -24,17 +24,17 @@ public partial class AppCultureProcessingServiceTests
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
         appCultureServiceMock
-            .Setup(x => x.Get(appCulture.AppId, appCulture.CultureId, false))
+            .Setup(x => x.GetAppCulture(appCulture.AppId, appCulture.CultureId, false))
             .Returns(appCulture);
-        appCultureServiceMock.Setup(x => x.DeleteAsync(appCulture)).Returns(ValueTask.CompletedTask);
+        appCultureServiceMock.Setup(x => x.DeleteAppCultureAsync(appCulture)).Returns(ValueTask.CompletedTask);
 
         // When
-        await appCultureProcessingService.DeleteAsync(appCulture);
+        await appCultureProcessingService.DeleteAppCultureAsync(appCulture);
 
         // Then
         appCultureServiceMock.Verify(
             x =>
-                x.DeleteAsync(
+                x.DeleteAppCultureAsync(
                     It.Is<AppCulture>(item =>
                         item.AppId == appCulture.AppId && item.CultureId == appCulture.CultureId
                     )
@@ -49,15 +49,15 @@ public partial class AppCultureProcessingServiceTests
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
         appCultureServiceMock
-            .Setup(x => x.Get(appCulture.AppId, appCulture.CultureId, false))
+            .Setup(x => x.GetAppCulture(appCulture.AppId, appCulture.CultureId, false))
             .Returns(appCulture);
         appCultureServiceMock
-            .Setup(x => x.DeleteAsync(appCulture))
+            .Setup(x => x.DeleteAppCultureAsync(appCulture))
             .Throws(new SecurityException("Access Denied!"));
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await appCultureProcessingService.DeleteAsync(appCulture)
+            await appCultureProcessingService.DeleteAppCultureAsync(appCulture)
         );
 
         // Then
@@ -69,12 +69,12 @@ public partial class AppCultureProcessingServiceTests
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
         appCultureServiceMock
-            .Setup(x => x.Get(appCulture.AppId, appCulture.CultureId, false))
+            .Setup(x => x.GetAppCulture(appCulture.AppId, appCulture.CultureId, false))
             .Returns((AppCulture)null);
 
         // When
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            await appCultureProcessingService.DeleteAsync(appCulture));
+            await appCultureProcessingService.DeleteAppCultureAsync(appCulture));
 
         // Then
     }

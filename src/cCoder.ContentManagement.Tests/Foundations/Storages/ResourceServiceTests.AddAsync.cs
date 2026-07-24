@@ -47,7 +47,7 @@ public partial class ResourceServiceTests
             .ReturnsAsync((CmsDataModels.Resource value) => value);
 
         // When
-        Resource result = await resourceService.AddAsync(resource);
+        Resource result = await resourceService.AddResourceAsync(resource);
 
         // Then
         result.Should().BeSameAs(resource);
@@ -155,7 +155,7 @@ public partial class ResourceServiceTests
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await resourceService.AddAsync(resource)
+            await resourceService.AddResourceAsync(resource)
         );
 
         // Then

@@ -23,18 +23,18 @@ public partial class PageRoleOrchestrationServiceTests
     {
         // Given
         PageRole entity = CreateRandomPageRole();
-        pageRoleProcessingServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
+        pageRoleProcessingServiceMock.Setup(x => x.AddPageRoleAsync(entity)).ReturnsAsync(entity);
 
         pageRoleEventProcessingServiceMock
             .Setup(x => x.RaisePageRoleAddEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        PageRole result = await orchestrationService.AddAsync(entity);
+        PageRole result = await orchestrationService.AddPageRoleAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        pageRoleProcessingServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
+        pageRoleProcessingServiceMock.Verify(x => x.AddPageRoleAsync(entity), Times.Once);
         pageRoleEventProcessingServiceMock.Verify(x => x.RaisePageRoleAddEventAsync(entity), Times.Once);
     }
 

@@ -11,24 +11,24 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PackageItemService(IPackageItemBroker packageItemBroker, IAuthorizationBroker authorizationBroker) : IPackageItemService
 {
-    public PackageItem Get(Guid id, bool ignoreFilters = false)
+    public PackageItem GetPackageItem(Guid packageItemId, bool ignoreFilters = false)
     {
         if (ignoreFilters)
         {
-            return GetAll(ignoreFilters: true)
-                        .FirstOrDefault(predicate: (PackageItem i) => i.Id == id);
+            return GetAllPackageItem(ignoreFilters: true)
+                .FirstOrDefault(predicate: (PackageItem i) => i.Id == packageItemId);
         }
 
-        PackageItem packageItem = GetAll()
-            .FirstOrDefault(predicate: (PackageItem i) => i.Id == id);
+        PackageItem packageItem = GetAllPackageItem()
+            .FirstOrDefault(predicate: (PackageItem i) => i.Id == packageItemId);
 
         if (packageItem != null)
         {
             return packageItem;
         }
 
-        PackageItem packageItem2 = GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: (PackageItem i) => i.Id == id);
+        PackageItem packageItem2 = GetAllPackageItem(ignoreFilters: true)
+            .FirstOrDefault(predicate: (PackageItem i) => i.Id == packageItemId);
 
         if (packageItem2 != null)
         {
@@ -38,54 +38,54 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
         return null;
     }
 
-    public IQueryable<PackageItem> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<PackageItem> GetAllPackageItem(bool ignoreFilters = false) =>
         packageItemBroker.GetAllPackageItems(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<PackageItem> AddAsync(PackageItem packageItem)
+    public async ValueTask<PackageItem> AddPackageItemAsync(PackageItem newPackageItem)
     {
-        PackageItem dataPackageItem = CreateStoragePackageItem(packageItem: packageItem);
+        PackageItem dataPackageItem = CreateStoragePackageItem(newPackageItem: newPackageItem);
         authorizationBroker.Authorize(appId: packageItemBroker.GetAppId(entity: dataPackageItem), privilege: "PackageItem_create");
-        PackageItem result = await packageItemBroker.AddPackageItemAsync(entity: dataPackageItem);
-        packageItem.Id = result.Id;
-        packageItem.PackageId = result.PackageId;
-        packageItem.Type = result.Type;
-        packageItem.Data = result.Data;
-        return packageItem;
+        PackageItem result = await packageItemBroker.AddPackageItemAsync(newPackageItem: dataPackageItem);
+        newPackageItem.Id = result.Id;
+        newPackageItem.PackageId = result.PackageId;
+        newPackageItem.Type = result.Type;
+        newPackageItem.Data = result.Data;
+        return newPackageItem;
     }
 
-    public async ValueTask<PackageItem> UpdateAsync(PackageItem packageItem)
+    public async ValueTask<PackageItem> UpdatePackageItemAsync(PackageItem updatedPackageItem)
     {
-        PackageItem dataPackageItem = CreateStoragePackageItem(packageItem: packageItem);
+        PackageItem dataPackageItem = CreateStoragePackageItem(newPackageItem: updatedPackageItem);
         authorizationBroker.Authorize(appId: packageItemBroker.GetAppId(entity: dataPackageItem), privilege: "PackageItem_update");
-        PackageItem result = await packageItemBroker.UpdatePackageItemAsync(entity: dataPackageItem);
-        packageItem.Id = result.Id;
-        packageItem.PackageId = result.PackageId;
-        packageItem.Type = result.Type;
-        packageItem.Data = result.Data;
-        return packageItem;
+        PackageItem result = await packageItemBroker.UpdatePackageItemAsync(updatedPackageItem: dataPackageItem);
+        updatedPackageItem.Id = result.Id;
+        updatedPackageItem.PackageId = result.PackageId;
+        updatedPackageItem.Type = result.Type;
+        updatedPackageItem.Data = result.Data;
+        return updatedPackageItem;
     }
 
-    public async ValueTask DeleteAsync(Guid id)
+    public async ValueTask DeleteAsync(Guid packageItemId)
     {
-        PackageItem packageItem = Get(id: id);
-        PackageItem dataPackageItem = CreateStoragePackageItem(packageItem: packageItem);
+        PackageItem packageItem = GetPackageItem(packageItemId: packageItemId);
+        PackageItem dataPackageItem = CreateStoragePackageItem(newPackageItem: packageItem);
         authorizationBroker.Authorize(appId: packageItemBroker.GetAppId(entity: dataPackageItem), privilege: "PackageItem_delete");
-        await packageItemBroker.DeletePackageItemAsync(entity: dataPackageItem);
+        await packageItemBroker.DeletePackageItemAsync(deletedPackageItem: dataPackageItem);
     }
 
-    private static PackageItem CreateStoragePackageItem(PackageItem packageItem)
+    private static PackageItem CreateStoragePackageItem(PackageItem newPackageItem)
     {
-        if (packageItem == null)
+        if (newPackageItem == null)
         {
             return null;
         }
 
         return new PackageItem
         {
-            Id = packageItem.Id,
-            PackageId = packageItem.PackageId,
-            Type = packageItem.Type,
-            Data = packageItem.Data
+            Id = newPackageItem.Id,
+            PackageId = newPackageItem.PackageId,
+            Type = newPackageItem.Type,
+            Data = newPackageItem.Data
         };
     }
 }

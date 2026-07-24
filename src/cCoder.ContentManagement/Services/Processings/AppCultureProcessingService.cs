@@ -11,14 +11,14 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal class AppCultureProcessingService(IAppCultureService service) : IAppCultureProcessingService
 {
-    public IQueryable<AppCulture> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
+        service.GetAllAppCulture(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<AppCulture> AddAsync(AppCulture entity)
+    public async ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture)
     {
         try
         {
-            return await service.AddAsync(appCulture: entity);
+            return await service.AddAppCultureAsync(newAppCulture: newAppCulture);
         }
         catch (DbUpdateException ex) when (
             ex.InnerException?.Message.Contains(value: "FOREIGN KEY", comparisonType: StringComparison.OrdinalIgnoreCase) == true)
@@ -27,33 +27,33 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
         }
     }
 
-    public async ValueTask DeleteAsync(AppCulture link)
+    public async ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture)
     {
-        AppCulture dbVersion = service.Get(appId: link.AppId, cultureId: link.CultureId);
+        AppCulture dbVersion = service.GetAppCulture(appId: deletedAppCulture.AppId, cultureId: deletedAppCulture.CultureId);
 
         if (dbVersion == null)
         {
             throw new InvalidOperationException(message: "The app culture does not exist.");
         }
 
-        await service.DeleteAsync(appCulture: dbVersion);
+        await service.DeleteAppCultureAsync(deletedAppCulture: dbVersion);
     }
 
-    public async ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdate(IEnumerable<AppCulture> items)
+    public async ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture)
     {
         List<Result<AppCulture>> results = [];
 
-        foreach (AppCulture item in items)
+        foreach (AppCulture item in newAppCulture)
         {
             try
             {
-                AppCulture existing = service.Get(appId: item.AppId, cultureId: item.CultureId, ignoreFilters: true);
+                AppCulture existing = service.GetAppCulture(appId: item.AppId, cultureId: item.CultureId, ignoreFilters: true);
 
                 results.Add(item: new Result<AppCulture>
                 {
                     Id = $"{item.AppId}:{item.CultureId}",
                     Success = true,
-                    Item = existing ?? await AddAsync(entity: item),
+                    Item = existing ?? await AddAppCultureAsync(newAppCulture: item),
                     Message = existing == null ? "Added Successfully" : "Already Exists"
                 });
             }
@@ -72,11 +72,11 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<AppCulture> items)
+    public async ValueTask DeleteAllAppCultureAsync(IEnumerable<AppCulture> deletedAppCulture)
     {
-        foreach (AppCulture item in items)
+        foreach (AppCulture item in deletedAppCulture)
         {
-            await DeleteAsync(link: item);
+            await DeleteAppCultureAsync(deletedAppCulture: item);
         }
     }
 }

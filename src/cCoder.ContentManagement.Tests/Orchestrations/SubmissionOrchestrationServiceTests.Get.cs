@@ -24,14 +24,14 @@ public partial class SubmissionOrchestrationServiceTests
         // Given
         Guid id = Guid.NewGuid();
         Submission entity = CreateRandomSubmission();
-        submissionProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        submissionProcessingServiceMock.Setup(x => x.GetSubmission(id)).Returns(entity);
 
         // When
-        Submission result = orchestrationService.Get(id);
+        Submission result = orchestrationService.GetSubmission(id);
 
         // Then
         result.Should().BeEquivalentTo(entity, options => options.Excluding(submission => submission.Data));
-        submissionProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        submissionProcessingServiceMock.Verify(x => x.GetSubmission(id), Times.Once);
         submissionProcessingServiceMock.VerifyNoOtherCalls();
         submissionEventProcessingServiceMock.VerifyNoOtherCalls();
     }

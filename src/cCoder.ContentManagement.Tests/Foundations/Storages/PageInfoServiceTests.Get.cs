@@ -27,7 +27,7 @@ public partial class PageInfoServiceTests
         pageInfoBrokerMock.Setup(x => x.GetAllPageInfo(false)).Returns(new[] { ToDataPageInfo(pageInfo) }.AsQueryable());
 
         // When
-        PageInfo result = pageInfoService.Get(7);
+        PageInfo result = pageInfoService.GetPageInfo(7);
 
         // Then
         result.Should().BeEquivalentTo(pageInfo);

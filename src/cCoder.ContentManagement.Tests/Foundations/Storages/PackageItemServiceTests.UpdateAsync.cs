@@ -37,7 +37,7 @@ public partial class PackageItemServiceTests
             .ReturnsAsync((cCoder.Data.Models.Packaging.PackageItem value) => value);
 
         // When
-        PackageItem result = await packageItemService.UpdateAsync(packageItem);
+        PackageItem result = await packageItemService.UpdatePackageItemAsync(packageItem);
 
         // Then
         result.Should().BeSameAs(packageItem);
@@ -68,7 +68,7 @@ public partial class PackageItemServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await packageItemService.UpdateAsync(packageItem);
+        Func<Task> action = async () => await packageItemService.UpdatePackageItemAsync(packageItem);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

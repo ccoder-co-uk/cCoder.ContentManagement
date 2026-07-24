@@ -22,7 +22,7 @@ public class ControllerGetAllTests
         Mock<IAppOrchestrationService> serviceMock = new();
         IQueryable<App> expectedApps = new[] { new App { Id = 1, Name = "App" } }.AsQueryable();
 
-        serviceMock.Setup(service => service.GetAll(false)).Returns(expectedApps);
+        serviceMock.Setup(service => service.GetAllApp(false)).Returns(expectedApps);
 
         AppController controller = new(
             serviceMock.Object,
@@ -40,7 +40,7 @@ public class ControllerGetAllTests
         Mock<ICultureOrchestrationService> serviceMock = new();
         IQueryable<Culture> expectedCultures = new[] { new Culture { Id = "en-GB", Name = "English" } }.AsQueryable();
 
-        serviceMock.Setup(service => service.GetAll(false)).Returns(expectedCultures);
+        serviceMock.Setup(service => service.GetAllCulture(false)).Returns(expectedCultures);
 
         CultureController controller = new(
             serviceMock.Object,
@@ -57,7 +57,7 @@ public class ControllerGetAllTests
         Mock<IPageOrchestrationService> serviceMock = new();
         IQueryable<Page> expectedPages = new[] { new Page { Id = 1, AppId = 1, Name = "Admin", Path = "Admin" } }.AsQueryable();
 
-        serviceMock.Setup(service => service.GetAll(false)).Returns(expectedPages);
+        serviceMock.Setup(service => service.GetAllPage(false)).Returns(expectedPages);
 
         PageController controller = new(
             serviceMock.Object,
@@ -84,7 +84,7 @@ public class ControllerGetAllTests
             }
         }.AsQueryable();
 
-        serviceMock.Setup(service => service.GetAll(false)).Returns(expectedSubmissions);
+        serviceMock.Setup(service => service.GetAllSubmission(false)).Returns(expectedSubmissions);
 
         SubmissionController controller = new(
             serviceMock.Object,

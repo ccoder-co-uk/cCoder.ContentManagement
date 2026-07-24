@@ -10,11 +10,11 @@ public interface ITemplateBroker
 {
     IQueryable<Template> GetAllTemplates(bool ignoreFilters);
 
-    ValueTask<Template> AddTemplateAsync(Template entity);
+    ValueTask<Template> AddTemplateAsync(Template newTemplate);
 
-    ValueTask<Template> UpdateTemplateAsync(Template entity);
+    ValueTask<Template> UpdateTemplateAsync(Template updatedTemplate);
 
-    ValueTask<int> DeleteTemplateAsync(Template entity);
+    ValueTask<int> DeleteTemplateAsync(Template deletedTemplate);
 
-    ValueTask DeleteAllTemplatesAsync(IEnumerable<Template> items);
+    ValueTask DeleteAllTemplatesAsync(IEnumerable<Template> deletedTemplate);
 }

@@ -54,11 +54,11 @@ public partial class CommonObjectProcessingServiceTests
             .Returns(Array.Empty<DataCommonObject>());
 
         currentUser = actor;
-        commonObjectServiceMock.Setup(x => x.AddAsync(commonObject)).ReturnsAsync(commonObject);
+        commonObjectServiceMock.Setup(x => x.AddCommonObjectAsync(commonObject)).ReturnsAsync(commonObject);
 
         // When
         cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
-            await commonObjectProcessingService.ImportAsync(new[] { commonObject })
+            await commonObjectProcessingService.ImportCommonObjectResultAsync(new[] { commonObject })
         ).ToArray();
 
         // Then
@@ -66,7 +66,7 @@ public partial class CommonObjectProcessingServiceTests
         results[0].Success.Should().BeTrue();
         commonObject.Id.Should().Be(0);
         commonObject.Version.Should().Be(1);
-        commonObjectServiceMock.Verify(x => x.AddAsync(commonObject), Times.Once);
+        commonObjectServiceMock.Verify(x => x.AddCommonObjectAsync(commonObject), Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
         commonObjectCacheMock.VerifyGet(x => x.LatestSet, Times.Once);
         commonObjectCacheMock.VerifyNoOtherCalls();
@@ -123,12 +123,12 @@ public partial class CommonObjectProcessingServiceTests
             Culture = dbObject.Culture,
         } });
         currentUser = actor;
-        commonObjectServiceMock.Setup(x => x.GetAll()).Returns(new[] { dbObject }.AsQueryable());
-        commonObjectServiceMock.Setup(x => x.AddAsync(incoming)).ReturnsAsync(incoming);
+        commonObjectServiceMock.Setup(x => x.GetAllCommonObject()).Returns(new[] { dbObject }.AsQueryable());
+        commonObjectServiceMock.Setup(x => x.AddCommonObjectAsync(incoming)).ReturnsAsync(incoming);
 
         // When
         cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
-            await commonObjectProcessingService.ImportAsync(new[] { incoming })
+            await commonObjectProcessingService.ImportCommonObjectResultAsync(new[] { incoming })
         ).ToArray();
 
         // Then
@@ -136,8 +136,8 @@ public partial class CommonObjectProcessingServiceTests
         results[0].Success.Should().BeTrue();
         incoming.Id.Should().Be(0);
         incoming.Version.Should().Be(5);
-        commonObjectServiceMock.Verify(x => x.GetAll(), Times.Exactly(2));
-        commonObjectServiceMock.Verify(x => x.AddAsync(incoming), Times.Once);
+        commonObjectServiceMock.Verify(x => x.GetAllCommonObject(), Times.Exactly(2));
+        commonObjectServiceMock.Verify(x => x.AddCommonObjectAsync(incoming), Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
         commonObjectCacheMock.VerifyGet(x => x.LatestSet, Times.Once);
         commonObjectCacheMock.VerifyNoOtherCalls();
@@ -188,7 +188,7 @@ public partial class CommonObjectProcessingServiceTests
 
         // When
         cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
-            await commonObjectProcessingService.ImportAsync(new[] { incoming })
+            await commonObjectProcessingService.ImportCommonObjectResultAsync(new[] { incoming })
         ).ToArray();
 
         // Then

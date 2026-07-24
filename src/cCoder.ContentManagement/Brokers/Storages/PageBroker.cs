@@ -19,36 +19,36 @@ public class PageBroker(ICoreContextFactory coreContextFactory) : IPageBroker
             : coreDataContext.Pages;
     }
 
-    public async ValueTask<Page> AddPageAsync(Page entity)
+    public async ValueTask<Page> AddPageAsync(Page newPage)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Page result = (await coreDataContext.Pages.AddAsync(entity: entity)).Entity;
+        Page result = (await coreDataContext.Pages.AddAsync(entity: newPage)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<Page> UpdatePageAsync(Page entity)
+    public async ValueTask<Page> UpdatePageAsync(Page updatedPage)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        Page result = coreDataContext.Pages.Update(entity: entity)
+        Page result = coreDataContext.Pages.Update(entity: updatedPage)
             .Entity;
 
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeletePageAsync(Page entity)
+    public async ValueTask<int> DeletePageAsync(Page deletedPage)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Pages.Remove(entity: entity);
+        coreDataContext.Pages.Remove(entity: deletedPage);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllPagesAsync(IEnumerable<Page> items)
+    public async ValueTask DeleteAllPagesAsync(IEnumerable<Page> deletedPage)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Pages.RemoveRange(entities: items);
+        coreDataContext.Pages.RemoveRange(entities: deletedPage);
         await coreDataContext.SaveChangesAsync();
     }
 }

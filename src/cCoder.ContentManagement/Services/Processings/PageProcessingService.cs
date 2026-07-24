@@ -19,21 +19,21 @@ internal partial class PageProcessingService(
     private User User =>
         authorizationBroker.GetCurrentUser();
 
-    public Page Get(int id)
+    public Page GetPage(int pageId)
     {
-        ValidateId(id: id, parameterName: "id");
-        return service.Get(id: id);
+        ValidateId(pageId: pageId, parameterName: "id");
+        return service.GetPage(pageId: pageId);
     }
 
-    public IQueryable<Page> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Page> GetAllPage(bool ignoreFilters = false) =>
+        service.GetAllPage(ignoreFilters: ignoreFilters);
 
-    public string MenuFor(int id, string culture)
+    public string MenuFor(int pageId, string culture)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(pageId: pageId, parameterName: "id");
 
-        IEnumerable<string> enumerable = service.GetAll(ignoreFilters: false)
-            .Where(predicate: page => page.ParentId == id && page.ShowOnMenus)
+        IEnumerable<string> enumerable = service.GetAllPage(ignoreFilters: false)
+            .Where(predicate: page => page.ParentId == pageId && page.ShowOnMenus)
             .OrderBy(keySelector: page => page.Order)
             .Select(selector: page => $"<li data-id='{page.Id}' class='item'><a href='/{page.Path}'>{ContentManagementModelLogic.Title(page: page, culture: culture)}</a></li>");
 
@@ -41,46 +41,46 @@ internal partial class PageProcessingService(
         return "<ul class='submenu'>" + text + "</ul>";
     }
 
-    public Page GetRoot(int id)
+    public Page GetRootPage(int pageId)
     {
-        ValidateId(id: id, parameterName: "id");
-        Page page = Get(id: id);
+        ValidateId(pageId: pageId, parameterName: "id");
+        Page page = GetPage(pageId: pageId);
 
         while (page.ParentId.HasValue)
         {
-            Page page2 = Get(id: page.ParentId.Value);
+            Page page2 = GetPage(pageId: page.ParentId.Value);
             page = page2 ?? page;
         }
 
         return page;
     }
 
-    public IEnumerable<Page> GetChildren(int id)
+    public IEnumerable<Page> GetChildrenPage(int pageId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(pageId: pageId, parameterName: "id");
 
-        return GetAll()
-            .Where(predicate: page => page.ParentId == (int?)id);
+        return GetAllPage()
+            .Where(predicate: page => page.ParentId == (int?)pageId);
     }
 
-    public ValueTask DeleteAsync(int id)
+    public ValueTask DeleteAsync(int pageId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(pageId: pageId, parameterName: "id");
 
-        if (!UserCan(privKey: "page_delete", pageId: id))
+        if (!UserCan(privKey: "page_delete", pageId: pageId))
         {
             throw new SecurityException(message: "Access Denied!");
         }
 
-        return service.DeleteAsync(id: id);
+        return service.DeleteAsync(pageId: pageId);
     }
 
-    public async ValueTask<Page> UpdateAsync(Page page)
+    public async ValueTask<Page> UpdatePageAsync(Page updatedPage)
     {
-        ValidatePage(page: page, parameterName: "page");
+        ValidatePage(page: updatedPage, parameterName: "page");
 
-        Page dbVersion = service.GetAll(ignoreFilters: true)
-            .Where(predicate: existingPage => existingPage.Id == page.Id)
+        Page dbVersion = service.GetAllPage(ignoreFilters: true)
+            .Where(predicate: existingPage => existingPage.Id == updatedPage.Id)
             .FirstOrDefault();
 
         if (dbVersion == null || !UserCan(privKey: "page_update", pageId: dbVersion.Id))
@@ -88,30 +88,30 @@ internal partial class PageProcessingService(
             throw new SecurityException(message: "Access Denied!");
         }
 
-        Page parent = page.ParentId.HasValue
-            ? service.GetAll(ignoreFilters: true)
-            .Where(predicate: existingPage => existingPage.Id == page.ParentId.Value)
+        Page parent = updatedPage.ParentId.HasValue
+            ? service.GetAllPage(ignoreFilters: true)
+            .Where(predicate: existingPage => existingPage.Id == updatedPage.ParentId.Value)
             .FirstOrDefault()
             : null;
 
-        if (page.ParentId.HasValue && parent == null)
+        if (updatedPage.ParentId.HasValue && parent == null)
         {
             throw new SecurityException(message: "Access Denied!");
         }
 
-        dbVersion.ParentId = page.ParentId;
-        dbVersion.AppId = page.AppId;
-        dbVersion.Order = page.Order;
-        dbVersion.ShowOnMenus = page.ShowOnMenus;
-        dbVersion.Name = page.Name;
-        dbVersion.ResourceKey = page.ResourceKey;
-        dbVersion.Layout = page.Layout;
-        dbVersion.Path = BuildPath(pageName: page.Name, parentPath: parent?.Path);
+        dbVersion.ParentId = updatedPage.ParentId;
+        dbVersion.AppId = updatedPage.AppId;
+        dbVersion.Order = updatedPage.Order;
+        dbVersion.ShowOnMenus = updatedPage.ShowOnMenus;
+        dbVersion.Name = updatedPage.Name;
+        dbVersion.ResourceKey = updatedPage.ResourceKey;
+        dbVersion.Layout = updatedPage.Layout;
+        dbVersion.Path = BuildPath(pageName: updatedPage.Name, parentPath: parent?.Path);
 
-        return await service.UpdateAsync(page: dbVersion);
+        return await service.UpdatePageAsync(updatedPage: dbVersion);
     }
 
-    public async ValueTask<Page> AddAsync(Page page)
+    public async ValueTask<Page> AddPageAsync(Page page)
     {
         ValidatePage(page: page, parameterName: "page");
 
@@ -124,7 +124,7 @@ internal partial class PageProcessingService(
 
         if (page.ParentId.HasValue)
         {
-            parent = service.GetAll(ignoreFilters: false)
+            parent = service.GetAllPage(ignoreFilters: false)
                 .Where(predicate: existingPage => existingPage.Id == page.ParentId.Value)
                 .FirstOrDefault();
         }
@@ -137,7 +137,7 @@ internal partial class PageProcessingService(
                 string normalizedParentPath = parentPath.TrimStart(trimChar: '/')
                     .ToLower();
 
-                parent = service.GetAll(ignoreFilters: false)
+                parent = service.GetAllPage(ignoreFilters: false)
                     .Where(predicate: existingPage =>
                         existingPage.AppId == page.AppId &&
                         existingPage.Path.ToLower() == normalizedParentPath)
@@ -193,19 +193,19 @@ internal partial class PageProcessingService(
             })
             .ToList();
 
-        return await service.AddAsync(page: newPage);
+        return await service.AddPageAsync(newPage: newPage);
     }
 
-    public async ValueTask<IEnumerable<Result<Page>>> AddOrUpdate(IEnumerable<Page> items)
+    public async ValueTask<IEnumerable<Result<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage)
     {
-        ValidatePages(pages: items, parameterName: "items");
+        ValidatePages(pages: newPage, parameterName: "items");
         List<Result<Page>> results = new List<Result<Page>>();
 
-        foreach (Page item in items)
+        foreach (Page item in newPage)
         {
             try
             {
-                Page savedItem = item.Id < 1 ? await AddAsync(page: item) : await UpdateAsync(page: item);
+                Page savedItem = item.Id < 1 ? await AddPageAsync(page: item) : await UpdatePageAsync(updatedPage: item);
 
                 results.Add(item: new Result<Page>
                 {
@@ -228,13 +228,13 @@ internal partial class PageProcessingService(
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Page> items)
+    public async ValueTask DeleteAllPageAsync(IEnumerable<Page> deletedPage)
     {
-        ValidatePages(pages: items, parameterName: "items");
+        ValidatePages(pages: deletedPage, parameterName: "items");
 
-        foreach (Page item in items)
+        foreach (Page item in deletedPage)
         {
-            await DeleteAsync(id: item.Id);
+            await DeleteAsync(pageId: item.Id);
         }
     }
 
@@ -252,7 +252,7 @@ internal partial class PageProcessingService(
 
     private async ValueTask RecomputePathsAsync(int appId)
     {
-        Page[] pages = service.GetAll(ignoreFilters: true)
+        Page[] pages = service.GetAllPage(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
             .OrderBy(keySelector: page => page.Order)
             .ToArray();
@@ -274,7 +274,7 @@ internal partial class PageProcessingService(
             if (!string.Equals(a: page.Path, b: newPath, comparisonType: StringComparison.Ordinal))
             {
                 page.Path = newPath;
-                await service.UpdateAsync(page: page);
+                await service.UpdatePageAsync(updatedPage: page);
             }
 
             await RecomputePathsAsync(parentId: page.Id, parentPath: newPath, pages: pages);
@@ -306,7 +306,7 @@ internal partial class PageProcessingService(
 
     private bool UserCan(string privKey, int pageId)
     {
-        Page page = service.GetAll(ignoreFilters: false)
+        Page page = service.GetAllPage(ignoreFilters: false)
             .Where(predicate: existingPage => existingPage.Id == pageId)
             .FirstOrDefault();
 
@@ -346,7 +346,7 @@ internal partial class PageProcessingService(
     {
         string normalizedPath = (page.Path ?? string.Empty).ToUpperInvariant();
 
-        bool pathExists = service.GetAll(ignoreFilters: true)
+        bool pathExists = service.GetAllPage(ignoreFilters: true)
             .Any(predicate: existingPage =>
                 existingPage.AppId == page.AppId &&
                 existingPage.Id != page.Id &&

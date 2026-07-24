@@ -10,11 +10,11 @@ public interface ILayoutBroker
 {
     IQueryable<Layout> GetAllLayouts(bool ignoreFilters);
 
-    ValueTask<Layout> AddLayoutAsync(Layout entity);
+    ValueTask<Layout> AddLayoutAsync(Layout newLayout);
 
-    ValueTask<Layout> UpdateLayoutAsync(Layout entity);
+    ValueTask<Layout> UpdateLayoutAsync(Layout updatedLayout);
 
-    ValueTask<int> DeleteLayoutAsync(Layout entity);
+    ValueTask<int> DeleteLayoutAsync(Layout deletedLayout);
 
-    ValueTask DeleteAllLayoutsAsync(IEnumerable<Layout> items);
+    ValueTask DeleteAllLayoutsAsync(IEnumerable<Layout> deletedLayout);
 }

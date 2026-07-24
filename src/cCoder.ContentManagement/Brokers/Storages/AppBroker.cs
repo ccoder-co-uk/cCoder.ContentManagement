@@ -20,38 +20,38 @@ public class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
             : coreDataContext.Apps;
     }
 
-    public async ValueTask<App> AddAppAsync(App entity)
+    public async ValueTask<App> AddAppAsync(App newApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        App result = (await coreDataContext.Apps.AddAsync(entity: entity)).Entity;
+        App result = (await coreDataContext.Apps.AddAsync(entity: newApp)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<App> UpdateAppAsync(App entity)
+    public async ValueTask<App> UpdateAppAsync(App updatedApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        App result = coreDataContext.Apps.Update(entity: entity)
+        App result = coreDataContext.Apps.Update(entity: updatedApp)
             .Entity;
 
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeleteAppAsync(App entity)
+    public async ValueTask<int> DeleteAppAsync(App deletedApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Apps.Remove(entity: entity);
+        coreDataContext.Apps.Remove(entity: deletedApp);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAppAggregateAsync(App entity)
+    public async ValueTask DeleteAppAggregateAsync(App deletedApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
         UserRole[] userRolesToDelete =
-            [.. entity.Roles?
+            [.. deletedApp.Roles?
                 .SelectMany(selector: role => role.Users ?? [])
             .GroupBy(keySelector: userRole => new { userRole.RoleId, userRole.UserId })
             .Select(selector: group => group.First())
@@ -62,21 +62,21 @@ public class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
             coreDataContext.UserRoles.RemoveRange(entities: userRolesToDelete);
         }
 
-        Role[] rolesToDelete = [.. entity.Roles ?? []];
+        Role[] rolesToDelete = [.. deletedApp.Roles ?? []];
 
         if (rolesToDelete.Length > 0)
         {
             coreDataContext.Roles.RemoveRange(entities: rolesToDelete);
         }
 
-        coreDataContext.Apps.Remove(entity: entity);
+        coreDataContext.Apps.Remove(entity: deletedApp);
         await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllAppsAsync(IEnumerable<App> items)
+    public async ValueTask DeleteAllAppsAsync(IEnumerable<App> deletedApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Apps.RemoveRange(entities: items);
+        coreDataContext.Apps.RemoveRange(entities: deletedApp);
         await coreDataContext.SaveChangesAsync();
     }
 }

@@ -11,43 +11,43 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal class TemplateProcessingService(ITemplateService service) : ITemplateProcessingService
 {
-    public Template Get(int id)
+    public Template GetTemplate(int templateId)
     {
-        ValidateId(id: id, parameterName: "id");
-        return service.Get(id: id);
+        ValidateId(templateId: templateId, parameterName: "id");
+        return service.GetTemplate(templateId: templateId);
     }
 
-    public IQueryable<Template> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Template> GetAllTemplate(bool ignoreFilters = false) =>
+        service.GetAllTemplate(ignoreFilters: ignoreFilters);
 
-    public ValueTask<Template> AddAsync(Template entity)
+    public ValueTask<Template> AddTemplateAsync(Template newTemplate)
     {
-        ValidateTemplate(template: entity, parameterName: "entity");
-        return service.AddAsync(template: entity);
+        ValidateTemplate(template: newTemplate, parameterName: "entity");
+        return service.AddTemplateAsync(newTemplate: newTemplate);
     }
 
-    public ValueTask<Template> UpdateAsync(Template entity)
+    public ValueTask<Template> UpdateTemplateAsync(Template updatedTemplate)
     {
-        ValidateTemplate(template: entity, parameterName: "entity");
-        return service.UpdateAsync(template: entity);
+        ValidateTemplate(template: updatedTemplate, parameterName: "entity");
+        return service.UpdateTemplateAsync(updatedTemplate: updatedTemplate);
     }
 
-    public ValueTask DeleteAsync(int id)
+    public ValueTask DeleteAsync(int templateId)
     {
-        ValidateId(id: id, parameterName: "id");
-        return service.DeleteAsync(id: id);
+        ValidateId(templateId: templateId, parameterName: "id");
+        return service.DeleteAsync(templateId: templateId);
     }
 
-    public async ValueTask<IEnumerable<Result<Template>>> AddOrUpdate(IEnumerable<Template> items)
+    public async ValueTask<IEnumerable<Result<Template>>> AddOrUpdateTemplateResult(IEnumerable<Template> newTemplate)
     {
-        ValidateTemplates(templates: items, parameterName: "items");
+        ValidateTemplates(templates: newTemplate, parameterName: "items");
         List<Result<Template>> results = new List<Result<Template>>();
 
-        foreach (Template item in items)
+        foreach (Template item in newTemplate)
         {
             try
             {
-                Template savedItem = item.Id < 1 ? await AddAsync(entity: item) : await UpdateAsync(entity: item);
+                Template savedItem = item.Id < 1 ? await AddTemplateAsync(newTemplate: item) : await UpdateTemplateAsync(updatedTemplate: item);
 
                 results.Add(item: new Result<Template>
                 {
@@ -70,18 +70,18 @@ internal class TemplateProcessingService(ITemplateService service) : ITemplatePr
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Template> items)
+    public async ValueTask DeleteAllTemplateAsync(IEnumerable<Template> deletedTemplate)
     {
-        ValidateTemplates(templates: items, parameterName: "items");
+        ValidateTemplates(templates: deletedTemplate, parameterName: "items");
 
-        foreach (Template item in items)
+        foreach (Template item in deletedTemplate)
         {
-            await DeleteAsync(id: item.Id);
+            await DeleteAsync(templateId: item.Id);
         }
     }
 
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int templateId, string parameterName) =>
+        ThrowIf(condition: templateId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateTemplate(Template template, string parameterName) =>
         ThrowIf(condition: template == null, message: parameterName + " is required.");

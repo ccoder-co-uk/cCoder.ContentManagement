@@ -24,14 +24,14 @@ public partial class PackageItemProcessingServiceTests
     {
         // Given
         PackageItem entity = CreateRandomPackageItem();
-        packageItemServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        packageItemServiceMock.Setup(x => x.UpdatePackageItemAsync(entity)).ReturnsAsync(entity);
 
         // When
-        PackageItem result = await packageItemProcessingService.UpdateAsync(entity);
+        PackageItem result = await packageItemProcessingService.UpdatePackageItemAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        packageItemServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        packageItemServiceMock.Verify(x => x.UpdatePackageItemAsync(entity), Times.Once);
         packageItemServiceMock.VerifyNoOtherCalls();
     }
 

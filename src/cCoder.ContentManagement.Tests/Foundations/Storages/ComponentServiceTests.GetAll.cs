@@ -31,7 +31,7 @@ public partial class ComponentServiceTests
         componentBrokerMock.Setup(x => x.GetAllComponents(false)).Returns(components);
 
         // When
-        IQueryable<Component> result = componentService.GetAll();
+        IQueryable<Component> result = componentService.GetAllComponent();
 
         // Then
         result.Should().BeEquivalentTo(expectedItems);

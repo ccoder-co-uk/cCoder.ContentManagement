@@ -42,17 +42,17 @@ public partial class ComponentRenderOrchestrationServiceTests
         };
 
         componentRenderProcessingServiceMock
-            .Setup(x => x.Render(app.Id, "Hero", actor, string.Empty, "Default"))
+            .Setup(x => x.RenderUser(app.Id, "Hero", actor, string.Empty, "Default"))
             .Returns("<section name='Hero' class='component'><div>content</div><script>console.log('component');</script></section>");
 
         // When
-        string result = renderOrchestrationService.Render(app.Id, "Hero", actor, string.Empty, "Default");
+        string result = renderOrchestrationService.RenderUser(app.Id, "Hero", actor, string.Empty, "Default");
 
         // Then
         result.Should().Contain("<section name='Hero' class='component'");
         result.Should().Contain("<div>content</div>");
         result.Should().Contain("console.log('component');");
-        componentRenderProcessingServiceMock.Verify(x => x.Render(app.Id, "Hero", actor, string.Empty, "Default"), Times.Once);
+        componentRenderProcessingServiceMock.Verify(x => x.RenderUser(app.Id, "Hero", actor, string.Empty, "Default"), Times.Once);
     }
 
 }

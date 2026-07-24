@@ -8,13 +8,13 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface IScriptService
 {
-    Script Get(int id, bool ignoreFilters = false);
+    Script GetScript(int scriptId, bool ignoreFilters = false);
 
-    IQueryable<Script> GetAll(bool ignoreFilters = false);
+    IQueryable<Script> GetAllScript(bool ignoreFilters = false);
 
-    ValueTask<Script> AddAsync(Script script);
+    ValueTask<Script> AddScriptAsync(Script newScript);
 
-    ValueTask<Script> UpdateAsync(Script script);
+    ValueTask<Script> UpdateScriptAsync(Script updatedScript);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int scriptId);
 }

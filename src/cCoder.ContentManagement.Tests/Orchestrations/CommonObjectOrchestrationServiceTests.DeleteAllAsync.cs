@@ -23,13 +23,13 @@ public partial class CommonObjectOrchestrationServiceTests
     {
         // Given
         CommonObject[] entities = [CreateRandomCommonObject()];
-        commonObjectProcessingServiceMock.Setup(x => x.DeleteAllAsync(entities)).Returns(ValueTask.CompletedTask);
+        commonObjectProcessingServiceMock.Setup(x => x.DeleteAllCommonObjectAsync(entities)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllCommonObjectAsync(entities);
 
         // Then
-        commonObjectProcessingServiceMock.Verify(x => x.DeleteAllAsync(entities), Times.Once);
+        commonObjectProcessingServiceMock.Verify(x => x.DeleteAllCommonObjectAsync(entities), Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
     }

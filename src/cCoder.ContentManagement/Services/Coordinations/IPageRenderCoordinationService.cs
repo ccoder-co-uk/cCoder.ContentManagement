@@ -13,5 +13,5 @@ public interface IPageRenderCoordinationService
 
     PageRenderResponse RenderError(PageRenderRequest request);
 
-    RenderResult Render(int appId, string path, string theme, string culture, bool edit = false);
+    RenderResult RenderRenderResult(int appId, string path, string theme, string culture, bool edit = false);
 }

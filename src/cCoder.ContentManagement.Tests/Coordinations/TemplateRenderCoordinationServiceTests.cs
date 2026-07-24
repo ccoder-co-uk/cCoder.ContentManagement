@@ -52,7 +52,7 @@ public class TemplateRenderCoordinationServiceTests
         object model = new { Name = "Ward" };
 
         orchestrationServiceMock
-            .Setup(x => x.Render(1, "Welcome", "en-GB", model, It.Is<User>(user => user.Id == "test-user")))
+            .Setup(x => x.RenderUser(1, "Welcome", "en-GB", model, It.Is<User>(user => user.Id == "test-user")))
             .Returns("<main>welcome</main>");
 
         string result = coordinationService.Render(1, "Welcome", null, model);

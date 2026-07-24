@@ -9,25 +9,25 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface IPageProcessingService
 {
-    Page Get(int id);
+    Page GetPage(int pageId);
 
-    IQueryable<Page> GetAll(bool ignoreFilters = false);
+    IQueryable<Page> GetAllPage(bool ignoreFilters = false);
 
-    ValueTask<Page> AddAsync(Page entity);
+    ValueTask<Page> AddPageAsync(Page newPage);
 
-    ValueTask<Page> UpdateAsync(Page entity);
+    ValueTask<Page> UpdatePageAsync(Page updatedPage);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int pageId);
 
-    ValueTask<IEnumerable<Result<Page>>> AddOrUpdate(IEnumerable<Page> items);
+    ValueTask<IEnumerable<Result<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage);
 
-    ValueTask DeleteAllAsync(IEnumerable<Page> items);
+    ValueTask DeleteAllPageAsync(IEnumerable<Page> deletedPage);
 
     ValueTask RecomputeAllForAppAsync(int appId);
 
-    Page GetRoot(int id);
+    Page GetRootPage(int pageId);
 
-    IEnumerable<Page> GetChildren(int id);
+    IEnumerable<Page> GetChildrenPage(int pageId);
 
-    string MenuFor(int id, string culture);
+    string MenuFor(int pageId, string culture);
 }

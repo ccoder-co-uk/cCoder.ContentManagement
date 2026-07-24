@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface IPageRoleService
 {
-    IQueryable<PageRole> GetAll(bool ignoreFilters = false);
+    IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false);
 
-    ValueTask<PageRole> AddAsync(PageRole pageRole);
+    ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole);
 
-    ValueTask DeleteAsync(PageRole pageRole);
+    ValueTask DeletePageRoleAsync(PageRole deletedPageRole);
 }

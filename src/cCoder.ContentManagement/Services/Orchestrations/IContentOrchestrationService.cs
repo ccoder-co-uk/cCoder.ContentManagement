@@ -9,17 +9,17 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IContentOrchestrationService
 {
-    Content Get(int id);
+    Content GetContent(int contentId);
 
-    IQueryable<Content> GetAll(bool ignoreFilters = false);
+    IQueryable<Content> GetAllContent(bool ignoreFilters = false);
 
-    ValueTask<Content> AddAsync(Content entity);
+    ValueTask<Content> AddContentAsync(Content newContent);
 
-    ValueTask<Content> UpdateAsync(Content entity);
+    ValueTask<Content> UpdateContentAsync(Content updatedContent);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int contentId);
 
-    ValueTask<IEnumerable<Result<Content>>> AddOrUpdate(IEnumerable<Content> items);
+    ValueTask<IEnumerable<Result<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent);
 
-    ValueTask DeleteAllAsync(IEnumerable<Content> items);
+    ValueTask DeleteAllContentAsync(IEnumerable<Content> deletedContent);
 }

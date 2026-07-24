@@ -28,14 +28,14 @@ public partial class PageRoleProcessingServiceTests
             new() { PageId = Random.Shared.Next(1, 1000), RoleId = Guid.NewGuid() },
         ];
         IQueryable<LocalPageRole> queryableLinks = links.AsQueryable();
-        pageRoleServiceMock.Setup(x => x.GetAll()).Returns(queryableLinks);
+        pageRoleServiceMock.Setup(x => x.GetAllPageRole()).Returns(queryableLinks);
 
         // When
-        IQueryable<LocalPageRole> result = pageRoleProcessingService.GetAll();
+        IQueryable<LocalPageRole> result = pageRoleProcessingService.GetAllPageRole();
 
         // Then
         result.Should().BeSameAs(queryableLinks);
-        pageRoleServiceMock.Verify(x => x.GetAll(), Times.Once);
+        pageRoleServiceMock.Verify(x => x.GetAllPageRole(), Times.Once);
         pageRoleServiceMock.VerifyNoOtherCalls();
         roleBrokerMock.VerifyNoOtherCalls();
         pageServiceMock.VerifyNoOtherCalls();

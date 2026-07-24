@@ -27,7 +27,7 @@ public partial class CultureServiceTests
         cultureBrokerMock.Setup(x => x.GetAllCultures(false)).Returns(new[] { culture }.AsQueryable());
 
         // When
-        Culture result = cultureService.Get("en-GB");
+        Culture result = cultureService.GetCulture("en-GB");
 
         // Then
         result.Should().BeEquivalentTo(culture);

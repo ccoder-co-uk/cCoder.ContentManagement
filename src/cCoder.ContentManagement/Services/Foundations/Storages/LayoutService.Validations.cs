@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class LayoutService
 {
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int layoutId, string parameterName) =>
+        ThrowIf(condition: layoutId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateLayout(Layout layout, string parameterName)
     {

@@ -10,10 +10,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAuthorizationBroker authorizationBroker) : IAppCultureService
 {
-    public IQueryable<AppCulture> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
         appCultureBroker.GetAllAppCultures(ignoreFilters: ignoreFilters);
 
-    public AppCulture Get(int appId, string cultureId, bool ignoreFilters = false)
+    public AppCulture GetAppCulture(int appId, string cultureId, bool ignoreFilters = false)
     {
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateCultureId(cultureId: cultureId, parameterName: "cultureId");
@@ -22,34 +22,34 @@ internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAu
             .FirstOrDefault(predicate: appCulture => appCulture.AppId == appId && appCulture.CultureId == cultureId);
     }
 
-    public async ValueTask<AppCulture> AddAsync(AppCulture appCulture)
+    public async ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture)
     {
-        ValidateAppCulture(appCulture: appCulture, parameterName: "appCulture");
-        authorizationBroker.Authorize(appId: appCulture.AppId, privilege: "AppCulture_create");
-        AppCulture result = await appCultureBroker.AddAppCultureAsync(entity: CreateStorageAppCulture(appCulture: appCulture));
-        appCulture.AppId = result.AppId;
-        appCulture.CultureId = result.CultureId;
-        return appCulture;
+        ValidateAppCulture(appCulture: newAppCulture, parameterName: "appCulture");
+        authorizationBroker.Authorize(appId: newAppCulture.AppId, privilege: "AppCulture_create");
+        AppCulture result = await appCultureBroker.AddAppCultureAsync(newAppCulture: CreateStorageAppCulture(newAppCulture: newAppCulture));
+        newAppCulture.AppId = result.AppId;
+        newAppCulture.CultureId = result.CultureId;
+        return newAppCulture;
     }
 
-    public async ValueTask DeleteAsync(AppCulture appCulture)
+    public async ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture)
     {
-        ValidateAppCulture(appCulture: appCulture, parameterName: "appCulture");
-        authorizationBroker.Authorize(appId: appCulture.AppId, privilege: "AppCulture_delete");
-        await appCultureBroker.DeleteAppCultureAsync(entity: CreateStorageAppCulture(appCulture: appCulture));
+        ValidateAppCulture(appCulture: deletedAppCulture, parameterName: "appCulture");
+        authorizationBroker.Authorize(appId: deletedAppCulture.AppId, privilege: "AppCulture_delete");
+        await appCultureBroker.DeleteAppCultureAsync(deletedAppCulture: CreateStorageAppCulture(newAppCulture: deletedAppCulture));
     }
 
-    private static AppCulture CreateStorageAppCulture(AppCulture appCulture)
+    private static AppCulture CreateStorageAppCulture(AppCulture newAppCulture)
     {
-        if (appCulture == null)
+        if (newAppCulture == null)
         {
             return null;
         }
 
         return new AppCulture
         {
-            AppId = appCulture.AppId,
-            CultureId = appCulture.CultureId
+            AppId = newAppCulture.AppId,
+            CultureId = newAppCulture.CultureId
         };
     }
 }

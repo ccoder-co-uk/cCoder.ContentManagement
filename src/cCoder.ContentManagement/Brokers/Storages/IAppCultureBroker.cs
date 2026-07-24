@@ -10,9 +10,9 @@ public interface IAppCultureBroker
 {
     IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters);
 
-    ValueTask<AppCulture> AddAppCultureAsync(AppCulture entity);
+    ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture);
 
-    ValueTask<int> DeleteAppCultureAsync(AppCulture entity);
+    ValueTask<int> DeleteAppCultureAsync(AppCulture deletedAppCulture);
 
-    ValueTask DeleteAllAppCulturesAsync(IEnumerable<AppCulture> items);
+    ValueTask DeleteAllAppCulturesAsync(IEnumerable<AppCulture> deletedAppCulture);
 }

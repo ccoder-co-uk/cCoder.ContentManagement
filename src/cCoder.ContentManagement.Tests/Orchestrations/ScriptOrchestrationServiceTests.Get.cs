@@ -24,14 +24,14 @@ public partial class ScriptOrchestrationServiceTests
         // Given
         int id = 1;
         Script entity = CreateRandomScript();
-        scriptProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        scriptProcessingServiceMock.Setup(x => x.GetScript(id)).Returns(entity);
 
         // When
-        Script result = orchestrationService.Get(id);
+        Script result = orchestrationService.GetScript(id);
 
         // Then
         result.Should().BeEquivalentTo(entity);
-        scriptProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        scriptProcessingServiceMock.Verify(x => x.GetScript(id), Times.Once);
         scriptProcessingServiceMock.VerifyNoOtherCalls();
         scriptEventProcessingServiceMock.VerifyNoOtherCalls();
     }

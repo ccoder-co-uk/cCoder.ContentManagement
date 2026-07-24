@@ -19,36 +19,36 @@ public class ContentBroker(ICoreContextFactory coreContextFactory) : IContentBro
             : coreDataContext.Contents;
     }
 
-    public async ValueTask<Content> AddContentAsync(Content entity)
+    public async ValueTask<Content> AddContentAsync(Content newContent)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Content result = (await coreDataContext.Contents.AddAsync(entity: entity)).Entity;
+        Content result = (await coreDataContext.Contents.AddAsync(entity: newContent)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<Content> UpdateContentAsync(Content entity)
+    public async ValueTask<Content> UpdateContentAsync(Content updatedContent)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        Content result = coreDataContext.Contents.Update(entity: entity)
+        Content result = coreDataContext.Contents.Update(entity: updatedContent)
             .Entity;
 
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeleteContentAsync(Content entity)
+    public async ValueTask<int> DeleteContentAsync(Content deletedContent)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Contents.Remove(entity: entity);
+        coreDataContext.Contents.Remove(entity: deletedContent);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllContentsAsync(IEnumerable<Content> items)
+    public async ValueTask DeleteAllContentsAsync(IEnumerable<Content> deletedContent)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Contents.RemoveRange(entities: items);
+        coreDataContext.Contents.RemoveRange(entities: deletedContent);
         await coreDataContext.SaveChangesAsync();
     }
 }

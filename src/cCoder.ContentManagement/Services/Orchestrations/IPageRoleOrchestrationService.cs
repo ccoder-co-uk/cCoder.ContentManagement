@@ -9,15 +9,15 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IPageRoleOrchestrationService
 {
-    IQueryable<PageRole> GetAll(bool ignoreFilters = false);
+    IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false);
 
-    ValueTask<PageRole> AddAsync(PageRole entity);
+    ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole);
 
-    ValueTask DeleteAsync(PageRole entity);
+    ValueTask DeletePageRoleAsync(PageRole deletedPageRole);
 
-    ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdate(IEnumerable<PageRole> items);
+    ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole);
 
     ValueTask ImportPageRolesAsync(int appId, PageRoleInfo[] items);
 
-    ValueTask DeleteAllAsync(IEnumerable<PageRole> items);
+    ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole);
 }

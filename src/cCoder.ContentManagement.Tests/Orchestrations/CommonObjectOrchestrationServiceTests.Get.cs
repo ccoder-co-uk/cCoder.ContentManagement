@@ -25,14 +25,14 @@ public partial class CommonObjectOrchestrationServiceTests
         // Given
         int id = 1;
         CommonObject entity = CreateRandomCommonObject();
-        commonObjectProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        commonObjectProcessingServiceMock.Setup(x => x.GetCommonObject(id)).Returns(entity);
 
         // When
-        CommonObject result = orchestrationService.Get(id);
+        CommonObject result = orchestrationService.GetCommonObject(id);
 
         // Then
         result.Should().BeSameAs(entity);
-        commonObjectProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        commonObjectProcessingServiceMock.Verify(x => x.GetCommonObject(id), Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
     }

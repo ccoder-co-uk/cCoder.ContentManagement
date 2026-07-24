@@ -45,7 +45,7 @@ public class AppController : ODataController
     public async Task<IActionResult> UpdatePageOrderAsync([FromRoute] int key, ODataActionParameters p)
     {
         App app = p["app"] as App;
-        await Service.UpdatePageOrderAsync(key: key, app: app);
+        await Service.UpdatePageOrderAppAsync(key: key, updatedApp: app);
         return Ok();
     }
 
@@ -58,7 +58,7 @@ public class AppController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<App> queryOptions) =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllApp());
 
     [HttpGet]
     [AllowAnonymous]
@@ -67,7 +67,7 @@ public class AppController : ODataController
     {
         try
         {
-            IQueryable<App> result = Service.GetAll()
+            IQueryable<App> result = Service.GetAllApp()
                 .Where(predicate: app => app.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -80,33 +80,33 @@ public class AppController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] App entity)
+    public async Task<IActionResult> Post([FromBody] App newApp)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: CreateResponseApp(app: await Service.AddAsync(entity: entity)));
+        return Ok(value: CreateResponseApp(newApp: await Service.AddAppAsync(newApp: newApp)));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] App entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] App updatedApp)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        entity.Id = key;
-        return Ok(value: CreateResponseApp(app: await Service.UpdateAsync(entity: entity)));
+        updatedApp.Id = key;
+        return Ok(value: CreateResponseApp(newApp: await Service.UpdateAppAsync(updatedApp: updatedApp)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<App> delta)
     {
-        App originalEntity = Service.Get(id: key);
+        App originalEntity = Service.GetApp(appId: key);
 
         if (originalEntity == null)
         {
@@ -114,32 +114,32 @@ public class AppController : ODataController
         }
 
         delta.Patch(original: originalEntity);
-        return Ok(value: CreateResponseApp(app: await Service.UpdateAsync(entity: originalEntity)));
+        return Ok(value: CreateResponseApp(newApp: await Service.UpdateAppAsync(updatedApp: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(id: key);
+        await Service.DeleteAsync(appId: key);
         return Ok();
     }
 
-    private static App CreateResponseApp(App app)
+    private static App CreateResponseApp(App newApp)
     {
-        if (app == null)
+        if (newApp == null)
         {
             return null;
         }
 
         return new App
         {
-            Id = app.Id,
-            DefaultCultureId = app.DefaultCultureId,
-            TenantId = app.TenantId,
-            Name = app.Name,
-            Domain = app.Domain,
-            DefaultTheme = app.DefaultTheme,
-            ConfigJson = app.ConfigJson
+            Id = newApp.Id,
+            DefaultCultureId = newApp.DefaultCultureId,
+            TenantId = newApp.TenantId,
+            Name = newApp.Name,
+            Domain = newApp.Domain,
+            DefaultTheme = newApp.DefaultTheme,
+            ConfigJson = newApp.ConfigJson
         };
     }
 }

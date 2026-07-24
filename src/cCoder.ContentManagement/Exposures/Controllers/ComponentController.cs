@@ -45,7 +45,7 @@ public class ComponentController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Component> queryOptions) =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllComponent());
 
     [HttpGet]
     [AllowAnonymous]
@@ -54,7 +54,7 @@ public class ComponentController : ODataController
     {
         try
         {
-            IQueryable<Component> result = Service.GetAll()
+            IQueryable<Component> result = Service.GetAllComponent()
                 .Where(predicate: component => component.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -67,32 +67,32 @@ public class ComponentController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Component entity)
+    public async Task<IActionResult> Post([FromBody] Component newComponent)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddAsync(entity: entity));
+        return Ok(value: await Service.AddComponentAsync(newComponent: newComponent));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Component entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Component updatedComponent)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdateAsync(entity: entity));
+        return Ok(value: await Service.UpdateComponentAsync(updatedComponent: updatedComponent));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<Component> delta)
     {
-        Component originalEntity = Service.Get(id: key);
+        Component originalEntity = Service.GetComponent(componentId: key);
 
         if (originalEntity == null)
         {
@@ -100,13 +100,13 @@ public class ComponentController : ODataController
         }
 
         delta.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateAsync(entity: originalEntity));
+        return Ok(value: await Service.UpdateComponentAsync(updatedComponent: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(id: key);
+        await Service.DeleteAsync(componentId: key);
         return Ok();
     }
 }

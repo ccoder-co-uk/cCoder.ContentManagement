@@ -35,7 +35,7 @@ internal class ComponentRenderProcessingService(
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
 
-    public string Render(int appId, string name, User user, string culture, string theme)
+    public string RenderUser(int appId, string name, User user, string culture, string theme)
     {
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateName(name: name, parameterName: "name");
@@ -45,7 +45,7 @@ internal class ComponentRenderProcessingService(
 
         culture ??= user.DefaultCultureId;
 
-        App app = appService.GetAll(ignoreFilters: true)
+        App app = appService.GetAllApp(ignoreFilters: true)
             .Where(predicate: existingApp => existingApp.Id == appId)
             .Select(selector: existingApp => new App
             {
@@ -61,15 +61,15 @@ internal class ComponentRenderProcessingService(
 
         if (app != null)
         {
-            app.Components = componentService.GetAll(ignoreFilters: true)
+            app.Components = componentService.GetAllComponent(ignoreFilters: true)
                 .Where(predicate: existingComponent => existingComponent.AppId == appId)
                 .ToArray();
 
-            app.Resources = resourceService.GetAll(ignoreFilters: true)
+            app.Resources = resourceService.GetAllResource(ignoreFilters: true)
                 .Where(predicate: existingResource => existingResource.AppId == appId)
                 .ToArray();
 
-            app.Scripts = scriptService.GetAll(ignoreFilters: true)
+            app.Scripts = scriptService.GetAllScript(ignoreFilters: true)
                 .Where(predicate: existingScript => existingScript.AppId == appId)
                 .ToArray();
         }
@@ -82,10 +82,10 @@ internal class ComponentRenderProcessingService(
             ?? throw new InvalidOperationException(message: "Component '" + name + "' was not found.");
 
         ComponentRenderParams renderParams = new(theme: theme, app: app, user: user, culture: culture);
-        return RenderComponent(component: component, renderParams: renderParams);
+        return RenderComponentComponentRenderParams(component: component, renderParams: renderParams);
     }
 
-    public string RenderComponent(Component component, ComponentRenderParams renderParams)
+    public string RenderComponentComponentRenderParams(Component component, ComponentRenderParams renderParams)
     {
         ValidateComponent(component: component, parameterName: "component");
         ValidateComponentRenderParams(renderParams: renderParams, parameterName: "renderParams");
@@ -361,7 +361,7 @@ internal class ComponentRenderProcessingService(
 
         List<Resource> list = known;
         List<Resource> list2 = new List<Resource>();
-        list2.AddRange(collection: SectionForCulture(potentials: renderParams.App.Resources, key: key, culture: renderParams.Culture ?? string.Empty));
+        list2.AddRange(collection: SectionForCultureResource(potentials: renderParams.App.Resources, key: key, culture: renderParams.Culture ?? string.Empty));
         list.AddRange(collection: list2);
         string key2 = key.ToLowerInvariant();
         string culture = renderParams.Culture.ToLowerInvariant();
@@ -576,7 +576,7 @@ internal class ComponentRenderProcessingService(
         });
     }
 
-    public static IEnumerable<Resource> SectionForCulture(IEnumerable<Resource> potentials, string key, string culture)
+    public static IEnumerable<Resource> SectionForCultureResource(IEnumerable<Resource> potentials, string key, string culture)
     {
         List<Resource> list = new List<Resource>();
 
@@ -584,7 +584,7 @@ internal class ComponentRenderProcessingService(
             .Where(predicate: resource => string.Equals(a: resource.Key, b: key, comparisonType: StringComparison.OrdinalIgnoreCase))
             .GroupBy(keySelector: resource => resource.Name.ToLowerInvariant()))
         {
-            Resource closestCulturalMatch = GetClosestCulturalMatch(potentials: item, culture: culture);
+            Resource closestCulturalMatch = GetClosestCulturalMatchResource(potentials: item, culture: culture);
 
             if (closestCulturalMatch != null)
             {
@@ -595,7 +595,7 @@ internal class ComponentRenderProcessingService(
         return list;
     }
 
-    public static Resource GetClosestCulturalMatch(IEnumerable<Resource> potentials, string culture)
+    public static Resource GetClosestCulturalMatchResource(IEnumerable<Resource> potentials, string culture)
     {
         Resource resource = null;
 

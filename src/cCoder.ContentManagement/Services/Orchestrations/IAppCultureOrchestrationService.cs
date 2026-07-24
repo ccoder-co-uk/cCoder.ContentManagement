@@ -9,15 +9,15 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IAppCultureOrchestrationService
 {
-    IQueryable<AppCulture> GetAll(bool ignoreFilters = false);
+    IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false);
 
-    ValueTask<AppCulture> AddAsync(AppCulture entity);
+    ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture);
 
-    ValueTask DeleteAsync(AppCulture entity);
+    ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture);
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdate(IEnumerable<AppCulture> items);
+    ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture);
 
-    ValueTask DeleteAllAsync(IEnumerable<AppCulture> items);
+    ValueTask DeleteAllAppCultureAsync(IEnumerable<AppCulture> deletedAppCulture);
 }

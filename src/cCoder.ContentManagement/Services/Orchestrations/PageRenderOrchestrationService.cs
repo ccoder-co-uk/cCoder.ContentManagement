@@ -14,13 +14,13 @@ internal class PageRenderOrchestrationService(
     Config config,
     IPageRenderProcessingService pageRenderProcessingService) : IPageRenderOrchestrationService
 {
-    public RenderResult Render(Page page, User user, string theme, string culture, bool edit = false)
+    public RenderResult RenderPageUserRenderResult(Page page, User user, string theme, string culture, bool edit = false)
     {
         ValidatePage(page: page, parameterName: "page");
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");
 
-        return pageRenderProcessingService.RenderPage(page: page, user: user, config: config, theme: theme, culture: culture, edit: edit);
+        return pageRenderProcessingService.RenderPageUserConfigRenderResult(page: page, user: user, config: config, theme: theme, culture: culture, edit: edit);
     }
 
     private static void ValidatePage(Page page, string parameterName) =>

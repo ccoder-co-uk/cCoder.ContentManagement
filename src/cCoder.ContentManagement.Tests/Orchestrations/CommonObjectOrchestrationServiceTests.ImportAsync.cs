@@ -24,12 +24,12 @@ public partial class CommonObjectOrchestrationServiceTests
     {
         CommonObject[] items = [CreateRandomCommonObject()];
         cCoder.ContentManagement.Models.Result<CommonObject>[] expectedResults = [];
-        commonObjectProcessingServiceMock.Setup(x => x.ImportAsync(items)).ReturnsAsync(expectedResults);
+        commonObjectProcessingServiceMock.Setup(x => x.ImportCommonObjectResultAsync(items)).ReturnsAsync(expectedResults);
 
-        IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>> result = await orchestrationService.ImportAsync(items);
+        IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>> result = await orchestrationService.ImportCommonObjectResultAsync(items);
 
         result.Should().BeSameAs(expectedResults);
-        commonObjectProcessingServiceMock.Verify(x => x.ImportAsync(items), Times.Once);
+        commonObjectProcessingServiceMock.Verify(x => x.ImportCommonObjectResultAsync(items), Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
     }

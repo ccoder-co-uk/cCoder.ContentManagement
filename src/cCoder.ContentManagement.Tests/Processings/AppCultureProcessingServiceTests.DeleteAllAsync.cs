@@ -25,7 +25,7 @@ public partial class AppCultureProcessingServiceTests
 
         // When
         Func<Task> act = async () =>
-            await appCultureProcessingService.DeleteAllAsync(new[] { link });
+            await appCultureProcessingService.DeleteAllAppCultureAsync(new[] { link });
 
         // Then
         await act.Should().ThrowAsync<InvalidOperationException>();

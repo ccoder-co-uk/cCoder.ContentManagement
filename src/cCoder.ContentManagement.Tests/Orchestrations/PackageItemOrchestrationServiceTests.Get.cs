@@ -25,14 +25,14 @@ public partial class PackageItemOrchestrationServiceTests
         // Given
         Guid id = Guid.NewGuid();
         PackageItem entity = CreateRandomPackageItem();
-        packageItemProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        packageItemProcessingServiceMock.Setup(x => x.GetPackageItem(id)).Returns(entity);
 
         // When
-        PackageItem result = orchestrationService.Get(id);
+        PackageItem result = orchestrationService.GetPackageItem(id);
 
         // Then
         result.Should().BeEquivalentTo(entity);
-        packageItemProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        packageItemProcessingServiceMock.Verify(x => x.GetPackageItem(id), Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
     }

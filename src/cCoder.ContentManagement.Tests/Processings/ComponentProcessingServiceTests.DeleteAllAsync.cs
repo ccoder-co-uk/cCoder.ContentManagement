@@ -26,7 +26,7 @@ public partial class ComponentProcessingServiceTests
         componentServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await componentProcessingService.DeleteAllAsync(new[] { entity });
+        await componentProcessingService.DeleteAllComponentAsync(new[] { entity });
 
         // Then
         componentServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);

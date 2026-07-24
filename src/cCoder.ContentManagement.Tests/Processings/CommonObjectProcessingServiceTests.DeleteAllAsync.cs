@@ -37,7 +37,7 @@ public partial class CommonObjectProcessingServiceTests
             .Returns(ValueTask.CompletedTask);
 
         // When
-        await commonObjectProcessingService.DeleteAllAsync(new[] { first, second });
+        await commonObjectProcessingService.DeleteAllCommonObjectAsync(new[] { first, second });
 
         // Then
         commonObjectServiceMock.Verify(x => x.DeleteAsync(first.Id), Times.Once);

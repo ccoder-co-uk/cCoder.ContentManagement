@@ -22,12 +22,12 @@ public partial class PageProcessingServiceTests
     {
         Page[] pages = [CreateRandomPage()];
         IQueryable<Page> queryablePages = pages.AsQueryable();
-        pageServiceMock.Setup(x => x.GetAll()).Returns(queryablePages);
+        pageServiceMock.Setup(x => x.GetAllPage()).Returns(queryablePages);
 
-        IQueryable<Page> result = pageProcessingService.GetAll();
+        IQueryable<Page> result = pageProcessingService.GetAllPage();
 
         result.Should().BeSameAs(queryablePages);
-        pageServiceMock.Verify(x => x.GetAll(), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

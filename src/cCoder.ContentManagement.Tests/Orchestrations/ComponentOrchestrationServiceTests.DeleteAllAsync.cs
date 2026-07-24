@@ -22,15 +22,15 @@ public partial class ComponentOrchestrationServiceTests
     {
         // Given
         Component[] entities = [CreateRandomComponent()];
-        componentProcessingServiceMock.Setup(x => x.Get(entities[0].Id)).Returns(entities[0]);
+        componentProcessingServiceMock.Setup(x => x.GetComponent(entities[0].Id)).Returns(entities[0]);
         componentEventProcessingServiceMock.Setup(x => x.RaiseComponentDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
         componentProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllComponentAsync(entities);
 
         // Then
-        componentProcessingServiceMock.Verify(x => x.Get(entities[0].Id), Times.Once);
+        componentProcessingServiceMock.Verify(x => x.GetComponent(entities[0].Id), Times.Once);
         componentEventProcessingServiceMock.Verify(x => x.RaiseComponentDeleteEventAsync(entities[0]), Times.Once);
         componentProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
     }

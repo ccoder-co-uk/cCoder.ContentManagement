@@ -36,7 +36,7 @@ public partial class ComponentRenderProcessingServiceTests
         renderFileContentServiceMock.Setup(x => x.GetLatestTextContent(app.Id, "snippets/info")).Returns("snippet-text");
 
         string result = await RenderTestWorkflowServer.RunAsync(
-            workflowBaseUrl => CreateSut(workflowBaseUrl).RenderComponent(component, renderParams));
+            workflowBaseUrl => CreateSut(workflowBaseUrl).RenderComponentComponentRenderParams(component, renderParams));
 
         result.Should().Contain("snippet-text");
         result.Should().Contain("bootstrap-script");
@@ -54,7 +54,7 @@ public partial class ComponentRenderProcessingServiceTests
     {
         (_, _, _, RenderComponentParams renderParams) = CreateComponentRenderContext();
 
-        Action act = () => CreateSut("http://127.0.0.1/").RenderComponent(null!, renderParams);
+        Action act = () => CreateSut("http://127.0.0.1/").RenderComponentComponentRenderParams(null!, renderParams);
 
         act.Should().Throw<ValidationException>();
     }

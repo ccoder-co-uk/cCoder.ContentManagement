@@ -24,14 +24,14 @@ public partial class ContentOrchestrationServiceTests
         // Given
         int id = 1;
         Content entity = CreateRandomContent();
-        contentProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        contentProcessingServiceMock.Setup(x => x.GetContent(id)).Returns(entity);
 
         // When
-        Content result = orchestrationService.Get(id);
+        Content result = orchestrationService.GetContent(id);
 
         // Then
         result.Should().BeEquivalentTo(entity);
-        contentProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        contentProcessingServiceMock.Verify(x => x.GetContent(id), Times.Once);
         contentProcessingServiceMock.VerifyNoOtherCalls();
         contentEventProcessingServiceMock.VerifyNoOtherCalls();
     }

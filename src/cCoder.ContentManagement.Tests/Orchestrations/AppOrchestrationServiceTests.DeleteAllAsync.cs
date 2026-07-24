@@ -22,13 +22,13 @@ public partial class AppOrchestrationServiceTests
     {
         // Given
         App[] entities = [CreateRandomApp()];
-        appProcessingServiceMock.Setup(x => x.DeleteAllAsync(entities)).Returns(ValueTask.CompletedTask);
+        appProcessingServiceMock.Setup(x => x.DeleteAllAppAsync(entities)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllAppAsync(entities);
 
         // Then
-        appProcessingServiceMock.Verify(x => x.DeleteAllAsync(entities), Times.Once);
+        appProcessingServiceMock.Verify(x => x.DeleteAllAppAsync(entities), Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }

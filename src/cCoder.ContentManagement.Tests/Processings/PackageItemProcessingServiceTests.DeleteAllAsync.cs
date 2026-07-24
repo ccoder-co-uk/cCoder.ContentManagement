@@ -27,7 +27,7 @@ public partial class PackageItemProcessingServiceTests
         packageItemServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await packageItemProcessingService.DeleteAllAsync(new[] { entity });
+        await packageItemProcessingService.DeleteAllPackageItemAsync(new[] { entity });
 
         // Then
         packageItemServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);

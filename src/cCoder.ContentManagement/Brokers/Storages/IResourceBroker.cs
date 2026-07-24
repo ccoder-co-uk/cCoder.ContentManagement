@@ -10,11 +10,11 @@ public interface IResourceBroker
 {
     IQueryable<Resource> GetAllResources(bool ignoreFilters);
 
-    ValueTask<Resource> AddResourceAsync(Resource entity);
+    ValueTask<Resource> AddResourceAsync(Resource newResource);
 
-    ValueTask<Resource> UpdateResourceAsync(Resource entity);
+    ValueTask<Resource> UpdateResourceAsync(Resource updatedResource);
 
-    ValueTask<int> DeleteResourceAsync(Resource entity);
+    ValueTask<int> DeleteResourceAsync(Resource deletedResource);
 
-    ValueTask DeleteAllResourcesAsync(IEnumerable<Resource> items);
+    ValueTask DeleteAllResourcesAsync(IEnumerable<Resource> deletedResource);
 }

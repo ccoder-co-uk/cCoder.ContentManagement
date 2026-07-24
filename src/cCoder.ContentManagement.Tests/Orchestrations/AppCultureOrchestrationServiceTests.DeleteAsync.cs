@@ -22,17 +22,17 @@ public partial class AppCultureOrchestrationServiceTests
     {
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
-        appCultureProcessingServiceMock.Setup(x => x.DeleteAsync(appCulture)).Returns(ValueTask.CompletedTask);
+        appCultureProcessingServiceMock.Setup(x => x.DeleteAppCultureAsync(appCulture)).Returns(ValueTask.CompletedTask);
 
         appCultureEventProcessingServiceMock
             .Setup(x => x.RaiseAppCultureDeleteEventAsync(appCulture))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(appCulture);
+        await orchestrationService.DeleteAppCultureAsync(appCulture);
 
         // Then
-        appCultureProcessingServiceMock.Verify(x => x.DeleteAsync(appCulture), Times.Once);
+        appCultureProcessingServiceMock.Verify(x => x.DeleteAppCultureAsync(appCulture), Times.Once);
         appCultureEventProcessingServiceMock.Verify(x => x.RaiseAppCultureDeleteEventAsync(appCulture), Times.Once);
     }
 

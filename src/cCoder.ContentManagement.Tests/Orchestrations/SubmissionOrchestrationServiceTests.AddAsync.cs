@@ -23,18 +23,18 @@ public partial class SubmissionOrchestrationServiceTests
     {
         // Given
         Submission entity = CreateRandomSubmission();
-        submissionProcessingServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
+        submissionProcessingServiceMock.Setup(x => x.AddSubmissionAsync(entity)).ReturnsAsync(entity);
 
         submissionEventProcessingServiceMock
             .Setup(x => x.RaiseSubmissionAddEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Submission result = await orchestrationService.AddAsync(entity);
+        Submission result = await orchestrationService.AddSubmissionAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        submissionProcessingServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
+        submissionProcessingServiceMock.Verify(x => x.AddSubmissionAsync(entity), Times.Once);
         submissionEventProcessingServiceMock.Verify(x => x.RaiseSubmissionAddEventAsync(entity), Times.Once);
     }
 

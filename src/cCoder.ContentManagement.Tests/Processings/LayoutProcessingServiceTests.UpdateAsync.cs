@@ -23,14 +23,14 @@ public partial class LayoutProcessingServiceTests
     {
         // Given
         Layout entity = CreateRandomLayout();
-        layoutServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        layoutServiceMock.Setup(x => x.UpdateLayoutAsync(entity)).ReturnsAsync(entity);
 
         // When
-        Layout result = await layoutProcessingService.UpdateAsync(entity);
+        Layout result = await layoutProcessingService.UpdateLayoutAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        layoutServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        layoutServiceMock.Verify(x => x.UpdateLayoutAsync(entity), Times.Once);
         layoutServiceMock.VerifyNoOtherCalls();
     }
 

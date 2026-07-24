@@ -23,7 +23,7 @@ public partial class PackageItemOrchestrationServiceTests
     {
         Guid id = Guid.NewGuid();
         PackageItem entity = CreateRandomPackageItem();
-        packageItemProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        packageItemProcessingServiceMock.Setup(x => x.GetPackageItem(id)).Returns(entity);
         packageItemProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
         packageItemEventProcessingServiceMock
             .Setup(x => x.RaisePackageItemDeleteEventAsync(entity))
@@ -31,7 +31,7 @@ public partial class PackageItemOrchestrationServiceTests
 
         await orchestrationService.DeleteAsync(id);
 
-        packageItemProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        packageItemProcessingServiceMock.Verify(x => x.GetPackageItem(id), Times.Once);
         packageItemProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
         packageItemEventProcessingServiceMock.Verify(x => x.RaisePackageItemDeleteEventAsync(entity), Times.Once);

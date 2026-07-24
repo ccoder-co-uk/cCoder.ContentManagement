@@ -23,12 +23,12 @@ public partial class AppOrchestrationServiceTests
         const int key = 1;
         App app = CreateRandomApp();
         appProcessingServiceMock
-            .Setup(x => x.UpdatePageOrderAsync(key, app))
+            .Setup(x => x.UpdatePageOrderAppAsync(key, app))
             .Returns(ValueTask.CompletedTask);
 
-        await orchestrationService.UpdatePageOrderAsync(key, app);
+        await orchestrationService.UpdatePageOrderAppAsync(key, app);
 
-        appProcessingServiceMock.Verify(x => x.UpdatePageOrderAsync(key, app), Times.Once);
+        appProcessingServiceMock.Verify(x => x.UpdatePageOrderAppAsync(key, app), Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }

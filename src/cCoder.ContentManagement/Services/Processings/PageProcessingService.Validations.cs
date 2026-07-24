@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PageProcessingService
 {
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int pageId, string parameterName) =>
+        ThrowIf(condition: pageId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");

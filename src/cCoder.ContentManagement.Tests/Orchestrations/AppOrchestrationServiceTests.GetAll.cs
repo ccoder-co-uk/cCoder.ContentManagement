@@ -23,14 +23,14 @@ public partial class AppOrchestrationServiceTests
     {
         // Given
         IQueryable<App> entities = new[] { CreateRandomApp() }.AsQueryable();
-        appProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+        appProcessingServiceMock.Setup(x => x.GetAllApp(true)).Returns(entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+        var result = orchestrationService.GetAllApp(true).ToArray();
 
         // Then
         result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        appProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        appProcessingServiceMock.Verify(x => x.GetAllApp(true), Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }

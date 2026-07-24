@@ -9,21 +9,21 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IResourceOrchestrationService
 {
-    Resource Get(int id);
+    Resource GetResource(int resourceId);
 
-    IQueryable<Resource> GetAll(bool ignoreFilters = false);
+    IQueryable<Resource> GetAllResource(bool ignoreFilters = false);
 
-    ValueTask<Resource> AddAsync(Resource entity);
+    ValueTask<Resource> AddResourceAsync(Resource newResource);
 
-    ValueTask<Resource> UpdateAsync(Resource entity);
+    ValueTask<Resource> UpdateResourceAsync(Resource updatedResource);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int resourceId);
 
     ValueTask DeleteByAppIdAsync(int appId);
 
-    ValueTask<IEnumerable<Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items);
+    ValueTask<IEnumerable<Result<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource);
 
     ValueTask ImportResourcesAsync(int appId, Resource[] items);
 
-    ValueTask DeleteAllAsync(IEnumerable<Resource> items);
+    ValueTask DeleteAllResourceAsync(IEnumerable<Resource> deletedResource);
 }

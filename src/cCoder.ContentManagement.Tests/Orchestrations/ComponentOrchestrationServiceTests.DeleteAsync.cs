@@ -23,7 +23,7 @@ public partial class ComponentOrchestrationServiceTests
         // Given
         int id = 1;
         Component entity = CreateRandomComponent();
-        componentProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        componentProcessingServiceMock.Setup(x => x.GetComponent(id)).Returns(entity);
         componentProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         componentEventProcessingServiceMock
@@ -34,7 +34,7 @@ public partial class ComponentOrchestrationServiceTests
         await orchestrationService.DeleteAsync(id);
 
         // Then
-        componentProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        componentProcessingServiceMock.Verify(x => x.GetComponent(id), Times.Once);
         componentProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
         componentEventProcessingServiceMock.Verify(x => x.RaiseComponentDeleteEventAsync(entity), Times.Once);
     }

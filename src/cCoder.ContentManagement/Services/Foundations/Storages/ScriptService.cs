@@ -11,26 +11,26 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationBroker authorizationBroker) : IScriptService
 {
-    public Script Get(int id, bool ignoreFilters = false)
+    public Script GetScript(int scriptId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(scriptId: scriptId, parameterName: "id");
 
         if (ignoreFilters)
         {
-            return GetAll(ignoreFilters: true)
-                        .FirstOrDefault(predicate: (Script i) => i.Id == id);
+            return GetAllScript(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
         }
 
-        Script script = GetAll()
-            .FirstOrDefault(predicate: (Script i) => i.Id == id);
+        Script script = GetAllScript()
+            .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
 
         if (script != null)
         {
             return script;
         }
 
-        Script script2 = GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: (Script i) => i.Id == id);
+        Script script2 = GetAllScript(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
 
         if (script2 != null)
         {
@@ -40,14 +40,14 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         return null;
     }
 
-    public IQueryable<Script> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<Script> GetAllScript(bool ignoreFilters = false) =>
         scriptBroker.GetAllScripts(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Script> AddAsync(Script script)
+    public async ValueTask<Script> AddScriptAsync(Script script)
     {
         ValidateScript(script: script, parameterName: "script");
         authorizationBroker.Authorize(appId: script.AppId, privilege: "Script_create");
-        Script newScript = CreateStorageScript(script: script);
+        Script newScript = CreateStorageScript(newScript: script);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
@@ -56,7 +56,7 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         newScript.CreatedBy = currentUserId;
         newScript.LastUpdated = now;
         newScript.LastUpdatedBy = currentUserId;
-        Script result = await scriptBroker.AddScriptAsync(entity: newScript);
+        Script result = await scriptBroker.AddScriptAsync(newScript: newScript);
         script.Id = result.Id;
         script.Name = result.Name;
         script.Description = result.Description;
@@ -70,11 +70,11 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         return script;
     }
 
-    public async ValueTask<Script> UpdateAsync(Script script)
+    public async ValueTask<Script> UpdateScriptAsync(Script updatedScript)
     {
-        ValidateScript(script: script, parameterName: "script");
-        authorizationBroker.Authorize(appId: script.AppId, privilege: "Script_update");
-        Script updateScript = CreateStorageScript(script: script);
+        ValidateScript(script: updatedScript, parameterName: "script");
+        authorizationBroker.Authorize(appId: updatedScript.AppId, privilege: "Script_update");
+        Script updateScript = CreateStorageScript(newScript: updatedScript);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
@@ -82,32 +82,32 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateScript.LastUpdated = now;
         updateScript.LastUpdatedBy = currentUserId;
-        Script result = await scriptBroker.UpdateScriptAsync(entity: updateScript);
-        script.Id = result.Id;
-        script.Name = result.Name;
-        script.Description = result.Description;
-        script.LastUpdated = result.LastUpdated;
-        script.LastUpdatedBy = result.LastUpdatedBy;
-        script.CreatedOn = result.CreatedOn;
-        script.CreatedBy = result.CreatedBy;
-        script.AppId = result.AppId;
-        script.Key = result.Key;
-        script.Content = result.Content;
-        return script;
+        Script result = await scriptBroker.UpdateScriptAsync(updatedScript: updateScript);
+        updatedScript.Id = result.Id;
+        updatedScript.Name = result.Name;
+        updatedScript.Description = result.Description;
+        updatedScript.LastUpdated = result.LastUpdated;
+        updatedScript.LastUpdatedBy = result.LastUpdatedBy;
+        updatedScript.CreatedOn = result.CreatedOn;
+        updatedScript.CreatedBy = result.CreatedBy;
+        updatedScript.AppId = result.AppId;
+        updatedScript.Key = result.Key;
+        updatedScript.Content = result.Content;
+        return updatedScript;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int scriptId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(scriptId: scriptId, parameterName: "id");
         Script script;
 
         try
         {
-            script = Get(id: id);
+            script = GetScript(scriptId: scriptId);
         }
         catch (SecurityException)
         {
-            script = Get(id: id, ignoreFilters: true);
+            script = GetScript(scriptId: scriptId, ignoreFilters: true);
         }
 
         if (script == null)
@@ -116,28 +116,28 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         }
 
         authorizationBroker.Authorize(appId: script.AppId, privilege: "Script_delete");
-        await scriptBroker.DeleteScriptAsync(entity: CreateStorageScript(script: script));
+        await scriptBroker.DeleteScriptAsync(deletedScript: CreateStorageScript(newScript: script));
     }
 
-    private static Script CreateStorageScript(Script script)
+    private static Script CreateStorageScript(Script newScript)
     {
-        if (script == null)
+        if (newScript == null)
         {
             return null;
         }
 
         return new Script
         {
-            Id = script.Id,
-            Name = script.Name,
-            Description = script.Description,
-            LastUpdated = script.LastUpdated,
-            LastUpdatedBy = script.LastUpdatedBy,
-            CreatedOn = script.CreatedOn,
-            CreatedBy = script.CreatedBy,
-            Key = script.Key,
-            AppId = script.AppId,
-            Content = script.Content
+            Id = newScript.Id,
+            Name = newScript.Name,
+            Description = newScript.Description,
+            LastUpdated = newScript.LastUpdated,
+            LastUpdatedBy = newScript.LastUpdatedBy,
+            CreatedOn = newScript.CreatedOn,
+            CreatedBy = newScript.CreatedBy,
+            Key = newScript.Key,
+            AppId = newScript.AppId,
+            Content = newScript.Content
         };
     }
 }

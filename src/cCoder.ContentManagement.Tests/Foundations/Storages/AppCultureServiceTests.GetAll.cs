@@ -31,7 +31,7 @@ public partial class AppCultureServiceTests
         appCultureBrokerMock.Setup(x => x.GetAllAppCultures(false)).Returns(appCultures);
 
         // When
-        IQueryable<AppCulture> result = appCultureService.GetAll();
+        IQueryable<AppCulture> result = appCultureService.GetAllAppCulture();
 
         // Then
         result.Should().BeEquivalentTo(expectedItems);

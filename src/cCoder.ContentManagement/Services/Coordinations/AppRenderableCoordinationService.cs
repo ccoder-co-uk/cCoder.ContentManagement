@@ -22,22 +22,22 @@ internal class AppRenderableCoordinationService(
 
         if (app.Templates != null)
         {
-            await templateOrchestrationService.AddOrUpdate(items: app.Templates);
+            await templateOrchestrationService.AddOrUpdateTemplateResult(newTemplate: app.Templates);
         }
 
         if (app.Layouts != null)
         {
-            await layoutOrchestrationService.AddOrUpdate(items: app.Layouts);
+            await layoutOrchestrationService.AddOrUpdateLayoutResult(newLayout: app.Layouts);
         }
 
         if (app.Components != null)
         {
-            await AddOrUpdateComponentsAsync(app: app);
+            await AddOrUpdateComponentsAsync(newApp: app);
         }
 
         if (app.Pages != null)
         {
-            await pageOrchestrationService.AddOrUpdate(items: app.Pages);
+            await pageOrchestrationService.AddOrUpdatePageResult(newPage: app.Pages);
         }
     }
 
@@ -48,26 +48,26 @@ internal class AppRenderableCoordinationService(
 
         if (app.Templates != null)
         {
-            await DeleteMissingTemplatesAsync(app: app);
-            await templateOrchestrationService.AddOrUpdate(items: app.Templates);
+            await DeleteMissingTemplatesAsync(deletedApp: app);
+            await templateOrchestrationService.AddOrUpdateTemplateResult(newTemplate: app.Templates);
         }
 
         if (app.Layouts != null)
         {
-            await DeleteMissingLayoutsAsync(app: app);
-            await layoutOrchestrationService.AddOrUpdate(items: app.Layouts);
+            await DeleteMissingLayoutsAsync(deletedApp: app);
+            await layoutOrchestrationService.AddOrUpdateLayoutResult(newLayout: app.Layouts);
         }
 
         if (app.Components != null)
         {
-            await DeleteMissingComponentsAsync(app: app);
-            await AddOrUpdateComponentsAsync(app: app);
+            await DeleteMissingComponentsAsync(deletedApp: app);
+            await AddOrUpdateComponentsAsync(newApp: app);
         }
 
         if (app.Pages != null)
         {
-            await DeleteMissingPagesAsync(app: app);
-            await pageOrchestrationService.AddOrUpdate(items: app.Pages);
+            await DeleteMissingPagesAsync(deletedApp: app);
+            await pageOrchestrationService.AddOrUpdatePageResult(newPage: app.Pages);
         }
     }
 
@@ -115,90 +115,90 @@ internal class AppRenderableCoordinationService(
         }
     }
 
-    private async ValueTask DeleteMissingPagesAsync(App app)
+    private async ValueTask DeleteMissingPagesAsync(App deletedApp)
     {
-        int[] incomingPageIds = app.Pages
+        int[] incomingPageIds = deletedApp.Pages
             .Where(predicate: page => page.Id > 0)
             .Select(selector: page => page.Id)
             .ToArray();
 
-        Page[] pagesToDelete = pageOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(predicate: page => page.AppId == app.Id && !((ReadOnlySpan<int>)incomingPageIds).Contains(value: page.Id))
+        Page[] pagesToDelete = pageOrchestrationService.GetAllPage(ignoreFilters: true)
+            .Where(predicate: page => page.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingPageIds).Contains(value: page.Id))
             .ToArray();
 
         if (pagesToDelete.Length > 0)
         {
-            await pageOrchestrationService.DeleteAllAsync(items: pagesToDelete);
+            await pageOrchestrationService.DeleteAllPageAsync(deletedPage: pagesToDelete);
         }
     }
 
-    private async ValueTask DeleteMissingComponentsAsync(App app)
+    private async ValueTask DeleteMissingComponentsAsync(App deletedApp)
     {
-        int[] incomingComponentIds = app.Components
+        int[] incomingComponentIds = deletedApp.Components
             .Where(predicate: component => component.Id > 0)
             .Select(selector: component => component.Id)
             .ToArray();
 
-        Component[] componentsToDelete = componentOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(predicate: component => component.AppId == app.Id && !((ReadOnlySpan<int>)incomingComponentIds).Contains(value: component.Id))
+        Component[] componentsToDelete = componentOrchestrationService.GetAllComponent(ignoreFilters: true)
+            .Where(predicate: component => component.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingComponentIds).Contains(value: component.Id))
             .ToArray();
 
         if (componentsToDelete.Length > 0)
         {
-            await componentOrchestrationService.DeleteAllAsync(items: componentsToDelete);
+            await componentOrchestrationService.DeleteAllComponentAsync(deletedComponent: componentsToDelete);
         }
     }
 
-    private async ValueTask DeleteMissingTemplatesAsync(App app)
+    private async ValueTask DeleteMissingTemplatesAsync(App deletedApp)
     {
-        int[] incomingTemplateIds = app.Templates
+        int[] incomingTemplateIds = deletedApp.Templates
             .Where(predicate: template => template.Id > 0)
             .Select(selector: template => template.Id)
             .ToArray();
 
-        Template[] templatesToDelete = templateOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(predicate: template => template.AppId == app.Id && !((ReadOnlySpan<int>)incomingTemplateIds).Contains(value: template.Id))
+        Template[] templatesToDelete = templateOrchestrationService.GetAllTemplate(ignoreFilters: true)
+            .Where(predicate: template => template.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingTemplateIds).Contains(value: template.Id))
             .ToArray();
 
         if (templatesToDelete.Length > 0)
         {
-            await templateOrchestrationService.DeleteAllAsync(items: templatesToDelete);
+            await templateOrchestrationService.DeleteAllTemplateAsync(deletedTemplate: templatesToDelete);
         }
     }
 
-    private async ValueTask DeleteMissingLayoutsAsync(App app)
+    private async ValueTask DeleteMissingLayoutsAsync(App deletedApp)
     {
-        int[] incomingLayoutIds = app.Layouts
+        int[] incomingLayoutIds = deletedApp.Layouts
             .Where(predicate: layout => layout.Id > 0)
             .Select(selector: layout => layout.Id)
             .ToArray();
 
-        Layout[] layoutsToDelete = layoutOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(predicate: layout => layout.AppId == app.Id && !((ReadOnlySpan<int>)incomingLayoutIds).Contains(value: layout.Id))
+        Layout[] layoutsToDelete = layoutOrchestrationService.GetAllLayout(ignoreFilters: true)
+            .Where(predicate: layout => layout.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingLayoutIds).Contains(value: layout.Id))
             .ToArray();
 
         if (layoutsToDelete.Length > 0)
         {
-            await layoutOrchestrationService.DeleteAllAsync(items: layoutsToDelete);
+            await layoutOrchestrationService.DeleteAllLayoutAsync(deletedLayout: layoutsToDelete);
         }
     }
 
-    private async ValueTask AddOrUpdateComponentsAsync(App app)
+    private async ValueTask AddOrUpdateComponentsAsync(App newApp)
     {
-        HashSet<int> existingComponentIds = componentOrchestrationService.GetAll(ignoreFilters: true)
-            .Where(predicate: component => component.AppId == app.Id)
+        HashSet<int> existingComponentIds = componentOrchestrationService.GetAllComponent(ignoreFilters: true)
+            .Where(predicate: component => component.AppId == newApp.Id)
             .Select(selector: component => component.Id)
             .ToHashSet();
 
-        foreach (Component component in app.Components)
+        foreach (Component component in newApp.Components)
         {
             if (existingComponentIds.Contains(item: component.Id))
             {
-                await componentOrchestrationService.UpdateAsync(entity: component);
+                await componentOrchestrationService.UpdateComponentAsync(updatedComponent: component);
             }
             else
             {
-                await componentOrchestrationService.AddAsync(entity: component);
+                await componentOrchestrationService.AddComponentAsync(newComponent: component);
             }
         }
     }

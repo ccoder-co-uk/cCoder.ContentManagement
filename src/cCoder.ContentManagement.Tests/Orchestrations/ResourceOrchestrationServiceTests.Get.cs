@@ -24,14 +24,14 @@ public partial class ResourceOrchestrationServiceTests
         // Given
         int id = 1;
         Resource entity = CreateRandomResource();
-        resourceProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        resourceProcessingServiceMock.Setup(x => x.GetResource(id)).Returns(entity);
 
         // When
-        Resource result = orchestrationService.Get(id);
+        Resource result = orchestrationService.GetResource(id);
 
         // Then
         result.Should().BeEquivalentTo(entity);
-        resourceProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        resourceProcessingServiceMock.Verify(x => x.GetResource(id), Times.Once);
         resourceProcessingServiceMock.VerifyNoOtherCalls();
         resourceEventProcessingServiceMock.VerifyNoOtherCalls();
     }

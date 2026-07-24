@@ -26,14 +26,14 @@ public partial class LayoutProcessingServiceTests
     {
         // Given
         Layout layout = CreateRandomLayout();
-        layoutServiceMock.Setup(x => x.AddAsync(layout)).ReturnsAsync(layout);
+        layoutServiceMock.Setup(x => x.AddLayoutAsync(layout)).ReturnsAsync(layout);
 
         // When
-        Layout result = await layoutProcessingService.AddAsync(layout);
+        Layout result = await layoutProcessingService.AddLayoutAsync(layout);
 
         // Then
         Assert.Same(layout, result);
-        layoutServiceMock.Verify(x => x.AddAsync(layout), Times.Once);
+        layoutServiceMock.Verify(x => x.AddLayoutAsync(layout), Times.Once);
     }
 
     [Fact]
@@ -43,12 +43,12 @@ public partial class LayoutProcessingServiceTests
         Layout layout = CreateRandomLayout();
 
         layoutServiceMock
-            .Setup(x => x.AddAsync(layout))
+            .Setup(x => x.AddLayoutAsync(layout))
             .ThrowsAsync(new SecurityException("Access Denied!"));
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await layoutProcessingService.AddAsync(layout)
+            await layoutProcessingService.AddLayoutAsync(layout)
         );
 
         // Then

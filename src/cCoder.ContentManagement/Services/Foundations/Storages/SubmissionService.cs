@@ -11,26 +11,26 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAuthorizationBroker authorizationBroker) : ISubmissionService
 {
-    public Submission Get(Guid id, bool ignoreFilters = false)
+    public Submission GetSubmission(Guid submissionId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(submissionId: submissionId, parameterName: "id");
 
         if (ignoreFilters)
         {
-            return GetAll(ignoreFilters: true)
-                        .FirstOrDefault(predicate: (Submission i) => i.Id == id);
+            return GetAllSubmission(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
         }
 
-        Submission submission = GetAll()
-            .FirstOrDefault(predicate: (Submission i) => i.Id == id);
+        Submission submission = GetAllSubmission()
+            .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
 
         if (submission != null)
         {
             return submission;
         }
 
-        Submission submission2 = GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: (Submission i) => i.Id == id);
+        Submission submission2 = GetAllSubmission(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
 
         if (submission2 != null)
         {
@@ -40,14 +40,14 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         return null;
     }
 
-    public IQueryable<Submission> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false) =>
         submissionBroker.GetAllSubmissions(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Submission> AddAsync(Submission submission)
+    public async ValueTask<Submission> AddSubmissionAsync(Submission submission)
     {
         ValidateSubmission(submission: submission, parameterName: "submission");
         authorizationBroker.Authorize(appId: submission.AppId, privilege: "Submission_create");
-        Submission newSubmission = CreateStorageSubmission(submission: submission);
+        Submission newSubmission = CreateStorageSubmission(newSubmission: submission);
         newSubmission.Id = ((submission.Id == Guid.Empty) ? Guid.NewGuid() : submission.Id);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
@@ -57,7 +57,7 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         newSubmission.CreatedBy = currentUserId;
         newSubmission.LastUpdatedOn = now;
         newSubmission.LastUpdatedBy = currentUserId;
-        Submission result = await submissionBroker.AddSubmissionAsync(entity: newSubmission);
+        Submission result = await submissionBroker.AddSubmissionAsync(newSubmission: newSubmission);
         submission.Id = result.Id;
         submission.AppId = result.AppId;
         submission.CreatedBy = result.CreatedBy;
@@ -70,11 +70,11 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         return submission;
     }
 
-    public async ValueTask<Submission> UpdateAsync(Submission submission)
+    public async ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission)
     {
-        ValidateSubmission(submission: submission, parameterName: "submission");
-        authorizationBroker.Authorize(appId: submission.AppId, privilege: "Submission_update");
-        Submission updateSubmission = CreateStorageSubmission(submission: submission);
+        ValidateSubmission(submission: updatedSubmission, parameterName: "submission");
+        authorizationBroker.Authorize(appId: updatedSubmission.AppId, privilege: "Submission_update");
+        Submission updateSubmission = CreateStorageSubmission(newSubmission: updatedSubmission);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
@@ -82,45 +82,45 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateSubmission.LastUpdatedOn = now;
         updateSubmission.LastUpdatedBy = currentUserId;
-        Submission result = await submissionBroker.UpdateSubmissionAsync(entity: updateSubmission);
-        submission.Id = result.Id;
-        submission.AppId = result.AppId;
-        submission.CreatedBy = result.CreatedBy;
-        submission.LastUpdatedBy = result.LastUpdatedBy;
-        submission.CreatedOn = result.CreatedOn;
-        submission.LastUpdatedOn = result.LastUpdatedOn;
-        submission.SourceComponent = result.SourceComponent;
-        submission.State = result.State;
-        submission.DataJson = result.DataJson;
-        return submission;
+        Submission result = await submissionBroker.UpdateSubmissionAsync(updatedSubmission: updateSubmission);
+        updatedSubmission.Id = result.Id;
+        updatedSubmission.AppId = result.AppId;
+        updatedSubmission.CreatedBy = result.CreatedBy;
+        updatedSubmission.LastUpdatedBy = result.LastUpdatedBy;
+        updatedSubmission.CreatedOn = result.CreatedOn;
+        updatedSubmission.LastUpdatedOn = result.LastUpdatedOn;
+        updatedSubmission.SourceComponent = result.SourceComponent;
+        updatedSubmission.State = result.State;
+        updatedSubmission.DataJson = result.DataJson;
+        return updatedSubmission;
     }
 
-    public async ValueTask DeleteAsync(Guid id)
+    public async ValueTask DeleteAsync(Guid submissionId)
     {
-        ValidateId(id: id, parameterName: "id");
-        Submission submission = Get(id: id);
+        ValidateId(submissionId: submissionId, parameterName: "id");
+        Submission submission = GetSubmission(submissionId: submissionId);
         authorizationBroker.Authorize(appId: submission.AppId, privilege: "Submission_delete");
-        await submissionBroker.DeleteSubmissionAsync(entity: CreateStorageSubmission(submission: submission));
+        await submissionBroker.DeleteSubmissionAsync(deletedSubmission: CreateStorageSubmission(newSubmission: submission));
     }
 
-    private static Submission CreateStorageSubmission(Submission submission)
+    private static Submission CreateStorageSubmission(Submission newSubmission)
     {
-        if (submission == null)
+        if (newSubmission == null)
         {
             return null;
         }
 
         return new Submission
         {
-            Id = submission.Id,
-            AppId = submission.AppId,
-            CreatedBy = submission.CreatedBy,
-            LastUpdatedBy = submission.LastUpdatedBy,
-            CreatedOn = submission.CreatedOn,
-            LastUpdatedOn = submission.LastUpdatedOn,
-            SourceComponent = submission.SourceComponent,
-            State = submission.State,
-            DataJson = submission.DataJson
+            Id = newSubmission.Id,
+            AppId = newSubmission.AppId,
+            CreatedBy = newSubmission.CreatedBy,
+            LastUpdatedBy = newSubmission.LastUpdatedBy,
+            CreatedOn = newSubmission.CreatedOn,
+            LastUpdatedOn = newSubmission.LastUpdatedOn,
+            SourceComponent = newSubmission.SourceComponent,
+            State = newSubmission.State,
+            DataJson = newSubmission.DataJson
         };
     }
 }

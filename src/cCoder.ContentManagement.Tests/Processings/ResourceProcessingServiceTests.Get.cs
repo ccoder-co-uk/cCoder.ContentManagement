@@ -23,14 +23,14 @@ public partial class ResourceProcessingServiceTests
     {
         // Given
         Resource resource = CreateRandomResource();
-        resourceServiceMock.Setup(x => x.Get(resource.Id)).Returns(resource);
+        resourceServiceMock.Setup(x => x.GetResource(resource.Id)).Returns(resource);
 
         // When
-        Resource result = resourceProcessingService.Get(resource.Id);
+        Resource result = resourceProcessingService.GetResource(resource.Id);
 
         // Then
         result.Should().BeSameAs(resource);
-        resourceServiceMock.Verify(x => x.Get(resource.Id), Times.Once);
+        resourceServiceMock.Verify(x => x.GetResource(resource.Id), Times.Once);
         resourceServiceMock.VerifyNoOtherCalls();
     }
 

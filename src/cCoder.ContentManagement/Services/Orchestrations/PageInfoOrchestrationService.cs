@@ -12,42 +12,42 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal class PageInfoOrchestrationService(IPageInfoProcessingService processingService, IPageInfoEventProcessingService eventService) : IPageInfoOrchestrationService
 {
-    public PageInfo Get(int id) =>
-        processingService.Get(id: ValidateId(id: id, parameterName: "id"));
+    public PageInfo GetPageInfo(int pageInfoId) =>
+        processingService.GetPageInfo(pageInfoId: ValidateId(pageInfoId: pageInfoId, parameterName: "id"));
 
-    public IQueryable<PageInfo> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false) =>
+        processingService.GetAllPageInfo(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<PageInfo> AddAsync(PageInfo entity)
+    public async ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo)
     {
-        ValidatePageInfo(pageInfo: entity, parameterName: "entity");
-        PageInfo result = await processingService.AddAsync(entity: entity);
+        ValidatePageInfo(pageInfo: newPageInfo, parameterName: "entity");
+        PageInfo result = await processingService.AddPageInfoAsync(newPageInfo: newPageInfo);
         await eventService.RaisePageInfoAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask<PageInfo> UpdateAsync(PageInfo entity)
+    public async ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo)
     {
-        ValidatePageInfo(pageInfo: entity, parameterName: "entity");
-        PageInfo result = await processingService.UpdateAsync(entity: entity);
+        ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "entity");
+        PageInfo result = await processingService.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo);
         await eventService.RaisePageInfoUpdateEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int pageInfoId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
 
         PageInfo entity;
 
         try
         {
-            entity = processingService.Get(id: id);
+            entity = processingService.GetPageInfo(pageInfoId: pageInfoId);
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAll(ignoreFilters: true)
-                .FirstOrDefault(predicate: pageInfo => pageInfo.Id == id);
+            entity = processingService.GetAllPageInfo(ignoreFilters: true)
+                .FirstOrDefault(predicate: pageInfo => pageInfo.Id == pageInfoId);
         }
 
         if (entity == null)
@@ -56,12 +56,12 @@ internal class PageInfoOrchestrationService(IPageInfoProcessingService processin
         }
 
         await eventService.RaisePageInfoDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(id: id);
+        await processingService.DeleteAsync(pageInfoId: pageInfoId);
     }
 
-    public async ValueTask<IEnumerable<Result<PageInfo>>> AddOrUpdate(IEnumerable<PageInfo> items)
+    public async ValueTask<IEnumerable<Result<PageInfo>>> AddOrUpdatePageInfoResult(IEnumerable<PageInfo> newPageInfo)
     {
-        PageInfo[] pageInfos = ValidatePageInfos(pageInfos: items, parameterName: "items")
+        PageInfo[] pageInfos = ValidatePageInfos(pageInfos: newPageInfo, parameterName: "items")
             .ToArray();
 
         List<Result<PageInfo>> results = new();
@@ -71,8 +71,8 @@ internal class PageInfoOrchestrationService(IPageInfoProcessingService processin
             try
             {
                 PageInfo result = pageInfo.Id <= 0
-                    ? await AddAsync(entity: pageInfo)
-                    : await UpdateAsync(entity: pageInfo);
+                    ? await AddPageInfoAsync(newPageInfo: pageInfo)
+                    : await UpdatePageInfoAsync(updatedPageInfo: pageInfo);
 
                 results.Add(item: new Result<PageInfo>
                 {
@@ -95,25 +95,25 @@ internal class PageInfoOrchestrationService(IPageInfoProcessingService processin
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<PageInfo> items)
+    public async ValueTask DeleteAllPageInfoAsync(IEnumerable<PageInfo> deletedPageInfo)
     {
-        PageInfo[] pageInfos = ValidatePageInfos(pageInfos: items, parameterName: "items")
+        PageInfo[] pageInfos = ValidatePageInfos(pageInfos: deletedPageInfo, parameterName: "items")
             .ToArray();
 
         foreach (PageInfo pageInfo in pageInfos)
         {
-            await DeleteAsync(id: pageInfo.Id);
+            await DeleteAsync(pageInfoId: pageInfo.Id);
         }
     }
 
-    private static int ValidateId(int id, string parameterName)
+    private static int ValidateId(int pageInfoId, string parameterName)
     {
-        if (id < 1)
+        if (pageInfoId < 1)
         {
             throw new ValidationException(message: parameterName + " must be greater than 0.");
         }
 
-        return id;
+        return pageInfoId;
     }
 
     private static PageInfo ValidatePageInfo(PageInfo pageInfo, string parameterName)

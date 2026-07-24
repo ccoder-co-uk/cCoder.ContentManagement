@@ -23,18 +23,18 @@ public partial class ContentOrchestrationServiceTests
     {
         // Given
         Content entity = CreateRandomContent();
-        contentProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        contentProcessingServiceMock.Setup(x => x.UpdateContentAsync(entity)).ReturnsAsync(entity);
 
         contentEventProcessingServiceMock
             .Setup(x => x.RaiseContentUpdateEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Content result = await orchestrationService.UpdateAsync(entity);
+        Content result = await orchestrationService.UpdateContentAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        contentProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        contentProcessingServiceMock.Verify(x => x.UpdateContentAsync(entity), Times.Once);
         contentEventProcessingServiceMock.Verify(x => x.RaiseContentUpdateEventAsync(entity), Times.Once);
     }
 

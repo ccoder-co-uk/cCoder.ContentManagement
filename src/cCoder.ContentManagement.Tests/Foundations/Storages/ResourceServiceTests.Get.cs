@@ -24,7 +24,7 @@ public partial class ResourceServiceTests
         // When
         Resource resource = CreateRandomResource(id: 5, appId: 7);
         resourceBrokerMock.Setup(x => x.GetAllResources(false)).Returns(new[] { resource }.AsQueryable());
-        Resource result = resourceService.Get(5);
+        Resource result = resourceService.GetResource(5);
 
         // Then
         Assert.Equivalent(resource, result);

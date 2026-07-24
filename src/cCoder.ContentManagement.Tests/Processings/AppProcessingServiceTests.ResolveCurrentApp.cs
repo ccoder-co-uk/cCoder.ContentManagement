@@ -57,14 +57,14 @@ public partial class AppProcessingServiceTests
             context
         );
 
-        appServiceMock.Setup(x => x.Get(7)).Returns(app);
+        appServiceMock.Setup(x => x.GetApp(7)).Returns(app);
 
         // When
         App result = serviceWithContext.ResolveCurrentApp();
 
         // Then
         result.Should().BeSameAs(app);
-        appServiceMock.Verify(x => x.Get(7), Times.Once);
+        appServiceMock.Verify(x => x.GetApp(7), Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 
@@ -103,14 +103,14 @@ public partial class AppProcessingServiceTests
             context
         );
 
-        appServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { app }.AsQueryable());
+        appServiceMock.Setup(x => x.GetAllApp(false)).Returns(new[] { app }.AsQueryable());
 
         // When
         App result = serviceWithContext.ResolveCurrentApp();
 
         // Then
         result.Should().BeSameAs(app);
-        appServiceMock.Verify(x => x.GetAll(false), Times.Once);
+        appServiceMock.Verify(x => x.GetAllApp(false), Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 

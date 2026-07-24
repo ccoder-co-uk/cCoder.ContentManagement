@@ -11,27 +11,27 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal class PageRoleOrchestrationService(IPageRoleProcessingService processingService, IPageRoleEventProcessingService eventService) : IPageRoleOrchestrationService
 {
-    public IQueryable<PageRole> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
+        processingService.GetAllPageRole(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<PageRole> AddAsync(PageRole entity)
+    public async ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole)
     {
-        ValidatePageRole(pageRole: entity, parameterName: "entity");
-        PageRole result = await processingService.AddAsync(entity: entity);
+        ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
+        PageRole result = await processingService.AddPageRoleAsync(newPageRole: newPageRole);
         await eventService.RaisePageRoleAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(PageRole entity)
+    public async ValueTask DeletePageRoleAsync(PageRole deletedPageRole)
     {
-        ValidatePageRole(pageRole: entity, parameterName: "entity");
-        await eventService.RaisePageRoleDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(entity: entity);
+        ValidatePageRole(pageRole: deletedPageRole, parameterName: "entity");
+        await eventService.RaisePageRoleDeleteEventAsync(entity: deletedPageRole);
+        await processingService.DeletePageRoleAsync(deletedPageRole: deletedPageRole);
     }
 
-    public async ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdate(IEnumerable<PageRole> items)
+    public async ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole)
     {
-        PageRole[] pageRoles = ValidatePageRoles(pageRoles: items, parameterName: "items")
+        PageRole[] pageRoles = ValidatePageRoles(pageRoles: newPageRole, parameterName: "items")
             .ToArray();
 
         List<Result<PageRole>> results = new();
@@ -40,7 +40,7 @@ internal class PageRoleOrchestrationService(IPageRoleProcessingService processin
         {
             try
             {
-                PageRole existingPageRole = processingService.GetAll(ignoreFilters: true)
+                PageRole existingPageRole = processingService.GetAllPageRole(ignoreFilters: true)
                     .FirstOrDefault(predicate: existing =>
                         existing.PageId == pageRole.PageId &&
                         existing.RoleId == pageRole.RoleId);
@@ -58,7 +58,7 @@ internal class PageRoleOrchestrationService(IPageRoleProcessingService processin
                     continue;
                 }
 
-                PageRole result = await AddAsync(entity: pageRole);
+                PageRole result = await AddPageRoleAsync(newPageRole: pageRole);
 
                 results.Add(item: new Result<PageRole>
                 {
@@ -86,14 +86,14 @@ internal class PageRoleOrchestrationService(IPageRoleProcessingService processin
     public ValueTask ImportPageRolesAsync(int appId, PageRoleInfo[] items) =>
         processingService.ImportPageRolesAsync(appId: ValidateAppId(appId: appId, parameterName: "appId"), items: ValidatePageRoleInfos(pageRoleInfos: items, parameterName: "items"));
 
-    public async ValueTask DeleteAllAsync(IEnumerable<PageRole> items)
+    public async ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole)
     {
-        PageRole[] pageRoles = ValidatePageRoles(pageRoles: items, parameterName: "items")
+        PageRole[] pageRoles = ValidatePageRoles(pageRoles: deletedPageRole, parameterName: "items")
             .ToArray();
 
         foreach (PageRole pageRole in pageRoles)
         {
-            await DeleteAsync(entity: pageRole);
+            await DeletePageRoleAsync(deletedPageRole: pageRole);
         }
     }
 

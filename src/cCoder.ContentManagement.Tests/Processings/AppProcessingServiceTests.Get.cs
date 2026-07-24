@@ -24,14 +24,14 @@ public partial class AppProcessingServiceTests
         // Given
         App entity = CreateRandomApp();
         var id = entity.Id;
-        appServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        appServiceMock.Setup(x => x.GetApp(id)).Returns(entity);
 
         // When
-        App result = appProcessingService.Get(id);
+        App result = appProcessingService.GetApp(id);
 
         // Then
         result.Should().BeSameAs(entity);
-        appServiceMock.Verify(x => x.Get(id), Times.Once);
+        appServiceMock.Verify(x => x.GetApp(id), Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 

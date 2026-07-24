@@ -10,11 +10,11 @@ public interface IComponentBroker
 {
     IQueryable<Component> GetAllComponents(bool ignoreFilters);
 
-    ValueTask<Component> AddComponentAsync(Component entity);
+    ValueTask<Component> AddComponentAsync(Component newComponent);
 
-    ValueTask<Component> UpdateComponentAsync(Component entity);
+    ValueTask<Component> UpdateComponentAsync(Component updatedComponent);
 
-    ValueTask<int> DeleteComponentAsync(Component entity);
+    ValueTask<int> DeleteComponentAsync(Component deletedComponent);
 
-    ValueTask DeleteAllComponentsAsync(IEnumerable<Component> items);
+    ValueTask DeleteAllComponentsAsync(IEnumerable<Component> deletedComponent);
 }

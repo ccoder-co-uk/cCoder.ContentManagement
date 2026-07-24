@@ -24,14 +24,14 @@ public partial class CommonObjectOrchestrationServiceTests
     {
         // Given
         IQueryable<CommonObject> entities = new[] { CreateRandomCommonObject() }.AsQueryable();
-        commonObjectProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+        commonObjectProcessingServiceMock.Setup(x => x.GetAllCommonObject(true)).Returns(entities);
 
         // When
-        IQueryable<CommonObject> result = orchestrationService.GetAll(true);
+        IQueryable<CommonObject> result = orchestrationService.GetAllCommonObject(true);
 
         // Then
         result.Should().BeSameAs(entities);
-        commonObjectProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        commonObjectProcessingServiceMock.Verify(x => x.GetAllCommonObject(true), Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
     }

@@ -42,7 +42,7 @@ internal sealed class MarkupRenderService(
         CultureLinkRegex = new Regex(pattern: "\\[culturelink\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", options: regexOptions)
     };
 
-    public PageRenderResult Render(PageRenderSession session)
+    public PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session)
     {
         string key = string.IsNullOrWhiteSpace(value: session.Page?.ResourceKey) ? "Default" : session.Page.ResourceKey;
         string culture = ResolveCulture(session: session);
@@ -50,7 +50,7 @@ internal sealed class MarkupRenderService(
         List<Replacement> replacements = BuildDefaultReplacements(session: session)
             .ToList();
 
-        AddThemeTemplateReplacements(session: session, replacements: replacements);
+        AddThemeTemplateReplacements(newPageRenderSession: session, newReplacement: replacements);
 
         return new PageRenderResult
         {
@@ -393,9 +393,9 @@ values: session.App.PagesById.Values
         }
     }
 
-    private void AddThemeTemplateReplacements(PageRenderSession session, ICollection<Replacement> replacements)
+    private void AddThemeTemplateReplacements(PageRenderSession newPageRenderSession, ICollection<Replacement> newReplacement)
     {
-        if (!TryGetThemeDictionary(config: session.App?.Config, themeDictionary: out IDictionary<string, object> themeDictionary))
+        if (!TryGetThemeDictionary(config: newPageRenderSession.App?.Config, themeDictionary: out IDictionary<string, object> themeDictionary))
         {
             return;
         }
@@ -403,26 +403,26 @@ values: session.App.PagesById.Values
         PageRenderTemplate baseTemplate = null;
         PageRenderTemplate themeTemplate = null;
 
-        session.App?.TemplatesByName.TryGetValue(key: "Theme", value: out baseTemplate);
-        session.App?.TemplatesByName.TryGetValue(key: "Theme-" + session.Request.Theme, value: out themeTemplate);
+        newPageRenderSession.App?.TemplatesByName.TryGetValue(key: "Theme", value: out baseTemplate);
+        newPageRenderSession.App?.TemplatesByName.TryGetValue(key: "Theme-" + newPageRenderSession.Request.Theme, value: out themeTemplate);
 
         string baseTheme = baseTemplate == null
             ? string.Empty
-            : RenderTemplate(template: baseTemplate, model: themeDictionary, session: session, pageReplacements: replacements.ToList());
+            : RenderTemplate(template: baseTemplate, model: themeDictionary, session: newPageRenderSession, pageReplacements: newReplacement.ToList());
 
-        themeDictionary.TryGetValue(key: session.Request.Theme ?? string.Empty, value: out object themeModel);
+        themeDictionary.TryGetValue(key: newPageRenderSession.Request.Theme ?? string.Empty, value: out object themeModel);
 
-        if (themeModel == null && !string.IsNullOrWhiteSpace(value: session.App?.DefaultTheme))
+        if (themeModel == null && !string.IsNullOrWhiteSpace(value: newPageRenderSession.App?.DefaultTheme))
         {
-            themeDictionary.TryGetValue(key: session.App.DefaultTheme, value: out themeModel);
+            themeDictionary.TryGetValue(key: newPageRenderSession.App.DefaultTheme, value: out themeModel);
         }
 
         string renderedTheme = themeModel == null || themeTemplate == null
             ? string.Empty
-            : RenderTemplate(template: themeTemplate, model: themeModel, session: session, pageReplacements: replacements.ToList());
+            : RenderTemplate(template: themeTemplate, model: themeModel, session: newPageRenderSession, pageReplacements: newReplacement.ToList());
 
-        replacements.Add(item: new Replacement(old: "[theme[template]]", @new: renderedTheme));
-        replacements.Add(item: new Replacement(old: "[theme[base]]", @new: baseTheme));
+        newReplacement.Add(item: new Replacement(old: "[theme[template]]", @new: renderedTheme));
+        newReplacement.Add(item: new Replacement(old: "[theme[base]]", @new: baseTheme));
     }
 
     private string RenderTemplate(PageRenderTemplate template, object model, PageRenderSession session, IReadOnlyCollection<Replacement> pageReplacements)

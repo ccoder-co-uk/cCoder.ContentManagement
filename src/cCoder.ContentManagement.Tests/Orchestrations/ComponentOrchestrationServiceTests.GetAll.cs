@@ -23,14 +23,14 @@ public partial class ComponentOrchestrationServiceTests
     {
         // Given
         IQueryable<Component> entities = new[] { CreateRandomComponent() }.AsQueryable();
-        componentProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+        componentProcessingServiceMock.Setup(x => x.GetAllComponent(true)).Returns(entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+        var result = orchestrationService.GetAllComponent(true).ToArray();
 
         // Then
         result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        componentProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        componentProcessingServiceMock.Verify(x => x.GetAllComponent(true), Times.Once);
         componentProcessingServiceMock.VerifyNoOtherCalls();
         componentEventProcessingServiceMock.VerifyNoOtherCalls();
     }

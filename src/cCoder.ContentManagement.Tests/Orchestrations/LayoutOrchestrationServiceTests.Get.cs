@@ -24,14 +24,14 @@ public partial class LayoutOrchestrationServiceTests
         // Given
         int id = 1;
         Layout entity = CreateRandomLayout();
-        layoutProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        layoutProcessingServiceMock.Setup(x => x.GetLayout(id)).Returns(entity);
 
         // When
-        Layout result = orchestrationService.Get(id);
+        Layout result = orchestrationService.GetLayout(id);
 
         // Then
         result.Should().BeEquivalentTo(entity);
-        layoutProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        layoutProcessingServiceMock.Verify(x => x.GetLayout(id), Times.Once);
         layoutProcessingServiceMock.VerifyNoOtherCalls();
         layoutEventProcessingServiceMock.VerifyNoOtherCalls();
     }

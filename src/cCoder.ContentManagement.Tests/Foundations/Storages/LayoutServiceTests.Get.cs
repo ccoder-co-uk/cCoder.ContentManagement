@@ -27,7 +27,7 @@ public partial class LayoutServiceTests
         layoutBrokerMock.Setup(x => x.GetAllLayouts(false)).Returns(new[] { layout }.AsQueryable());
 
         // When
-        Layout result = layoutService.Get(7);
+        Layout result = layoutService.GetLayout(7);
 
         // Then
         result.Should().BeEquivalentTo(layout);

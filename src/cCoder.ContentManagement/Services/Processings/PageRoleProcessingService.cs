@@ -23,53 +23,53 @@ internal class PageRoleProcessingService(
     private User User =>
         authorizationBroker.GetCurrentUser();
 
-    public IQueryable<PageRole> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
+        service.GetAllPageRole(ignoreFilters: ignoreFilters);
 
-    public ValueTask<PageRole> AddAsync(PageRole entity)
+    public ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole)
     {
-        ValidatePageRole(pageRole: entity, parameterName: "entity");
-        var (role, page) = GetRoleAndPage(entity: entity);
+        ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
+        var (role, page) = GetRoleAndPage(entity: newPageRole);
 
         if (role != null && page != null && ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "pagerole_create"))
         {
             return (!(page.Roles ?? Array.Empty<PageRole>()).Any(predicate: (PageRole r) => r.RoleId == role.Id))
-                ? service.AddAsync(pageRole: entity)
-                : ValueTask.FromResult(result: entity);
+                ? service.AddPageRoleAsync(newPageRole: newPageRole)
+                : ValueTask.FromResult(result: newPageRole);
         }
 
         throw new SecurityException(message: "Access Denied!");
     }
 
-    public async ValueTask DeleteAsync(PageRole link)
+    public async ValueTask DeletePageRoleAsync(PageRole deletedPageRole)
     {
-        ValidatePageRole(pageRole: link, parameterName: "link");
+        ValidatePageRole(pageRole: deletedPageRole, parameterName: "link");
 
-        Page page = pageService.GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: existingPage => existingPage.Id == link.PageId);
+        Page page = pageService.GetAllPage(ignoreFilters: true)
+            .FirstOrDefault(predicate: existingPage => existingPage.Id == deletedPageRole.PageId);
 
-        PageRole dbVersion = service.GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: pageRole => pageRole.RoleId == link.RoleId && pageRole.PageId == link.PageId);
+        PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)
+            .FirstOrDefault(predicate: pageRole => pageRole.RoleId == deletedPageRole.RoleId && pageRole.PageId == deletedPageRole.PageId);
 
         if (dbVersion == null || page == null || !ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "pagerole_delete"))
         {
             throw new SecurityException(message: "Access Denied!");
         }
 
-        await service.DeleteAsync(pageRole: dbVersion);
+        await service.DeletePageRoleAsync(deletedPageRole: dbVersion);
     }
 
-    public async ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdate(IEnumerable<PageRole> items)
+    public async ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole)
     {
-        ValidatePageRoles(pageRoles: items, parameterName: "items");
-        PageRole[] itemArray = items.ToArray();
+        ValidatePageRoles(pageRoles: newPageRole, parameterName: "items");
+        PageRole[] itemArray = newPageRole.ToArray();
 
         int[] leftIds = itemArray
             .Select(selector: item => item.PageId)
             .Distinct()
             .ToArray();
 
-        PageRole[] existingItems = GetAll()
+        PageRole[] existingItems = GetAllPageRole()
             .Where(predicate: item => ((ReadOnlySpan<int>)leftIds).Contains(value: item.PageId))
             .ToArray();
 
@@ -83,7 +83,7 @@ internal class PageRoleProcessingService(
                 .Where(predicate: item => object.Equals(objA: item.PageId, objB: group.Key))
                 .ToArray();
 
-            await DeleteAllAsync(items: existingGroupItems);
+            await DeleteAllPageRoleAsync(deletedPageRole: existingGroupItems);
 
             foreach (PageRole item in groupItems)
             {
@@ -93,7 +93,7 @@ internal class PageRoleProcessingService(
                     {
                         Id = $"{item.PageId}:{item.RoleId}",
                         Success = true,
-                        Item = await AddAsync(entity: item),
+                        Item = await AddPageRoleAsync(newPageRole: item),
                         Message = "Added Successfully"
                     });
                 }
@@ -122,7 +122,7 @@ internal class PageRoleProcessingService(
             .Where(predicate: role => role.AppId == appId)
             .ToArray();
 
-        Page[] pages = pageService.GetAll(ignoreFilters: true)
+        Page[] pages = pageService.GetAllPage(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
             .ToArray();
 
@@ -160,7 +160,7 @@ internal class PageRoleProcessingService(
 
         if (pageRolesToDelete.Length > 0)
         {
-            await pageRoleBroker.DeleteAllPageRolesAsync(items: pageRolesToDelete);
+            await pageRoleBroker.DeleteAllPageRolesAsync(deletedPageRole: pageRolesToDelete);
         }
 
         foreach (PageRole pageRole in pageRoles
@@ -168,17 +168,17 @@ internal class PageRoleProcessingService(
                 existing.PageId == incoming.PageId
                 && existing.RoleId == incoming.RoleId)))
         {
-            await pageRoleBroker.AddPageRoleAsync(entity: pageRole);
+            await pageRoleBroker.AddPageRoleAsync(newPageRole: pageRole);
         }
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<PageRole> items)
+    public async ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole)
     {
-        ValidatePageRoles(pageRoles: items, parameterName: "items");
+        ValidatePageRoles(pageRoles: deletedPageRole, parameterName: "items");
 
-        foreach (PageRole item in items)
+        foreach (PageRole item in deletedPageRole)
         {
-            await DeleteAsync(link: item);
+            await DeletePageRoleAsync(deletedPageRole: item);
         }
     }
 
@@ -188,7 +188,7 @@ internal class PageRoleProcessingService(
             role: roleBroker.GetAllRoles(ignoreFilters: true)
             .Where(predicate: role => role.Id == entity.RoleId)
             .FirstOrDefault(),
-            page: pageService.GetAll(ignoreFilters: true)
+            page: pageService.GetAllPage(ignoreFilters: true)
             .FirstOrDefault(predicate: page => page.Id == entity.PageId));
     }
 

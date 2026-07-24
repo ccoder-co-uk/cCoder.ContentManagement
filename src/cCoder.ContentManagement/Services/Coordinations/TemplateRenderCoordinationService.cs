@@ -23,6 +23,6 @@ internal sealed partial class TemplateRenderCoordinationService(
 
         culture ??= User.DefaultCultureId;
 
-        return templateRenderOrchestrationService.Render(appId: appId, name: name, culture: culture, model: model, user: User);
+        return templateRenderOrchestrationService.RenderUser(appId: appId, name: name, culture: culture, model: model, user: User);
     }
 }

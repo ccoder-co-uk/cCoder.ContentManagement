@@ -8,11 +8,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface IAppCultureService
 {
-    IQueryable<AppCulture> GetAll(bool ignoreFilters = false);
+    IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false);
 
-    AppCulture Get(int appId, string cultureId, bool ignoreFilters = false);
+    AppCulture GetAppCulture(int appId, string cultureId, bool ignoreFilters = false);
 
-    ValueTask<AppCulture> AddAsync(AppCulture appCulture);
+    ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture);
 
-    ValueTask DeleteAsync(AppCulture appCulture);
+    ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture);
 }

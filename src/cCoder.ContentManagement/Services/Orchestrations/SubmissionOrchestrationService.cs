@@ -13,53 +13,53 @@ internal class SubmissionOrchestrationService(
     ISubmissionProcessingService processingService,
     ISubmissionEventProcessingService eventService) : ISubmissionOrchestrationService
 {
-    public Submission Get(Guid id) =>
-        processingService.Get(id: ValidateId(id: id, parameterName: "id"));
+    public Submission GetSubmission(Guid submissionId) =>
+        processingService.GetSubmission(submissionId: ValidateId(submissionId: submissionId, parameterName: "id"));
 
-    public IQueryable<Submission> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false) =>
+        processingService.GetAllSubmission(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Submission> AddAsync(Submission entity)
+    public async ValueTask<Submission> AddSubmissionAsync(Submission newSubmission)
     {
-        ValidateSubmission(submission: entity, parameterName: "entity");
+        ValidateSubmission(submission: newSubmission, parameterName: "entity");
 
-        Submission result = await processingService.AddAsync(entity: entity);
+        Submission result = await processingService.AddSubmissionAsync(newSubmission: newSubmission);
         await eventService.RaiseSubmissionAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask<Submission> UpdateAsync(Submission entity)
+    public async ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission)
     {
-        ValidateSubmission(submission: entity, parameterName: "entity");
+        ValidateSubmission(submission: updatedSubmission, parameterName: "entity");
 
-        Submission result = await processingService.UpdateAsync(entity: entity);
+        Submission result = await processingService.UpdateSubmissionAsync(updatedSubmission: updatedSubmission);
         await eventService.RaiseSubmissionUpdateEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(Guid id)
+    public async ValueTask DeleteAsync(Guid submissionId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(submissionId: submissionId, parameterName: "id");
 
-        Submission entity = processingService.Get(id: id);
+        Submission entity = processingService.GetSubmission(submissionId: submissionId);
         await eventService.RaiseSubmissionDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(id: id);
+        await processingService.DeleteAsync(submissionId: submissionId);
     }
 
-    public ValueTask<IEnumerable<Result<Submission>>> AddOrUpdate(IEnumerable<Submission> items) =>
-        processingService.AddOrUpdate(items: ValidateSubmissions(submissions: items, parameterName: "items"));
+    public ValueTask<IEnumerable<Result<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission) =>
+        processingService.AddOrUpdateSubmissionResult(newSubmission: ValidateSubmissions(submissions: newSubmission, parameterName: "items"));
 
-    public ValueTask DeleteAllAsync(IEnumerable<Submission> items) =>
-        processingService.DeleteAllAsync(items: ValidateSubmissions(submissions: items, parameterName: "items"));
+    public ValueTask DeleteAllSubmissionAsync(IEnumerable<Submission> deletedSubmission) =>
+        processingService.DeleteAllSubmissionAsync(deletedSubmission: ValidateSubmissions(submissions: deletedSubmission, parameterName: "items"));
 
-    private static Guid ValidateId(Guid id, string parameterName)
+    private static Guid ValidateId(Guid submissionId, string parameterName)
     {
-        if (id == Guid.Empty)
+        if (submissionId == Guid.Empty)
         {
             throw new ValidationException(message: parameterName + " is required.");
         }
 
-        return id;
+        return submissionId;
     }
 
     private static Submission ValidateSubmission(Submission submission, string parameterName)

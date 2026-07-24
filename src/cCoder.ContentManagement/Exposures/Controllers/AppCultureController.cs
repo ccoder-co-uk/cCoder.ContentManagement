@@ -29,28 +29,28 @@ public class AppCultureController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 3, MaxExpansionDepth = 3)]
     [ActionName("Get")]
     public IActionResult GetAll() =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllAppCulture());
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] AppCulture entity)
+    public async Task<IActionResult> Post([FromBody] AppCulture newAppCulture)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddAsync(entity: entity));
+        return Ok(value: await Service.AddAppCultureAsync(newAppCulture: newAppCulture));
     }
 
     [HttpPost]
-    public async Task<IActionResult> DeleteAll([FromBody] IEnumerable<AppCulture> items)
+    public async Task<IActionResult> DeleteAll([FromBody] IEnumerable<AppCulture> deletedAppCulture)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        await Service.DeleteAllAsync(items: items);
+        await Service.DeleteAllAppCultureAsync(deletedAppCulture: deletedAppCulture);
         return Ok();
     }
 }

@@ -46,7 +46,7 @@ public partial class TemplateServiceTests
             .ReturnsAsync((CmsDataModels.Template value) => value);
 
         // When
-        Template result = await templateService.AddAsync(template);
+        Template result = await templateService.AddTemplateAsync(template);
 
         // Then
         result.Should().BeSameAs(template);
@@ -151,7 +151,7 @@ public partial class TemplateServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await templateService.AddAsync(template);
+        Func<Task> action = async () => await templateService.AddTemplateAsync(template);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

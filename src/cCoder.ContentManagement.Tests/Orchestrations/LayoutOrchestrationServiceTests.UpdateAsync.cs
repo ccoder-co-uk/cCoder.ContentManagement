@@ -23,18 +23,18 @@ public partial class LayoutOrchestrationServiceTests
     {
         // Given
         Layout entity = CreateRandomLayout();
-        layoutProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        layoutProcessingServiceMock.Setup(x => x.UpdateLayoutAsync(entity)).ReturnsAsync(entity);
 
         layoutEventProcessingServiceMock
             .Setup(x => x.RaiseLayoutUpdateEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Layout result = await orchestrationService.UpdateAsync(entity);
+        Layout result = await orchestrationService.UpdateLayoutAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        layoutProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        layoutProcessingServiceMock.Verify(x => x.UpdateLayoutAsync(entity), Times.Once);
         layoutEventProcessingServiceMock.Verify(x => x.RaiseLayoutUpdateEventAsync(entity), Times.Once);
     }
 

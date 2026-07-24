@@ -23,14 +23,14 @@ public partial class ContentProcessingServiceTests
     {
         // Given
         Content entity = CreateRandomContent();
-        contentServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        contentServiceMock.Setup(x => x.UpdateContentAsync(entity)).ReturnsAsync(entity);
 
         // When
-        Content result = await contentProcessingService.UpdateAsync(entity);
+        Content result = await contentProcessingService.UpdateContentAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        contentServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        contentServiceMock.Verify(x => x.UpdateContentAsync(entity), Times.Once);
         contentServiceMock.VerifyNoOtherCalls();
     }
 

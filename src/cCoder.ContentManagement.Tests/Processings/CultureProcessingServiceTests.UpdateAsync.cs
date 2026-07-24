@@ -23,14 +23,14 @@ public partial class CultureProcessingServiceTests
     {
         // Given
         Culture entity = CreateRandomCulture();
-        cultureServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        cultureServiceMock.Setup(x => x.UpdateCultureAsync(entity)).ReturnsAsync(entity);
 
         // When
-        Culture result = await cultureProcessingService.UpdateAsync(entity);
+        Culture result = await cultureProcessingService.UpdateCultureAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        cultureServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        cultureServiceMock.Verify(x => x.UpdateCultureAsync(entity), Times.Once);
         cultureServiceMock.VerifyNoOtherCalls();
     }
 

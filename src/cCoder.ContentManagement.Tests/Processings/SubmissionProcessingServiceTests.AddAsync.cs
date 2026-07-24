@@ -26,14 +26,14 @@ public partial class SubmissionProcessingServiceTests
     {
         // Given
         Submission submission = CreateRandomSubmission();
-        submissionServiceMock.Setup(x => x.AddAsync(submission)).ReturnsAsync(submission);
+        submissionServiceMock.Setup(x => x.AddSubmissionAsync(submission)).ReturnsAsync(submission);
 
         // When
-        Submission result = await submissionProcessingService.AddAsync(submission);
+        Submission result = await submissionProcessingService.AddSubmissionAsync(submission);
 
         // Then
         Assert.Same(submission, result);
-        submissionServiceMock.Verify(x => x.AddAsync(submission), Times.Once);
+        submissionServiceMock.Verify(x => x.AddSubmissionAsync(submission), Times.Once);
     }
 
     [Fact]
@@ -43,12 +43,12 @@ public partial class SubmissionProcessingServiceTests
         Submission submission = CreateRandomSubmission();
 
         submissionServiceMock
-            .Setup(x => x.AddAsync(submission))
+            .Setup(x => x.AddSubmissionAsync(submission))
             .ThrowsAsync(new SecurityException("Access Denied!"));
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await submissionProcessingService.AddAsync(submission)
+            await submissionProcessingService.AddSubmissionAsync(submission)
         );
 
         // Then

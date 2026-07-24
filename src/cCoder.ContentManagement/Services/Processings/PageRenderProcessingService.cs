@@ -15,14 +15,14 @@ namespace cCoder.ContentManagement.Services.Processings;
 internal sealed class PageRenderProcessingService(
     IPageRenderExecutionOrchestrationService executionOrchestrationService) : IPageRenderProcessingService
 {
-    public RenderResult RenderPage(Page page, User user, Config config, string theme, string culture, bool edit = false)
+    public RenderResult RenderPageUserConfigRenderResult(Page page, User user, Config config, string theme, string culture, bool edit = false)
     {
         ValidatePage(page: page, parameterName: "page");
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");
 
         PageRenderSession session = BuildSession(page: page, user: user, config: config, theme: theme, culture: culture, edit: edit);
-        PageRenderResult pageRenderResult = executionOrchestrationService.Render(session: session);
+        PageRenderResult pageRenderResult = executionOrchestrationService.RenderPageRenderSessionPageRenderResult(session: session);
 
         return new RenderResult
         {

@@ -43,14 +43,14 @@ public partial class PageProcessingServiceTests
         Page child = CreateRandomPage();
         child.Id = 2;
         child.ParentId = root.Id;
-        pageServiceMock.Setup(x => x.Get(root.Id)).Returns(root);
-        pageServiceMock.Setup(x => x.Get(child.Id)).Returns(child);
+        pageServiceMock.Setup(x => x.GetPage(root.Id)).Returns(root);
+        pageServiceMock.Setup(x => x.GetPage(child.Id)).Returns(child);
 
-        Page result = pageProcessingService.GetRoot(child.Id);
+        Page result = pageProcessingService.GetRootPage(child.Id);
 
         result.Id.Should().Be(root.Id);
-        pageServiceMock.Verify(x => x.Get(child.Id), Times.Once);
-        pageServiceMock.Verify(x => x.Get(root.Id), Times.Once);
+        pageServiceMock.Verify(x => x.GetPage(child.Id), Times.Once);
+        pageServiceMock.Verify(x => x.GetPage(root.Id), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
@@ -74,12 +74,12 @@ public partial class PageProcessingServiceTests
         Page root = CreateRandomPage();
         root.Id = 1;
         root.ParentId = null;
-        pageServiceMock.Setup(x => x.Get(root.Id)).Returns(root);
+        pageServiceMock.Setup(x => x.GetPage(root.Id)).Returns(root);
 
-        Page result = pageProcessingService.GetRoot(root.Id);
+        Page result = pageProcessingService.GetRootPage(root.Id);
 
         result.Should().BeSameAs(root);
-        pageServiceMock.Verify(x => x.Get(root.Id), Times.Once);
+        pageServiceMock.Verify(x => x.GetPage(root.Id), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

@@ -53,46 +53,46 @@ public partial class PageCoordinationServiceTests
         }.AsQueryable();
         IQueryable<LocalPageInfo> pageInfos = localPageInfos.AsQueryable();
 
-        pageRoleOrchestrationServiceMock.Setup(service => service.GetAll(true)).Returns(pageRoles);
-        pageInfoOrchestrationServiceMock.Setup(service => service.GetAll(true)).Returns(pageInfos);
-        contentOrchestrationServiceMock.Setup(service => service.GetAll(true)).Returns(contents);
+        pageRoleOrchestrationServiceMock.Setup(service => service.GetAllPageRole(true)).Returns(pageRoles);
+        pageInfoOrchestrationServiceMock.Setup(service => service.GetAllPageInfo(true)).Returns(pageInfos);
+        contentOrchestrationServiceMock.Setup(service => service.GetAllContent(true)).Returns(contents);
 
         pageRoleOrchestrationServiceMock
-            .Setup(service => service.DeleteAllAsync(It.IsAny<IEnumerable<LocalPageRole>>()))
+            .Setup(service => service.DeleteAllPageRoleAsync(It.IsAny<IEnumerable<LocalPageRole>>()))
             .Returns(ValueTask.CompletedTask);
 
         pageInfoOrchestrationServiceMock
-            .Setup(service => service.DeleteAllAsync(It.IsAny<IEnumerable<LocalPageInfo>>()))
+            .Setup(service => service.DeleteAllPageInfoAsync(It.IsAny<IEnumerable<LocalPageInfo>>()))
             .Returns(ValueTask.CompletedTask);
 
         contentOrchestrationServiceMock
-            .Setup(service => service.DeleteAllAsync(It.IsAny<IEnumerable<LocalContent>>()))
+            .Setup(service => service.DeleteAllContentAsync(It.IsAny<IEnumerable<LocalContent>>()))
             .Returns(ValueTask.CompletedTask);
 
         // When
         await coordinationService.HandlePageDeleteAsync(page);
 
         // Then
-        pageRoleOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
-        pageInfoOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
-        contentOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        pageRoleOrchestrationServiceMock.Verify(service => service.GetAllPageRole(true), Times.Once);
+        pageInfoOrchestrationServiceMock.Verify(service => service.GetAllPageInfo(true), Times.Once);
+        contentOrchestrationServiceMock.Verify(service => service.GetAllContent(true), Times.Once);
 
         pageRoleOrchestrationServiceMock.Verify(
-            service => service.DeleteAllAsync(
+            service => service.DeleteAllPageRoleAsync(
                 It.Is<IEnumerable<LocalPageRole>>(items => items.Single().PageId == page.Id)
             ),
             Times.Once
         );
 
         pageInfoOrchestrationServiceMock.Verify(
-            service => service.DeleteAllAsync(
+            service => service.DeleteAllPageInfoAsync(
                 It.Is<IEnumerable<LocalPageInfo>>(items => items.Single().PageId == page.Id)
             ),
             Times.Once
         );
 
         contentOrchestrationServiceMock.Verify(
-            service => service.DeleteAllAsync(
+            service => service.DeleteAllContentAsync(
                 It.Is<IEnumerable<LocalContent>>(items => items.Single().PageId == page.Id)
             ),
             Times.Once

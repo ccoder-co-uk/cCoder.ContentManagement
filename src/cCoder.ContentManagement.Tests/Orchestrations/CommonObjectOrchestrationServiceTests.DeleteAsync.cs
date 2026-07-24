@@ -22,7 +22,7 @@ public partial class CommonObjectOrchestrationServiceTests
         // Given
         int id = 1;
         CommonObject entity = CreateRandomCommonObject();
-        commonObjectProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        commonObjectProcessingServiceMock.Setup(x => x.GetCommonObject(id)).Returns(entity);
         commonObjectProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         commonObjectEventProcessingServiceMock
@@ -33,7 +33,7 @@ public partial class CommonObjectOrchestrationServiceTests
         await orchestrationService.DeleteAsync(id);
 
         // Then
-        commonObjectProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        commonObjectProcessingServiceMock.Verify(x => x.GetCommonObject(id), Times.Once);
         commonObjectProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
         commonObjectEventProcessingServiceMock.Verify(x => x.RaiseCommonObjectDeleteEventAsync(entity), Times.Once);
     }

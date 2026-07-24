@@ -14,26 +14,26 @@ internal partial class PageInfoService(
     IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IPageInfoService
 {
-    public PageInfo Get(int id, bool ignoreFilters = false)
+    public PageInfo GetPageInfo(int pageInfoId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
 
         if (ignoreFilters)
         {
-            return GetAll(ignoreFilters: true)
-                        .FirstOrDefault(predicate: (PageInfo i) => i.Id == id);
+            return GetAllPageInfo(ignoreFilters: true)
+                .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
         }
 
-        PageInfo pageInfo = GetAll()
-            .FirstOrDefault(predicate: (PageInfo i) => i.Id == id);
+        PageInfo pageInfo = GetAllPageInfo()
+            .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
 
         if (pageInfo != null)
         {
             return pageInfo;
         }
 
-        PageInfo pageInfo2 = GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: (PageInfo i) => i.Id == id);
+        PageInfo pageInfo2 = GetAllPageInfo(ignoreFilters: true)
+            .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
 
         if (pageInfo2 != null)
         {
@@ -43,49 +43,49 @@ internal partial class PageInfoService(
         return null;
     }
 
-    public IQueryable<PageInfo> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false) =>
         pageInfoBroker.GetAllPageInfo(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<PageInfo> AddAsync(PageInfo pageInfo)
+    public async ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo)
     {
-        ValidatePageInfo(pageInfo: pageInfo, parameterName: "pageInfo");
-        authorizationBroker.Authorize(appId: GetAppId(pageId: pageInfo.PageId), privilege: "PageInfo_create");
-        PageInfo result = await pageInfoBroker.AddPageInfoAsync(entity: CreateStoragePageInfo(pageInfo: pageInfo));
-        pageInfo.Id = result.Id;
-        pageInfo.PageId = result.PageId;
-        pageInfo.CultureId = result.CultureId;
-        pageInfo.Title = result.Title;
-        pageInfo.Description = result.Description;
-        pageInfo.Keywords = result.Keywords;
-        return pageInfo;
+        ValidatePageInfo(pageInfo: newPageInfo, parameterName: "pageInfo");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: newPageInfo.PageId), privilege: "PageInfo_create");
+        PageInfo result = await pageInfoBroker.AddPageInfoAsync(newPageInfo: CreateStoragePageInfo(newPageInfo: newPageInfo));
+        newPageInfo.Id = result.Id;
+        newPageInfo.PageId = result.PageId;
+        newPageInfo.CultureId = result.CultureId;
+        newPageInfo.Title = result.Title;
+        newPageInfo.Description = result.Description;
+        newPageInfo.Keywords = result.Keywords;
+        return newPageInfo;
     }
 
-    public async ValueTask<PageInfo> UpdateAsync(PageInfo pageInfo)
+    public async ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo)
     {
-        ValidatePageInfo(pageInfo: pageInfo, parameterName: "pageInfo");
-        authorizationBroker.Authorize(appId: GetAppId(pageId: pageInfo.PageId), privilege: "PageInfo_update");
-        PageInfo result = await pageInfoBroker.UpdatePageInfoAsync(entity: CreateStoragePageInfo(pageInfo: pageInfo));
-        pageInfo.Id = result.Id;
-        pageInfo.PageId = result.PageId;
-        pageInfo.CultureId = result.CultureId;
-        pageInfo.Title = result.Title;
-        pageInfo.Description = result.Description;
-        pageInfo.Keywords = result.Keywords;
-        return pageInfo;
+        ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "pageInfo");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: updatedPageInfo.PageId), privilege: "PageInfo_update");
+        PageInfo result = await pageInfoBroker.UpdatePageInfoAsync(updatedPageInfo: CreateStoragePageInfo(newPageInfo: updatedPageInfo));
+        updatedPageInfo.Id = result.Id;
+        updatedPageInfo.PageId = result.PageId;
+        updatedPageInfo.CultureId = result.CultureId;
+        updatedPageInfo.Title = result.Title;
+        updatedPageInfo.Description = result.Description;
+        updatedPageInfo.Keywords = result.Keywords;
+        return updatedPageInfo;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int pageInfoId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
         PageInfo pageInfo;
 
         try
         {
-            pageInfo = Get(id: id);
+            pageInfo = GetPageInfo(pageInfoId: pageInfoId);
         }
         catch (SecurityException)
         {
-            pageInfo = Get(id: id, ignoreFilters: true);
+            pageInfo = GetPageInfo(pageInfoId: pageInfoId, ignoreFilters: true);
         }
 
         if (pageInfo == null)
@@ -94,24 +94,24 @@ internal partial class PageInfoService(
         }
 
         authorizationBroker.Authorize(appId: GetAppId(pageId: pageInfo.PageId), privilege: "PageInfo_delete");
-        await pageInfoBroker.DeletePageInfoAsync(entity: CreateStoragePageInfo(pageInfo: pageInfo));
+        await pageInfoBroker.DeletePageInfoAsync(deletedPageInfo: CreateStoragePageInfo(newPageInfo: pageInfo));
     }
 
-    private static PageInfo CreateStoragePageInfo(PageInfo pageInfo)
+    private static PageInfo CreateStoragePageInfo(PageInfo newPageInfo)
     {
-        if (pageInfo == null)
+        if (newPageInfo == null)
         {
             return null;
         }
 
         return new PageInfo
         {
-            Id = pageInfo.Id,
-            PageId = pageInfo.PageId,
-            CultureId = pageInfo.CultureId,
-            Title = pageInfo.Title,
-            Description = pageInfo.Description,
-            Keywords = pageInfo.Keywords
+            Id = newPageInfo.Id,
+            PageId = newPageInfo.PageId,
+            CultureId = newPageInfo.CultureId,
+            Title = newPageInfo.Title,
+            Description = newPageInfo.Description,
+            Keywords = newPageInfo.Keywords
         };
     }
 

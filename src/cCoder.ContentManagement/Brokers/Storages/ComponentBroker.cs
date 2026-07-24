@@ -19,36 +19,36 @@ public class ComponentBroker(ICoreContextFactory coreContextFactory) : IComponen
             : coreDataContext.Components;
     }
 
-    public async ValueTask<Component> AddComponentAsync(Component entity)
+    public async ValueTask<Component> AddComponentAsync(Component newComponent)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Component result = (await coreDataContext.Components.AddAsync(entity: entity)).Entity;
+        Component result = (await coreDataContext.Components.AddAsync(entity: newComponent)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<Component> UpdateComponentAsync(Component entity)
+    public async ValueTask<Component> UpdateComponentAsync(Component updatedComponent)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        Component result = coreDataContext.Components.Update(entity: entity)
+        Component result = coreDataContext.Components.Update(entity: updatedComponent)
             .Entity;
 
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeleteComponentAsync(Component entity)
+    public async ValueTask<int> DeleteComponentAsync(Component deletedComponent)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Components.Remove(entity: entity);
+        coreDataContext.Components.Remove(entity: deletedComponent);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllComponentsAsync(IEnumerable<Component> items)
+    public async ValueTask DeleteAllComponentsAsync(IEnumerable<Component> deletedComponent)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Components.RemoveRange(entities: items);
+        coreDataContext.Components.RemoveRange(entities: deletedComponent);
         await coreDataContext.SaveChangesAsync();
     }
 

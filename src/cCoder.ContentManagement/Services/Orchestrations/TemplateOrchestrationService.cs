@@ -15,42 +15,42 @@ internal class TemplateOrchestrationService(
     ITemplateEventProcessingService eventService) : ITemplateOrchestrationService
 {
 
-    public Template Get(int id) =>
-        processingService.Get(id: id);
+    public Template GetTemplate(int templateId) =>
+        processingService.GetTemplate(templateId: templateId);
 
-    public IQueryable<Template> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Template> GetAllTemplate(bool ignoreFilters = false) =>
+        processingService.GetAllTemplate(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Template> AddAsync(Template entity)
+    public async ValueTask<Template> AddTemplateAsync(Template newTemplate)
     {
-        ValidateTemplate(template: entity, parameterName: "entity");
+        ValidateTemplate(template: newTemplate, parameterName: "entity");
 
-        Template result = await processingService.AddAsync(entity: entity);
+        Template result = await processingService.AddTemplateAsync(newTemplate: newTemplate);
         await eventService.RaiseTemplateAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask<Template> UpdateAsync(Template entity)
+    public async ValueTask<Template> UpdateTemplateAsync(Template updatedTemplate)
     {
-        ValidateTemplate(template: entity, parameterName: "entity");
+        ValidateTemplate(template: updatedTemplate, parameterName: "entity");
 
-        Template result = await processingService.UpdateAsync(entity: entity);
+        Template result = await processingService.UpdateTemplateAsync(updatedTemplate: updatedTemplate);
         await eventService.RaiseTemplateUpdateEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int templateId)
     {
         Template entity;
 
         try
         {
-            entity = processingService.Get(id: id);
+            entity = processingService.GetTemplate(templateId: templateId);
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAll(ignoreFilters: true)
-                .FirstOrDefault(predicate: template => template.Id == id);
+            entity = processingService.GetAllTemplate(ignoreFilters: true)
+                .FirstOrDefault(predicate: template => template.Id == templateId);
         }
 
         if (entity == null)
@@ -59,23 +59,23 @@ internal class TemplateOrchestrationService(
         }
 
         await eventService.RaiseTemplateDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(id: id);
+        await processingService.DeleteAsync(templateId: templateId);
     }
 
     public async ValueTask DeleteByAppIdAsync(int appId)
     {
-        Template[] templatesToDelete = [.. GetAll(ignoreFilters: true)
+        Template[] templatesToDelete = [.. GetAllTemplate(ignoreFilters: true)
             .Where(predicate: template => template.AppId == appId)];
 
         if (templatesToDelete.Length > 0)
         {
-            await DeleteAllAsync(items: templatesToDelete);
+            await DeleteAllTemplateAsync(deletedTemplate: templatesToDelete);
         }
     }
 
-    public async ValueTask<IEnumerable<Result<Template>>> AddOrUpdate(IEnumerable<Template> items)
+    public async ValueTask<IEnumerable<Result<Template>>> AddOrUpdateTemplateResult(IEnumerable<Template> newTemplate)
     {
-        Template[] templates = (items ?? []).ToArray();
+        Template[] templates = (newTemplate ?? []).ToArray();
         List<Result<Template>> results = new();
 
         foreach (Template template in templates)
@@ -83,8 +83,8 @@ internal class TemplateOrchestrationService(
             try
             {
                 Template result = template.Id <= 0
-                    ? await AddAsync(entity: template)
-                    : await UpdateAsync(entity: template);
+                    ? await AddTemplateAsync(newTemplate: template)
+                    : await UpdateTemplateAsync(updatedTemplate: template);
 
                 results.Add(item: new Result<Template>
                 {
@@ -114,7 +114,7 @@ internal class TemplateOrchestrationService(
         string[] names = validatedItems.Select(selector: template => template.Name.ToLower())
             .ToArray();
 
-        var dbVersions = processingService.GetAll()
+        var dbVersions = processingService.GetAllTemplate()
             .Where(predicate: template => template.AppId == appId && ((ReadOnlySpan<string>)names).Contains(value: template.Name.ToLower()))
             .Select(selector: template => new { template.Id, template.Name })
             .ToArray();
@@ -125,16 +125,16 @@ internal class TemplateOrchestrationService(
             template.Id = dbVersions.FirstOrDefault(predicate: existing => existing.Name == template.Name)?.Id ?? 0;
         });
 
-        await AddOrUpdate(items: validatedItems);
+        await AddOrUpdateTemplateResult(newTemplate: validatedItems);
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Template> items)
+    public async ValueTask DeleteAllTemplateAsync(IEnumerable<Template> deletedTemplate)
     {
-        Template[] templates = (items ?? []).ToArray();
+        Template[] templates = (deletedTemplate ?? []).ToArray();
 
         foreach (Template template in templates)
         {
-            await DeleteAsync(id: template.Id);
+            await DeleteAsync(templateId: template.Id);
         }
     }
 

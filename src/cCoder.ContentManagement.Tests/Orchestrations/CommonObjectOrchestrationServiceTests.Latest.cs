@@ -24,12 +24,12 @@ public partial class CommonObjectOrchestrationServiceTests
     {
         const string type = "TestType";
         CommonObject[] items = [CreateRandomCommonObject()];
-        commonObjectProcessingServiceMock.Setup(x => x.Latest(type)).Returns(items);
+        commonObjectProcessingServiceMock.Setup(x => x.LatestCommonObject(type)).Returns(items);
 
-        IEnumerable<CommonObject> result = orchestrationService.Latest(type);
+        IEnumerable<CommonObject> result = orchestrationService.LatestCommonObject(type);
 
         result.Should().BeSameAs(items);
-        commonObjectProcessingServiceMock.Verify(x => x.Latest(type), Times.Once);
+        commonObjectProcessingServiceMock.Verify(x => x.LatestCommonObject(type), Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
     }

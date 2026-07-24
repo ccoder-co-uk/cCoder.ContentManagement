@@ -51,7 +51,7 @@ internal partial class PackageExportService(
         public string Title { get; init; }
     }
 
-    public Package ExportRoles(int appId)
+    public Package ExportRolesPackage(int appId)
     {
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
@@ -64,7 +64,7 @@ data: roleBroker.GetAllRoles(ignoreFilters: true)
             .ToArray());
     }
 
-    public Package ExportLayouts(int appId)
+    public Package ExportLayoutsPackage(int appId)
     {
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
@@ -84,7 +84,7 @@ data: layoutBroker.GetAllLayouts(ignoreFilters: true)
             .ToArray());
     }
 
-    public Package ExportTemplates(int appId)
+    public Package ExportTemplatesPackage(int appId)
     {
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
@@ -103,7 +103,7 @@ data: templateBroker.GetAllTemplates(ignoreFilters: true)
             .ToArray());
     }
 
-    public Package ExportComponents(int appId)
+    public Package ExportComponentsPackage(int appId)
     {
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
@@ -124,7 +124,7 @@ data: componentBroker.GetAllComponents(ignoreFilters: true)
             .ToArray());
     }
 
-    public Package ExportScripts(int appId)
+    public Package ExportScriptsPackage(int appId)
     {
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
@@ -142,7 +142,7 @@ data: scriptBroker.GetAllScripts(ignoreFilters: true)
             .ToArray());
     }
 
-    public Package ExportResources(int appId)
+    public Package ExportResourcesPackage(int appId)
     {
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
@@ -164,7 +164,7 @@ data: resourceBroker.GetAllResources(ignoreFilters: true)
             .ToArray());
     }
 
-    public Package ExportPages(int appId)
+    public Package ExportPagesPackage(int appId)
     {
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
@@ -236,7 +236,7 @@ data: pages.Select(selector: page => new
             .ToArray());
     }
 
-    public Package ExportPageRoles(int appId)
+    public Package ExportPageRolesPackage(int appId)
     {
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 

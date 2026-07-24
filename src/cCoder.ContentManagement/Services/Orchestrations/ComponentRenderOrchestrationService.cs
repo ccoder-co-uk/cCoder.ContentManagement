@@ -11,14 +11,14 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 internal sealed class ComponentRenderOrchestrationService(
     IComponentRenderProcessingService componentRenderProcessingService) : IComponentRenderOrchestrationService
 {
-    public string Render(int appId, string name, User user, string culture, string theme)
+    public string RenderUser(int appId, string name, User user, string culture, string theme)
     {
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateName(name: name, parameterName: "name");
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");
 
-        return componentRenderProcessingService.Render(appId: appId, name: name, user: user, culture: culture, theme: theme);
+        return componentRenderProcessingService.RenderUser(appId: appId, name: name, user: user, culture: culture, theme: theme);
     }
 
     private static void ValidateAppId(int appId, string parameterName) =>

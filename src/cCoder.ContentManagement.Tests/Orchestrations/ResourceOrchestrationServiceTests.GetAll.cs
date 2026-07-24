@@ -23,14 +23,14 @@ public partial class ResourceOrchestrationServiceTests
     {
         // Given
         IQueryable<Resource> entities = new[] { CreateRandomResource() }.AsQueryable();
-        resourceProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+        resourceProcessingServiceMock.Setup(x => x.GetAllResource(true)).Returns(entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+        var result = orchestrationService.GetAllResource(true).ToArray();
 
         // Then
         result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        resourceProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        resourceProcessingServiceMock.Verify(x => x.GetAllResource(true), Times.Once);
         resourceProcessingServiceMock.VerifyNoOtherCalls();
         resourceEventProcessingServiceMock.VerifyNoOtherCalls();
     }

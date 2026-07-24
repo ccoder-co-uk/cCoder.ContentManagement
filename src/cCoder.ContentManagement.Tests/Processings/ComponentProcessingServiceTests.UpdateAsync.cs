@@ -23,14 +23,14 @@ public partial class ComponentProcessingServiceTests
     {
         // Given
         Component entity = CreateRandomComponent();
-        componentServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        componentServiceMock.Setup(x => x.UpdateComponentAsync(entity)).ReturnsAsync(entity);
 
         // When
-        Component result = await componentProcessingService.UpdateAsync(entity);
+        Component result = await componentProcessingService.UpdateComponentAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        componentServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        componentServiceMock.Verify(x => x.UpdateComponentAsync(entity), Times.Once);
         componentServiceMock.VerifyNoOtherCalls();
     }
 

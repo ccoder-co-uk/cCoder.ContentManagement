@@ -31,7 +31,7 @@ public partial class TemplateServiceTests
         templateBrokerMock.Setup(x => x.GetAllTemplates(false)).Returns(templates);
 
         // When
-        IQueryable<Template> result = templateService.GetAll();
+        IQueryable<Template> result = templateService.GetAllTemplate();
 
         // Then
         result.Should().BeEquivalentTo(expectedItems);

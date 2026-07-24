@@ -30,44 +30,44 @@ internal class PackageOrchestrationService(
         await contentManagementMigrationAggregationService.ImportPackageAsync(appId: appId, package: package);
     }
 
-    public Package Get(Guid id) =>
-        processingService.Get(id: ValidateId(id: id, parameterName: "id"));
+    public Package GetPackage(Guid packageId) =>
+        processingService.GetPackage(packageId: ValidateId(packageId: packageId, parameterName: "id"));
 
-    public IQueryable<Package> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Package> GetAllPackage(bool ignoreFilters = false) =>
+        processingService.GetAllPackage(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Package> AddAsync(Package entity)
+    public async ValueTask<Package> AddPackageAsync(Package newPackage)
     {
-        ValidatePackage(package: entity, parameterName: "entity");
+        ValidatePackage(package: newPackage, parameterName: "entity");
 
-        Package result = await processingService.AddAsync(entity: entity);
+        Package result = await processingService.AddPackageAsync(newPackage: newPackage);
         await eventService.RaisePackageAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask<Package> UpdateAsync(Package entity)
+    public async ValueTask<Package> UpdatePackageAsync(Package updatedPackage)
     {
-        ValidatePackage(package: entity, parameterName: "entity");
+        ValidatePackage(package: updatedPackage, parameterName: "entity");
 
-        Package result = await processingService.UpdateAsync(entity: entity);
+        Package result = await processingService.UpdatePackageAsync(updatedPackage: updatedPackage);
         await eventService.RaisePackageUpdateEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(Guid id)
+    public async ValueTask DeleteAsync(Guid packageId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(packageId: packageId, parameterName: "id");
 
-        Package entity = processingService.Get(id: id);
+        Package entity = processingService.GetPackage(packageId: packageId);
         await eventService.RaisePackageDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(id: id);
+        await processingService.DeleteAsync(packageId: packageId);
     }
 
-    public ValueTask<IEnumerable<Result<Package>>> AddOrUpdate(IEnumerable<Package> items) =>
-        processingService.AddOrUpdate(items: ValidatePackages(packages: items, parameterName: "items"));
+    public ValueTask<IEnumerable<Result<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage) =>
+        processingService.AddOrUpdatePackageResult(newPackage: ValidatePackages(packages: newPackage, parameterName: "items"));
 
-    public ValueTask DeleteAllAsync(IEnumerable<Package> items) =>
-        processingService.DeleteAllAsync(items: ValidatePackages(packages: items, parameterName: "items"));
+    public ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage) =>
+        processingService.DeleteAllPackageAsync(deletedPackage: ValidatePackages(packages: deletedPackage, parameterName: "items"));
 
     private static int ValidateAppId(int appId, string parameterName)
     {
@@ -79,14 +79,14 @@ internal class PackageOrchestrationService(
         return appId;
     }
 
-    private static Guid ValidateId(Guid id, string parameterName)
+    private static Guid ValidateId(Guid packageId, string parameterName)
     {
-        if (id == Guid.Empty)
+        if (packageId == Guid.Empty)
         {
             throw new ValidationException(message: parameterName + " is required.");
         }
 
-        return id;
+        return packageId;
     }
 
     private static Package ValidatePackage(Package package, string parameterName)

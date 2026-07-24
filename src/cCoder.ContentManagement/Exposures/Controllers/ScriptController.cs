@@ -35,7 +35,7 @@ public class ScriptController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Script> queryOptions) =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllScript());
 
     [HttpGet]
     [AllowAnonymous]
@@ -44,7 +44,7 @@ public class ScriptController : ODataController
     {
         try
         {
-            IQueryable<Script> result = Service.GetAll()
+            IQueryable<Script> result = Service.GetAllScript()
                 .Where(predicate: script => script.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -57,32 +57,32 @@ public class ScriptController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Script entity)
+    public async Task<IActionResult> Post([FromBody] Script newScript)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddAsync(entity: entity));
+        return Ok(value: await Service.AddScriptAsync(newScript: newScript));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Script entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Script updatedScript)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdateAsync(entity: entity));
+        return Ok(value: await Service.UpdateScriptAsync(updatedScript: updatedScript));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<Script> delta)
     {
-        Script originalEntity = Service.Get(id: key);
+        Script originalEntity = Service.GetScript(scriptId: key);
 
         if (originalEntity == null)
         {
@@ -90,13 +90,13 @@ public class ScriptController : ODataController
         }
 
         delta.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateAsync(entity: originalEntity));
+        return Ok(value: await Service.UpdateScriptAsync(updatedScript: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(id: key);
+        await Service.DeleteAsync(scriptId: key);
         return Ok();
     }
 }

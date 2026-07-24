@@ -29,7 +29,7 @@ public partial class CommonObjectServiceTests
             .Returns(new[] { ToDataCommonObject(commonObject) }.AsQueryable());
 
         // When
-        CommonObject result = commonObjectService.Get(7);
+        CommonObject result = commonObjectService.GetCommonObject(7);
 
         // Then
         result.Should().BeEquivalentTo(commonObject);

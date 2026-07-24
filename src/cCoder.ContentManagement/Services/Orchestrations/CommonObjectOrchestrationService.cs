@@ -11,56 +11,56 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal class CommonObjectOrchestrationService(ICommonObjectProcessingService processingService, ICommonObjectEventProcessingService eventService) : ICommonObjectOrchestrationService
 {
-    public CommonObject Get(int id)
+    public CommonObject GetCommonObject(int commonObjectId)
     {
-        ValidateId(id: id, parameterName: "id");
-        return processingService.Get(id: id);
+        ValidateId(commonObjectId: commonObjectId, parameterName: "id");
+        return processingService.GetCommonObject(commonObjectId: commonObjectId);
     }
 
-    public IQueryable<CommonObject> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false) =>
+        processingService.GetAllCommonObject(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<CommonObject> AddAsync(CommonObject entity)
+    public async ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject)
     {
-        ValidateCommonObject(commonObject: entity, parameterName: "entity");
-        CommonObject result = await processingService.AddAsync(entity: entity);
+        ValidateCommonObject(commonObject: newCommonObject, parameterName: "entity");
+        CommonObject result = await processingService.AddCommonObjectAsync(newCommonObject: newCommonObject);
         await eventService.RaiseCommonObjectAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask<CommonObject> UpdateAsync(CommonObject entity)
+    public async ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject)
     {
-        ValidateCommonObject(commonObject: entity, parameterName: "entity");
-        CommonObject result = await processingService.UpdateAsync(entity: entity);
+        ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "entity");
+        CommonObject result = await processingService.UpdateCommonObjectAsync(updatedCommonObject: updatedCommonObject);
         await eventService.RaiseCommonObjectUpdateEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int commonObjectId)
     {
-        ValidateId(id: id, parameterName: "id");
-        CommonObject entity = processingService.Get(id: id);
+        ValidateId(commonObjectId: commonObjectId, parameterName: "id");
+        CommonObject entity = processingService.GetCommonObject(commonObjectId: commonObjectId);
         await eventService.RaiseCommonObjectDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(id: id);
+        await processingService.DeleteAsync(commonObjectId: commonObjectId);
     }
 
-    public ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdate(IEnumerable<CommonObject> items) =>
-        processingService.AddOrUpdate(items: ValidateCommonObjects(commonObjects: items, parameterName: "items"));
+    public ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject) =>
+        processingService.AddOrUpdateCommonObjectResult(newCommonObject: ValidateCommonObjects(commonObjects: newCommonObject, parameterName: "items"));
 
-    public ValueTask DeleteAllAsync(IEnumerable<CommonObject> items) =>
-        processingService.DeleteAllAsync(items: ValidateCommonObjects(commonObjects: items, parameterName: "items"));
+    public ValueTask DeleteAllCommonObjectAsync(IEnumerable<CommonObject> deletedCommonObject) =>
+        processingService.DeleteAllCommonObjectAsync(deletedCommonObject: ValidateCommonObjects(commonObjects: deletedCommonObject, parameterName: "items"));
 
-    public IEnumerable<CommonObject> Latest(string type)
+    public IEnumerable<CommonObject> LatestCommonObject(string type)
     {
         ValidateType(type: type, parameterName: "type");
-        return processingService.Latest(type: type);
+        return processingService.LatestCommonObject(type: type);
     }
 
-    public ValueTask<IEnumerable<Result<CommonObject>>> ImportAsync(IEnumerable<CommonObject> items) =>
-        processingService.ImportAsync(items: ValidateCommonObjects(commonObjects: items, parameterName: "items"));
+    public ValueTask<IEnumerable<Result<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items) =>
+        processingService.ImportCommonObjectResultAsync(items: ValidateCommonObjects(commonObjects: items, parameterName: "items"));
 
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int commonObjectId, string parameterName) =>
+        ThrowIf(condition: commonObjectId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateType(string type, string parameterName) =>
         ThrowIf(condition: string.IsNullOrWhiteSpace(value: type), message: parameterName + " is required.");

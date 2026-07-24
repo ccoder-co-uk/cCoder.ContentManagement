@@ -24,14 +24,14 @@ public partial class ComponentOrchestrationServiceTests
         // Given
         int id = 1;
         Component entity = CreateRandomComponent();
-        componentProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        componentProcessingServiceMock.Setup(x => x.GetComponent(id)).Returns(entity);
 
         // When
-        Component result = orchestrationService.Get(id);
+        Component result = orchestrationService.GetComponent(id);
 
         // Then
         result.Should().BeEquivalentTo(entity);
-        componentProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        componentProcessingServiceMock.Verify(x => x.GetComponent(id), Times.Once);
         componentProcessingServiceMock.VerifyNoOtherCalls();
         componentEventProcessingServiceMock.VerifyNoOtherCalls();
     }

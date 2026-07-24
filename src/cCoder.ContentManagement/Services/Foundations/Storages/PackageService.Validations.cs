@@ -9,14 +9,14 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PackageService
 {
-    private static Guid ValidateId(Guid id, string parameterName)
+    private static Guid ValidateId(Guid packageId, string parameterName)
     {
-        if (id == Guid.Empty)
+        if (packageId == Guid.Empty)
         {
             throw new ValidationException(message: parameterName + " is required.");
         }
 
-        return id;
+        return packageId;
     }
 
     private static Package ValidatePackage(Package package, string parameterName)

@@ -27,7 +27,7 @@ public partial class ComponentServiceTests
         componentBrokerMock.Setup(x => x.GetAllComponents(false)).Returns(new[] { component }.AsQueryable());
 
         // When
-        Component result = componentService.Get(7);
+        Component result = componentService.GetComponent(7);
 
         // Then
         result.Should().BeEquivalentTo(component);

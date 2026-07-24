@@ -40,14 +40,14 @@ public static partial class IServiceCollectionExtensions
 {
     public static void AddContentManagementWeb(
         this IServiceCollection services,
-        Action<ContentManagementConfiguration> configure = null,
+        Action<ContentManagementConfiguration> newContentManagementConfiguration = null,
         ODataConventionModelBuilder builder = null) =>
-        services.AddConfiguredContentManagementWeb(configure: (_, configuration) => configure?.Invoke(obj: configuration), builder: builder);
+        services.AddConfiguredContentManagementWeb(newContentManagementConfiguration: (_, configuration) => newContentManagementConfiguration?.Invoke(obj: configuration), builder: builder);
 
     public static void AddContentManagementHostedServices(
         this IServiceCollection services,
-        Action<ContentManagementConfiguration> configure = null) =>
-        services.AddConfiguredContentManagement(configure: (_, configuration) => configure?.Invoke(obj: configuration));
+        Action<ContentManagementConfiguration> newContentManagementConfiguration = null) =>
+        services.AddConfiguredContentManagement(newContentManagementConfiguration: (_, configuration) => newContentManagementConfiguration?.Invoke(obj: configuration));
 
     private static void AddContentManagement(this IServiceCollection services)
     {

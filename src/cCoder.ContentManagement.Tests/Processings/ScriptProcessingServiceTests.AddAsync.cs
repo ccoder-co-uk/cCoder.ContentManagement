@@ -26,14 +26,14 @@ public partial class ScriptProcessingServiceTests
     {
         // Given
         Script script = CreateRandomScript();
-        scriptServiceMock.Setup(x => x.AddAsync(script)).ReturnsAsync(script);
+        scriptServiceMock.Setup(x => x.AddScriptAsync(script)).ReturnsAsync(script);
 
         // When
-        Script result = await scriptProcessingService.AddAsync(script);
+        Script result = await scriptProcessingService.AddScriptAsync(script);
 
         // Then
         Assert.Same(script, result);
-        scriptServiceMock.Verify(x => x.AddAsync(script), Times.Once);
+        scriptServiceMock.Verify(x => x.AddScriptAsync(script), Times.Once);
     }
 
     [Fact]
@@ -43,12 +43,12 @@ public partial class ScriptProcessingServiceTests
         Script script = CreateRandomScript();
 
         scriptServiceMock
-            .Setup(x => x.AddAsync(script))
+            .Setup(x => x.AddScriptAsync(script))
             .ThrowsAsync(new SecurityException("Access Denied!"));
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await scriptProcessingService.AddAsync(script)
+            await scriptProcessingService.AddScriptAsync(script)
         );
 
         // Then

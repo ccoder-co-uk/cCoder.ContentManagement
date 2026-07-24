@@ -23,18 +23,18 @@ public partial class ResourceOrchestrationServiceTests
     {
         // Given
         Resource entity = CreateRandomResource();
-        resourceProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        resourceProcessingServiceMock.Setup(x => x.UpdateResourceAsync(entity)).ReturnsAsync(entity);
 
         resourceEventProcessingServiceMock
             .Setup(x => x.RaiseResourceUpdateEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Resource result = await orchestrationService.UpdateAsync(entity);
+        Resource result = await orchestrationService.UpdateResourceAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        resourceProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        resourceProcessingServiceMock.Verify(x => x.UpdateResourceAsync(entity), Times.Once);
         resourceEventProcessingServiceMock.Verify(x => x.RaiseResourceUpdateEventAsync(entity), Times.Once);
     }
 

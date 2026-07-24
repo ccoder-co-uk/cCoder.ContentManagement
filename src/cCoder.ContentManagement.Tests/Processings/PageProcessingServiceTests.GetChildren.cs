@@ -42,13 +42,13 @@ public partial class PageProcessingServiceTests
         Page child = CreateRandomPage();
         child.Id = 10;
         child.ParentId = parent.Id;
-        pageServiceMock.Setup(x => x.GetAll()).Returns(new[] { parent, child }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage()).Returns(new[] { parent, child }.AsQueryable());
 
-        Page[] result = pageProcessingService.GetChildren(parent.Id).ToArray();
+        Page[] result = pageProcessingService.GetChildrenPage(parent.Id).ToArray();
 
         result.Should().ContainSingle();
         result[0].Id.Should().Be(child.Id);
-        pageServiceMock.Verify(x => x.GetAll(), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
@@ -72,12 +72,12 @@ public partial class PageProcessingServiceTests
         Page parent = CreateRandomPage();
         Page other = CreateRandomPage();
         other.ParentId = parent.Id + 1;
-        pageServiceMock.Setup(x => x.GetAll()).Returns(new[] { parent, other }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage()).Returns(new[] { parent, other }.AsQueryable());
 
-        Page[] result = pageProcessingService.GetChildren(parent.Id).ToArray();
+        Page[] result = pageProcessingService.GetChildrenPage(parent.Id).ToArray();
 
         result.Should().BeEmpty();
-        pageServiceMock.Verify(x => x.GetAll(), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

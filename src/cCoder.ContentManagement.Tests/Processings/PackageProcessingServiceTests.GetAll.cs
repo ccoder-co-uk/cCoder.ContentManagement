@@ -24,14 +24,14 @@ public partial class PackageProcessingServiceTests
     {
         // Given
         IQueryable<Package> entities = new[] { CreateRandomPackage() }.AsQueryable();
-        packageServiceMock.Setup(x => x.GetAll()).Returns(entities);
+        packageServiceMock.Setup(x => x.GetAllPackage()).Returns(entities);
 
         // When
-        IQueryable<Package> result = packageProcessingService.GetAll();
+        IQueryable<Package> result = packageProcessingService.GetAllPackage();
 
         // Then
         result.Should().BeSameAs(entities);
-        packageServiceMock.Verify(x => x.GetAll(), Times.Once);
+        packageServiceMock.Verify(x => x.GetAllPackage(), Times.Once);
         packageServiceMock.VerifyNoOtherCalls();
     }
 

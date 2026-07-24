@@ -9,7 +9,7 @@ namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed class CommonObjectCacheService(ICommonObjectReaderBroker broker) : ICommonObjectCacheService
 {
-    public PageCacheSlice Get(PageRenderEngineRequest request)
+    public PageCacheSlice GetPageRenderEngineRequestPageCacheSlice(PageRenderEngineRequest request)
     {
         return new PageCacheSlice
         {

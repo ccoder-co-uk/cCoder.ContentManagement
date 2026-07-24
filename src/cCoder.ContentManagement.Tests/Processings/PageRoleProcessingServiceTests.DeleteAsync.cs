@@ -55,21 +55,21 @@ public partial class PageRoleProcessingServiceTests
             },
         };
         currentUser = user;
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { page }.AsQueryable());
-        pageRoleServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { link }.AsQueryable());
-        pageRoleServiceMock.Setup(x => x.DeleteAsync(link)).Returns(ValueTask.CompletedTask);
+        pageServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { page }.AsQueryable());
+        pageRoleServiceMock.Setup(x => x.GetAllPageRole(true)).Returns(new[] { link }.AsQueryable());
+        pageRoleServiceMock.Setup(x => x.DeletePageRoleAsync(link)).Returns(ValueTask.CompletedTask);
 
         // When
-        await pageRoleProcessingService.DeleteAsync(
+        await pageRoleProcessingService.DeletePageRoleAsync(
         new LocalPageRole { PageId = link.PageId, RoleId = link.RoleId }
     );
 
         // Then
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
-        pageRoleServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(true), Times.Once);
+        pageRoleServiceMock.Verify(x => x.GetAllPageRole(true), Times.Once);
         pageRoleServiceMock.Verify(
             x =>
-                x.DeleteAsync(
+                x.DeletePageRoleAsync(
                     It.Is<LocalPageRole>(item =>
                         item.RoleId == link.RoleId && item.PageId == link.PageId
                     )

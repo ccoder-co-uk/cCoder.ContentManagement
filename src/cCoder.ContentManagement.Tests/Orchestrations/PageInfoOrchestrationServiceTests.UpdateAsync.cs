@@ -23,18 +23,18 @@ public partial class PageInfoOrchestrationServiceTests
     {
         // Given
         PageInfo entity = CreateRandomPageInfo();
-        pageInfoProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        pageInfoProcessingServiceMock.Setup(x => x.UpdatePageInfoAsync(entity)).ReturnsAsync(entity);
 
         pageInfoEventProcessingServiceMock
             .Setup(x => x.RaisePageInfoUpdateEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        PageInfo result = await orchestrationService.UpdateAsync(entity);
+        PageInfo result = await orchestrationService.UpdatePageInfoAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        pageInfoProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        pageInfoProcessingServiceMock.Verify(x => x.UpdatePageInfoAsync(entity), Times.Once);
         pageInfoEventProcessingServiceMock.Verify(x => x.RaisePageInfoUpdateEventAsync(entity), Times.Once);
     }
 

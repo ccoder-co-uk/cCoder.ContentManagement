@@ -14,26 +14,26 @@ internal partial class CultureService(
     IAppCultureBroker appCultureBroker,
     IAuthorizationBroker authorizationBroker) : ICultureService
 {
-    public Culture Get(string id, bool ignoreFilters = false)
+    public Culture GetCulture(string cultureId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(cultureId: cultureId, parameterName: "id");
 
         if (ignoreFilters)
         {
-            return GetAll(ignoreFilters: true)
-                        .FirstOrDefault(predicate: (Culture i) => i.Id == id);
+            return GetAllCulture(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
         }
 
-        Culture culture = GetAll()
-            .FirstOrDefault(predicate: (Culture i) => i.Id == id);
+        Culture culture = GetAllCulture()
+            .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
 
         if ((object)culture != null)
         {
             return culture;
         }
 
-        Culture culture2 = GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: (Culture i) => i.Id == id);
+        Culture culture2 = GetAllCulture(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
 
         if ((object)culture2 != null)
         {
@@ -43,48 +43,48 @@ internal partial class CultureService(
         return null;
     }
 
-    public IQueryable<Culture> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<Culture> GetAllCulture(bool ignoreFilters = false) =>
         cultureBroker.GetAllCultures(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Culture> AddAsync(Culture culture)
+    public async ValueTask<Culture> AddCultureAsync(Culture newCulture)
     {
-        ValidateCulture(culture: culture, parameterName: "culture");
-        authorizationBroker.Authorize(appId: GetAppId(cultureId: culture.Id), privilege: "Culture_create");
-        Culture result = await cultureBroker.AddCultureAsync(entity: CreateStorageCulture(culture: culture));
-        culture.Id = result.Id;
-        culture.Name = result.Name;
-        return culture;
+        ValidateCulture(culture: newCulture, parameterName: "culture");
+        authorizationBroker.Authorize(appId: GetAppId(cultureId: newCulture.Id), privilege: "Culture_create");
+        Culture result = await cultureBroker.AddCultureAsync(newCulture: CreateStorageCulture(newCulture: newCulture));
+        newCulture.Id = result.Id;
+        newCulture.Name = result.Name;
+        return newCulture;
     }
 
-    public async ValueTask<Culture> UpdateAsync(Culture culture)
+    public async ValueTask<Culture> UpdateCultureAsync(Culture updatedCulture)
     {
-        ValidateCulture(culture: culture, parameterName: "culture");
-        authorizationBroker.Authorize(appId: GetAppId(cultureId: culture.Id), privilege: "Culture_update");
-        Culture result = await cultureBroker.UpdateCultureAsync(entity: CreateStorageCulture(culture: culture));
-        culture.Id = result.Id;
-        culture.Name = result.Name;
-        return culture;
+        ValidateCulture(culture: updatedCulture, parameterName: "culture");
+        authorizationBroker.Authorize(appId: GetAppId(cultureId: updatedCulture.Id), privilege: "Culture_update");
+        Culture result = await cultureBroker.UpdateCultureAsync(updatedCulture: CreateStorageCulture(newCulture: updatedCulture));
+        updatedCulture.Id = result.Id;
+        updatedCulture.Name = result.Name;
+        return updatedCulture;
     }
 
-    public async ValueTask DeleteAsync(string id)
+    public async ValueTask DeleteAsync(string cultureId)
     {
-        ValidateId(id: id, parameterName: "id");
-        Culture culture = Get(id: id);
+        ValidateId(cultureId: cultureId, parameterName: "id");
+        Culture culture = GetCulture(cultureId: cultureId);
         authorizationBroker.Authorize(appId: GetAppId(cultureId: culture.Id), privilege: "Culture_delete");
-        await cultureBroker.DeleteCultureAsync(entity: CreateStorageCulture(culture: culture));
+        await cultureBroker.DeleteCultureAsync(deletedCulture: CreateStorageCulture(newCulture: culture));
     }
 
-    private static Culture CreateStorageCulture(Culture culture)
+    private static Culture CreateStorageCulture(Culture newCulture)
     {
-        if (culture == null)
+        if (newCulture == null)
         {
             return null;
         }
 
         return new Culture
         {
-            Id = culture.Id,
-            Name = culture.Name
+            Id = newCulture.Id,
+            Name = newCulture.Name
         };
     }
 

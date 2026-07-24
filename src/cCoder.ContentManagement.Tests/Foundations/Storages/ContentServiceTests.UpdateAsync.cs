@@ -40,7 +40,7 @@ public partial class ContentServiceTests
             .ReturnsAsync((CmsDataModels.Content value) => value);
 
         // When
-        Content result = await contentService.UpdateAsync(content);
+        Content result = await contentService.UpdateContentAsync(content);
 
         // Then
         result.Should().BeSameAs(content);
@@ -69,7 +69,7 @@ public partial class ContentServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await contentService.UpdateAsync(content);
+        Func<Task> action = async () => await contentService.UpdateContentAsync(content);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

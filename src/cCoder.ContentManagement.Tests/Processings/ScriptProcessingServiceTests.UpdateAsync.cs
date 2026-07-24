@@ -23,14 +23,14 @@ public partial class ScriptProcessingServiceTests
     {
         // Given
         Script entity = CreateRandomScript();
-        scriptServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        scriptServiceMock.Setup(x => x.UpdateScriptAsync(entity)).ReturnsAsync(entity);
 
         // When
-        Script result = await scriptProcessingService.UpdateAsync(entity);
+        Script result = await scriptProcessingService.UpdateScriptAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        scriptServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        scriptServiceMock.Verify(x => x.UpdateScriptAsync(entity), Times.Once);
         scriptServiceMock.VerifyNoOtherCalls();
     }
 

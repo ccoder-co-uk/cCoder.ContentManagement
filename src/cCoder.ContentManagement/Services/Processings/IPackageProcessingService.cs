@@ -13,17 +13,17 @@ public interface IPackageProcessingService
 
     Package[] ExportPackages(int appId, string[] packageNames);
 
-    Package Get(Guid id);
+    Package GetPackage(Guid packageId);
 
-    IQueryable<Package> GetAll(bool ignoreFilters = false);
+    IQueryable<Package> GetAllPackage(bool ignoreFilters = false);
 
-    ValueTask<Package> AddAsync(Package entity);
+    ValueTask<Package> AddPackageAsync(Package newPackage);
 
-    ValueTask<Package> UpdateAsync(Package entity);
+    ValueTask<Package> UpdatePackageAsync(Package updatedPackage);
 
-    ValueTask DeleteAsync(Guid id);
+    ValueTask DeleteAsync(Guid packageId);
 
-    ValueTask<IEnumerable<Result<Package>>> AddOrUpdate(IEnumerable<Package> items);
+    ValueTask<IEnumerable<Result<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage);
 
-    ValueTask DeleteAllAsync(IEnumerable<Package> items);
+    ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage);
 }

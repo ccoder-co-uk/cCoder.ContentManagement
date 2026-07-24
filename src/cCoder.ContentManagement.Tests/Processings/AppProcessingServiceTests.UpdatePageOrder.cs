@@ -62,7 +62,7 @@ public partial class AppProcessingServiceTests
             .Returns(ValueTask.CompletedTask);
 
         // When
-        await appProcessingService.UpdatePageOrderAsync(incomingApp.Id, incomingApp);
+        await appProcessingService.UpdatePageOrderAppAsync(incomingApp.Id, incomingApp);
 
         // Then
         appServiceMock.Verify(x => x.UpdatePageOrderAsync(incomingApp.Id, incomingApp.Pages), Times.Once);
@@ -96,7 +96,7 @@ public partial class AppProcessingServiceTests
 
         // When
         Func<Task> act = async () =>
-            await appProcessingService.UpdatePageOrderAsync(incomingApp.Id, incomingApp);
+            await appProcessingService.UpdatePageOrderAppAsync(incomingApp.Id, incomingApp);
 
         // Then
         await act.Should().ThrowAsync<TaskCanceledException>().WithMessage("App not found");

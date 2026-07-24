@@ -54,14 +54,14 @@ public partial class PageProcessingServiceTests
                 Culture = null!,
             },
         ];
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { child }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { child }.AsQueryable());
 
         string result = pageProcessingService.MenuFor(10, string.Empty);
 
         result.Should().Contain("<ul class='submenu'>");
         result.Should().Contain("/docs");
         result.Should().Contain("Docs");
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(false), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
@@ -82,12 +82,12 @@ public partial class PageProcessingServiceTests
 
         authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
 
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(Array.Empty<Page>().AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(false)).Returns(Array.Empty<Page>().AsQueryable());
 
         string result = pageProcessingService.MenuFor(10, string.Empty);
 
         result.Should().Be("<ul class='submenu'></ul>");
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(false), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

@@ -55,10 +55,10 @@ public partial class PageRenderOrchestrationServiceTests
         PageRenderOrchestrationService orchestrationService = new(new Config(), processingServiceMock.Object);
 
         processingServiceMock
-            .Setup(x => x.RenderPage(page, user, It.IsAny<Config>(), "Default", string.Empty, true))
+            .Setup(x => x.RenderPageUserConfigRenderResult(page, user, It.IsAny<Config>(), "Default", string.Empty, true))
             .Returns(expected);
 
-        RenderResult actual = orchestrationService.Render(page, user, "Default", string.Empty, true);
+        RenderResult actual = orchestrationService.RenderPageUserRenderResult(page, user, "Default", string.Empty, true);
 
         actual.Should().BeSameAs(expected);
         processingServiceMock.VerifyAll();

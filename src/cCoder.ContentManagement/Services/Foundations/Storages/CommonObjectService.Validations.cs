@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class CommonObjectService
 {
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int commonObjectId, string parameterName) =>
+        ThrowIf(condition: commonObjectId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateCommonObject(CommonObject commonObject, string parameterName)
     {

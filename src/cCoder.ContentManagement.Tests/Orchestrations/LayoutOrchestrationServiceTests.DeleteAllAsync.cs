@@ -22,15 +22,15 @@ public partial class LayoutOrchestrationServiceTests
     {
         // Given
         Layout[] entities = [CreateRandomLayout()];
-        layoutProcessingServiceMock.Setup(x => x.Get(entities[0].Id)).Returns(entities[0]);
+        layoutProcessingServiceMock.Setup(x => x.GetLayout(entities[0].Id)).Returns(entities[0]);
         layoutEventProcessingServiceMock.Setup(x => x.RaiseLayoutDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
         layoutProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllLayoutAsync(entities);
 
         // Then
-        layoutProcessingServiceMock.Verify(x => x.Get(entities[0].Id), Times.Once);
+        layoutProcessingServiceMock.Verify(x => x.GetLayout(entities[0].Id), Times.Once);
         layoutEventProcessingServiceMock.Verify(x => x.RaiseLayoutDeleteEventAsync(entities[0]), Times.Once);
         layoutProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
     }

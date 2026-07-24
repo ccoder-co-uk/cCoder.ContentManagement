@@ -23,14 +23,14 @@ public partial class AppCultureProcessingServiceTests
     {
         // Given
         IQueryable<AppCulture> entities = new[] { CreateRandomAppCulture() }.AsQueryable();
-        appCultureServiceMock.Setup(x => x.GetAll()).Returns(entities);
+        appCultureServiceMock.Setup(x => x.GetAllAppCulture()).Returns(entities);
 
         // When
-        IQueryable<AppCulture> result = appCultureProcessingService.GetAll();
+        IQueryable<AppCulture> result = appCultureProcessingService.GetAllAppCulture();
 
         // Then
         result.Should().BeSameAs(entities);
-        appCultureServiceMock.Verify(x => x.GetAll(), Times.Once);
+        appCultureServiceMock.Verify(x => x.GetAllAppCulture(), Times.Once);
         appCultureServiceMock.VerifyNoOtherCalls();
     }
 

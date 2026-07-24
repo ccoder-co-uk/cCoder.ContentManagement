@@ -13,37 +13,37 @@ internal partial class PageRoleService(
     IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IPageRoleService
 {
-    public IQueryable<PageRole> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
         pageRoleBroker.GetAllPageRoles(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<PageRole> AddAsync(PageRole pageRole)
+    public async ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole)
     {
-        ValidatePageRole(pageRole: pageRole, parameterName: "pageRole");
-        authorizationBroker.Authorize(appId: GetAppId(pageId: pageRole.PageId), privilege: "PageRole_create");
-        PageRole result = await pageRoleBroker.AddPageRoleAsync(entity: CreateStoragePageRole(pageRole: pageRole));
-        pageRole.PageId = result.PageId;
-        pageRole.RoleId = result.RoleId;
-        return pageRole;
+        ValidatePageRole(pageRole: newPageRole, parameterName: "pageRole");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: newPageRole.PageId), privilege: "PageRole_create");
+        PageRole result = await pageRoleBroker.AddPageRoleAsync(newPageRole: CreateStoragePageRole(newPageRole: newPageRole));
+        newPageRole.PageId = result.PageId;
+        newPageRole.RoleId = result.RoleId;
+        return newPageRole;
     }
 
-    public async ValueTask DeleteAsync(PageRole pageRole)
+    public async ValueTask DeletePageRoleAsync(PageRole deletedPageRole)
     {
-        ValidatePageRole(pageRole: pageRole, parameterName: "pageRole");
-        authorizationBroker.Authorize(appId: GetAppId(pageId: pageRole.PageId), privilege: "PageRole_delete");
-        await pageRoleBroker.DeletePageRoleAsync(entity: CreateStoragePageRole(pageRole: pageRole));
+        ValidatePageRole(pageRole: deletedPageRole, parameterName: "pageRole");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: deletedPageRole.PageId), privilege: "PageRole_delete");
+        await pageRoleBroker.DeletePageRoleAsync(deletedPageRole: CreateStoragePageRole(newPageRole: deletedPageRole));
     }
 
-    private static PageRole CreateStoragePageRole(PageRole pageRole)
+    private static PageRole CreateStoragePageRole(PageRole newPageRole)
     {
-        if (pageRole == null)
+        if (newPageRole == null)
         {
             return null;
         }
 
         return new PageRole
         {
-            PageId = pageRole.PageId,
-            RoleId = pageRole.RoleId
+            PageId = newPageRole.PageId,
+            RoleId = newPageRole.RoleId
         };
     }
 

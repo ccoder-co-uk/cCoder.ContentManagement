@@ -24,14 +24,14 @@ public partial class PageInfoProcessingServiceTests
         // Given
         PageInfo entity = CreateRandomPageInfo();
         var id = entity.Id;
-        pageInfoServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        pageInfoServiceMock.Setup(x => x.GetPageInfo(id)).Returns(entity);
 
         // When
-        PageInfo result = pageInfoProcessingService.Get(id);
+        PageInfo result = pageInfoProcessingService.GetPageInfo(id);
 
         // Then
         result.Should().BeSameAs(entity);
-        pageInfoServiceMock.Verify(x => x.Get(id), Times.Once);
+        pageInfoServiceMock.Verify(x => x.GetPageInfo(id), Times.Once);
         pageInfoServiceMock.VerifyNoOtherCalls();
     }
 

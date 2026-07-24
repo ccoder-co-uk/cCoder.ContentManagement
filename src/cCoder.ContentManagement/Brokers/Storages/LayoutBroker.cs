@@ -19,36 +19,36 @@ public class LayoutBroker(ICoreContextFactory coreContextFactory) : ILayoutBroke
             : coreDataContext.Layouts;
     }
 
-    public async ValueTask<Layout> AddLayoutAsync(Layout entity)
+    public async ValueTask<Layout> AddLayoutAsync(Layout newLayout)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Layout result = (await coreDataContext.Layouts.AddAsync(entity: entity)).Entity;
+        Layout result = (await coreDataContext.Layouts.AddAsync(entity: newLayout)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<Layout> UpdateLayoutAsync(Layout entity)
+    public async ValueTask<Layout> UpdateLayoutAsync(Layout updatedLayout)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        Layout result = coreDataContext.Layouts.Update(entity: entity)
+        Layout result = coreDataContext.Layouts.Update(entity: updatedLayout)
             .Entity;
 
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeleteLayoutAsync(Layout entity)
+    public async ValueTask<int> DeleteLayoutAsync(Layout deletedLayout)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Layouts.Remove(entity: entity);
+        coreDataContext.Layouts.Remove(entity: deletedLayout);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllLayoutsAsync(IEnumerable<Layout> items)
+    public async ValueTask DeleteAllLayoutsAsync(IEnumerable<Layout> deletedLayout)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Layouts.RemoveRange(entities: items);
+        coreDataContext.Layouts.RemoveRange(entities: deletedLayout);
         await coreDataContext.SaveChangesAsync();
     }
 

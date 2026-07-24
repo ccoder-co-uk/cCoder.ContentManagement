@@ -24,18 +24,18 @@ public partial class PackageOrchestrationServiceTests
     {
         // Given
         Package entity = CreateRandomPackage();
-        packageProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        packageProcessingServiceMock.Setup(x => x.UpdatePackageAsync(entity)).ReturnsAsync(entity);
 
         packageEventProcessingServiceMock
             .Setup(x => x.RaisePackageUpdateEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Package result = await orchestrationService.UpdateAsync(entity);
+        Package result = await orchestrationService.UpdatePackageAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        packageProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        packageProcessingServiceMock.Verify(x => x.UpdatePackageAsync(entity), Times.Once);
         packageEventProcessingServiceMock.Verify(x => x.RaisePackageUpdateEventAsync(entity), Times.Once);
     }
 

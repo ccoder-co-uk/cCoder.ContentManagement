@@ -22,18 +22,18 @@ public partial class CommonObjectOrchestrationServiceTests
     {
         // Given
         CommonObject entity = CreateRandomCommonObject();
-        commonObjectProcessingServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
+        commonObjectProcessingServiceMock.Setup(x => x.AddCommonObjectAsync(entity)).ReturnsAsync(entity);
 
         commonObjectEventProcessingServiceMock
             .Setup(x => x.RaiseCommonObjectAddEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        CommonObject result = await orchestrationService.AddAsync(entity);
+        CommonObject result = await orchestrationService.AddCommonObjectAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        commonObjectProcessingServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
+        commonObjectProcessingServiceMock.Verify(x => x.AddCommonObjectAsync(entity), Times.Once);
         commonObjectEventProcessingServiceMock.Verify(x => x.RaiseCommonObjectAddEventAsync(entity), Times.Once);
     }
 

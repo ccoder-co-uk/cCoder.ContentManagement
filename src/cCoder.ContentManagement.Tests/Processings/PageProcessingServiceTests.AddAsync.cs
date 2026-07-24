@@ -56,15 +56,15 @@ public partial class PageProcessingServiceTests
         };
 
         currentUser = actor;
-        pageServiceMock.Setup(x => x.AddAsync(It.IsAny<Page>())).ReturnsAsync(addedPage);
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(Array.Empty<Page>().AsQueryable());
+        pageServiceMock.Setup(x => x.AddPageAsync(It.IsAny<Page>())).ReturnsAsync(addedPage);
+        pageServiceMock.Setup(x => x.GetAllPage(true)).Returns(Array.Empty<Page>().AsQueryable());
 
-        Page result = await pageProcessingService.AddAsync(page);
+        Page result = await pageProcessingService.AddPageAsync(page);
 
         result.Should().BeSameAs(addedPage);
         pageServiceMock.Verify(
             x =>
-                x.AddAsync(
+                x.AddPageAsync(
                     It.Is<Page>(p =>
                         p.Path == "About"
                         && p.Name == "About"
@@ -76,7 +76,7 @@ public partial class PageProcessingServiceTests
                 ),
             Times.Once
         );
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(true), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
@@ -125,17 +125,17 @@ public partial class PageProcessingServiceTests
         };
 
         currentUser = actor;
-        pageServiceMock.Setup(x => x.AddAsync(It.IsAny<Page>())).ReturnsAsync(addedPage);
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { parent }.AsQueryable());
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { parent }.AsQueryable());
+        pageServiceMock.Setup(x => x.AddPageAsync(It.IsAny<Page>())).ReturnsAsync(addedPage);
+        pageServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { parent }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { parent }.AsQueryable());
 
-        Page result = await pageProcessingService.AddAsync(page);
+        Page result = await pageProcessingService.AddPageAsync(page);
 
         result.Should().BeSameAs(addedPage);
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(false), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(true), Times.Once);
         pageServiceMock.Verify(
-            x => x.AddAsync(It.Is<Page>(p => p.Path == "parent/Child" && p.AppId == 1)),
+            x => x.AddPageAsync(It.Is<Page>(p => p.Path == "parent/Child" && p.AppId == 1)),
             Times.Once
         );
         pageServiceMock.VerifyNoOtherCalls();
@@ -174,15 +174,15 @@ public partial class PageProcessingServiceTests
             Contents = [],
         };
 
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { existingPage }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { existingPage }.AsQueryable());
 
-        Func<Task> act = async () => await pageProcessingService.AddAsync(page);
+        Func<Task> act = async () => await pageProcessingService.AddPageAsync(page);
 
         await act.Should()
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
             .WithMessage("A page already exists for app 1 with path 'About'.");
 
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(true), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
@@ -227,15 +227,15 @@ public partial class PageProcessingServiceTests
             Roles = [],
         };
 
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { existingPage }.AsQueryable());
-        pageServiceMock.Setup(x => x.AddAsync(It.IsAny<Page>())).ReturnsAsync(addedPage);
+        pageServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { existingPage }.AsQueryable());
+        pageServiceMock.Setup(x => x.AddPageAsync(It.IsAny<Page>())).ReturnsAsync(addedPage);
 
-        Page result = await pageProcessingService.AddAsync(page);
+        Page result = await pageProcessingService.AddPageAsync(page);
 
         result.Should().BeSameAs(addedPage);
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(true), Times.Once);
         pageServiceMock.Verify(
-            x => x.AddAsync(It.Is<Page>(p => p.AppId == 1 && p.Path == "About")),
+            x => x.AddPageAsync(It.Is<Page>(p => p.AppId == 1 && p.Path == "About")),
             Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
@@ -294,17 +294,17 @@ public partial class PageProcessingServiceTests
             Roles = [],
         };
 
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { parent }.AsQueryable());
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { parent, hiddenDuplicate }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { parent }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { parent, hiddenDuplicate }.AsQueryable());
 
-        Func<Task> act = async () => await pageProcessingService.AddAsync(page);
+        Func<Task> act = async () => await pageProcessingService.AddPageAsync(page);
 
         await act.Should()
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
             .WithMessage("A page already exists for app 1 with path 'parent/Child'.");
 
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Exactly(2));
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(false), Times.Exactly(2));
+        pageServiceMock.Verify(x => x.GetAllPage(true), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

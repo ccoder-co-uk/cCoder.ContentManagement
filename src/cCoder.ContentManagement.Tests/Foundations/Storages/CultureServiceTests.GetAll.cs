@@ -31,7 +31,7 @@ public partial class CultureServiceTests
         cultureBrokerMock.Setup(x => x.GetAllCultures(false)).Returns(cultures);
 
         // When
-        IQueryable<Culture> result = cultureService.GetAll();
+        IQueryable<Culture> result = cultureService.GetAllCulture();
 
         // Then
         result.Should().BeEquivalentTo(expectedItems);

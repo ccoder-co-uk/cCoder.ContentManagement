@@ -13,41 +13,41 @@ internal class AppCultureOrchestrationService(
     IAppCultureProcessingService processingService,
     IAppCultureEventProcessingService eventService) : IAppCultureOrchestrationService
 {
-    public IQueryable<AppCulture> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
+        processingService.GetAllAppCulture(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<AppCulture> AddAsync(AppCulture entity)
+    public async ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture)
     {
-        ValidateAppCulture(appCulture: entity, parameterName: "entity");
+        ValidateAppCulture(appCulture: newAppCulture, parameterName: "entity");
 
-        AppCulture result = await processingService.AddAsync(entity: entity);
+        AppCulture result = await processingService.AddAppCultureAsync(newAppCulture: newAppCulture);
         await eventService.RaiseAppCultureAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(AppCulture entity)
+    public async ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture)
     {
-        ValidateAppCulture(appCulture: entity, parameterName: "entity");
+        ValidateAppCulture(appCulture: deletedAppCulture, parameterName: "entity");
 
-        await eventService.RaiseAppCultureDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(entity: entity);
+        await eventService.RaiseAppCultureDeleteEventAsync(entity: deletedAppCulture);
+        await processingService.DeleteAppCultureAsync(deletedAppCulture: deletedAppCulture);
     }
 
     public async ValueTask DeleteByAppIdAsync(int appId)
     {
         AppCulture[] appCulturesToDelete =
-            [.. GetAll(ignoreFilters: true)
+            [.. GetAllAppCulture(ignoreFilters: true)
             .Where(predicate: appCulture => appCulture.AppId == appId)];
 
         foreach (AppCulture appCulture in appCulturesToDelete)
         {
-            await DeleteAsync(entity: appCulture);
+            await DeleteAppCultureAsync(deletedAppCulture: appCulture);
         }
     }
 
-    public async ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdate(IEnumerable<AppCulture> items)
+    public async ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture)
     {
-        AppCulture[] appCultures = ValidateAppCultures(appCultures: items, parameterName: "items")
+        AppCulture[] appCultures = ValidateAppCultures(appCultures: newAppCulture, parameterName: "items")
             .ToArray();
 
         List<Result<AppCulture>> results = new();
@@ -56,7 +56,7 @@ internal class AppCultureOrchestrationService(
         {
             try
             {
-                AppCulture existingAppCulture = GetAll(ignoreFilters: true)
+                AppCulture existingAppCulture = GetAllAppCulture(ignoreFilters: true)
                     .FirstOrDefault(predicate: existing =>
                         existing.AppId == appCulture.AppId &&
                         existing.CultureId == appCulture.CultureId);
@@ -74,7 +74,7 @@ internal class AppCultureOrchestrationService(
                     continue;
                 }
 
-                AppCulture result = await AddAsync(entity: appCulture);
+                AppCulture result = await AddAppCultureAsync(newAppCulture: appCulture);
 
                 results.Add(item: new Result<AppCulture>
                 {
@@ -99,14 +99,14 @@ internal class AppCultureOrchestrationService(
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<AppCulture> items)
+    public async ValueTask DeleteAllAppCultureAsync(IEnumerable<AppCulture> deletedAppCulture)
     {
-        AppCulture[] appCultures = ValidateAppCultures(appCultures: items, parameterName: "items")
+        AppCulture[] appCultures = ValidateAppCultures(appCultures: deletedAppCulture, parameterName: "items")
             .ToArray();
 
         foreach (AppCulture appCulture in appCultures)
         {
-            await DeleteAsync(entity: appCulture);
+            await DeleteAppCultureAsync(deletedAppCulture: appCulture);
         }
     }
 

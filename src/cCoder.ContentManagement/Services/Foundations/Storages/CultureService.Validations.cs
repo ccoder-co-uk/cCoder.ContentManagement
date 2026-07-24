@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class CultureService
 {
-    private static void ValidateId(string id, string parameterName) =>
-        ThrowIf(condition: string.IsNullOrWhiteSpace(value: id), message: parameterName + " is required.");
+    private static void ValidateId(string cultureId, string parameterName) =>
+        ThrowIf(condition: string.IsNullOrWhiteSpace(value: cultureId), message: parameterName + " is required.");
 
     private static void ValidateCulture(Culture culture, string parameterName)
     {

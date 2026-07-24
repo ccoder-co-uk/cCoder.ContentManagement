@@ -23,14 +23,14 @@ public partial class TemplateProcessingServiceTests
     {
         // Given
         IQueryable<Template> entities = new[] { CreateRandomTemplate() }.AsQueryable();
-        templateServiceMock.Setup(x => x.GetAll()).Returns(entities);
+        templateServiceMock.Setup(x => x.GetAllTemplate()).Returns(entities);
 
         // When
-        IQueryable<Template> result = templateProcessingService.GetAll();
+        IQueryable<Template> result = templateProcessingService.GetAllTemplate();
 
         // Then
         result.Should().BeSameAs(entities);
-        templateServiceMock.Verify(x => x.GetAll(), Times.Once);
+        templateServiceMock.Verify(x => x.GetAllTemplate(), Times.Once);
         templateServiceMock.VerifyNoOtherCalls();
     }
 

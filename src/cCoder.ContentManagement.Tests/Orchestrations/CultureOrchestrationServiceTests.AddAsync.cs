@@ -23,18 +23,18 @@ public partial class CultureOrchestrationServiceTests
     {
         // Given
         Culture entity = CreateRandomCulture();
-        cultureProcessingServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
+        cultureProcessingServiceMock.Setup(x => x.AddCultureAsync(entity)).ReturnsAsync(entity);
 
         cultureEventProcessingServiceMock
             .Setup(x => x.RaiseCultureAddEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Culture result = await orchestrationService.AddAsync(entity);
+        Culture result = await orchestrationService.AddCultureAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        cultureProcessingServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
+        cultureProcessingServiceMock.Verify(x => x.AddCultureAsync(entity), Times.Once);
         cultureEventProcessingServiceMock.Verify(x => x.RaiseCultureAddEventAsync(entity), Times.Once);
     }
 

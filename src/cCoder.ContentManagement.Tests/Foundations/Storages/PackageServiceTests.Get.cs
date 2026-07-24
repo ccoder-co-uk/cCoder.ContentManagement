@@ -29,7 +29,7 @@ public partial class PackageServiceTests
         packageBrokerMock.Setup(x => x.GetAllPackages(false)).Returns(new[] { package }.AsQueryable());
 
         // When
-        Package result = packageService.Get(packageId);
+        Package result = packageService.GetPackage(packageId);
 
         // Then
         result.Should().BeEquivalentTo(package);

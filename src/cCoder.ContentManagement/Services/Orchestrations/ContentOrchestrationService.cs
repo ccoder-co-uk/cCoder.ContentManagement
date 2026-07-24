@@ -14,44 +14,44 @@ internal class ContentOrchestrationService(
     IContentProcessingService processingService,
     IContentEventProcessingService eventService) : IContentOrchestrationService
 {
-    public Content Get(int id) =>
-        processingService.Get(id: ValidateId(id: id, parameterName: "id"));
+    public Content GetContent(int contentId) =>
+        processingService.GetContent(contentId: ValidateId(contentId: contentId, parameterName: "id"));
 
-    public IQueryable<Content> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Content> GetAllContent(bool ignoreFilters = false) =>
+        processingService.GetAllContent(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Content> AddAsync(Content entity)
+    public async ValueTask<Content> AddContentAsync(Content newContent)
     {
-        ValidateContent(content: entity, parameterName: "entity");
+        ValidateContent(content: newContent, parameterName: "entity");
 
-        Content result = await processingService.AddAsync(entity: entity);
+        Content result = await processingService.AddContentAsync(newContent: newContent);
         await eventService.RaiseContentAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask<Content> UpdateAsync(Content entity)
+    public async ValueTask<Content> UpdateContentAsync(Content updatedContent)
     {
-        ValidateContent(content: entity, parameterName: "entity");
+        ValidateContent(content: updatedContent, parameterName: "entity");
 
-        Content result = await processingService.UpdateAsync(entity: entity);
+        Content result = await processingService.UpdateContentAsync(updatedContent: updatedContent);
         await eventService.RaiseContentUpdateEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int contentId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(contentId: contentId, parameterName: "id");
 
         Content entity;
 
         try
         {
-            entity = processingService.Get(id: id);
+            entity = processingService.GetContent(contentId: contentId);
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAll(ignoreFilters: true)
-                .FirstOrDefault(predicate: content => content.Id == id);
+            entity = processingService.GetAllContent(ignoreFilters: true)
+                .FirstOrDefault(predicate: content => content.Id == contentId);
         }
 
         if (entity == null)
@@ -60,12 +60,12 @@ internal class ContentOrchestrationService(
         }
 
         await eventService.RaiseContentDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(id: id);
+        await processingService.DeleteAsync(contentId: contentId);
     }
 
-    public async ValueTask<IEnumerable<Result<Content>>> AddOrUpdate(IEnumerable<Content> items)
+    public async ValueTask<IEnumerable<Result<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent)
     {
-        Content[] contents = ValidateContents(contents: items, parameterName: "items")
+        Content[] contents = ValidateContents(contents: newContent, parameterName: "items")
             .ToArray();
 
         List<Result<Content>> results = new();
@@ -75,8 +75,8 @@ internal class ContentOrchestrationService(
             try
             {
                 Content result = content.Id <= 0
-                    ? await AddAsync(entity: content)
-                    : await UpdateAsync(entity: content);
+                    ? await AddContentAsync(newContent: content)
+                    : await UpdateContentAsync(updatedContent: content);
 
                 results.Add(item: new Result<Content>
                 {
@@ -99,25 +99,25 @@ internal class ContentOrchestrationService(
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Content> items)
+    public async ValueTask DeleteAllContentAsync(IEnumerable<Content> deletedContent)
     {
-        Content[] contents = ValidateContents(contents: items, parameterName: "items")
+        Content[] contents = ValidateContents(contents: deletedContent, parameterName: "items")
             .ToArray();
 
         foreach (Content content in contents)
         {
-            await DeleteAsync(id: content.Id);
+            await DeleteAsync(contentId: content.Id);
         }
     }
 
-    private static int ValidateId(int id, string parameterName)
+    private static int ValidateId(int contentId, string parameterName)
     {
-        if (id < 1)
+        if (contentId < 1)
         {
             throw new ValidationException(message: parameterName + " must be greater than 0.");
         }
 
-        return id;
+        return contentId;
     }
 
     private static Content ValidateContent(Content content, string parameterName)

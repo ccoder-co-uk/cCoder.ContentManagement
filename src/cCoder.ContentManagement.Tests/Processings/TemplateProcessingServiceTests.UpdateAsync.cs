@@ -23,14 +23,14 @@ public partial class TemplateProcessingServiceTests
     {
         // Given
         Template entity = CreateRandomTemplate();
-        templateServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        templateServiceMock.Setup(x => x.UpdateTemplateAsync(entity)).ReturnsAsync(entity);
 
         // When
-        Template result = await templateProcessingService.UpdateAsync(entity);
+        Template result = await templateProcessingService.UpdateTemplateAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        templateServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        templateServiceMock.Verify(x => x.UpdateTemplateAsync(entity), Times.Once);
         templateServiceMock.VerifyNoOtherCalls();
     }
 

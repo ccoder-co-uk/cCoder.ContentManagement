@@ -23,13 +23,13 @@ public partial class PackageItemOrchestrationServiceTests
     {
         // Given
         PackageItem[] entities = [CreateRandomPackageItem()];
-        packageItemProcessingServiceMock.Setup(x => x.DeleteAllAsync(entities)).Returns(ValueTask.CompletedTask);
+        packageItemProcessingServiceMock.Setup(x => x.DeleteAllPackageItemAsync(entities)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllPackageItemAsync(entities);
 
         // Then
-        packageItemProcessingServiceMock.Verify(x => x.DeleteAllAsync(entities), Times.Once);
+        packageItemProcessingServiceMock.Verify(x => x.DeleteAllPackageItemAsync(entities), Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
     }

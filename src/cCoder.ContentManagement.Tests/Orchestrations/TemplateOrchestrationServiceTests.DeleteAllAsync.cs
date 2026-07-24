@@ -22,15 +22,15 @@ public partial class TemplateOrchestrationServiceTests
     {
         // Given
         Template[] entities = [CreateRandomTemplate()];
-        templateProcessingServiceMock.Setup(x => x.Get(entities[0].Id)).Returns(entities[0]);
+        templateProcessingServiceMock.Setup(x => x.GetTemplate(entities[0].Id)).Returns(entities[0]);
         templateEventProcessingServiceMock.Setup(x => x.RaiseTemplateDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
         templateProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllTemplateAsync(entities);
 
         // Then
-        templateProcessingServiceMock.Verify(x => x.Get(entities[0].Id), Times.Once);
+        templateProcessingServiceMock.Verify(x => x.GetTemplate(entities[0].Id), Times.Once);
         templateEventProcessingServiceMock.Verify(x => x.RaiseTemplateDeleteEventAsync(entities[0]), Times.Once);
         templateProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
     }

@@ -23,12 +23,12 @@ public partial class PageProcessingServiceTests
         User actor = TestUsers.WithPrivilege("app_admin", 1);
         Page page = CreateRandomPage(actor);
         currentUser = actor;
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { page }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { page }.AsQueryable());
         pageServiceMock.Setup(x => x.DeleteAsync(page.Id)).Returns(ValueTask.CompletedTask);
 
-        await pageProcessingService.DeleteAllAsync(new[] { page });
+        await pageProcessingService.DeleteAllPageAsync(new[] { page });
 
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(false), Times.Once);
         pageServiceMock.Verify(x => x.DeleteAsync(page.Id), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }

@@ -28,7 +28,7 @@ public partial class AppProcessingServiceTests
         appServiceMock.Setup(x => x.DeleteAsync(app.Id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await appProcessingService.DeleteAllAsync(new[] { app });
+        await appProcessingService.DeleteAllAppAsync(new[] { app });
 
         // Then
         appServiceMock.Verify(x => x.DeleteAsync(app.Id), Times.Once);

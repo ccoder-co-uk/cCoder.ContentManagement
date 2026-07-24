@@ -26,7 +26,7 @@ public partial class CultureProcessingServiceTests
         cultureServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await cultureProcessingService.DeleteAllAsync(new[] { entity });
+        await cultureProcessingService.DeleteAllCultureAsync(new[] { entity });
 
         // Then
         cultureServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);

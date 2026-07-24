@@ -35,10 +35,10 @@ public partial class ComponentRenderOrchestrationServiceTests
         string expectedHtml = "<section>component</section>";
 
         componentRenderProcessingServiceMock
-            .Setup(x => x.Render(1, "Hero", user, "en-GB", "Default"))
+            .Setup(x => x.RenderUser(1, "Hero", user, "en-GB", "Default"))
             .Returns(expectedHtml);
 
-        string result = renderOrchestrationService.Render(1, "Hero", user, "en-GB", "Default");
+        string result = renderOrchestrationService.RenderUser(1, "Hero", user, "en-GB", "Default");
 
         result.Should().Be(expectedHtml);
         componentRenderProcessingServiceMock.VerifyAll();
@@ -47,7 +47,7 @@ public partial class ComponentRenderOrchestrationServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionWhenUserIsNull()
     {
-        Action act = () => renderOrchestrationService.Render(1, "Hero", null!, "en-GB", "Default");
+        Action act = () => renderOrchestrationService.RenderUser(1, "Hero", null!, "en-GB", "Default");
 
         act.Should().Throw<ValidationException>().WithMessage("user is required.");
     }

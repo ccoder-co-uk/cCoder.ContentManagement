@@ -12,7 +12,7 @@ internal sealed class PageRenderExecutionOrchestrationService(
     ICommonObjectCacheService commonObjectCacheService,
     IMarkupRenderService markupRenderService) : IPageRenderExecutionOrchestrationService
 {
-    public PageRenderResult Render(PageRenderSession session)
+    public PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session)
     {
         string culture = !string.IsNullOrWhiteSpace(value: session.Request.Culture)
             ? session.Request.Culture
@@ -20,11 +20,11 @@ internal sealed class PageRenderExecutionOrchestrationService(
 
         session.MetadataResolver = metadataCacheService.Get(culture: culture);
 
-        PageCacheSlice pageCacheSlice = commonObjectCacheService.Get(request: session.Request);
+        PageCacheSlice pageCacheSlice = commonObjectCacheService.GetPageRenderEngineRequestPageCacheSlice(request: session.Request);
         session.CommonResourcesByLookup = pageCacheSlice.CommonResourcesByLookup;
         session.CommonComponentsByName = pageCacheSlice.CommonComponentsByName;
         session.CommonScriptsByName = pageCacheSlice.CommonScriptsByName;
 
-        return markupRenderService.Render(session: session);
+        return markupRenderService.RenderPageRenderSessionPageRenderResult(session: session);
     }
 }

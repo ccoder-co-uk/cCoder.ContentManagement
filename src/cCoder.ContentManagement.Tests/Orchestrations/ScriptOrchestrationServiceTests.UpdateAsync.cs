@@ -23,18 +23,18 @@ public partial class ScriptOrchestrationServiceTests
     {
         // Given
         Script entity = CreateRandomScript();
-        scriptProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        scriptProcessingServiceMock.Setup(x => x.UpdateScriptAsync(entity)).ReturnsAsync(entity);
 
         scriptEventProcessingServiceMock
             .Setup(x => x.RaiseScriptUpdateEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Script result = await orchestrationService.UpdateAsync(entity);
+        Script result = await orchestrationService.UpdateScriptAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        scriptProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        scriptProcessingServiceMock.Verify(x => x.UpdateScriptAsync(entity), Times.Once);
         scriptEventProcessingServiceMock.Verify(x => x.RaiseScriptUpdateEventAsync(entity), Times.Once);
     }
 

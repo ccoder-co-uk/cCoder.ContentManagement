@@ -23,14 +23,14 @@ public partial class PageOrchestrationServiceTests
     {
         // Given
         IQueryable<Page> entities = new[] { CreateRandomPage() }.AsQueryable();
-        pageProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+        pageProcessingServiceMock.Setup(x => x.GetAllPage(true)).Returns(entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+        var result = orchestrationService.GetAllPage(true).ToArray();
 
         // Then
         result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        pageProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageProcessingServiceMock.Verify(x => x.GetAllPage(true), Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }

@@ -24,16 +24,16 @@ public partial class CommonObjectProcessingServiceTests
     {
         // Given
         CommonObject commonObject = CreateRandomCommonObject();
-        commonObjectServiceMock.Setup(x => x.Get(commonObject.Id)).Returns(commonObject);
+        commonObjectServiceMock.Setup(x => x.GetCommonObject(commonObject.Id)).Returns(commonObject);
 
         // When
-        CommonObject result = commonObjectProcessingService.Get(
+        CommonObject result = commonObjectProcessingService.GetCommonObject(
             commonObject.Id
         );
 
         // Then
         result.Should().BeSameAs(commonObject);
-        commonObjectServiceMock.Verify(x => x.Get(commonObject.Id), Times.Once);
+        commonObjectServiceMock.Verify(x => x.GetCommonObject(commonObject.Id), Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
         commonObjectCacheMock.VerifyNoOtherCalls();
     }

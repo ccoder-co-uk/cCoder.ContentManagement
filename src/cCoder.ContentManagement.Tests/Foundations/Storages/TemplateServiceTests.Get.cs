@@ -27,7 +27,7 @@ public partial class TemplateServiceTests
         templateBrokerMock.Setup(x => x.GetAllTemplates(false)).Returns(new[] { template }.AsQueryable());
 
         // When
-        Template result = templateService.Get(5);
+        Template result = templateService.GetTemplate(5);
 
         // Then
         result.Should().BeEquivalentTo(template);

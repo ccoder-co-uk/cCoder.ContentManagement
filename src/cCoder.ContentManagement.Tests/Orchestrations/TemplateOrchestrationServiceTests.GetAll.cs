@@ -23,14 +23,14 @@ public partial class TemplateOrchestrationServiceTests
     {
         // Given
         IQueryable<Template> entities = new[] { CreateRandomTemplate() }.AsQueryable();
-        templateProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+        templateProcessingServiceMock.Setup(x => x.GetAllTemplate(true)).Returns(entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+        var result = orchestrationService.GetAllTemplate(true).ToArray();
 
         // Then
         result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        templateProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        templateProcessingServiceMock.Verify(x => x.GetAllTemplate(true), Times.Once);
         templateProcessingServiceMock.VerifyNoOtherCalls();
         templateEventProcessingServiceMock.VerifyNoOtherCalls();
     }

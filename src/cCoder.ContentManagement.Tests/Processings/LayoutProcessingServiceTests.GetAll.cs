@@ -23,14 +23,14 @@ public partial class LayoutProcessingServiceTests
     {
         // Given
         IQueryable<Layout> entities = new[] { CreateRandomLayout() }.AsQueryable();
-        layoutServiceMock.Setup(x => x.GetAll()).Returns(entities);
+        layoutServiceMock.Setup(x => x.GetAllLayout()).Returns(entities);
 
         // When
-        IQueryable<Layout> result = layoutProcessingService.GetAll();
+        IQueryable<Layout> result = layoutProcessingService.GetAllLayout();
 
         // Then
         result.Should().BeSameAs(entities);
-        layoutServiceMock.Verify(x => x.GetAll(), Times.Once);
+        layoutServiceMock.Verify(x => x.GetAllLayout(), Times.Once);
         layoutServiceMock.VerifyNoOtherCalls();
     }
 

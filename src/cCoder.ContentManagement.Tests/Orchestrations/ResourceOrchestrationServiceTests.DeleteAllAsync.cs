@@ -22,15 +22,15 @@ public partial class ResourceOrchestrationServiceTests
     {
         // Given
         Resource[] entities = [CreateRandomResource()];
-        resourceProcessingServiceMock.Setup(x => x.Get(entities[0].Id)).Returns(entities[0]);
+        resourceProcessingServiceMock.Setup(x => x.GetResource(entities[0].Id)).Returns(entities[0]);
         resourceEventProcessingServiceMock.Setup(x => x.RaiseResourceDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
         resourceProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllResourceAsync(entities);
 
         // Then
-        resourceProcessingServiceMock.Verify(x => x.Get(entities[0].Id), Times.Once);
+        resourceProcessingServiceMock.Verify(x => x.GetResource(entities[0].Id), Times.Once);
         resourceEventProcessingServiceMock.Verify(x => x.RaiseResourceDeleteEventAsync(entities[0]), Times.Once);
         resourceProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
     }

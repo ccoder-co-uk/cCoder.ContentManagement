@@ -19,36 +19,36 @@ public class ScriptBroker(ICoreContextFactory coreContextFactory) : IScriptBroke
             : coreDataContext.Scripts;
     }
 
-    public async ValueTask<Script> AddScriptAsync(Script entity)
+    public async ValueTask<Script> AddScriptAsync(Script newScript)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Script result = (await coreDataContext.Scripts.AddAsync(entity: entity)).Entity;
+        Script result = (await coreDataContext.Scripts.AddAsync(entity: newScript)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<Script> UpdateScriptAsync(Script entity)
+    public async ValueTask<Script> UpdateScriptAsync(Script updatedScript)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        Script result = coreDataContext.Scripts.Update(entity: entity)
+        Script result = coreDataContext.Scripts.Update(entity: updatedScript)
             .Entity;
 
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeleteScriptAsync(Script entity)
+    public async ValueTask<int> DeleteScriptAsync(Script deletedScript)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Scripts.Remove(entity: entity);
+        coreDataContext.Scripts.Remove(entity: deletedScript);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllScriptsAsync(IEnumerable<Script> items)
+    public async ValueTask DeleteAllScriptsAsync(IEnumerable<Script> deletedScript)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Scripts.RemoveRange(entities: items);
+        coreDataContext.Scripts.RemoveRange(entities: deletedScript);
         await coreDataContext.SaveChangesAsync();
     }
 

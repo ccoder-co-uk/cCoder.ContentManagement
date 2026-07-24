@@ -12,14 +12,14 @@ public partial class PackageProcessingServiceTests
         // Given
         Package package = CreateRandomPackage();
         package.Items = null;
-        packageServiceMock.Setup(service => service.UpdateAsync(package)).ReturnsAsync(package);
+        packageServiceMock.Setup(service => service.UpdatePackageAsync(package)).ReturnsAsync(package);
 
         // When
-        Package result = await packageProcessingService.UpdateAsync(package);
+        Package result = await packageProcessingService.UpdatePackageAsync(package);
 
         // Then
         Assert.Same(package, result);
-        packageServiceMock.Verify(service => service.UpdateAsync(package), Times.Once);
+        packageServiceMock.Verify(service => service.UpdatePackageAsync(package), Times.Once);
         packageItemServiceMock.VerifyNoOtherCalls();
     }
 
@@ -32,24 +32,24 @@ public partial class PackageProcessingServiceTests
         PackageItem existingItem = CreateRandomPackageItem();
         existingItem.PackageId = package.Id;
 
-        packageServiceMock.Setup(service => service.UpdateAsync(package)).ReturnsAsync(package);
+        packageServiceMock.Setup(service => service.UpdatePackageAsync(package)).ReturnsAsync(package);
         packageItemServiceMock
-            .Setup(service => service.GetAll(false))
+            .Setup(service => service.GetAllPackageItem(false))
             .Returns(new[] { existingItem }.AsQueryable());
         packageItemServiceMock
-            .Setup(service => service.DeleteAllAsync(
+            .Setup(service => service.DeleteAllPackageItemAsync(
                 It.Is<IEnumerable<PackageItem>>(items => items.Single() == existingItem)))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Package result = await packageProcessingService.UpdateAsync(package);
+        Package result = await packageProcessingService.UpdatePackageAsync(package);
 
         // Then
         Assert.Same(package, result);
-        packageServiceMock.Verify(service => service.UpdateAsync(package), Times.Once);
-        packageItemServiceMock.Verify(service => service.GetAll(false), Times.Once);
+        packageServiceMock.Verify(service => service.UpdatePackageAsync(package), Times.Once);
+        packageItemServiceMock.Verify(service => service.GetAllPackageItem(false), Times.Once);
         packageItemServiceMock.Verify(
-            service => service.DeleteAllAsync(
+            service => service.DeleteAllPackageItemAsync(
                 It.Is<IEnumerable<PackageItem>>(items => items.Single() == existingItem)),
             Times.Once);
         packageItemServiceMock.VerifyNoOtherCalls();

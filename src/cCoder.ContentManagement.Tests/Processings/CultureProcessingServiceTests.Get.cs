@@ -24,14 +24,14 @@ public partial class CultureProcessingServiceTests
         // Given
         Culture entity = CreateRandomCulture();
         var id = entity.Id;
-        cultureServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        cultureServiceMock.Setup(x => x.GetCulture(id)).Returns(entity);
 
         // When
-        Culture result = cultureProcessingService.Get(id);
+        Culture result = cultureProcessingService.GetCulture(id);
 
         // Then
         result.Should().BeSameAs(entity);
-        cultureServiceMock.Verify(x => x.Get(id), Times.Once);
+        cultureServiceMock.Verify(x => x.GetCulture(id), Times.Once);
         cultureServiceMock.VerifyNoOtherCalls();
     }
 

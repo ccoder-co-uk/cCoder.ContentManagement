@@ -1,0 +1,623 @@
+{
+  "Classes": [
+    {
+      "Name": "Apps.Shared.DomainApiHosting",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "UseDomainApiShell",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "UseDomainDefaultCors",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "UseDomainExceptionHandling",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            },
+            {
+              "Name": "errorHandler",
+              "Type": "RequestDelegate"
+            }
+          ],
+          "ReturnType": "System.Void"
+        }
+      ]
+    },
+    {
+      "Name": "Apps.Shared.Hosting.NoOpSession",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Id",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Instance",
+          "Type": "Apps.Shared.Hosting.NoOpSession"
+        },
+        {
+          "Name": "IsAvailable",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "Keys",
+          "Type": "System.Collections.Generic.IEnumerable\u003CSystem.String\u003E"
+        }
+      ],
+      "Methods": [
+        {
+          "Name": "Clear",
+          "Inputs": [],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "CommitAsync",
+          "Inputs": [
+            {
+              "Name": "cancellationToken",
+              "Type": "System.Threading.CancellationToken"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task"
+        },
+        {
+          "Name": "LoadAsync",
+          "Inputs": [
+            {
+              "Name": "cancellationToken",
+              "Type": "System.Threading.CancellationToken"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task"
+        },
+        {
+          "Name": "Remove",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "Set",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            },
+            {
+              "Name": "value",
+              "Type": "System.Byte[]"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "TryGetValue",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            },
+            {
+              "Name": "value",
+              "Type": "System.Byte[]"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        }
+      ]
+    },
+    {
+      "Name": "Apps.Shared.Hosting.NoOpSessionFeature",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Session",
+          "Type": "ISession"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "Apps.Shared.Models.Config",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "ConnectionStrings",
+          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, System.String\u003E"
+        },
+        {
+          "Name": "DebugInfo",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "LogSQL",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "Services",
+          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, System.String\u003E"
+        },
+        {
+          "Name": "Settings",
+          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, System.String\u003E"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "ContentManagement.Web.Controllers.HomeController",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Index",
+          "Inputs": [
+            {
+              "Name": "path",
+              "Type": "System.String"
+            },
+            {
+              "Name": "theme",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "edit",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "IActionResult"
+        }
+      ]
+    },
+    {
+      "Name": "ContentManagement.Web.Controllers.PackageController",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "ImportAsync",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "package",
+              "Type": "cCoder.Data.Models.Packaging.Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        }
+      ]
+    },
+    {
+      "Name": "ContentManagement.Web.NoApiRouteConstraint",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Match",
+          "Inputs": [
+            {
+              "Name": "httpContext",
+              "Type": "HttpContext"
+            },
+            {
+              "Name": "route",
+              "Type": "IRouter"
+            },
+            {
+              "Name": "routeKey",
+              "Type": "System.String"
+            },
+            {
+              "Name": "values",
+              "Type": "RouteValueDictionary"
+            },
+            {
+              "Name": "routeDirection",
+              "Type": "RouteDirection"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        }
+      ]
+    },
+    {
+      "Name": "ContentManagement.Web.Program",
+      "StandardElementType": "App",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Main",
+          "Inputs": [
+            {
+              "Name": "args",
+              "Type": "System.String[]"
+            }
+          ],
+          "ReturnType": "System.Void"
+        }
+      ]
+    }
+  ],
+  "Links": [],
+  "AnalysisItems": [
+    {
+      "Code": "STXFORMAT011",
+      "Description": "Every C# source file must begin with a correctly formatted copyright header.",
+      "Severity": "Warning",
+      "Type": "Apps.Shared.Models.Config",
+      "LineNumber": 1
+    },
+    {
+      "Code": "STXM002",
+      "Description": "Model properties must not declare default values.",
+      "Severity": "Warning",
+      "Type": "Apps.Shared.Models.Config",
+      "LineNumber": 5
+    },
+    {
+      "Code": "STXM002",
+      "Description": "Model properties must not declare default values.",
+      "Severity": "Warning",
+      "Type": "Apps.Shared.Models.Config",
+      "LineNumber": 6
+    },
+    {
+      "Code": "STXM002",
+      "Description": "Model properties must not declare default values.",
+      "Severity": "Warning",
+      "Type": "Apps.Shared.Models.Config",
+      "LineNumber": 7
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "Apps.Shared.Models.Config",
+      "LineNumber": 10
+    },
+    {
+      "Code": "STXFORMAT011",
+      "Description": "Every C# source file must begin with a correctly formatted copyright header.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 1
+    },
+    {
+      "Code": "STX0002",
+      "Description": "Properties may only be declared on models.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 12
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 12
+    },
+    {
+      "Code": "STXFORMAT009",
+      "Description": "Every method chained from an invocation result must begin on a new line.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 12
+    },
+    {
+      "Code": "STX0002",
+      "Description": "Properties may only be declared on models.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 14
+    },
+    {
+      "Code": "STXE002",
+      "Description": "An exposure must not contain loops.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 24
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 27
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 27
+    },
+    {
+      "Code": "STXFORMAT007",
+      "Description": "Control-flow statement bodies must always be enclosed in scope braces.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 27
+    },
+    {
+      "Code": "STXAPI004",
+      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 34
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 39
+    },
+    {
+      "Code": "STXFORMAT009",
+      "Description": "Every method chained from an invocation result must begin on a new line.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 39
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 46
+    },
+    {
+      "Code": "STXFORMAT007",
+      "Description": "Control-flow statement bodies must always be enclosed in scope braces.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 46
+    },
+    {
+      "Code": "STXFORMAT007",
+      "Description": "Control-flow statement bodies must always be enclosed in scope braces.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 49
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 51
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 56
+    },
+    {
+      "Code": "STXFORMAT007",
+      "Description": "Control-flow statement bodies must always be enclosed in scope braces.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 56
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 58
+    },
+    {
+      "Code": "STXFORMAT007",
+      "Description": "Control-flow statement bodies must always be enclosed in scope braces.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 58
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 61
+    },
+    {
+      "Code": "STXFORMAT007",
+      "Description": "Control-flow statement bodies must always be enclosed in scope braces.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 61
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 63
+    },
+    {
+      "Code": "STXFORMAT007",
+      "Description": "Control-flow statement bodies must always be enclosed in scope braces.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 63
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 65
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 76
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 77
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 78
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 80
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 86
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 114
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 115
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 121
+    },
+    {
+      "Code": "STXFORMAT007",
+      "Description": "Control-flow statement bodies must always be enclosed in scope braces.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 121
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 122
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 123
+    },
+    {
+      "Code": "STXFORMAT007",
+      "Description": "Control-flow statement bodies must always be enclosed in scope braces.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 123
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 125
+    },
+    {
+      "Code": "STXFORMAT011",
+      "Description": "Every C# source file must begin with a correctly formatted copyright header.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.PackageController",
+      "LineNumber": 1
+    },
+    {
+      "Code": "STXAPI004",
+      "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.PackageController",
+      "LineNumber": 13
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.PackageController",
+      "LineNumber": 17
+    },
+    {
+      "Code": "STXFORMAT007",
+      "Description": "Control-flow statement bodies must always be enclosed in scope braces.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.PackageController",
+      "LineNumber": 17
+    },
+    {
+      "Code": "STXFORMAT005",
+      "Description": "Method call arguments must declare their parameter names.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.PackageController",
+      "LineNumber": 19
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.PackageController",
+      "LineNumber": 22
+    },
+    {
+      "Code": "STXAPP005",
+      "Description": "Program.cs must compose the app through IServiceCollection using SDK namespaces and one local composition namespace only.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Program",
+      "LineNumber": 27
+    }
+  ]
+}

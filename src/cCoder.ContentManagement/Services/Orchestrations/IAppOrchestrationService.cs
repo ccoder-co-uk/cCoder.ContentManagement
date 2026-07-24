@@ -10,25 +10,25 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IAppOrchestrationService
 {
-    App Get(int id);
+    App GetApp(int appId);
 
-    App GetByDomain(string domain, bool ignoreFilters = false);
+    App GetByDomainApp(string domain, bool ignoreFilters = false);
 
-    IQueryable<App> GetAll(bool ignoreFilters = false);
+    IQueryable<App> GetAllApp(bool ignoreFilters = false);
 
-    ValueTask<App> AddAsync(App entity);
+    ValueTask<App> AddAppAsync(App newApp);
 
-    ValueTask<App> UpdateAsync(App entity);
+    ValueTask<App> UpdateAppAsync(App updatedApp);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int appId);
 
-    ValueTask<IEnumerable<Result<App>>> AddOrUpdate(IEnumerable<App> items);
+    ValueTask<IEnumerable<Result<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp);
 
-    ValueTask DeleteAllAsync(IEnumerable<App> items);
+    ValueTask DeleteAllAppAsync(IEnumerable<App> deletedApp);
 
     IQueryable<User> GetAppUsers(int appId);
 
-    ValueTask UpdatePageOrderAsync(int key, App app);
+    ValueTask UpdatePageOrderAppAsync(int key, App updatedApp);
 
     App ResolveCurrentApp();
 }

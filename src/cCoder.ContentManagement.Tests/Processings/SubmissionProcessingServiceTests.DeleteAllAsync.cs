@@ -26,7 +26,7 @@ public partial class SubmissionProcessingServiceTests
         submissionServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await submissionProcessingService.DeleteAllAsync(new[] { entity });
+        await submissionProcessingService.DeleteAllSubmissionAsync(new[] { entity });
 
         // Then
         submissionServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);

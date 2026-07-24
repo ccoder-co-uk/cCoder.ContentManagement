@@ -38,13 +38,13 @@ public class PageController : ODataController
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     public IActionResult Get(ODataQueryOptions<Page> queryOptions) =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllPage());
 
     [HttpGet]
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     public IActionResult RootFor([FromRoute] int key) =>
-        Ok(value: CreateResponsePage(page: Service.GetRoot(id: key)));
+        Ok(value: CreateResponsePage(newPage: Service.GetRootPage(pageId: key)));
 
     [HttpGet]
     public IActionResult Menu([FromRoute] int key, string culture)
@@ -52,7 +52,7 @@ public class PageController : ODataController
         return Ok(value: new Result<string>
         {
             Id = key.ToString(),
-            Item = Service.MenuFor(id: key, culture: culture),
+            Item = Service.MenuFor(pageId: key, culture: culture),
             Success = true
         });
     }
@@ -60,7 +60,7 @@ public class PageController : ODataController
     [HttpGet]
     [AllowAnonymous]
     public IActionResult Render(int appId, string path, string theme, string culture) =>
-        Ok(value: RenderService.Render(appId: appId, path: path, theme: theme, culture: culture));
+        Ok(value: RenderService.RenderRenderResult(appId: appId, path: path, theme: theme, culture: culture));
 
     [HttpGet]
     public IActionResult GetMetadata() =>
@@ -74,7 +74,7 @@ public class PageController : ODataController
     {
         try
         {
-            IQueryable<Page> result = Service.GetAll()
+            IQueryable<Page> result = Service.GetAllPage()
                 .Where(predicate: page => page.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -87,33 +87,33 @@ public class PageController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Page entity)
+    public async Task<IActionResult> Post([FromBody] Page newPage)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: CreateResponsePage(page: await Service.AddAsync(entity: entity)));
+        return Ok(value: CreateResponsePage(newPage: await Service.AddPageAsync(newPage: newPage)));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Page entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Page updatedPage)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        entity.Id = key;
-        return Ok(value: CreateResponsePage(page: await Service.UpdateAsync(entity: entity)));
+        updatedPage.Id = key;
+        return Ok(value: CreateResponsePage(newPage: await Service.UpdatePageAsync(updatedPage: updatedPage)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<Page> delta)
     {
-        Page originalEntity = Service.Get(id: key);
+        Page originalEntity = Service.GetPage(pageId: key);
 
         if (originalEntity == null)
         {
@@ -121,38 +121,38 @@ public class PageController : ODataController
         }
 
         delta.Patch(original: originalEntity);
-        return Ok(value: CreateResponsePage(page: await Service.UpdateAsync(entity: originalEntity)));
+        return Ok(value: CreateResponsePage(newPage: await Service.UpdatePageAsync(updatedPage: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(id: key);
+        await Service.DeleteAsync(pageId: key);
         return Ok();
     }
 
-    private static Page CreateResponsePage(Page page)
+    private static Page CreateResponsePage(Page newPage)
     {
-        if (page == null)
+        if (newPage == null)
         {
             return null;
         }
 
         return new Page
         {
-            Id = page.Id,
-            ParentId = page.ParentId,
-            AppId = page.AppId,
-            Order = page.Order,
-            ShowOnMenus = page.ShowOnMenus,
-            Name = page.Name,
-            LastUpdated = page.LastUpdated,
-            LastUpdatedBy = page.LastUpdatedBy,
-            CreatedOn = page.CreatedOn,
-            CreatedBy = page.CreatedBy,
-            Path = page.Path,
-            ResourceKey = page.ResourceKey,
-            Layout = page.Layout
+            Id = newPage.Id,
+            ParentId = newPage.ParentId,
+            AppId = newPage.AppId,
+            Order = newPage.Order,
+            ShowOnMenus = newPage.ShowOnMenus,
+            Name = newPage.Name,
+            LastUpdated = newPage.LastUpdated,
+            LastUpdatedBy = newPage.LastUpdatedBy,
+            CreatedOn = newPage.CreatedOn,
+            CreatedBy = newPage.CreatedBy,
+            Path = newPage.Path,
+            ResourceKey = newPage.ResourceKey,
+            Layout = newPage.Layout
         };
     }
 }

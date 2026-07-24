@@ -25,7 +25,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     public IActionResult Latest(string type) =>
-        Ok(value: Service.Latest(type: type));
+        Ok(value: Service.LatestCommonObject(type: type));
 
     [HttpPost]
     public async Task<IActionResult> ImportAsync([FromBody] JsonElement payload)
@@ -42,7 +42,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
             return BadRequest(message: "A common object payload is required.");
         }
 
-        return Ok(value: await Service.ImportAsync(items: items));
+        return Ok(value: await Service.ImportCommonObjectResultAsync(items: items));
     }
 
     [HttpGet]
@@ -54,7 +54,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<CommonObject> queryOptions) =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllCommonObject());
 
     [HttpGet]
     [AllowAnonymous]
@@ -63,7 +63,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     {
         try
         {
-            IQueryable<CommonObject> result = Service.GetAll()
+            IQueryable<CommonObject> result = Service.GetAllCommonObject()
                 .Where(predicate: commonObject => commonObject.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -76,33 +76,33 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] CommonObject entity)
+    public async Task<IActionResult> Post([FromBody] CommonObject newCommonObject)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddAsync(entity: entity));
+        return Ok(value: await Service.AddCommonObjectAsync(newCommonObject: newCommonObject));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] CommonObject entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] CommonObject updatedCommonObject)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        entity.Id = key;
-        return Ok(value: await Service.UpdateAsync(entity: entity));
+        updatedCommonObject.Id = key;
+        return Ok(value: await Service.UpdateCommonObjectAsync(updatedCommonObject: updatedCommonObject));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<CommonObject> delta)
     {
-        CommonObject originalEntity = Service.Get(id: key);
+        CommonObject originalEntity = Service.GetCommonObject(commonObjectId: key);
 
         if (originalEntity == null)
         {
@@ -110,13 +110,13 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
         }
 
         delta.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateAsync(entity: originalEntity));
+        return Ok(value: await Service.UpdateCommonObjectAsync(updatedCommonObject: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(id: key);
+        await Service.DeleteAsync(commonObjectId: key);
         return Ok();
     }
 

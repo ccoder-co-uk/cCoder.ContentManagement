@@ -33,7 +33,7 @@ internal class TemplateRenderProcessingService(
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
 
-    public string Render(int appId, string name, object model, User user, string culture, Config config, ILogger log = null)
+    public string RenderUserConfig(int appId, string name, object model, User user, string culture, Config config, ILogger log = null)
     {
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateTemplateName(name: name, parameterName: "name");
@@ -41,7 +41,7 @@ internal class TemplateRenderProcessingService(
         ValidateUser(user: user, parameterName: "user");
         EnsureRenderDependenciesConfigured();
 
-        App app = appService.GetAll(ignoreFilters: true)
+        App app = appService.GetAllApp(ignoreFilters: true)
             .Where(predicate: existingApp => existingApp.Id == appId)
             .Select(selector: existingApp => new App
             {
@@ -60,19 +60,19 @@ internal class TemplateRenderProcessingService(
             throw new InvalidOperationException(message: $"App '{appId}' was not found.");
         }
 
-        app.Components = componentService.GetAll(ignoreFilters: true)
+        app.Components = componentService.GetAllComponent(ignoreFilters: true)
             .Where(predicate: existingComponent => existingComponent.AppId == appId)
             .ToArray();
 
-        app.Resources = resourceService.GetAll(ignoreFilters: true)
+        app.Resources = resourceService.GetAllResource(ignoreFilters: true)
             .Where(predicate: existingResource => existingResource.AppId == appId)
             .ToArray();
 
-        app.Scripts = scriptService.GetAll(ignoreFilters: true)
+        app.Scripts = scriptService.GetAllScript(ignoreFilters: true)
             .Where(predicate: existingScript => existingScript.AppId == appId)
             .ToArray();
 
-        Template template = templateService.GetAll(ignoreFilters: true)
+        Template template = templateService.GetAllTemplate(ignoreFilters: true)
             .Where(predicate: existingTemplate => existingTemplate.AppId == appId)
             .ToArray()
             .FirstOrDefault(predicate: existingTemplate =>
@@ -80,10 +80,10 @@ internal class TemplateRenderProcessingService(
             ?? throw new InvalidOperationException(message: "Template '" + name + "' was not found.");
 
         TemplateRenderParams templateRenderParams = new(app: app, user: user, culture: culture);
-        return RenderTemplate(template: template, model: model, renderParams: templateRenderParams, config: config, log: log);
+        return RenderTemplateRenderParamsConfig(template: template, model: model, renderParams: templateRenderParams, config: config, log: log);
     }
 
-    public string RenderTemplate(Template template, object model, RenderParams renderParams, Config config, ILogger log = null)
+    public string RenderTemplateRenderParamsConfig(Template template, object model, RenderParams renderParams, Config config, ILogger log = null)
     {
         ValidateTemplate(template: template, parameterName: "template");
         ValidateModel(model: model, parameterName: "model");
@@ -160,7 +160,7 @@ internal class TemplateRenderProcessingService(
             if (TryGetThemeDictionary(config: renderParams.App.Config, themeDictionary: out source) && source.Any())
             {
                 list2.AddRange(collection: BuildThemeReplacements(model: source.First()
-                                .Value));
+                    .Value));
             }
         }
 

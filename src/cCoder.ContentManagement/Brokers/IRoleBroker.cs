@@ -10,11 +10,11 @@ public interface IRoleBroker
 {
     IQueryable<Role> GetAllRoles(bool ignoreFilters);
 
-    ValueTask<Role> AddRoleAsync(Role entity);
+    ValueTask<Role> AddRoleAsync(Role newRole);
 
-    ValueTask<Role> UpdateRoleAsync(Role entity);
+    ValueTask<Role> UpdateRoleAsync(Role updatedRole);
 
-    ValueTask<int> DeleteRoleAsync(Role entity);
+    ValueTask<int> DeleteRoleAsync(Role deletedRole);
 
-    ValueTask DeleteAllRolesAsync(IEnumerable<Role> items);
+    ValueTask DeleteAllRolesAsync(IEnumerable<Role> deletedRole);
 }

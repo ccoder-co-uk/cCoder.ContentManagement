@@ -35,7 +35,7 @@ public class PageInfoController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<PageInfo> queryOptions) =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllPageInfo());
 
     [HttpGet]
     [AllowAnonymous]
@@ -44,7 +44,7 @@ public class PageInfoController : ODataController
     {
         try
         {
-            IQueryable<PageInfo> result = Service.GetAll()
+            IQueryable<PageInfo> result = Service.GetAllPageInfo()
                 .Where(predicate: pageInfo => pageInfo.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -57,32 +57,32 @@ public class PageInfoController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] PageInfo entity)
+    public async Task<IActionResult> Post([FromBody] PageInfo newPageInfo)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddAsync(entity: entity));
+        return Ok(value: await Service.AddPageInfoAsync(newPageInfo: newPageInfo));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] PageInfo entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] PageInfo updatedPageInfo)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdateAsync(entity: entity));
+        return Ok(value: await Service.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] int key, Delta<PageInfo> delta)
     {
-        PageInfo originalEntity = Service.Get(id: key);
+        PageInfo originalEntity = Service.GetPageInfo(pageInfoId: key);
 
         if (originalEntity == null)
         {
@@ -90,13 +90,13 @@ public class PageInfoController : ODataController
         }
 
         delta.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateAsync(entity: originalEntity));
+        return Ok(value: await Service.UpdatePageInfoAsync(updatedPageInfo: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(id: key);
+        await Service.DeleteAsync(pageInfoId: key);
         return Ok();
     }
 }

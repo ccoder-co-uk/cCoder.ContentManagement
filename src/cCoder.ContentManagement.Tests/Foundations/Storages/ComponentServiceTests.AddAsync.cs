@@ -46,7 +46,7 @@ public partial class ComponentServiceTests
             .ReturnsAsync((CmsDataModels.Component value) => value);
 
         // When
-        Component result = await componentService.AddAsync(component);
+        Component result = await componentService.AddComponentAsync(component);
 
         // Then
         result.Should().BeSameAs(component);
@@ -151,7 +151,7 @@ public partial class ComponentServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await componentService.AddAsync(component);
+        Func<Task> action = async () => await componentService.AddComponentAsync(component);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

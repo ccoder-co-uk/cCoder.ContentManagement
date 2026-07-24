@@ -29,7 +29,7 @@ public partial class PageServiceTests
         pageBrokerMock.Setup(x => x.GetAllPages(false)).Returns(pages);
 
         // When
-        IQueryable<Page> result = pageService.GetAll();
+        IQueryable<Page> result = pageService.GetAllPage();
 
         // Then
         result.Should().BeEquivalentTo(expectedItems);

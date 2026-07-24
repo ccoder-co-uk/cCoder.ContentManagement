@@ -7,6 +7,7 @@ using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Security;
+using cCoder.Security.Data.EF.Dependencies;
 using cCoder.Security.Data.EF;
 using cCoder.Security.Objects.Entities;
 using cCoder.Eventing;

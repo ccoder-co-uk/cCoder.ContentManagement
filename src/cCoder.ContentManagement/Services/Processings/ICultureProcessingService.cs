@@ -9,17 +9,17 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface ICultureProcessingService
 {
-    Culture Get(string id);
+    Culture GetCulture(string cultureId);
 
-    IQueryable<Culture> GetAll(bool ignoreFilters = false);
+    IQueryable<Culture> GetAllCulture(bool ignoreFilters = false);
 
-    ValueTask<Culture> AddAsync(Culture entity);
+    ValueTask<Culture> AddCultureAsync(Culture newCulture);
 
-    ValueTask<Culture> UpdateAsync(Culture entity);
+    ValueTask<Culture> UpdateCultureAsync(Culture updatedCulture);
 
-    ValueTask DeleteAsync(string id);
+    ValueTask DeleteAsync(string cultureId);
 
-    ValueTask<IEnumerable<Result<Culture>>> AddOrUpdate(IEnumerable<Culture> items);
+    ValueTask<IEnumerable<Result<Culture>>> AddOrUpdateCultureResult(IEnumerable<Culture> newCulture);
 
-    ValueTask DeleteAllAsync(IEnumerable<Culture> items);
+    ValueTask DeleteAllCultureAsync(IEnumerable<Culture> deletedCulture);
 }

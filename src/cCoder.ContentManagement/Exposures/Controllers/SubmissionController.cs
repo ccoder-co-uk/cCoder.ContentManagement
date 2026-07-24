@@ -36,7 +36,7 @@ public class SubmissionController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Submission> queryOptions) =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllSubmission());
 
     [HttpGet]
     [AllowAnonymous]
@@ -45,7 +45,7 @@ public class SubmissionController : ODataController
     {
         try
         {
-            IQueryable<Submission> result = Service.GetAll()
+            IQueryable<Submission> result = Service.GetAllSubmission()
                 .Where(predicate: submission => submission.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -58,32 +58,32 @@ public class SubmissionController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Submission entity)
+    public async Task<IActionResult> Post([FromBody] Submission newSubmission)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return new JsonResult(value: CreateResponseSubmission(submission: await Service.AddAsync(entity: entity)));
+        return new JsonResult(value: CreateResponseSubmission(newSubmission: await Service.AddSubmissionAsync(newSubmission: newSubmission)));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] Guid key, [FromBody] Submission entity)
+    public async Task<IActionResult> Put([FromRoute] Guid key, [FromBody] Submission updatedSubmission)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return new JsonResult(value: CreateResponseSubmission(submission: await Service.UpdateAsync(entity: entity)));
+        return new JsonResult(value: CreateResponseSubmission(newSubmission: await Service.UpdateSubmissionAsync(updatedSubmission: updatedSubmission)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     public async Task<IActionResult> Patch([FromRoute] Guid key, Delta<Submission> delta)
     {
-        Submission originalEntity = Service.Get(id: key);
+        Submission originalEntity = Service.GetSubmission(submissionId: key);
 
         if (originalEntity == null)
         {
@@ -91,34 +91,34 @@ public class SubmissionController : ODataController
         }
 
         delta.Patch(original: originalEntity);
-        return new JsonResult(value: CreateResponseSubmission(submission: await Service.UpdateAsync(entity: originalEntity)));
+        return new JsonResult(value: CreateResponseSubmission(newSubmission: await Service.UpdateSubmissionAsync(updatedSubmission: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] Guid key)
     {
-        await Service.DeleteAsync(id: key);
+        await Service.DeleteAsync(submissionId: key);
         return Ok();
     }
 
-    private static Submission CreateResponseSubmission(Submission submission)
+    private static Submission CreateResponseSubmission(Submission newSubmission)
     {
-        if (submission == null)
+        if (newSubmission == null)
         {
             return null;
         }
 
         return new Submission
         {
-            Id = submission.Id,
-            AppId = submission.AppId,
-            CreatedBy = submission.CreatedBy,
-            LastUpdatedBy = submission.LastUpdatedBy,
-            CreatedOn = submission.CreatedOn,
-            LastUpdatedOn = submission.LastUpdatedOn,
-            SourceComponent = submission.SourceComponent,
-            State = submission.State,
-            DataJson = submission.DataJson
+            Id = newSubmission.Id,
+            AppId = newSubmission.AppId,
+            CreatedBy = newSubmission.CreatedBy,
+            LastUpdatedBy = newSubmission.LastUpdatedBy,
+            CreatedOn = newSubmission.CreatedOn,
+            LastUpdatedOn = newSubmission.LastUpdatedOn,
+            SourceComponent = newSubmission.SourceComponent,
+            State = newSubmission.State,
+            DataJson = newSubmission.DataJson
         };
     }
 }

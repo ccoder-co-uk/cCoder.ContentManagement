@@ -11,26 +11,26 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PackageService(IPackageBroker packageBroker, IAuthorizationBroker authorizationBroker) : IPackageService
 {
-    public Package Get(Guid id, bool ignoreFilters = false)
+    public Package GetPackage(Guid packageId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(packageId: packageId, parameterName: "id");
 
         if (ignoreFilters)
         {
-            return GetAll(ignoreFilters: true)
-                        .FirstOrDefault(predicate: (Package i) => i.Id == id);
+            return GetAllPackage(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
         }
 
-        Package package = GetAll()
-            .FirstOrDefault(predicate: (Package i) => i.Id == id);
+        Package package = GetAllPackage()
+            .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
 
         if (package != null)
         {
             return package;
         }
 
-        Package package2 = GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: (Package i) => i.Id == id);
+        Package package2 = GetAllPackage(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
 
         if (package2 != null)
         {
@@ -40,57 +40,57 @@ internal partial class PackageService(IPackageBroker packageBroker, IAuthorizati
         return null;
     }
 
-    public IQueryable<Package> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<Package> GetAllPackage(bool ignoreFilters = false) =>
         packageBroker.GetAllPackages(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Package> AddAsync(Package package)
+    public async ValueTask<Package> AddPackageAsync(Package newPackage)
     {
-        ValidatePackage(package: package, parameterName: "package");
+        ValidatePackage(package: newPackage, parameterName: "package");
         authorizationBroker.Authorize(appId: null, privilege: "Package_create");
-        Package result = await packageBroker.AddPackageAsync(entity: CreateStoragePackage(package: package));
-        package.Id = result.Id;
-        package.Name = result.Name;
-        package.Description = result.Description;
-        package.Category = result.Category;
-        package.SourceApi = result.SourceApi;
-        return package;
+        Package result = await packageBroker.AddPackageAsync(newPackage: CreateStoragePackage(newPackage: newPackage));
+        newPackage.Id = result.Id;
+        newPackage.Name = result.Name;
+        newPackage.Description = result.Description;
+        newPackage.Category = result.Category;
+        newPackage.SourceApi = result.SourceApi;
+        return newPackage;
     }
 
-    public async ValueTask<Package> UpdateAsync(Package package)
+    public async ValueTask<Package> UpdatePackageAsync(Package updatedPackage)
     {
-        ValidatePackage(package: package, parameterName: "package");
+        ValidatePackage(package: updatedPackage, parameterName: "package");
         authorizationBroker.Authorize(appId: null, privilege: "Package_update");
-        Package result = await packageBroker.UpdatePackageAsync(entity: CreateStoragePackage(package: package));
-        package.Id = result.Id;
-        package.Name = result.Name;
-        package.Description = result.Description;
-        package.Category = result.Category;
-        package.SourceApi = result.SourceApi;
-        return package;
+        Package result = await packageBroker.UpdatePackageAsync(updatedPackage: CreateStoragePackage(newPackage: updatedPackage));
+        updatedPackage.Id = result.Id;
+        updatedPackage.Name = result.Name;
+        updatedPackage.Description = result.Description;
+        updatedPackage.Category = result.Category;
+        updatedPackage.SourceApi = result.SourceApi;
+        return updatedPackage;
     }
 
-    public async ValueTask DeleteAsync(Guid id)
+    public async ValueTask DeleteAsync(Guid packageId)
     {
-        ValidateId(id: id, parameterName: "id");
-        Package package = Get(id: id);
+        ValidateId(packageId: packageId, parameterName: "id");
+        Package package = GetPackage(packageId: packageId);
         authorizationBroker.Authorize(appId: null, privilege: "Package_delete");
-        await packageBroker.DeletePackageAsync(entity: CreateStoragePackage(package: package));
+        await packageBroker.DeletePackageAsync(deletedPackage: CreateStoragePackage(newPackage: package));
     }
 
-    private static Package CreateStoragePackage(Package package)
+    private static Package CreateStoragePackage(Package newPackage)
     {
-        if (package == null)
+        if (newPackage == null)
         {
             return null;
         }
 
         return new Package
         {
-            Id = package.Id,
-            Name = package.Name,
-            Description = package.Description,
-            Category = package.Category,
-            SourceApi = package.SourceApi
+            Id = newPackage.Id,
+            Name = newPackage.Name,
+            Description = newPackage.Description,
+            Category = newPackage.Category,
+            SourceApi = newPackage.SourceApi
         };
     }
 }

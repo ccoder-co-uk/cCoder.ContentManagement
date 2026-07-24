@@ -14,47 +14,47 @@ internal class ComponentOrchestrationService(
     IComponentProcessingService processingService,
     IComponentEventProcessingService eventService) : IComponentOrchestrationService
 {
-    public Component Get(int id)
+    public Component GetComponent(int componentId)
     {
-        ValidateId(id: id, parameterName: "id");
-        return processingService.Get(id: id);
+        ValidateId(componentId: componentId, parameterName: "id");
+        return processingService.GetComponent(componentId: componentId);
     }
 
-    public IQueryable<Component> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Component> GetAllComponent(bool ignoreFilters = false) =>
+        processingService.GetAllComponent(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Component> AddAsync(Component entity)
+    public async ValueTask<Component> AddComponentAsync(Component newComponent)
     {
-        ValidateComponent(component: entity, parameterName: "entity");
+        ValidateComponent(component: newComponent, parameterName: "entity");
 
-        Component result = await processingService.AddAsync(entity: entity);
+        Component result = await processingService.AddComponentAsync(newComponent: newComponent);
         await eventService.RaiseComponentAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask<Component> UpdateAsync(Component entity)
+    public async ValueTask<Component> UpdateComponentAsync(Component updatedComponent)
     {
-        ValidateComponent(component: entity, parameterName: "entity");
+        ValidateComponent(component: updatedComponent, parameterName: "entity");
 
-        Component result = await processingService.UpdateAsync(entity: entity);
+        Component result = await processingService.UpdateComponentAsync(updatedComponent: updatedComponent);
         await eventService.RaiseComponentUpdateEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int componentId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(componentId: componentId, parameterName: "id");
 
         Component entity;
 
         try
         {
-            entity = processingService.Get(id: id);
+            entity = processingService.GetComponent(componentId: componentId);
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAll(ignoreFilters: true)
-                .FirstOrDefault(predicate: component => component.Id == id);
+            entity = processingService.GetAllComponent(ignoreFilters: true)
+                .FirstOrDefault(predicate: component => component.Id == componentId);
         }
 
         if (entity == null)
@@ -63,25 +63,25 @@ internal class ComponentOrchestrationService(
         }
 
         await eventService.RaiseComponentDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(id: id);
+        await processingService.DeleteAsync(componentId: componentId);
     }
 
     public async ValueTask DeleteByAppIdAsync(int appId)
     {
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        Component[] componentsToDelete = [.. GetAll(ignoreFilters: true)
+        Component[] componentsToDelete = [.. GetAllComponent(ignoreFilters: true)
             .Where(predicate: component => component.AppId == appId)];
 
         foreach (Component component in componentsToDelete)
         {
-            await DeleteAsync(id: component.Id);
+            await DeleteAsync(componentId: component.Id);
         }
     }
 
-    public async ValueTask<IEnumerable<Result<Component>>> AddOrUpdate(IEnumerable<Component> items)
+    public async ValueTask<IEnumerable<Result<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent)
     {
-        Component[] components = ValidateComponents(components: items, parameterName: "items")
+        Component[] components = ValidateComponents(components: newComponent, parameterName: "items")
             .ToArray();
 
         List<Result<Component>> results = new();
@@ -91,8 +91,8 @@ internal class ComponentOrchestrationService(
             try
             {
                 Component result = component.Id <= 0
-                    ? await AddAsync(entity: component)
-                    : await UpdateAsync(entity: component);
+                    ? await AddComponentAsync(newComponent: component)
+                    : await UpdateComponentAsync(updatedComponent: component);
 
                 results.Add(item: new Result<Component>
                 {
@@ -125,7 +125,7 @@ internal class ComponentOrchestrationService(
         string[] names = validatedItems.Select(selector: component => component.Name.ToLower())
             .ToArray();
 
-        var dbVersions = processingService.GetAll()
+        var dbVersions = processingService.GetAllComponent()
             .Where(predicate: component => component.AppId == appId && ((ReadOnlySpan<string>)names).Contains(value: component.Name.ToLower()))
             .Select(selector: component => new { component.Id, component.Name })
             .ToArray();
@@ -138,22 +138,22 @@ internal class ComponentOrchestrationService(
                 existing.Name.Equals(value: component.Name, comparisonType: StringComparison.OrdinalIgnoreCase))?.Id ?? 0;
         });
 
-        await AddOrUpdate(items: validatedItems);
+        await AddOrUpdateComponentResult(newComponent: validatedItems);
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Component> items)
+    public async ValueTask DeleteAllComponentAsync(IEnumerable<Component> deletedComponent)
     {
-        Component[] components = ValidateComponents(components: items, parameterName: "items")
+        Component[] components = ValidateComponents(components: deletedComponent, parameterName: "items")
             .ToArray();
 
         foreach (Component component in components)
         {
-            await DeleteAsync(id: component.Id);
+            await DeleteAsync(componentId: component.Id);
         }
     }
 
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int componentId, string parameterName) =>
+        ThrowIf(condition: componentId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");

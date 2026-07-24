@@ -19,36 +19,36 @@ public class SubmissionBroker(ICoreContextFactory coreContextFactory) : ISubmiss
             : coreDataContext.Submissions;
     }
 
-    public async ValueTask<Submission> AddSubmissionAsync(Submission entity)
+    public async ValueTask<Submission> AddSubmissionAsync(Submission newSubmission)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Submission result = (await coreDataContext.Submissions.AddAsync(entity: entity)).Entity;
+        Submission result = (await coreDataContext.Submissions.AddAsync(entity: newSubmission)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<Submission> UpdateSubmissionAsync(Submission entity)
+    public async ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        Submission result = coreDataContext.Submissions.Update(entity: entity)
+        Submission result = coreDataContext.Submissions.Update(entity: updatedSubmission)
             .Entity;
 
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeleteSubmissionAsync(Submission entity)
+    public async ValueTask<int> DeleteSubmissionAsync(Submission deletedSubmission)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Submissions.Remove(entity: entity);
+        coreDataContext.Submissions.Remove(entity: deletedSubmission);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllSubmissionsAsync(IEnumerable<Submission> items)
+    public async ValueTask DeleteAllSubmissionsAsync(IEnumerable<Submission> deletedSubmission)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Submissions.RemoveRange(entities: items);
+        coreDataContext.Submissions.RemoveRange(entities: deletedSubmission);
         await coreDataContext.SaveChangesAsync();
     }
 

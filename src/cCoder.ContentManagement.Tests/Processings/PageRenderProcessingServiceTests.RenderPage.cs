@@ -35,7 +35,7 @@ public partial class PageRenderProcessingServiceTests
         metadataReaderBroker.Set("site-description", "en-GB", "Meta Description");
 
         RenderResult result = await RenderTestWorkflowServer.RunAsync(workflowBaseUrl =>
-            sut.RenderPage(page, user, CreateConfig(workflowBaseUrl), "Default", "en-GB"));
+            sut.RenderPageUserConfigRenderResult(page, user, CreateConfig(workflowBaseUrl), "Default", "en-GB"));
 
         result.HeaderHtml.Should().Contain("<title>Home</title>");
         result.HeaderHtml.Should().Contain("Meta Description");
@@ -58,7 +58,7 @@ public partial class PageRenderProcessingServiceTests
     {
         PageRenderProcessingService sut = CreateSut();
 
-        Action act = () => sut.RenderPage(null!, CreateUser(), CreateConfig("http://127.0.0.1/"), "Default", "en-GB");
+        Action act = () => sut.RenderPageUserConfigRenderResult(null!, CreateUser(), CreateConfig("http://127.0.0.1/"), "Default", "en-GB");
 
         act.Should().Throw<ValidationException>();
     }

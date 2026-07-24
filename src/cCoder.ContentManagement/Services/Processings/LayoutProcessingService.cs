@@ -11,43 +11,43 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal class LayoutProcessingService(ILayoutService service) : ILayoutProcessingService
 {
-    public Layout Get(int id)
+    public Layout GetLayout(int layoutId)
     {
-        ValidateId(id: id, parameterName: "id");
-        return service.Get(id: id);
+        ValidateId(layoutId: layoutId, parameterName: "id");
+        return service.GetLayout(layoutId: layoutId);
     }
 
-    public IQueryable<Layout> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<Layout> GetAllLayout(bool ignoreFilters = false) =>
+        service.GetAllLayout(ignoreFilters: ignoreFilters);
 
-    public ValueTask<Layout> AddAsync(Layout entity)
+    public ValueTask<Layout> AddLayoutAsync(Layout newLayout)
     {
-        ValidateLayout(layout: entity, parameterName: "entity");
-        return service.AddAsync(layout: entity);
+        ValidateLayout(layout: newLayout, parameterName: "entity");
+        return service.AddLayoutAsync(newLayout: newLayout);
     }
 
-    public ValueTask<Layout> UpdateAsync(Layout entity)
+    public ValueTask<Layout> UpdateLayoutAsync(Layout updatedLayout)
     {
-        ValidateLayout(layout: entity, parameterName: "entity");
-        return service.UpdateAsync(layout: entity);
+        ValidateLayout(layout: updatedLayout, parameterName: "entity");
+        return service.UpdateLayoutAsync(updatedLayout: updatedLayout);
     }
 
-    public ValueTask DeleteAsync(int id)
+    public ValueTask DeleteAsync(int layoutId)
     {
-        ValidateId(id: id, parameterName: "id");
-        return service.DeleteAsync(id: id);
+        ValidateId(layoutId: layoutId, parameterName: "id");
+        return service.DeleteAsync(layoutId: layoutId);
     }
 
-    public async ValueTask<IEnumerable<Result<Layout>>> AddOrUpdate(IEnumerable<Layout> items)
+    public async ValueTask<IEnumerable<Result<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout)
     {
-        ValidateLayouts(layouts: items, parameterName: "items");
+        ValidateLayouts(layouts: newLayout, parameterName: "items");
         List<Result<Layout>> results = new List<Result<Layout>>();
 
-        foreach (Layout item in items)
+        foreach (Layout item in newLayout)
         {
             try
             {
-                Layout savedItem = item.Id < 1 ? await AddAsync(entity: item) : await UpdateAsync(entity: item);
+                Layout savedItem = item.Id < 1 ? await AddLayoutAsync(newLayout: item) : await UpdateLayoutAsync(updatedLayout: item);
 
                 results.Add(item: new Result<Layout>
                 {
@@ -70,18 +70,18 @@ internal class LayoutProcessingService(ILayoutService service) : ILayoutProcessi
         return results;
     }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Layout> items)
+    public async ValueTask DeleteAllLayoutAsync(IEnumerable<Layout> deletedLayout)
     {
-        ValidateLayouts(layouts: items, parameterName: "items");
+        ValidateLayouts(layouts: deletedLayout, parameterName: "items");
 
-        foreach (Layout item in items)
+        foreach (Layout item in deletedLayout)
         {
-            await DeleteAsync(id: item.Id);
+            await DeleteAsync(layoutId: item.Id);
         }
     }
 
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int layoutId, string parameterName) =>
+        ThrowIf(condition: layoutId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateLayout(Layout layout, string parameterName) =>
         ThrowIf(condition: layout == null, message: parameterName + " is required.");

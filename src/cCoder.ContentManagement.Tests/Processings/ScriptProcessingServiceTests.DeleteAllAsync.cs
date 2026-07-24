@@ -26,7 +26,7 @@ public partial class ScriptProcessingServiceTests
         scriptServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await scriptProcessingService.DeleteAllAsync(new[] { entity });
+        await scriptProcessingService.DeleteAllScriptAsync(new[] { entity });
 
         // Then
         scriptServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);

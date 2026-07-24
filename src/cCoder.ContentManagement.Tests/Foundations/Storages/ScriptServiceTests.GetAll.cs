@@ -31,7 +31,7 @@ public partial class ScriptServiceTests
         scriptBrokerMock.Setup(x => x.GetAllScripts(false)).Returns(scripts);
 
         // When
-        IQueryable<Script> result = scriptService.GetAll();
+        IQueryable<Script> result = scriptService.GetAllScript();
 
         // Then
         result.Should().BeEquivalentTo(expectedItems);

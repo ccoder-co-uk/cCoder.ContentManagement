@@ -49,7 +49,7 @@ public partial class AppServiceTests
             .Callback<CmsDataModels.App>(candidate => submitted = candidate)
             .ReturnsAsync((CmsDataModels.App value) => value);
         // When
-        App result = await appService.AddAsync(app);
+        App result = await appService.AddAppAsync(app);
 
         // Then
         result.Should().BeSameAs(app);
@@ -99,7 +99,7 @@ public partial class AppServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await appService.AddAsync(app);
+        Func<Task> action = async () => await appService.AddAppAsync(app);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

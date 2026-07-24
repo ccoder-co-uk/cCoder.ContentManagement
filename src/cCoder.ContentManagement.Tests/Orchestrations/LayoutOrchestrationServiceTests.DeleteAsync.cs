@@ -23,7 +23,7 @@ public partial class LayoutOrchestrationServiceTests
         // Given
         int id = 1;
         Layout entity = CreateRandomLayout();
-        layoutProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        layoutProcessingServiceMock.Setup(x => x.GetLayout(id)).Returns(entity);
         layoutProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         layoutEventProcessingServiceMock
@@ -34,7 +34,7 @@ public partial class LayoutOrchestrationServiceTests
         await orchestrationService.DeleteAsync(id);
 
         // Then
-        layoutProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        layoutProcessingServiceMock.Verify(x => x.GetLayout(id), Times.Once);
         layoutProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
         layoutEventProcessingServiceMock.Verify(x => x.RaiseLayoutDeleteEventAsync(entity), Times.Once);
     }

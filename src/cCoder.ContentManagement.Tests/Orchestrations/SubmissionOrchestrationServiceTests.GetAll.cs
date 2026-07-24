@@ -23,14 +23,14 @@ public partial class SubmissionOrchestrationServiceTests
     {
         // Given
         IQueryable<Submission> entities = new[] { CreateRandomSubmission() }.AsQueryable();
-        submissionProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+        submissionProcessingServiceMock.Setup(x => x.GetAllSubmission(true)).Returns(entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+        var result = orchestrationService.GetAllSubmission(true).ToArray();
 
         // Then
         result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        submissionProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        submissionProcessingServiceMock.Verify(x => x.GetAllSubmission(true), Times.Once);
         submissionProcessingServiceMock.VerifyNoOtherCalls();
         submissionEventProcessingServiceMock.VerifyNoOtherCalls();
     }

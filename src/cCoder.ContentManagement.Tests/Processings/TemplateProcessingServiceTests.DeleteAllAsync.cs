@@ -26,7 +26,7 @@ public partial class TemplateProcessingServiceTests
         templateServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await templateProcessingService.DeleteAllAsync(new[] { entity });
+        await templateProcessingService.DeleteAllTemplateAsync(new[] { entity });
 
         // Then
         templateServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);

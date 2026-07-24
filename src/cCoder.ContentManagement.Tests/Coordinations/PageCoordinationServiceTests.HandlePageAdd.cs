@@ -42,7 +42,7 @@ public partial class PageCoordinationServiceTests
 
         pageInfoOrchestrationServiceMock
             .Setup(service =>
-                service.AddOrUpdate(
+                service.AddOrUpdatePageInfoResult(
                     It.Is<IEnumerable<LocalPageInfo>>(items =>
                         items.Select(i => i.Id).SequenceEqual(localPageInfos.Select(i => i.Id))
                     )
@@ -51,7 +51,7 @@ public partial class PageCoordinationServiceTests
             .ReturnsAsync([]);
 
         contentOrchestrationServiceMock
-            .Setup(service => service.AddOrUpdate(
+            .Setup(service => service.AddOrUpdateContentResult(
                 It.Is<IEnumerable<LocalContent>>(items =>
                     items.Select(item => item.PageId).SequenceEqual(localContents.Select(item => item.PageId))
                 )
@@ -59,7 +59,7 @@ public partial class PageCoordinationServiceTests
             .ReturnsAsync([]);
 
         pageRoleOrchestrationServiceMock
-            .Setup(service => service.AddOrUpdate(
+            .Setup(service => service.AddOrUpdatePageRoleResult(
                 It.Is<IEnumerable<LocalPageRole>>(items =>
                     items.Select(item => item.RoleId).SequenceEqual(localPageRoles.Select(item => item.RoleId))
                 )
@@ -72,7 +72,7 @@ public partial class PageCoordinationServiceTests
         // Then
         pageInfoOrchestrationServiceMock.Verify(
             service =>
-                service.AddOrUpdate(
+                service.AddOrUpdatePageInfoResult(
                     It.Is<IEnumerable<LocalPageInfo>>(items =>
                         items.Select(i => i.Id).SequenceEqual(localPageInfos.Select(i => i.Id))
                     )
@@ -81,7 +81,7 @@ public partial class PageCoordinationServiceTests
         );
 
         contentOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdate(
+            service => service.AddOrUpdateContentResult(
                 It.Is<IEnumerable<LocalContent>>(items =>
                     items.Select(item => item.PageId).SequenceEqual(localContents.Select(item => item.PageId))
                 )
@@ -90,7 +90,7 @@ public partial class PageCoordinationServiceTests
         );
 
         pageRoleOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdate(
+            service => service.AddOrUpdatePageRoleResult(
                 It.Is<IEnumerable<LocalPageRole>>(items =>
                     items.Select(item => item.RoleId).SequenceEqual(localPageRoles.Select(item => item.RoleId))
                 )

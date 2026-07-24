@@ -27,10 +27,10 @@ public partial class ResourceProcessingServiceTests
         secondVersion.Key = rootResource.Key;
         secondVersion.Name = rootResource.Name;
 
-        resourceServiceMock.Setup(x => x.Get(rootResource.Id)).Returns(rootResource);
+        resourceServiceMock.Setup(x => x.GetResource(rootResource.Id)).Returns(rootResource);
 
         resourceServiceMock
-            .Setup(x => x.GetAll())
+            .Setup(x => x.GetAllResource())
             .Returns(new[] { rootResource, secondVersion }.AsQueryable());
 
         resourceServiceMock
@@ -42,11 +42,11 @@ public partial class ResourceProcessingServiceTests
             .Returns(ValueTask.CompletedTask);
 
         // When
-        await resourceProcessingService.DeleteAllAsync(new[] { rootResource, secondVersion });
+        await resourceProcessingService.DeleteAllResourceAsync(new[] { rootResource, secondVersion });
 
         // Then
-        resourceServiceMock.Verify(x => x.Get(rootResource.Id), Times.Once);
-        resourceServiceMock.Verify(x => x.GetAll(), Times.Exactly(2));
+        resourceServiceMock.Verify(x => x.GetResource(rootResource.Id), Times.Once);
+        resourceServiceMock.Verify(x => x.GetAllResource(), Times.Exactly(2));
         resourceServiceMock.Verify(x => x.DeleteAsync(rootResource.Id), Times.Once);
         resourceServiceMock.Verify(x => x.DeleteAsync(secondVersion.Id), Times.Once);
         resourceServiceMock.VerifyNoOtherCalls();

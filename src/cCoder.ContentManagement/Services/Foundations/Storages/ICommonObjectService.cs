@@ -8,13 +8,13 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface ICommonObjectService
 {
-    CommonObject Get(int id, bool ignoreFilters = false);
+    CommonObject GetCommonObject(int commonObjectId, bool ignoreFilters = false);
 
-    IQueryable<CommonObject> GetAll(bool ignoreFilters = false);
+    IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false);
 
-    ValueTask<CommonObject> AddAsync(CommonObject commonObject);
+    ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject);
 
-    ValueTask<CommonObject> UpdateAsync(CommonObject commonObject);
+    ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int commonObjectId);
 }

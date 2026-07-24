@@ -39,12 +39,12 @@ public class AppRenderableCoordinationServiceTests
 
         layoutOrchestrationServiceMock
             .InSequence(sequence)
-            .Setup(service => service.AddOrUpdate(
+            .Setup(service => service.AddOrUpdateLayoutResult(
                 It.Is<IEnumerable<Layout>>(items => items.Single() == layout && layout.AppId == app.Id)))
             .ReturnsAsync([]);
         pageOrchestrationServiceMock
             .InSequence(sequence)
-            .Setup(service => service.AddOrUpdate(
+            .Setup(service => service.AddOrUpdatePageResult(
                 It.Is<IEnumerable<Page>>(items => items.Single() == page && page.AppId == app.Id)))
             .ReturnsAsync([]);
 
@@ -53,10 +53,10 @@ public class AppRenderableCoordinationServiceTests
 
         // Then
         layoutOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdate(It.Is<IEnumerable<Layout>>(items => items.Single() == layout)),
+            service => service.AddOrUpdateLayoutResult(It.Is<IEnumerable<Layout>>(items => items.Single() == layout)),
             Times.Once);
         pageOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdate(It.Is<IEnumerable<Page>>(items => items.Single() == page)),
+            service => service.AddOrUpdatePageResult(It.Is<IEnumerable<Page>>(items => items.Single() == page)),
             Times.Once);
         pageOrchestrationServiceMock.VerifyNoOtherCalls();
         componentOrchestrationServiceMock.VerifyNoOtherCalls();
@@ -80,20 +80,20 @@ public class AppRenderableCoordinationServiceTests
 
         layoutOrchestrationServiceMock
             .InSequence(sequence)
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllLayout(true))
             .Returns(new[] { layout }.AsQueryable());
         layoutOrchestrationServiceMock
             .InSequence(sequence)
-            .Setup(service => service.AddOrUpdate(
+            .Setup(service => service.AddOrUpdateLayoutResult(
                 It.Is<IEnumerable<Layout>>(items => items.Single() == layout && layout.AppId == app.Id)))
             .ReturnsAsync([]);
         pageOrchestrationServiceMock
             .InSequence(sequence)
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllPage(true))
             .Returns(new[] { page }.AsQueryable());
         pageOrchestrationServiceMock
             .InSequence(sequence)
-            .Setup(service => service.AddOrUpdate(
+            .Setup(service => service.AddOrUpdatePageResult(
                 It.Is<IEnumerable<Page>>(items => items.Single() == page && page.AppId == app.Id)))
             .ReturnsAsync([]);
 
@@ -101,13 +101,13 @@ public class AppRenderableCoordinationServiceTests
         await coordinationService.HandleAppUpdateAsync(app);
 
         // Then
-        layoutOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        layoutOrchestrationServiceMock.Verify(service => service.GetAllLayout(true), Times.Once);
         layoutOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdate(It.Is<IEnumerable<Layout>>(items => items.Single() == layout)),
+            service => service.AddOrUpdateLayoutResult(It.Is<IEnumerable<Layout>>(items => items.Single() == layout)),
             Times.Once);
-        pageOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        pageOrchestrationServiceMock.Verify(service => service.GetAllPage(true), Times.Once);
         pageOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdate(It.Is<IEnumerable<Page>>(items => items.Single() == page)),
+            service => service.AddOrUpdatePageResult(It.Is<IEnumerable<Page>>(items => items.Single() == page)),
             Times.Once);
         pageOrchestrationServiceMock.VerifyNoOtherCalls();
         componentOrchestrationServiceMock.VerifyNoOtherCalls();
@@ -188,71 +188,71 @@ public class AppRenderableCoordinationServiceTests
         Layout existingLayout = new() { Id = 4, AppId = app.Id };
 
         pageOrchestrationServiceMock
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllPage(true))
             .Returns(new[] { existingPage }.AsQueryable());
         componentOrchestrationServiceMock
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllComponent(true))
             .Returns(new[] { existingComponent }.AsQueryable());
         templateOrchestrationServiceMock
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllTemplate(true))
             .Returns(new[] { existingTemplate }.AsQueryable());
         layoutOrchestrationServiceMock
-            .Setup(service => service.GetAll(true))
+            .Setup(service => service.GetAllLayout(true))
             .Returns(new[] { existingLayout }.AsQueryable());
         pageOrchestrationServiceMock
-            .Setup(service => service.DeleteAllAsync(
+            .Setup(service => service.DeleteAllPageAsync(
                 It.Is<IEnumerable<Page>>(items => items.Single() == existingPage)))
             .Returns(ValueTask.CompletedTask);
         componentOrchestrationServiceMock
-            .Setup(service => service.DeleteAllAsync(
+            .Setup(service => service.DeleteAllComponentAsync(
                 It.Is<IEnumerable<Component>>(items => items.Single() == existingComponent)))
             .Returns(ValueTask.CompletedTask);
         templateOrchestrationServiceMock
-            .Setup(service => service.DeleteAllAsync(
+            .Setup(service => service.DeleteAllTemplateAsync(
                 It.Is<IEnumerable<Template>>(items => items.Single() == existingTemplate)))
             .Returns(ValueTask.CompletedTask);
         layoutOrchestrationServiceMock
-            .Setup(service => service.DeleteAllAsync(
+            .Setup(service => service.DeleteAllLayoutAsync(
                 It.Is<IEnumerable<Layout>>(items => items.Single() == existingLayout)))
             .Returns(ValueTask.CompletedTask);
         pageOrchestrationServiceMock
-            .Setup(service => service.AddOrUpdate(It.Is<IEnumerable<Page>>(items => !items.Any())))
+            .Setup(service => service.AddOrUpdatePageResult(It.Is<IEnumerable<Page>>(items => !items.Any())))
             .ReturnsAsync([]);
         templateOrchestrationServiceMock
-            .Setup(service => service.AddOrUpdate(It.Is<IEnumerable<Template>>(items => !items.Any())))
+            .Setup(service => service.AddOrUpdateTemplateResult(It.Is<IEnumerable<Template>>(items => !items.Any())))
             .ReturnsAsync([]);
         layoutOrchestrationServiceMock
-            .Setup(service => service.AddOrUpdate(It.Is<IEnumerable<Layout>>(items => !items.Any())))
+            .Setup(service => service.AddOrUpdateLayoutResult(It.Is<IEnumerable<Layout>>(items => !items.Any())))
             .ReturnsAsync([]);
 
         // When
         await coordinationService.HandleAppUpdateAsync(app);
 
         // Then
-        pageOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
-        componentOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Exactly(2));
-        templateOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
-        layoutOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        pageOrchestrationServiceMock.Verify(service => service.GetAllPage(true), Times.Once);
+        componentOrchestrationServiceMock.Verify(service => service.GetAllComponent(true), Times.Exactly(2));
+        templateOrchestrationServiceMock.Verify(service => service.GetAllTemplate(true), Times.Once);
+        layoutOrchestrationServiceMock.Verify(service => service.GetAllLayout(true), Times.Once);
         pageOrchestrationServiceMock.Verify(
-            service => service.DeleteAllAsync(It.Is<IEnumerable<Page>>(items => items.Single() == existingPage)),
+            service => service.DeleteAllPageAsync(It.Is<IEnumerable<Page>>(items => items.Single() == existingPage)),
             Times.Once);
         componentOrchestrationServiceMock.Verify(
-            service => service.DeleteAllAsync(It.Is<IEnumerable<Component>>(items => items.Single() == existingComponent)),
+            service => service.DeleteAllComponentAsync(It.Is<IEnumerable<Component>>(items => items.Single() == existingComponent)),
             Times.Once);
         templateOrchestrationServiceMock.Verify(
-            service => service.DeleteAllAsync(It.Is<IEnumerable<Template>>(items => items.Single() == existingTemplate)),
+            service => service.DeleteAllTemplateAsync(It.Is<IEnumerable<Template>>(items => items.Single() == existingTemplate)),
             Times.Once);
         layoutOrchestrationServiceMock.Verify(
-            service => service.DeleteAllAsync(It.Is<IEnumerable<Layout>>(items => items.Single() == existingLayout)),
+            service => service.DeleteAllLayoutAsync(It.Is<IEnumerable<Layout>>(items => items.Single() == existingLayout)),
             Times.Once);
         pageOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdate(It.Is<IEnumerable<Page>>(items => !items.Any())),
+            service => service.AddOrUpdatePageResult(It.Is<IEnumerable<Page>>(items => !items.Any())),
             Times.Once);
         templateOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdate(It.Is<IEnumerable<Template>>(items => !items.Any())),
+            service => service.AddOrUpdateTemplateResult(It.Is<IEnumerable<Template>>(items => !items.Any())),
             Times.Once);
         layoutOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdate(It.Is<IEnumerable<Layout>>(items => !items.Any())),
+            service => service.AddOrUpdateLayoutResult(It.Is<IEnumerable<Layout>>(items => !items.Any())),
             Times.Once);
         pageOrchestrationServiceMock.VerifyNoOtherCalls();
         componentOrchestrationServiceMock.VerifyNoOtherCalls();

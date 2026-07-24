@@ -24,14 +24,14 @@ public partial class CultureOrchestrationServiceTests
         // Given
         string id = "en-GB";
         Culture entity = CreateRandomCulture();
-        cultureProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        cultureProcessingServiceMock.Setup(x => x.GetCulture(id)).Returns(entity);
 
         // When
-        Culture result = orchestrationService.Get(id);
+        Culture result = orchestrationService.GetCulture(id);
 
         // Then
         result.Should().BeEquivalentTo(entity);
-        cultureProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        cultureProcessingServiceMock.Verify(x => x.GetCulture(id), Times.Once);
         cultureProcessingServiceMock.VerifyNoOtherCalls();
         cultureEventProcessingServiceMock.VerifyNoOtherCalls();
     }

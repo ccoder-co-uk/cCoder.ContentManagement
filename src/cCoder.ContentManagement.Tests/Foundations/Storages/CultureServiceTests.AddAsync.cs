@@ -42,7 +42,7 @@ public partial class CultureServiceTests
             .ReturnsAsync((CmsDataModels.Culture value) => value);
 
         // When
-        Culture result = await cultureService.AddAsync(culture);
+        Culture result = await cultureService.AddCultureAsync(culture);
 
         // Then
         result.Should().BeSameAs(culture);
@@ -89,7 +89,7 @@ public partial class CultureServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await cultureService.AddAsync(culture);
+        Func<Task> action = async () => await cultureService.AddCultureAsync(culture);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

@@ -24,14 +24,14 @@ public partial class TemplateProcessingServiceTests
         // Given
         Template entity = CreateRandomTemplate();
         var id = entity.Id;
-        templateServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        templateServiceMock.Setup(x => x.GetTemplate(id)).Returns(entity);
 
         // When
-        Template result = templateProcessingService.Get(id);
+        Template result = templateProcessingService.GetTemplate(id);
 
         // Then
         result.Should().BeSameAs(entity);
-        templateServiceMock.Verify(x => x.Get(id), Times.Once);
+        templateServiceMock.Verify(x => x.GetTemplate(id), Times.Once);
         templateServiceMock.VerifyNoOtherCalls();
     }
 

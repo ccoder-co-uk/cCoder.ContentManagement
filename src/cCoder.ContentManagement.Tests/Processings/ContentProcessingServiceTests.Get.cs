@@ -24,14 +24,14 @@ public partial class ContentProcessingServiceTests
         // Given
         Content entity = CreateRandomContent();
         var id = entity.Id;
-        contentServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        contentServiceMock.Setup(x => x.GetContent(id)).Returns(entity);
 
         // When
-        Content result = contentProcessingService.Get(id);
+        Content result = contentProcessingService.GetContent(id);
 
         // Then
         result.Should().BeSameAs(entity);
-        contentServiceMock.Verify(x => x.Get(id), Times.Once);
+        contentServiceMock.Verify(x => x.GetContent(id), Times.Once);
         contentServiceMock.VerifyNoOtherCalls();
     }
 

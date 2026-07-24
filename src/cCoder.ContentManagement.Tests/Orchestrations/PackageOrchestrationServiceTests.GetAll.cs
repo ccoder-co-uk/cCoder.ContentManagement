@@ -24,14 +24,14 @@ public partial class PackageOrchestrationServiceTests
     {
         // Given
         IQueryable<Package> entities = new[] { CreateRandomPackage() }.AsQueryable();
-        packageProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+        packageProcessingServiceMock.Setup(x => x.GetAllPackage(true)).Returns(entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+        var result = orchestrationService.GetAllPackage(true).ToArray();
 
         // Then
         result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        packageProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        packageProcessingServiceMock.Verify(x => x.GetAllPackage(true), Times.Once);
         packageProcessingServiceMock.VerifyNoOtherCalls();
         packageEventProcessingServiceMock.VerifyNoOtherCalls();
     }

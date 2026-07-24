@@ -45,7 +45,7 @@ public partial class PageInfoServiceTests
             .ReturnsAsync((DataPageInfo value) => value);
 
         // When
-        PageInfo result = await pageInfoService.AddAsync(pageInfo);
+        PageInfo result = await pageInfoService.AddPageInfoAsync(pageInfo);
 
         // Then
         result.Should().BeSameAs(pageInfo);
@@ -87,7 +87,7 @@ public partial class PageInfoServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await pageInfoService.AddAsync(pageInfo);
+        Func<Task> action = async () => await pageInfoService.AddPageInfoAsync(pageInfo);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

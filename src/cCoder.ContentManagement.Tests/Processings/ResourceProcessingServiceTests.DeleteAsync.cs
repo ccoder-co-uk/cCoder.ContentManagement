@@ -27,10 +27,10 @@ public partial class ResourceProcessingServiceTests
         secondVersion.Key = rootResource.Key;
         secondVersion.Name = rootResource.Name;
         User currentUser = TestUsers.WithPrivilege("resource_delete", rootResource.AppId);
-        resourceServiceMock.Setup(x => x.Get(rootResource.Id)).Returns(rootResource);
+        resourceServiceMock.Setup(x => x.GetResource(rootResource.Id)).Returns(rootResource);
 
         resourceServiceMock
-            .Setup(x => x.GetAll())
+            .Setup(x => x.GetAllResource())
             .Returns(new[] { rootResource, secondVersion }.AsQueryable());
 
         resourceServiceMock
@@ -54,7 +54,7 @@ public partial class ResourceProcessingServiceTests
     {
         // Given
         Resource resource = CreateRandomResource(id: 42, culture: "en-GB");
-        resourceServiceMock.Setup(x => x.Get(resource.Id)).Returns(resource);
+        resourceServiceMock.Setup(x => x.GetResource(resource.Id)).Returns(resource);
         resourceServiceMock.Setup(x => x.DeleteAsync(resource.Id)).Returns(ValueTask.CompletedTask);
 
         // When
@@ -69,13 +69,13 @@ public partial class ResourceProcessingServiceTests
     {
         // Given
         int resourceId = 42;
-        resourceServiceMock.Setup(x => x.Get(resourceId)).Returns((Resource)null!);
+        resourceServiceMock.Setup(x => x.GetResource(resourceId)).Returns((Resource)null!);
 
         // When
         await resourceProcessingService.DeleteAsync(resourceId);
 
         // Then
-        resourceServiceMock.Verify(x => x.Get(resourceId), Times.Once);
+        resourceServiceMock.Verify(x => x.GetResource(resourceId), Times.Once);
         resourceServiceMock.VerifyNoOtherCalls();
     }
 

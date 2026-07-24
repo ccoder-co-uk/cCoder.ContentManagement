@@ -22,15 +22,15 @@ public partial class ScriptOrchestrationServiceTests
     {
         // Given
         Script[] entities = [CreateRandomScript()];
-        scriptProcessingServiceMock.Setup(x => x.Get(entities[0].Id)).Returns(entities[0]);
+        scriptProcessingServiceMock.Setup(x => x.GetScript(entities[0].Id)).Returns(entities[0]);
         scriptEventProcessingServiceMock.Setup(x => x.RaiseScriptDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
         scriptProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllScriptAsync(entities);
 
         // Then
-        scriptProcessingServiceMock.Verify(x => x.Get(entities[0].Id), Times.Once);
+        scriptProcessingServiceMock.Verify(x => x.GetScript(entities[0].Id), Times.Once);
         scriptEventProcessingServiceMock.Verify(x => x.RaiseScriptDeleteEventAsync(entities[0]), Times.Once);
         scriptProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
     }

@@ -14,26 +14,26 @@ internal partial class ContentService(
     IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IContentService
 {
-    public Content Get(int id, bool ignoreFilters = false)
+    public Content GetContent(int contentId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(contentId: contentId, parameterName: "id");
 
         if (ignoreFilters)
         {
-            return GetAll(ignoreFilters: true)
-                        .FirstOrDefault(predicate: (Content i) => i.Id == id);
+            return GetAllContent(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
         }
 
-        Content content = GetAll()
-            .FirstOrDefault(predicate: (Content i) => i.Id == id);
+        Content content = GetAllContent()
+            .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
 
         if (content != null)
         {
             return content;
         }
 
-        Content content2 = GetAll(ignoreFilters: true)
-            .FirstOrDefault(predicate: (Content i) => i.Id == id);
+        Content content2 = GetAllContent(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
 
         if (content2 != null)
         {
@@ -43,47 +43,47 @@ internal partial class ContentService(
         return null;
     }
 
-    public IQueryable<Content> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<Content> GetAllContent(bool ignoreFilters = false) =>
         contentBroker.GetAllContents(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Content> AddAsync(Content content)
+    public async ValueTask<Content> AddContentAsync(Content newContent)
     {
-        ValidateContent(content: content, parameterName: "content");
-        authorizationBroker.Authorize(appId: GetAppId(pageId: content.PageId), privilege: "Content_create");
-        Content result = await contentBroker.AddContentAsync(entity: CreateStorageContent(content: content));
-        content.Id = result.Id;
-        content.PageId = result.PageId;
-        content.CultureId = result.CultureId;
-        content.Name = result.Name;
-        content.Html = result.Html;
-        return content;
+        ValidateContent(content: newContent, parameterName: "content");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: newContent.PageId), privilege: "Content_create");
+        Content result = await contentBroker.AddContentAsync(newContent: CreateStorageContent(newContent: newContent));
+        newContent.Id = result.Id;
+        newContent.PageId = result.PageId;
+        newContent.CultureId = result.CultureId;
+        newContent.Name = result.Name;
+        newContent.Html = result.Html;
+        return newContent;
     }
 
-    public async ValueTask<Content> UpdateAsync(Content content)
+    public async ValueTask<Content> UpdateContentAsync(Content updatedContent)
     {
-        ValidateContent(content: content, parameterName: "content");
-        authorizationBroker.Authorize(appId: GetAppId(pageId: content.PageId), privilege: "Content_update");
-        Content result = await contentBroker.UpdateContentAsync(entity: CreateStorageContent(content: content));
-        content.Id = result.Id;
-        content.PageId = result.PageId;
-        content.CultureId = result.CultureId;
-        content.Name = result.Name;
-        content.Html = result.Html;
-        return content;
+        ValidateContent(content: updatedContent, parameterName: "content");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: updatedContent.PageId), privilege: "Content_update");
+        Content result = await contentBroker.UpdateContentAsync(updatedContent: CreateStorageContent(newContent: updatedContent));
+        updatedContent.Id = result.Id;
+        updatedContent.PageId = result.PageId;
+        updatedContent.CultureId = result.CultureId;
+        updatedContent.Name = result.Name;
+        updatedContent.Html = result.Html;
+        return updatedContent;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int contentId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(contentId: contentId, parameterName: "id");
         Content content;
 
         try
         {
-            content = Get(id: id);
+            content = GetContent(contentId: contentId);
         }
         catch (SecurityException)
         {
-            content = Get(id: id, ignoreFilters: true);
+            content = GetContent(contentId: contentId, ignoreFilters: true);
         }
 
         if (content == null)
@@ -92,23 +92,23 @@ internal partial class ContentService(
         }
 
         authorizationBroker.Authorize(appId: GetAppId(pageId: content.PageId), privilege: "Content_delete");
-        await contentBroker.DeleteContentAsync(entity: CreateStorageContent(content: content));
+        await contentBroker.DeleteContentAsync(deletedContent: CreateStorageContent(newContent: content));
     }
 
-    private static Content CreateStorageContent(Content content)
+    private static Content CreateStorageContent(Content newContent)
     {
-        if (content == null)
+        if (newContent == null)
         {
             return null;
         }
 
         return new Content
         {
-            Id = content.Id,
-            PageId = content.PageId,
-            CultureId = content.CultureId,
-            Name = content.Name,
-            Html = content.Html
+            Id = newContent.Id,
+            PageId = newContent.PageId,
+            CultureId = newContent.CultureId,
+            Name = newContent.Name,
+            Html = newContent.Html
         };
     }
 

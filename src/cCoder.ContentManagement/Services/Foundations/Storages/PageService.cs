@@ -11,18 +11,18 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker authorizationBroker) : IPageService
 {
-    public Page Get(int id, bool ignoreFilters = false)
+    public Page GetPage(int pageId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(pageId: pageId, parameterName: "id");
 
         if (ignoreFilters)
         {
             return pageBroker.GetAllPages(ignoreFilters: true)
-                .FirstOrDefault(predicate: page => page.Id == id);
+                .FirstOrDefault(predicate: page => page.Id == pageId);
         }
 
         Page result = pageBroker.GetAllPages(ignoreFilters: false)
-            .FirstOrDefault(predicate: page => page.Id == id);
+            .FirstOrDefault(predicate: page => page.Id == pageId);
 
         if (result != null)
         {
@@ -30,7 +30,7 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         }
 
         result = pageBroker.GetAllPages(ignoreFilters: true)
-            .FirstOrDefault(predicate: foundPage => foundPage.Id == id);
+            .FirstOrDefault(predicate: foundPage => foundPage.Id == pageId);
 
         if (result != null)
         {
@@ -40,14 +40,14 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         return null;
     }
 
-    public IQueryable<Page> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<Page> GetAllPage(bool ignoreFilters = false) =>
         pageBroker.GetAllPages(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<Page> AddAsync(Page page)
+    public async ValueTask<Page> AddPageAsync(Page page)
     {
         ValidatePage(page: page, parameterName: "page");
         authorizationBroker.Authorize(appId: page.AppId, privilege: "Page_create");
-        Page newPage = CreateStoragePage(page: page);
+        Page newPage = CreateStoragePage(newPage: page);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
@@ -56,7 +56,7 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         newPage.CreatedBy = currentUserId;
         newPage.LastUpdated = now;
         newPage.LastUpdatedBy = currentUserId;
-        Page result = await pageBroker.AddPageAsync(entity: newPage);
+        Page result = await pageBroker.AddPageAsync(newPage: newPage);
         page.Id = result.Id;
         page.ParentId = result.ParentId;
         page.AppId = result.AppId;
@@ -73,11 +73,11 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         return page;
     }
 
-    public async ValueTask<Page> UpdateAsync(Page page)
+    public async ValueTask<Page> UpdatePageAsync(Page updatedPage)
     {
-        ValidatePage(page: page, parameterName: "page");
-        authorizationBroker.Authorize(appId: page.AppId, privilege: "Page_update");
-        Page updatePage = CreateStoragePage(page: page);
+        ValidatePage(page: updatedPage, parameterName: "page");
+        authorizationBroker.Authorize(appId: updatedPage.AppId, privilege: "Page_update");
+        Page updatePage = CreateStoragePage(newPage: updatedPage);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
@@ -85,35 +85,35 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updatePage.LastUpdated = now;
         updatePage.LastUpdatedBy = currentUserId;
-        Page result = await pageBroker.UpdatePageAsync(entity: updatePage);
-        page.Id = result.Id;
-        page.ParentId = result.ParentId;
-        page.AppId = result.AppId;
-        page.Order = result.Order;
-        page.ShowOnMenus = result.ShowOnMenus;
-        page.Name = result.Name;
-        page.LastUpdated = result.LastUpdated;
-        page.LastUpdatedBy = result.LastUpdatedBy;
-        page.CreatedOn = result.CreatedOn;
-        page.CreatedBy = result.CreatedBy;
-        page.Path = result.Path;
-        page.ResourceKey = result.ResourceKey;
-        page.Layout = result.Layout;
-        return page;
+        Page result = await pageBroker.UpdatePageAsync(updatedPage: updatePage);
+        updatedPage.Id = result.Id;
+        updatedPage.ParentId = result.ParentId;
+        updatedPage.AppId = result.AppId;
+        updatedPage.Order = result.Order;
+        updatedPage.ShowOnMenus = result.ShowOnMenus;
+        updatedPage.Name = result.Name;
+        updatedPage.LastUpdated = result.LastUpdated;
+        updatedPage.LastUpdatedBy = result.LastUpdatedBy;
+        updatedPage.CreatedOn = result.CreatedOn;
+        updatedPage.CreatedBy = result.CreatedBy;
+        updatedPage.Path = result.Path;
+        updatedPage.ResourceKey = result.ResourceKey;
+        updatedPage.Layout = result.Layout;
+        return updatedPage;
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int pageId)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(pageId: pageId, parameterName: "id");
         Page page;
 
         try
         {
-            page = Get(id: id);
+            page = GetPage(pageId: pageId);
         }
         catch (SecurityException)
         {
-            page = Get(id: id, ignoreFilters: true);
+            page = GetPage(pageId: pageId, ignoreFilters: true);
         }
 
         if (page == null)
@@ -122,31 +122,31 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         }
 
         authorizationBroker.Authorize(appId: page.AppId, privilege: "Page_delete");
-        await pageBroker.DeletePageAsync(entity: CreateStoragePage(page: page));
+        await pageBroker.DeletePageAsync(deletedPage: CreateStoragePage(newPage: page));
     }
 
-    private static Page CreateStoragePage(Page page)
+    private static Page CreateStoragePage(Page newPage)
     {
-        if (page == null)
+        if (newPage == null)
         {
             return null;
         }
 
         return new Page
         {
-            Id = page.Id,
-            ParentId = page.ParentId,
-            AppId = page.AppId,
-            Order = page.Order,
-            ShowOnMenus = page.ShowOnMenus,
-            Name = page.Name,
-            LastUpdated = page.LastUpdated,
-            LastUpdatedBy = page.LastUpdatedBy,
-            CreatedOn = page.CreatedOn,
-            CreatedBy = page.CreatedBy,
-            Path = page.Path,
-            ResourceKey = page.ResourceKey,
-            Layout = page.Layout
+            Id = newPage.Id,
+            ParentId = newPage.ParentId,
+            AppId = newPage.AppId,
+            Order = newPage.Order,
+            ShowOnMenus = newPage.ShowOnMenus,
+            Name = newPage.Name,
+            LastUpdated = newPage.LastUpdated,
+            LastUpdatedBy = newPage.LastUpdatedBy,
+            CreatedOn = newPage.CreatedOn,
+            CreatedBy = newPage.CreatedBy,
+            Path = newPage.Path,
+            ResourceKey = newPage.ResourceKey,
+            Layout = newPage.Layout
         };
     }
 }

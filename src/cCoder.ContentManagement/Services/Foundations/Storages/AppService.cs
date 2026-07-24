@@ -15,18 +15,18 @@ internal partial class AppService(
     IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IAppService
 {
-    public App Get(int id, bool ignoreFilters = false)
+    public App GetApp(int appId, bool ignoreFilters = false)
     {
-        ValidateId(id: id, parameterName: "id");
+        ValidateId(appId: appId, parameterName: "id");
 
         if (ignoreFilters)
         {
             return appBroker.GetAllApps(ignoreFilters: true)
-                .FirstOrDefault(predicate: app => app.Id == id);
+                .FirstOrDefault(predicate: app => app.Id == appId);
         }
 
         App app = appBroker.GetAllApps(ignoreFilters: false)
-            .FirstOrDefault(predicate: foundApp => foundApp.Id == id);
+            .FirstOrDefault(predicate: foundApp => foundApp.Id == appId);
 
         if (app != null)
         {
@@ -34,7 +34,7 @@ internal partial class AppService(
         }
 
         App app2 = appBroker.GetAllApps(ignoreFilters: true)
-            .FirstOrDefault(predicate: foundApp => foundApp.Id == id);
+            .FirstOrDefault(predicate: foundApp => foundApp.Id == appId);
 
         if (app2 != null)
         {
@@ -44,50 +44,50 @@ internal partial class AppService(
         return null;
     }
 
-    public IQueryable<App> GetAll(bool ignoreFilters = false) =>
+    public IQueryable<App> GetAllApp(bool ignoreFilters = false) =>
         appBroker.GetAllApps(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<App> AddAsync(App app)
+    public async ValueTask<App> AddAppAsync(App newApp)
     {
-        ValidateApp(app: app, parameterName: "app");
+        ValidateApp(app: newApp, parameterName: "app");
         authorizationBroker.Authorize(appId: null, privilege: "App_create");
-        App storedApp = CreateStorageApp(app: app);
-        App result = await appBroker.AddAppAsync(entity: storedApp);
-        app.Id = result.Id;
-        app.DefaultCultureId = result.DefaultCultureId;
-        app.TenantId = result.TenantId;
-        app.Name = result.Name;
-        app.Domain = result.Domain;
-        app.DefaultTheme = result.DefaultTheme;
-        app.ConfigJson = result.ConfigJson;
-        return app;
+        App storedApp = CreateStorageApp(newApp: newApp);
+        App result = await appBroker.AddAppAsync(newApp: storedApp);
+        newApp.Id = result.Id;
+        newApp.DefaultCultureId = result.DefaultCultureId;
+        newApp.TenantId = result.TenantId;
+        newApp.Name = result.Name;
+        newApp.Domain = result.Domain;
+        newApp.DefaultTheme = result.DefaultTheme;
+        newApp.ConfigJson = result.ConfigJson;
+        return newApp;
     }
 
-    public async ValueTask<App> UpdateAsync(App app)
+    public async ValueTask<App> UpdateAppAsync(App updatedApp)
     {
-        ValidateApp(app: app, parameterName: "app");
-        authorizationBroker.Authorize(appId: app.Id, privilege: "App_update");
-        App storedApp = CreateStorageApp(app: app);
-        App result = await appBroker.UpdateAppAsync(entity: storedApp);
-        app.Id = result.Id;
-        app.DefaultCultureId = result.DefaultCultureId;
-        app.TenantId = result.TenantId;
-        app.Name = result.Name;
-        app.Domain = result.Domain;
-        app.DefaultTheme = result.DefaultTheme;
-        app.ConfigJson = result.ConfigJson;
-        return app;
+        ValidateApp(app: updatedApp, parameterName: "app");
+        authorizationBroker.Authorize(appId: updatedApp.Id, privilege: "App_update");
+        App storedApp = CreateStorageApp(newApp: updatedApp);
+        App result = await appBroker.UpdateAppAsync(updatedApp: storedApp);
+        updatedApp.Id = result.Id;
+        updatedApp.DefaultCultureId = result.DefaultCultureId;
+        updatedApp.TenantId = result.TenantId;
+        updatedApp.Name = result.Name;
+        updatedApp.Domain = result.Domain;
+        updatedApp.DefaultTheme = result.DefaultTheme;
+        updatedApp.ConfigJson = result.ConfigJson;
+        return updatedApp;
     }
 
-    public async ValueTask UpdatePageOrderAsync(int id, IEnumerable<Page> pages)
+    public async ValueTask UpdatePageOrderAsync(int appId, IEnumerable<Page> updatedPage)
     {
-        ValidateId(id: id, parameterName: "id");
-        ValidatePages(pages: pages, parameterName: "pages");
-        authorizationBroker.Authorize(appId: id, privilege: "App_update");
-        Dictionary<int, Page> incomingPagesById = pages.ToDictionary(keySelector: page => page.Id);
+        ValidateId(appId: appId, parameterName: "id");
+        ValidatePages(pages: updatedPage, parameterName: "pages");
+        authorizationBroker.Authorize(appId: appId, privilege: "App_update");
+        Dictionary<int, Page> incomingPagesById = updatedPage.ToDictionary(keySelector: page => page.Id);
 
         List<Page> existingPages = pageBroker.GetAllPages(ignoreFilters: true)
-            .Where(predicate: page => page.AppId == id)
+            .Where(predicate: page => page.AppId == appId)
             .ToList();
 
         foreach (Page existingPage in existingPages)
@@ -96,15 +96,15 @@ internal partial class AppService(
             {
                 existingPage.Order = incomingPage.Order;
                 existingPage.ParentId = incomingPage.ParentId;
-                await pageBroker.UpdatePageAsync(entity: existingPage);
+                await pageBroker.UpdatePageAsync(updatedPage: existingPage);
             }
         }
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask DeleteAsync(int appId)
     {
-        ValidateId(id: id, parameterName: "id");
-        App app = GetAppForDelete(id: id);
+        ValidateId(appId: appId, parameterName: "id");
+        App app = GetAppForDelete(appId: appId);
 
         if (app == null)
         {
@@ -116,31 +116,31 @@ internal partial class AppService(
             authorizationBroker.Authorize(appId: app.Id, privilege: "App_delete");
         }
 
-        await appBroker.DeleteAppAggregateAsync(entity: app);
+        await appBroker.DeleteAppAggregateAsync(deletedApp: app);
     }
 
-    private App GetAppForDelete(int id) =>
+    private App GetAppForDelete(int appId) =>
         appBroker.GetAllApps(ignoreFilters: true)
         .Include(navigationPropertyPath: app => app.Roles)
         .ThenInclude(navigationPropertyPath: role => role.Users)
-        .FirstOrDefault(predicate: app => app.Id == id);
+        .FirstOrDefault(predicate: app => app.Id == appId);
 
-    private static App CreateStorageApp(App app)
+    private static App CreateStorageApp(App newApp)
     {
-        if (app == null)
+        if (newApp == null)
         {
             return null;
         }
 
         return new App
         {
-            Id = app.Id,
-            DefaultCultureId = app.DefaultCultureId,
-            TenantId = app.TenantId,
-            Name = app.Name,
-            Domain = app.Domain,
-            DefaultTheme = app.DefaultTheme,
-            ConfigJson = app.ConfigJson,
+            Id = newApp.Id,
+            DefaultCultureId = newApp.DefaultCultureId,
+            TenantId = newApp.TenantId,
+            Name = newApp.Name,
+            Domain = newApp.Domain,
+            DefaultTheme = newApp.DefaultTheme,
+            ConfigJson = newApp.ConfigJson,
         };
     }
 

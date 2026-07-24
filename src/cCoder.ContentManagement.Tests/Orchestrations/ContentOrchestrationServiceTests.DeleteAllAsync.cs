@@ -22,15 +22,15 @@ public partial class ContentOrchestrationServiceTests
     {
         // Given
         Content[] entities = [CreateRandomContent()];
-        contentProcessingServiceMock.Setup(x => x.Get(entities[0].Id)).Returns(entities[0]);
+        contentProcessingServiceMock.Setup(x => x.GetContent(entities[0].Id)).Returns(entities[0]);
         contentEventProcessingServiceMock.Setup(x => x.RaiseContentDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
         contentProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllContentAsync(entities);
 
         // Then
-        contentProcessingServiceMock.Verify(x => x.Get(entities[0].Id), Times.Once);
+        contentProcessingServiceMock.Verify(x => x.GetContent(entities[0].Id), Times.Once);
         contentEventProcessingServiceMock.Verify(x => x.RaiseContentDeleteEventAsync(entities[0]), Times.Once);
         contentProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
     }

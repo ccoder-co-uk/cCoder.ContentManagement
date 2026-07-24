@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class TemplateService
 {
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int templateId, string parameterName) =>
+        ThrowIf(condition: templateId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateTemplate(Template template, string parameterName)
     {

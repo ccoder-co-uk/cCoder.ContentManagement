@@ -50,7 +50,7 @@ public class ComponentRenderCoordinationServiceTests
     public void ShouldDefaultCultureFromCurrentUser()
     {
         orchestrationServiceMock
-            .Setup(x => x.Render(1, "Hero", It.Is<User>(user => user.Id == "test-user"), "en-GB", "Default"))
+            .Setup(x => x.RenderUser(1, "Hero", It.Is<User>(user => user.Id == "test-user"), "en-GB", "Default"))
             .Returns("<section>hero</section>");
 
         string result = coordinationService.Render(1, "Hero", null, "Default");

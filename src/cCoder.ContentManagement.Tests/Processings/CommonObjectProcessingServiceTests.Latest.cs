@@ -67,7 +67,7 @@ public partial class CommonObjectProcessingServiceTests
         );
 
         CommonObject[] results = commonObjectProcessingService
-            .Latest("Core/Resource")
+            .LatestCommonObject("Core/Resource")
             .ToArray();
 
         // Then

@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class ResourceService
 {
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(condition: id < 1, message: parameterName + " must be greater than 0.");
+    private static void ValidateId(int resourceId, string parameterName) =>
+        ThrowIf(condition: resourceId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateResource(Resource resource, string parameterName)
     {

@@ -70,15 +70,15 @@ public partial class PageRoleProcessingServiceTests
         LocalPageRole link = new() { PageId = page.Id, RoleId = roleToAdd.Id };
         currentUser = user;
         roleBrokerMock.Setup(x => x.GetAllRoles(true)).Returns(new[] { roleToAdd }.AsQueryable());
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { page }.AsQueryable());
-        pageRoleServiceMock.Setup(x => x.AddAsync(link)).ReturnsAsync(link);
+        pageServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { page }.AsQueryable());
+        pageRoleServiceMock.Setup(x => x.AddPageRoleAsync(link)).ReturnsAsync(link);
 
         // When
-        LocalPageRole result = await pageRoleProcessingService.AddAsync(link);
+        LocalPageRole result = await pageRoleProcessingService.AddPageRoleAsync(link);
 
         // Then
         Assert.Same(link, result);
-        pageRoleServiceMock.Verify(x => x.AddAsync(link), Times.Once);
+        pageRoleServiceMock.Verify(x => x.AddPageRoleAsync(link), Times.Once);
     }
 
     [Fact]
@@ -116,11 +116,11 @@ public partial class PageRoleProcessingServiceTests
             Roles = [],
         };
         roleBrokerMock.Setup(x => x.GetAllRoles(true)).Returns(new[] { roleToAdd }.AsQueryable());
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { page }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { page }.AsQueryable());
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await pageRoleProcessingService.AddAsync(
+            await pageRoleProcessingService.AddPageRoleAsync(
                 new LocalPageRole { PageId = page.Id, RoleId = roleToAdd.Id }
             )
         );

@@ -42,7 +42,7 @@ public partial class LayoutServiceTests
             .ReturnsAsync((CmsDataModels.Layout value) => value);
 
         // When
-        Layout result = await layoutService.UpdateAsync(layout);
+        Layout result = await layoutService.UpdateLayoutAsync(layout);
 
         // Then
         result.Should().BeSameAs(layout);
@@ -139,7 +139,7 @@ public partial class LayoutServiceTests
             .Throws(new SecurityException("Access Denied!"));
 
         // When
-        Func<Task> action = async () => await layoutService.UpdateAsync(layout);
+        Func<Task> action = async () => await layoutService.UpdateLayoutAsync(layout);
 
         // Then
         await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");

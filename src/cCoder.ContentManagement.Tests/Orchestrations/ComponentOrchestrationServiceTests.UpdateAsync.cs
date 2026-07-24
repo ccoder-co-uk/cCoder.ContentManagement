@@ -23,18 +23,18 @@ public partial class ComponentOrchestrationServiceTests
     {
         // Given
         Component entity = CreateRandomComponent();
-        componentProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        componentProcessingServiceMock.Setup(x => x.UpdateComponentAsync(entity)).ReturnsAsync(entity);
 
         componentEventProcessingServiceMock
             .Setup(x => x.RaiseComponentUpdateEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Component result = await orchestrationService.UpdateAsync(entity);
+        Component result = await orchestrationService.UpdateComponentAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        componentProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        componentProcessingServiceMock.Verify(x => x.UpdateComponentAsync(entity), Times.Once);
         componentEventProcessingServiceMock.Verify(x => x.RaiseComponentUpdateEventAsync(entity), Times.Once);
     }
 

@@ -23,17 +23,17 @@ public partial class ResourceProcessingServiceTests
         // Given
         Resource resource = CreateRandomResource(appId: 7);
         User currentUser = TestUsers.WithPrivilege("resource_create");
-        resourceServiceMock.Setup(x => x.AddAsync(resource)).ReturnsAsync(resource);
+        resourceServiceMock.Setup(x => x.AddResourceAsync(resource)).ReturnsAsync(resource);
 
         // When
-        Resource result = await resourceProcessingService.AddAsync(resource);
+        Resource result = await resourceProcessingService.AddResourceAsync(resource);
 
         // Then
         Assert.Same(resource, result);
         Assert.Equal("test-user", resource.CreatedBy);
         Assert.Equal("test-user", resource.LastUpdatedBy);
         Assert.Equal(resource.CreatedOn, resource.LastUpdated);
-        resourceServiceMock.Verify(x => x.AddAsync(resource), Times.Once);
+        resourceServiceMock.Verify(x => x.AddResourceAsync(resource), Times.Once);
     }
 
 }

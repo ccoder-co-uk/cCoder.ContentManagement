@@ -24,14 +24,14 @@ public partial class PageOrchestrationServiceTests
         // Given
         int id = 1;
         Page entity = CreateRandomPage();
-        pageProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        pageProcessingServiceMock.Setup(x => x.GetPage(id)).Returns(entity);
 
         // When
-        Page result = orchestrationService.Get(id);
+        Page result = orchestrationService.GetPage(id);
 
         // Then
         result.Should().BeEquivalentTo(entity);
-        pageProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        pageProcessingServiceMock.Verify(x => x.GetPage(id), Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }

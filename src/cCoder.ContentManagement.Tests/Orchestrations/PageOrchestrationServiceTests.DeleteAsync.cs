@@ -23,7 +23,7 @@ public partial class PageOrchestrationServiceTests
         // Given
         int id = 1;
         Page entity = CreateRandomPage();
-        pageProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+        pageProcessingServiceMock.Setup(x => x.GetPage(id)).Returns(entity);
         pageProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
 
         pageEventProcessingServiceMock
@@ -34,7 +34,7 @@ public partial class PageOrchestrationServiceTests
         await orchestrationService.DeleteAsync(id);
 
         // Then
-        pageProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+        pageProcessingServiceMock.Verify(x => x.GetPage(id), Times.Once);
         pageProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
         pageEventProcessingServiceMock.Verify(x => x.RaisePageDeleteEventAsync(entity), Times.Once);
     }

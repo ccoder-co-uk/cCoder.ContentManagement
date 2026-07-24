@@ -8,15 +8,15 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface IAppService
 {
-    App Get(int id, bool ignoreFilters = false);
+    App GetApp(int appId, bool ignoreFilters = false);
 
-    IQueryable<App> GetAll(bool ignoreFilters = false);
+    IQueryable<App> GetAllApp(bool ignoreFilters = false);
 
-    ValueTask<App> AddAsync(App app);
+    ValueTask<App> AddAppAsync(App newApp);
 
-    ValueTask<App> UpdateAsync(App app);
+    ValueTask<App> UpdateAppAsync(App updatedApp);
 
-    ValueTask UpdatePageOrderAsync(int id, IEnumerable<Page> pages);
+    ValueTask UpdatePageOrderAsync(int appId, IEnumerable<Page> updatedPage);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int appId);
 }

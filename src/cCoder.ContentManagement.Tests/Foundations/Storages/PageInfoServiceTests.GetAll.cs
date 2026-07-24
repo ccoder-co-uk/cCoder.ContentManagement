@@ -29,7 +29,7 @@ public partial class PageInfoServiceTests
         pageInfoBrokerMock.Setup(x => x.GetAllPageInfo(false)).Returns(pageInfos);
 
         // When
-        IQueryable<PageInfo> result = pageInfoService.GetAll();
+        IQueryable<PageInfo> result = pageInfoService.GetAllPageInfo();
 
         // Then
         result.Should().BeEquivalentTo([pageInfo]);

@@ -26,14 +26,14 @@ public partial class ContentProcessingServiceTests
     {
         // Given
         Content content = CreateRandomContent();
-        contentServiceMock.Setup(x => x.AddAsync(content)).ReturnsAsync(content);
+        contentServiceMock.Setup(x => x.AddContentAsync(content)).ReturnsAsync(content);
 
         // When
-        Content result = await contentProcessingService.AddAsync(content);
+        Content result = await contentProcessingService.AddContentAsync(content);
 
         // Then
         Assert.Same(content, result);
-        contentServiceMock.Verify(x => x.AddAsync(content), Times.Once);
+        contentServiceMock.Verify(x => x.AddContentAsync(content), Times.Once);
     }
 
     [Fact]
@@ -43,12 +43,12 @@ public partial class ContentProcessingServiceTests
         Content content = CreateRandomContent();
 
         contentServiceMock
-            .Setup(x => x.AddAsync(content))
+            .Setup(x => x.AddContentAsync(content))
             .ThrowsAsync(new SecurityException("Access Denied!"));
 
         // When
         await Assert.ThrowsAsync<SecurityException>(async () =>
-            await contentProcessingService.AddAsync(content)
+            await contentProcessingService.AddContentAsync(content)
         );
 
         // Then

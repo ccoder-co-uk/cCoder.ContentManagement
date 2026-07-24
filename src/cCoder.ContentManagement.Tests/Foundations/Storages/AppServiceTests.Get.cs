@@ -28,7 +28,7 @@ public partial class AppServiceTests
         appBrokerMock.Setup(x => x.GetAllApps(false)).Returns(new[] { app }.AsQueryable());
 
         // When
-        App result = appService.Get(5);
+        App result = appService.GetApp(5);
 
         // Then
         result.Should().BeEquivalentTo(app);
@@ -44,7 +44,7 @@ public partial class AppServiceTests
 
         appBrokerMock.Setup(x => x.GetAllApps(true)).Returns(new[] { app }.AsQueryable());
 
-        App result = appService.Get(7, ignoreFilters: true);
+        App result = appService.GetApp(7, ignoreFilters: true);
 
         result.Should().BeEquivalentTo(app);
         appBrokerMock.Verify(x => x.GetAllApps(true), Times.Once);
@@ -60,7 +60,7 @@ public partial class AppServiceTests
         appBrokerMock.Setup(x => x.GetAllApps(false)).Returns(Array.Empty<cCoder.Data.Models.CMS.App>().AsQueryable());
         appBrokerMock.Setup(x => x.GetAllApps(true)).Returns(new[] { app }.AsQueryable());
 
-        Action act = () => appService.Get(9);
+        Action act = () => appService.GetApp(9);
 
         act.Should().Throw<SecurityException>().WithMessage("Access Denied!");
         appBrokerMock.Verify(x => x.GetAllApps(false), Times.Once);

@@ -29,28 +29,28 @@ public class PageRoleController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 3, MaxExpansionDepth = 3)]
     [ActionName("Get")]
     public IActionResult GetAll() =>
-        Ok(value: Service.GetAll());
+        Ok(value: Service.GetAllPageRole());
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] PageRole entity)
+    public async Task<IActionResult> Post([FromBody] PageRole newPageRole)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddAsync(entity: entity));
+        return Ok(value: await Service.AddPageRoleAsync(newPageRole: newPageRole));
     }
 
     [HttpPost]
-    public async Task<IActionResult> DeleteAll([FromBody] IEnumerable<PageRole> items)
+    public async Task<IActionResult> DeleteAll([FromBody] IEnumerable<PageRole> deletedPageRole)
     {
         if (!base.ModelState.IsValid)
         {
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        await Service.DeleteAllAsync(items: items);
+        await Service.DeleteAllPageRoleAsync(deletedPageRole: deletedPageRole);
         return Ok();
     }
 }

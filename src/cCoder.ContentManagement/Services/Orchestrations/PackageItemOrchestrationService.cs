@@ -12,36 +12,36 @@ internal class PackageItemOrchestrationService(
     IPackageItemProcessingService processingService,
     IPackageItemEventProcessingService eventService) : IPackageItemOrchestrationService
 {
-    public PackageItem Get(Guid id) =>
-        processingService.Get(id: id);
+    public PackageItem GetPackageItem(Guid packageItemId) =>
+        processingService.GetPackageItem(packageItemId: packageItemId);
 
-    public IQueryable<PackageItem> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters: ignoreFilters);
+    public IQueryable<PackageItem> GetAllPackageItem(bool ignoreFilters = false) =>
+        processingService.GetAllPackageItem(ignoreFilters: ignoreFilters);
 
-    public async ValueTask<PackageItem> AddAsync(PackageItem entity)
+    public async ValueTask<PackageItem> AddPackageItemAsync(PackageItem newPackageItem)
     {
-        PackageItem result = await processingService.AddAsync(entity: entity);
+        PackageItem result = await processingService.AddPackageItemAsync(newPackageItem: newPackageItem);
         await eventService.RaisePackageItemAddEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask<PackageItem> UpdateAsync(PackageItem entity)
+    public async ValueTask<PackageItem> UpdatePackageItemAsync(PackageItem updatedPackageItem)
     {
-        PackageItem result = await processingService.UpdateAsync(entity: entity);
+        PackageItem result = await processingService.UpdatePackageItemAsync(updatedPackageItem: updatedPackageItem);
         await eventService.RaisePackageItemUpdateEventAsync(entity: result);
         return result;
     }
 
-    public async ValueTask DeleteAsync(Guid id)
+    public async ValueTask DeleteAsync(Guid packageItemId)
     {
-        PackageItem entity = processingService.Get(id: id);
+        PackageItem entity = processingService.GetPackageItem(packageItemId: packageItemId);
         await eventService.RaisePackageItemDeleteEventAsync(entity: entity);
-        await processingService.DeleteAsync(id: id);
+        await processingService.DeleteAsync(packageItemId: packageItemId);
     }
 
-    public ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdate(IEnumerable<PackageItem> items) =>
-        processingService.AddOrUpdate(items: items);
+    public ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdatePackageItemResult(IEnumerable<PackageItem> newPackageItem) =>
+        processingService.AddOrUpdatePackageItemResult(newPackageItem: newPackageItem);
 
-    public ValueTask DeleteAllAsync(IEnumerable<PackageItem> items) =>
-        processingService.DeleteAllAsync(items: items);
+    public ValueTask DeleteAllPackageItemAsync(IEnumerable<PackageItem> deletedPackageItem) =>
+        processingService.DeleteAllPackageItemAsync(deletedPackageItem: deletedPackageItem);
 }

@@ -26,21 +26,21 @@ public partial class PageOrchestrationServiceTests
         Page entity = CreateRandomPage();
         entity.Layout = "Default";
         layoutProcessingServiceMock
-            .Setup(x => x.GetAll(true))
+            .Setup(x => x.GetAllLayout(true))
             .Returns(new[] { CreateLayoutFor(entity) }.AsQueryable());
-        pageProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+        pageProcessingServiceMock.Setup(x => x.UpdatePageAsync(entity)).ReturnsAsync(entity);
 
         pageEventProcessingServiceMock
             .Setup(x => x.RaisePageUpdateEventAsync(entity))
             .Returns(ValueTask.CompletedTask);
 
         // When
-        Page result = await orchestrationService.UpdateAsync(entity);
+        Page result = await orchestrationService.UpdatePageAsync(entity);
 
         // Then
         result.Should().BeSameAs(entity);
-        layoutProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
-        pageProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+        layoutProcessingServiceMock.Verify(x => x.GetAllLayout(true), Times.Once);
+        pageProcessingServiceMock.Verify(x => x.UpdatePageAsync(entity), Times.Once);
         pageEventProcessingServiceMock.Verify(x => x.RaisePageUpdateEventAsync(entity), Times.Once);
     }
 
@@ -51,16 +51,16 @@ public partial class PageOrchestrationServiceTests
         Page entity = CreateRandomPage();
         entity.Layout = "MissingLayout";
         layoutProcessingServiceMock
-            .Setup(x => x.GetAll(true))
+            .Setup(x => x.GetAllLayout(true))
             .Returns(Array.Empty<Layout>().AsQueryable());
 
         // When
-        Func<Task> act = async () => await orchestrationService.UpdateAsync(entity);
+        Func<Task> act = async () => await orchestrationService.UpdatePageAsync(entity);
 
         // Then
         await act.Should().ThrowAsync<ValidationException>()
             .WithMessage($"Layout '{entity.Layout}' does not exist for app {entity.AppId}.");
-        layoutProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        layoutProcessingServiceMock.Verify(x => x.GetAllLayout(true), Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }

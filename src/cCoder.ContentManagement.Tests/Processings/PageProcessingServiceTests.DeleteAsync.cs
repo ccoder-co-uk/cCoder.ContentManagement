@@ -41,12 +41,12 @@ public partial class PageProcessingServiceTests
         User user = TestUsers.WithPrivilege("page_delete", 1);
         Page page = CreateRandomPage(user);
         currentUser = user;
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { page }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { page }.AsQueryable());
         pageServiceMock.Setup(x => x.DeleteAsync(page.Id)).Returns(ValueTask.CompletedTask);
 
         await pageProcessingService.DeleteAsync(page.Id);
 
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(false), Times.Once);
         pageServiceMock.Verify(x => x.DeleteAsync(page.Id), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
@@ -70,12 +70,12 @@ public partial class PageProcessingServiceTests
 
         Page page = CreateRandomPage();
         currentUser = TestUsers.WithoutPrivileges();
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { page }.AsQueryable());
+        pageServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { page }.AsQueryable());
 
         Func<Task> act = async () => await pageProcessingService.DeleteAsync(page.Id);
 
         await act.Should().ThrowAsync<SecurityException>();
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
+        pageServiceMock.Verify(x => x.GetAllPage(false), Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }
