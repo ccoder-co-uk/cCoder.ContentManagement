@@ -22,33 +22,33 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class AppController : ODataController
 {
-    protected IAppOrchestrationService Service { get; }
+    private readonly IAppOrchestrationService service;
 
-    protected IAuthorizationBroker AuthorizationBroker { get; }
+    private readonly IAuthorizationBroker authorizationBroker;
 
     public AppController(IAppOrchestrationService service, IAuthorizationBroker authorizationBroker, ILogger<AppController> log)
     {
-        Service = service;
-        AuthorizationBroker = authorizationBroker;
+        this.service = service;
+        this.authorizationBroker = authorizationBroker;
     }
 
     [HttpGet]
     [ActionName("IsAdmin")]
     public IActionResult GetIsAdmin([FromRoute] int key, string userName) =>
-        Ok(value: AuthorizationBroker.IsAdmin(appId: key, userName: userName));
+        Ok(value: authorizationBroker.IsAdmin(appId: key, userName: userName));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     [ActionName("Users")]
     public IActionResult GetUsers([FromRoute] int key) =>
-        Ok(value: Service.GetAppUsers(appId: key));
+        Ok(value: service.GetAppUsers(appId: key));
 
     [HttpPost]
     [ActionName("UpdatePageOrder")]
     public async Task<IActionResult> PostUpdatePageOrderAsync([FromRoute] int key, ODataActionParameters p)
     {
         App app = p["app"] as App;
-        await Service.UpdatePageOrderAppAsync(key: key, updatedApp: app);
+        await service.UpdatePageOrderAppAsync(key: key, updatedApp: app);
         return Ok();
     }
 
@@ -61,7 +61,7 @@ public class AppController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<App> queryOptions) =>
-        Ok(value: Service.GetAllApp());
+        Ok(value: service.GetAllApp());
 
     [HttpGet]
     [AllowAnonymous]
@@ -70,7 +70,7 @@ public class AppController : ODataController
     {
         try
         {
-            IQueryable<App> result = Service.GetAllApp()
+            IQueryable<App> result = service.GetAllApp()
                 .Where(predicate: app => app.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -90,7 +90,7 @@ public class AppController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: CreateResponseApp(newApp: await Service.AddAppAsync(newApp: newApp)));
+        return Ok(value: CreateResponseApp(newApp: await service.AddAppAsync(newApp: newApp)));
     }
 
     [HttpPut]
@@ -103,14 +103,14 @@ public class AppController : ODataController
         }
 
         updatedApp.Id = key;
-        return Ok(value: CreateResponseApp(newApp: await Service.UpdateAppAsync(updatedApp: updatedApp)));
+        return Ok(value: CreateResponseApp(newApp: await service.UpdateAppAsync(updatedApp: updatedApp)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<App> updatedApp)
     {
-        App originalEntity = Service.GetApp(appId: key);
+        App originalEntity = service.GetApp(appId: key);
 
         if (originalEntity == null)
         {
@@ -118,13 +118,13 @@ public class AppController : ODataController
         }
 
         updatedApp.Patch(original: originalEntity);
-        return Ok(value: CreateResponseApp(newApp: await Service.UpdateAppAsync(updatedApp: originalEntity)));
+        return Ok(value: CreateResponseApp(newApp: await service.UpdateAppAsync(updatedApp: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(appId: key);
+        await service.DeleteAsync(appId: key);
         return Ok();
     }
 

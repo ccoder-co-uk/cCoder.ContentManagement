@@ -14,11 +14,11 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class AppCultureController : ODataController
 {
-    protected IAppCultureOrchestrationService Service { get; }
+    private readonly IAppCultureOrchestrationService service;
 
     public AppCultureController(IAppCultureOrchestrationService service, ILogger<AppCultureController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
@@ -29,7 +29,7 @@ public class AppCultureController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 3, MaxExpansionDepth = 3)]
     [ActionName("Get")]
     public IActionResult GetAll() =>
-        Ok(value: Service.GetAllAppCulture());
+        Ok(value: service.GetAllAppCulture());
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] AppCulture newAppCulture)
@@ -39,7 +39,7 @@ public class AppCultureController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddAppCultureAsync(newAppCulture: newAppCulture));
+        return Ok(value: await service.AddAppCultureAsync(newAppCulture: newAppCulture));
     }
 
     [HttpPost]
@@ -50,7 +50,7 @@ public class AppCultureController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        await Service.DeleteAllAppCultureAsync(deletedAppCulture: deletedAppCulture);
+        await service.DeleteAllAppCultureAsync(deletedAppCulture: deletedAppCulture);
         return Ok();
     }
 }

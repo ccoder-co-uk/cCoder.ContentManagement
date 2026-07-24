@@ -47,7 +47,7 @@ public partial class PageRendererTests
         };
 
         pageRenderCoordinationServiceMock
-            .Setup(expression: x => x.RenderError(request: request))
+            .Setup(expression: x => x.RenderErrorPageRenderRequestPageRenderResponse(request: request))
             .Returns(value: expectedResponse);
 
         // When
@@ -58,7 +58,9 @@ public partial class PageRendererTests
         response.Should()
             .BeSameAs(expected: expectedResponse);
 
-        pageRenderCoordinationServiceMock.Verify(expression: x => x.RenderError(request: request), times: Times.Once);
+        pageRenderCoordinationServiceMock.Verify(
+            expression: x => x.RenderErrorPageRenderRequestPageRenderResponse(request: request),
+            times: Times.Once);
     }
 
     [Fact]

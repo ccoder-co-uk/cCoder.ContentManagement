@@ -15,7 +15,7 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class CommonObjectProcessingService(ICommonObjectService service, ICommonObjectCache cache, IAuthorizationBroker authorizationBroker, IJsonBroker jsonBroker) : ICommonObjectProcessingService
 {
-    private User User =>
+    private User GetCurrentUser() =>
         authorizationBroker.GetCurrentUser();
 
     public CommonObject GetCommonObject(int commonObjectId) =>
@@ -40,7 +40,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
         ValidateLatestCommonObject(inputs: [type]);
         ValidateType(type: type, parameterName: "type");
 
-        return cache.LatestSet
+        return cache.GetLatestSet()
             .Where(predicate: item => item.Type == type);
 
     });
@@ -130,14 +130,17 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
         updatedCommonObject.Version = ((newVersionCount > newVersionFromField) ? newVersionCount : (newVersionFromField + 1));
         updatedCommonObject.CreatedOn = DateTimeOffset.Now;
         updatedCommonObject.LastUpdated = DateTimeOffset.Now;
-        updatedCommonObject.LastUpdatedBy = User.Id;
-        updatedCommonObject.CreatedBy = User.Id;
+        updatedCommonObject.LastUpdatedBy = GetCurrentUser().Id;
+        updatedCommonObject.CreatedBy = GetCurrentUser().Id;
         updatedCommonObject = await service.AddCommonObjectAsync(newCommonObject: updatedCommonObject);
 
         if (updatedCommonObject.Type.ToLowerInvariant() == "core/component")
         {
             cache.Set(key: "component|" + updatedCommonObject.Name.ToLower(), item: jsonBroker.ParseJson<Component>(json: updatedCommonObject.Json));
-            CommonObject latestSetObject = cache.LatestSet.First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "Core/Component");
+
+            CommonObject latestSetObject = cache.GetLatestSet()
+                .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "Core/Component");
+
             latestSetObject.Version = updatedCommonObject.Version;
             latestSetObject.Key = updatedCommonObject.Key;
             latestSetObject.Type = updatedCommonObject.Type;
@@ -154,7 +157,10 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
             if (updatedCommonObject.Type.ToLowerInvariant() == "core/resource")
             {
                 cache.Set(key: $"resource|{updatedCommonObject.Key?.ToLower() ?? string.Empty}-{updatedCommonObject.Name?.ToLower() ?? string.Empty}-{updatedCommonObject.Culture?.ToLower() ?? string.Empty}", item: jsonBroker.ParseJson<Resource>(json: updatedCommonObject.Json));
-                CommonObject latestSetObject2 = cache.LatestSet.First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Key.ToLowerInvariant() == updatedCommonObject.Key.ToLowerInvariant() && r.Name == updatedCommonObject.Name.ToLowerInvariant() && r.Culture.ToLowerInvariant() == updatedCommonObject.Culture.ToLowerInvariant() && r.Type == "Core/Resource");
+
+                CommonObject latestSetObject2 = cache.GetLatestSet()
+                    .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Key.ToLowerInvariant() == updatedCommonObject.Key.ToLowerInvariant() && r.Name == updatedCommonObject.Name.ToLowerInvariant() && r.Culture.ToLowerInvariant() == updatedCommonObject.Culture.ToLowerInvariant() && r.Type == "Core/Resource");
+
                 latestSetObject2.Version = updatedCommonObject.Version;
                 latestSetObject2.Key = updatedCommonObject.Key;
                 latestSetObject2.Type = updatedCommonObject.Type;
@@ -170,7 +176,9 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
             {
                 if (updatedCommonObject.Type.ToLowerInvariant() == "core/script")
                 {
-                    CommonObject latestSetObject3 = cache.LatestSet.First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "Core/Script");
+                    CommonObject latestSetObject3 = cache.GetLatestSet()
+                        .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "Core/Script");
+
                     latestSetObject3.Version = updatedCommonObject.Version;
                     latestSetObject3.Key = updatedCommonObject.Key;
                     latestSetObject3.Type = updatedCommonObject.Type;
@@ -318,7 +326,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     {
         ValidateType(type: type, parameterName: "type");
 
-        return cache.LatestSet
+        return cache.GetLatestSet()
             .Where(predicate: item => item.Type == type);
     }
 
@@ -340,14 +348,17 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
         updatedCommonObject.Version = ((newVersionCount > newVersionFromField) ? newVersionCount : (newVersionFromField + 1));
         updatedCommonObject.CreatedOn = DateTimeOffset.Now;
         updatedCommonObject.LastUpdated = DateTimeOffset.Now;
-        updatedCommonObject.LastUpdatedBy = User.Id;
-        updatedCommonObject.CreatedBy = User.Id;
+        updatedCommonObject.LastUpdatedBy = GetCurrentUser().Id;
+        updatedCommonObject.CreatedBy = GetCurrentUser().Id;
         updatedCommonObject = await service.AddCommonObjectAsync(newCommonObject: updatedCommonObject);
 
         if (updatedCommonObject.Type.ToLowerInvariant() == "core/component")
         {
             cache.Set(key: "component|" + updatedCommonObject.Name.ToLower(), item: jsonBroker.ParseJson<Component>(json: updatedCommonObject.Json));
-            CommonObject latestSetObject = cache.LatestSet.First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "Core/Component");
+
+            CommonObject latestSetObject = cache.GetLatestSet()
+                .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "Core/Component");
+
             latestSetObject.Version = updatedCommonObject.Version;
             latestSetObject.Key = updatedCommonObject.Key;
             latestSetObject.Type = updatedCommonObject.Type;
@@ -364,7 +375,10 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
             if (updatedCommonObject.Type.ToLowerInvariant() == "core/resource")
             {
                 cache.Set(key: $"resource|{updatedCommonObject.Key?.ToLower() ?? string.Empty}-{updatedCommonObject.Name?.ToLower() ?? string.Empty}-{updatedCommonObject.Culture?.ToLower() ?? string.Empty}", item: jsonBroker.ParseJson<Resource>(json: updatedCommonObject.Json));
-                CommonObject latestSetObject2 = cache.LatestSet.First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Key.ToLowerInvariant() == updatedCommonObject.Key.ToLowerInvariant() && r.Name == updatedCommonObject.Name.ToLowerInvariant() && r.Culture.ToLowerInvariant() == updatedCommonObject.Culture.ToLowerInvariant() && r.Type == "Core/Resource");
+
+                CommonObject latestSetObject2 = cache.GetLatestSet()
+                    .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Key.ToLowerInvariant() == updatedCommonObject.Key.ToLowerInvariant() && r.Name == updatedCommonObject.Name.ToLowerInvariant() && r.Culture.ToLowerInvariant() == updatedCommonObject.Culture.ToLowerInvariant() && r.Type == "Core/Resource");
+
                 latestSetObject2.Version = updatedCommonObject.Version;
                 latestSetObject2.Key = updatedCommonObject.Key;
                 latestSetObject2.Type = updatedCommonObject.Type;
@@ -380,7 +394,9 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
             {
                 if (updatedCommonObject.Type.ToLowerInvariant() == "core/script")
                 {
-                    CommonObject latestSetObject3 = cache.LatestSet.First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "Core/Script");
+                    CommonObject latestSetObject3 = cache.GetLatestSet()
+                        .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "Core/Script");
+
                     latestSetObject3.Version = updatedCommonObject.Version;
                     latestSetObject3.Key = updatedCommonObject.Key;
                     latestSetObject3.Type = updatedCommonObject.Type;

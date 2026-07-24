@@ -19,11 +19,11 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class LayoutController : ODataController
 {
-    protected ILayoutOrchestrationService Service { get; }
+    private readonly ILayoutOrchestrationService service;
 
     public LayoutController(ILayoutOrchestrationService service, ILogger<LayoutController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
@@ -35,7 +35,7 @@ public class LayoutController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Layout> queryOptions) =>
-        Ok(value: Service.GetAllLayout());
+        Ok(value: service.GetAllLayout());
 
     [HttpGet]
     [AllowAnonymous]
@@ -44,7 +44,7 @@ public class LayoutController : ODataController
     {
         try
         {
-            IQueryable<Layout> result = Service.GetAllLayout()
+            IQueryable<Layout> result = service.GetAllLayout()
                 .Where(predicate: layout => layout.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -64,7 +64,7 @@ public class LayoutController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddLayoutAsync(newLayout: newLayout));
+        return Ok(value: await service.AddLayoutAsync(newLayout: newLayout));
     }
 
     [HttpPut]
@@ -76,14 +76,14 @@ public class LayoutController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdateLayoutAsync(updatedLayout: updatedLayout));
+        return Ok(value: await service.UpdateLayoutAsync(updatedLayout: updatedLayout));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Layout> updatedLayout)
     {
-        Layout originalEntity = Service.GetLayout(layoutId: key);
+        Layout originalEntity = service.GetLayout(layoutId: key);
 
         if (originalEntity == null)
         {
@@ -91,13 +91,13 @@ public class LayoutController : ODataController
         }
 
         updatedLayout.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateLayoutAsync(updatedLayout: originalEntity));
+        return Ok(value: await service.UpdateLayoutAsync(updatedLayout: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(layoutId: key);
+        await service.DeleteAsync(layoutId: key);
         return Ok();
     }
 }

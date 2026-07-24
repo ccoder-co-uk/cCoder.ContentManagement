@@ -29,10 +29,10 @@ internal sealed partial class PageRenderCoordinationService(
     IPageRoleOrchestrationService pageRoleOrchestrationService,
     IPageRenderOrchestrationService pageRenderOrchestrationService) : IPageRenderCoordinationService
 {
-    private User User =>
+    private User GetCurrentUser() =>
         authorizationBroker.GetCurrentUser();
 
-    public PageRenderResponse Render(PageRenderRequest request) =>
+    public PageRenderResponse RenderPageRenderRequestPageRenderResponse(PageRenderRequest request) =>
         TryCatch<PageRenderResponse>(operation: () =>
     {
         ValidateRender(inputs: [request]);
@@ -60,7 +60,7 @@ internal sealed partial class PageRenderCoordinationService(
 
     });
 
-    public PageRenderResponse RenderError(PageRenderRequest request) =>
+    public PageRenderResponse RenderErrorPageRenderRequestPageRenderResponse(PageRenderRequest request) =>
         TryCatch<PageRenderResponse>(operation: () =>
     {
         ValidateRenderError(inputs: [request]);
@@ -93,7 +93,7 @@ internal sealed partial class PageRenderCoordinationService(
         ValidateTheme(theme: theme, parameterName: "theme");
 
         path ??= string.Empty;
-        culture ??= User.DefaultCultureId;
+        culture ??= GetCurrentUser().DefaultCultureId;
 
         App app = ResolveAppById(appId: appId);
 
@@ -118,7 +118,7 @@ internal sealed partial class PageRenderCoordinationService(
         {
             RenderResult renderResult = pageRenderOrchestrationService.RenderPageUserRenderResult(
 page: CreateMissingPage(newApp: app, path: path, culture: culture),
-user: User,
+user: GetCurrentUser(),
 theme: theme,
 culture: culture);
 
@@ -126,20 +126,20 @@ culture: culture);
             return renderResult;
         }
 
-        if (!ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "page_read") && !authorizationBroker.IsAdminOfApp(appId: appId))
+        if (!ContentManagementModelLogic.UserCan(page: page, user: GetCurrentUser(), privilege: "page_read") && !authorizationBroker.IsAdminOfApp(appId: appId))
         {
             Page gatedPage = CreateGatedPage(newPage: page);
             gatedPage.App = app;
 
-            return pageRenderOrchestrationService.RenderPageUserRenderResult(page: gatedPage, user: User, theme: theme, culture: culture);
+            return pageRenderOrchestrationService.RenderPageUserRenderResult(page: gatedPage, user: GetCurrentUser(), theme: theme, culture: culture);
         }
 
         return pageRenderOrchestrationService.RenderPageUserRenderResult(
 page: page,
-user: User,
+user: GetCurrentUser(),
 theme: theme,
 culture: culture,
-edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "page_update"));
+edit: edit && ContentManagementModelLogic.UserCan(page: page, user: GetCurrentUser(), privilege: "page_update"));
 
     });
 
@@ -370,7 +370,7 @@ edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privil
         ValidateTheme(theme: theme, parameterName: "theme");
 
         path ??= string.Empty;
-        culture ??= User.DefaultCultureId;
+        culture ??= GetCurrentUser().DefaultCultureId;
 
         App app = ResolveAppById(appId: appId);
 
@@ -395,7 +395,7 @@ edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privil
         {
             RenderResult renderResult = pageRenderOrchestrationService.RenderPageUserRenderResult(
 page: CreateMissingPage(newApp: app, path: path, culture: culture),
-user: User,
+user: GetCurrentUser(),
 theme: theme,
 culture: culture);
 
@@ -403,19 +403,19 @@ culture: culture);
             return renderResult;
         }
 
-        if (!ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "page_read") && !authorizationBroker.IsAdminOfApp(appId: appId))
+        if (!ContentManagementModelLogic.UserCan(page: page, user: GetCurrentUser(), privilege: "page_read") && !authorizationBroker.IsAdminOfApp(appId: appId))
         {
             Page gatedPage = CreateGatedPage(newPage: page);
             gatedPage.App = app;
 
-            return pageRenderOrchestrationService.RenderPageUserRenderResult(page: gatedPage, user: User, theme: theme, culture: culture);
+            return pageRenderOrchestrationService.RenderPageUserRenderResult(page: gatedPage, user: GetCurrentUser(), theme: theme, culture: culture);
         }
 
         return pageRenderOrchestrationService.RenderPageUserRenderResult(
 page: page,
-user: User,
+user: GetCurrentUser(),
 theme: theme,
 culture: culture,
-edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "page_update"));
+edit: edit && ContentManagementModelLogic.UserCan(page: page, user: GetCurrentUser(), privilege: "page_update"));
     }
 }

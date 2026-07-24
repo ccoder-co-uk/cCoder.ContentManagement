@@ -9,9 +9,9 @@ namespace cCoder.ContentManagement.Services.Coordinations;
 
 public interface IPageRenderCoordinationService
 {
-    PageRenderResponse Render(PageRenderRequest request);
+    PageRenderResponse RenderPageRenderRequestPageRenderResponse(PageRenderRequest request);
 
-    PageRenderResponse RenderError(PageRenderRequest request);
+    PageRenderResponse RenderErrorPageRenderRequestPageRenderResponse(PageRenderRequest request);
 
     RenderResult RenderRenderResult(int appId, string path, string theme, string culture, bool edit = false);
 }

@@ -14,7 +14,6 @@ namespace cCoder.ContentManagement.Exposures.Caching;
 
 internal class MetadataCache : IMetadataCache
 {
-    public int ExpiryTimeInMinutes { get; set; }
     private readonly IDictionary<string, IDictionary<string, string>> metaSerialized;
     private readonly IMetadataTypeCache metadataTypeCache;
     private readonly ICommonObjectCache resourceCache;
@@ -22,7 +21,6 @@ internal class MetadataCache : IMetadataCache
 
     public MetadataCache(IMetadataTypeCache metadataTypeCache, ICommonObjectCache resourceCache)
     {
-        this.ExpiryTimeInMinutes = 60;
         metaSerialized = new Dictionary<string, IDictionary<string, string>>();
         this.metadataTypeCache = metadataTypeCache;
         this.resourceCache = resourceCache;

@@ -19,11 +19,11 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class ScriptController : ODataController
 {
-    protected IScriptOrchestrationService Service { get; }
+    private readonly IScriptOrchestrationService service;
 
     public ScriptController(IScriptOrchestrationService service, ILogger<ScriptController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
@@ -35,7 +35,7 @@ public class ScriptController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Script> queryOptions) =>
-        Ok(value: Service.GetAllScript());
+        Ok(value: service.GetAllScript());
 
     [HttpGet]
     [AllowAnonymous]
@@ -44,7 +44,7 @@ public class ScriptController : ODataController
     {
         try
         {
-            IQueryable<Script> result = Service.GetAllScript()
+            IQueryable<Script> result = service.GetAllScript()
                 .Where(predicate: script => script.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -64,7 +64,7 @@ public class ScriptController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddScriptAsync(newScript: newScript));
+        return Ok(value: await service.AddScriptAsync(newScript: newScript));
     }
 
     [HttpPut]
@@ -76,14 +76,14 @@ public class ScriptController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdateScriptAsync(updatedScript: updatedScript));
+        return Ok(value: await service.UpdateScriptAsync(updatedScript: updatedScript));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Script> updatedScript)
     {
-        Script originalEntity = Service.GetScript(scriptId: key);
+        Script originalEntity = service.GetScript(scriptId: key);
 
         if (originalEntity == null)
         {
@@ -91,13 +91,13 @@ public class ScriptController : ODataController
         }
 
         updatedScript.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateScriptAsync(updatedScript: originalEntity));
+        return Ok(value: await service.UpdateScriptAsync(updatedScript: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(scriptId: key);
+        await service.DeleteAsync(scriptId: key);
         return Ok();
     }
 }

@@ -20,11 +20,11 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class SubmissionController : ODataController
 {
-    protected ISubmissionOrchestrationService Service { get; }
+    private readonly ISubmissionOrchestrationService service;
 
     public SubmissionController(ISubmissionOrchestrationService service, ILogger<SubmissionController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
@@ -36,7 +36,7 @@ public class SubmissionController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Submission> queryOptions) =>
-        Ok(value: Service.GetAllSubmission());
+        Ok(value: service.GetAllSubmission());
 
     [HttpGet]
     [AllowAnonymous]
@@ -45,7 +45,7 @@ public class SubmissionController : ODataController
     {
         try
         {
-            IQueryable<Submission> result = Service.GetAllSubmission()
+            IQueryable<Submission> result = service.GetAllSubmission()
                 .Where(predicate: submission => submission.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -65,7 +65,7 @@ public class SubmissionController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return new JsonResult(value: CreateResponseSubmission(newSubmission: await Service.AddSubmissionAsync(newSubmission: newSubmission)));
+        return new JsonResult(value: CreateResponseSubmission(newSubmission: await service.AddSubmissionAsync(newSubmission: newSubmission)));
     }
 
     [HttpPut]
@@ -77,14 +77,14 @@ public class SubmissionController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return new JsonResult(value: CreateResponseSubmission(newSubmission: await Service.UpdateSubmissionAsync(updatedSubmission: updatedSubmission)));
+        return new JsonResult(value: CreateResponseSubmission(newSubmission: await service.UpdateSubmissionAsync(updatedSubmission: updatedSubmission)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] Guid key, Delta<Submission> updatedSubmission)
     {
-        Submission originalEntity = Service.GetSubmission(submissionId: key);
+        Submission originalEntity = service.GetSubmission(submissionId: key);
 
         if (originalEntity == null)
         {
@@ -92,13 +92,13 @@ public class SubmissionController : ODataController
         }
 
         updatedSubmission.Patch(original: originalEntity);
-        return new JsonResult(value: CreateResponseSubmission(newSubmission: await Service.UpdateSubmissionAsync(updatedSubmission: originalEntity)));
+        return new JsonResult(value: CreateResponseSubmission(newSubmission: await service.UpdateSubmissionAsync(updatedSubmission: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] Guid key)
     {
-        await Service.DeleteAsync(submissionId: key);
+        await service.DeleteAsync(submissionId: key);
         return Ok();
     }
 

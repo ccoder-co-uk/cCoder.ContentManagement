@@ -5,17 +5,17 @@
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 
-namespace cCoder.ContentManagement.Exposures;
+namespace cCoder.ContentManagement.Models;
 
 public sealed class PageRenderResponse
 {
-    public required App App { get; init; }
+    public App App { get; init; }
 
-    public required RenderResult Page { get; init; }
+    public RenderResult Page { get; init; }
 
-    public required string Theme { get; init; }
+    public string Theme { get; init; }
 
-    public required string Culture { get; init; }
+    public string Culture { get; init; }
 
-    public required bool Edit { get; init; }
+    public bool Edit { get; init; }
 }

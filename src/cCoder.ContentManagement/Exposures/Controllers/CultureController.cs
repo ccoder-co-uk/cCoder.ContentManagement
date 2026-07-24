@@ -20,11 +20,11 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class CultureController : ODataController
 {
-    protected ICultureOrchestrationService Service { get; }
+    private readonly ICultureOrchestrationService service;
 
     public CultureController(ICultureOrchestrationService service, ILogger<CultureController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
@@ -36,7 +36,7 @@ public class CultureController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Culture> queryOptions) =>
-        Ok(value: Service.GetAllCulture());
+        Ok(value: service.GetAllCulture());
 
     [HttpGet]
     [AllowAnonymous]
@@ -45,7 +45,7 @@ public class CultureController : ODataController
     {
         try
         {
-            IQueryable<Culture> result = Service.GetAllCulture()
+            IQueryable<Culture> result = service.GetAllCulture()
                 .Where(predicate: culture => culture.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -65,7 +65,7 @@ public class CultureController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: CreateResponseCulture(newCulture: await Service.AddCultureAsync(newCulture: newCulture)));
+        return Ok(value: CreateResponseCulture(newCulture: await service.AddCultureAsync(newCulture: newCulture)));
     }
 
     [HttpPut]
@@ -77,14 +77,14 @@ public class CultureController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: CreateResponseCulture(newCulture: await Service.UpdateCultureAsync(updatedCulture: updatedCulture)));
+        return Ok(value: CreateResponseCulture(newCulture: await service.UpdateCultureAsync(updatedCulture: updatedCulture)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] string key, Delta<Culture> updatedCulture)
     {
-        Culture originalEntity = Service.GetCulture(cultureId: key);
+        Culture originalEntity = service.GetCulture(cultureId: key);
 
         if (originalEntity == null)
         {
@@ -92,13 +92,13 @@ public class CultureController : ODataController
         }
 
         updatedCulture.Patch(original: originalEntity);
-        return Ok(value: CreateResponseCulture(newCulture: await Service.UpdateCultureAsync(updatedCulture: originalEntity)));
+        return Ok(value: CreateResponseCulture(newCulture: await service.UpdateCultureAsync(updatedCulture: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] string key)
     {
-        await Service.DeleteAsync(cultureId: key);
+        await service.DeleteAsync(cultureId: key);
         return Ok();
     }
 

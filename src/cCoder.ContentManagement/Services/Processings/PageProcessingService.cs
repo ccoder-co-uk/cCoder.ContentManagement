@@ -16,7 +16,7 @@ internal partial class PageProcessingService(
     IPageService service,
     IAuthorizationBroker authorizationBroker) : IPageProcessingService
 {
-    private User User =>
+    private User GetCurrentUser() =>
         authorizationBroker.GetCurrentUser();
 
     public Page GetPage(int pageId) =>
@@ -329,7 +329,7 @@ internal partial class PageProcessingService(
                     RoleId = role.RoleId
                 })
             .ToArray()
-            : ((User?.Roles ?? Array.Empty<UserRole>())
+            : ((GetCurrentUser()?.Roles ?? Array.Empty<UserRole>())
                 .Where(predicate: userRole => userRole.Role?.AppId == page.AppId)
             .Select(selector: userRole => new PageRole
             {
@@ -344,7 +344,7 @@ internal partial class PageProcessingService(
             .Where(predicate: existingPage => existingPage.Id == pageId)
             .FirstOrDefault();
 
-        return page != null && ContentManagementModelLogic.UserCan(page: page, user: User, privilege: privKey);
+        return page != null && ContentManagementModelLogic.UserCan(page: page, user: GetCurrentUser(), privilege: privKey);
     }
 
     private static string BuildPath(string pageName, string parentPath)

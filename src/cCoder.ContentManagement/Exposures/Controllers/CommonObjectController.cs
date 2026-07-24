@@ -20,13 +20,13 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class CommonObjectController(ICommonObjectOrchestrationService service) : ODataController()
 {
-    protected ICommonObjectOrchestrationService Service { get; } = service;
+    private readonly ICommonObjectOrchestrationService service = service;
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     [ActionName("Latest")]
     public IActionResult GetLatest(string type) =>
-        Ok(value: Service.LatestCommonObject(type: type));
+        Ok(value: service.LatestCommonObject(type: type));
 
     [HttpPost]
     [ActionName("Import")]
@@ -44,7 +44,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
             return BadRequest(message: "A common object payload is required.");
         }
 
-        return Ok(value: await Service.ImportCommonObjectResultAsync(items: items));
+        return Ok(value: await service.ImportCommonObjectResultAsync(items: items));
     }
 
     [HttpGet]
@@ -56,7 +56,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<CommonObject> queryOptions) =>
-        Ok(value: Service.GetAllCommonObject());
+        Ok(value: service.GetAllCommonObject());
 
     [HttpGet]
     [AllowAnonymous]
@@ -65,7 +65,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     {
         try
         {
-            IQueryable<CommonObject> result = Service.GetAllCommonObject()
+            IQueryable<CommonObject> result = service.GetAllCommonObject()
                 .Where(predicate: commonObject => commonObject.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -85,7 +85,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddCommonObjectAsync(newCommonObject: newCommonObject));
+        return Ok(value: await service.AddCommonObjectAsync(newCommonObject: newCommonObject));
     }
 
     [HttpPut]
@@ -98,14 +98,14 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
         }
 
         updatedCommonObject.Id = key;
-        return Ok(value: await Service.UpdateCommonObjectAsync(updatedCommonObject: updatedCommonObject));
+        return Ok(value: await service.UpdateCommonObjectAsync(updatedCommonObject: updatedCommonObject));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<CommonObject> updatedCommonObject)
     {
-        CommonObject originalEntity = Service.GetCommonObject(commonObjectId: key);
+        CommonObject originalEntity = service.GetCommonObject(commonObjectId: key);
 
         if (originalEntity == null)
         {
@@ -113,13 +113,13 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
         }
 
         updatedCommonObject.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateCommonObjectAsync(updatedCommonObject: originalEntity));
+        return Ok(value: await service.UpdateCommonObjectAsync(updatedCommonObject: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(commonObjectId: key);
+        await service.DeleteAsync(commonObjectId: key);
         return Ok();
     }
 

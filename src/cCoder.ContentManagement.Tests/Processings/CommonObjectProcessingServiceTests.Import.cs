@@ -59,7 +59,7 @@ type: "Core/Other"
         commonObject.Version = 9;
 
         commonObjectCacheMock
-            .SetupGet(expression: x => x.LatestSet)
+            .Setup(expression: x => x.GetLatestSet())
             .Returns(value: Array.Empty<DataCommonObject>());
 
         currentUser = actor;
@@ -89,7 +89,7 @@ type: "Core/Other"
 
         commonObjectServiceMock.Verify(expression: x => x.AddCommonObjectAsync(newCommonObject: commonObject), times: Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
-        commonObjectCacheMock.VerifyGet(expression: x => x.LatestSet, times: Times.Once);
+        commonObjectCacheMock.Verify(expression: x => x.GetLatestSet(), times: Times.Once);
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
@@ -131,7 +131,7 @@ type: "Core/Other"
         incoming.CreatedOn = DateTimeOffset.UtcNow;
         incoming.LastUpdated = DateTimeOffset.UtcNow;
 
-        commonObjectCacheMock.SetupGet(expression: x => x.LatestSet)
+        commonObjectCacheMock.Setup(expression: x => x.GetLatestSet())
             .Returns(value: new[] { new DataCommonObject
         {
             Id = dbObject.Id,
@@ -179,7 +179,7 @@ type: "Core/Other"
         commonObjectServiceMock.Verify(expression: x => x.GetAllCommonObject(), times: Times.Exactly(callCount: 2));
         commonObjectServiceMock.Verify(expression: x => x.AddCommonObjectAsync(newCommonObject: incoming), times: Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
-        commonObjectCacheMock.VerifyGet(expression: x => x.LatestSet, times: Times.Once);
+        commonObjectCacheMock.Verify(expression: x => x.GetLatestSet(), times: Times.Once);
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
@@ -213,7 +213,7 @@ type: "Core/Other"
         incoming.CreatedOn = dbObject.CreatedOn;
         incoming.LastUpdated = dbObject.LastUpdated;
 
-        commonObjectCacheMock.SetupGet(expression: x => x.LatestSet)
+        commonObjectCacheMock.Setup(expression: x => x.GetLatestSet())
             .Returns(value: new[] { new DataCommonObject
         {
             Id = dbObject.Id,
@@ -242,7 +242,7 @@ type: "Core/Other"
             .BeEmpty();
 
         commonObjectServiceMock.VerifyNoOtherCalls();
-        commonObjectCacheMock.VerifyGet(expression: x => x.LatestSet, times: Times.Once);
+        commonObjectCacheMock.Verify(expression: x => x.GetLatestSet(), times: Times.Once);
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
 

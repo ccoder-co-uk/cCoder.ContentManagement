@@ -88,7 +88,8 @@ public partial class PageRenderCoordinationServiceTests
             .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: app.DefaultTheme, culture: app.DefaultCultureId, edit: false))
             .Returns(value: renderResult);
 
-        PageRenderResponse response = coordinationService.Render(request: request);
+        PageRenderResponse response =
+            coordinationService.RenderPageRenderRequestPageRenderResponse(request: request);
 
         response.App.Id.Should()
             .Be(expected: app.Id);
@@ -191,7 +192,8 @@ public partial class PageRenderCoordinationServiceTests
             .Throws(exception: new InvalidOperationException(message: "Boom"))
             .Returns(value: CreateRenderResult(bodyHtml: "[problem[message]]|[problem[detail]]|[problem[url]]"));
 
-        PageRenderResponse response = coordinationService.Render(request: request);
+        PageRenderResponse response =
+            coordinationService.RenderPageRenderRequestPageRenderResponse(request: request);
 
         response.Page.BodyHtml.Should()
             .Contain(expected: "Boom");
@@ -205,7 +207,8 @@ public partial class PageRenderCoordinationServiceTests
     {
         PageRenderRequest request = null!;
 
-        Action act = () => coordinationService.Render(request: request);
+        Action act = () =>
+            coordinationService.RenderPageRenderRequestPageRenderResponse(request: request);
 
         act.Should()
             .Throw<ValidationException>()
@@ -221,7 +224,8 @@ public partial class PageRenderCoordinationServiceTests
             Exception = null
         };
 
-        Action act = () => coordinationService.RenderError(request: request);
+        Action act = () =>
+            coordinationService.RenderErrorPageRenderRequestPageRenderResponse(request: request);
 
         act.Should()
             .Throw<ValidationException>()

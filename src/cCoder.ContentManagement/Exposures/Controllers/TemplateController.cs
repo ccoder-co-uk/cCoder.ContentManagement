@@ -22,16 +22,16 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class TemplateController : ODataController
 {
-    protected ITemplateOrchestrationService Service { get; }
-    protected ITemplateRenderer Renderer { get; }
+    private readonly ITemplateOrchestrationService service;
+    private readonly ITemplateRenderer renderer;
 
     public TemplateController(
         ITemplateOrchestrationService service,
         ITemplateRenderer renderer,
         ILogger<TemplateController> log)
     {
-        Service = service;
-        Renderer = renderer;
+        this.service = service;
+        this.renderer = renderer;
     }
 
     [HttpPost]
@@ -41,7 +41,7 @@ public class TemplateController : ODataController
     {
         using StreamReader reader = new StreamReader(stream: base.Request.Body);
         dynamic m = JsonConvert.DeserializeObject(value: await reader.ReadToEndAsync());
-        return Content(content: Renderer.Render(appId: appId, name: name, culture: culture, model: m), contentType: "text/plain", contentEncoding: Encoding.UTF8);
+        return Content(content: renderer.Render(appId: appId, name: name, culture: culture, model: m), contentType: "text/plain", contentEncoding: Encoding.UTF8);
     }
 
     [HttpPost]
@@ -65,7 +65,7 @@ public class TemplateController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Template> queryOptions) =>
-        Ok(value: Service.GetAllTemplate());
+        Ok(value: service.GetAllTemplate());
 
     [HttpGet]
     [AllowAnonymous]
@@ -74,7 +74,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            IQueryable<Template> result = Service.GetAllTemplate()
+            IQueryable<Template> result = service.GetAllTemplate()
                 .Where(predicate: template => template.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -94,7 +94,7 @@ public class TemplateController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddTemplateAsync(newTemplate: newTemplate));
+        return Ok(value: await service.AddTemplateAsync(newTemplate: newTemplate));
     }
 
     [HttpPut]
@@ -106,14 +106,14 @@ public class TemplateController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdateTemplateAsync(updatedTemplate: updatedTemplate));
+        return Ok(value: await service.UpdateTemplateAsync(updatedTemplate: updatedTemplate));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Template> updatedTemplate)
     {
-        Template originalEntity = Service.GetTemplate(templateId: key);
+        Template originalEntity = service.GetTemplate(templateId: key);
 
         if (originalEntity == null)
         {
@@ -121,13 +121,13 @@ public class TemplateController : ODataController
         }
 
         updatedTemplate.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateTemplateAsync(updatedTemplate: originalEntity));
+        return Ok(value: await service.UpdateTemplateAsync(updatedTemplate: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(templateId: key);
+        await service.DeleteAsync(templateId: key);
         return Ok();
     }
 }

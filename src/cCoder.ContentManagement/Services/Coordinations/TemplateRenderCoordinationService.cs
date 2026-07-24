@@ -12,7 +12,7 @@ internal sealed partial class TemplateRenderCoordinationService(
     IAuthorizationBroker authorizationBroker,
     ITemplateRenderOrchestrationService templateRenderOrchestrationService) : ITemplateRenderCoordinationService
 {
-    private User User =>
+    private User GetCurrentUser() =>
         authorizationBroker.GetCurrentUser();
 
     public string Render(int appId, string name, string culture, dynamic model) =>
@@ -23,9 +23,9 @@ internal sealed partial class TemplateRenderCoordinationService(
         ValidateName(name: name, parameterName: "name");
         ValidateModel(model: model, parameterName: "model");
 
-        culture ??= User.DefaultCultureId;
+        culture ??= GetCurrentUser().DefaultCultureId;
 
-        return templateRenderOrchestrationService.RenderUser(appId: appId, name: name, culture: culture, model: model, user: User);
+        return templateRenderOrchestrationService.RenderUser(appId: appId, name: name, culture: culture, model: model, user: GetCurrentUser());
 
     });
 }

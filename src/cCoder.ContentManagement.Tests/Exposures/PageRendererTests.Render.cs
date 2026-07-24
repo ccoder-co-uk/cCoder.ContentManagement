@@ -47,7 +47,7 @@ public partial class PageRendererTests
         };
 
         pageRenderCoordinationServiceMock
-            .Setup(expression: x => x.Render(request: request))
+            .Setup(expression: x => x.RenderPageRenderRequestPageRenderResponse(request: request))
             .Returns(value: expectedResponse);
 
         // When
@@ -61,7 +61,9 @@ public partial class PageRendererTests
         response.Edit.Should()
             .BeTrue();
 
-        pageRenderCoordinationServiceMock.Verify(expression: x => x.Render(request: request), times: Times.Once);
+        pageRenderCoordinationServiceMock.Verify(
+            expression: x => x.RenderPageRenderRequestPageRenderResponse(request: request),
+            times: Times.Once);
     }
 
     [Fact]
@@ -87,7 +89,7 @@ public partial class PageRendererTests
         };
 
         pageRenderCoordinationServiceMock
-            .Setup(expression: x => x.Render(request: request))
+            .Setup(expression: x => x.RenderPageRenderRequestPageRenderResponse(request: request))
             .Returns(value: expectedResponse);
 
         // When
@@ -98,7 +100,9 @@ public partial class PageRendererTests
         response.Should()
             .BeSameAs(expected: expectedResponse);
 
-        pageRenderCoordinationServiceMock.Verify(expression: x => x.Render(request: request), times: Times.Once);
+        pageRenderCoordinationServiceMock.Verify(
+            expression: x => x.RenderPageRenderRequestPageRenderResponse(request: request),
+            times: Times.Once);
     }
 
     [Fact]

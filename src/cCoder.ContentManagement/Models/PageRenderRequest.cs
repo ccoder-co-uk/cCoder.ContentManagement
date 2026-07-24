@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-namespace cCoder.ContentManagement.Exposures;
+namespace cCoder.ContentManagement.Models;
 
 public sealed class PageRenderRequest
 {
@@ -15,13 +15,12 @@ public sealed class PageRenderRequest
     public string RequestUrl { get; set; }
     public Exception Exception { get; set; }
 
-    public PageRenderRequest
-    ()
+    public PageRenderRequest()
     {
-        this.Host = string.Empty;
-        this.Path = string.Empty;
-        this.Theme = string.Empty;
-        this.Culture = string.Empty;
-        this.RequestUrl = string.Empty;
+        Host = string.Empty;
+        Path = string.Empty;
+        Theme = string.Empty;
+        Culture = string.Empty;
+        RequestUrl = string.Empty;
     }
 }

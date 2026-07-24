@@ -37,7 +37,7 @@ type: "Core/Resource"
 type: "Core/Component"
         );
 
-        commonObjectCacheMock.SetupGet(expression: x => x.LatestSet)
+        commonObjectCacheMock.Setup(expression: x => x.GetLatestSet())
             .Returns(
 value: [
                 new DataCommonObject

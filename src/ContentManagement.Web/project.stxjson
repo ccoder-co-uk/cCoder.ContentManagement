@@ -295,28 +295,35 @@
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
       "Type": "ContentManagement.Web.Controllers.HomeController",
-      "LineNumber": 16
+      "LineNumber": 17
     },
     {
       "Code": "STX0002",
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
       "Type": "ContentManagement.Web.Controllers.HomeController",
-      "LineNumber": 20
+      "LineNumber": 21
     },
     {
       "Code": "STXE002",
       "Description": "An exposure must not contain loops.",
       "Severity": "Warning",
       "Type": "ContentManagement.Web.Controllers.HomeController",
-      "LineNumber": 30
+      "LineNumber": 31
     },
     {
       "Code": "STXAPI004",
       "Description": "API controller methods must use HTTP nouns: Get, Post, Put, or Delete.",
       "Severity": "Warning",
       "Type": "ContentManagement.Web.Controllers.HomeController",
-      "LineNumber": 42
+      "LineNumber": 43
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "ContentManagement.Web.Controllers.HomeController",
+      "LineNumber": 159
     },
     {
       "Code": "STXAPI004",

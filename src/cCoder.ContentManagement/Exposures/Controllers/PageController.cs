@@ -22,30 +22,30 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class PageController : ODataController
 {
-    protected IPageOrchestrationService Service { get; }
-    private IPageRenderCoordinationService RenderService { get; }
+    private readonly IPageOrchestrationService service;
+    private readonly IPageRenderCoordinationService renderService;
 
     public PageController(
         IPageOrchestrationService service,
         IPageRenderCoordinationService renderService,
         ILogger<PageController> log)
     {
-        Service = service;
-        RenderService = renderService;
+        this.service = service;
+        this.renderService = renderService;
     }
 
     [HttpGet]
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     public IActionResult Get(ODataQueryOptions<Page> queryOptions) =>
-        Ok(value: Service.GetAllPage());
+        Ok(value: service.GetAllPage());
 
     [HttpGet]
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     [ActionName("RootFor")]
     public IActionResult GetRootFor([FromRoute] int key) =>
-        Ok(value: CreateResponsePage(newPage: Service.GetRootPage(pageId: key)));
+        Ok(value: CreateResponsePage(newPage: service.GetRootPage(pageId: key)));
 
     [HttpGet]
     [ActionName("Menu")]
@@ -53,7 +53,7 @@ public class PageController : ODataController
         Ok(value: new Result<string>
         {
             Id = key.ToString(),
-            Item = Service.MenuFor(pageId: key, culture: culture),
+            Item = service.MenuFor(pageId: key, culture: culture),
             Success = true
         });
 
@@ -61,7 +61,7 @@ public class PageController : ODataController
     [AllowAnonymous]
     [ActionName("Render")]
     public IActionResult GetRender(int appId, string path, string theme, string culture) =>
-        Ok(value: RenderService.RenderRenderResult(appId: appId, path: path, theme: theme, culture: culture));
+        Ok(value: renderService.RenderRenderResult(appId: appId, path: path, theme: theme, culture: culture));
 
     [HttpGet]
     public IActionResult GetMetadata() =>
@@ -75,7 +75,7 @@ public class PageController : ODataController
     {
         try
         {
-            IQueryable<Page> result = Service.GetAllPage()
+            IQueryable<Page> result = service.GetAllPage()
                 .Where(predicate: page => page.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -95,7 +95,7 @@ public class PageController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: CreateResponsePage(newPage: await Service.AddPageAsync(newPage: newPage)));
+        return Ok(value: CreateResponsePage(newPage: await service.AddPageAsync(newPage: newPage)));
     }
 
     [HttpPut]
@@ -108,14 +108,14 @@ public class PageController : ODataController
         }
 
         updatedPage.Id = key;
-        return Ok(value: CreateResponsePage(newPage: await Service.UpdatePageAsync(updatedPage: updatedPage)));
+        return Ok(value: CreateResponsePage(newPage: await service.UpdatePageAsync(updatedPage: updatedPage)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Page> updatedPage)
     {
-        Page originalEntity = Service.GetPage(pageId: key);
+        Page originalEntity = service.GetPage(pageId: key);
 
         if (originalEntity == null)
         {
@@ -123,13 +123,13 @@ public class PageController : ODataController
         }
 
         updatedPage.Patch(original: originalEntity);
-        return Ok(value: CreateResponsePage(newPage: await Service.UpdatePageAsync(updatedPage: originalEntity)));
+        return Ok(value: CreateResponsePage(newPage: await service.UpdatePageAsync(updatedPage: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(pageId: key);
+        await service.DeleteAsync(pageId: key);
         return Ok();
     }
 

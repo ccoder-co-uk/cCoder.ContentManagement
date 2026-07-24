@@ -2118,12 +2118,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
       "StandardElementType": "Exposure",
-      "Properties": [
-        {
-          "Name": "LatestSet",
-          "Type": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
-        }
-      ],
+      "Properties": [],
       "Methods": [
         {
           "Name": "Dispose",
@@ -2144,6 +2139,11 @@
           "Name": "GetAll",
           "Inputs": [],
           "ReturnType": "T[]"
+        },
+        {
+          "Name": "GetLatestSet",
+          "Inputs": [],
+          "ReturnType": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
         },
         {
           "Name": "Refresh",
@@ -2167,33 +2167,9 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache.CacheEntry",
-      "StandardElementType": "Exposure",
-      "Properties": [
-        {
-          "Name": "AddedOn",
-          "Type": "System.DateTime"
-        },
-        {
-          "Name": "Key",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Value",
-          "Type": "System.Object"
-        }
-      ],
-      "Methods": []
-    },
-    {
       "Name": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
       "StandardElementType": "Exposure",
-      "Properties": [
-        {
-          "Name": "ExpiryTimeInMinutes",
-          "Type": "System.Int32"
-        }
-      ],
+      "Properties": [],
       "Methods": [
         {
           "Name": "Dispose",
@@ -3548,68 +3524,6 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "StandardElementType": "Exposure",
-      "Properties": [
-        {
-          "Name": "Culture",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Edit",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "Exception",
-          "Type": "System.Exception"
-        },
-        {
-          "Name": "Host",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Path",
-          "Type": "System.String"
-        },
-        {
-          "Name": "RequestUrl",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Theme",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Exposures.PageRenderResponse",
-      "StandardElementType": "Exposure",
-      "Properties": [
-        {
-          "Name": "App",
-          "Type": "App"
-        },
-        {
-          "Name": "Culture",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Edit",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "Page",
-          "Type": "cCoder.ContentManagement.Models.RenderResult"
-        },
-        {
-          "Name": "Theme",
-          "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
       "Name": "cCoder.ContentManagement.Exposures.PageRenderer",
       "StandardElementType": "Exposure",
       "Properties": [],
@@ -3619,20 +3533,20 @@
           "Inputs": [
             {
               "Name": "request",
-              "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest"
+              "Type": "cCoder.ContentManagement.Models.PageRenderRequest"
             }
           ],
-          "ReturnType": "cCoder.ContentManagement.Exposures.PageRenderResponse"
+          "ReturnType": "cCoder.ContentManagement.Models.PageRenderResponse"
         },
         {
           "Name": "RenderError",
           "Inputs": [
             {
               "Name": "request",
-              "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest"
+              "Type": "cCoder.ContentManagement.Models.PageRenderRequest"
             }
           ],
-          "ReturnType": "cCoder.ContentManagement.Exposures.PageRenderResponse"
+          "ReturnType": "cCoder.ContentManagement.Models.PageRenderResponse"
         }
       ]
     },
@@ -3847,6 +3761,25 @@
         {
           "Name": "UserName",
           "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.Caching.CacheEntry",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "AddedOn",
+          "Type": "System.DateTime"
+        },
+        {
+          "Name": "Key",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Value",
+          "Type": "System.Object"
         }
       ],
       "Methods": []
@@ -4316,6 +4249,68 @@
         {
           "Name": "Page",
           "Type": "Page"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.PageRenderRequest",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "Culture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Edit",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "Exception",
+          "Type": "System.Exception"
+        },
+        {
+          "Name": "Host",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Path",
+          "Type": "System.String"
+        },
+        {
+          "Name": "RequestUrl",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Theme",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.PageRenderResponse",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "App",
+          "Type": "App"
+        },
+        {
+          "Name": "Culture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Edit",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "Page",
+          "Type": "cCoder.ContentManagement.Models.RenderResult"
+        },
+        {
+          "Name": "Theme",
+          "Type": "System.String"
         }
       ],
       "Methods": []
@@ -5339,24 +5334,24 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "Render",
+          "Name": "RenderErrorPageRenderRequestPageRenderResponse",
           "Inputs": [
             {
               "Name": "request",
-              "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest"
+              "Type": "cCoder.ContentManagement.Models.PageRenderRequest"
             }
           ],
-          "ReturnType": "cCoder.ContentManagement.Exposures.PageRenderResponse"
+          "ReturnType": "cCoder.ContentManagement.Models.PageRenderResponse"
         },
         {
-          "Name": "RenderError",
+          "Name": "RenderPageRenderRequestPageRenderResponse",
           "Inputs": [
             {
               "Name": "request",
-              "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest"
+              "Type": "cCoder.ContentManagement.Models.PageRenderRequest"
             }
           ],
-          "ReturnType": "cCoder.ContentManagement.Exposures.PageRenderResponse"
+          "ReturnType": "cCoder.ContentManagement.Models.PageRenderResponse"
         },
         {
           "Name": "RenderRenderResult",
@@ -12079,214 +12074,165 @@
       "LineNumber": 48
     },
     {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 35
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 37
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 38
-    },
-    {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 46
+      "LineNumber": 39
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 52
+      "LineNumber": 45
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 56
+      "LineNumber": 49
     },
     {
       "Code": "STXE002",
       "Description": "An exposure must not contain loops.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 110
+      "LineNumber": 103
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 112
+      "LineNumber": 105
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 136
+      "LineNumber": 132
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 139
+      "LineNumber": 135
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 156
+      "LineNumber": 152
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 165
+      "LineNumber": 161
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 168
+      "LineNumber": 164
     },
     {
       "Code": "STXE002",
       "Description": "An exposure must not contain loops.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 179
+      "LineNumber": 175
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 187
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache.CacheEntry",
-      "LineNumber": 18
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache.CacheEntry",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache.CacheEntry",
-      "LineNumber": 22
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 17
+      "LineNumber": 183
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 33
+      "LineNumber": 31
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 42
+      "LineNumber": 40
     },
     {
       "Code": "STXE002",
       "Description": "An exposure must not contain loops.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 47
+      "LineNumber": 45
     },
     {
       "Code": "STXE002",
       "Description": "An exposure must not contain loops.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 52
+      "LineNumber": 50
     },
     {
       "Code": "STXE002",
       "Description": "An exposure must not contain loops.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 57
+      "LineNumber": 55
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 71
+      "LineNumber": 69
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 81
+      "LineNumber": 79
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 87
+      "LineNumber": 85
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 90
+      "LineNumber": 88
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 95
+      "LineNumber": 93
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.MetadataCache",
-      "LineNumber": 109
+      "LineNumber": 107
     },
     {
       "Code": "STXE003",
@@ -12303,39 +12249,11 @@
       "LineNumber": 23
     },
     {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.AppController",
-      "LineNumber": 25
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.AppController",
-      "LineNumber": 27
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.AppCultureController",
-      "LineNumber": 17
-    },
-    {
       "Code": "STXAPI001",
       "Description": "An API controller must have exactly one business dependency.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.BaselineController",
       "LineNumber": 10
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 23
     },
     {
       "Code": "STXAPI001",
@@ -12345,87 +12263,10 @@
       "LineNumber": 20
     },
     {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
-      "LineNumber": 22
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.CultureController",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.LayoutController",
-      "LineNumber": 22
-    },
-    {
       "Code": "STXAPI001",
       "Description": "An API controller must have exactly one business dependency.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 25
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 26
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController",
-      "LineNumber": 22
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRoleController",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.ResourceController",
-      "LineNumber": 22
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.ScriptController",
-      "LineNumber": 22
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController",
       "LineNumber": 23
     },
     {
@@ -12434,20 +12275,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
       "LineNumber": 23
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
-      "LineNumber": 25
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
-      "LineNumber": 26
     },
     {
       "Code": "STXFORMAT001",
@@ -12457,88 +12284,11 @@
       "LineNumber": 17
     },
     {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "LineNumber": 9
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "LineNumber": 10
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "LineNumber": 13
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "LineNumber": 15
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderRequest",
-      "LineNumber": 16
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderResponse",
-      "LineNumber": 12
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderResponse",
+      "Type": "cCoder.ContentManagement.Models.Caching.CacheEntry",
       "LineNumber": 14
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderResponse",
-      "LineNumber": 16
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderResponse",
-      "LineNumber": 18
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.PageRenderResponse",
-      "LineNumber": 20
     },
     {
       "Code": "STXFORMAT001",
@@ -12581,6 +12331,20 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Models.OData.PropertyContainer",
       "LineNumber": 100
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.PageRenderRequest",
+      "LineNumber": 26
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.PageRenderResponse",
+      "LineNumber": 21
     },
     {
       "Code": "STX0007",
@@ -12646,18 +12410,18 @@
       "LineNumber": 11
     },
     {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Coordinations.ComponentRenderCoordinationService",
-      "LineNumber": 15
-    },
-    {
       "Code": "STXC001",
       "Description": "The service must have two or three OrchestrationService dependencies.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Coordinations.PageCoordinationService",
       "LineNumber": 12
+    },
+    {
+      "Code": "STX0007",
+      "Description": "A service public API must use one model contract or primitive types.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
+      "LineNumber": 18
     },
     {
       "Code": "STXC001",
@@ -12667,25 +12431,11 @@
       "LineNumber": 18
     },
     {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Coordinations.PageRenderCoordinationService",
-      "LineNumber": 32
-    },
-    {
       "Code": "STXC001",
       "Description": "The service must have two or three OrchestrationService dependencies.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Coordinations.TemplateRenderCoordinationService",
       "LineNumber": 11
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Coordinations.TemplateRenderCoordinationService",
-      "LineNumber": 15
     },
     {
       "Code": "STXF002",
@@ -12849,11 +12599,11 @@
       "LineNumber": 16
     },
     {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "LineNumber": 18
+      "LineNumber": 417
     },
     {
       "Code": "STXP001",
@@ -12898,13 +12648,6 @@
       "LineNumber": 14
     },
     {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageProcessingService",
-      "LineNumber": 19
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
@@ -12930,20 +12673,6 @@
       "Description": "A processing service may use only one foundation service and no higher-level service.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "LineNumber": 16
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STX0002",
-      "Description": "Properties may only be declared on models.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ResourceProcessingService",
       "LineNumber": 16
     },
     {

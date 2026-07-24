@@ -14,11 +14,11 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class PageRoleController : ODataController
 {
-    protected IPageRoleOrchestrationService Service { get; }
+    private readonly IPageRoleOrchestrationService service;
 
     public PageRoleController(IPageRoleOrchestrationService service, ILogger<PageRoleController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
@@ -29,7 +29,7 @@ public class PageRoleController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 3, MaxExpansionDepth = 3)]
     [ActionName("Get")]
     public IActionResult GetAll() =>
-        Ok(value: Service.GetAllPageRole());
+        Ok(value: service.GetAllPageRole());
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] PageRole newPageRole)
@@ -39,7 +39,7 @@ public class PageRoleController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddPageRoleAsync(newPageRole: newPageRole));
+        return Ok(value: await service.AddPageRoleAsync(newPageRole: newPageRole));
     }
 
     [HttpPost]
@@ -50,7 +50,7 @@ public class PageRoleController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        await Service.DeleteAllPageRoleAsync(deletedPageRole: deletedPageRole);
+        await service.DeleteAllPageRoleAsync(deletedPageRole: deletedPageRole);
         return Ok();
     }
 }

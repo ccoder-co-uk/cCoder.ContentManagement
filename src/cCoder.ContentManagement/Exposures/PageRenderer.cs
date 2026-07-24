@@ -9,8 +9,8 @@ namespace cCoder.ContentManagement.Exposures;
 internal sealed class PageRenderer(IPageRenderCoordinationService pageRenderCoordinationService) : IPageRenderer
 {
     public PageRenderResponse Render(PageRenderRequest request) =>
-        pageRenderCoordinationService.Render(request: request);
+        pageRenderCoordinationService.RenderPageRenderRequestPageRenderResponse(request: request);
 
     public PageRenderResponse RenderError(PageRenderRequest request) =>
-        pageRenderCoordinationService.RenderError(request: request);
+        pageRenderCoordinationService.RenderErrorPageRenderRequestPageRenderResponse(request: request);
 }

@@ -13,7 +13,7 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class ResourceProcessingService(IResourceService service, IAuthorizationBroker authorizationBroker) : IResourceProcessingService
 {
-    private User User =>
+    private User GetCurrentUser() =>
         authorizationBroker.GetCurrentUser();
 
     public Resource GetResource(int resourceId) =>
@@ -38,9 +38,9 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
         ValidateResourceOnAdd(inputs: [newResource]);
         ValidateResource(resource: newResource, parameterName: "entity");
         newResource.CreatedOn = DateTimeOffset.Now;
-        newResource.CreatedBy = User.Id;
+        newResource.CreatedBy = GetCurrentUser().Id;
         newResource.LastUpdated = newResource.CreatedOn;
-        newResource.LastUpdatedBy = User.Id;
+        newResource.LastUpdatedBy = GetCurrentUser().Id;
         return service.AddResourceAsync(newResource: newResource);
 
     }, isValueTask: true);
@@ -51,7 +51,7 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
         ValidateResourceOnUpdate(inputs: [updatedResource]);
         ValidateResource(resource: updatedResource, parameterName: "entity");
         updatedResource.LastUpdated = DateTimeOffset.Now;
-        updatedResource.LastUpdatedBy = User.Id;
+        updatedResource.LastUpdatedBy = GetCurrentUser().Id;
         return service.UpdateResourceAsync(updatedResource: updatedResource);
 
     }, isValueTask: true);
@@ -183,9 +183,9 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
     {
         ValidateResource(resource: newResource, parameterName: "entity");
         newResource.CreatedOn = DateTimeOffset.Now;
-        newResource.CreatedBy = User.Id;
+        newResource.CreatedBy = GetCurrentUser().Id;
         newResource.LastUpdated = newResource.CreatedOn;
-        newResource.LastUpdatedBy = User.Id;
+        newResource.LastUpdatedBy = GetCurrentUser().Id;
         return service.AddResourceAsync(newResource: newResource);
     }
 
@@ -231,7 +231,7 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
     {
         ValidateResource(resource: updatedResource, parameterName: "entity");
         updatedResource.LastUpdated = DateTimeOffset.Now;
-        updatedResource.LastUpdatedBy = User.Id;
+        updatedResource.LastUpdatedBy = GetCurrentUser().Id;
         return service.UpdateResourceAsync(updatedResource: updatedResource);
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Caching;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models;
 
@@ -13,15 +14,6 @@ namespace cCoder.ContentManagement.Exposures.Caching;
 
 internal class CommonObjectCache : ICommonObjectCache, IDisposable
 {
-    private sealed class CacheEntry
-    {
-        public required string Key { get; init; }
-
-        public required DateTime AddedOn { get; init; }
-
-        public required object Value { get; init; }
-    }
-
     private readonly ILogger log;
 
     private readonly IServiceScopeFactory serviceScopeFactory;
@@ -32,28 +24,29 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
 
     private bool disposed;
 
-    protected Config Config { get; }
+    private readonly Config config;
 
-    public IEnumerable<CommonObject> LatestSet { get; set; }
-    private int ExpiryTimeInMinutes { get; }
+    private IEnumerable<CommonObject> latestSet;
+
+    private readonly int expiryTimeInMinutes;
 
     public CommonObjectCache(Config config, IServiceScopeFactory serviceScopeFactory, ILogger<CommonObjectCache> log)
     {
-        this.LatestSet = Array.Empty<CommonObject>();
-        Config = config;
+        latestSet = Array.Empty<CommonObject>();
+        this.config = config;
         this.serviceScopeFactory = serviceScopeFactory;
         this.log = log;
-        ExpiryTimeInMinutes = (config.Settings.ContainsKey(key: "CacheExpiry") ? int.Parse(s: config.Settings["CacheExpiry"]) : 30);
+        expiryTimeInMinutes = (config.Settings.ContainsKey(key: "CacheExpiry") ? int.Parse(s: config.Settings["CacheExpiry"]) : 30);
         timer.Elapsed += ScanForExpiredItems;
-        timer.Interval = ExpiryTimeInMinutes * 60 * 1000;
+        timer.Interval = expiryTimeInMinutes * 60 * 1000;
         timer.Start();
     }
 
     public void Refresh()
     {
-        LatestSet = Array.Empty<CommonObject>();
+        latestSet = Array.Empty<CommonObject>();
 
-        if (!Config.Settings.ContainsKey(key: "CacheSource") || !Config.Settings.ContainsKey(key: "CacheSourceAppId"))
+        if (!config.Settings.ContainsKey(key: "CacheSource") || !config.Settings.ContainsKey(key: "CacheSourceAppId"))
         {
             log.LogInformation(message: "Common object cache source settings are missing, loading from local data.");
         }
@@ -80,7 +73,7 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
                 .Where(predicate: commonObject => commonObject.Type == "Core/Script")
                 .ToArray();
 
-            LatestSet = array.Union(second: array2)
+            latestSet = array.Union(second: array2)
                 .Union(second: array3)
                 .ToArray();
 
@@ -123,6 +116,9 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
             }
         }
     }
+
+    public IEnumerable<CommonObject> GetLatestSet() =>
+        latestSet;
 
     public T[] GetAll<T>() =>
         data.Values.AsParallel()
@@ -167,7 +163,7 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
 
     private void ScanForExpiredItems(object sender, System.Timers.ElapsedEventArgs e)
     {
-        DateTime expiryCutoff = DateTime.Now.AddMinutes(value: -ExpiryTimeInMinutes);
+        DateTime expiryCutoff = DateTime.Now.AddMinutes(value: -expiryTimeInMinutes);
 
         string[] array = data.Values
             .Where(predicate: entry => entry.AddedOn < expiryCutoff)

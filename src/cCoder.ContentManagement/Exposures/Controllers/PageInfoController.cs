@@ -19,11 +19,11 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class PageInfoController : ODataController
 {
-    protected IPageInfoOrchestrationService Service { get; }
+    private readonly IPageInfoOrchestrationService service;
 
     public PageInfoController(IPageInfoOrchestrationService service, ILogger<PageInfoController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
@@ -35,7 +35,7 @@ public class PageInfoController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<PageInfo> queryOptions) =>
-        Ok(value: Service.GetAllPageInfo());
+        Ok(value: service.GetAllPageInfo());
 
     [HttpGet]
     [AllowAnonymous]
@@ -44,7 +44,7 @@ public class PageInfoController : ODataController
     {
         try
         {
-            IQueryable<PageInfo> result = Service.GetAllPageInfo()
+            IQueryable<PageInfo> result = service.GetAllPageInfo()
                 .Where(predicate: pageInfo => pageInfo.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -64,7 +64,7 @@ public class PageInfoController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddPageInfoAsync(newPageInfo: newPageInfo));
+        return Ok(value: await service.AddPageInfoAsync(newPageInfo: newPageInfo));
     }
 
     [HttpPut]
@@ -76,14 +76,14 @@ public class PageInfoController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo));
+        return Ok(value: await service.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<PageInfo> updatedPageInfo)
     {
-        PageInfo originalEntity = Service.GetPageInfo(pageInfoId: key);
+        PageInfo originalEntity = service.GetPageInfo(pageInfoId: key);
 
         if (originalEntity == null)
         {
@@ -91,13 +91,13 @@ public class PageInfoController : ODataController
         }
 
         updatedPageInfo.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdatePageInfoAsync(updatedPageInfo: originalEntity));
+        return Ok(value: await service.UpdatePageInfoAsync(updatedPageInfo: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(pageInfoId: key);
+        await service.DeleteAsync(pageInfoId: key);
         return Ok();
     }
 }

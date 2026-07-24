@@ -19,11 +19,11 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class ResourceController : ODataController
 {
-    protected IResourceOrchestrationService Service { get; }
+    private readonly IResourceOrchestrationService service;
 
     public ResourceController(IResourceOrchestrationService service, ILogger<ResourceController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
@@ -35,7 +35,7 @@ public class ResourceController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Resource> queryOptions) =>
-        Ok(value: Service.GetAllResource());
+        Ok(value: service.GetAllResource());
 
     [HttpGet]
     [AllowAnonymous]
@@ -44,7 +44,7 @@ public class ResourceController : ODataController
     {
         try
         {
-            IQueryable<Resource> result = Service.GetAllResource()
+            IQueryable<Resource> result = service.GetAllResource()
                 .Where(predicate: resource => resource.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -64,7 +64,7 @@ public class ResourceController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.AddResourceAsync(newResource: newResource));
+        return Ok(value: await service.AddResourceAsync(newResource: newResource));
     }
 
     [HttpPut]
@@ -76,14 +76,14 @@ public class ResourceController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await Service.UpdateResourceAsync(updatedResource: updatedResource));
+        return Ok(value: await service.UpdateResourceAsync(updatedResource: updatedResource));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Resource> updatedResource)
     {
-        Resource originalEntity = Service.GetResource(resourceId: key);
+        Resource originalEntity = service.GetResource(resourceId: key);
 
         if (originalEntity == null)
         {
@@ -91,13 +91,13 @@ public class ResourceController : ODataController
         }
 
         updatedResource.Patch(original: originalEntity);
-        return Ok(value: await Service.UpdateResourceAsync(updatedResource: originalEntity));
+        return Ok(value: await service.UpdateResourceAsync(updatedResource: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(resourceId: key);
+        await service.DeleteAsync(resourceId: key);
         return Ok();
     }
 }

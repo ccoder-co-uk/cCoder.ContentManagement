@@ -15,7 +15,8 @@ public interface ICommonObjectCache : IDisposable
     T Get<T>(string key);
 
     void Set(string key, object item);
-    IEnumerable<CommonObject> LatestSet { get; set; }
+
+    IEnumerable<CommonObject> GetLatestSet();
 }
 
 public interface IMetadataCache
