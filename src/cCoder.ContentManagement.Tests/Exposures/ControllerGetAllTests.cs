@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Exposures.Controllers;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -30,9 +29,8 @@ public class ControllerGetAllTests
             .Returns(value: expectedApps);
 
         AppController controller = new(
-service: serviceMock.Object,
-authorizationBroker: Mock.Of<IAuthorizationBroker>(),
-log: Mock.Of<ILogger<AppController>>());
+            service: serviceMock.Object,
+            log: Mock.Of<ILogger<AppController>>());
 
         OkObjectResult result = controller.GetAll(queryOptions: null!)
             .Should()

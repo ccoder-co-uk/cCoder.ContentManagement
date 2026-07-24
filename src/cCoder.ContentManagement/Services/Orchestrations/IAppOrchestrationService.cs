@@ -12,6 +12,8 @@ public interface IAppOrchestrationService
 {
     App GetApp(int appId);
 
+    bool IsAdminApp(int appId, string userName);
+
     App GetByDomainApp(string domain, bool ignoreFilters = false);
 
     IQueryable<App> GetAllApp(bool ignoreFilters = false);

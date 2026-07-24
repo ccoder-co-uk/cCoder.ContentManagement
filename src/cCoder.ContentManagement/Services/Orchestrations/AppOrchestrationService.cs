@@ -26,6 +26,16 @@ internal partial class AppOrchestrationService(
 
     });
 
+    public bool IsAdminApp(int appId, string userName) =>
+        TryCatch<bool>(operation: () =>
+    {
+        ValidateIsAdminApp(inputs: [appId, userName]);
+        ValidateId(appId: appId, parameterName: "appId");
+        ValidateUserName(userName: userName, parameterName: "userName");
+
+        return authorizationBroker.IsAdmin(appId: appId, userName: userName);
+    });
+
     public App GetByDomainApp(string domain, bool ignoreFilters = false) =>
         TryCatch<App>(operation: () =>
     {
@@ -141,6 +151,9 @@ internal partial class AppOrchestrationService(
 
     private static void ValidateDomain(string domain, string parameterName) =>
         ThrowIf(condition: string.IsNullOrWhiteSpace(value: domain), message: parameterName + " is required.");
+
+    private static void ValidateUserName(string userName, string parameterName) =>
+        ThrowIf(condition: string.IsNullOrWhiteSpace(value: userName), message: parameterName + " is required.");
 
     private static IEnumerable<App> ValidateApps(IEnumerable<App> apps, string parameterName)
     {

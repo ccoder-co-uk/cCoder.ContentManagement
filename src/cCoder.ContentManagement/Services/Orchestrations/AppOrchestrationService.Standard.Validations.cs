@@ -11,6 +11,9 @@ internal partial class AppOrchestrationService
     private static void ValidateAppOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
+    private static void ValidateIsAdminApp(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateByDomainAppOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

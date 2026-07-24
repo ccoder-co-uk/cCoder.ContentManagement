@@ -5,7 +5,6 @@
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
-using cCoder.ContentManagement.Brokers;
 using cCoder.Data.Extensions;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -24,18 +23,15 @@ public class AppController : ODataController
 {
     private readonly IAppOrchestrationService service;
 
-    private readonly IAuthorizationBroker authorizationBroker;
-
-    public AppController(IAppOrchestrationService service, IAuthorizationBroker authorizationBroker, ILogger<AppController> log)
+    public AppController(IAppOrchestrationService service, ILogger<AppController> log)
     {
         this.service = service;
-        this.authorizationBroker = authorizationBroker;
     }
 
     [HttpGet]
     [ActionName("IsAdmin")]
     public IActionResult GetIsAdmin([FromRoute] int key, string userName) =>
-        Ok(value: authorizationBroker.IsAdmin(appId: key, userName: userName));
+        Ok(value: service.IsAdminApp(appId: key, userName: userName));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
