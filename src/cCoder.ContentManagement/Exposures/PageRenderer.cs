@@ -10,11 +10,19 @@ internal sealed class PageRenderer(
     IPageRenderAggregationService pageRenderAggregationService)
         : IPageRenderer
 {
-    public PageRenderResponse Render(PageRenderRequest request) =>
-        pageRenderAggregationService.RenderPageRenderRequestPageRenderResponse(
-            request: request);
+    public PageRenderResponse Render(PageRenderRequest request)
+    {
+        request.OperationType = PageRenderOperationType.Render;
 
-    public PageRenderResponse RenderError(PageRenderRequest request) =>
-        pageRenderAggregationService.RenderErrorPageRenderRequestPageRenderResponse(
-            request: request);
+        return pageRenderAggregationService.RenderPageRenderOperation(
+            operation: request);
+    }
+
+    public PageRenderResponse RenderError(PageRenderRequest request)
+    {
+        request.OperationType = PageRenderOperationType.RenderError;
+
+        return pageRenderAggregationService.RenderPageRenderOperation(
+            operation: request);
+    }
 }

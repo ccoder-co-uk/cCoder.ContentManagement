@@ -8,6 +8,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class PageRenderOrchestrationService
 {
+    private static void ValidateProcessPageRenderOperation(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateIsAdminOfApp(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

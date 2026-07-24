@@ -83,9 +83,7 @@ public partial class PageRenderAggregationServiceTests
             }
         }.AsQueryable());
 
-        pageRenderOrchestrationServiceMock
-            .Setup(expression: x => x.RenderPageRenderResult(page: It.IsAny<Page>(), theme: app.DefaultTheme, culture: app.DefaultCultureId, edit: false))
-            .Returns(value: renderResult);
+        SetupRenderResult(renderResult: renderResult);
 
         // When
         PageRenderResponse response =
@@ -190,9 +188,13 @@ public partial class PageRenderAggregationServiceTests
         }.AsQueryable());
 
         pageRenderOrchestrationServiceMock
-            .SetupSequence(expression: x => x.RenderPageRenderResult(page: It.IsAny<Page>(), theme: app.DefaultTheme, culture: app.DefaultCultureId, edit: It.IsAny<bool>()))
+            .SetupSequence(expression: service => service.ProcessPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.OperationType != PageRenderOperationType.UserCanPage)))
             .Throws(exception: new InvalidOperationException(message: "Boom"))
-            .Returns(value: CreateRenderResult(bodyHtml: "[problem[message]]|[problem[detail]]|[problem[url]]"));
+            .Returns(value: CreatePageRenderOperation(
+                renderResult: CreateRenderResult(
+                    bodyHtml: "[problem[message]]|[problem[detail]]|[problem[url]]")));
 
         // When
         PageRenderResponse response =
@@ -263,9 +265,7 @@ public partial class PageRenderAggregationServiceTests
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
-        pageRenderOrchestrationServiceMock
-            .Setup(expression: x => x.RenderPageRenderResult(page: It.IsAny<Page>(), theme: "Default", culture: string.Empty, edit: false))
-            .Returns(value: CreateRenderResult());
+        SetupRenderResult(renderResult: CreateRenderResult());
 
         // When
         RenderResult result = aggregationService.RenderRenderResult(appId: app.Id, path: "missing", theme: "Default", culture: string.Empty);
@@ -275,8 +275,10 @@ public partial class PageRenderAggregationServiceTests
             .Be(expected: 404);
 
         pageRenderOrchestrationServiceMock.Verify(
-expression: x => x.RenderPageRenderResult(page: It.Is<Page>(match: page => page.Path == "missing"), theme: "Default", culture: string.Empty, edit: false),
-times: Times.Once);
+            expression: service => service.ProcessPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.SourcePage.Path == "missing")),
+            times: Times.Once);
     }
 
     [Fact]
@@ -321,21 +323,18 @@ times: Times.Once);
         pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
             .Returns(value: new[] { protectedPage }.AsQueryable());
 
-        pageRenderOrchestrationServiceMock
-            .Setup(expression: x => x.RenderPageRenderResult(page: It.IsAny<Page>(), theme: "Default", culture: string.Empty, edit: false))
-            .Returns(value: CreateRenderResult());
+        SetupRenderResult(renderResult: CreateRenderResult());
 
         // When
         aggregationService.RenderRenderResult(appId: app.Id, path: string.Empty, theme: "Default", culture: string.Empty);
 
         // Then
         pageRenderOrchestrationServiceMock.Verify(
-expression: x => x.RenderPageRenderResult(
-page: It.Is<Page>(match: page => page.Contents.Any(predicate: content => content.Html == "[component[login]]")),
-theme: "Default",
-culture: string.Empty,
-edit: false),
-times: Times.Once);
+            expression: service => service.ProcessPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.SourcePage.Contents.Any(
+                        predicate: content => content.Html == "[component[login]]"))),
+            times: Times.Once);
     }
 
     [Fact]
@@ -406,24 +405,20 @@ times: Times.Once);
         pageRoleOrchestrationServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
             .Returns(value: roles.AsQueryable());
 
-        pageRenderOrchestrationServiceMock
-            .Setup(expression: x => x.RenderPageRenderResult(page: It.IsAny<Page>(), theme: "Default", culture: string.Empty, edit: false))
-            .Returns(value: CreateRenderResult());
+        SetupRenderResult(renderResult: CreateRenderResult());
 
         // When
         aggregationService.RenderRenderResult(appId: app.Id, path: "Admin", theme: "Default", culture: string.Empty);
 
         // Then
         pageRenderOrchestrationServiceMock.Verify(
-expression: x => x.RenderPageRenderResult(
-page: It.Is<Page>(match: renderPage =>
-                    renderPage.PageInfo.SequenceEqual(second: pageInfos)
-                    && renderPage.Contents.SequenceEqual(second: contents)
-                    && renderPage.Roles.SequenceEqual(second: roles)),
-theme: "Default",
-culture: string.Empty,
-edit: false),
-times: Times.Once);
+            expression: service => service.ProcessPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.OperationType != PageRenderOperationType.UserCanPage
+                    && operation.SourcePage.PageInfo.SequenceEqual(second: pageInfos)
+                    && operation.SourcePage.Contents.SequenceEqual(second: contents)
+                    && operation.SourcePage.Roles.SequenceEqual(second: roles))),
+            times: Times.Once);
     }
 
     [Fact]
@@ -492,34 +487,29 @@ times: Times.Once);
         pageRoleOrchestrationServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
             .Returns(value: roles.AsQueryable());
 
-        pageRenderOrchestrationServiceMock
-            .Setup(expression: x => x.RenderPageRenderResult(page: It.IsAny<Page>(), theme: "Default", culture: string.Empty, edit: false))
-            .Returns(value: CreateRenderResult(bodyHtml: "Public body"));
+        SetupRenderResult(renderResult: CreateRenderResult(bodyHtml: "Public body"));
 
         // When
         aggregationService.RenderRenderResult(appId: app.Id, path: string.Empty, theme: "Default", culture: string.Empty);
 
         // Then
         pageRenderOrchestrationServiceMock.Verify(
-expression: x => x.RenderPageRenderResult(
-page: It.Is<Page>(match: renderPage =>
-                    renderPage.Contents.Any(predicate: content => content.Html == "Public body")
-                    && renderPage.Roles.Any(predicate: role =>
+            expression: service => service.ProcessPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.OperationType != PageRenderOperationType.UserCanPage
+                    && operation.SourcePage.Contents.Any(predicate: content => content.Html == "Public body")
+                    && operation.SourcePage.Roles.Any(predicate: role =>
                         role.Role != null
                         && role.Role.Privileges != null
-                        && role.Role.Privileges.Contains(item: "page_read"))),
-theme: "Default",
-culture: string.Empty,
-edit: false),
-times: Times.Once);
+                        && role.Role.Privileges.Contains(item: "page_read")))),
+            times: Times.Once);
 
         pageRenderOrchestrationServiceMock.Verify(
-expression: x => x.RenderPageRenderResult(
-page: It.Is<Page>(match: renderPage => renderPage.Contents.Any(predicate: content => content.Html == "[component[login]]")),
-theme: "Default",
-culture: string.Empty,
-edit: false),
-times: Times.Never);
+            expression: service => service.ProcessPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.SourcePage.Contents.Any(
+                        predicate: content => content.Html == "[component[login]]"))),
+            times: Times.Never);
     }
 
     [Fact]
@@ -564,9 +554,7 @@ times: Times.Never);
         pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
             .Returns(value: new[] { protectedPage }.AsQueryable());
 
-        pageRenderOrchestrationServiceMock
-            .Setup(expression: x => x.RenderPageRenderResult(page: It.IsAny<Page>(), theme: "Default", culture: string.Empty, edit: false))
-            .Returns(value: CreateRenderResult());
+        SetupRenderResult(renderResult: CreateRenderResult());
 
         aggregationService.RenderRenderResult(appId: app.Id, path: "missing", theme: "Default", culture: string.Empty);
         // When
@@ -574,23 +562,24 @@ times: Times.Never);
 
         // Then
         pageRenderOrchestrationServiceMock.Verify(
-expression: x => x.RenderPageRenderResult(
-page: It.Is<Page>(match: renderPage => renderPage.Path == "missing"
-                    && renderPage.Contents.Any(predicate: content => content.Name == "body" && content.Html == "[component[NotFound]]")),
-theme: "Default",
-culture: string.Empty,
-edit: false),
-times: Times.Once);
+            expression: service => service.ProcessPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.SourcePage.Path == "missing"
+                    && operation.SourcePage.Contents.Any(
+                        predicate: content =>
+                            content.Name == "body"
+                            && content.Html == "[component[NotFound]]"))),
+            times: Times.Once);
 
         pageRenderOrchestrationServiceMock.Verify(
-expression: x => x.RenderPageRenderResult(
-page: It.Is<Page>(match: renderPage =>
-                    renderPage.Path == "Admin"
-                    && renderPage.Contents.Any(predicate: content => content.Name == "body" && content.Html == "[component[login]]")),
-theme: "Default",
-culture: string.Empty,
-edit: false),
-times: Times.Once);
+            expression: service => service.ProcessPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.SourcePage.Path == "Admin"
+                    && operation.SourcePage.Contents.Any(
+                        predicate: content =>
+                            content.Name == "body"
+                            && content.Html == "[component[login]]"))),
+            times: Times.Once);
     }
 
     [Fact]

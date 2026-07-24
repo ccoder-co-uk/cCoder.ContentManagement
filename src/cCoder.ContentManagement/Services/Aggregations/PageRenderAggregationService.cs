@@ -26,7 +26,52 @@ internal sealed partial class PageRenderAggregationService(
     IPageRoleOrchestrationService pageRoleOrchestrationService,
     IPageRenderOrchestrationService pageRenderOrchestrationService) : IPageRenderAggregationService
 {
-    public PageRenderResponse RenderPageRenderRequestPageRenderResponse(PageRenderRequest request) =>
+    public PageRenderOperation RenderPageRenderOperation(
+        PageRenderOperation operation) =>
+        TryCatch<PageRenderOperation>(operation: () =>
+    {
+        ValidateRenderPageRenderOperation(inputs: [operation]);
+
+        if (operation.OperationType == PageRenderOperationType.RenderResult)
+        {
+            operation.Page = RenderRenderResult(
+                appId: operation.AppId,
+                path: operation.Path,
+                theme: operation.Theme,
+                culture: operation.Culture,
+                edit: operation.Edit);
+
+            return operation;
+        }
+
+        PageRenderRequest request = new()
+        {
+            Host = operation.Host,
+            Path = operation.Path,
+            Theme = operation.Theme,
+            Culture = operation.Culture,
+            Edit = operation.Edit,
+            RequestUrl = operation.RequestUrl,
+            Exception = operation.Exception
+        };
+
+        PageRenderResponse response =
+            operation.OperationType == PageRenderOperationType.RenderError
+                ? RenderErrorPageRenderRequestPageRenderResponse(
+                    request: request)
+                : RenderPageRenderRequestPageRenderResponse(
+                    request: request);
+
+        operation.App = response.App;
+        operation.Page = response.Page;
+        operation.Theme = response.Theme;
+        operation.Culture = response.Culture;
+        operation.Edit = response.Edit;
+
+        return operation;
+    });
+
+    internal PageRenderResponse RenderPageRenderRequestPageRenderResponse(PageRenderRequest request) =>
         TryCatch<PageRenderResponse>(operation: () =>
     {
         ValidateRender(inputs: [request]);
@@ -54,7 +99,7 @@ internal sealed partial class PageRenderAggregationService(
 
     });
 
-    public PageRenderResponse RenderErrorPageRenderRequestPageRenderResponse(PageRenderRequest request) =>
+    internal PageRenderResponse RenderErrorPageRenderRequestPageRenderResponse(PageRenderRequest request) =>
         TryCatch<PageRenderResponse>(operation: () =>
     {
         ValidateRenderError(inputs: [request]);
@@ -79,7 +124,7 @@ internal sealed partial class PageRenderAggregationService(
 
     });
 
-    public RenderResult RenderRenderResult(int appId, string path, string theme, string culture, bool edit = false) =>
+    internal RenderResult RenderRenderResult(int appId, string path, string theme, string culture, bool edit = false) =>
         TryCatch<RenderResult>(operation: () =>
     {
         ValidateRenderRenderResult(inputs: [appId, path, theme, culture, edit]);
@@ -110,7 +155,7 @@ internal sealed partial class PageRenderAggregationService(
 
         if (page == null)
         {
-            RenderResult renderResult = pageRenderOrchestrationService.RenderPageRenderResult(
+            RenderResult renderResult = RenderPageRenderResult(
 page: CreateMissingPage(newApp: app, path: path, culture: culture),
 theme: theme,
 culture: culture);
@@ -119,23 +164,23 @@ culture: culture);
             return renderResult;
         }
 
-        if (!pageRenderOrchestrationService.UserCanPage(page: page, privilege: "page_read") &&
+        if (!UserCanPage(page: page, privilege: "page_read") &&
             !pageRenderOrchestrationService.IsAdminOfApp(appId: appId))
         {
             Page gatedPage = CreateGatedPage(newPage: page);
             gatedPage.App = app;
 
-            return pageRenderOrchestrationService.RenderPageRenderResult(
+            return RenderPageRenderResult(
                 page: gatedPage,
                 theme: theme,
                 culture: culture);
         }
 
-        return pageRenderOrchestrationService.RenderPageRenderResult(
+        return RenderPageRenderResult(
 page: page,
 theme: theme,
 culture: culture,
-edit: edit && pageRenderOrchestrationService.UserCanPage(page: page, privilege: "page_update"));
+edit: edit && UserCanPage(page: page, privilege: "page_update"));
 
     });
 
@@ -360,6 +405,42 @@ edit: edit && pageRenderOrchestrationService.UserCanPage(page: page, privilege: 
         };
     }
 
+    private RenderResult RenderPageRenderResult(
+        Page page,
+        string theme,
+        string culture,
+        bool edit = false)
+    {
+        PageRenderOperation operation = new()
+        {
+            OperationType = PageRenderOperationType.RenderResult,
+            SourcePage = page,
+            Theme = theme,
+            Culture = culture,
+            Edit = edit
+        };
+
+        return pageRenderOrchestrationService
+            .ProcessPageRenderOperation(
+                operation: operation)
+            .Page;
+    }
+
+    private bool UserCanPage(Page page, string privilege)
+    {
+        PageRenderOperation operation = new()
+        {
+            OperationType = PageRenderOperationType.UserCanPage,
+            SourcePage = page,
+            Privilege = privilege
+        };
+
+        return pageRenderOrchestrationService
+            .ProcessPageRenderOperation(
+                operation: operation)
+            .IsAuthorized;
+    }
+
     private RenderResult ExecuteRenderRenderResult(int appId, string path, string theme, string culture, bool edit = false)
     {
         ValidateAppId(appId: appId, parameterName: "appId");
@@ -389,7 +470,7 @@ edit: edit && pageRenderOrchestrationService.UserCanPage(page: page, privilege: 
 
         if (page == null)
         {
-            RenderResult renderResult = pageRenderOrchestrationService.RenderPageRenderResult(
+            RenderResult renderResult = RenderPageRenderResult(
 page: CreateMissingPage(newApp: app, path: path, culture: culture),
 theme: theme,
 culture: culture);
@@ -398,22 +479,22 @@ culture: culture);
             return renderResult;
         }
 
-        if (!pageRenderOrchestrationService.UserCanPage(page: page, privilege: "page_read") &&
+        if (!UserCanPage(page: page, privilege: "page_read") &&
             !pageRenderOrchestrationService.IsAdminOfApp(appId: appId))
         {
             Page gatedPage = CreateGatedPage(newPage: page);
             gatedPage.App = app;
 
-            return pageRenderOrchestrationService.RenderPageRenderResult(
+            return RenderPageRenderResult(
                 page: gatedPage,
                 theme: theme,
                 culture: culture);
         }
 
-        return pageRenderOrchestrationService.RenderPageRenderResult(
+        return RenderPageRenderResult(
 page: page,
 theme: theme,
 culture: culture,
-edit: edit && pageRenderOrchestrationService.UserCanPage(page: page, privilege: "page_update"));
+edit: edit && UserCanPage(page: page, privilege: "page_update"));
     }
 }

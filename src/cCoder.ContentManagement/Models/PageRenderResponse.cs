@@ -7,15 +7,15 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Models;
 
-public sealed class PageRenderResponse
+public class PageRenderResponse
 {
-    public App App { get; init; }
+    public App App { get; set; }
 
-    public RenderResult Page { get; init; }
+    public RenderResult Page { get; set; }
 
-    public string Theme { get; init; }
+    public string Theme { get; set; }
 
-    public string Culture { get; init; }
+    public string Culture { get; set; }
 
-    public bool Edit { get; init; }
+    public bool Edit { get; set; }
 }

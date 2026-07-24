@@ -17,7 +17,23 @@ internal sealed partial class PageRenderProcessingService(
     IPageRenderService pageRenderService,
     Config config) : IPageRenderProcessingService
 {
-    public RenderResult RenderPageUserRenderResult(
+    public PageRenderOperation RenderPageRenderOperation(
+        PageRenderOperation operation) =>
+        TryCatch<PageRenderOperation>(operation: () =>
+    {
+        ValidateRenderPageRenderOperation(inputs: [operation]);
+
+        operation.Page = RenderPageUserRenderResult(
+            page: operation.SourcePage,
+            user: operation.User,
+            theme: operation.Theme,
+            culture: operation.Culture,
+            edit: operation.Edit);
+
+        return operation;
+    });
+
+    internal RenderResult RenderPageUserRenderResult(
         Page page,
         User user,
         string theme,

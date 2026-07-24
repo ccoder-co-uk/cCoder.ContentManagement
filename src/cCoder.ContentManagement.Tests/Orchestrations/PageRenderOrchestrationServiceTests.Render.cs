@@ -64,8 +64,19 @@ public partial class PageRenderOrchestrationServiceTests
             authorizationProcessingService: authorizationProcessingServiceMock.Object);
 
         processingServiceMock
-            .Setup(expression: x => x.RenderPageUserRenderResult(page: page, user: user, theme: "Default", culture: string.Empty, edit: true))
-            .Returns(value: expected);
+            .Setup(expression: service => service.RenderPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.SourcePage == page
+                    && operation.User == user
+                    && operation.Theme == "Default"
+                    && operation.Culture == string.Empty
+                    && operation.Edit)))
+            .Returns(valueFunction: (PageRenderOperation operation) =>
+            {
+                operation.Page = expected;
+
+                return operation;
+            });
 
         // When
         RenderResult actual = orchestrationService.RenderPageUserRenderResult(page: page, user: user, theme: "Default", culture: string.Empty, edit: true);

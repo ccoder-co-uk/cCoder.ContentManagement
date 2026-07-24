@@ -13,16 +13,30 @@ internal sealed class PageManager(
     IServiceProviderExecutionService serviceProviderExecutionService)
         : IPageManager
 {
-    public object Render(int appId, string path, string theme, string culture) =>
-        serviceProviderExecutionService.Execute<
+    public object Render(
+        int appId,
+        string path,
+        string theme,
+        string culture)
+    {
+        PageRenderOperation operation = new()
+        {
+            OperationType = PageRenderOperationType.RenderResult,
+            AppId = appId,
+            Path = path,
+            Theme = theme,
+            Culture = culture
+        };
+
+        return serviceProviderExecutionService.Execute<
             IPageRenderAggregationService,
-            object>(
+            PageRenderOperation>(
                 name: "PageRender",
-                operation: service => service.RenderRenderResult(
-                    appId: appId,
-                    path: path,
-                    theme: theme,
-                    culture: culture));
+                operation: service =>
+                    service.RenderPageRenderOperation(
+                        operation: operation))
+            .Page;
+    }
 
     public IQueryable<Page> GetAll() =>
         serviceProviderExecutionService.Execute<

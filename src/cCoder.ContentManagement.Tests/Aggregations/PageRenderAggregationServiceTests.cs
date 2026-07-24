@@ -48,14 +48,18 @@ public partial class PageRenderAggregationServiceTests
                 culture ?? currentUser.DefaultCultureId);
 
         pageRenderOrchestrationServiceMock
-            .Setup(expression: service => service.UserCanPage(
-                page: It.IsAny<Page>(),
-                privilege: It.IsAny<string>()))
-            .Returns(valueFunction: (Page page, string privilege) =>
-                ContentManagementModelLogic.UserCan(
-                    page: page,
+            .Setup(expression: service => service.ProcessPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.OperationType == PageRenderOperationType.UserCanPage)))
+            .Returns(valueFunction: (PageRenderOperation operation) =>
+            {
+                operation.IsAuthorized = ContentManagementModelLogic.UserCan(
+                    page: operation.SourcePage,
                     user: currentUser,
-                    privilege: privilege));
+                    privilege: operation.Privilege);
+
+                return operation;
+            });
 
         layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
             .Returns(value: Array.Empty<Layout>()
@@ -149,4 +153,22 @@ pageRenderOrchestrationService: pageRenderOrchestrationServiceMock.Object);
             Edit = false,
             StatusCode = 200
         };
+
+    private static PageRenderOperation CreatePageRenderOperation(RenderResult renderResult) =>
+        new()
+        {
+            Page = renderResult
+        };
+
+    private void SetupRenderResult(RenderResult renderResult) =>
+        pageRenderOrchestrationServiceMock
+            .Setup(expression: service => service.ProcessPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.OperationType != PageRenderOperationType.UserCanPage)))
+            .Returns(valueFunction: (PageRenderOperation operation) =>
+            {
+                operation.Page = renderResult;
+
+                return operation;
+            });
 }

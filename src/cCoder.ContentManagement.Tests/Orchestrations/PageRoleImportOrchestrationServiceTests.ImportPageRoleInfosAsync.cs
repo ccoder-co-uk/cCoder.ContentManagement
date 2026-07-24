@@ -25,7 +25,8 @@ public partial class PageRoleImportOrchestrationServiceTests
 
         PageRole resolvedPageRole = CreatePageRole(
             pageId: 123,
-            roleId: Guid.NewGuid());
+            roleId: new Guid(
+                g: "5fe70497-0cb4-4e1f-8f72-f0370b2af448"));
 
         PageRoleInfo[] pageRoleInfos =
         [
@@ -46,7 +47,7 @@ public partial class PageRoleImportOrchestrationServiceTests
             .Setup(
                 expression: service =>
                     service.SynchronizePageRolesAsync(
-                        It.Is<PageRole[]>(
+                        pageRoles: It.Is<PageRole[]>(
                             match: pageRoles =>
                                 pageRoles.Length == 1
                                 && pageRoles[0] == resolvedPageRole)))

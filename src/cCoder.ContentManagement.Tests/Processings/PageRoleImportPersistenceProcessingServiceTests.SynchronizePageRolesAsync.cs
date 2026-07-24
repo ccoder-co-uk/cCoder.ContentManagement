@@ -49,7 +49,7 @@ public partial class PageRoleImportPersistenceProcessingServiceTests
             .Setup(
                 expression: broker =>
                     broker.DeleteAllPageRolesAsync(
-                        It.Is<PageRole[]>(
+                        deletedPageRole: It.Is<PageRole[]>(
                             match: pageRoles =>
                                 pageRoles.Length == 1
                                 && pageRoles[0] == deletedPageRole)))

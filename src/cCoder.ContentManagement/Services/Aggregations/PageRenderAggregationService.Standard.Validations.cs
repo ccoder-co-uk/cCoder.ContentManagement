@@ -8,6 +8,9 @@ namespace cCoder.ContentManagement.Services.Aggregations;
 
 internal sealed partial class PageRenderAggregationService
 {
+    private static void ValidateRenderPageRenderOperation(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateRender(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

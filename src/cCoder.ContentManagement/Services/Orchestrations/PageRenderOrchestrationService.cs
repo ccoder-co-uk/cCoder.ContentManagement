@@ -34,7 +34,38 @@ internal partial class PageRenderOrchestrationService(
 
     });
 
-    public bool UserCanPage(Page page, string privilege) =>
+    public PageRenderOperation ProcessPageRenderOperation(
+        PageRenderOperation operation) =>
+        TryCatch<PageRenderOperation>(operation: () =>
+    {
+        ValidateProcessPageRenderOperation(inputs: [operation]);
+
+        if (operation.OperationType == PageRenderOperationType.UserCanPage)
+        {
+            operation.IsAuthorized = UserCanPage(
+                page: operation.SourcePage,
+                privilege: operation.Privilege);
+
+            return operation;
+        }
+
+        operation.Page = operation.User == null
+            ? RenderPageRenderResult(
+                page: operation.SourcePage,
+                theme: operation.Theme,
+                culture: operation.Culture,
+                edit: operation.Edit)
+            : RenderPageUserRenderResult(
+                page: operation.SourcePage,
+                user: operation.User,
+                theme: operation.Theme,
+                culture: operation.Culture,
+                edit: operation.Edit);
+
+        return operation;
+    });
+
+    internal bool UserCanPage(Page page, string privilege) =>
         TryCatch<bool>(operation: () =>
     {
         ValidateUserCanPage(inputs: [page, privilege]);
@@ -50,7 +81,7 @@ internal partial class PageRenderOrchestrationService(
 
     });
 
-    public RenderResult RenderPageRenderResult(
+    internal RenderResult RenderPageRenderResult(
         Page page,
         string theme,
         string culture,
@@ -73,7 +104,7 @@ internal partial class PageRenderOrchestrationService(
 
     });
 
-    public RenderResult RenderPageUserRenderResult(Page page, User user, string theme, string culture, bool edit = false) =>
+    internal RenderResult RenderPageUserRenderResult(Page page, User user, string theme, string culture, bool edit = false) =>
         TryCatch<RenderResult>(operation: () =>
     {
         ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit]);
@@ -95,13 +126,22 @@ internal partial class PageRenderOrchestrationService(
         User user,
         string theme,
         string culture,
-        bool edit) =>
-        pageRenderProcessingService.RenderPageUserRenderResult(
-            page: page,
-            user: user,
-            theme: theme,
-            culture: culture,
-            edit: edit);
+        bool edit)
+    {
+        PageRenderOperation operation = new()
+        {
+            SourcePage = page,
+            User = user,
+            Theme = theme,
+            Culture = culture,
+            Edit = edit
+        };
+
+        return pageRenderProcessingService
+            .RenderPageRenderOperation(
+                operation: operation)
+            .Page;
+    }
 
     private static void ValidatePage(Page page, string parameterName) =>
         ThrowIf(condition: page == null, message: parameterName + " is required.");
