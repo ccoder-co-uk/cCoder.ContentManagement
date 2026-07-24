@@ -3,10 +3,8 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Brokers;
 using Newtonsoft.Json.Linq;
 using cCoder.ContentManagement.Services.Orchestrations;
-using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.CMS;
@@ -14,8 +12,7 @@ using cCoder.Data.Models.CMS;
 namespace cCoder.ContentManagement.Services.Aggregations;
 
 internal partial class ContentManagementMigrationAggregationService(
-    IJsonBroker jsonBroker,
-    IPackageExportProcessingService packageExportProcessingService,
+    IMigrationSupportOrchestrationService migrationSupportOrchestrationService,
     IComponentOrchestrationService componentOrchestrationService,
     ILayoutOrchestrationService layoutOrchestrationService,
     IPageOrchestrationService pageOrchestrationService,
@@ -39,14 +36,11 @@ internal partial class ContentManagementMigrationAggregationService(
         ValidateExportPackages(inputs: [appId, packageNames]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        return ValidatePackageNames(
-            packageNames: packageNames,
-            parameterName: "packageNames")
-            .Select(selector: packageName =>
-                packageExportProcessingService.ExportPackage(
-                    appId: appId,
-                    packageName: packageName))
-            .ToArray();
+        return migrationSupportOrchestrationService.ExportPackages(
+            appId: appId,
+            packageNames: ValidatePackageNames(
+                packageNames: packageNames,
+                parameterName: "packageNames"));
 
     });
 
@@ -95,7 +89,10 @@ internal partial class ContentManagementMigrationAggregationService(
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackageItem(packageItem: item, parameterName: "item");
         string sanitizedData = RemoveComputedFields(json: item.Data);
-        Component[] items = ((!sanitizedData.StartsWith(value: "{")) ? jsonBroker.ParseJson<Component[]>(json: sanitizedData) : new Component[1] { jsonBroker.ParseJson<Component>(json: sanitizedData) });
+
+        Component[] items = migrationSupportOrchestrationService
+            .DeserializeItems<Component>(json: sanitizedData);
+
         await componentOrchestrationService.ImportComponentsAsync(appId: appId, items: items);
     }
 
@@ -104,7 +101,10 @@ internal partial class ContentManagementMigrationAggregationService(
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackageItem(packageItem: item, parameterName: "item");
         string sanitizedData = RemoveComputedFields(json: item.Data);
-        Layout[] items = ((!sanitizedData.StartsWith(value: "{")) ? jsonBroker.ParseJson<Layout[]>(json: sanitizedData) : new Layout[1] { jsonBroker.ParseJson<Layout>(json: sanitizedData) });
+
+        Layout[] items = migrationSupportOrchestrationService
+            .DeserializeItems<Layout>(json: sanitizedData);
+
         await layoutOrchestrationService.ImportLayoutsAsync(appId: appId, items: items);
     }
 
@@ -113,7 +113,10 @@ internal partial class ContentManagementMigrationAggregationService(
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackageItem(packageItem: item, parameterName: "item");
         string sanitizedData = RemoveComputedFields(json: item.Data);
-        Page[] pages = ((!sanitizedData.StartsWith(value: "{")) ? jsonBroker.ParseJson<Page[]>(json: sanitizedData) : new Page[1] { jsonBroker.ParseJson<Page>(json: sanitizedData) });
+
+        Page[] pages = migrationSupportOrchestrationService
+            .DeserializeItems<Page>(json: sanitizedData);
+
         await pageOrchestrationService.ImportPagesAsync(appId: appId, items: pages);
     }
 
@@ -121,7 +124,9 @@ internal partial class ContentManagementMigrationAggregationService(
     {
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackageItem(packageItem: item, parameterName: "item");
-        PageRoleInfo[] pageRoles = ((!item.Data.StartsWith(value: "{")) ? jsonBroker.ParseJson<PageRoleInfo[]>(json: item.Data) : new PageRoleInfo[1] { jsonBroker.ParseJson<PageRoleInfo>(json: item.Data) });
+
+        PageRoleInfo[] pageRoles = migrationSupportOrchestrationService
+            .DeserializeItems<PageRoleInfo>(json: item.Data);
 
         await pageRoleOrchestrationService.ImportPageRoleInfosAsync(
             appId: appId,
@@ -133,7 +138,10 @@ internal partial class ContentManagementMigrationAggregationService(
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackageItem(packageItem: item, parameterName: "item");
         string sanitizedData = RemoveComputedFields(json: item.Data);
-        Resource[] items = ((!sanitizedData.StartsWith(value: "{")) ? jsonBroker.ParseJson<Resource[]>(json: sanitizedData) : new Resource[1] { jsonBroker.ParseJson<Resource>(json: sanitizedData) });
+
+        Resource[] items = migrationSupportOrchestrationService
+            .DeserializeItems<Resource>(json: sanitizedData);
+
         await resourceOrchestrationService.ImportResourcesAsync(appId: appId, items: items);
     }
 
@@ -142,7 +150,10 @@ internal partial class ContentManagementMigrationAggregationService(
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackageItem(packageItem: item, parameterName: "item");
         string sanitizedData = RemoveComputedFields(json: item.Data);
-        Script[] items = ((!sanitizedData.StartsWith(value: "{")) ? jsonBroker.ParseJson<Script[]>(json: sanitizedData) : new Script[1] { jsonBroker.ParseJson<Script>(json: sanitizedData) });
+
+        Script[] items = migrationSupportOrchestrationService
+            .DeserializeItems<Script>(json: sanitizedData);
+
         await scriptOrchestrationService.ImportScriptsAsync(appId: appId, items: items);
     }
 
@@ -151,7 +162,10 @@ internal partial class ContentManagementMigrationAggregationService(
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackageItem(packageItem: item, parameterName: "item");
         string sanitizedData = RemoveComputedFields(json: item.Data);
-        Template[] items = ((!sanitizedData.StartsWith(value: "{")) ? jsonBroker.ParseJson<Template[]>(json: sanitizedData) : new Template[1] { jsonBroker.ParseJson<Template>(json: sanitizedData) });
+
+        Template[] items = migrationSupportOrchestrationService
+            .DeserializeItems<Template>(json: sanitizedData);
+
         await templateOrchestrationService.ImportTemplatesAsync(appId: appId, items: items);
     }
 

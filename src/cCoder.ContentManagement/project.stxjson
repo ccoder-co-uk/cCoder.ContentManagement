@@ -6328,6 +6328,23 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Serialization.JsonService",
+      "StandardElementType": "FoundationService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Deserialize",
+          "Inputs": [
+            {
+              "Name": "json",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "T"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Foundations.Storages.AppCultureService",
       "StandardElementType": "FoundationService",
       "Properties": [],
@@ -7979,6 +7996,37 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CLayout\u003E"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Orchestrations.MigrationSupportOrchestrationService",
+      "StandardElementType": "OrchestrationService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "DeserializeItems",
+          "Inputs": [
+            {
+              "Name": "json",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "T[]"
+        },
+        {
+          "Name": "ExportPackages",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "packageNames",
+              "Type": "System.String[]"
+            }
+          ],
+          "ReturnType": "Package[]"
         }
       ]
     },
@@ -9799,6 +9847,23 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Processings.JsonProcessingService",
+      "StandardElementType": "ProcessingService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "DeserializeItems",
+          "Inputs": [
+            {
+              "Name": "json",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "T[]"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Processings.LayoutEventProcessingService",
       "StandardElementType": "ProcessingService",
       "Properties": [],
@@ -11360,15 +11425,15 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Brokers.JsonBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.MigrationSupportOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
@@ -11389,10 +11454,6 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Processings.PackageExportProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
@@ -11589,6 +11650,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.RenderFileContentService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.RenderFileContentBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Serialization.JsonService",
+      "ToType": "cCoder.ContentManagement.Brokers.JsonBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.AppCultureService",
@@ -11801,6 +11866,14 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.LayoutProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.MigrationSupportOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.JsonProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.MigrationSupportOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.PackageExportProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.PackageItemOrchestrationService",
@@ -12035,6 +12108,10 @@
       "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.AppService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Processings.JsonProcessingService",
+      "ToType": "cCoder.ContentManagement.Services.Foundations.Serialization.JsonService"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Processings.LayoutEventProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.Events.LayoutEventService"
     },
@@ -12230,46 +12307,11 @@
       "LineNumber": 10
     },
     {
-      "Code": "STXA001",
-      "Description": "An aggregation service may have any number of dependencies, but they must share the same service variation.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "LineNumber": 16
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
       "LineNumber": 16
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Authorization.AuthorizationService",
-      "LineNumber": 19
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Authorization.AuthorizationService",
-      "LineNumber": 37
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Authorization.AuthorizationService",
-      "LineNumber": 50
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService",
-      "LineNumber": 198
     },
     {
       "Code": "STXO001",
@@ -12298,27 +12340,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
       "LineNumber": 16
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService",
-      "LineNumber": 22
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService",
-      "LineNumber": 49
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService",
-      "LineNumber": 50
     },
     {
       "Code": "STXP001",

@@ -22,6 +22,7 @@ using cCoder.ContentManagement.Services.Foundations.Authorization;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Foundations.Serialization;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
@@ -170,6 +171,7 @@ public static partial class IServiceCollectionExtensions
     private static void AddFoundations(this IServiceCollection services)
     {
         services.AddTransient<IEventHandlerService, EventHandlerService>();
+        services.AddTransient<IJsonService, JsonService>();
         services.AddTransient<IAuthorizationService, AuthorizationService>();
         services.AddTransient<IAppCultureEventService, AppCultureEventService>();
         services.AddTransient<IAppEventService, AppEventService>();
@@ -230,6 +232,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentOrchestrationService, ContentOrchestrationService>();
         services.AddTransient<ICultureOrchestrationService, CultureOrchestrationService>();
         services.AddTransient<ILayoutOrchestrationService, LayoutOrchestrationService>();
+        services.AddTransient<IMigrationSupportOrchestrationService, MigrationSupportOrchestrationService>();
         services.AddTransient<IPackageItemOrchestrationService, PackageItemOrchestrationService>();
         services.AddTransient<IPackageOrchestrationService, PackageOrchestrationService>();
         services.AddTransient<IPageInfoOrchestrationService, PageInfoOrchestrationService>();
@@ -260,6 +263,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ICultureProcessingService, CultureProcessingService>();
         services.AddTransient<ILayoutEventProcessingService, LayoutEventProcessingService>();
         services.AddTransient<ILayoutProcessingService, LayoutProcessingService>();
+        services.AddTransient<IJsonProcessingService, JsonProcessingService>();
         services.AddTransient<IPackageEventProcessingService, PackageEventProcessingService>();
         services.AddTransient<IPackageExportProcessingService, PackageExportProcessingService>();
         services.AddTransient<IPackageItemEventProcessingService, PackageItemEventProcessingService>();

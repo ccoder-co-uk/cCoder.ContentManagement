@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Services.Foundations.Serialization;
 using cCoder.Data.Models.Packaging;
 using FluentAssertions;
 using Moq;
@@ -145,8 +146,10 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
         IScriptOrchestrationService scriptOrchestrationService = null)
         =>
         new(
-jsonBroker: new JsonBroker(),
-packageExportProcessingService: packageExportProcessingService ?? Mock.Of<IPackageExportProcessingService>(),
+migrationSupportOrchestrationService: new MigrationSupportOrchestrationService(
+jsonProcessingService: new JsonProcessingService(
+jsonService: new JsonService(jsonBroker: new JsonBroker())),
+packageExportProcessingService: packageExportProcessingService ?? Mock.Of<IPackageExportProcessingService>()),
 componentOrchestrationService: componentOrchestrationService ?? Mock.Of<IComponentOrchestrationService>(),
 layoutOrchestrationService: layoutOrchestrationService ?? Mock.Of<ILayoutOrchestrationService>(),
 pageOrchestrationService: pageOrchestrationService ?? Mock.Of<IPageOrchestrationService>(),
