@@ -4697,6 +4697,45 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Models.ComponentRenderOperation",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "AppId",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "Component",
+          "Type": "Component"
+        },
+        {
+          "Name": "Culture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "RenderParams",
+          "Type": "cCoder.ContentManagement.Models.ComponentRenderParams"
+        },
+        {
+          "Name": "Result",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Theme",
+          "Type": "System.String"
+        },
+        {
+          "Name": "User",
+          "Type": "User"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Models.ComponentRenderParams",
       "StandardElementType": "Model",
       "Properties": [
@@ -5376,6 +5415,45 @@
       "Name": "cCoder.ContentManagement.Models.Result\u003CT\u003E",
       "StandardElementType": "Model",
       "Properties": [],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.TemplateRenderOperation",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "AppId",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "Culture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Model",
+          "Type": "System.Object"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "RenderParams",
+          "Type": "cCoder.ContentManagement.Models.RenderParams"
+        },
+        {
+          "Name": "Result",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Template",
+          "Type": "Template"
+        },
+        {
+          "Name": "User",
+          "Type": "User"
+        }
+      ],
       "Methods": []
     },
     {
@@ -9978,41 +10056,11 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "RenderComponentComponentRenderParams",
+          "Name": "RenderComponentRenderOperation",
           "Inputs": [
             {
-              "Name": "component",
-              "Type": "Component"
-            },
-            {
-              "Name": "renderParams",
-              "Type": "cCoder.ContentManagement.Models.ComponentRenderParams"
-            }
-          ],
-          "ReturnType": "System.String"
-        },
-        {
-          "Name": "RenderUser",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "name",
-              "Type": "System.String"
-            },
-            {
-              "Name": "user",
-              "Type": "User"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            },
-            {
-              "Name": "theme",
-              "Type": "System.String"
+              "Name": "operation",
+              "Type": "cCoder.ContentManagement.Models.ComponentRenderOperation"
             }
           ],
           "ReturnType": "System.String"
@@ -11546,45 +11594,11 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "RenderTemplateRenderParams",
+          "Name": "RenderTemplateRenderOperation",
           "Inputs": [
             {
-              "Name": "template",
-              "Type": "Template"
-            },
-            {
-              "Name": "model",
-              "Type": "System.Object"
-            },
-            {
-              "Name": "renderParams",
-              "Type": "cCoder.ContentManagement.Models.RenderParams"
-            }
-          ],
-          "ReturnType": "System.String"
-        },
-        {
-          "Name": "RenderUser",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "name",
-              "Type": "System.String"
-            },
-            {
-              "Name": "model",
-              "Type": "System.Object"
-            },
-            {
-              "Name": "user",
-              "Type": "User"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
+              "Name": "operation",
+              "Type": "cCoder.ContentManagement.Models.TemplateRenderOperation"
             }
           ],
           "ReturnType": "System.String"
@@ -12687,11 +12701,67 @@
   ],
   "AnalysisItems": [
     {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.ComponentRenderOperation",
+      "LineNumber": 27
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Models.TemplateRenderOperation",
+      "LineNumber": 27
+    },
+    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
       "LineNumber": 16
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Orchestrations.ComponentRenderOrchestrationService",
+      "LineNumber": 101
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService",
+      "LineNumber": 96
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
+      "LineNumber": 20
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
+      "LineNumber": 729
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
+      "LineNumber": 19
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
+      "LineNumber": 900
     }
   ]
 }

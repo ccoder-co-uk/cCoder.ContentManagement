@@ -8,6 +8,9 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class TemplateRenderProcessingService
 {
+    private static void ValidateRenderTemplateOperation(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateRenderUser(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

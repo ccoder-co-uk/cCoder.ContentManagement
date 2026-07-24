@@ -38,15 +38,16 @@ public partial class TemplateRenderOrchestrationServiceTests
         };
 
         templateRenderProcessingServiceMock
-            .Setup(expression: x =>
-                x.RenderUser(
-appId: 1,
-name: "template",
-model: model,
-user: It.IsAny<User>(),
-                    culture: "en-GB"
-                )
-            )
+            .Setup(
+                expression: service =>
+                    service.RenderTemplateRenderOperation(
+                        operation: It.Is<TemplateRenderOperation>(
+                            match: operation =>
+                                operation.AppId == 1
+                                && operation.Name == "template"
+                                && operation.Model == model
+                                && operation.User == user
+                                && operation.Culture == "en-GB")))
             .Returns(value: "rendered");
 
         // When

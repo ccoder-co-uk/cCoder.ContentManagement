@@ -17,6 +17,7 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Models;
 
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
@@ -46,12 +47,16 @@ public partial class ComponentRenderOrchestrationServiceTests
             .Returns(value: authorization);
 
         componentRenderProcessingServiceMock
-            .Setup(expression: service => service.RenderUser(
-                appId: 1,
-                name: "Hero",
-                user: user,
-                culture: "en-GB",
-                theme: "Default"))
+            .Setup(
+                expression: service =>
+                    service.RenderComponentRenderOperation(
+                        operation: It.Is<ComponentRenderOperation>(
+                            match: operation =>
+                                operation.AppId == 1
+                                && operation.Name == "Hero"
+                                && operation.User == user
+                                && operation.Culture == "en-GB"
+                                && operation.Theme == "Default")))
             .Returns(value: expectedHtml);
 
         // When
@@ -86,7 +91,16 @@ public partial class ComponentRenderOrchestrationServiceTests
         string expectedHtml = "<section>component</section>";
 
         componentRenderProcessingServiceMock
-            .Setup(expression: x => x.RenderUser(appId: 1, name: "Hero", user: user, culture: "en-GB", theme: "Default"))
+            .Setup(
+                expression: service =>
+                    service.RenderComponentRenderOperation(
+                        operation: It.Is<ComponentRenderOperation>(
+                            match: operation =>
+                                operation.AppId == 1
+                                && operation.Name == "Hero"
+                                && operation.User == user
+                                && operation.Culture == "en-GB"
+                                && operation.Theme == "Default")))
             .Returns(value: expectedHtml);
 
         // When

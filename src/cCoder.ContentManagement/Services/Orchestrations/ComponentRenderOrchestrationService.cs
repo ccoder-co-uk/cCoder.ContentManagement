@@ -57,13 +57,20 @@ internal sealed partial class ComponentRenderOrchestrationService(
         string name,
         User user,
         string culture,
-        string theme) =>
-        componentRenderProcessingService.RenderUser(
-            appId: appId,
-            name: name,
-            user: user,
-            culture: culture,
-            theme: theme);
+        string theme)
+    {
+        ComponentRenderOperation operation = new()
+        {
+            AppId = appId,
+            Name = name,
+            User = user,
+            Culture = culture,
+            Theme = theme
+        };
+
+        return componentRenderProcessingService.RenderComponentRenderOperation(
+            operation: operation);
+    }
 
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");

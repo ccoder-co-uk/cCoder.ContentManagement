@@ -55,13 +55,20 @@ internal sealed partial class TemplateRenderOrchestrationService(
         string name,
         string culture,
         dynamic model,
-        User user) =>
-        templateRenderProcessingService.RenderUser(
-            appId: appId,
-            name: name,
-            model: model,
-            user: user,
-            culture: culture);
+        User user)
+    {
+        TemplateRenderOperation operation = new()
+        {
+            AppId = appId,
+            Name = name,
+            Model = model,
+            User = user,
+            Culture = culture
+        };
+
+        return templateRenderProcessingService.RenderTemplateRenderOperation(
+            operation: operation);
+    }
 
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");

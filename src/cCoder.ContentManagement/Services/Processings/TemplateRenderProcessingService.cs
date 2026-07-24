@@ -33,7 +33,28 @@ internal partial class TemplateRenderProcessingService(
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
 
-    public string RenderUser(
+    public string RenderTemplateRenderOperation(
+        TemplateRenderOperation operation) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateRenderTemplateOperation(inputs: [operation]);
+
+        operation.Result = operation.Template != null
+            ? RenderTemplateRenderParams(
+                template: operation.Template,
+                model: operation.Model,
+                renderParams: operation.RenderParams)
+            : RenderUser(
+                appId: operation.AppId,
+                name: operation.Name,
+                model: operation.Model,
+                user: operation.User,
+                culture: operation.Culture);
+
+        return operation.Result;
+    });
+
+    internal string RenderUser(
         int appId,
         string name,
         object model,
@@ -110,7 +131,7 @@ internal partial class TemplateRenderProcessingService(
 
     });
 
-    public string RenderTemplateRenderParams(
+    internal string RenderTemplateRenderParams(
         Template template,
         object model,
         RenderParams renderParams) =>

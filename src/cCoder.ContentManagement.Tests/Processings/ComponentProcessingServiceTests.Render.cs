@@ -47,7 +47,16 @@ public partial class ComponentRenderOrchestrationServiceTests
         };
 
         componentRenderProcessingServiceMock
-            .Setup(expression: x => x.RenderUser(appId: app.Id, name: "Hero", user: actor, culture: string.Empty, theme: "Default"))
+            .Setup(
+                expression: service =>
+                    service.RenderComponentRenderOperation(
+                        operation: It.Is<ComponentRenderOperation>(
+                            match: operation =>
+                                operation.AppId == app.Id
+                                && operation.Name == "Hero"
+                                && operation.User == actor
+                                && operation.Culture == string.Empty
+                                && operation.Theme == "Default")))
             .Returns(value: "<section name='Hero' class='component'><div>content</div><script>console.log('component');</script></section>");
 
         // When
@@ -64,7 +73,17 @@ public partial class ComponentRenderOrchestrationServiceTests
         result.Should()
             .Contain(expected: "console.log('component');");
 
-        componentRenderProcessingServiceMock.Verify(expression: x => x.RenderUser(appId: app.Id, name: "Hero", user: actor, culture: string.Empty, theme: "Default"), times: Times.Once);
+        componentRenderProcessingServiceMock.Verify(
+            expression: service =>
+                service.RenderComponentRenderOperation(
+                    operation: It.Is<ComponentRenderOperation>(
+                        match: operation =>
+                            operation.AppId == app.Id
+                            && operation.Name == "Hero"
+                            && operation.User == actor
+                            && operation.Culture == string.Empty
+                            && operation.Theme == "Default")),
+            times: Times.Once);
     }
 
 }

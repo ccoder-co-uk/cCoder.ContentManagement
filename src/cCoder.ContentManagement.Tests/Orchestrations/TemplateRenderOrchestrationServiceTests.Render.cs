@@ -49,12 +49,16 @@ public partial class TemplateRenderOrchestrationServiceTests
             .Returns(value: authorization);
 
         templateRenderProcessingServiceMock
-            .Setup(expression: service => service.RenderUser(
-                appId: 1,
-                name: "Welcome",
-                model: model,
-                user: user,
-                culture: "en-GB"))
+            .Setup(
+                expression: service =>
+                    service.RenderTemplateRenderOperation(
+                        operation: It.Is<TemplateRenderOperation>(
+                            match: operation =>
+                                operation.AppId == 1
+                                && operation.Name == "Welcome"
+                                && operation.Model == model
+                                && operation.User == user
+                                && operation.Culture == "en-GB")))
             .Returns(value: expectedHtml);
 
         // When
@@ -90,12 +94,16 @@ public partial class TemplateRenderOrchestrationServiceTests
         string expectedHtml = "<main>template</main>";
 
         templateRenderProcessingServiceMock
-            .Setup(expression: x => x.RenderUser(
-appId: 1,
-name: "Welcome",
-model: model,
-user: user,
-culture: "en-GB"))
+            .Setup(
+                expression: service =>
+                    service.RenderTemplateRenderOperation(
+                        operation: It.Is<TemplateRenderOperation>(
+                            match: operation =>
+                                operation.AppId == 1
+                                && operation.Name == "Welcome"
+                                && operation.Model == model
+                                && operation.User == user
+                                && operation.Culture == "en-GB")))
             .Returns(value: expectedHtml);
 
         // When

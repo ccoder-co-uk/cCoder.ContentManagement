@@ -33,7 +33,27 @@ internal partial class ComponentRenderProcessingService(
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
 
-    public string RenderUser(int appId, string name, User user, string culture, string theme) =>
+    public string RenderComponentRenderOperation(
+        ComponentRenderOperation operation) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateRenderComponentOperation(inputs: [operation]);
+
+        operation.Result = operation.Component != null
+            ? RenderComponentComponentRenderParams(
+                component: operation.Component,
+                renderParams: operation.RenderParams)
+            : RenderUser(
+                appId: operation.AppId,
+                name: operation.Name,
+                user: operation.User,
+                culture: operation.Culture,
+                theme: operation.Theme);
+
+        return operation.Result;
+    });
+
+    internal string RenderUser(int appId, string name, User user, string culture, string theme) =>
         TryCatch<string>(operation: () =>
     {
         ValidateRenderUser(inputs: [appId, name, user, culture, theme]);
@@ -100,7 +120,7 @@ internal partial class ComponentRenderProcessingService(
 
     });
 
-    public string RenderComponentComponentRenderParams(Component component, ComponentRenderParams renderParams) =>
+    internal string RenderComponentComponentRenderParams(Component component, ComponentRenderParams renderParams) =>
         TryCatch<string>(operation: () =>
     {
         ValidateRenderComponentComponentRenderParams(inputs: [component, renderParams]);
