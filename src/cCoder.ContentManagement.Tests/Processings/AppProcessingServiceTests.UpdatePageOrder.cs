@@ -30,6 +30,10 @@ public partial class AppProcessingServiceTests
     public async Task ShouldUpdatePageOrderAndSaveWhenAppExists()
     {
         // Given
+        currentUser = TestUsers.WithPrivilege(
+            privilege: "app_update",
+            appId: 1);
+
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -66,15 +70,32 @@ public partial class AppProcessingServiceTests
             },
         ];
 
-        appServiceMock
-            .Setup(expression: x => x.UpdatePageOrderAsync(appId: incomingApp.Id, updatedPage: incomingApp.Pages))
-            .Returns(value: ValueTask.CompletedTask);
+        Page existingPage = new()
+        {
+            Id = incomingApp.Pages.Single().Id,
+            AppId = incomingApp.Id
+        };
+
+        pageBrokerMock
+            .Setup(expression: broker => broker.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { existingPage }.AsQueryable());
+
+        pageBrokerMock
+            .Setup(expression: broker => broker.UpdatePageAsync(updatedPage: existingPage))
+            .ReturnsAsync(value: existingPage);
 
         // When
         await appProcessingService.UpdatePageOrderAppAsync(key: incomingApp.Id, updatedApp: incomingApp);
 
         // Then
-        appServiceMock.Verify(expression: x => x.UpdatePageOrderAsync(appId: incomingApp.Id, updatedPage: incomingApp.Pages), times: Times.Once);
+        pageBrokerMock.Verify(
+            expression: broker => broker.GetAllPages(ignoreFilters: true),
+            times: Times.Once);
+
+        pageBrokerMock.Verify(
+            expression: broker => broker.UpdatePageAsync(updatedPage: existingPage),
+            times: Times.Once);
+
         appServiceMock.VerifyNoOtherCalls();
     }
 
@@ -82,6 +103,10 @@ public partial class AppProcessingServiceTests
     public async Task ShouldThrowTaskCanceledExceptionWhenAppDoesNotExistForUpdatePageOrder()
     {
         // Given
+        currentUser = TestUsers.WithPrivilege(
+            privilege: "app_update",
+            appId: 1);
+
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -103,9 +128,9 @@ public partial class AppProcessingServiceTests
         incomingApp.Id = 1;
         incomingApp.Pages = [];
 
-        appServiceMock
-            .Setup(expression: x => x.UpdatePageOrderAsync(appId: incomingApp.Id, updatedPage: incomingApp.Pages))
-            .Returns(value: ValueTask.FromException(exception: new TaskCanceledException(message: "App not found")));
+        pageBrokerMock
+            .Setup(expression: broker => broker.GetAllPages(ignoreFilters: true))
+            .Throws(exception: new TaskCanceledException(message: "App not found"));
 
         // When
 
@@ -118,7 +143,10 @@ public partial class AppProcessingServiceTests
             .ThrowAsync<TaskCanceledException>()
             .WithMessage(expectedWildcardPattern: "App not found");
 
-        appServiceMock.Verify(expression: x => x.UpdatePageOrderAsync(appId: incomingApp.Id, updatedPage: incomingApp.Pages), times: Times.Once);
+        pageBrokerMock.Verify(
+            expression: broker => broker.GetAllPages(ignoreFilters: true),
+            times: Times.Once);
+
         appServiceMock.VerifyNoOtherCalls();
     }
 

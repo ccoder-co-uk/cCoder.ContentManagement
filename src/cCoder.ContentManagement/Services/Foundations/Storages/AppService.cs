@@ -12,7 +12,6 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class AppService(
     IAppBroker appBroker,
-    IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IAppService
 {
     public App GetApp(int appId, bool ignoreFilters = false) =>
@@ -89,31 +88,6 @@ internal partial class AppService(
         updatedApp.DefaultTheme = result.DefaultTheme;
         updatedApp.ConfigJson = result.ConfigJson;
         return updatedApp;
-
-    }, isValueTask: true);
-
-    public ValueTask UpdatePageOrderAsync(int appId, IEnumerable<Page> updatedPage) =>
-        TryCatch(operation: async () =>
-    {
-        ValidatePageOrderOnUpdate(inputs: [appId, updatedPage]);
-        ValidateId(appId: appId, parameterName: "id");
-        ValidatePages(pages: updatedPage, parameterName: "pages");
-        authorizationBroker.Authorize(appId: appId, privilege: "App_update");
-        Dictionary<int, Page> incomingPagesById = updatedPage.ToDictionary(keySelector: page => page.Id);
-
-        List<Page> existingPages = pageBroker.GetAllPages(ignoreFilters: true)
-            .Where(predicate: page => page.AppId == appId)
-            .ToList();
-
-        foreach (Page existingPage in existingPages)
-        {
-            if (incomingPagesById.TryGetValue(key: existingPage.Id, value: out Page incomingPage))
-            {
-                existingPage.Order = incomingPage.Order;
-                existingPage.ParentId = incomingPage.ParentId;
-                await pageBroker.UpdatePageAsync(updatedPage: existingPage);
-            }
-        }
 
     }, isValueTask: true);
 

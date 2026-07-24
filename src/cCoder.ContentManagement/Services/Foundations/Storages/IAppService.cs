@@ -16,7 +16,5 @@ public interface IAppService
 
     ValueTask<App> UpdateAppAsync(App updatedApp);
 
-    ValueTask UpdatePageOrderAsync(int appId, IEnumerable<Page> updatedPage);
-
     ValueTask DeleteAsync(int appId);
 }

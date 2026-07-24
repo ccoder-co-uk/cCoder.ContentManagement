@@ -20,6 +20,7 @@ internal partial class AppProcessingService(
     IAuthorizationBroker authorizationBroker,
     IRoleBroker roleBroker,
     IUserRoleBroker userRoleBroker,
+    IPageBroker pageBroker,
     HttpContext httpContext = null) : IAppProcessingService
 {
     public App GetApp(int appId) =>
@@ -335,7 +336,27 @@ internal partial class AppProcessingService(
         ValidatePageOrderAppOnUpdate(inputs: [key, updatedApp]);
         ValidateId(appId: key, parameterName: "key");
         ValidateApp(app: updatedApp, parameterName: "app");
-        await service.UpdatePageOrderAsync(appId: key, updatedPage: updatedApp.Pages ?? new List<Page>());
+        authorizationBroker.Authorize(appId: key, privilege: "App_update");
+
+        Dictionary<int, Page> incomingPagesById =
+            (updatedApp.Pages ?? [])
+            .ToDictionary(keySelector: page => page.Id);
+
+        Page[] existingPages = pageBroker.GetAllPages(ignoreFilters: true)
+            .Where(predicate: page => page.AppId == key)
+            .ToArray();
+
+        foreach (Page existingPage in existingPages)
+        {
+            if (incomingPagesById.TryGetValue(
+                key: existingPage.Id,
+                value: out Page incomingPage))
+            {
+                existingPage.Order = incomingPage.Order;
+                existingPage.ParentId = incomingPage.ParentId;
+                await pageBroker.UpdatePageAsync(updatedPage: existingPage);
+            }
+        }
 
     }, isValueTask: true);
 

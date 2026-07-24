@@ -34,6 +34,7 @@ public partial class AppProcessingServiceTests
     private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
     private readonly Mock<IRoleBroker> roleBrokerMock = new();
     private readonly Mock<IUserRoleBroker> userRoleBrokerMock = new();
+    private readonly Mock<IPageBroker> pageBrokerMock = new();
     private readonly AppProcessingService appProcessingService;
 
     public AppProcessingServiceTests()
@@ -52,7 +53,8 @@ cultureService: cultureServiceMock.Object,
 privilegeBroker: privilegeBrokerMock.Object,
 authorizationBroker: authorizationBrokerMock.Object,
 roleBroker: roleBrokerMock.Object,
-userRoleBroker: userRoleBrokerMock.Object
+userRoleBroker: userRoleBrokerMock.Object,
+pageBroker: pageBrokerMock.Object
         );
     }
 

@@ -6345,20 +6345,6 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CApp\u003E"
-        },
-        {
-          "Name": "UpdatePageOrderAsync",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "updatedPage",
-              "Type": "System.Collections.Generic.IEnumerable\u003CPage\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask"
         }
       ]
     },
@@ -11427,10 +11413,6 @@
       "ToType": "cCoder.ContentManagement.Brokers.Storages.AppBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.AppService",
-      "ToType": "cCoder.ContentManagement.Brokers.Storages.PageBroker"
-    },
-    {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService",
       "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
     },
@@ -11745,6 +11727,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.RoleBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
+      "ToType": "cCoder.ContentManagement.Brokers.Storages.PageBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",

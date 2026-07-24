@@ -61,6 +61,7 @@ privilegeBroker: privilegeBrokerMock.Object,
 authorizationBroker: authorizationBrokerMock.Object,
 roleBroker: roleBrokerMock.Object,
 userRoleBroker: userRoleBrokerMock.Object,
+pageBroker: pageBrokerMock.Object,
 httpContext: context
         );
 
@@ -114,6 +115,7 @@ privilegeBroker: privilegeBrokerMock.Object,
 authorizationBroker: authorizationBrokerMock.Object,
 roleBroker: roleBrokerMock.Object,
 userRoleBroker: userRoleBrokerMock.Object,
+pageBroker: pageBrokerMock.Object,
 httpContext: context
         );
 

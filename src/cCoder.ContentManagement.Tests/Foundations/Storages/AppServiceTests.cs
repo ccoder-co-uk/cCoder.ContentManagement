@@ -30,7 +30,6 @@ public partial class AppServiceTests
     private readonly Mock<IAppBroker> appBrokerMock;
     private readonly Mock<ICultureBroker> cultureBrokerMock;
     private readonly Mock<IPrivilegeBroker> privilegeBrokerMock;
-    private readonly Mock<IPageBroker> pageBrokerMock;
     private readonly Mock<IAuthorizationBroker> authorizationBrokerMock;
     private readonly AppService appService;
 
@@ -39,12 +38,10 @@ public partial class AppServiceTests
         appBrokerMock = new Mock<IAppBroker>(behavior: MockBehavior.Strict);
         cultureBrokerMock = new Mock<ICultureBroker>(behavior: MockBehavior.Strict);
         privilegeBrokerMock = new Mock<IPrivilegeBroker>(behavior: MockBehavior.Strict);
-        pageBrokerMock = new Mock<IPageBroker>(behavior: MockBehavior.Strict);
         authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
 
         appService = new AppService(
 appBroker: appBrokerMock.Object,
-pageBroker: pageBrokerMock.Object,
 authorizationBroker: authorizationBrokerMock.Object);
     }
 
