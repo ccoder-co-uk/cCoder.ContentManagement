@@ -12,11 +12,11 @@ internal sealed class LayoutEventBroker(IEventInfrastructureDependency eventInfr
     : AuthenticatedEventBroker(eventInfrastructureDependency), ILayoutEventBroker
 {
     public ValueTask RaiseLayoutAddEventAsync(EventMessage<Layout> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "layout_add", message: message);
+        RaiseEventAsync(name: "layout_add", message: message);
 
     public ValueTask RaiseLayoutUpdateEventAsync(EventMessage<Layout> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "layout_update", message: message);
+        RaiseEventAsync(name: "layout_update", message: message);
 
     public ValueTask RaiseLayoutDeleteEventAsync(EventMessage<Layout> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "layout_delete", message: message);
+        RaiseEventAsync(name: "layout_delete", message: message);
 }

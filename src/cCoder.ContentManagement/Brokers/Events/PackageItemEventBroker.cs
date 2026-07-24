@@ -12,11 +12,11 @@ internal sealed class PackageItemEventBroker(IEventInfrastructureDependency even
     : AuthenticatedEventBroker(eventInfrastructureDependency), IPackageItemEventBroker
 {
     public ValueTask RaisePackageItemAddEventAsync(EventMessage<PackageItem> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "package_item_add", message: message);
+        RaiseEventAsync(name: "package_item_add", message: message);
 
     public ValueTask RaisePackageItemUpdateEventAsync(EventMessage<PackageItem> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "package_item_update", message: message);
+        RaiseEventAsync(name: "package_item_update", message: message);
 
     public ValueTask RaisePackageItemDeleteEventAsync(EventMessage<PackageItem> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "package_item_delete", message: message);
+        RaiseEventAsync(name: "package_item_delete", message: message);
 }

@@ -12,11 +12,11 @@ internal sealed class CultureEventBroker(IEventInfrastructureDependency eventInf
     : AuthenticatedEventBroker(eventInfrastructureDependency), ICultureEventBroker
 {
     public ValueTask RaiseCultureAddEventAsync(EventMessage<Culture> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "culture_add", message: message);
+        RaiseEventAsync(name: "culture_add", message: message);
 
     public ValueTask RaiseCultureUpdateEventAsync(EventMessage<Culture> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "culture_update", message: message);
+        RaiseEventAsync(name: "culture_update", message: message);
 
     public ValueTask RaiseCultureDeleteEventAsync(EventMessage<Culture> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "culture_delete", message: message);
+        RaiseEventAsync(name: "culture_delete", message: message);
 }

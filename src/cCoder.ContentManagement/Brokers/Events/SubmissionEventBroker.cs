@@ -12,11 +12,11 @@ internal sealed class SubmissionEventBroker(IEventInfrastructureDependency event
     : AuthenticatedEventBroker(eventInfrastructureDependency), ISubmissionEventBroker
 {
     public ValueTask RaiseSubmissionAddEventAsync(EventMessage<Submission> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "submission_add", message: message);
+        RaiseEventAsync(name: "submission_add", message: message);
 
     public ValueTask RaiseSubmissionUpdateEventAsync(EventMessage<Submission> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "submission_update", message: message);
+        RaiseEventAsync(name: "submission_update", message: message);
 
     public ValueTask RaiseSubmissionDeleteEventAsync(EventMessage<Submission> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "submission_delete", message: message);
+        RaiseEventAsync(name: "submission_delete", message: message);
 }

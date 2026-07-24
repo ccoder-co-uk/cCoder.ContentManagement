@@ -12,11 +12,11 @@ internal sealed class ResourceEventBroker(IEventInfrastructureDependency eventIn
     : AuthenticatedEventBroker(eventInfrastructureDependency), IResourceEventBroker
 {
     public ValueTask RaiseResourceAddEventAsync(EventMessage<Resource> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "resource_add", message: message);
+        RaiseEventAsync(name: "resource_add", message: message);
 
     public ValueTask RaiseResourceUpdateEventAsync(EventMessage<Resource> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "resource_update", message: message);
+        RaiseEventAsync(name: "resource_update", message: message);
 
     public ValueTask RaiseResourceDeleteEventAsync(EventMessage<Resource> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "resource_delete", message: message);
+        RaiseEventAsync(name: "resource_delete", message: message);
 }

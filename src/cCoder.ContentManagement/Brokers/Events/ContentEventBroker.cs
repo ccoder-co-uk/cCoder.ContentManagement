@@ -12,11 +12,11 @@ internal sealed class ContentEventBroker(IEventInfrastructureDependency eventInf
     : AuthenticatedEventBroker(eventInfrastructureDependency), IContentEventBroker
 {
     public ValueTask RaiseContentAddEventAsync(EventMessage<Content> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "content_add", message: message);
+        RaiseEventAsync(name: "content_add", message: message);
 
     public ValueTask RaiseContentUpdateEventAsync(EventMessage<Content> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "content_update", message: message);
+        RaiseEventAsync(name: "content_update", message: message);
 
     public ValueTask RaiseContentDeleteEventAsync(EventMessage<Content> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "content_delete", message: message);
+        RaiseEventAsync(name: "content_delete", message: message);
 }

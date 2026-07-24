@@ -12,11 +12,11 @@ internal sealed class CommonObjectEventBroker(IEventInfrastructureDependency eve
     : AuthenticatedEventBroker(eventInfrastructureDependency), ICommonObjectEventBroker
 {
     public ValueTask RaiseCommonObjectAddEventAsync(EventMessage<CommonObject> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "common_object_add", message: message);
+        RaiseEventAsync(name: "common_object_add", message: message);
 
     public ValueTask RaiseCommonObjectUpdateEventAsync(EventMessage<CommonObject> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "common_object_update", message: message);
+        RaiseEventAsync(name: "common_object_update", message: message);
 
     public ValueTask RaiseCommonObjectDeleteEventAsync(EventMessage<CommonObject> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "common_object_delete", message: message);
+        RaiseEventAsync(name: "common_object_delete", message: message);
 }

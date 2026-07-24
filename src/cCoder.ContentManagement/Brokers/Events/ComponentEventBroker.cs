@@ -12,11 +12,11 @@ internal sealed class ComponentEventBroker(IEventInfrastructureDependency eventI
     : AuthenticatedEventBroker(eventInfrastructureDependency), IComponentEventBroker
 {
     public ValueTask RaiseComponentAddEventAsync(EventMessage<Component> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "component_add", message: message);
+        RaiseEventAsync(name: "component_add", message: message);
 
     public ValueTask RaiseComponentUpdateEventAsync(EventMessage<Component> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "component_update", message: message);
+        RaiseEventAsync(name: "component_update", message: message);
 
     public ValueTask RaiseComponentDeleteEventAsync(EventMessage<Component> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "component_delete", message: message);
+        RaiseEventAsync(name: "component_delete", message: message);
 }

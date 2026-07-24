@@ -12,14 +12,14 @@ internal sealed class PackageEventBroker(IEventInfrastructureDependency eventInf
     : AuthenticatedEventBroker(eventInfrastructureDependency), IPackageEventBroker
 {
     public ValueTask RaisePackageImportEventAsync(EventMessage<(int, Package)> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "package_import", message: message);
+        RaiseEventAsync(name: "package_import", message: message);
 
     public ValueTask RaisePackageAddEventAsync(EventMessage<Package> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "package_add", message: message);
+        RaiseEventAsync(name: "package_add", message: message);
 
     public ValueTask RaisePackageUpdateEventAsync(EventMessage<Package> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "package_update", message: message);
+        RaiseEventAsync(name: "package_update", message: message);
 
     public ValueTask RaisePackageDeleteEventAsync(EventMessage<Package> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "package_delete", message: message);
+        RaiseEventAsync(name: "package_delete", message: message);
 }

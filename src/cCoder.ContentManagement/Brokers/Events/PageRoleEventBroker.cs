@@ -12,8 +12,8 @@ internal sealed class PageRoleEventBroker(IEventInfrastructureDependency eventIn
     : AuthenticatedEventBroker(eventInfrastructureDependency), IPageRoleEventBroker
 {
     public ValueTask RaisePageRoleAddEventAsync(EventMessage<PageRole> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "page_role_add", message: message);
+        RaiseEventAsync(name: "page_role_add", message: message);
 
     public ValueTask RaisePageRoleDeleteEventAsync(EventMessage<PageRole> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "page_role_delete", message: message);
+        RaiseEventAsync(name: "page_role_delete", message: message);
 }

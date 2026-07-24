@@ -12,8 +12,8 @@ internal sealed class AppCultureEventBroker(IEventInfrastructureDependency event
     : AuthenticatedEventBroker(eventInfrastructureDependency), IAppCultureEventBroker
 {
     public ValueTask RaiseAppCultureAddEventAsync(EventMessage<AppCulture> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "app_culture_add", message: message);
+        RaiseEventAsync(name: "app_culture_add", message: message);
 
     public ValueTask RaiseAppCultureDeleteEventAsync(EventMessage<AppCulture> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "app_culture_delete", message: message);
+        RaiseEventAsync(name: "app_culture_delete", message: message);
 }

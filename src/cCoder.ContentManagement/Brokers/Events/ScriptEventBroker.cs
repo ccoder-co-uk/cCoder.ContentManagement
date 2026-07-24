@@ -12,11 +12,11 @@ internal sealed class ScriptEventBroker(IEventInfrastructureDependency eventInfr
     : AuthenticatedEventBroker(eventInfrastructureDependency), IScriptEventBroker
 {
     public ValueTask RaiseScriptAddEventAsync(EventMessage<Script> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "script_add", message: message);
+        RaiseEventAsync(name: "script_add", message: message);
 
     public ValueTask RaiseScriptUpdateEventAsync(EventMessage<Script> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "script_update", message: message);
+        RaiseEventAsync(name: "script_update", message: message);
 
     public ValueTask RaiseScriptDeleteEventAsync(EventMessage<Script> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "script_delete", message: message);
+        RaiseEventAsync(name: "script_delete", message: message);
 }

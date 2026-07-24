@@ -12,11 +12,11 @@ internal sealed class AppEventBroker(IEventInfrastructureDependency eventInfrast
     : AuthenticatedEventBroker(eventInfrastructureDependency), IAppEventBroker
 {
     public ValueTask RaiseAppAddEventAsync(EventMessage<App> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "app_add", message: message);
+        RaiseEventAsync(name: "app_add", message: message);
 
     public ValueTask RaiseAppUpdateEventAsync(EventMessage<App> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "app_update", message: message);
+        RaiseEventAsync(name: "app_update", message: message);
 
     public ValueTask RaiseAppDeleteEventAsync(EventMessage<App> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "app_delete", message: message);
+        RaiseEventAsync(name: "app_delete", message: message);
 }

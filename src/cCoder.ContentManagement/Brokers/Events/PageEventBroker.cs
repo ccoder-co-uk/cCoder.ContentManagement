@@ -12,11 +12,11 @@ internal sealed class PageEventBroker(IEventInfrastructureDependency eventInfras
     : AuthenticatedEventBroker(eventInfrastructureDependency), IPageEventBroker
 {
     public ValueTask RaisePageAddEventAsync(EventMessage<Page> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "page_add", message: message);
+        RaiseEventAsync(name: "page_add", message: message);
 
     public ValueTask RaisePageUpdateEventAsync(EventMessage<Page> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "page_update", message: message);
+        RaiseEventAsync(name: "page_update", message: message);
 
     public ValueTask RaisePageDeleteEventAsync(EventMessage<Page> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: "page_delete", message: message);
+        RaiseEventAsync(name: "page_delete", message: message);
 }
