@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -7,96 +11,164 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAuthorizationBroker authorizationBroker) : ISubmissionService
 {
-    public Submission Get(Guid id, bool ignoreFilters = false)
+    public Submission GetSubmission(Guid submissionId, bool ignoreFilters = false) =>
+        TryCatch<Submission>(operation: () =>
     {
-        ValidateId(id, "id");
+        ValidateSubmissionOnGet(inputs: [submissionId, ignoreFilters]);
+        ValidateId(submissionId: submissionId, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Submission i) => i.Id == id);
+        {
+            return ExecuteGetAllSubmission(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
+        }
 
-        Submission submission = GetAll().FirstOrDefault((Submission i) => i.Id == id);
+        Submission submission = ExecuteGetAllSubmission()
+            .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
+
         if (submission != null)
+        {
             return submission;
+        }
 
-        Submission submission2 = GetAll(ignoreFilters: true).FirstOrDefault((Submission i) => i.Id == id);
+        Submission submission2 = ExecuteGetAllSubmission(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
+
         if (submission2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
-    }
 
-    public IQueryable<Submission> GetAll(bool ignoreFilters = false) =>
-        submissionBroker.GetAllSubmissions(ignoreFilters);
+    });
 
-    public async ValueTask<Submission> AddAsync(Submission submission)
+    public IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Submission>>(operation: () =>
     {
-        ValidateSubmission(submission, "submission");
-        authorizationBroker.Authorize(submission.AppId, "Submission_create");
-        Submission newSubmission = CreateStorageSubmission(submission);
-        newSubmission.Id = ((submission.Id == Guid.Empty) ? Guid.NewGuid() : submission.Id);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
-        DateTimeOffset now = (newSubmission.CreatedOn = DateTimeOffset.UtcNow);
-        newSubmission.CreatedBy = currentUserId;
-        newSubmission.LastUpdatedOn = now;
-        newSubmission.LastUpdatedBy = currentUserId;
-        Submission result = await submissionBroker.AddSubmissionAsync(newSubmission);
-        submission.Id = result.Id;
-        submission.AppId = result.AppId;
-        submission.CreatedBy = result.CreatedBy;
-        submission.LastUpdatedBy = result.LastUpdatedBy;
-        submission.CreatedOn = result.CreatedOn;
-        submission.LastUpdatedOn = result.LastUpdatedOn;
-        submission.SourceComponent = result.SourceComponent;
-        submission.State = result.State;
-        submission.DataJson = result.DataJson;
-        return submission;
-    }
+        ValidateAllSubmissionOnGet(inputs: [ignoreFilters]);
+        return submissionBroker.GetAllSubmissions(ignoreFilters: ignoreFilters);
+    });
 
-    public async ValueTask<Submission> UpdateAsync(Submission submission)
+    public ValueTask<Submission> AddSubmissionAsync(Submission newSubmission) =>
+        TryCatch<Submission>(operation: async () =>
     {
-        ValidateSubmission(submission, "submission");
-        authorizationBroker.Authorize(submission.AppId, "Submission_update");
-        Submission updateSubmission = CreateStorageSubmission(submission);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateSubmissionOnAdd(inputs: [newSubmission]);
+        ValidateSubmission(submission: newSubmission, parameterName: "submission");
+        authorizationBroker.Authorize(appId: newSubmission.AppId, privilege: "Submission_create");
+        Submission storageSubmission = CreateStorageSubmission(newSubmission: newSubmission);
+        storageSubmission.Id = ((newSubmission.Id == Guid.Empty) ? Guid.NewGuid() : newSubmission.Id);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
+        DateTimeOffset now = (storageSubmission.CreatedOn = DateTimeOffset.UtcNow);
+        storageSubmission.CreatedBy = currentUserId;
+        storageSubmission.LastUpdatedOn = now;
+        storageSubmission.LastUpdatedBy = currentUserId;
+        Submission result = await submissionBroker.AddSubmissionAsync(newSubmission: storageSubmission);
+        newSubmission.Id = result.Id;
+        newSubmission.AppId = result.AppId;
+        newSubmission.CreatedBy = result.CreatedBy;
+        newSubmission.LastUpdatedBy = result.LastUpdatedBy;
+        newSubmission.CreatedOn = result.CreatedOn;
+        newSubmission.LastUpdatedOn = result.LastUpdatedOn;
+        newSubmission.SourceComponent = result.SourceComponent;
+        newSubmission.State = result.State;
+        newSubmission.DataJson = result.DataJson;
+        return newSubmission;
+
+    }, isValueTask: true);
+
+    public ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission) =>
+        TryCatch<Submission>(operation: async () =>
+    {
+        ValidateSubmissionOnUpdate(inputs: [updatedSubmission]);
+        ValidateSubmission(submission: updatedSubmission, parameterName: "submission");
+        authorizationBroker.Authorize(appId: updatedSubmission.AppId, privilege: "Submission_update");
+        Submission updateSubmission = CreateStorageSubmission(newSubmission: updatedSubmission);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateSubmission.LastUpdatedOn = now;
         updateSubmission.LastUpdatedBy = currentUserId;
-        Submission result = await submissionBroker.UpdateSubmissionAsync(updateSubmission);
-        submission.Id = result.Id;
-        submission.AppId = result.AppId;
-        submission.CreatedBy = result.CreatedBy;
-        submission.LastUpdatedBy = result.LastUpdatedBy;
-        submission.CreatedOn = result.CreatedOn;
-        submission.LastUpdatedOn = result.LastUpdatedOn;
-        submission.SourceComponent = result.SourceComponent;
-        submission.State = result.State;
-        submission.DataJson = result.DataJson;
-        return submission;
-    }
+        Submission result = await submissionBroker.UpdateSubmissionAsync(updatedSubmission: updateSubmission);
+        updatedSubmission.Id = result.Id;
+        updatedSubmission.AppId = result.AppId;
+        updatedSubmission.CreatedBy = result.CreatedBy;
+        updatedSubmission.LastUpdatedBy = result.LastUpdatedBy;
+        updatedSubmission.CreatedOn = result.CreatedOn;
+        updatedSubmission.LastUpdatedOn = result.LastUpdatedOn;
+        updatedSubmission.SourceComponent = result.SourceComponent;
+        updatedSubmission.State = result.State;
+        updatedSubmission.DataJson = result.DataJson;
+        return updatedSubmission;
 
-    public async ValueTask DeleteAsync(Guid id)
-    {
-        ValidateId(id, "id");
-        Submission submission = Get(id);
-        authorizationBroker.Authorize(submission.AppId, "Submission_delete");
-        await submissionBroker.DeleteSubmissionAsync(CreateStorageSubmission(submission));
-    }
+    }, isValueTask: true);
 
-    private static Submission CreateStorageSubmission(Submission submission)
+    public ValueTask DeleteAsync(Guid submissionId) =>
+        TryCatch(operation: async () =>
     {
-        if (submission == null)
+        ValidateDeleteAsync(inputs: [submissionId]);
+        ValidateId(submissionId: submissionId, parameterName: "id");
+        Submission submission = ExecuteGetSubmission(submissionId: submissionId);
+        authorizationBroker.Authorize(appId: submission.AppId, privilege: "Submission_delete");
+        await submissionBroker.DeleteSubmissionAsync(deletedSubmission: CreateStorageSubmission(newSubmission: submission));
+
+    }, isValueTask: true);
+
+    private static Submission CreateStorageSubmission(Submission newSubmission)
+    {
+        if (newSubmission == null)
+        {
             return null;
+        }
 
         return new Submission
         {
-            Id = submission.Id,
-            AppId = submission.AppId,
-            CreatedBy = submission.CreatedBy,
-            LastUpdatedBy = submission.LastUpdatedBy,
-            CreatedOn = submission.CreatedOn,
-            LastUpdatedOn = submission.LastUpdatedOn,
-            SourceComponent = submission.SourceComponent,
-            State = submission.State,
-            DataJson = submission.DataJson
+            Id = newSubmission.Id,
+            AppId = newSubmission.AppId,
+            CreatedBy = newSubmission.CreatedBy,
+            LastUpdatedBy = newSubmission.LastUpdatedBy,
+            CreatedOn = newSubmission.CreatedOn,
+            LastUpdatedOn = newSubmission.LastUpdatedOn,
+            SourceComponent = newSubmission.SourceComponent,
+            State = newSubmission.State,
+            DataJson = newSubmission.DataJson
         };
+    }
+
+    private IQueryable<Submission> ExecuteGetAllSubmission(bool ignoreFilters = false) =>
+        submissionBroker.GetAllSubmissions(ignoreFilters: ignoreFilters);
+
+    private Submission ExecuteGetSubmission(Guid submissionId, bool ignoreFilters = false)
+    {
+        ValidateId(submissionId: submissionId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllSubmission(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
+        }
+
+        Submission submission = ExecuteGetAllSubmission()
+            .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
+
+        if (submission != null)
+        {
+            return submission;
+        }
+
+        Submission submission2 = ExecuteGetAllSubmission(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
+
+        if (submission2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

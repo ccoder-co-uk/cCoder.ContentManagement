@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,11 +33,12 @@ public partial class ComponentServiceTests
 
     public ComponentServiceTests()
     {
-        componentBrokerMock = new Mock<IComponentBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        componentBrokerMock = new Mock<IComponentBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         componentService = new ComponentService(
-            componentBrokerMock.Object,
-            authorizationBrokerMock.Object
+componentBroker: componentBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -41,39 +46,19 @@ public partial class ComponentServiceTests
     {
         Component component = Builder<Component>
             .CreateNew()
-            .With(x => x.Id = id)
-            .With(x => x.AppId = appId)
-            .With(x => x.ResourceKey = $"resource-{Guid.NewGuid():N}")
-            .With(x => x.Content = "<div>content</div>")
-            .With(x => x.Script = "console.log('component');")
-            .With(x => x.Key = $"component-{Guid.NewGuid():N}")
-            .With(x => x.Name = $"Component-{Guid.NewGuid():N}")
-            .With(x => x.CreatedBy = "tester")
-            .With(x => x.LastUpdatedBy = "tester")
-            .With(x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(-5))
-            .With(x => x.LastUpdated = DateTimeOffset.UtcNow)
+            .With(func: x => x.Id = id)
+            .With(func: x => x.AppId = appId)
+            .With(func: x => x.ResourceKey = $"resource-{Guid.NewGuid():N}")
+            .With(func: x => x.Content = "<div>content</div>")
+            .With(func: x => x.Script = "console.log('component');")
+            .With(func: x => x.Key = $"component-{Guid.NewGuid():N}")
+            .With(func: x => x.Name = $"Component-{Guid.NewGuid():N}")
+            .With(func: x => x.CreatedBy = "tester")
+            .With(func: x => x.LastUpdatedBy = "tester")
+            .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
+            .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow)
             .Build();
 
         return component;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

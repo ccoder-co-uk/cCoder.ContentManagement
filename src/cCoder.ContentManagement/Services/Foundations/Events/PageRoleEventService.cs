@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -5,31 +9,41 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker, ICoreAuthInfo authInfo) : IPageRoleEventService
+internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker) : IPageRoleEventService
 {
-    public async ValueTask RaisePageRoleAddEventAsync(PageRole entity)
+    public ValueTask RaisePageRoleAddEventAsync(PageRole entity) =>
+        TryCatch(operation: async () =>
     {
-        EventMessage<PageRole> message = new EventMessage<PageRole>
-        {
-            AuthInfo = new EventAuthInfo
-            {
-                SSOUserId = authInfo.SSOUserId
-            },
-            Data = entity
-        };
-        await pageRoleEventBroker.RaisePageRoleAddEventAsync(message);
-    }
+        ValidateRaisePageRoleAddEventAsync(inputs: [entity]);
 
-    public async ValueTask RaisePageRoleDeleteEventAsync(PageRole entity)
-    {
         EventMessage<PageRole> message = new EventMessage<PageRole>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = pageRoleEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
-        await pageRoleEventBroker.RaisePageRoleDeleteEventAsync(message);
-    }
+
+        await pageRoleEventBroker.RaisePageRoleAddEventAsync(message: message);
+
+    }, isValueTask: true);
+
+    public ValueTask RaisePageRoleDeleteEventAsync(PageRole entity) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateRaisePageRoleDeleteEventAsync(inputs: [entity]);
+
+        EventMessage<PageRole> message = new EventMessage<PageRole>
+        {
+            AuthInfo = new EventAuthInfo
+            {
+                SSOUserId = pageRoleEventBroker.GetCurrentUserId()
+            },
+            Data = entity
+        };
+
+        await pageRoleEventBroker.RaisePageRoleDeleteEventAsync(message: message);
+
+    }, isValueTask: true);
 }

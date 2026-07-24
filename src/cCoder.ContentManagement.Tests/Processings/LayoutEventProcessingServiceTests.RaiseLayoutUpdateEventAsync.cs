@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class LayoutEventProcessingServiceTests
     {
         // Given
         Layout entity = CreateRandomLayout();
+
         layoutEventServiceMock
-            .Setup(x => x.RaiseLayoutUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseLayoutUpdateEventAsync(entity);
+        await service.RaiseLayoutUpdateEventAsync(entity: entity);
 
         // Then
-        layoutEventServiceMock.Verify(x => x.RaiseLayoutUpdateEventAsync(entity), Times.Once);
+        layoutEventServiceMock.Verify(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity), times: Times.Once);
         layoutEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

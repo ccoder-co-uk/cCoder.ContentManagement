@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
 
@@ -5,17 +9,17 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface ITemplateProcessingService
 {
-    Template Get(int id);
+    Template GetTemplate(int templateId);
 
-    IQueryable<Template> GetAll(bool ignoreFilters = false);
+    IQueryable<Template> GetAllTemplate(bool ignoreFilters = false);
 
-    ValueTask<Template> AddAsync(Template entity);
+    ValueTask<Template> AddTemplateAsync(Template newTemplate);
 
-    ValueTask<Template> UpdateAsync(Template entity);
+    ValueTask<Template> UpdateTemplateAsync(Template updatedTemplate);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int templateId);
 
-    ValueTask<IEnumerable<Result<Template>>> AddOrUpdate(IEnumerable<Template> items);
+    ValueTask<IEnumerable<OperationResult<Template>>> AddOrUpdateTemplateResult(IEnumerable<Template> newTemplate);
 
-    ValueTask DeleteAllAsync(IEnumerable<Template> items);
+    ValueTask DeleteAllTemplateAsync(IEnumerable<Template> deletedTemplate);
 }

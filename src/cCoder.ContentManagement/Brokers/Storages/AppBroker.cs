@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
@@ -5,67 +9,68 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
+internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
 {
     public IQueryable<App> GetAllApps(bool ignoreFilters)
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.Apps.IgnoreQueryFilters()
-            : coreDataContext.Apps;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Apps,
+            ignoreFilters: ignoreFilters);
     }
 
-    public async ValueTask<App> AddAppAsync(App entity)
+    public async ValueTask<App> AddAppAsync(App newApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        App result = (await coreDataContext.Apps.AddAsync(entity)).Entity;
+        App result = (await coreDataContext.Apps.AddAsync(entity: newApp)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<App> UpdateAppAsync(App entity)
+    public async ValueTask<App> UpdateAppAsync(App updatedApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        App result = coreDataContext.Apps.Update(entity).Entity;
+
+        App result = coreDataContext.Apps.Update(entity: updatedApp)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeleteAppAsync(App entity)
+    public async ValueTask<int> DeleteAppAsync(App deletedApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Apps.Remove(entity);
+        coreDataContext.Apps.Remove(entity: deletedApp);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAppAggregateAsync(App entity)
+    public async ValueTask DeleteAppAggregateAsync(App deletedApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
         UserRole[] userRolesToDelete =
-            [.. entity.Roles?
-                .SelectMany(role => role.Users ?? [])
-                .GroupBy(userRole => new { userRole.RoleId, userRole.UserId })
-                .Select(group => group.First())
+            [.. deletedApp.Roles?
+                .SelectMany(selector: role => role.Users ?? [])
+            .GroupBy(keySelector: userRole => new { userRole.RoleId, userRole.UserId })
+            .Select(selector: group => group.First())
                 ?? []];
 
-        if (userRolesToDelete.Length > 0)
-            coreDataContext.UserRoles.RemoveRange(userRolesToDelete);
+        coreDataContext.UserRoles.RemoveRange(entities: userRolesToDelete);
 
-        Role[] rolesToDelete = [.. entity.Roles ?? []];
+        Role[] rolesToDelete = [.. deletedApp.Roles ?? []];
 
-        if (rolesToDelete.Length > 0)
-            coreDataContext.Roles.RemoveRange(rolesToDelete);
+        coreDataContext.Roles.RemoveRange(entities: rolesToDelete);
 
-        coreDataContext.Apps.Remove(entity);
+        coreDataContext.Apps.Remove(entity: deletedApp);
         await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllAppsAsync(IEnumerable<App> items)
+    public async ValueTask DeleteAllAppsAsync(IEnumerable<App> deletedApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Apps.RemoveRange(items);
+        coreDataContext.Apps.RemoveRange(entities: deletedApp);
         await coreDataContext.SaveChangesAsync();
     }
 }

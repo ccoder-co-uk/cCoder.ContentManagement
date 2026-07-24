@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,26 +16,25 @@ public sealed partial class TemplateControllerTests
     {
         // Given
         Template createdTemplate = await CreateTemplateAsync(
-            new
-            {
-                appId = 1,
-                name = Unique("Template"),
-                description = "Acceptance template",
-                resourceKey = "Default",
-                rawString = "<html><body><h1>[model[title]]</h1></body></html>",
-            });
+payload: new
+{
+    appId = 1,
+    name = Unique(prefix: "Template"),
+    description = "Acceptance template",
+    resourceKey = "Default",
+    rawString = "<html><body><h1>[model[title]]</h1></body></html>",
+});
 
         // When
-        int actualStatusCode = await DeleteTemplateAsync(createdTemplate.Id);
-        int actualReadStatusCode = await GetTemplateStatusCodeAsync(createdTemplate.Id);
+        int actualStatusCode = await DeleteTemplateAsync(id: createdTemplate.Id);
+        int actualReadStatusCode = await GetTemplateStatusCodeAsync(id: createdTemplate.Id);
 
         // Then
-        actualStatusCode.Should().Be(200);
-        actualReadStatusCode.Should().Be(404);
+
+        actualStatusCode.Should()
+            .Be(expected: 200);
+
+        actualReadStatusCode.Should()
+            .Be(expected: 404);
     }
 }
-
-
-
-
-

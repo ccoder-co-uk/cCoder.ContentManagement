@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -11,8 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -24,72 +26,84 @@ public partial class PageProcessingServiceTests
     [Fact]
     public void ShouldWalkToTopParentWhenGetRoot()
     {
+        // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         Page root = CreateRandomPage();
         root.Id = 1;
         Page child = CreateRandomPage();
         child.Id = 2;
         child.ParentId = root.Id;
-        pageServiceMock.Setup(x => x.Get(root.Id)).Returns(root);
-        pageServiceMock.Setup(x => x.Get(child.Id)).Returns(child);
 
-        Page result = pageProcessingService.GetRoot(child.Id);
+        pageServiceMock.Setup(expression: x => x.GetPage(pageId: root.Id))
+            .Returns(value: root);
 
-        result.Id.Should().Be(root.Id);
-        pageServiceMock.Verify(x => x.Get(child.Id), Times.Once);
-        pageServiceMock.Verify(x => x.Get(root.Id), Times.Once);
+        pageServiceMock.Setup(expression: x => x.GetPage(pageId: child.Id))
+            .Returns(value: child);
+
+        // When
+        Page result = pageProcessingService.GetRootPage(pageId: child.Id);
+
+        // Then
+        result.Id.Should()
+            .Be(expected: root.Id);
+
+        pageServiceMock.Verify(expression: x => x.GetPage(pageId: child.Id), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetPage(pageId: root.Id), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
     public void ShouldReturnSamePageWhenPageIsAlreadyRootForGetRoot()
     {
+        // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         Page root = CreateRandomPage();
         root.Id = 1;
         root.ParentId = null;
-        pageServiceMock.Setup(x => x.Get(root.Id)).Returns(root);
 
-        Page result = pageProcessingService.GetRoot(root.Id);
+        pageServiceMock.Setup(expression: x => x.GetPage(pageId: root.Id))
+            .Returns(value: root);
 
-        result.Should().BeSameAs(root);
-        pageServiceMock.Verify(x => x.Get(root.Id), Times.Once);
+        // When
+        Page result = pageProcessingService.GetRootPage(pageId: root.Id);
+
+        // Then
+        result.Should()
+            .BeSameAs(expected: root);
+
+        pageServiceMock.Verify(expression: x => x.GetPage(pageId: root.Id), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }
-
-
-
-
-
-
-
-
-
-

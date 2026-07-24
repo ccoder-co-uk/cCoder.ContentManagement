@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
@@ -16,22 +20,23 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class CultureController : ODataController
 {
-    protected ICultureOrchestrationService Service { get; }
+    private readonly ICultureOrchestrationService service;
 
     public CultureController(ICultureOrchestrationService service, ILogger<CultureController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Culture)) : new MetadataContainer(typeof(Culture), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Culture)) : new MetadataContainer(type: typeof(Culture), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Culture> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: service.GetAllCulture());
 
     [HttpGet]
     [AllowAnonymous]
@@ -40,8 +45,10 @@ public class CultureController : ODataController
     {
         try
         {
-            IQueryable<Culture> result = Service.GetAll().Where(culture => culture.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<Culture> result = service.GetAllCulture()
+                .Where(predicate: culture => culture.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -51,51 +58,61 @@ public class CultureController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Culture entity)
+    public async Task<IActionResult> Post([FromBody] Culture newCulture)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(CreateResponseCulture(await Service.AddAsync(entity)));
+        return Ok(value: CreateResponseCulture(newCulture: await service.AddCultureAsync(newCulture: newCulture)));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] string key, [FromBody] Culture entity)
+    public async Task<IActionResult> Put([FromRoute] string key, [FromBody] Culture updatedCulture)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(CreateResponseCulture(await Service.UpdateAsync(entity)));
+        return Ok(value: CreateResponseCulture(newCulture: await service.UpdateCultureAsync(updatedCulture: updatedCulture)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] string key, Delta<Culture> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] string key, Delta<Culture> updatedCulture)
     {
-        Culture originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Culture originalEntity = service.GetCulture(cultureId: key);
 
-        delta.Patch(originalEntity);
-        return Ok(CreateResponseCulture(await Service.UpdateAsync(originalEntity)));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        updatedCulture.Patch(original: originalEntity);
+        return Ok(value: CreateResponseCulture(newCulture: await service.UpdateCultureAsync(updatedCulture: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] string key)
     {
-        await Service.DeleteAsync(key);
+        await service.DeleteAsync(cultureId: key);
         return Ok();
     }
 
-    private static Culture CreateResponseCulture(Culture culture)
+    private static Culture CreateResponseCulture(Culture newCulture)
     {
-        if (culture == null)
+        if (newCulture == null)
+        {
             return null;
+        }
 
         return new Culture
         {
-            Id = culture.Id,
-            Name = culture.Name
+            Id = newCulture.Id,
+            Name = newCulture.Name
         };
     }
 }

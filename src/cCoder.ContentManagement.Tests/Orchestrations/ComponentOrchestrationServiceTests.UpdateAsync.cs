@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,39 +27,24 @@ public partial class ComponentOrchestrationServiceTests
     {
         // Given
         Component entity = CreateRandomComponent();
-        componentProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+
+        componentProcessingServiceMock.Setup(expression: x => x.UpdateComponentAsync(updatedComponent: entity))
+            .ReturnsAsync(value: entity);
 
         componentEventProcessingServiceMock
-            .Setup(x => x.RaiseComponentUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseComponentUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Component result = await orchestrationService.UpdateAsync(entity);
+        Component result = await orchestrationService.UpdateComponentAsync(updatedComponent: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        componentProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
-        componentEventProcessingServiceMock.Verify(x => x.RaiseComponentUpdateEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        componentProcessingServiceMock.Verify(expression: x => x.UpdateComponentAsync(updatedComponent: entity), times: Times.Once);
+        componentEventProcessingServiceMock.Verify(expression: x => x.RaiseComponentUpdateEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

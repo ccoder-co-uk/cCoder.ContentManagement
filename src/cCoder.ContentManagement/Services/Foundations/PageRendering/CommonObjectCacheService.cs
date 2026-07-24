@@ -1,17 +1,25 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Rendering.Models;
+using cCoder.ContentManagement.Dependencies.Rendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
-internal sealed class CommonObjectCacheService(ICommonObjectReaderBroker broker) : ICommonObjectCacheService
+internal sealed partial class CommonObjectCacheService(ICommonObjectReaderBroker broker) : ICommonObjectCacheService
 {
-    public PageCacheSlice Get(PageRenderEngineRequest request)
+    public PageCacheSlice GetPageRenderEngineRequestPageCacheSlice(PageRenderEngineRequest request) =>
+        TryCatch<PageCacheSlice>(operation: () =>
     {
+        ValidatePageRenderEngineRequestPageCacheSliceOnGet(inputs: [request]);
+
         return new PageCacheSlice
         {
             CommonResourcesByLookup = broker.GetResourcesByLookup(),
             CommonComponentsByName = broker.GetComponentsByName(),
             CommonScriptsByName = broker.GetScriptsByName()
         };
-    }
+
+    });
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
 
@@ -8,8 +12,12 @@ public sealed partial class WebShellTests
     [Fact]
     public async Task Get_GivenHealthEndpoint_ShouldReturnOk()
     {
-        string content = await GetOkContentAsync("/Health");
+        // Given
+        // When
+        string content = await GetOkContentAsync(path: "/Health");
 
-        content.Should().Be("OK");
+        // Then
+        content.Should()
+            .Be(expected: "OK");
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
@@ -6,11 +10,11 @@ public interface ISubmissionBroker
 {
     IQueryable<Submission> GetAllSubmissions(bool ignoreFilters);
 
-    ValueTask<Submission> AddSubmissionAsync(Submission entity);
+    ValueTask<Submission> AddSubmissionAsync(Submission newSubmission);
 
-    ValueTask<Submission> UpdateSubmissionAsync(Submission entity);
+    ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission);
 
-    ValueTask<int> DeleteSubmissionAsync(Submission entity);
+    ValueTask<int> DeleteSubmissionAsync(Submission deletedSubmission);
 
-    ValueTask DeleteAllSubmissionsAsync(IEnumerable<Submission> items);
+    ValueTask DeleteAllSubmissionsAsync(IEnumerable<Submission> deletedSubmission);
 }

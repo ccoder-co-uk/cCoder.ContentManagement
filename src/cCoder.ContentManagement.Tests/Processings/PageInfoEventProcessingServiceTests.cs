@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,31 +28,11 @@ public partial class PageInfoEventProcessingServiceTests
 
     public PageInfoEventProcessingServiceTests()
     {
-        pageInfoEventServiceMock = new Mock<IPageInfoEventService>(MockBehavior.Strict);
-        service = new PageInfoEventProcessingService(pageInfoEventServiceMock.Object);
+        pageInfoEventServiceMock = new Mock<IPageInfoEventService>(behavior: MockBehavior.Strict);
+        service = new PageInfoEventProcessingService(eventService: pageInfoEventServiceMock.Object);
     }
 
     private static PageInfo CreateRandomPageInfo() =>
-        Builder<PageInfo>.CreateNew().Build();
+        Builder<PageInfo>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

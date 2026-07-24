@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -22,7 +26,8 @@ public sealed partial class AppControllerTests(WebAcceptanceFixture fixture)
     private string ResourceBaseUrl { get; } = "/Api/Core/Resource";
     private static JsonSerializerOptions JsonOptions { get; } = new() { PropertyNameCaseInsensitive = true };
 
-    private static string Unique(string prefix) => $"{prefix}-{Guid.NewGuid():N}";
+    private static string Unique(string prefix) =>
+        $"{prefix}-{Guid.NewGuid():N}";
 
     private sealed record SeededApp(int AppId, Guid RoleId, string Domain);
     private sealed record ODataEnvelope<T>(List<T> Value);
@@ -50,288 +55,396 @@ public sealed partial class AppControllerTests(WebAcceptanceFixture fixture)
     private async Task<SeededApp> SeedDatabase(params string[] privileges)
     {
         using IServiceScope scope = fixture.Factory.Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
+
         string scopedConnectionString = core.Database.GetConnectionString() ?? string.Empty;
 
-        scopedConnectionString.Should().Contain("accept", because: scopedConnectionString);
+        scopedConnectionString.Should()
+            .Contain(expected: "accept", because: scopedConnectionString);
 
-        App app = await core.AddAppAsync(new App
+        App app = await core.AddAppAsync(app: new App
         {
-            Name = Unique("AcceptanceApp"),
-            Domain = $"{Unique("acceptance")}.local",
+            Name = Unique(prefix: "AcceptanceApp"),
+            Domain = $"{Unique(prefix: "acceptance")}.local",
             DefaultTheme = "Default",
             DefaultCultureId = string.Empty,
-            TenantId = Unique("tenant"),
+            TenantId = Unique(prefix: "tenant"),
             ConfigJson = "{}",
         });
 
-        Role role = await core.AddRoleAsync(new Role
+        Role role = await core.AddRoleAsync(role: new Role
         {
             Id = Guid.NewGuid(),
             AppId = app.Id,
-            Name = Unique("AcceptanceRole"),
+            Name = Unique(prefix: "AcceptanceRole"),
             Description = "Acceptance role",
-            Privs = string.Join(',', privileges),
+            Privs = string.Join(separator: ',', value: privileges),
         });
 
-        await core.AddUserRoleAsync(new UserRole { RoleId = role.Id, UserId = "Guest" });
+        await core.AddUserRoleAsync(userRole: new UserRole { RoleId = role.Id, UserId = "Guest" });
 
-        return new SeededApp(app.Id, role.Id, app.Domain);
+        return new SeededApp(AppId: app.Id, RoleId: role.Id, Domain: app.Domain);
     }
 
     private async Task Teardown(SeededApp seededApp)
     {
         using IServiceScope scope = fixture.Factory.Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
         UserRole[] userRoles = core
-            .Set<UserRole>().IgnoreQueryFilters()
-            .Where(userRole => userRole.RoleId == seededApp.RoleId)
+            .Set<UserRole>()
+            .IgnoreQueryFilters()
+            .Where(predicate: userRole => userRole.RoleId == seededApp.RoleId)
             .ToArray();
 
         if (userRoles.Length > 0)
-            await core.DeleteAllAsync(userRoles);
+        {
+            await core.DeleteAllAsync(userRoles: userRoles);
+        }
 
-        Role role = core.Set<Role>().IgnoreQueryFilters().FirstOrDefault(foundRole => foundRole.Id == seededApp.RoleId);
+        Role role = core.Set<Role>()
+            .IgnoreQueryFilters()
+            .FirstOrDefault(predicate: foundRole => foundRole.Id == seededApp.RoleId);
+
         if (role is not null)
-            await core.DeleteAsync(role);
+        {
+            await core.DeleteAsync(role: role);
+        }
 
-        App app = core.Set<App>().IgnoreQueryFilters().FirstOrDefault(foundApp => foundApp.Id == seededApp.AppId);
+        App app = core.Set<App>()
+            .IgnoreQueryFilters()
+            .FirstOrDefault(predicate: foundApp => foundApp.Id == seededApp.AppId);
+
         if (app is not null)
-            await core.DeleteAsync(app);
+        {
+            await core.DeleteAsync(app: app);
+        }
     }
 
     private async Task<bool> AppExists(int appId)
     {
         using IServiceScope scope = fixture.Factory.Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
-        return await Task.FromResult(core.Set<App>().IgnoreQueryFilters().AsNoTracking().Any(app => app.Id == appId));
+
+        return await Task.FromResult(result: core.Set<App>()
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Any(predicate: app => app.Id == appId));
     }
 
     private async Task<App> CreateAppAsync(object payload)
     {
-        using HttpResponseMessage response = await Client.PostAsJsonAsync(BaseUrl, payload);
+        using HttpResponseMessage response = await Client.PostAsJsonAsync(requestUri: BaseUrl, value: payload);
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
-        return JsonSerializer.Deserialize<App>(content, JsonOptions)!;
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
+        return JsonSerializer.Deserialize<App>(json: content, options: JsonOptions)!;
     }
 
     private async Task<int> UpdateAppAsync(int id, object payload)
     {
-        using HttpResponseMessage response = await Client.PutAsJsonAsync($"{BaseUrl}({id})", payload);
+        using HttpResponseMessage response = await Client.PutAsJsonAsync(requestUri: $"{BaseUrl}({id})", value: payload);
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
         return (int)response.StatusCode;
     }
 
     private async Task<int> UpdateAppAsync(string host, int id, object payload)
     {
-        using HttpRequestMessage request = new(HttpMethod.Put, $"{BaseUrl}({id})")
+        using HttpRequestMessage request = new(method: HttpMethod.Put, requestUri: $"{BaseUrl}({id})")
         {
-            Content = JsonContent.Create(payload),
+            Content = JsonContent.Create(inputValue: payload),
         };
+
         request.Headers.Host = host;
 
-        using HttpResponseMessage response = await Client.SendAsync(request);
+        using HttpResponseMessage response = await Client.SendAsync(request: request);
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
         return (int)response.StatusCode;
     }
 
     private async Task<int> PatchAppAsync(int id, object payload)
     {
-        using HttpRequestMessage request = new(HttpMethod.Patch, $"{BaseUrl}({id})")
+        using HttpRequestMessage request = new(method: HttpMethod.Patch, requestUri: $"{BaseUrl}({id})")
         {
-            Content = JsonContent.Create(payload),
+            Content = JsonContent.Create(inputValue: payload),
         };
 
-        using HttpResponseMessage response = await Client.SendAsync(request);
+        using HttpResponseMessage response = await Client.SendAsync(request: request);
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
         return (int)response.StatusCode;
     }
 
     private async Task<int> PatchAppAsync(string host, int id, object payload)
     {
-        using HttpRequestMessage request = new(HttpMethod.Patch, $"{BaseUrl}({id})")
+        using HttpRequestMessage request = new(method: HttpMethod.Patch, requestUri: $"{BaseUrl}({id})")
         {
-            Content = JsonContent.Create(payload),
+            Content = JsonContent.Create(inputValue: payload),
         };
+
         request.Headers.Host = host;
 
-        using HttpResponseMessage response = await Client.SendAsync(request);
+        using HttpResponseMessage response = await Client.SendAsync(request: request);
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
         return (int)response.StatusCode;
     }
 
     private async Task<int> DeleteAppAsync(int id)
     {
-        using HttpResponseMessage response = await Client.DeleteAsync($"{BaseUrl}({id})");
+        using HttpResponseMessage response = await Client.DeleteAsync(requestUri: $"{BaseUrl}({id})");
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
         return (int)response.StatusCode;
     }
 
     private async Task<int> DeleteAppAsync(string host, int id)
     {
-        using HttpRequestMessage request = new(HttpMethod.Delete, $"{BaseUrl}({id})");
+        using HttpRequestMessage request = new(method: HttpMethod.Delete, requestUri: $"{BaseUrl}({id})");
         request.Headers.Host = host;
 
-        using HttpResponseMessage response = await Client.SendAsync(request);
+        using HttpResponseMessage response = await Client.SendAsync(request: request);
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
         return (int)response.StatusCode;
     }
 
     private async Task<App> GetAppAsync(int id)
     {
-        using HttpResponseMessage response = await Client.GetAsync($"{BaseUrl}({id})");
+        using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}({id})");
 
         if (response.StatusCode == HttpStatusCode.NotFound)
+        {
             return null;
+        }
 
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
 
-        if (content.Contains("\"value\":[]", StringComparison.Ordinal))
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
+        if (content.Contains(value: "\"value\":[]", comparisonType: StringComparison.Ordinal))
+        {
             return null;
+        }
 
-        return JsonSerializer.Deserialize<App>(content, JsonOptions);
+        return JsonSerializer.Deserialize<App>(json: content, options: JsonOptions);
     }
 
     private async Task<App> GetAppAsync(string host, int id)
     {
-        using HttpRequestMessage request = new(HttpMethod.Get, $"{BaseUrl}({id})");
+        using HttpRequestMessage request = new(method: HttpMethod.Get, requestUri: $"{BaseUrl}({id})");
         request.Headers.Host = host;
 
-        using HttpResponseMessage response = await Client.SendAsync(request);
+        using HttpResponseMessage response = await Client.SendAsync(request: request);
 
         if (response.StatusCode == HttpStatusCode.NotFound)
+        {
             return null;
+        }
 
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
 
-        if (content.Contains("\"value\":[]", StringComparison.Ordinal))
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
+        if (content.Contains(value: "\"value\":[]", comparisonType: StringComparison.Ordinal))
+        {
             return null;
+        }
 
-        return JsonSerializer.Deserialize<App>(content, JsonOptions);
+        return JsonSerializer.Deserialize<App>(json: content, options: JsonOptions);
     }
 
     private async Task<int> GetAppCountAsync()
     {
-        using HttpResponseMessage response = await Client.GetAsync($"{BaseUrl}/$count");
+        using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}/$count");
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
-        return int.Parse(content);
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
+        return int.Parse(s: content);
     }
 
     private async Task<IReadOnlyList<Layout>> GetLayoutsAsync(string host)
     {
-        using HttpRequestMessage request = new(HttpMethod.Get, LayoutBaseUrl);
+        using HttpRequestMessage request = new(method: HttpMethod.Get, requestUri: LayoutBaseUrl);
         request.Headers.Host = host;
 
-        using HttpResponseMessage response = await Client.SendAsync(request);
+        using HttpResponseMessage response = await Client.SendAsync(request: request);
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
-        return JsonSerializer.Deserialize<ODataEnvelope<Layout>>(content, JsonOptions)!.Value;
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
+        return JsonSerializer.Deserialize<ODataEnvelope<Layout>>(json: content, options: JsonOptions)!.Value;
     }
 
     private async Task<IReadOnlyList<Resource>> GetResourcesAsync(string host)
     {
-        using HttpRequestMessage request = new(HttpMethod.Get, ResourceBaseUrl);
+        using HttpRequestMessage request = new(method: HttpMethod.Get, requestUri: ResourceBaseUrl);
         request.Headers.Host = host;
 
-        using HttpResponseMessage response = await Client.SendAsync(request);
+        using HttpResponseMessage response = await Client.SendAsync(request: request);
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
-        return JsonSerializer.Deserialize<ODataEnvelope<Resource>>(content, JsonOptions)!.Value;
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
+        return JsonSerializer.Deserialize<ODataEnvelope<Resource>>(json: content, options: JsonOptions)!.Value;
     }
 
     private async Task<int> GetAppStatusCodeAsync(int id)
     {
-        using HttpResponseMessage response = await Client.GetAsync($"{BaseUrl}({id})");
+        using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}({id})");
         return (int)response.StatusCode;
     }
 
     private async Task<int> GetAppStatusCodeAsync(string host, int id)
     {
-        using HttpRequestMessage request = new(HttpMethod.Get, $"{BaseUrl}({id})");
+        using HttpRequestMessage request = new(method: HttpMethod.Get, requestUri: $"{BaseUrl}({id})");
         request.Headers.Host = host;
 
-        using HttpResponseMessage response = await Client.SendAsync(request);
+        using HttpResponseMessage response = await Client.SendAsync(request: request);
         return (int)response.StatusCode;
     }
 
     private async Task<AppChildCounts> GetAppChildCountsAsync(int appId)
     {
         using IServiceScope scope = fixture.Factory.Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        int roleCount = core.Set<Role>().IgnoreQueryFilters().Count(role => role.AppId == appId);
-        Guid[] roleIds = [.. core.Set<Role>().IgnoreQueryFilters().Where(role => role.AppId == appId).Select(role => role.Id)];
+        int roleCount = core.Set<Role>()
+            .IgnoreQueryFilters()
+            .Count(predicate: role => role.AppId == appId);
+
+        Guid[] roleIds = [.. core.Set<Role>()
+            .IgnoreQueryFilters()
+            .Where(predicate: role => role.AppId == appId)
+            .Select(selector: role => role.Id)];
 
         return await Task.FromResult(
-            new AppChildCounts(
-                core.Set<App>().IgnoreQueryFilters().Any(app => app.Id == appId),
-                core.Set<AppCulture>().IgnoreQueryFilters().Count(appCulture => appCulture.AppId == appId),
-                core.Set<Component>().IgnoreQueryFilters().Count(component => component.AppId == appId),
-                core.Set<Layout>().IgnoreQueryFilters().Count(layout => layout.AppId == appId),
-                core.Set<Resource>().IgnoreQueryFilters().Count(resource => resource.AppId == appId),
-                roleCount,
-                core.Set<Script>().IgnoreQueryFilters().Count(script => script.AppId == appId),
-                core.Set<Template>().IgnoreQueryFilters().Count(template => template.AppId == appId),
-                core.Set<UserRole>().IgnoreQueryFilters().Count(userRole => roleIds.Contains(userRole.RoleId))
+result: new AppChildCounts(
+AppExists: core.Set<App>()
+            .IgnoreQueryFilters()
+            .Any(predicate: app => app.Id == appId),
+AppCultureCount: core.Set<AppCulture>()
+            .IgnoreQueryFilters()
+            .Count(predicate: appCulture => appCulture.AppId == appId),
+ComponentCount: core.Set<Component>()
+            .IgnoreQueryFilters()
+            .Count(predicate: component => component.AppId == appId),
+LayoutCount: core.Set<Layout>()
+            .IgnoreQueryFilters()
+            .Count(predicate: layout => layout.AppId == appId),
+ResourceCount: core.Set<Resource>()
+            .IgnoreQueryFilters()
+            .Count(predicate: resource => resource.AppId == appId),
+RoleCount: roleCount,
+ScriptCount: core.Set<Script>()
+            .IgnoreQueryFilters()
+            .Count(predicate: script => script.AppId == appId),
+TemplateCount: core.Set<Template>()
+            .IgnoreQueryFilters()
+            .Count(predicate: template => template.AppId == appId),
+UserRoleCount: core.Set<UserRole>()
+            .IgnoreQueryFilters()
+            .Count(predicate: userRole => roleIds.Contains(value: userRole.RoleId))
             ));
     }
 
     private async Task<AppCmsChildren> GetAppCmsChildrenAsync(int appId)
     {
         using IServiceScope scope = fixture.Factory.Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
         return await Task.FromResult(
-            new AppCmsChildren(
-                [.. core.Set<AppCulture>().IgnoreQueryFilters().Where(appCulture => appCulture.AppId == appId)],
-                [.. core.Set<Component>().IgnoreQueryFilters().Where(component => component.AppId == appId)],
-                [.. core.Set<Layout>().IgnoreQueryFilters().Where(layout => layout.AppId == appId)],
-                [.. core.Set<Resource>().IgnoreQueryFilters().Where(resource => resource.AppId == appId)]
+result: new AppCmsChildren(
+Cultures: [.. core.Set<AppCulture>()
+            .IgnoreQueryFilters()
+            .Where(predicate: appCulture => appCulture.AppId == appId)],
+Components: [.. core.Set<Component>()
+            .IgnoreQueryFilters()
+            .Where(predicate: component => component.AppId == appId)],
+Layouts: [.. core.Set<Layout>()
+            .IgnoreQueryFilters()
+            .Where(predicate: layout => layout.AppId == appId)],
+Resources: [.. core.Set<Resource>()
+            .IgnoreQueryFilters()
+            .Where(predicate: resource => resource.AppId == appId)]
                 ,
-                [.. core.Set<Role>().IgnoreQueryFilters().Where(role => role.AppId == appId)],
-                [.. core.Set<Script>().IgnoreQueryFilters().Where(script => script.AppId == appId)],
-                [.. core.Set<Template>().IgnoreQueryFilters().Where(template => template.AppId == appId)]
+Roles: [.. core.Set<Role>()
+            .IgnoreQueryFilters()
+            .Where(predicate: role => role.AppId == appId)],
+Scripts: [.. core.Set<Script>()
+            .IgnoreQueryFilters()
+            .Where(predicate: script => script.AppId == appId)],
+Templates: [.. core.Set<Template>()
+            .IgnoreQueryFilters()
+            .Where(predicate: template => template.AppId == appId)]
             ));
     }
 
     private async Task<string> GetNonDefaultCultureIdAsync()
     {
         using IServiceScope scope = fixture.Factory.Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
         return await Task.FromResult(
-            core.Set<Culture>().IgnoreQueryFilters()
-                .Where(culture => culture.Id != string.Empty)
-                .Select(culture => culture.Id)
-                .First());
+result: core.Set<Culture>()
+            .IgnoreQueryFilters()
+            .Where(predicate: culture => culture.Id != string.Empty)
+            .Select(selector: culture => culture.Id)
+            .First());
     }
 
     private async Task<IReadOnlyList<string>> GetNonDefaultCultureIdsAsync(int count)
     {
         using IServiceScope scope = fixture.Factory.Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
         return await Task.FromResult<IReadOnlyList<string>>(
-            [.. core.Set<Culture>().IgnoreQueryFilters()
-                .Where(culture => culture.Id != string.Empty)
-                .Select(culture => culture.Id)
-                .Take(count)]);
+result: [.. core.Set<Culture>()
+            .IgnoreQueryFilters()
+            .Where(predicate: culture => culture.Id != string.Empty)
+            .Select(selector: culture => culture.Id)
+            .Take(count: count)]);
     }
 }

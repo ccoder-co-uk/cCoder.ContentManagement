@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,37 +27,24 @@ public partial class PageOrchestrationServiceTests
     {
         // Given
         IQueryable<Page> entities = new[] { CreateRandomPage() }.AsQueryable();
-        pageProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+
+        pageProcessingServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+            .Returns(value: entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+
+        var result = orchestrationService.GetAllPage(ignoreFilters: true)
+            .ToArray();
 
         // Then
-        result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        pageProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+
+        result.Select(selector: item => item.Id)
+            .Should()
+            .Equal(expected: entities.Select(selector: item => item.Id));
+
+        pageProcessingServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

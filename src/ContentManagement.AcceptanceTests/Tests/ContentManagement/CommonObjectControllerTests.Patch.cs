@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using FluentAssertions;
 using Xunit;
@@ -15,32 +19,37 @@ public sealed partial class CommonObjectControllerTests
         string updatedDescription = "Patched common object";
 
         // When
-        await PatchCommonObjectAsync(seededContext.Id, new
+
+        await PatchCommonObjectAsync(id: seededContext.Id, payload: new
         {
             description = updatedDescription,
         });
 
         IReadOnlyList<CommonObject> actualCommonObjects = await FilterCommonObjectsByKeyAsync(
-            seededContext.Key
+key: seededContext.Key
         );
+
         CommonObject actualCommonObject = actualCommonObjects
-            .OrderByDescending(item => item.Version)
-            .FirstOrDefault(item => item.Type == seededContext.Type && item.Culture == seededContext.Culture);
+            .OrderByDescending(keySelector: item => item.Version)
+            .FirstOrDefault(predicate: item => item.Type == seededContext.Type && item.Culture == seededContext.Culture);
 
         // Then
-        actualCommonObject.Should().NotBeNull();
-        actualCommonObject!.Description.Should().Be(updatedDescription);
-        actualCommonObject.Version.Should().Be(2);
+
+        actualCommonObject.Should()
+            .NotBeNull();
+
+        actualCommonObject!.Description.Should()
+            .Be(expected: updatedDescription);
+
+        actualCommonObject.Version.Should()
+            .Be(expected: 2);
 
         foreach (CommonObject commonObject in actualCommonObjects)
-            await DeleteCommonObjectAsync(commonObject.Id);
+        {
+            await DeleteCommonObjectAsync(id: commonObject.Id);
+        }
 
-        await Teardown(actualCommonObjects.Select(item => item.Id).ToArray());
+        await Teardown(ids: actualCommonObjects.Select(selector: item => item.Id)
+            .ToArray());
     }
 }
-
-
-
-
-
-

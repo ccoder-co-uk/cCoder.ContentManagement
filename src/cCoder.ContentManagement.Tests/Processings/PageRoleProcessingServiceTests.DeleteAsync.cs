@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,8 +27,11 @@ public partial class PageRoleProcessingServiceTests
     public async Task ShouldDelegateToFoundationDeleteWhenUserCanDeletePageRoleForDeleteAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
-        User user = TestUsers.WithPrivilege("pagerole_delete", 1);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
+
+        User user = TestUsers.WithPrivilege(privilege: "pagerole_delete", appId: 1);
+
         Page page = new()
         {
             Id = 8,
@@ -37,11 +44,14 @@ public partial class PageRoleProcessingServiceTests
                 new LocalPageRole
                 {
                     PageId = 8,
-                    RoleId = user.Roles.First().RoleId,
-                    Role = user.Roles.First().Role,
+                    RoleId = user.Roles.First()
+            .RoleId,
+                    Role = user.Roles.First()
+            .Role,
                 },
             ],
         };
+
         LocalPageRole link = new()
         {
             PageId = page.Id,
@@ -54,50 +64,37 @@ public partial class PageRoleProcessingServiceTests
                 Privs = "page_read",
             },
         };
+
         currentUser = user;
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { page }.AsQueryable());
-        pageRoleServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { link }.AsQueryable());
-        pageRoleServiceMock.Setup(x => x.DeleteAsync(link)).Returns(ValueTask.CompletedTask);
+
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { page }.AsQueryable());
+
+        pageRoleServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
+            .Returns(value: new[] { link }.AsQueryable());
+
+        pageRoleServiceMock.Setup(expression: x => x.DeletePageRoleAsync(deletedPageRole: link))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await pageRoleProcessingService.DeleteAsync(
-        new LocalPageRole { PageId = link.PageId, RoleId = link.RoleId }
+
+        await pageRoleProcessingService.DeletePageRoleAsync(
+deletedPageRole: new LocalPageRole { PageId = link.PageId, RoleId = link.RoleId }
     );
 
         // Then
-        pageServiceMock.Verify(x => x.GetAll(true), Times.Once);
-        pageRoleServiceMock.Verify(x => x.GetAll(true), Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
+        pageRoleServiceMock.Verify(expression: x => x.GetAllPageRole(ignoreFilters: true), times: Times.Once);
+
         pageRoleServiceMock.Verify(
-            x =>
-                x.DeleteAsync(
-                    It.Is<LocalPageRole>(item =>
+expression: x =>
+                x.DeletePageRoleAsync(
+deletedPageRole: It.Is<LocalPageRole>(match: item =>
                         item.RoleId == link.RoleId && item.PageId == link.PageId
                     )
                 ),
-            Times.Once
+times: Times.Once
         );
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

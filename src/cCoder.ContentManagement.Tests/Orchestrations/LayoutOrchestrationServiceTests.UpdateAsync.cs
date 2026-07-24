@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,39 +27,24 @@ public partial class LayoutOrchestrationServiceTests
     {
         // Given
         Layout entity = CreateRandomLayout();
-        layoutProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+
+        layoutProcessingServiceMock.Setup(expression: x => x.UpdateLayoutAsync(updatedLayout: entity))
+            .ReturnsAsync(value: entity);
 
         layoutEventProcessingServiceMock
-            .Setup(x => x.RaiseLayoutUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Layout result = await orchestrationService.UpdateAsync(entity);
+        Layout result = await orchestrationService.UpdateLayoutAsync(updatedLayout: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        layoutProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
-        layoutEventProcessingServiceMock.Verify(x => x.RaiseLayoutUpdateEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        layoutProcessingServiceMock.Verify(expression: x => x.UpdateLayoutAsync(updatedLayout: entity), times: Times.Once);
+        layoutEventProcessingServiceMock.Verify(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

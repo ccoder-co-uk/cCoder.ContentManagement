@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,11 +32,12 @@ public partial class PackageServiceTests
 
     public PackageServiceTests()
     {
-        packageBrokerMock = new Mock<IPackageBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        packageBrokerMock = new Mock<IPackageBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         packageService = new PackageService(
-            packageBrokerMock.Object,
-            authorizationBrokerMock.Object
+packageBroker: packageBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -40,36 +45,14 @@ public partial class PackageServiceTests
     {
         Package package = Builder<Package>
             .CreateNew()
-            .With(x => x.Id = id == Guid.Empty ? Guid.NewGuid() : id)
-            .With(x => x.Name = $"Package-{Guid.NewGuid():N}")
-            .With(x => x.Description = $"Description-{Guid.NewGuid():N}")
-            .With(x => x.Category = $"Category-{Guid.NewGuid():N}")
-            .With(x => x.SourceApi = $"https://api-{Guid.NewGuid():N}.test")
-            .With(x => x.Items = Array.Empty<PackageItem>())
+            .With(func: x => x.Id = id == Guid.Empty ? Guid.NewGuid() : id)
+            .With(func: x => x.Name = $"Package-{Guid.NewGuid():N}")
+            .With(func: x => x.Description = $"Description-{Guid.NewGuid():N}")
+            .With(func: x => x.Category = $"Category-{Guid.NewGuid():N}")
+            .With(func: x => x.SourceApi = $"https://api-{Guid.NewGuid():N}.test")
+            .With(func: x => x.Items = Array.Empty<PackageItem>())
             .Build();
 
         return package;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

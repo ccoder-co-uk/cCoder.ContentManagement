@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
@@ -5,45 +9,65 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class ScriptProcessingService(IScriptService service) : IScriptProcessingService
+internal partial class ScriptProcessingService(IScriptService service) : IScriptProcessingService
 {
-    public Script Get(int id)
+    public Script GetScript(int scriptId) =>
+        TryCatch<Script>(operation: () =>
     {
-        ValidateId(id, "id");
-        return service.Get(id);
-    }
+        ValidateScriptOnGet(inputs: [scriptId]);
+        ValidateId(scriptId: scriptId, parameterName: "id");
+        return service.GetScript(scriptId: scriptId);
 
-    public IQueryable<Script> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters);
+    });
 
-    public ValueTask<Script> AddAsync(Script entity)
+    public IQueryable<Script> GetAllScript(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Script>>(operation: () =>
     {
-        ValidateScript(entity, "entity");
-        return service.AddAsync(entity);
-    }
+        ValidateAllScriptOnGet(inputs: [ignoreFilters]);
+        return service.GetAllScript(ignoreFilters: ignoreFilters);
+    });
 
-    public ValueTask<Script> UpdateAsync(Script entity)
+    public ValueTask<Script> AddScriptAsync(Script newScript) =>
+        TryCatch<Script>(operation: () =>
     {
-        ValidateScript(entity, "entity");
-        return service.UpdateAsync(entity);
-    }
+        ValidateScriptOnAdd(inputs: [newScript]);
+        ValidateScript(script: newScript, parameterName: "entity");
+        return service.AddScriptAsync(newScript: newScript);
 
-    public ValueTask DeleteAsync(int id)
-    {
-        ValidateId(id, "id");
-        return service.DeleteAsync(id);
-    }
+    }, isValueTask: true);
 
-    public async ValueTask<IEnumerable<Result<Script>>> AddOrUpdate(IEnumerable<Script> items)
+    public ValueTask<Script> UpdateScriptAsync(Script updatedScript) =>
+        TryCatch<Script>(operation: () =>
     {
-        ValidateScripts(items, "items");
-        List<Result<Script>> results = new List<Result<Script>>();
-        foreach (Script item in items)
+        ValidateScriptOnUpdate(inputs: [updatedScript]);
+        ValidateScript(script: updatedScript, parameterName: "entity");
+        return service.UpdateScriptAsync(updatedScript: updatedScript);
+
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int scriptId) =>
+        TryCatch(operation: () =>
+    {
+        ValidateDeleteAsync(inputs: [scriptId]);
+        ValidateId(scriptId: scriptId, parameterName: "id");
+        return service.DeleteAsync(scriptId: scriptId);
+
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<OperationResult<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript) =>
+        TryCatch<IEnumerable<OperationResult<Script>>>(operation: async () =>
+    {
+        ValidateOrUpdateScriptResultOnAdd(inputs: [newScript]);
+        ValidateScripts(scripts: newScript, parameterName: "items");
+        List<OperationResult<Script>> results = new List<OperationResult<Script>>();
+
+        foreach (Script item in newScript)
         {
             try
             {
-                Script savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new Result<Script>
+                Script savedItem = item.Id < 1 ? await ExecuteAddScriptAsync(newScript: item) : await ExecuteUpdateScriptAsync(updatedScript: item);
+
+                results.Add(item: new OperationResult<Script>
                 {
                     Success = true,
                     Item = savedItem,
@@ -52,7 +76,7 @@ internal class ScriptProcessingService(IScriptService service) : IScriptProcessi
             }
             catch (Exception ex)
             {
-                results.Add(new Result<Script>
+                results.Add(item: new OperationResult<Script>
                 {
                     Success = false,
                     Item = item,
@@ -60,28 +84,56 @@ internal class ScriptProcessingService(IScriptService service) : IScriptProcessi
                 });
             }
         }
+
         return results;
-    }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Script> items)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllScriptAsync(IEnumerable<Script> deletedScript) =>
+        TryCatch(operation: async () =>
     {
-        ValidateScripts(items, "items");
-        foreach (Script item in items)
-            await DeleteAsync(item.Id);
-    }
+        ValidateAllScriptOnDelete(inputs: [deletedScript]);
+        ValidateScripts(scripts: deletedScript, parameterName: "items");
 
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(id < 1, parameterName + " must be greater than 0.");
+        foreach (Script item in deletedScript)
+        {
+            await ExecuteDeleteAsync(scriptId: item.Id);
+        }
+
+    }, isValueTask: true);
+
+    private static void ValidateId(int scriptId, string parameterName) =>
+        ThrowIf(condition: scriptId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateScript(Script script, string parameterName) =>
-        ThrowIf(script == null, parameterName + " is required.");
+        ThrowIf(condition: script == null, message: parameterName + " is required.");
 
     private static void ValidateScripts(IEnumerable<Script> scripts, string parameterName) =>
-        ThrowIf(scripts == null, parameterName + " is required.");
+        ThrowIf(condition: scripts == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
+    }
+
+    private ValueTask<Script> ExecuteAddScriptAsync(Script newScript)
+    {
+        ValidateScript(script: newScript, parameterName: "entity");
+        return service.AddScriptAsync(newScript: newScript);
+    }
+
+    private ValueTask ExecuteDeleteAsync(int scriptId)
+    {
+        ValidateId(scriptId: scriptId, parameterName: "id");
+        return service.DeleteAsync(scriptId: scriptId);
+    }
+
+    private ValueTask<Script> ExecuteUpdateScriptAsync(Script updatedScript)
+    {
+        ValidateScript(script: updatedScript, parameterName: "entity");
+        return service.UpdateScriptAsync(updatedScript: updatedScript);
     }
 }

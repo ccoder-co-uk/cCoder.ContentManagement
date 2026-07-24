@@ -1,9 +1,16 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Caching;
+using cCoder.ContentManagement.Dependencies.Caching;
+using cCoder.ContentManagement.Dependencies.Events;
 using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
@@ -12,9 +19,13 @@ using cCoder.ContentManagement.Services;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Foundations;
+using cCoder.ContentManagement.Services.Foundations.Authorization;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Foundations.Serialization;
+using cCoder.ContentManagement.Services.Foundations.ServiceProviders;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
@@ -25,6 +36,7 @@ using cCoder.Data.Models.Security;
 using cCoder.Eventing;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Batch;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
@@ -36,19 +48,20 @@ public static partial class IServiceCollectionExtensions
 {
     public static void AddContentManagementWeb(
         this IServiceCollection services,
-        Action<ContentManagementConfiguration> configure = null,
+        Action<ContentManagementConfiguration> newContentManagementConfiguration = null,
         ODataConventionModelBuilder builder = null) =>
-        services.AddConfiguredContentManagementWeb((_, configuration) => configure?.Invoke(configuration), builder);
+        services.AddConfiguredContentManagementWeb(newContentManagementConfiguration: (_, configuration) => newContentManagementConfiguration?.Invoke(obj: configuration), builder: builder);
 
     public static void AddContentManagementHostedServices(
         this IServiceCollection services,
-        Action<ContentManagementConfiguration> configure = null) =>
-        services.AddConfiguredContentManagement((_, configuration) => configure?.Invoke(configuration));
+        Action<ContentManagementConfiguration> newContentManagementConfiguration = null) =>
+        services.AddConfiguredContentManagement(newContentManagementConfiguration: (_, configuration) => newContentManagementConfiguration?.Invoke(obj: configuration));
 
     private static void AddContentManagement(this IServiceCollection services)
     {
         services.AddEventingTypes();
         services.AddBrokers();
+        services.AddServiceProviderDependencies();
         services.AddFoundations();
         services.AddProcessings();
         services.AddOrchestrations();
@@ -57,11 +70,92 @@ public static partial class IServiceCollectionExtensions
         services.AddRendering();
     }
 
-    private static void AddContentManagementWeb(this IServiceCollection services, ODataConventionModelBuilder builder = null)
+    private static void AddServiceProviderDependencies(
+        this IServiceCollection services)
     {
-        services.AddContentManagement();
+        services.AddTransient<IServiceProviderBroker, ServiceProviderBroker>();
+        services.AddTransient<
+            IServiceProviderExecutionService,
+            ServiceProviderExecutionService>();
 
+        services.AddKeyedTransient<IComponentOrchestrationService>(
+            serviceKey: "Component",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IComponentOrchestrationService>());
+
+        services.AddKeyedTransient<IAppOrchestrationService>(
+            serviceKey: "App",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IAppOrchestrationService>());
+
+        services.AddKeyedTransient<IAppUserProcessingService>(
+            serviceKey: "AppUser",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IAppUserProcessingService>());
+
+        services.AddKeyedTransient<IComponentRenderOrchestrationService>(
+            serviceKey: "ComponentRender",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IComponentRenderOrchestrationService>());
+
+        services.AddKeyedTransient<IPageOrchestrationService>(
+            serviceKey: "Page",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IPageOrchestrationService>());
+
+        services.AddKeyedTransient<IPageRenderAggregationService>(
+            serviceKey: "PageRender",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IPageRenderAggregationService>());
+
+        services.AddKeyedTransient<IPageRenderExecutionOrchestrationService>(
+            serviceKey: "PageRenderExecution",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IPageRenderExecutionOrchestrationService>());
+
+        services.AddKeyedTransient<IAppService>(
+            serviceKey: "AppStorage",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IAppService>());
+
+        services.AddKeyedTransient<IComponentService>(
+            serviceKey: "ComponentStorage",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IComponentService>());
+
+        services.AddKeyedTransient<IResourceService>(
+            serviceKey: "ResourceStorage",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IResourceService>());
+
+        services.AddKeyedTransient<IScriptService>(
+            serviceKey: "ScriptStorage",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IScriptService>());
+
+        services.AddKeyedTransient<ITemplateService>(
+            serviceKey: "TemplateStorage",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<ITemplateService>());
+
+        services.AddKeyedTransient<IRenderFileContentService>(
+            serviceKey: "RenderFileContent",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IRenderFileContentService>());
+
+        services.AddKeyedTransient<ITemplateOrchestrationService>(
+            serviceKey: "Template",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<ITemplateOrchestrationService>());
+
+        services.AddKeyedTransient<ITemplateRenderOrchestrationService>(
+            serviceKey: "TemplateRender",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<ITemplateRenderOrchestrationService>());
     }
+
+    private static void AddContentManagementWeb(this IServiceCollection services, ODataConventionModelBuilder builder = null) =>
+        services.AddContentManagement();
 
     private static void AddEventingTypes(this IServiceCollection services)
     {
@@ -87,6 +181,7 @@ public static partial class IServiceCollectionExtensions
     private static void AddBrokers(this IServiceCollection services)
     {
         services.AddTransient<IEventHubBroker, EventHubBroker>();
+        services.AddTransient<IEventInfrastructureDependency, EventInfrastructureDependency>();
         services.AddTransient<IAppCultureEventBroker, AppCultureEventBroker>();
         services.AddTransient<IAppEventBroker, AppEventBroker>();
         services.AddTransient<ICommonObjectEventBroker, CommonObjectEventBroker>();
@@ -130,25 +225,29 @@ public static partial class IServiceCollectionExtensions
     private static void AddCoordinations(this IServiceCollection services)
     {
         services.AddTransient<IAppRenderableCoordinationService, AppRenderableCoordinationService>();
+        services.AddTransient<IAppPageComponentCoordinationService, AppPageComponentCoordinationService>();
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
-        services.AddTransient<IComponentRenderCoordinationService, ComponentRenderCoordinationService>();
         services.AddTransient<IPageCoordinationService, PageCoordinationService>();
-        services.AddTransient<ITemplateRenderCoordinationService, TemplateRenderCoordinationService>();
+        services.AddTransient<IPageStructureCoordinationService, PageStructureCoordinationService>();
     }
 
     private static void AddEventHandlers(this IServiceCollection services)
     {
         services.AddTransient<IAppManager, AppManager>();
+        services.AddTransient<IBaselineManager, BaselineManager>();
+        services.AddTransient<IComponentManager, ComponentManager>();
         services.AddTransient<IContentManagementPackageManager, ContentManagementPackageManager>();
         services.AddTransient<IComponentRenderer, ComponentRenderer>();
+        services.AddTransient<IPageManager, PageManager>();
         services.AddTransient<IPageRenderer, PageRenderer>();
+        services.AddTransient<ITemplateManager, TemplateManager>();
         services.AddTransient<ITemplateRenderer, TemplateRenderer>();
         services.AddTransient<IContentManagementEventHandlers, ContentManagementEventHandlers>();
     }
 
     private static void AddRendering(this IServiceCollection services)
     {
-        services.AddTransient<IPageRenderCoordinationService, PageRenderCoordinationService>();
+        services.AddTransient<IPageRenderAggregationService, PageRenderAggregationService>();
         services.AddTransient<IPageRenderOrchestrationService, PageRenderOrchestrationService>();
         services.AddTransient<IPageRenderProcessingService, PageRenderProcessingService>();
         services.AddTransient<IPageRenderExecutionOrchestrationService, PageRenderExecutionOrchestrationService>();
@@ -164,6 +263,8 @@ public static partial class IServiceCollectionExtensions
     private static void AddFoundations(this IServiceCollection services)
     {
         services.AddTransient<IEventHandlerService, EventHandlerService>();
+        services.AddTransient<IJsonService, JsonService>();
+        services.AddTransient<IAuthorizationService, AuthorizationService>();
         services.AddTransient<IAppCultureEventService, AppCultureEventService>();
         services.AddTransient<IAppEventService, AppEventService>();
         services.AddTransient<ICommonObjectEventService, CommonObjectEventService>();
@@ -197,13 +298,22 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IScriptService, ScriptService>();
         services.AddTransient<ISubmissionService, SubmissionService>();
         services.AddTransient<ITemplateService, TemplateService>();
-        services.AddTransient<ICurrentAppResolver, CurrentAppResolver>();
+        services.AddTransient<
+            ICurrentAppProcessingService,
+            CurrentAppProcessingService>();
+
+        services.AddTransient<ICurrentAppResolver, CurrentAppManager>();
         services.AddTransient<IContentManagementMetadataTypeService, ContentManagementMetadataTypeService>();
         services.AddTransient<IRenderFileContentService, RenderFileContentService>();
-        services.AddTransient<IResourceProvider, CoreResourceProvider>();
-        services.AddSingleton<ICommonObjectCache, CommonObjectCache>();
-        services.AddSingleton<MetadataCache>();
-        services.AddSingleton<IMetadataCache>(serviceProvider => serviceProvider.GetRequiredService<MetadataCache>());
+        services.AddTransient<IComponentRenderService, ComponentRenderService>();
+        services.AddTransient<IPageRenderService, PageRenderService>();
+        services.AddTransient<ITemplateRenderService, TemplateRenderService>();
+        services.AddTransient<IResourceProvider, CoreResourceBroker>();
+        services.AddSingleton<ICommonObjectCache, CommonObjectCacheDependency>();
+        services.AddSingleton<MetadataCacheDependency>();
+        services.AddSingleton<IMetadataCache>(
+            implementationFactory: serviceProvider =>
+                serviceProvider.GetRequiredService<MetadataCacheDependency>());
     }
 
     private static void AddOrchestrations(this IServiceCollection services)
@@ -217,11 +327,15 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentOrchestrationService, ContentOrchestrationService>();
         services.AddTransient<ICultureOrchestrationService, CultureOrchestrationService>();
         services.AddTransient<ILayoutOrchestrationService, LayoutOrchestrationService>();
+        services.AddTransient<IMigrationSupportOrchestrationService, MigrationSupportOrchestrationService>();
         services.AddTransient<IPackageItemOrchestrationService, PackageItemOrchestrationService>();
         services.AddTransient<IPackageOrchestrationService, PackageOrchestrationService>();
         services.AddTransient<IPageInfoOrchestrationService, PageInfoOrchestrationService>();
         services.AddTransient<IPageOrchestrationService, PageOrchestrationService>();
         services.AddTransient<IPageRoleOrchestrationService, PageRoleOrchestrationService>();
+        services.AddTransient<
+            IPageRoleImportOrchestrationService,
+            PageRoleImportOrchestrationService>();
         services.AddTransient<IResourceOrchestrationService, ResourceOrchestrationService>();
         services.AddTransient<IScriptOrchestrationService, ScriptOrchestrationService>();
         services.AddTransient<ISubmissionOrchestrationService, SubmissionOrchestrationService>();
@@ -231,10 +345,12 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddProcessings(this IServiceCollection services)
     {
+        services.AddTransient<IAuthorizationProcessingService, AuthorizationProcessingService>();
         services.AddTransient<IAppCultureEventProcessingService, AppCultureEventProcessingService>();
         services.AddTransient<IAppCultureProcessingService, AppCultureProcessingService>();
         services.AddTransient<IAppEventProcessingService, AppEventProcessingService>();
         services.AddTransient<IAppProcessingService, AppProcessingService>();
+        services.AddTransient<IAppUserProcessingService, AppUserProcessingService>();
         services.AddTransient<ICommonObjectEventProcessingService, CommonObjectEventProcessingService>();
         services.AddTransient<ICommonObjectProcessingService, CommonObjectProcessingService>();
         services.AddTransient<IComponentEventProcessingService, ComponentEventProcessingService>();
@@ -246,6 +362,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ICultureProcessingService, CultureProcessingService>();
         services.AddTransient<ILayoutEventProcessingService, LayoutEventProcessingService>();
         services.AddTransient<ILayoutProcessingService, LayoutProcessingService>();
+        services.AddTransient<IJsonProcessingService, JsonProcessingService>();
         services.AddTransient<IPackageEventProcessingService, PackageEventProcessingService>();
         services.AddTransient<IPackageExportProcessingService, PackageExportProcessingService>();
         services.AddTransient<IPackageItemEventProcessingService, PackageItemEventProcessingService>();
@@ -257,6 +374,12 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageProcessingService, PageProcessingService>();
         services.AddTransient<IPageRoleEventProcessingService, PageRoleEventProcessingService>();
         services.AddTransient<IPageRoleProcessingService, PageRoleProcessingService>();
+        services.AddTransient<
+            IPageRoleImportLookupProcessingService,
+            PageRoleImportLookupProcessingService>();
+        services.AddTransient<
+            IPageRoleImportPersistenceProcessingService,
+            PageRoleImportPersistenceProcessingService>();
         services.AddTransient<IResourceEventProcessingService, ResourceEventProcessingService>();
         services.AddTransient<IResourceProcessingService, ResourceProcessingService>();
         services.AddTransient<IScriptEventProcessingService, ScriptEventProcessingService>();
@@ -266,5 +389,238 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateEventProcessingService, TemplateEventProcessingService>();
         services.AddTransient<ITemplateProcessingService, TemplateProcessingService>();
         services.AddTransient<ITemplateRenderProcessingService, TemplateRenderProcessingService>();
+    }
+
+private static ContentManagementConfiguration AddConfiguredContentManagement(
+        this IServiceCollection services,
+        Action<IServiceCollection, ContentManagementConfiguration> newContentManagementConfiguration)
+    {
+        ContentManagementConfiguration configuration = CreateConfiguration(services: services, newContentManagementConfiguration: newContentManagementConfiguration);
+        services.AddContentManagement();
+        return configuration;
+    }
+
+    private static ContentManagementConfiguration AddConfiguredContentManagementWeb(
+        this IServiceCollection services,
+        Action<IServiceCollection, ContentManagementConfiguration> newContentManagementConfiguration,
+        ODataConventionModelBuilder builder = null)
+    {
+        ContentManagementConfiguration configuration = CreateConfiguration(services: services, newContentManagementConfiguration: newContentManagementConfiguration);
+        services.AddContentManagementWeb(builder: builder);
+
+        services.AddConfiguredApi(
+newContentManagementConfiguration: configuration,
+documentName: "ContentManagement",
+configureModel: static modelBuilder => modelBuilder.ConfigureContentManagementApiModel(),
+builder: builder);
+
+        return configuration;
+    }
+
+    public static void ConfigureContentManagementApiModel(this ODataConventionModelBuilder builder) =>
+        new ContentManagementModelBroker(builder: builder).Configure();
+
+    private static ContentManagementConfiguration CreateConfiguration(
+        IServiceCollection services,
+        Action<IServiceCollection, ContentManagementConfiguration> newContentManagementConfiguration)
+    {
+        ContentManagementConfiguration configuration = new();
+        newContentManagementConfiguration?.Invoke(arg1: services, arg2: configuration);
+        services.AddSingleton(implementationInstance: configuration);
+        services.AddEventProviders(eventProviders: configuration.EventProviders);
+        return configuration;
+    }
+
+    private static void AddConfiguredApi(
+        this IServiceCollection services,
+        ContentManagementConfiguration newContentManagementConfiguration,
+        string documentName,
+        Action<ODataConventionModelBuilder> configureModel,
+        ODataConventionModelBuilder builder = null,
+        bool useFullSchemaIds = false)
+    {
+        services.AddSingleton<Action<ODataConventionModelBuilder>>(implementationInstance: configureModel);
+
+        if (builder is not null)
+        {
+            configureModel(obj: builder);
+        }
+
+        AddAspNet(services: services);
+
+        if (builder is null)
+        {
+            AddApiDocumentation(services: services, documentName: documentName, newContentManagementConfiguration: newContentManagementConfiguration, useFullSchemaIds: useFullSchemaIds);
+        }
+
+        IEdmModel routeModel = BuildRouteModel(configureModel: configureModel);
+        DefaultODataBatchHandler batchHandler = new();
+
+        string rootPath = string.IsNullOrWhiteSpace(value: newContentManagementConfiguration.RootPath)
+            ? $"Api/{documentName}"
+            : newContentManagementConfiguration.RootPath;
+
+        services.AddControllers()
+            .AddOData(setupAction: options =>
+        {
+            options.RouteOptions.EnableQualifiedOperationCall = false;
+            options.EnableAttributeRouting = true;
+            options.RouteOptions.EnableKeyAsSegment = false;
+
+            options.Expand()
+                .Count()
+                .Filter()
+                .Select()
+                .OrderBy()
+                .SetMaxTop(maxTopValue: 1000)
+                .AddRouteComponents(routePrefix: rootPath, model: routeModel, batchHandler: batchHandler);
+
+            if (builder is null
+                && newContentManagementConfiguration.IncludeLegacyCoreContext
+                && !string.Equals(a: rootPath, b: "Api/Core", comparisonType: StringComparison.OrdinalIgnoreCase))
+            {
+                options.AddRouteComponents(routePrefix: "Api/Core", model: routeModel, batchHandler: batchHandler);
+            }
+        });
+    }
+
+    private static void AddApiDocumentation(
+        IServiceCollection services,
+        string documentName,
+        ContentManagementConfiguration newContentManagementConfiguration,
+        bool useFullSchemaIds) =>
+        services.AddSwaggerGen(setupAction: options =>
+                                  {
+                                      options.ResolveConflictingActions(resolver: apiDescriptions => apiDescriptions.First());
+                                      AddSwaggerDocuments(options: options, documentName: documentName, newContentManagementConfiguration: newContentManagementConfiguration);
+
+                                      options.DocInclusionPredicate(
+predicate: (swaggerDocumentName, apiDescription) =>
+                                              ShouldIncludeInDocument(
+swaggerDocumentName: swaggerDocumentName,
+relativePath: apiDescription.RelativePath,
+documentName: documentName,
+configuration: newContentManagementConfiguration));
+
+                                      if (useFullSchemaIds)
+                                      {
+                                          options.CustomSchemaIds(schemaIdSelector: type => type.FullName?.Replace(oldChar: '+', newChar: '.') ?? type.Name);
+                                      }
+
+                                      //options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+                                      //{
+                                      //    Description = @"Authorization header using the Bearer scheme.",
+                                      //    Name = "Authorization",
+                                      //    In = ParameterLocation.Header,
+                                      //    Type = SecuritySchemeType.ApiKey,
+                                      //    Scheme = "bearer",
+                                      //});
+                                  });
+
+    private static void AddSwaggerDocuments(
+        Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options,
+        string documentName,
+        ContentManagementConfiguration newContentManagementConfiguration)
+    {
+        options.SwaggerDoc(name: documentName, info: new OpenApiInfo
+        {
+            Title = $"{documentName} API definition",
+            Version = documentName,
+        });
+
+        if (newContentManagementConfiguration.IncludeLegacyCoreContext)
+        {
+            options.SwaggerDoc(name: "Core", info: new OpenApiInfo
+            {
+                Title = "Core API definition",
+                Version = "Core",
+            });
+
+            options.SwaggerDoc(name: "v1", info: new OpenApiInfo
+            {
+                Title = "Core API definition",
+                Version = "v1",
+            });
+        }
+    }
+
+    private static bool ShouldIncludeInDocument(
+        string swaggerDocumentName,
+        string relativePath,
+        string documentName,
+        ContentManagementConfiguration configuration)
+    {
+        if (string.IsNullOrWhiteSpace(value: relativePath))
+        {
+            return false;
+        }
+
+        if (string.Equals(a: swaggerDocumentName, b: "v1", comparisonType: StringComparison.OrdinalIgnoreCase))
+        {
+            swaggerDocumentName = "Core";
+        }
+
+        string path = NormalizePath(relativePath: relativePath);
+
+        string rootPath = string.IsNullOrWhiteSpace(value: configuration.RootPath)
+            ? $"Api/{documentName}"
+            : configuration.RootPath;
+
+        return string.Equals(a: swaggerDocumentName, b: "Core", comparisonType: StringComparison.OrdinalIgnoreCase)
+            ? configuration.IncludeLegacyCoreContext && MatchesContextRoute(path: path, rootPath: "Api/Core")
+            : MatchesContextRoute(path: path, rootPath: rootPath);
+    }
+
+    private static bool MatchesContextRoute(string path, string rootPath)
+    {
+        string normalizedPath = NormalizePath(relativePath: rootPath);
+
+        return path.Equals(value: normalizedPath, comparisonType: StringComparison.OrdinalIgnoreCase)
+            || path.StartsWith(value: $"{normalizedPath}/", comparisonType: StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string NormalizePath(string relativePath) =>
+        relativePath.StartsWith(value: '/') ? relativePath : $"/{relativePath}";
+
+    private static IEdmModel BuildRouteModel(Action<ODataConventionModelBuilder> configureModel)
+    {
+        ODataConventionModelBuilder builder = new();
+        configureModel(obj: builder);
+        return builder.GetEdmModel();
+    }
+
+    private static void AddAspNet(IServiceCollection services)
+    {
+        services.AddRouting();
+        services.AddResponseCompression();
+        services.AddHttpClient();
+        services.AddHttpContextAccessor();
+
+        services.AddScoped(
+serviceType: typeof(HttpContext),
+implementationFactory: ctx => ctx.GetService<IHttpContextAccessor>()?.HttpContext ?? new DefaultHttpContext());
+
+        services.AddScoped(serviceType: typeof(HttpRequest), implementationFactory: ctx => ctx.GetRequiredService<HttpContext>()
+            .Request);
+
+        services.AddSession();
+
+        services.AddHsts(configureOptions: options =>
+        {
+            options.Preload = true;
+            options.IncludeSubDomains = true;
+            options.MaxAge = TimeSpan.FromMinutes(minutes: 60);
+        });
+
+        services.AddMvc(setupAction: options => options.EnableEndpointRouting = false);
+        services.AddRazorPages();
+
+        services.Configure<KestrelServerOptions>(configureOptions: options =>
+        {
+            options.Limits.MaxRequestBodySize = int.MaxValue;
+        });
+
+        services.AddEndpointsApiExplorer();
+        services.AddSignalR();
     }
 }

@@ -1,5 +1,8 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Brokers;
 using Newtonsoft.Json.Linq;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Models;
@@ -8,18 +11,18 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
-internal class ContentManagementMigrationAggregationService(
-    IJsonBroker jsonBroker,
+internal partial class ContentManagementMigrationAggregationService(
+    IMigrationSupportOrchestrationService migrationSupportOrchestrationService,
     IComponentOrchestrationService componentOrchestrationService,
     ILayoutOrchestrationService layoutOrchestrationService,
     IPageOrchestrationService pageOrchestrationService,
-    IPageRoleOrchestrationService pageRoleOrchestrationService,
+    IPageRoleImportOrchestrationService pageRoleImportOrchestrationService,
     IResourceOrchestrationService resourceOrchestrationService,
     ITemplateOrchestrationService templateOrchestrationService,
     IScriptOrchestrationService scriptOrchestrationService)
         : IContentManagementMigrationAggregationService
 {
-    private static readonly HashSet<string> ComputedImportFields = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> ComputedImportFields = new(comparer: StringComparer.OrdinalIgnoreCase)
     {
         "LastUpdated",
         "LastUpdatedBy",
@@ -27,110 +30,154 @@ internal class ContentManagementMigrationAggregationService(
         "CreatedBy"
     };
 
-    public async ValueTask ImportPackageAsync(int appId, Package package)
+    public Package[] ExportPackages(int appId, string[] packageNames) =>
+        TryCatch<Package[]>(operation: () =>
     {
-        ValidateAppId(appId, "appId");
-        ValidatePackage(package, "package");
+        ValidateExportPackages(inputs: [appId, packageNames]);
+        ValidateAppId(appId: appId, parameterName: "appId");
+
+        return migrationSupportOrchestrationService.ExportPackages(
+            appId: appId,
+            packageNames: ValidatePackageNames(
+                packageNames: packageNames,
+                parameterName: "packageNames"));
+
+    });
+
+    public ValueTask ImportPackageAsync(int appId, Package package) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateImportPackageAsync(inputs: [appId, package]);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePackage(package: package, parameterName: "package");
 
         if (package.Items != null)
+        {
             foreach (PackageItem item in package.Items)
             {
                 switch (item.Type)
                 {
                     case "Core/Component":
-                        await ImportComponentsAsync(appId, item);
+                        await ImportComponentsAsync(appId: appId, item: item);
                         break;
                     case "Core/Layout":
-                        await ImportLayoutsAsync(appId, item);
+                        await ImportLayoutsAsync(appId: appId, item: item);
                         break;
                     case "Core/Page":
-                        await ImportPagesAsync(appId, item);
+                        await ImportPagesAsync(appId: appId, item: item);
                         break;
                     case "Core/PageRole":
-                        await ImportPageRolesAsync(appId, item);
+                        await ImportPageRolesAsync(appId: appId, item: item);
                         break;
                     case "Core/Resource":
-                        await ImportResourcesAsync(appId, item);
+                        await ImportResourcesAsync(appId: appId, item: item);
                         break;
                     case "Core/Script":
-                        await ImportScriptsAsync(appId, item);
+                        await ImportScriptsAsync(appId: appId, item: item);
                         break;
                     case "Core/Template":
-                        await ImportTemplatesAsync(appId, item);
+                        await ImportTemplatesAsync(appId: appId, item: item);
                         break;
                 }
             }
-    }
+        }
+
+    }, isValueTask: true);
 
     private async ValueTask ImportComponentsAsync(int appId, PackageItem item)
     {
-        ValidateAppId(appId, "appId");
-        ValidatePackageItem(item, "item");
-        string sanitizedData = RemoveComputedFields(item.Data);
-        Component[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Component[]>(sanitizedData) : new Component[1] { jsonBroker.ParseJson<Component>(sanitizedData) });
-        await componentOrchestrationService.ImportComponentsAsync(appId, items);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePackageItem(packageItem: item, parameterName: "item");
+        string sanitizedData = RemoveComputedFields(json: item.Data);
+
+        Component[] items = migrationSupportOrchestrationService
+            .DeserializeItems<Component>(json: sanitizedData);
+
+        await componentOrchestrationService.ImportComponentsAsync(appId: appId, items: items);
     }
 
     private async ValueTask ImportLayoutsAsync(int appId, PackageItem item)
     {
-        ValidateAppId(appId, "appId");
-        ValidatePackageItem(item, "item");
-        string sanitizedData = RemoveComputedFields(item.Data);
-        Layout[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Layout[]>(sanitizedData) : new Layout[1] { jsonBroker.ParseJson<Layout>(sanitizedData) });
-        await layoutOrchestrationService.ImportLayoutsAsync(appId, items);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePackageItem(packageItem: item, parameterName: "item");
+        string sanitizedData = RemoveComputedFields(json: item.Data);
+
+        Layout[] items = migrationSupportOrchestrationService
+            .DeserializeItems<Layout>(json: sanitizedData);
+
+        await layoutOrchestrationService.ImportLayoutsAsync(appId: appId, items: items);
     }
 
     private async ValueTask ImportPagesAsync(int appId, PackageItem item)
     {
-        ValidateAppId(appId, "appId");
-        ValidatePackageItem(item, "item");
-        string sanitizedData = RemoveComputedFields(item.Data);
-        Page[] pages = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Page[]>(sanitizedData) : new Page[1] { jsonBroker.ParseJson<Page>(sanitizedData) });
-        await pageOrchestrationService.ImportPagesAsync(appId, pages);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePackageItem(packageItem: item, parameterName: "item");
+        string sanitizedData = RemoveComputedFields(json: item.Data);
+
+        Page[] pages = migrationSupportOrchestrationService
+            .DeserializeItems<Page>(json: sanitizedData);
+
+        await pageOrchestrationService.ImportPagesAsync(appId: appId, items: pages);
     }
 
     private async ValueTask ImportPageRolesAsync(int appId, PackageItem item)
     {
-        ValidateAppId(appId, "appId");
-        ValidatePackageItem(item, "item");
-        PageRoleInfo[] pageRoles = ((!item.Data.StartsWith("{")) ? jsonBroker.ParseJson<PageRoleInfo[]>(item.Data) : new PageRoleInfo[1] { jsonBroker.ParseJson<PageRoleInfo>(item.Data) });
-        await pageRoleOrchestrationService.ImportPageRolesAsync(appId, pageRoles);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePackageItem(packageItem: item, parameterName: "item");
+
+        PageRoleInfo[] pageRoles = migrationSupportOrchestrationService
+            .DeserializeItems<PageRoleInfo>(json: item.Data);
+
+        await pageRoleImportOrchestrationService.ImportPageRoleInfosAsync(
+            appId: appId,
+            pageRoleInfos: pageRoles);
     }
 
     private async ValueTask ImportResourcesAsync(int appId, PackageItem item)
     {
-        ValidateAppId(appId, "appId");
-        ValidatePackageItem(item, "item");
-        string sanitizedData = RemoveComputedFields(item.Data);
-        Resource[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Resource[]>(sanitizedData) : new Resource[1] { jsonBroker.ParseJson<Resource>(sanitizedData) });
-        await resourceOrchestrationService.ImportResourcesAsync(appId, items);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePackageItem(packageItem: item, parameterName: "item");
+        string sanitizedData = RemoveComputedFields(json: item.Data);
+
+        Resource[] items = migrationSupportOrchestrationService
+            .DeserializeItems<Resource>(json: sanitizedData);
+
+        await resourceOrchestrationService.ImportResourcesAsync(appId: appId, items: items);
     }
 
     private async ValueTask ImportScriptsAsync(int appId, PackageItem item)
     {
-        ValidateAppId(appId, "appId");
-        ValidatePackageItem(item, "item");
-        string sanitizedData = RemoveComputedFields(item.Data);
-        Script[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Script[]>(sanitizedData) : new Script[1] { jsonBroker.ParseJson<Script>(sanitizedData) });
-        await scriptOrchestrationService.ImportScriptsAsync(appId, items);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePackageItem(packageItem: item, parameterName: "item");
+        string sanitizedData = RemoveComputedFields(json: item.Data);
+
+        Script[] items = migrationSupportOrchestrationService
+            .DeserializeItems<Script>(json: sanitizedData);
+
+        await scriptOrchestrationService.ImportScriptsAsync(appId: appId, items: items);
     }
 
     private async ValueTask ImportTemplatesAsync(int appId, PackageItem item)
     {
-        ValidateAppId(appId, "appId");
-        ValidatePackageItem(item, "item");
-        string sanitizedData = RemoveComputedFields(item.Data);
-        Template[] items = ((!sanitizedData.StartsWith("{")) ? jsonBroker.ParseJson<Template[]>(sanitizedData) : new Template[1] { jsonBroker.ParseJson<Template>(sanitizedData) });
-        await templateOrchestrationService.ImportTemplatesAsync(appId, items);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePackageItem(packageItem: item, parameterName: "item");
+        string sanitizedData = RemoveComputedFields(json: item.Data);
+
+        Template[] items = migrationSupportOrchestrationService
+            .DeserializeItems<Template>(json: sanitizedData);
+
+        await templateOrchestrationService.ImportTemplatesAsync(appId: appId, items: items);
     }
 
     private static string RemoveComputedFields(string json)
     {
-        if (string.IsNullOrWhiteSpace(json))
+        if (string.IsNullOrWhiteSpace(value: json))
+        {
             return json;
+        }
 
-        JToken token = JToken.Parse(json);
-        RemoveComputedFields(token);
+        JToken token = JToken.Parse(json: json);
+        RemoveComputedFields(token: token);
         return token.ToString();
     }
 
@@ -139,26 +186,38 @@ internal class ContentManagementMigrationAggregationService(
         if (token is JObject jsonObject)
         {
             JProperty[] computedProperties = jsonObject.Properties()
-                .Where(property => ComputedImportFields.Contains(property.Name))
+                .Where(predicate: property => ComputedImportFields.Contains(item: property.Name))
                 .ToArray();
 
             foreach (JProperty property in computedProperties)
+            {
                 property.Remove();
+            }
 
-            foreach (JProperty property in jsonObject.Properties().ToArray())
-                RemoveComputedFields(property.Value);
+            foreach (JProperty property in jsonObject.Properties()
+                .ToArray())
+            {
+                RemoveComputedFields(token: property.Value);
+            }
         }
-        else if (token is JArray jsonArray)
+        else
         {
-            foreach (JToken arrayItem in jsonArray)
-                RemoveComputedFields(arrayItem);
+            if (token is JArray jsonArray)
+            {
+                foreach (JToken arrayItem in jsonArray)
+                {
+                    RemoveComputedFields(token: arrayItem);
+                }
+            }
         }
     }
 
     private static int ValidateAppId(int appId, string parameterName)
     {
         if (appId < 1)
-            throw new ValidationException(parameterName + " must be greater than 0.");
+        {
+            throw new ValidationException(message: parameterName + " must be greater than 0.");
+        }
 
         return appId;
     }
@@ -166,21 +225,42 @@ internal class ContentManagementMigrationAggregationService(
     private static Package ValidatePackage(Package package, string parameterName)
     {
         if (package == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return package;
+    }
+
+    private static string[] ValidatePackageNames(
+        string[] packageNames,
+        string parameterName)
+    {
+        if (packageNames == null)
+        {
+            throw new ValidationException(
+                message: parameterName + " is required.");
+        }
+
+        return packageNames;
     }
 
     private static PackageItem ValidatePackageItem(PackageItem packageItem, string parameterName)
     {
         if (packageItem == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
-        if (string.IsNullOrWhiteSpace(packageItem.Type))
-            throw new ValidationException(parameterName + ".Type is required.");
+        if (string.IsNullOrWhiteSpace(value: packageItem.Type))
+        {
+            throw new ValidationException(message: parameterName + ".Type is required.");
+        }
 
-        if (string.IsNullOrWhiteSpace(packageItem.Data))
-            throw new ValidationException(parameterName + ".Data is required.");
+        if (string.IsNullOrWhiteSpace(value: packageItem.Data))
+        {
+            throw new ValidationException(message: parameterName + ".Data is required.");
+        }
 
         return packageItem;
     }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,31 +27,20 @@ public partial class LayoutProcessingServiceTests
     {
         // Given
         IQueryable<Layout> entities = new[] { CreateRandomLayout() }.AsQueryable();
-        layoutServiceMock.Setup(x => x.GetAll()).Returns(entities);
+
+        layoutServiceMock.Setup(expression: x => x.GetAllLayout())
+            .Returns(value: entities);
 
         // When
-        IQueryable<Layout> result = layoutProcessingService.GetAll();
+        IQueryable<Layout> result = layoutProcessingService.GetAllLayout();
 
         // Then
-        result.Should().BeSameAs(entities);
-        layoutServiceMock.Verify(x => x.GetAll(), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entities);
+
+        layoutServiceMock.Verify(expression: x => x.GetAllLayout(), times: Times.Once);
         layoutServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,11 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.Security;
 using cCoder.Security.Data.EF;
+using cCoder.Security.Data.EF.Dependencies;
 using cCoder.Security.Data.EF.Interfaces;
 using cCoder.Security.Objects;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -23,22 +28,22 @@ public sealed class ContentManagementIntegrationFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        string coreConnectionString = AddDatabaseSuffix("CCODER_ACCEPTANCE_CORE_CONNECTION_STRING");
-        string ssoConnectionString = AddDatabaseSuffix("CCODER_ACCEPTANCE_SSO_CONNECTION_STRING");
+        string coreConnectionString = AddDatabaseSuffix(variableName: "CCODER_ACCEPTANCE_CORE_CONNECTION_STRING");
+        string ssoConnectionString = AddDatabaseSuffix(variableName: "CCODER_ACCEPTANCE_SSO_CONNECTION_STRING");
 
-        databaseServices = CreateDatabaseServices(coreConnectionString, ssoConnectionString);
+        databaseServices = CreateDatabaseServices(coreConnectionString: coreConnectionString, ssoConnectionString: ssoConnectionString);
         await ResetDatabasesAsync();
         await SeedGuestUserAsync();
 
         Factory = new ContentManagementIntegrationFactory(
-            coreConnectionString,
-            ssoConnectionString,
-            DecryptionKey);
+coreConnectionString: coreConnectionString,
+ssoConnectionString: ssoConnectionString,
+decryptionKey: DecryptionKey);
 
-        Client = Factory.CreateClient(new WebApplicationFactoryClientOptions
+        Client = Factory.CreateClient(options: new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false,
-            BaseAddress = new Uri("https://localhost"),
+            BaseAddress = new Uri(uriString: "https://localhost"),
         });
     }
 
@@ -47,27 +52,33 @@ public sealed class ContentManagementIntegrationFixture : IAsyncLifetime
         Client?.Dispose();
 
         if (Factory is not null)
+        {
             await Factory.DisposeAsync();
+        }
 
         await DropDatabasesAsync();
 
         if (databaseServices is not null)
+        {
             await databaseServices.DisposeAsync();
+        }
     }
 
     private async Task ResetDatabasesAsync()
     {
         using IServiceScope scope = databaseServices.CreateScope();
+
         using var sso = scope.ServiceProvider.GetRequiredService<ISecurityDbContextFactory>()
-            .CreateDbContext(true);
+            .CreateDbContext(ignoreAuthInfo: true);
+
         using var core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        EnsureSafeIntegrationDatabase(sso.Database.GetConnectionString(), "dev-Members");
-        EnsureSafeIntegrationDatabase(core.Database.GetConnectionString(), "dev-Core");
+        EnsureSafeIntegrationDatabase(connectionString: sso.Database.GetConnectionString(), protectedDatabaseName: "dev-Members");
+        EnsureSafeIntegrationDatabase(connectionString: core.Database.GetConnectionString(), protectedDatabaseName: "dev-Core");
 
-        ForceDropDatabase(sso.Database.GetConnectionString());
-        ForceDropDatabase(core.Database.GetConnectionString());
+        ForceDropDatabase(connectionString: sso.Database.GetConnectionString());
+        ForceDropDatabase(connectionString: core.Database.GetConnectionString());
 
         await sso.Database.MigrateAsync();
         await core.Database.MigrateAsync();
@@ -76,37 +87,44 @@ public sealed class ContentManagementIntegrationFixture : IAsyncLifetime
     private async Task DropDatabasesAsync()
     {
         if (databaseServices is null)
+        {
             return;
+        }
 
         using IServiceScope scope = databaseServices.CreateScope();
+
         using var sso = scope.ServiceProvider.GetRequiredService<ISecurityDbContextFactory>()
-            .CreateDbContext(true);
+            .CreateDbContext(ignoreAuthInfo: true);
+
         using var core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        EnsureSafeIntegrationDatabase(sso.Database.GetConnectionString(), "dev-Members");
-        EnsureSafeIntegrationDatabase(core.Database.GetConnectionString(), "dev-Core");
+        EnsureSafeIntegrationDatabase(connectionString: sso.Database.GetConnectionString(), protectedDatabaseName: "dev-Members");
+        EnsureSafeIntegrationDatabase(connectionString: core.Database.GetConnectionString(), protectedDatabaseName: "dev-Core");
 
-        ForceDropDatabase(sso.Database.GetConnectionString());
-        ForceDropDatabase(core.Database.GetConnectionString());
+        ForceDropDatabase(connectionString: sso.Database.GetConnectionString());
+        ForceDropDatabase(connectionString: core.Database.GetConnectionString());
     }
 
     private async Task SeedGuestUserAsync()
     {
         using IServiceScope scope = databaseServices.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        if (!await core.Set<User>().AnyAsync(user => user.Id == "Guest"))
+        if (!await core.Set<User>()
+            .AnyAsync(predicate: user => user.Id == "Guest"))
         {
-            await core.Set<User>().AddAsync(new User
-            {
-                Id = "Guest",
-                DisplayName = "Guest",
-                Email = string.Empty,
-                DefaultCultureId = string.Empty,
-                IsActive = true,
-            });
+            await core.Set<User>()
+                .AddAsync(entity: new User
+                {
+                    Id = "Guest",
+                    DisplayName = "Guest",
+                    Email = string.Empty,
+                    DefaultCultureId = string.Empty,
+                    IsActive = true,
+                });
 
             await core.SaveChangesAsync();
         }
@@ -118,65 +136,81 @@ public sealed class ContentManagementIntegrationFixture : IAsyncLifetime
     {
         ServiceCollection services = new();
         services.AddLogging();
+
         services.AddSingleton(
-            new Config
-            {
-                ConnectionStrings = new Dictionary<string, string>
-                {
-                    ["Core"] = coreConnectionString,
-                    ["SSO"] = ssoConnectionString,
-                },
-                Settings = new Dictionary<string, string>
-                {
-                    ["DecryptionKey"] = DecryptionKey,
-                    ["enableExternalEventing"] = "true",
-                },
-                Services = new Dictionary<string, string>(),
-            });
+implementationInstance: new Config
+{
+    ConnectionStrings = new Dictionary<string, string>
+    {
+        ["Core"] = coreConnectionString,
+        ["SSO"] = ssoConnectionString,
+    },
+    Settings = new Dictionary<string, string>
+    {
+        ["DecryptionKey"] = DecryptionKey,
+        ["enableExternalEventing"] = "true",
+    },
+    Services = new Dictionary<string, string>(),
+});
+
         services.AddSingleton<ISecurityDbContextFactory>(
-            _ => new MSSQLSecurityDbContextFactory(ssoConnectionString));
-        services.AddCoreData(coreConnectionString);
+implementationFactory: _ => new MSSQLSecurityDbContextFactory(connectionString: ssoConnectionString));
+
+        services.AddCoreData(connectionString: coreConnectionString);
 
         return services.BuildServiceProvider(validateScopes: false);
     }
 
     private static void EnsureSafeIntegrationDatabase(string connectionString, string protectedDatabaseName)
     {
-        if (string.IsNullOrWhiteSpace(connectionString))
-            throw new InvalidOperationException("Integration database connection string is empty.");
+        if (string.IsNullOrWhiteSpace(value: connectionString))
+        {
+            throw new InvalidOperationException(message: "Integration database connection string is empty.");
+        }
 
-        SqlConnectionStringBuilder builder = CreateConnectionStringBuilder(connectionString);
+        SqlConnectionStringBuilder builder = CreateConnectionStringBuilder(connectionString: connectionString);
         string databaseName = builder.InitialCatalog ?? string.Empty;
 
-        if (string.IsNullOrWhiteSpace(databaseName))
-            throw new InvalidOperationException("Integration database name is empty.");
+        if (string.IsNullOrWhiteSpace(value: databaseName))
+        {
+            throw new InvalidOperationException(message: "Integration database name is empty.");
+        }
 
-        if (databaseName.Equals(protectedDatabaseName, StringComparison.OrdinalIgnoreCase))
+        if (databaseName.Equals(value: protectedDatabaseName, comparisonType: StringComparison.OrdinalIgnoreCase))
+        {
             throw new InvalidOperationException(
-                $"Refusing to run integration database operations against protected database '{protectedDatabaseName}'.");
+        message: $"Refusing to run integration database operations against protected database '{protectedDatabaseName}'.");
+        }
 
-        if (!databaseName.Contains("integration", StringComparison.OrdinalIgnoreCase))
+        if (!databaseName.Contains(value: "integration", comparisonType: StringComparison.OrdinalIgnoreCase))
+        {
             throw new InvalidOperationException(
-                $"Refusing to run integration database operations against non-integration database '{databaseName}'.");
+        message: $"Refusing to run integration database operations against non-integration database '{databaseName}'.");
+        }
     }
 
     private static void ForceDropDatabase(string connectionString)
     {
-        if (string.IsNullOrWhiteSpace(connectionString))
+        if (string.IsNullOrWhiteSpace(value: connectionString))
+        {
             return;
+        }
 
-        SqlConnectionStringBuilder builder = CreateConnectionStringBuilder(connectionString);
+        SqlConnectionStringBuilder builder = CreateConnectionStringBuilder(connectionString: connectionString);
         string databaseName = builder.InitialCatalog ?? string.Empty;
 
-        if (string.IsNullOrWhiteSpace(databaseName))
+        if (string.IsNullOrWhiteSpace(value: databaseName))
+        {
             return;
+        }
 
         builder.InitialCatalog = "master";
 
-        using SqlConnection connection = new(builder.ConnectionString);
+        using SqlConnection connection = new(connectionString: builder.ConnectionString);
         connection.Open();
 
         using SqlCommand command = connection.CreateCommand();
+
         command.CommandText = @"
 IF DB_ID(@databaseName) IS NOT NULL
 BEGIN
@@ -185,45 +219,50 @@ BEGIN
         + N'DROP DATABASE [' + REPLACE(@databaseName, ']', ']]') + N']';
     EXEC(@sql);
 END";
-        _ = command.Parameters.AddWithValue("@databaseName", databaseName);
+
+        _ = command.Parameters.AddWithValue(parameterName: "@databaseName", value: databaseName);
         command.ExecuteNonQuery();
     }
 
     private static string AddDatabaseSuffix(string variableName)
     {
         string connectionString =
-            Environment.GetEnvironmentVariable(variableName)
-            ?? Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.User)
-            ?? Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.Machine)
-            ?? ReadConfiguredConnectionString(variableName);
+            Environment.GetEnvironmentVariable(variable: variableName)
+            ?? Environment.GetEnvironmentVariable(variable: variableName, target: EnvironmentVariableTarget.User)
+            ?? Environment.GetEnvironmentVariable(variable: variableName, target: EnvironmentVariableTarget.Machine)
+            ?? ReadConfiguredConnectionString(variableName: variableName);
 
-        if (string.IsNullOrWhiteSpace(connectionString))
+        if (string.IsNullOrWhiteSpace(value: connectionString))
+        {
             return string.Empty;
+        }
 
-        SqlConnectionStringBuilder builder = CreateConnectionStringBuilder(connectionString);
+        SqlConnectionStringBuilder builder = CreateConnectionStringBuilder(connectionString: connectionString);
 
-        if (!string.IsNullOrWhiteSpace(builder.InitialCatalog))
+        if (!string.IsNullOrWhiteSpace(value: builder.InitialCatalog))
+        {
             builder.InitialCatalog = $"{builder.InitialCatalog}-contentmanagement-integration";
+        }
 
         return builder.ConnectionString;
     }
 
     private static string ReadConfiguredConnectionString(string variableName)
     {
-        string connectionName = variableName.Contains("CORE", StringComparison.OrdinalIgnoreCase)
+        string connectionName = variableName.Contains(value: "CORE", comparisonType: StringComparison.OrdinalIgnoreCase)
             ? "Core"
             : "SSO";
 
         IConfigurationRoot configuration = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.testing.json", optional: true)
+            .SetBasePath(basePath: AppContext.BaseDirectory)
+            .AddJsonFile(path: "appsettings.testing.json", optional: true)
             .Build();
 
-        return configuration.GetConnectionString(connectionName) ?? string.Empty;
+        return configuration.GetConnectionString(name: connectionName) ?? string.Empty;
     }
 
     private static SqlConnectionStringBuilder CreateConnectionStringBuilder(string connectionString) =>
-        new(connectionString)
+        new(connectionString: connectionString)
         {
             Encrypt = true,
             TrustServerCertificate = true,

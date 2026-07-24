@@ -1,24 +1,68 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Rendering.Models;
+using cCoder.ContentManagement.Dependencies.Rendering;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
 using cCoder.ContentManagement.Services;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal sealed class PageRenderProcessingService(
-    IPageRenderExecutionOrchestrationService executionOrchestrationService) : IPageRenderProcessingService
+internal sealed partial class PageRenderProcessingService(
+    IPageRenderService pageRenderService,
+    Config config) : IPageRenderProcessingService
 {
-    public RenderResult RenderPage(Page page, User user, Config config, string theme, string culture, bool edit = false)
+    public PageRenderOperation RenderPageRenderOperation(
+        PageRenderOperation operation) =>
+        TryCatch<PageRenderOperation>(operation: () =>
     {
-        ValidatePage(page, "page");
-        ValidateUser(user, "user");
-        ValidateTheme(theme, "theme");
+        ValidateRenderPageRenderOperation(inputs: [operation]);
 
-        PageRenderSession session = BuildSession(page, user, config, theme, culture, edit);
-        PageRenderResult pageRenderResult = executionOrchestrationService.Render(session);
+        operation.Page = RenderPageUserRenderResult(
+            page: operation.SourcePage,
+            user: operation.User,
+            theme: operation.Theme,
+            culture: operation.Culture,
+            edit: operation.Edit);
+
+        return operation;
+    });
+
+    internal RenderResult RenderPageUserRenderResult(
+        Page page,
+        User user,
+        string theme,
+        string culture,
+        bool edit = false) =>
+        TryCatch<RenderResult>(operation: () =>
+    {
+        ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit]);
+        ValidatePage(page: page, parameterName: "page");
+        ValidateUser(user: user, parameterName: "user");
+        ValidateTheme(theme: theme, parameterName: "theme");
+
+        PageRenderSession session =
+            BuildSession(
+                page: page,
+                user: user,
+                config: config,
+                theme: theme,
+                culture: culture,
+                edit: edit);
+
+        PageRenderResult pageRenderResult =
+            pageRenderService.Execute<
+                IPageRenderExecutionOrchestrationService,
+                PageRenderResult>(
+                    name: "PageRenderExecution",
+                    operation: service =>
+                        service.RenderPageRenderSessionPageRenderResult(
+                            session: session));
 
         return new RenderResult
         {
@@ -37,13 +81,15 @@ internal sealed class PageRenderProcessingService(
             BodyHtml = pageRenderResult.BodyHtml,
             StatusCode = pageRenderResult.StatusCode
         };
-    }
+
+    });
 
     private static PageRenderSession BuildSession(Page page, User user, Config config, string theme, string culture, bool edit)
     {
-        App app = page.App ?? throw new InvalidOperationException("page.App is required.");
-        string resolvedTheme = string.IsNullOrWhiteSpace(theme) ? app.DefaultTheme ?? "Default" : theme;
-        string resolvedCulture = string.IsNullOrWhiteSpace(culture)
+        App app = page.App ?? throw new InvalidOperationException(message: "page.App is required.");
+        string resolvedTheme = string.IsNullOrWhiteSpace(value: theme) ? app.DefaultTheme ?? "Default" : theme;
+
+        string resolvedCulture = string.IsNullOrWhiteSpace(value: culture)
             ? user.DefaultCultureId ?? app.DefaultCultureId ?? string.Empty
             : culture;
 
@@ -58,20 +104,19 @@ internal sealed class PageRenderProcessingService(
                 Edit = edit
             },
             Config = config,
-            App = MapApp(app, resolvedCulture),
-            Page = MapPage(page, resolvedCulture, includeContent: true),
-            User = MapUser(user),
-            Layout = ResolveLayout(app, page.Layout),
-            Resources = MapResources(app.Resources),
-            ResourcesByLookup = BuildResourceLookup(app.Resources),
-            ComponentsByName = BuildComponentLookup(app.Components),
-            ScriptsByName = BuildScriptLookup(app.Scripts)
+            App = MapApp(app: app, culture: resolvedCulture),
+            Page = MapPage(page: page, culture: resolvedCulture, includeContent: true),
+            User = MapUser(user: user),
+            Layout = ResolveLayout(app: app, layoutName: page.Layout),
+            Resources = MapResources(resources: app.Resources),
+            ResourcesByLookup = BuildResourceLookup(resources: app.Resources),
+            ComponentsByName = BuildComponentLookup(components: app.Components),
+            ScriptsByName = BuildScriptLookup(scripts: app.Scripts)
         };
     }
 
-    private static PageRenderApp MapApp(App app, string culture)
-    {
-        return new PageRenderApp
+    private static PageRenderApp MapApp(App app, string culture) =>
+        new PageRenderApp
         {
             Id = app.Id,
             Name = app.Name ?? string.Empty,
@@ -80,27 +125,23 @@ internal sealed class PageRenderProcessingService(
             DefaultCulture = app.DefaultCultureId ?? string.Empty,
             Config = app.Config,
             TemplatesByName = (app.Templates ?? new List<Template>())
-                .GroupBy(template => template.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(group => group.Key, group => MapTemplate(group.First()), StringComparer.OrdinalIgnoreCase),
+                .GroupBy(keySelector: template => template.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(keySelector: group => group.Key, elementSelector: group => MapTemplate(template: group.First()), comparer: StringComparer.OrdinalIgnoreCase),
             PagesById = (app.Pages ?? new List<Page>())
-                .GroupBy(foundPage => foundPage.Id)
-                .ToDictionary(group => group.Key, group => MapPage(group.First(), culture, includeContent: false))
+                .GroupBy(keySelector: foundPage => foundPage.Id)
+        .ToDictionary(keySelector: group => group.Key, elementSelector: group => MapPage(page: group.First(), culture: culture, includeContent: false))
         };
-    }
 
-    private static PageRenderTemplate MapTemplate(Template template)
-    {
-        return new PageRenderTemplate
+    private static PageRenderTemplate MapTemplate(Template template) =>
+        new PageRenderTemplate
         {
             Name = template.Name ?? string.Empty,
             ResourceKey = template.ResourceKey ?? string.Empty,
             RawString = template.RawString ?? string.Empty
         };
-    }
 
-    private static PageRenderPage MapPage(Page page, string culture, bool includeContent)
-    {
-        return new PageRenderPage
+    private static PageRenderPage MapPage(Page page, string culture, bool includeContent) =>
+        new PageRenderPage
         {
             Id = page.Id,
             ParentId = page.ParentId,
@@ -111,37 +152,34 @@ internal sealed class PageRenderProcessingService(
             Name = page.Name ?? string.Empty,
             ResourceKey = page.ResourceKey ?? string.Empty,
             LayoutName = page.Layout ?? string.Empty,
-            Title = ContentManagementModelLogic.Title(page, culture),
-            Description = ContentManagementModelLogic.Description(page, culture),
-            Keywords = ContentManagementModelLogic.Keywords(page, culture),
+            Title = ContentManagementModelLogic.Title(page: page, culture: culture),
+            Description = ContentManagementModelLogic.Description(page: page, culture: culture),
+            Keywords = ContentManagementModelLogic.Keywords(page: page, culture: culture),
             ContentByName = includeContent
-                ? BuildContentLookup(page.Contents, culture)
-                : new Dictionary<string, PageRenderContent>(StringComparer.OrdinalIgnoreCase)
+                ? BuildContentLookup(contents: page.Contents, culture: culture)
+                : new Dictionary<string, PageRenderContent>(comparer: StringComparer.OrdinalIgnoreCase)
         };
-    }
 
-    private static PageRenderUser MapUser(User user)
-    {
-        return new PageRenderUser
+    private static PageRenderUser MapUser(User user) =>
+        new PageRenderUser
         {
             Id = user.Id ?? string.Empty,
             DefaultCultureId = user.DefaultCultureId ?? string.Empty,
             DisplayName = user.DisplayName ?? string.Empty,
             Email = user.Email ?? string.Empty,
             AppPrivileges = (user.Roles ?? new List<UserRole>())
-                .Where(role => role.Role?.AppId != null)
-                .GroupBy(role => role.Role.AppId)
-                .ToDictionary(
-                    group => group.Key,
-                    group => (ISet<string>)new HashSet<string>(
-                        group.SelectMany(role => role.Role?.Privileges ?? new List<string>()),
-                        StringComparer.OrdinalIgnoreCase))
+                .Where(predicate: role => role.Role?.AppId != null)
+        .GroupBy(keySelector: role => role.Role.AppId)
+        .ToDictionary(
+keySelector: group => group.Key,
+elementSelector: group => (ISet<string>)new HashSet<string>(
+collection: group.SelectMany(selector: role => role.Role?.Privileges ?? new List<string>()),
+comparer: StringComparer.OrdinalIgnoreCase))
         };
-    }
 
     private static PageRenderLayout ResolveLayout(App app, string layoutName)
     {
-        Layout layout = app.Layouts?.FirstOrDefault(item => item.Name == layoutName)
+        Layout layout = app.Layouts?.FirstOrDefault(predicate: item => item.Name == layoutName)
             ?? app.Layouts?.FirstOrDefault();
 
         return layout == null
@@ -159,51 +197,54 @@ internal sealed class PageRenderProcessingService(
             };
     }
 
-    private static IReadOnlyDictionary<string, PageRenderContent> BuildContentLookup(IEnumerable<Content> contents, string culture)
-    {
-        return (contents ?? Array.Empty<Content>())
-            .GroupBy(content => content.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                group => group.Key,
-                group => MapContent(GetClosestContent(group, culture) ?? group.First()),
-                StringComparer.OrdinalIgnoreCase);
-    }
+    private static IReadOnlyDictionary<string, PageRenderContent> BuildContentLookup(IEnumerable<Content> contents, string culture) =>
+        (contents ?? Array.Empty<Content>())
+            .GroupBy(keySelector: content => content.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(
+keySelector: group => group.Key,
+elementSelector: group => MapContent(content: GetClosestContent(potentials: group, culture: culture) ?? group.First()),
+comparer: StringComparer.OrdinalIgnoreCase);
 
     private static Content GetClosestContent(IEnumerable<Content> potentials, string culture)
     {
         Content content = null;
-        List<string> cultureParts = (culture ?? string.Empty).ToLowerInvariant().Split('-').ToList();
+
+        List<string> cultureParts = (culture ?? string.Empty).ToLowerInvariant()
+            .Split(separator: '-')
+            .ToList();
+
         int count = cultureParts.Count;
         string resultCulture = string.Empty;
 
         while (content == null && resultCulture != null)
         {
-            resultCulture = string.Join("-", cultureParts.Take(count));
-            content = potentials.FirstOrDefault(candidate =>
-                string.Equals(candidate.CultureId ?? string.Empty, resultCulture ?? string.Empty, StringComparison.OrdinalIgnoreCase));
+            resultCulture = string.Join(separator: "-", values: cultureParts.Take(count: count));
+
+            content = potentials.FirstOrDefault(predicate: candidate =>
+                string.Equals(a: candidate.CultureId ?? string.Empty, b: resultCulture ?? string.Empty, comparisonType: StringComparison.OrdinalIgnoreCase));
+
             count--;
 
             if (count == 0)
+            {
                 resultCulture = null;
+            }
         }
 
-        return content ?? potentials.FirstOrDefault(candidate => string.IsNullOrEmpty(candidate.CultureId));
+        return content ?? potentials.FirstOrDefault(predicate: candidate => string.IsNullOrEmpty(value: candidate.CultureId));
     }
 
-    private static PageRenderContent MapContent(Content content)
-    {
-        return new PageRenderContent
+    private static PageRenderContent MapContent(Content content) =>
+        new PageRenderContent
         {
             Id = content.Id,
             Name = content.Name ?? string.Empty,
             Html = content.Html ?? string.Empty
         };
-    }
 
-    private static IReadOnlyList<PageRenderResource> MapResources(IEnumerable<Resource> resources)
-    {
-        return (resources ?? Array.Empty<Resource>())
-            .Select(resource => new PageRenderResource
+    private static IReadOnlyList<PageRenderResource> MapResources(IEnumerable<Resource> resources) =>
+        (resources ?? Array.Empty<Resource>())
+            .Select(selector: resource => new PageRenderResource
             {
                 Key = resource.Key ?? string.Empty,
                 Culture = resource.Culture ?? string.Empty,
@@ -212,70 +253,80 @@ internal sealed class PageRenderProcessingService(
                 ShortDisplayName = resource.ShortDisplayName ?? resource.Name ?? string.Empty,
                 Description = resource.Description ?? string.Empty
             })
-            .ToArray();
-    }
+        .ToArray();
 
-    private static IReadOnlyDictionary<string, PageRenderResource> BuildResourceLookup(IEnumerable<Resource> resources)
-    {
-        return (resources ?? Array.Empty<Resource>())
-            .GroupBy(resource => $"{resource.Key ?? string.Empty}|{resource.Name ?? string.Empty}|{resource.Culture ?? string.Empty}", StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                group => group.Key,
-                group => new PageRenderResource
-                {
-                    Key = group.First().Key ?? string.Empty,
-                    Culture = group.First().Culture ?? string.Empty,
-                    Name = group.First().Name ?? string.Empty,
-                    DisplayName = group.First().DisplayName ?? group.First().Name ?? string.Empty,
-                    ShortDisplayName = group.First().ShortDisplayName ?? group.First().Name ?? string.Empty,
-                    Description = group.First().Description ?? string.Empty
-                },
-                StringComparer.OrdinalIgnoreCase);
-    }
+    private static IReadOnlyDictionary<string, PageRenderResource> BuildResourceLookup(IEnumerable<Resource> resources) =>
+        (resources ?? Array.Empty<Resource>())
+            .GroupBy(keySelector: resource => $"{resource.Key ?? string.Empty}|{resource.Name ?? string.Empty}|{resource.Culture ?? string.Empty}", comparer: StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(
+keySelector: group => group.Key,
+elementSelector: group => new PageRenderResource
+{
+    Key = group.First()
+        .Key ?? string.Empty,
+    Culture = group.First()
+        .Culture ?? string.Empty,
+    Name = group.First()
+        .Name ?? string.Empty,
+    DisplayName = group.First()
+        .DisplayName ?? group.First()
+        .Name ?? string.Empty,
+    ShortDisplayName = group.First()
+        .ShortDisplayName ?? group.First()
+        .Name ?? string.Empty,
+    Description = group.First()
+        .Description ?? string.Empty
+},
+comparer: StringComparer.OrdinalIgnoreCase);
 
-    private static IDictionary<string, PageRenderComponent> BuildComponentLookup(IEnumerable<Component> components)
-    {
-        return (components ?? Array.Empty<Component>())
-            .GroupBy(component => component.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                group => group.Key,
-                group => new PageRenderComponent
-                {
-                    Id = group.First().Id,
-                    Name = group.First().Name ?? string.Empty,
-                    ResourceKey = group.First().ResourceKey ?? string.Empty,
-                    Content = group.First().Content ?? string.Empty,
-                    Script = group.First().Script ?? string.Empty
-                },
-                StringComparer.OrdinalIgnoreCase);
-    }
+    private static IDictionary<string, PageRenderComponent> BuildComponentLookup(IEnumerable<Component> components) =>
+        (components ?? Array.Empty<Component>())
+            .GroupBy(keySelector: component => component.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(
+keySelector: group => group.Key,
+elementSelector: group => new PageRenderComponent
+{
+    Id = group.First()
+        .Id,
+    Name = group.First()
+        .Name ?? string.Empty,
+    ResourceKey = group.First()
+        .ResourceKey ?? string.Empty,
+    Content = group.First()
+        .Content ?? string.Empty,
+    Script = group.First()
+        .Script ?? string.Empty
+},
+comparer: StringComparer.OrdinalIgnoreCase);
 
-    private static IDictionary<string, PageRenderScript> BuildScriptLookup(IEnumerable<Script> scripts)
-    {
-        return (scripts ?? Array.Empty<Script>())
-            .GroupBy(script => script.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                group => group.Key,
-                group => new PageRenderScript
-                {
-                    Name = group.First().Name ?? string.Empty,
-                    Content = group.First().Content ?? string.Empty
-                },
-                StringComparer.OrdinalIgnoreCase);
-    }
+    private static IDictionary<string, PageRenderScript> BuildScriptLookup(IEnumerable<Script> scripts) =>
+        (scripts ?? Array.Empty<Script>())
+            .GroupBy(keySelector: script => script.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(
+keySelector: group => group.Key,
+elementSelector: group => new PageRenderScript
+{
+    Name = group.First()
+        .Name ?? string.Empty,
+    Content = group.First()
+        .Content ?? string.Empty
+},
+comparer: StringComparer.OrdinalIgnoreCase);
 
     private static void ValidatePage(Page page, string parameterName) =>
-        ThrowIf(page == null, parameterName + " is required.");
+        ThrowIf(condition: page == null, message: parameterName + " is required.");
 
     private static void ValidateUser(User user, string parameterName) =>
-        ThrowIf(user == null, parameterName + " is required.");
+        ThrowIf(condition: user == null, message: parameterName + " is required.");
 
     private static void ValidateTheme(string theme, string parameterName) =>
-        ThrowIf(string.IsNullOrWhiteSpace(theme), parameterName + " is required.");
+        ThrowIf(condition: string.IsNullOrWhiteSpace(value: theme), message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

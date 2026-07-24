@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,28 +29,15 @@ public partial class PackageProcessingServiceTests
         Package package = CreateRandomPackage();
         package.Items = [CreateRandomPackageItem(), CreateRandomPackageItem()];
 
-        packageServiceMock.Setup(x => x.AddAsync(package)).ReturnsAsync(package);
+        packageServiceMock.Setup(expression: x => x.AddPackageAsync(newPackage: package))
+            .ReturnsAsync(value: package);
 
         // When
-        Package result = await packageProcessingService.AddAsync(package);
+        Package result = await packageProcessingService.AddPackageAsync(newPackage: package);
 
         // Then
-        Assert.Same(package, result);
-        packageServiceMock.Verify(x => x.AddAsync(package), Times.Once);
-        packageItemServiceMock.VerifyNoOtherCalls();
+        Assert.Same(expected: package, actual: result);
+        packageServiceMock.Verify(expression: x => x.AddPackageAsync(newPackage: package), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

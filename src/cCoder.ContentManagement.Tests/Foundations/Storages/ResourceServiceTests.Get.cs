@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,29 +27,14 @@ public partial class ResourceServiceTests
 
         // When
         Resource resource = CreateRandomResource(id: 5, appId: 7);
-        resourceBrokerMock.Setup(x => x.GetAllResources(false)).Returns(new[] { resource }.AsQueryable());
-        Resource result = resourceService.Get(5);
+
+        resourceBrokerMock.Setup(expression: x => x.GetAllResources(ignoreFilters: false))
+            .Returns(value: new[] { resource }.AsQueryable());
+
+        Resource result = resourceService.GetResource(resourceId: 5);
 
         // Then
-        Assert.Equivalent(resource, result);
+        Assert.Equivalent(expected: resource, actual: result);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

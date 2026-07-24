@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -11,13 +15,10 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
 using SecurityDataModels = cCoder.Data.Models.Security;
-
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
@@ -28,23 +29,27 @@ public partial class AppProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
-        User actor = TestUsers.WithPrivilege("app_create");
+        User actor = TestUsers.WithPrivilege(privilege: "app_create");
         App inputApp = CreateRandomApp();
         inputApp.DefaultTheme = string.Empty;
         inputApp.Cultures = [];
+
         inputApp.Roles =
         [
             new Role
@@ -55,24 +60,29 @@ public partial class AppProcessingServiceTests
                 Privs = "app_admin,app_delete"
             }
         ];
+
         currentUser = actor;
+
         appServiceMock
-            .Setup(x => x.GetAll(true))
-            .Returns(Array.Empty<App>().AsQueryable());
-        appServiceMock.Setup(x => x.AddAsync(It.IsAny<App>()))
-            .ReturnsAsync((App candidate) =>
+            .Setup(expression: x => x.GetAllApp(ignoreFilters: true))
+            .Returns(value: Array.Empty<App>()
+            .AsQueryable());
+
+        appServiceMock.Setup(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()))
+            .ReturnsAsync(valueFunction: (App candidate) =>
             {
                 candidate.Id = 1;
                 return candidate;
             });
 
-        cultureServiceMock
-            .Setup(x => x.GetAll(false))
-            .Returns(new[] { new Culture { Id = string.Empty } }.AsQueryable());
+        cultureBrokerMock
+            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
+
         privilegeBrokerMock
-            .Setup(x => x.GetAllPrivileges(false))
+            .Setup(expression: x => x.GetAllPrivileges(ignoreFilters: false))
             .Returns(
-                new[]
+value: new[]
                 {
                     new SecurityDataModels.Privilege { Id = "app_create", Operation = "Create", Type = "App" },
                     new SecurityDataModels.Privilege { Id = "app_read", Operation = "Read", Type = "App" },
@@ -81,32 +91,41 @@ public partial class AppProcessingServiceTests
                 }.AsQueryable());
 
         // When
-        App result = await appProcessingService.AddAsync(inputApp);
+        App result = await appProcessingService.AddAppAsync(newApp: inputApp);
 
         // Then
-        result.Id.Should().Be(1);
-        result.DefaultTheme.Should().Be("Default");
-        result.Cultures.Should().HaveCount(1);
-        result.Roles.Should().HaveCount(3);
+        result.Id.Should()
+            .Be(expected: 1);
+
+        result.DefaultTheme.Should()
+            .Be(expected: "Default");
+
+        result.Cultures.Should()
+            .HaveCount(expected: 1);
+
+        result.Roles.Should()
+            .HaveCount(expected: 3);
+
         appServiceMock.Verify(
-                x =>
-                    x.AddAsync(
-                        It.Is<App>(app =>
+expression: x =>
+                    x.AddAppAsync(
+newApp: It.Is<App>(match: app =>
                             app.DefaultTheme == "Default"
                             && app.Cultures.Count == 1
                             && app.Roles.Count == 3
-                            && app.Roles.Any(role => role.Name == "Administrators")
-                            && app.Roles.Any(role => role.Name == "Users")
-                            && app.Roles.Any(role => role.Name == "Guests")
+                            && app.Roles.Any(predicate: role => role.Name == "Administrators")
+                            && app.Roles.Any(predicate: role => role.Name == "Users")
+                            && app.Roles.Any(predicate: role => role.Name == "Guests")
                         )
                     ),
-            Times.Once
+times: Times.Once
         );
-        cultureServiceMock.Verify(x => x.GetAll(false), Times.Once);
-        privilegeBrokerMock.Verify(x => x.GetAllPrivileges(false), Times.Exactly(2));
-        appServiceMock.Verify(x => x.GetAll(true), Times.Once);
+
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
+        privilegeBrokerMock.Verify(expression: x => x.GetAllPrivileges(ignoreFilters: false), times: Times.Exactly(callCount: 2));
+        appServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
-        cultureServiceMock.VerifyNoOtherCalls();
+        cultureBrokerMock.VerifyNoOtherCalls();
         privilegeBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -115,136 +134,160 @@ public partial class AppProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         App app = new() { Name = "App", Domain = "app.local" };
 
         currentUser = TestUsers.WithoutPrivileges();
+
         appServiceMock
-            .Setup(x => x.GetAll(true))
-            .Returns(new[] { new App { Id = 99, Domain = "existing.local" } }.AsQueryable());
-        cultureServiceMock
-            .Setup(x => x.GetAll(false))
-            .Returns(new[] { new Culture { Id = string.Empty } }.AsQueryable());
+            .Setup(expression: x => x.GetAllApp(ignoreFilters: true))
+            .Returns(value: new[] { new App { Id = 99, Domain = "existing.local" } }.AsQueryable());
+
+        cultureBrokerMock
+            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
+
         privilegeBrokerMock
-            .Setup(x => x.GetAllPrivileges(false))
-            .Returns(Array.Empty<SecurityDataModels.Privilege>().AsQueryable());
+            .Setup(expression: x => x.GetAllPrivileges(ignoreFilters: false))
+            .Returns(value: Array.Empty<SecurityDataModels.Privilege>()
+            .AsQueryable());
+
         appServiceMock
-            .Setup(x => x.AddAsync(It.IsAny<App>()))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> act = async () => await appProcessingService.AddAsync(app);
+        Func<Task> act = async () => await appProcessingService.AddAppAsync(newApp: app);
 
         // Then
-        await act.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        cultureServiceMock.Verify(x => x.GetAll(false), Times.Once);
-        privilegeBrokerMock.Verify(x => x.GetAllPrivileges(false), Times.Exactly(2));
-        appServiceMock.Verify(x => x.GetAll(true), Times.Once);
-        appServiceMock.Verify(x => x.AddAsync(It.IsAny<App>()), Times.Once);
+        await act.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
+        privilegeBrokerMock.Verify(expression: x => x.GetAllPrivileges(ignoreFilters: false), times: Times.Exactly(callCount: 2));
+        appServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
+        appServiceMock.Verify(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
     public async Task ShouldGrantAppCreateWithoutAssigningGuestToAdminRolesWhenCreatingFirstApp()
     {
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => null);
+        // Given
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => null);
+
         appServiceMock
-            .Setup(x => x.GetAll(true))
-            .Returns(Array.Empty<App>().AsQueryable());
+            .Setup(expression: x => x.GetAllApp(ignoreFilters: true))
+            .Returns(value: Array.Empty<App>()
+            .AsQueryable());
+
         appServiceMock
-            .Setup(x => x.AddAsync(It.IsAny<App>()))
-            .ReturnsAsync((App candidate) =>
+            .Setup(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()))
+            .ReturnsAsync(valueFunction: (App candidate) =>
             {
                 candidate.Id = 1;
                 return candidate;
             });
-        cultureServiceMock
-            .Setup(x => x.GetAll(false))
-            .Returns(new[] { new Culture { Id = string.Empty } }.AsQueryable());
+
+        cultureBrokerMock
+            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
+
         privilegeBrokerMock
-            .Setup(x => x.GetAllPrivileges(false))
+            .Setup(expression: x => x.GetAllPrivileges(ignoreFilters: false))
             .Returns(
-                new[]
+value: new[]
                 {
                     new SecurityDataModels.Privilege { Id = "app_create", Operation = "Create", Type = "App" },
                     new SecurityDataModels.Privilege { Id = "app_read", Operation = "Read", Type = "App" },
                     new SecurityDataModels.Privilege { Id = "app_admin", Operation = "Admin", Type = "App" }
                 }.AsQueryable());
 
-        App result = await appProcessingService.AddAsync(CreateRandomApp());
+        // When
+        App result = await appProcessingService.AddAppAsync(newApp: CreateRandomApp());
 
-        Role administrators = result.Roles.Single(role => role.Name == "Administrators");
-        Role users = result.Roles.Single(role => role.Name == "Users");
-        Role guests = result.Roles.Single(role => role.Name == "Guests");
+        Role administrators = result.Roles.Single(predicate: role => role.Name == "Administrators");
+        Role users = result.Roles.Single(predicate: role => role.Name == "Users");
+        Role guests = result.Roles.Single(predicate: role => role.Name == "Guests");
 
-        administrators.Privileges.Should().Contain("app_create");
-        administrators.Users.Should().BeEmpty();
-        users.Users.Should().BeEmpty();
-        guests.Users.Should().ContainSingle(userRole => userRole.UserId == "Guest");
+        // Then
+        administrators.Privileges.Should()
+            .Contain(expected: "app_create");
+
+        administrators.Users.Should()
+            .BeEmpty();
+
+        users.Users.Should()
+            .BeEmpty();
+
+        guests.Users.Should()
+            .ContainSingle(predicate: userRole => userRole.UserId == "Guest");
     }
 
     [Fact]
     public async Task ShouldReturnAddedAppWithoutRoleBackReferencesForAddAsync()
     {
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => TestUsers.WithPrivilege("app_create"));
+        // Given
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => TestUsers.WithPrivilege(privilege: "app_create"));
+
         appServiceMock
-            .Setup(x => x.GetAll(true))
-            .Returns(Array.Empty<App>().AsQueryable());
+            .Setup(expression: x => x.GetAllApp(ignoreFilters: true))
+            .Returns(value: Array.Empty<App>()
+            .AsQueryable());
+
         appServiceMock
-            .Setup(x => x.AddAsync(It.IsAny<App>()))
-            .ReturnsAsync((App candidate) =>
+            .Setup(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()))
+            .ReturnsAsync(valueFunction: (App candidate) =>
             {
                 candidate.Id = 1;
                 return candidate;
             });
-        cultureServiceMock
-            .Setup(x => x.GetAll(false))
-            .Returns(new[] { new Culture { Id = string.Empty } }.AsQueryable());
+
+        cultureBrokerMock
+            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
+
         privilegeBrokerMock
-            .Setup(x => x.GetAllPrivileges(false))
+            .Setup(expression: x => x.GetAllPrivileges(ignoreFilters: false))
             .Returns(
-                new[]
+value: new[]
                 {
                     new SecurityDataModels.Privilege { Id = "app_create", Operation = "Create", Type = "App" },
                     new SecurityDataModels.Privilege { Id = "app_read", Operation = "Read", Type = "App" },
                     new SecurityDataModels.Privilege { Id = "app_admin", Operation = "Admin", Type = "App" }
                 }.AsQueryable());
 
-        App result = await appProcessingService.AddAsync(CreateRandomApp());
+        // When
+        App result = await appProcessingService.AddAppAsync(newApp: CreateRandomApp());
 
-        result.Roles.Should().NotBeEmpty();
-        result.Roles.Should().OnlyContain(role => role.App == null);
-        result.Roles.SelectMany(role => role.Users ?? Array.Empty<UserRole>())
+        // Then
+        result.Roles.Should()
+            .NotBeEmpty();
+
+        result.Roles.Should()
+            .OnlyContain(predicate: role => role.App == null);
+
+        result.Roles.SelectMany(selector: role => role.Users ?? Array.Empty<UserRole>())
             .Should()
-            .OnlyContain(userRole => userRole.Role == null);
+            .OnlyContain(predicate: userRole => userRole.Role == null);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -5,31 +9,41 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class AppCultureEventService(IAppCultureEventBroker appCultureEventBroker, ICoreAuthInfo authInfo) : IAppCultureEventService
+internal partial class AppCultureEventService(IAppCultureEventBroker appCultureEventBroker) : IAppCultureEventService
 {
-    public async ValueTask RaiseAppCultureAddEventAsync(AppCulture entity)
+    public ValueTask RaiseAppCultureAddEventAsync(AppCulture entity) =>
+        TryCatch(operation: async () =>
     {
-        EventMessage<AppCulture> message = new EventMessage<AppCulture>
-        {
-            AuthInfo = new EventAuthInfo
-            {
-                SSOUserId = authInfo.SSOUserId
-            },
-            Data = entity
-        };
-        await appCultureEventBroker.RaiseAppCultureAddEventAsync(message);
-    }
+        ValidateRaiseAppCultureAddEventAsync(inputs: [entity]);
 
-    public async ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity)
-    {
         EventMessage<AppCulture> message = new EventMessage<AppCulture>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = appCultureEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
-        await appCultureEventBroker.RaiseAppCultureDeleteEventAsync(message);
-    }
+
+        await appCultureEventBroker.RaiseAppCultureAddEventAsync(message: message);
+
+    }, isValueTask: true);
+
+    public ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateRaiseAppCultureDeleteEventAsync(inputs: [entity]);
+
+        EventMessage<AppCulture> message = new EventMessage<AppCulture>
+        {
+            AuthInfo = new EventAuthInfo
+            {
+                SSOUserId = appCultureEventBroker.GetCurrentUserId()
+            },
+            Data = entity
+        };
+
+        await appCultureEventBroker.RaiseAppCultureDeleteEventAsync(message: message);
+
+    }, isValueTask: true);
 }

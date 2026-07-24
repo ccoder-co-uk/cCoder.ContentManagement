@@ -1,5 +1,10 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Dynamic;
 using cCoder.ContentManagement.Exposures;
+using cCoder.ContentManagement.Models;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using RenderApp = cCoder.Data.Models.CMS.App;
@@ -9,87 +14,109 @@ namespace ContentManagement.Web.Controllers;
 
 public sealed class HomeController(IPageRenderer PageRenderer) : Controller
 {
-    private string Host => Request.Host.Host.Replace("www.", "").ToLowerInvariant();
+    private string GetHost() =>
+        Request.Host.Host.Replace(oldValue: "www.", newValue: "")
+        .ToLowerInvariant();
 
-    private dynamic DynamicSessionObject
+    private ExpandoObject CreateSessionExpandoObject()
     {
-        get
-        {
-            dynamic result = new ExpandoObject();
+        dynamic result = new ExpandoObject();
 
-            result.apiRoot = (Request.Host.Port is not 443 and not 80)
-                ? $"{Request.Scheme}://{Host}:{Request.Host.Port}/Api/"
-                : $"{Request.Scheme}://{Host}/Api/";
+        string host = GetHost();
 
-            foreach (string key in HttpContext.Session.Keys)
-            {
-                if (key != "ssoUser")
-                    ((IDictionary<string, object>)result).Add(key, GetSessionValue(key));
-            }
+        result.apiRoot = (Request.Host.Port is not 443 and not 80)
+            ? $"{Request.Scheme}://{host}:{Request.Host.Port}/Api/"
+            : $"{Request.Scheme}://{host}/Api/";
 
-            return result;
-        }
+        IDictionary<string, object> sessionValues =
+            HttpContext.Session.Keys
+                .Where(predicate: key => key != "ssoUser")
+                .ToDictionary(
+                    keySelector: key => key,
+                    elementSelector: key => (object)GetSessionValue(key: key));
+
+        sessionValues
+            .ToList()
+            .ForEach(action: item =>
+                ((IDictionary<string, object>)result).Add(
+                    key: item.Key,
+                    value: item.Value));
+
+        return (ExpandoObject)result;
     }
 
     [HttpGet]
-    public IActionResult Index(string path = null, string theme = null, string culture = null, bool edit = false)
+    public IActionResult Get(string path = null, string theme = null, string culture = null, bool edit = false)
     {
         try
         {
-            if (path?.ToLowerInvariant().EndsWith(".php") == true)
+            if (path?.ToLowerInvariant()
+                .EndsWith(value: ".php") == true)
             {
                 Response.HttpContext.Abort();
                 return Ok();
             }
 
             if (path?.ToLowerInvariant() == "robots.txt")
-                return Content("User-agent: * Allow: *", "text/plain");
+            {
+                return Content(content: "User-agent: * Allow: *", contentType: "text/plain");
+            }
 
             if (!HttpContext.Session.IsAvailable)
-                throw new Exception("Cannot load session information");
+            {
+                throw new Exception(message: "Cannot load session information");
+            }
 
-            culture = Response.HttpContext.Request.Query.ContainsKey("culture")
+            culture = Response.HttpContext.Request.Query.ContainsKey(key: "culture")
                 ? Response.HttpContext.Request.Query["culture"].ToString()
                 : null;
 
             if (culture != null)
-                SetSessionValue("culture", culture);
+            {
+                SetSessionValue(key: "culture", value: culture);
+            }
             else
-                culture = GetSessionValue("culture");
+            {
+                culture = GetSessionValue(key: "culture");
+            }
 
             if (theme != null)
-                SetSessionValue("theme", theme);
+            {
+                SetSessionValue(key: "theme", value: theme);
+            }
             else
-                theme = GetSessionValue("theme");
+            {
+                theme = GetSessionValue(key: "theme");
+            }
 
             PageRenderResponse response = PageRenderer.Render(
-                new PageRenderRequest
-                {
-                    Host = Host,
-                    Path = path,
-                    Theme = theme,
-                    Culture = culture,
-                    Edit = edit,
-                    RequestUrl = Request.GetEncodedUrl(),
-                });
+request: new PageRenderRequest
+{
+    Host = GetHost(),
+    Path = path,
+    Theme = theme,
+    Culture = culture,
+    Edit = edit,
+    RequestUrl = Request.GetEncodedUrl(),
+});
 
-            SetSessionValue("theme", response.Theme);
-            SetSessionValue("culture", response.Culture);
-            SetupViewBag(response);
+            SetSessionValue(key: "theme", value: response.Theme);
+            SetSessionValue(key: "culture", value: response.Culture);
+            SetupViewBag(response: response);
 
-            ViewResult viewResult = View(response.Page);
+            ViewResult viewResult = View(model: response.Page);
             viewResult.StatusCode = response.Page.StatusCode;
             return viewResult;
         }
         catch (Exception ex)
         {
-            return PartialView("Error", ex);
+            return PartialView(viewName: "Error", model: ex);
         }
     }
 
     private void SetupViewBag(PageRenderResponse response)
     {
-        dynamic session = DynamicSessionObject;
+        dynamic session = CreateSessionExpandoObject();
 
         RenderApp app = response.App;
         RenderResult page = response.Page;
@@ -104,23 +131,34 @@ public sealed class HomeController(IPageRenderer PageRenderer) : Controller
             app.Config
         };
 
-        session.page = page.KeyInfo();
+        session.page = new
+        {
+            page.AppId,
+            page.PageId,
+            page.ParentId
+        };
 
         ViewData["Session"] = session;
         ViewData["Edit"] = response.Edit;
     }
 
     private string GetSessionValue(string key) =>
-        HttpContext.Session.Keys.Contains(key.ToLowerInvariant())
-            ? HttpContext.Session.GetString(key)
+        HttpContext.Session.Keys.Contains(value: key.ToLowerInvariant())
+            ? HttpContext.Session.GetString(key: key)
             : string.Empty;
 
     private void SetSessionValue(string key, string value)
     {
         if (value != null)
-            HttpContext.Session.SetString(key.ToLowerInvariant(), value);
-        else if (HttpContext.Session.Keys.Contains(key.ToLowerInvariant()))
-            HttpContext.Session.Remove(key.ToLowerInvariant());
+        {
+            HttpContext.Session.SetString(key: key.ToLowerInvariant(), value: value);
+        }
+        else
+        {
+            if (HttpContext.Session.Keys.Contains(value: key.ToLowerInvariant()))
+            {
+                HttpContext.Session.Remove(key: key.ToLowerInvariant());
+            }
+        }
     }
 }
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -11,34 +15,33 @@ public sealed partial class ComponentControllerTests
     public async Task Post_CreatesComponent()
     {
         // Given
-        string name = Unique("Component");
+        string name = Unique(prefix: "Component");
         Component expectedComponent;
 
         // When
-        expectedComponent = await CreateComponentAsync(
-            new
-            {
-                appId = 1,
-                name,
-                description = "Acceptance component",
-                resourceKey = "Default",
-                content = "<div>Hello component</div>",
-                script = "console.log('component');",
-                key = "Acceptance",
-            });
 
-        Component actualComponent = await GetComponentAsync(expectedComponent.Id);
+        expectedComponent = await CreateComponentAsync(
+payload: new
+{
+    appId = 1,
+    name,
+    description = "Acceptance component",
+    resourceKey = "Default",
+    content = "<div>Hello component</div>",
+    script = "console.log('component');",
+    key = "Acceptance",
+});
+
+        Component actualComponent = await GetComponentAsync(id: expectedComponent.Id);
 
         // Then
-        actualComponent.Should().NotBeNull();
-        actualComponent!.Name.Should().Be(name);
 
-        await DeleteComponentAsync(expectedComponent.Id);
+        actualComponent.Should()
+            .NotBeNull();
+
+        actualComponent!.Name.Should()
+            .Be(expected: name);
+
+        await DeleteComponentAsync(id: expectedComponent.Id);
     }
 }
-
-
-
-
-
-

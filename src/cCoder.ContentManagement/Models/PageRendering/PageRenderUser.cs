@@ -1,26 +1,23 @@
-namespace cCoder.ContentManagement.Rendering.Models;
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+namespace cCoder.ContentManagement.Dependencies.Rendering;
 
 internal sealed class PageRenderUser
 {
-    public string Id { get; set; } = string.Empty;
+    public string Id { get; set; }
+    public string DefaultCultureId { get; set; }
+    public string DisplayName { get; set; }
+    public string Email { get; set; }
+    public IReadOnlyDictionary<int, ISet<string>> AppPrivileges { get; set; }
 
-    public string DefaultCultureId { get; set; } = string.Empty;
-
-    public string DisplayName { get; set; } = string.Empty;
-
-    public string Email { get; set; } = string.Empty;
-
-    public IReadOnlyDictionary<int, ISet<string>> AppPrivileges { get; set; } =
-        new Dictionary<int, ISet<string>>();
-
-    public bool Can(int? appId, string operation)
+    internal PageRenderUser()
     {
-        string normalizedOperation = operation?.ToLowerInvariant() ?? string.Empty;
-
-        if (!appId.HasValue)
-            return AppPrivileges.Values.Any(privileges => privileges.Contains(normalizedOperation));
-
-        return AppPrivileges.TryGetValue(appId.Value, out ISet<string> value)
-            && value.Contains(normalizedOperation);
+        Id = string.Empty;
+        DefaultCultureId = string.Empty;
+        DisplayName = string.Empty;
+        Email = string.Empty;
+        AppPrivileges = new Dictionary<int, ISet<string>>();
     }
 }

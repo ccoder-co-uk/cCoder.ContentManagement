@@ -1,39 +1,43 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class AppCultureBroker(ICoreContextFactory coreContextFactory) : IAppCultureBroker
+internal sealed class AppCultureBroker(ICoreContextFactory coreContextFactory) : IAppCultureBroker
 {
     public IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters)
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.AppCultures.IgnoreQueryFilters()
-            : coreDataContext.AppCultures;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.AppCultures,
+            ignoreFilters: ignoreFilters);
     }
 
-    public async ValueTask<AppCulture> AddAppCultureAsync(AppCulture entity)
+    public async ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        AppCulture result = (await coreDataContext.AppCultures.AddAsync(entity)).Entity;
+        AppCulture result = (await coreDataContext.AppCultures.AddAsync(entity: newAppCulture)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeleteAppCultureAsync(AppCulture entity)
+    public async ValueTask<int> DeleteAppCultureAsync(AppCulture deletedAppCulture)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.AppCultures.Remove(entity);
+        coreDataContext.AppCultures.Remove(entity: deletedAppCulture);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllAppCulturesAsync(IEnumerable<AppCulture> items)
+    public async ValueTask DeleteAllAppCulturesAsync(IEnumerable<AppCulture> deletedAppCulture)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.AppCultures.RemoveRange(items);
+        coreDataContext.AppCultures.RemoveRange(entities: deletedAppCulture);
         await coreDataContext.SaveChangesAsync();
     }
 }

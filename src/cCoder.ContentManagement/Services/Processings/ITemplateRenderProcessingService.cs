@@ -1,12 +1,11 @@
-using cCoder.ContentManagement.Models;
-using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Security;
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models;
 namespace cCoder.ContentManagement.Services.Processings;
 
 public interface ITemplateRenderProcessingService
 {
-    string Render(int appId, string name, object model, User user, string culture, Config config, ILogger log = null);
-
-    string RenderTemplate(Template template, object model, RenderParams renderParams, Config config, ILogger log = null);
+    string RenderTemplateRenderOperation(TemplateRenderOperation operation);
 }

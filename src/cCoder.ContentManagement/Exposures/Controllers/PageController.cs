@@ -1,11 +1,13 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.Data.Extensions;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using cCoder.ContentManagement.Services.Coordinations;
-using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Deltas;
@@ -18,49 +20,44 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class PageController : ODataController
 {
-    protected IPageOrchestrationService Service { get; }
-    private IPageRenderCoordinationService RenderService { get; }
+    private readonly IPageManager manager;
 
-    public PageController(
-        IPageOrchestrationService service,
-        IPageRenderCoordinationService renderService,
-        ILogger<PageController> log)
-    {
-        Service = service;
-        RenderService = renderService;
-    }
+    public PageController(IPageManager manager) =>
+        this.manager = manager;
 
     [HttpGet]
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     public IActionResult Get(ODataQueryOptions<Page> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: manager.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
-    public IActionResult RootFor([FromRoute] int key) =>
-        Ok(CreateResponsePage(Service.GetRoot(key)));
+    [ActionName("RootFor")]
+    public IActionResult GetRootFor([FromRoute] int key) =>
+        Ok(value: CreateResponsePage(newPage: manager.GetRoot(pageId: key)));
 
     [HttpGet]
-    public IActionResult Menu([FromRoute] int key, string culture)
-    {
-        return Ok(new Result<string>
+    [ActionName("Menu")]
+    public IActionResult GetMenu([FromRoute] int key, string culture) =>
+        Ok(value: new Result<string>
         {
             Id = key.ToString(),
-            Item = Service.MenuFor(key, culture),
+            Item = manager.GetMenu(pageId: key, culture: culture),
             Success = true
         });
-    }
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Render(int appId, string path, string theme, string culture) =>
-        Ok(RenderService.Render(appId, path, theme, culture));
+    [ActionName("Render")]
+    public IActionResult GetRender(int appId, string path, string theme, string culture) =>
+        Ok(value: manager.Render(appId: appId, path: path, theme: theme, culture: culture));
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Page)) : new MetadataContainer(typeof(Page), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Page)) : new MetadataContainer(type: typeof(Page), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [AllowAnonymous]
@@ -69,8 +66,10 @@ public class PageController : ODataController
     {
         try
         {
-            IQueryable<Page> result = Service.GetAll().Where(page => page.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<Page> result = manager.GetAll()
+                .Where(predicate: page => page.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -80,63 +79,73 @@ public class PageController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Page entity)
+    public async Task<IActionResult> Post([FromBody] Page newPage)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(CreateResponsePage(await Service.AddAsync(entity)));
+        return Ok(value: CreateResponsePage(newPage: await manager.AddAsync(newPage: newPage)));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Page entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Page updatedPage)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        entity.Id = key;
-        return Ok(CreateResponsePage(await Service.UpdateAsync(entity)));
+        updatedPage.Id = key;
+        return Ok(value: CreateResponsePage(newPage: await manager.UpdateAsync(updatedPage: updatedPage)));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<Page> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Page> updatedPage)
     {
-        Page originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Page originalEntity = manager.Get(pageId: key);
 
-        delta.Patch(originalEntity);
-        return Ok(CreateResponsePage(await Service.UpdateAsync(originalEntity)));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        updatedPage.Patch(original: originalEntity);
+        return Ok(value: CreateResponsePage(newPage: await manager.UpdateAsync(updatedPage: originalEntity)));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(key);
+        await manager.DeleteAsync(pageId: key);
         return Ok();
     }
 
-    private static Page CreateResponsePage(Page page)
+    private static Page CreateResponsePage(Page newPage)
     {
-        if (page == null)
+        if (newPage == null)
+        {
             return null;
+        }
 
         return new Page
         {
-            Id = page.Id,
-            ParentId = page.ParentId,
-            AppId = page.AppId,
-            Order = page.Order,
-            ShowOnMenus = page.ShowOnMenus,
-            Name = page.Name,
-            LastUpdated = page.LastUpdated,
-            LastUpdatedBy = page.LastUpdatedBy,
-            CreatedOn = page.CreatedOn,
-            CreatedBy = page.CreatedBy,
-            Path = page.Path,
-            ResourceKey = page.ResourceKey,
-            Layout = page.Layout
+            Id = newPage.Id,
+            ParentId = newPage.ParentId,
+            AppId = newPage.AppId,
+            Order = newPage.Order,
+            ShowOnMenus = newPage.ShowOnMenus,
+            Name = newPage.Name,
+            LastUpdated = newPage.LastUpdated,
+            LastUpdatedBy = newPage.LastUpdatedBy,
+            CreatedOn = newPage.CreatedOn,
+            CreatedBy = newPage.CreatedBy,
+            Path = newPage.Path,
+            ResourceKey = newPage.ResourceKey,
+            Layout = newPage.Layout
         };
     }
 }

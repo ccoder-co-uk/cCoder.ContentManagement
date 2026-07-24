@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,27 +28,16 @@ public partial class PackageProcessingServiceTests
         // Given
         Package entity = CreateRandomPackage();
         var id = entity.Id;
-        packageServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        packageServiceMock.Setup(expression: x => x.DeleteAsync(packageId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await packageProcessingService.DeleteAllAsync(new[] { entity });
+        await packageProcessingService.DeleteAllPackageAsync(deletedPackage: new[] { entity });
 
         // Then
-        packageServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
+        packageServiceMock.Verify(expression: x => x.DeleteAsync(packageId: id), times: Times.Once);
         packageServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

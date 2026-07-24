@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,37 +26,23 @@ public partial class SubmissionServiceTests
     public void ShouldReturnSubmissionWhenGet()
     {
         // Given
-        Guid submissionId = new Guid("11111111-1111-1111-1111-111111111111");
-        Submission submission = CreateRandomSubmission(submissionId);
+        Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
+        Submission submission = CreateRandomSubmission(id: submissionId);
 
-        submissionBrokerMock.Setup(x => x.GetAllSubmissions(false)).Returns(new[] { submission }.AsQueryable());
+        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions(ignoreFilters: false))
+            .Returns(value: new[] { submission }.AsQueryable());
 
         // When
-        Submission result = submissionService.Get(submissionId);
+        Submission result = submissionService.GetSubmission(submissionId: submissionId);
 
         // Then
-        result.Should().BeEquivalentTo(submission);
-        submissionBrokerMock.Verify(x => x.GetAllSubmissions(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: submission);
+
+        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(ignoreFilters: false), times: Times.Once);
         submissionBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

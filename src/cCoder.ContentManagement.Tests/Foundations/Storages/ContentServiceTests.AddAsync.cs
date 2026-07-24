@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -31,44 +35,55 @@ public partial class ContentServiceTests
 
         CmsDataModels.Content submitted = null;
 
-        pageBrokerMock.Setup(x => x.GetAllPages(true)).Returns(new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "Content_create"));
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
+
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_create"));
 
         contentBrokerMock
-            .Setup(x =>
-                x.AddContentAsync(It.Is<CmsDataModels.Content>(candidate => !ReferenceEquals(candidate, content)))
+            .Setup(expression: x =>
+                x.AddContentAsync(newContent: It.Is<CmsDataModels.Content>(match: candidate => !ReferenceEquals(objA: candidate, objB: content)))
             )
-            .Callback<CmsDataModels.Content>(candidate => submitted = candidate)
-            .ReturnsAsync((CmsDataModels.Content value) => value);
+            .Callback<CmsDataModels.Content>(action: candidate => submitted = candidate)
+            .ReturnsAsync(valueFunction: (CmsDataModels.Content value) => value);
 
         // When
-        Content result = await contentService.AddAsync(content);
+        Content result = await contentService.AddContentAsync(newContent: content);
 
         // Then
-        result.Should().BeSameAs(content);
-        submitted.Should().NotBeNull();
-        submitted.Should().NotBeSameAs(content);
-        result.Should().NotBeSameAs(submitted);
+
+        result.Should()
+            .BeSameAs(expected: content);
+
+        submitted.Should()
+            .NotBeNull();
+
+        submitted.Should()
+            .NotBeSameAs(unexpected: content);
+
+        result.Should()
+            .NotBeSameAs(unexpected: submitted);
 
         submitted
             .Should()
-            .BeEquivalentTo(content, options => options.Excluding(candidate => candidate.Id));
+            .BeEquivalentTo(expectation: content, config: options => options.Excluding(expression: candidate => candidate.Id));
 
         result
             .Should()
-            .BeEquivalentTo(content, options => options.Excluding(candidate => candidate.Id));
+            .BeEquivalentTo(expectation: content, config: options => options.Excluding(expression: candidate => candidate.Id));
 
         contentBrokerMock.Verify(
-            x =>
+expression: x =>
                 x.AddContentAsync(
-                    It.Is<CmsDataModels.Content>(candidate => !ReferenceEquals(candidate, content))
+newContent: It.Is<CmsDataModels.Content>(match: candidate => !ReferenceEquals(objA: candidate, objB: content))
                 ),
-            Times.Once
+times: Times.Once
         );
+
         contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(x => x.GetAllPages(true), Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Content_create"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_create"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -78,36 +93,27 @@ public partial class ContentServiceTests
         // Given
         Content content = CreateRandomContent(id: 0);
 
-        pageBrokerMock.Setup(x => x.GetAllPages(true)).Returns(new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "Content_create"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_create"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await contentService.AddAsync(content);
+        Func<Task> action = async () => await contentService.AddContentAsync(newContent: content);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
         contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(x => x.GetAllPages(true), Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Content_create"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_create"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

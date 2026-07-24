@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Net;
 using System.Net.Http.Json;
 using cCoder.Data.Models.Packaging;
@@ -12,37 +16,47 @@ public sealed partial class AppControllerTests
     [Fact]
     public async Task ImportPackage_CreatesResourcesForApp()
     {
-        SeededApp app = await SeedDatabase("app_admin", "package_create", "resource_create", "resource_update");
+        // Given
+        // When
+        SeededApp app = await SeedDatabase(privileges: ["app_admin", "package_create", "resource_create", "resource_update"]);
 
         try
         {
             Package package = AcceptanceSeedData
                 .LoadExportPackages()
-                .First(found => string.Equals(found.Name, "Resources", StringComparison.OrdinalIgnoreCase));
+                .First(predicate: found => string.Equals(a: found.Name, b: "Resources", comparisonType: StringComparison.OrdinalIgnoreCase));
 
-            AppCmsChildren beforeImport = await GetAppCmsChildrenAsync(app.AppId);
-            int statusCode = await ImportPackageAsync(app.AppId, package);
-            AppCmsChildren afterImport = await GetAppCmsChildrenAsync(app.AppId);
+            AppCmsChildren beforeImport = await GetAppCmsChildrenAsync(appId: app.AppId);
+            int statusCode = await ImportPackageAsync(appId: app.AppId, package: package);
+            AppCmsChildren afterImport = await GetAppCmsChildrenAsync(appId: app.AppId);
 
-            statusCode.Should().Be((int)HttpStatusCode.OK);
-            beforeImport.Resources.Should().BeEmpty();
-            afterImport.Resources.Should().NotBeEmpty();
+            // Then
+            statusCode.Should()
+                .Be(expected: (int)HttpStatusCode.OK);
+
+            beforeImport.Resources.Should()
+                .BeEmpty();
+
+            afterImport.Resources.Should()
+                .NotBeEmpty();
         }
         finally
         {
-            await DeleteAppAsync(app.AppId);
+            await DeleteAppAsync(id: app.AppId);
         }
     }
 
     private async Task<int> ImportPackageAsync(int appId, Package package)
     {
         using HttpResponseMessage response = await Client.PostAsJsonAsync(
-            $"/Api/Core/Package/Import?appId={appId}",
-            package);
+requestUri: $"/Api/Core/Package/Import?appId={appId}",
+value: package);
 
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.OK, content);
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
         return (int)response.StatusCode;
     }
 }
-

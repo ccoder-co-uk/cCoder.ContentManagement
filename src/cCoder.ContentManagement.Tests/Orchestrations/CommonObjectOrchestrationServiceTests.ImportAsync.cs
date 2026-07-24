@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -13,8 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class CommonObjectOrchestrationServiceTests
@@ -22,40 +24,23 @@ public partial class CommonObjectOrchestrationServiceTests
     [Fact]
     public async Task ShouldReturnProcessingResultsWhenImportAsync()
     {
+        // Given
         CommonObject[] items = [CreateRandomCommonObject()];
-        cCoder.ContentManagement.Models.Result<CommonObject>[] expectedResults = [];
-        commonObjectProcessingServiceMock.Setup(x => x.ImportAsync(items)).ReturnsAsync(expectedResults);
+        OperationResult<CommonObject>[] expectedResults = [];
 
-        IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>> result = await orchestrationService.ImportAsync(items);
+        commonObjectProcessingServiceMock.Setup(expression: x => x.ImportCommonObjectResultAsync(items: items))
+            .ReturnsAsync(value: expectedResults);
 
-        result.Should().BeSameAs(expectedResults);
-        commonObjectProcessingServiceMock.Verify(x => x.ImportAsync(items), Times.Once);
+        // When
+        IEnumerable<OperationResult<CommonObject>> result = await orchestrationService.ImportCommonObjectResultAsync(items: items);
+
+        // Then
+        result.Should()
+            .BeSameAs(expected: expectedResults);
+
+        commonObjectProcessingServiceMock.Verify(expression: x => x.ImportCommonObjectResultAsync(items: items), times: Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

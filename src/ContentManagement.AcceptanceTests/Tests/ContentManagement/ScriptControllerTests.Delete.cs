@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,26 +16,25 @@ public sealed partial class ScriptControllerTests
     {
         // Given
         Script createdScript = await CreateScriptAsync(
-            new
-            {
-                appId = 1,
-                name = Unique("Script"),
-                description = "Acceptance script",
-                key = "Acceptance",
-                content = "return 42;",
-            });
+payload: new
+{
+    appId = 1,
+    name = Unique(prefix: "Script"),
+    description = "Acceptance script",
+    key = "Acceptance",
+    content = "return 42;",
+});
 
         // When
-        int actualStatusCode = await DeleteScriptAsync(createdScript.Id);
-        int actualReadStatusCode = await GetScriptStatusCodeAsync(createdScript.Id);
+        int actualStatusCode = await DeleteScriptAsync(id: createdScript.Id);
+        int actualReadStatusCode = await GetScriptStatusCodeAsync(id: createdScript.Id);
 
         // Then
-        actualStatusCode.Should().Be(200);
-        actualReadStatusCode.Should().Be(404);
+
+        actualStatusCode.Should()
+            .Be(expected: 200);
+
+        actualReadStatusCode.Should()
+            .Be(expected: 404);
     }
 }
-
-
-
-
-

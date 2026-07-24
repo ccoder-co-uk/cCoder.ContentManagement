@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,34 +28,20 @@ public partial class TemplateServiceTests
         // Given
         Template template = CreateRandomTemplate(id: 5);
 
-        templateBrokerMock.Setup(x => x.GetAllTemplates(false)).Returns(new[] { template }.AsQueryable());
+        templateBrokerMock.Setup(expression: x => x.GetAllTemplates(ignoreFilters: false))
+            .Returns(value: new[] { template }.AsQueryable());
 
         // When
-        Template result = templateService.Get(5);
+        Template result = templateService.GetTemplate(templateId: 5);
 
         // Then
-        result.Should().BeEquivalentTo(template);
-        templateBrokerMock.Verify(x => x.GetAllTemplates(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: template);
+
+        templateBrokerMock.Verify(expression: x => x.GetAllTemplates(ignoreFilters: false), times: Times.Once);
         templateBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

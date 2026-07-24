@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,7 +27,7 @@ public partial class AppCultureProcessingServiceTests
 
     public AppCultureProcessingServiceTests()
     {
-        appCultureProcessingService = new AppCultureProcessingService(appCultureServiceMock.Object);
+        appCultureProcessingService = new AppCultureProcessingService(service: appCultureServiceMock.Object);
     }
 
     private static AppCulture CreateRandomAppCulture() =>
@@ -35,24 +39,3 @@ public partial class AppCultureProcessingServiceTests
             Culture = null!,
         };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

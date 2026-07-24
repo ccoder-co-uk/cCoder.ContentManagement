@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
@@ -6,25 +10,25 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IAppOrchestrationService
 {
-    App Get(int id);
+    App GetApp(int appId);
 
-    App GetByDomain(string domain, bool ignoreFilters = false);
+    bool IsAdminApp(int appId, string userName);
 
-    IQueryable<App> GetAll(bool ignoreFilters = false);
+    App GetByDomainApp(string domain, bool ignoreFilters = false);
 
-    ValueTask<App> AddAsync(App entity);
+    IQueryable<App> GetAllApp(bool ignoreFilters = false);
 
-    ValueTask<App> UpdateAsync(App entity);
+    ValueTask<App> AddAppAsync(App newApp);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask<App> UpdateAppAsync(App updatedApp);
 
-    ValueTask<IEnumerable<Result<App>>> AddOrUpdate(IEnumerable<App> items);
+    ValueTask DeleteAsync(int appId);
 
-    ValueTask DeleteAllAsync(IEnumerable<App> items);
+    ValueTask<IEnumerable<OperationResult<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp);
 
-    IQueryable<User> GetAppUsers(int appId);
+    ValueTask DeleteAllAppAsync(IEnumerable<App> deletedApp);
 
-    ValueTask UpdatePageOrderAsync(int key, App app);
+    ValueTask UpdatePageOrderAppAsync(int key, App updatedApp);
 
     App ResolveCurrentApp();
 }

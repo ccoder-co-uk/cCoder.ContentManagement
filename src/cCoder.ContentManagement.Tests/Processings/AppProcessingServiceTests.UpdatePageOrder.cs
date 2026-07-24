@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,22 +30,30 @@ public partial class AppProcessingServiceTests
     public async Task ShouldUpdatePageOrderAndSaveWhenAppExists()
     {
         // Given
+        currentUser = TestUsers.WithPrivilege(
+            privilege: "app_update",
+            appId: 1);
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         App incomingApp = CreateRandomApp();
         incomingApp.Id = 1;
+
         incomingApp.Pages =
         [
             new Page
@@ -57,15 +69,33 @@ public partial class AppProcessingServiceTests
                 Pages = [],
             },
         ];
-        appServiceMock
-            .Setup(x => x.UpdatePageOrderAsync(incomingApp.Id, incomingApp.Pages))
-            .Returns(ValueTask.CompletedTask);
+
+        Page existingPage = new()
+        {
+            Id = incomingApp.Pages.Single().Id,
+            AppId = incomingApp.Id
+        };
+
+        pageBrokerMock
+            .Setup(expression: broker => broker.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { existingPage }.AsQueryable());
+
+        pageBrokerMock
+            .Setup(expression: broker => broker.UpdatePageAsync(updatedPage: existingPage))
+            .ReturnsAsync(value: existingPage);
 
         // When
-        await appProcessingService.UpdatePageOrderAsync(incomingApp.Id, incomingApp);
+        await appProcessingService.UpdatePageOrderAppAsync(key: incomingApp.Id, updatedApp: incomingApp);
 
         // Then
-        appServiceMock.Verify(x => x.UpdatePageOrderAsync(incomingApp.Id, incomingApp.Pages), Times.Once);
+        pageBrokerMock.Verify(
+            expression: broker => broker.GetAllPages(ignoreFilters: true),
+            times: Times.Once);
+
+        pageBrokerMock.Verify(
+            expression: broker => broker.UpdatePageAsync(updatedPage: existingPage),
+            times: Times.Once);
+
         appServiceMock.VerifyNoOtherCalls();
     }
 
@@ -73,51 +103,51 @@ public partial class AppProcessingServiceTests
     public async Task ShouldThrowTaskCanceledExceptionWhenAppDoesNotExistForUpdatePageOrder()
     {
         // Given
+        currentUser = TestUsers.WithPrivilege(
+            privilege: "app_update",
+            appId: 1);
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         App incomingApp = CreateRandomApp();
         incomingApp.Id = 1;
         incomingApp.Pages = [];
-        appServiceMock
-            .Setup(x => x.UpdatePageOrderAsync(incomingApp.Id, incomingApp.Pages))
-            .Returns(ValueTask.FromException(new TaskCanceledException("App not found")));
+
+        pageBrokerMock
+            .Setup(expression: broker => broker.GetAllPages(ignoreFilters: true))
+            .Throws(exception: new TaskCanceledException(message: "App not found"));
 
         // When
+
         Func<Task> act = async () =>
-            await appProcessingService.UpdatePageOrderAsync(incomingApp.Id, incomingApp);
+            await appProcessingService.UpdatePageOrderAppAsync(key: incomingApp.Id, updatedApp: incomingApp);
 
         // Then
-        await act.Should().ThrowAsync<TaskCanceledException>().WithMessage("App not found");
-        appServiceMock.Verify(x => x.UpdatePageOrderAsync(incomingApp.Id, incomingApp.Pages), Times.Once);
+
+        await act.Should()
+            .ThrowAsync<TaskCanceledException>()
+            .WithMessage(expectedWildcardPattern: "App not found");
+
+        pageBrokerMock.Verify(
+            expression: broker => broker.GetAllPages(ignoreFilters: true),
+            times: Times.Once);
+
         appServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

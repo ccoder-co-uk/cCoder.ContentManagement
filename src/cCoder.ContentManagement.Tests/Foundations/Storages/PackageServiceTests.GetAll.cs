@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,39 +28,25 @@ public partial class PackageServiceTests
     {
         // Given
         Package[] expectedItems = [CreateRandomPackage()];
+
         IQueryable<cCoder.Data.Models.Packaging.Package> packages = expectedItems
-            .Select(item => item)
+            .Select(selector: item => item)
             .AsQueryable();
 
-        packageBrokerMock.Setup(x => x.GetAllPackages(false)).Returns(packages);
+        packageBrokerMock.Setup(expression: x => x.GetAllPackages(ignoreFilters: false))
+            .Returns(value: packages);
 
         // When
-        IQueryable<Package> result = packageService.GetAll();
+        IQueryable<Package> result = packageService.GetAllPackage();
 
         // Then
-        result.Should().BeEquivalentTo(expectedItems);
-        packageBrokerMock.Verify(x => x.GetAllPackages(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: expectedItems);
+
+        packageBrokerMock.Verify(expression: x => x.GetAllPackages(ignoreFilters: false), times: Times.Once);
         packageBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

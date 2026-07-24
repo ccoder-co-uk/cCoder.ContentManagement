@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,6 +27,7 @@ public partial class PageRenderOrchestrationServiceTests
     [Fact]
     public void ShouldDelegatePreparedPageToRenderProcessingService()
     {
+        // Given
         Page page = new()
         {
             Id = 10,
@@ -49,25 +54,37 @@ public partial class PageRenderOrchestrationServiceTests
             Roles = []
         };
 
-        User user = TestUsers.WithPrivilege("app_admin", 1);
+        User user = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
         RenderResult expected = new() { StatusCode = 200 };
         Mock<IPageRenderProcessingService> processingServiceMock = new();
-        PageRenderOrchestrationService orchestrationService = new(new Config(), processingServiceMock.Object);
+        Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock = new();
+
+        PageRenderOrchestrationService orchestrationService = new(
+            pageRenderProcessingService: processingServiceMock.Object,
+            authorizationProcessingService: authorizationProcessingServiceMock.Object);
 
         processingServiceMock
-            .Setup(x => x.RenderPage(page, user, It.IsAny<Config>(), "Default", string.Empty, true))
-            .Returns(expected);
+            .Setup(expression: service => service.RenderPageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.SourcePage == page
+                    && operation.User == user
+                    && operation.Theme == "Default"
+                    && operation.Culture == string.Empty
+                    && operation.Edit)))
+            .Returns(valueFunction: (PageRenderOperation operation) =>
+            {
+                operation.Page = expected;
 
-        RenderResult actual = orchestrationService.Render(page, user, "Default", string.Empty, true);
+                return operation;
+            });
 
-        actual.Should().BeSameAs(expected);
+        // When
+        RenderResult actual = orchestrationService.RenderPageUserRenderResult(page: page, user: user, theme: "Default", culture: string.Empty, edit: true);
+
+        // Then
+        actual.Should()
+            .BeSameAs(expected: expected);
+
         processingServiceMock.VerifyAll();
     }
 }
-
-
-
-
-
-
-

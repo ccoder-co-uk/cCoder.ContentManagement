@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class ResourceEventProcessingServiceTests
     {
         // Given
         Resource entity = CreateRandomResource();
+
         resourceEventServiceMock
-            .Setup(x => x.RaiseResourceUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseResourceUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseResourceUpdateEventAsync(entity);
+        await service.RaiseResourceUpdateEventAsync(entity: entity);
 
         // Then
-        resourceEventServiceMock.Verify(x => x.RaiseResourceUpdateEventAsync(entity), Times.Once);
+        resourceEventServiceMock.Verify(expression: x => x.RaiseResourceUpdateEventAsync(entity: entity), times: Times.Once);
         resourceEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

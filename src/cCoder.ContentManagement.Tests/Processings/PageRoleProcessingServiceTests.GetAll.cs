@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,35 +29,26 @@ public partial class PageRoleProcessingServiceTests
         // Given
         LocalPageRole[] links =
         [
-            new() { PageId = Random.Shared.Next(1, 1000), RoleId = Guid.NewGuid() },
+            new() { PageId = Random.Shared.Next(minValue: 1, maxValue: 1000), RoleId = Guid.NewGuid() },
         ];
+
         IQueryable<LocalPageRole> queryableLinks = links.AsQueryable();
-        pageRoleServiceMock.Setup(x => x.GetAll()).Returns(queryableLinks);
+
+        pageRoleServiceMock.Setup(expression: x => x.GetAllPageRole())
+            .Returns(value: queryableLinks);
 
         // When
-        IQueryable<LocalPageRole> result = pageRoleProcessingService.GetAll();
+        IQueryable<LocalPageRole> result = pageRoleProcessingService.GetAllPageRole();
 
         // Then
-        result.Should().BeSameAs(queryableLinks);
-        pageRoleServiceMock.Verify(x => x.GetAll(), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: queryableLinks);
+
+        pageRoleServiceMock.Verify(expression: x => x.GetAllPageRole(), times: Times.Once);
         pageRoleServiceMock.VerifyNoOtherCalls();
         roleBrokerMock.VerifyNoOtherCalls();
-        pageServiceMock.VerifyNoOtherCalls();
+        pageBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

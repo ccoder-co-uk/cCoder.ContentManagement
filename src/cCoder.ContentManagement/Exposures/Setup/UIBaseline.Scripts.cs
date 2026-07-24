@@ -1,16 +1,21 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Exposures.Setup;
 
 public static partial class UIBaseline
 {
-    static Package Scripts => new()
-    {
-        Name = "Content Management Scripts",
-        Category = "CMS",
-        Description = "Content Management Scripts.",
-        SourceApi = "https://ccoder.co.uk/Api/",
-        Items =
+    static Package Scripts =>
+        new()
+        {
+            Name = "Content Management Scripts",
+            Category = "CMS",
+            Description = "Content Management Scripts.",
+            SourceApi = "https://ccoder.co.uk/Api/",
+            Items =
         [
             new PackageItem
             {
@@ -52,5 +57,5 @@ public static partial class UIBaseline
 """
             },
         ]
-    };
+        };
 }

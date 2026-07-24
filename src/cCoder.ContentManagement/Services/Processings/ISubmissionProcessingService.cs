@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
 
@@ -5,17 +9,17 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface ISubmissionProcessingService
 {
-    Submission Get(Guid id);
+    Submission GetSubmission(Guid submissionId);
 
-    IQueryable<Submission> GetAll(bool ignoreFilters = false);
+    IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false);
 
-    ValueTask<Submission> AddAsync(Submission entity);
+    ValueTask<Submission> AddSubmissionAsync(Submission newSubmission);
 
-    ValueTask<Submission> UpdateAsync(Submission entity);
+    ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission);
 
-    ValueTask DeleteAsync(Guid id);
+    ValueTask DeleteAsync(Guid submissionId);
 
-    ValueTask<IEnumerable<Result<Submission>>> AddOrUpdate(IEnumerable<Submission> items);
+    ValueTask<IEnumerable<OperationResult<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission);
 
-    ValueTask DeleteAllAsync(IEnumerable<Submission> items);
+    ValueTask DeleteAllSubmissionAsync(IEnumerable<Submission> deletedSubmission);
 }

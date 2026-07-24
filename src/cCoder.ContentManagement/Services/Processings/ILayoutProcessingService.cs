@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
 
@@ -5,17 +9,17 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface ILayoutProcessingService
 {
-    Layout Get(int id);
+    Layout GetLayout(int layoutId);
 
-    IQueryable<Layout> GetAll(bool ignoreFilters = false);
+    IQueryable<Layout> GetAllLayout(bool ignoreFilters = false);
 
-    ValueTask<Layout> AddAsync(Layout entity);
+    ValueTask<Layout> AddLayoutAsync(Layout newLayout);
 
-    ValueTask<Layout> UpdateAsync(Layout entity);
+    ValueTask<Layout> UpdateLayoutAsync(Layout updatedLayout);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int layoutId);
 
-    ValueTask<IEnumerable<Result<Layout>>> AddOrUpdate(IEnumerable<Layout> items);
+    ValueTask<IEnumerable<OperationResult<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout);
 
-    ValueTask DeleteAllAsync(IEnumerable<Layout> items);
+    ValueTask DeleteAllLayoutAsync(IEnumerable<Layout> deletedLayout);
 }

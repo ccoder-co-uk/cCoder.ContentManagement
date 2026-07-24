@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.Security;
@@ -9,43 +13,54 @@ internal partial class PageRoleService(
     IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IPageRoleService
 {
-    public IQueryable<PageRole> GetAll(bool ignoreFilters = false) =>
-        pageRoleBroker.GetAllPageRoles(ignoreFilters);
-
-    public async ValueTask<PageRole> AddAsync(PageRole pageRole)
+    public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<PageRole>>(operation: () =>
     {
-        ValidatePageRole(pageRole, "pageRole");
-        authorizationBroker.Authorize(GetAppId(pageRole.PageId), "PageRole_create");
-        PageRole result = await pageRoleBroker.AddPageRoleAsync(CreateStoragePageRole(pageRole));
-        pageRole.PageId = result.PageId;
-        pageRole.RoleId = result.RoleId;
-        return pageRole;
-    }
+        ValidateAllPageRoleOnGet(inputs: [ignoreFilters]);
+        return pageRoleBroker.GetAllPageRoles(ignoreFilters: ignoreFilters);
+    });
 
-    public async ValueTask DeleteAsync(PageRole pageRole)
+    public ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole) =>
+        TryCatch<PageRole>(operation: async () =>
     {
-        ValidatePageRole(pageRole, "pageRole");
-        authorizationBroker.Authorize(GetAppId(pageRole.PageId), "PageRole_delete");
-        await pageRoleBroker.DeletePageRoleAsync(CreateStoragePageRole(pageRole));
-    }
+        ValidatePageRoleOnAdd(inputs: [newPageRole]);
+        ValidatePageRole(pageRole: newPageRole, parameterName: "pageRole");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: newPageRole.PageId), privilege: "PageRole_create");
+        PageRole result = await pageRoleBroker.AddPageRoleAsync(newPageRole: CreateStoragePageRole(newPageRole: newPageRole));
+        newPageRole.PageId = result.PageId;
+        newPageRole.RoleId = result.RoleId;
+        return newPageRole;
 
-    private static PageRole CreateStoragePageRole(PageRole pageRole)
+    }, isValueTask: true);
+
+    public ValueTask DeletePageRoleAsync(PageRole deletedPageRole) =>
+        TryCatch(operation: async () =>
     {
-        if (pageRole == null)
+        ValidatePageRoleOnDelete(inputs: [deletedPageRole]);
+        ValidatePageRole(pageRole: deletedPageRole, parameterName: "pageRole");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: deletedPageRole.PageId), privilege: "PageRole_delete");
+        await pageRoleBroker.DeletePageRoleAsync(deletedPageRole: CreateStoragePageRole(newPageRole: deletedPageRole));
+
+    }, isValueTask: true);
+
+    private static PageRole CreateStoragePageRole(PageRole newPageRole)
+    {
+        if (newPageRole == null)
+        {
             return null;
+        }
 
         return new PageRole
         {
-            PageId = pageRole.PageId,
-            RoleId = pageRole.RoleId
+            PageId = newPageRole.PageId,
+            RoleId = newPageRole.RoleId
         };
     }
 
-    private int? GetAppId(int pageId)
-    {
-        return pageBroker.GetAllPages(ignoreFilters: true)
-            .Where(page => page.Id == pageId)
-            .Select(page => (int?)page.AppId)
-            .FirstOrDefault();
-    }
+    private int? GetAppId(int pageId) =>
+        pageBroker.GetAllPages(ignoreFilters: true)
+        .Where(predicate: page => page.Id == pageId)
+        .Select(selector: page => (int?)page.AppId)
+        .FirstOrDefault();
+
 }

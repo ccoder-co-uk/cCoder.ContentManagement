@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,31 +27,20 @@ public partial class ScriptProcessingServiceTests
     {
         // Given
         Script entity = CreateRandomScript();
-        scriptServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+
+        scriptServiceMock.Setup(expression: x => x.UpdateScriptAsync(updatedScript: entity))
+            .ReturnsAsync(value: entity);
 
         // When
-        Script result = await scriptProcessingService.UpdateAsync(entity);
+        Script result = await scriptProcessingService.UpdateScriptAsync(updatedScript: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        scriptServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        scriptServiceMock.Verify(expression: x => x.UpdateScriptAsync(updatedScript: entity), times: Times.Once);
         scriptServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

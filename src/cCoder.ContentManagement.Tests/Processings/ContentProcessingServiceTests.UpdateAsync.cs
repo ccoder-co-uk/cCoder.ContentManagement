@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,31 +27,20 @@ public partial class ContentProcessingServiceTests
     {
         // Given
         Content entity = CreateRandomContent();
-        contentServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+
+        contentServiceMock.Setup(expression: x => x.UpdateContentAsync(updatedContent: entity))
+            .ReturnsAsync(value: entity);
 
         // When
-        Content result = await contentProcessingService.UpdateAsync(entity);
+        Content result = await contentProcessingService.UpdateContentAsync(updatedContent: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        contentServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        contentServiceMock.Verify(expression: x => x.UpdateContentAsync(updatedContent: entity), times: Times.Once);
         contentServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

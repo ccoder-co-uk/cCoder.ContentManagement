@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,36 +26,17 @@ public partial class CultureOrchestrationServiceTests
     {
         // Given
         Culture[] entities = [CreateRandomCulture()];
-        cultureProcessingServiceMock.Setup(x => x.DeleteAllAsync(entities)).Returns(ValueTask.CompletedTask);
+
+        cultureProcessingServiceMock.Setup(expression: x => x.DeleteAllCultureAsync(deletedCulture: entities))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllCultureAsync(deletedCulture: entities);
 
         // Then
-        cultureProcessingServiceMock.Verify(x => x.DeleteAllAsync(entities), Times.Once);
+        cultureProcessingServiceMock.Verify(expression: x => x.DeleteAllCultureAsync(deletedCulture: entities), times: Times.Once);
         cultureProcessingServiceMock.VerifyNoOtherCalls();
         cultureEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

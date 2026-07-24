@@ -1,26 +1,34 @@
-using cCoder.ContentManagement.Rendering.Models;
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+using cCoder.ContentManagement.Dependencies.Rendering;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 
 namespace cCoder.ContentManagement.Rendering.Services.Orchestrations;
 
-internal sealed class PageRenderExecutionOrchestrationService(
+internal sealed partial class PageRenderExecutionOrchestrationService(
     IMetadataCacheService metadataCacheService,
     ICommonObjectCacheService commonObjectCacheService,
     IMarkupRenderService markupRenderService) : IPageRenderExecutionOrchestrationService
 {
-    public PageRenderResult Render(PageRenderSession session)
+    public PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session) =>
+        TryCatch<PageRenderResult>(operation: () =>
     {
-        string culture = !string.IsNullOrWhiteSpace(session.Request.Culture)
+        ValidateRenderPageRenderSessionPageRenderResult(inputs: [session]);
+
+        string culture = !string.IsNullOrWhiteSpace(value: session.Request.Culture)
             ? session.Request.Culture
             : session.App?.DefaultCulture ?? string.Empty;
 
-        session.MetadataResolver = metadataCacheService.Get(culture);
+        session.MetadataResolver = metadataCacheService.Get(culture: culture);
 
-        PageCacheSlice pageCacheSlice = commonObjectCacheService.Get(session.Request);
+        PageCacheSlice pageCacheSlice = commonObjectCacheService.GetPageRenderEngineRequestPageCacheSlice(request: session.Request);
         session.CommonResourcesByLookup = pageCacheSlice.CommonResourcesByLookup;
         session.CommonComponentsByName = pageCacheSlice.CommonComponentsByName;
         session.CommonScriptsByName = pageCacheSlice.CommonScriptsByName;
 
-        return markupRenderService.Render(session);
-    }
+        return markupRenderService.RenderPageRenderSessionPageRenderResult(session: session);
+
+    });
 }

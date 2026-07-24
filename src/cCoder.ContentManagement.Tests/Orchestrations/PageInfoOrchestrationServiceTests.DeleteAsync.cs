@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,42 +27,24 @@ public partial class PageInfoOrchestrationServiceTests
         // Given
         int id = 1;
         PageInfo entity = CreateRandomPageInfo();
-        pageInfoProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
-        pageInfoProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        pageInfoProcessingServiceMock.Setup(expression: x => x.GetPageInfo(pageInfoId: id))
+            .Returns(value: entity);
+
+        pageInfoProcessingServiceMock.Setup(expression: x => x.DeleteAsync(pageInfoId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         pageInfoEventProcessingServiceMock
-            .Setup(x => x.RaisePageInfoDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageInfoDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(pageInfoId: id);
 
         // Then
-        pageInfoProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
-        pageInfoProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        pageInfoEventProcessingServiceMock.Verify(x => x.RaisePageInfoDeleteEventAsync(entity), Times.Once);
+        pageInfoProcessingServiceMock.Verify(expression: x => x.GetPageInfo(pageInfoId: id), times: Times.Once);
+        pageInfoProcessingServiceMock.Verify(expression: x => x.DeleteAsync(pageInfoId: id), times: Times.Once);
+        pageInfoEventProcessingServiceMock.Verify(expression: x => x.RaisePageInfoDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

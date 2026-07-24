@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -11,8 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -24,25 +26,30 @@ public partial class PageProcessingServiceTests
     [Fact]
     public void ShouldRenderChildMenuItemsWhenMenuFor()
     {
+        // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         Page child = CreateRandomPage();
         child.ParentId = 10;
         child.Path = "docs";
         child.ShowOnMenus = true;
         child.Order = 1;
+
         child.PageInfo =
         [
             new PageInfo
@@ -54,50 +61,60 @@ public partial class PageProcessingServiceTests
                 Culture = null!,
             },
         ];
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { child }.AsQueryable());
 
-        string result = pageProcessingService.MenuFor(10, string.Empty);
+        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: new[] { child }.AsQueryable());
 
-        result.Should().Contain("<ul class='submenu'>");
-        result.Should().Contain("/docs");
-        result.Should().Contain("Docs");
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
+        // When
+        string result = pageProcessingService.MenuFor(pageId: 10, culture: string.Empty);
+
+        // Then
+        result.Should()
+            .Contain(expected: "<ul class='submenu'>");
+
+        result.Should()
+            .Contain(expected: "/docs");
+
+        result.Should()
+            .Contain(expected: "Docs");
+
+        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
     public void ShouldRenderEmptySubmenuWhenNoVisibleChildrenExistForMenuFor()
     {
+        // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(Array.Empty<Page>().AsQueryable());
+        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: Array.Empty<Page>()
+            .AsQueryable());
 
-        string result = pageProcessingService.MenuFor(10, string.Empty);
+        // When
+        string result = pageProcessingService.MenuFor(pageId: 10, culture: string.Empty);
 
-        result.Should().Be("<ul class='submenu'></ul>");
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
+        // Then
+        result.Should()
+            .Be(expected: "<ul class='submenu'></ul>");
+
+        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,38 +32,36 @@ public partial class PackageItemEventServiceTests
         EventMessage<cCoder.Data.Models.Packaging.PackageItem> actualMessage = null;
 
         packageItemEventBrokerMock
-            .Setup(x => x.RaisePackageItemAddEventAsync(It.IsAny<EventMessage<cCoder.Data.Models.Packaging.PackageItem>>()))
-            .Callback<EventMessage<cCoder.Data.Models.Packaging.PackageItem>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePackageItemAddEventAsync(message: It.IsAny<EventMessage<cCoder.Data.Models.Packaging.PackageItem>>()))
+            .Callback<EventMessage<cCoder.Data.Models.Packaging.PackageItem>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePackageItemAddEventAsync(entity);
+        await service.RaisePackageItemAddEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         packageItemEventBrokerMock.Verify(
-            x => x.RaisePackageItemAddEventAsync(It.IsAny<EventMessage<cCoder.Data.Models.Packaging.PackageItem>>()),
-            Times.Once
+expression: x => x.RaisePackageItemAddEventAsync(message: It.IsAny<EventMessage<cCoder.Data.Models.Packaging.PackageItem>>()),
+times: Times.Once
         );
+
+        packageItemEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         packageItemEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

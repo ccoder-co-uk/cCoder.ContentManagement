@@ -1,7 +1,10 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
-
 
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
@@ -11,35 +14,33 @@ public sealed partial class AppControllerTests
     public async Task Post_CreatesApp()
     {
         // Given
-        SeededApp seededApp = await SeedDatabase("app_create", "app_read", "app_delete");
-        string createdName = Unique("CreatedApp");
+        SeededApp seededApp = await SeedDatabase(privileges: ["app_create", "app_read", "app_delete"]);
+        string createdName = Unique(prefix: "CreatedApp");
         App expectedApp = new() { Name = createdName };
 
         // When
         App createdApp = await CreateAppAsync(
-            new
-            {
-                name = createdName,
-                domain = $"{Unique("created")}.local",
-                defaultTheme = "Default",
-                defaultCultureId = string.Empty,
-                tenantId = Unique("tenant"),
-                configJson = "{}",
-            });
-        App actualApp = await GetAppAsync(createdApp.Domain, createdApp.Id);
+payload: new
+{
+    name = createdName,
+    domain = $"{Unique(prefix: "created")}.local",
+    defaultTheme = "Default",
+    defaultCultureId = string.Empty,
+    tenantId = Unique(prefix: "tenant"),
+    configJson = "{}",
+});
+
+        App actualApp = await GetAppAsync(host: createdApp.Domain, id: createdApp.Id);
 
         // Then
-        actualApp.Should().NotBeNull();
-        actualApp!.Name.Should().Be(expectedApp.Name);
+        actualApp.Should()
+            .NotBeNull();
 
-        await DeleteAppAsync(createdApp.Domain, createdApp.Id);
+        actualApp!.Name.Should()
+            .Be(expected: expectedApp.Name);
 
-        await Teardown(seededApp);
+        await DeleteAppAsync(host: createdApp.Domain, id: createdApp.Id);
+
+        await Teardown(seededApp: seededApp);
     }
 }
-
-
-
-
-
-

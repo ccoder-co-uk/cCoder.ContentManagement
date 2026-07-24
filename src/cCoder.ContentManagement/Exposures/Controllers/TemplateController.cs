@@ -1,9 +1,12 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using System.Text;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.Data.Extensions;
-using cCoder.ContentManagement.Services.Orchestrations;
 using iText.Html2pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,47 +21,43 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class TemplateController : ODataController
 {
-    protected ITemplateOrchestrationService Service { get; }
-    protected ITemplateRenderer Renderer { get; }
+    private readonly ITemplateManager manager;
 
-    public TemplateController(
-        ITemplateOrchestrationService service,
-        ITemplateRenderer renderer,
-        ILogger<TemplateController> log)
+    public TemplateController(ITemplateManager manager) =>
+        this.manager = manager;
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ActionName("Render")]
+    public async Task<IActionResult> GetRender(int appId, string name, string culture)
     {
-        Service = service;
-        Renderer = renderer;
+        using StreamReader reader = new StreamReader(stream: base.Request.Body);
+        dynamic m = JsonConvert.DeserializeObject(value: await reader.ReadToEndAsync());
+        return Content(content: manager.Render(appId: appId, name: name, culture: culture, model: m), contentType: "text/plain", contentEncoding: Encoding.UTF8);
     }
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<IActionResult> Render(int appId, string name, string culture)
+    [ActionName("HtmlToPdf")]
+    public async Task<IActionResult> GetHtmlToPdf(string name)
     {
-        using StreamReader reader = new StreamReader(base.Request.Body);
-        dynamic m = JsonConvert.DeserializeObject(await reader.ReadToEndAsync());
-        return Content(Renderer.Render(appId, name, culture, m), "text/plain", Encoding.UTF8);
-    }
-
-    [HttpPost]
-    [AllowAnonymous]
-    public async Task<IActionResult> HtmlToPdf(string name)
-    {
-        using StreamReader reader = new StreamReader(base.Request.Body);
+        using StreamReader reader = new StreamReader(stream: base.Request.Body);
         string htmlContent = await reader.ReadToEndAsync();
         using MemoryStream pdfStream = new MemoryStream();
-        HtmlConverter.ConvertToPdf(htmlContent, (Stream)pdfStream);
-        return File(pdfStream.ToArray(), "application/pdf", name + ".pdf");
+        HtmlConverter.ConvertToPdf(html: htmlContent, pdfStream: (Stream)pdfStream);
+        return File(fileContents: pdfStream.ToArray(), contentType: "application/pdf", fileDownloadName: name + ".pdf");
     }
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Template)) : new MetadataContainer(typeof(Template), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Template)) : new MetadataContainer(type: typeof(Template), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Template> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: manager.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -67,8 +66,10 @@ public class TemplateController : ODataController
     {
         try
         {
-            IQueryable<Template> result = Service.GetAll().Where(template => template.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<Template> result = manager.GetAll()
+                .Where(predicate: template => template.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -78,39 +79,47 @@ public class TemplateController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Template entity)
+    public async Task<IActionResult> Post([FromBody] Template newTemplate)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.AddAsync(entity));
+        return Ok(value: await manager.AddAsync(newTemplate: newTemplate));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Template entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Template updatedTemplate)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.UpdateAsync(entity));
+        return Ok(value: await manager.UpdateAsync(updatedTemplate: updatedTemplate));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<Template> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Template> updatedTemplate)
     {
-        Template originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Template originalEntity = manager.Get(templateId: key);
 
-        delta.Patch(originalEntity);
-        return Ok(await Service.UpdateAsync(originalEntity));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        updatedTemplate.Patch(original: originalEntity);
+        return Ok(value: await manager.UpdateAsync(updatedTemplate: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(key);
+        await manager.DeleteAsync(templateId: key);
         return Ok();
     }
 }

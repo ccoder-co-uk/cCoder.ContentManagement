@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,34 +29,16 @@ public partial class ContentProcessingServiceTests
 
     public ContentProcessingServiceTests()
     {
-        contentProcessingService = new ContentProcessingService(contentServiceMock.Object);
+        contentProcessingService = new ContentProcessingService(service: contentServiceMock.Object);
     }
 
     private static Content CreateRandomContent() =>
         Builder<Content>
             .CreateNew()
-            .With(x => x.Id = Random.Shared.Next(1, 10000))
-            .With(x => x.PageId = Random.Shared.Next(1, 10000))
-            .With(x => x.CultureId = string.Empty)
-            .With(x => x.Name = $"Content-{Guid.NewGuid():N}")
-            .With(x => x.Html = $"<p>{Guid.NewGuid():N}</p>")
-            .Build();
+        .With(func: x => x.Id = Random.Shared.Next(minValue: 1, maxValue: 10000))
+        .With(func: x => x.PageId = Random.Shared.Next(minValue: 1, maxValue: 10000))
+        .With(func: x => x.CultureId = string.Empty)
+        .With(func: x => x.Name = $"Content-{Guid.NewGuid():N}")
+        .With(func: x => x.Html = $"<p>{Guid.NewGuid():N}</p>")
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

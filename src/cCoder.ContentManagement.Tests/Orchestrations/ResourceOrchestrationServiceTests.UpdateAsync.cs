@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,39 +27,24 @@ public partial class ResourceOrchestrationServiceTests
     {
         // Given
         Resource entity = CreateRandomResource();
-        resourceProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+
+        resourceProcessingServiceMock.Setup(expression: x => x.UpdateResourceAsync(updatedResource: entity))
+            .ReturnsAsync(value: entity);
 
         resourceEventProcessingServiceMock
-            .Setup(x => x.RaiseResourceUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseResourceUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Resource result = await orchestrationService.UpdateAsync(entity);
+        Resource result = await orchestrationService.UpdateResourceAsync(updatedResource: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        resourceProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
-        resourceEventProcessingServiceMock.Verify(x => x.RaiseResourceUpdateEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        resourceProcessingServiceMock.Verify(expression: x => x.UpdateResourceAsync(updatedResource: entity), times: Times.Once);
+        resourceEventProcessingServiceMock.Verify(expression: x => x.RaiseResourceUpdateEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

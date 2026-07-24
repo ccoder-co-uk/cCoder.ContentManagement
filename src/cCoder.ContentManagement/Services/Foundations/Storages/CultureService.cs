@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -10,71 +14,131 @@ internal partial class CultureService(
     IAppCultureBroker appCultureBroker,
     IAuthorizationBroker authorizationBroker) : ICultureService
 {
-    public Culture Get(string id, bool ignoreFilters = false)
+    public Culture GetCulture(string cultureId, bool ignoreFilters = false) =>
+        TryCatch<Culture>(operation: () =>
     {
-        ValidateId(id, "id");
+        ValidateCultureOnGet(inputs: [cultureId, ignoreFilters]);
+        ValidateId(cultureId: cultureId, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Culture i) => i.Id == id);
+        {
+            return ExecuteGetAllCulture(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
+        }
 
-        Culture culture = GetAll().FirstOrDefault((Culture i) => i.Id == id);
+        Culture culture = ExecuteGetAllCulture()
+            .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
+
         if ((object)culture != null)
+        {
             return culture;
+        }
 
-        Culture culture2 = GetAll(ignoreFilters: true).FirstOrDefault((Culture i) => i.Id == id);
+        Culture culture2 = ExecuteGetAllCulture(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
+
         if ((object)culture2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
-    }
 
-    public IQueryable<Culture> GetAll(bool ignoreFilters = false) =>
-        cultureBroker.GetAllCultures(ignoreFilters);
+    });
 
-    public async ValueTask<Culture> AddAsync(Culture culture)
+    public IQueryable<Culture> GetAllCulture(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Culture>>(operation: () =>
     {
-        ValidateCulture(culture, "culture");
-        authorizationBroker.Authorize(GetAppId(culture.Id), "Culture_create");
-        Culture result = await cultureBroker.AddCultureAsync(CreateStorageCulture(culture));
-        culture.Id = result.Id;
-        culture.Name = result.Name;
-        return culture;
-    }
+        ValidateAllCultureOnGet(inputs: [ignoreFilters]);
+        return cultureBroker.GetAllCultures(ignoreFilters: ignoreFilters);
+    });
 
-    public async ValueTask<Culture> UpdateAsync(Culture culture)
+    public ValueTask<Culture> AddCultureAsync(Culture newCulture) =>
+        TryCatch<Culture>(operation: async () =>
     {
-        ValidateCulture(culture, "culture");
-        authorizationBroker.Authorize(GetAppId(culture.Id), "Culture_update");
-        Culture result = await cultureBroker.UpdateCultureAsync(CreateStorageCulture(culture));
-        culture.Id = result.Id;
-        culture.Name = result.Name;
-        return culture;
-    }
+        ValidateCultureOnAdd(inputs: [newCulture]);
+        ValidateCulture(culture: newCulture, parameterName: "culture");
+        authorizationBroker.Authorize(appId: GetAppId(cultureId: newCulture.Id), privilege: "Culture_create");
+        Culture result = await cultureBroker.AddCultureAsync(newCulture: CreateStorageCulture(newCulture: newCulture));
+        newCulture.Id = result.Id;
+        newCulture.Name = result.Name;
+        return newCulture;
 
-    public async ValueTask DeleteAsync(string id)
-    {
-        ValidateId(id, "id");
-        Culture culture = Get(id);
-        authorizationBroker.Authorize(GetAppId(culture.Id), "Culture_delete");
-        await cultureBroker.DeleteCultureAsync(CreateStorageCulture(culture));
-    }
+    }, isValueTask: true);
 
-    private static Culture CreateStorageCulture(Culture culture)
+    public ValueTask<Culture> UpdateCultureAsync(Culture updatedCulture) =>
+        TryCatch<Culture>(operation: async () =>
     {
-        if (culture == null)
+        ValidateCultureOnUpdate(inputs: [updatedCulture]);
+        ValidateCulture(culture: updatedCulture, parameterName: "culture");
+        authorizationBroker.Authorize(appId: GetAppId(cultureId: updatedCulture.Id), privilege: "Culture_update");
+        Culture result = await cultureBroker.UpdateCultureAsync(updatedCulture: CreateStorageCulture(newCulture: updatedCulture));
+        updatedCulture.Id = result.Id;
+        updatedCulture.Name = result.Name;
+        return updatedCulture;
+
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(string cultureId) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateDeleteAsync(inputs: [cultureId]);
+        ValidateId(cultureId: cultureId, parameterName: "id");
+        Culture culture = ExecuteGetCulture(cultureId: cultureId);
+        authorizationBroker.Authorize(appId: GetAppId(cultureId: culture.Id), privilege: "Culture_delete");
+        await cultureBroker.DeleteCultureAsync(deletedCulture: CreateStorageCulture(newCulture: culture));
+
+    }, isValueTask: true);
+
+    private static Culture CreateStorageCulture(Culture newCulture)
+    {
+        if (newCulture == null)
+        {
             return null;
+        }
 
         return new Culture
         {
-            Id = culture.Id,
-            Name = culture.Name
+            Id = newCulture.Id,
+            Name = newCulture.Name
         };
     }
 
-    private int? GetAppId(string cultureId)
+    private int? GetAppId(string cultureId) =>
+        appCultureBroker.GetAllAppCultures(ignoreFilters: true)
+        .Where(predicate: appCulture => appCulture.CultureId == cultureId)
+        .Select(selector: appCulture => (int?)appCulture.AppId)
+        .FirstOrDefault();
+
+    private IQueryable<Culture> ExecuteGetAllCulture(bool ignoreFilters = false) =>
+        cultureBroker.GetAllCultures(ignoreFilters: ignoreFilters);
+
+    private Culture ExecuteGetCulture(string cultureId, bool ignoreFilters = false)
     {
-        return appCultureBroker.GetAllAppCultures(ignoreFilters: true)
-            .Where(appCulture => appCulture.CultureId == cultureId)
-            .Select(appCulture => (int?)appCulture.AppId)
-            .FirstOrDefault();
+        ValidateId(cultureId: cultureId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllCulture(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
+        }
+
+        Culture culture = ExecuteGetAllCulture()
+            .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
+
+        if ((object)culture != null)
+        {
+            return culture;
+        }
+
+        Culture culture2 = ExecuteGetAllCulture(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
+
+        if ((object)culture2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,10 +26,9 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class PageRoleProcessingServiceTests
 {
-    private readonly Mock<IPageService> pageServiceMock = new();
+    private readonly Mock<IPageBroker> pageBrokerMock = new();
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPageRoleService> pageRoleServiceMock = new();
-    private readonly Mock<IPageRoleBroker> pageRoleBrokerMock = new();
     private readonly Mock<IRoleBroker> roleBrokerMock = new();
     private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
     private readonly PageRoleProcessingService pageRoleProcessingService;
@@ -33,11 +36,10 @@ public partial class PageRoleProcessingServiceTests
     public PageRoleProcessingServiceTests()
     {
         pageRoleProcessingService = new PageRoleProcessingService(
-            pageRoleServiceMock.Object,
-            pageRoleBrokerMock.Object,
-            roleBrokerMock.Object,
-            pageServiceMock.Object,
-            authorizationBrokerMock.Object
+service: pageRoleServiceMock.Object,
+roleBroker: roleBrokerMock.Object,
+pageBroker: pageBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -51,32 +53,3 @@ public partial class PageRoleProcessingServiceTests
             Privs = role.Privs,
         };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

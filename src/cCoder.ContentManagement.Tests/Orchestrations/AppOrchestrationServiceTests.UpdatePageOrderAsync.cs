@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -12,7 +16,6 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class AppOrchestrationServiceTests
@@ -20,38 +23,21 @@ public partial class AppOrchestrationServiceTests
     [Fact]
     public async Task ShouldDelegateToProcessingServiceWhenUpdatePageOrderAsync()
     {
+        // Given
         const int key = 1;
         App app = CreateRandomApp();
+
         appProcessingServiceMock
-            .Setup(x => x.UpdatePageOrderAsync(key, app))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.UpdatePageOrderAppAsync(key: key, updatedApp: app))
+            .Returns(value: ValueTask.CompletedTask);
 
-        await orchestrationService.UpdatePageOrderAsync(key, app);
+        // When
+        await orchestrationService.UpdatePageOrderAppAsync(key: key, updatedApp: app);
 
-        appProcessingServiceMock.Verify(x => x.UpdatePageOrderAsync(key, app), Times.Once);
+        // Then
+        appProcessingServiceMock.Verify(expression: x => x.UpdatePageOrderAppAsync(key: key, updatedApp: app), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

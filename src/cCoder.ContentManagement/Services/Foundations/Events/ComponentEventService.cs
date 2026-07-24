@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -5,44 +9,59 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class ComponentEventService(IComponentEventBroker componentEventBroker, ICoreAuthInfo authInfo) : IComponentEventService
+internal partial class ComponentEventService(IComponentEventBroker componentEventBroker) : IComponentEventService
 {
-    public async ValueTask RaiseComponentAddEventAsync(Component entity)
+    public ValueTask RaiseComponentAddEventAsync(Component entity) =>
+        TryCatch(operation: async () =>
     {
-        EventMessage<Component> message = new EventMessage<Component>
-        {
-            AuthInfo = new EventAuthInfo
-            {
-                SSOUserId = authInfo.SSOUserId
-            },
-            Data = entity
-        };
-        await componentEventBroker.RaiseComponentAddEventAsync(message);
-    }
+        ValidateRaiseComponentAddEventAsync(inputs: [entity]);
 
-    public async ValueTask RaiseComponentUpdateEventAsync(Component entity)
-    {
         EventMessage<Component> message = new EventMessage<Component>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = componentEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
-        await componentEventBroker.RaiseComponentUpdateEventAsync(message);
-    }
 
-    public async ValueTask RaiseComponentDeleteEventAsync(Component entity)
+        await componentEventBroker.RaiseComponentAddEventAsync(message: message);
+
+    }, isValueTask: true);
+
+    public ValueTask RaiseComponentUpdateEventAsync(Component entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseComponentUpdateEventAsync(inputs: [entity]);
+
         EventMessage<Component> message = new EventMessage<Component>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = componentEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
-        await componentEventBroker.RaiseComponentDeleteEventAsync(message);
-    }
+
+        await componentEventBroker.RaiseComponentUpdateEventAsync(message: message);
+
+    }, isValueTask: true);
+
+    public ValueTask RaiseComponentDeleteEventAsync(Component entity) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateRaiseComponentDeleteEventAsync(inputs: [entity]);
+
+        EventMessage<Component> message = new EventMessage<Component>
+        {
+            AuthInfo = new EventAuthInfo
+            {
+                SSOUserId = componentEventBroker.GetCurrentUserId()
+            },
+            Data = entity
+        };
+
+        await componentEventBroker.RaiseComponentDeleteEventAsync(message: message);
+
+    }, isValueTask: true);
 }

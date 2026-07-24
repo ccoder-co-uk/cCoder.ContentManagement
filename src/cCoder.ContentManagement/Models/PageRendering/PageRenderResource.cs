@@ -1,16 +1,26 @@
-namespace cCoder.ContentManagement.Rendering.Models;
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+namespace cCoder.ContentManagement.Dependencies.Rendering;
 
 internal sealed class PageRenderResource
 {
-    public string Key { get; set; } = string.Empty;
+    public string Key { get; set; }
+    public string Culture { get; set; }
+    public string Name { get; set; }
+    public string DisplayName { get; set; }
+    public string ShortDisplayName { get; set; }
+    public string Description { get; set; }
 
-    public string Culture { get; set; } = string.Empty;
-
-    public string Name { get; set; } = string.Empty;
-
-    public string DisplayName { get; set; } = string.Empty;
-
-    public string ShortDisplayName { get; set; } = string.Empty;
-
-    public string Description { get; set; } = string.Empty;
+    internal PageRenderResource
+()
+    {
+        this.Key = string.Empty;
+        this.Culture = string.Empty;
+        this.Name = string.Empty;
+        this.DisplayName = string.Empty;
+        this.ShortDisplayName = string.Empty;
+        this.Description = string.Empty;
+    }
 }

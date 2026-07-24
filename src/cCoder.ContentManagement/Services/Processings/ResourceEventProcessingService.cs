@@ -1,38 +1,53 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class ResourceEventProcessingService(IResourceEventService eventService) : IResourceEventProcessingService
+internal partial class ResourceEventProcessingService(IResourceEventService eventService) : IResourceEventProcessingService
 {
-    public ValueTask RaiseResourceAddEventAsync(Resource entity)
+    public ValueTask RaiseResourceAddEventAsync(Resource entity) =>
+        TryCatch(operation: () =>
     {
-        ValidateResource(entity, "entity");
+        ValidateRaiseResourceAddEventAsync(inputs: [entity]);
+        ValidateResource(resource: entity, parameterName: "entity");
 
-        return eventService.RaiseResourceAddEventAsync(entity);
-    }
+        return eventService.RaiseResourceAddEventAsync(entity: entity);
 
-    public ValueTask RaiseResourceUpdateEventAsync(Resource entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseResourceUpdateEventAsync(Resource entity) =>
+        TryCatch(operation: () =>
     {
-        ValidateResource(entity, "entity");
+        ValidateRaiseResourceUpdateEventAsync(inputs: [entity]);
+        ValidateResource(resource: entity, parameterName: "entity");
 
-        return eventService.RaiseResourceUpdateEventAsync(entity);
-    }
+        return eventService.RaiseResourceUpdateEventAsync(entity: entity);
 
-    public ValueTask RaiseResourceDeleteEventAsync(Resource entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseResourceDeleteEventAsync(Resource entity) =>
+        TryCatch(operation: () =>
     {
-        ValidateResource(entity, "entity");
+        ValidateRaiseResourceDeleteEventAsync(inputs: [entity]);
+        ValidateResource(resource: entity, parameterName: "entity");
 
-        return eventService.RaiseResourceDeleteEventAsync(entity);
-    }
+        return eventService.RaiseResourceDeleteEventAsync(entity: entity);
+
+    }, isValueTask: true);
 
     private static void ValidateResource(Resource resource, string parameterName) =>
-        ThrowIf(resource == null, parameterName + " is required.");
+        ThrowIf(condition: resource == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

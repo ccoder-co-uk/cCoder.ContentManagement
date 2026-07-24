@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,39 +29,26 @@ public partial class CommonObjectServiceTests
         CommonObject commonObject = CreateRandomCommonObject(id: 7);
 
         commonObjectBrokerMock
-            .Setup(x => x.GetAllCommonObjects(false))
-            .Returns(new[] { ToDataCommonObject(commonObject) }.AsQueryable());
+            .Setup(expression: x => x.GetAllCommonObjects(ignoreFilters: false))
+            .Returns(value: new[] { ToDataCommonObject(commonObject: commonObject) }.AsQueryable());
 
         // When
-        CommonObject result = commonObjectService.Get(7);
+        CommonObject result = commonObjectService.GetCommonObject(commonObjectId: 7);
 
         // Then
-        result.Should().BeEquivalentTo(commonObject);
-        commonObjectBrokerMock.Verify(x => x.GetAllCommonObjects(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: commonObject);
+
+        commonObjectBrokerMock.Verify(expression: x => x.GetAllCommonObjects(ignoreFilters: false), times: Times.Once);
+
         commonObjectBrokerMock.Verify(
-            x => x.GetAppId(It.IsAny<DataCommonObject>()),
-            Times.AtMostOnce()
+expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()),
+times: Times.AtMostOnce()
         );
+
         commonObjectBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

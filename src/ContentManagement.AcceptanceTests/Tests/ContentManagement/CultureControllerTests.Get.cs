@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
 
@@ -15,7 +19,9 @@ public sealed partial class CultureControllerTests
         int actualCount = await GetCultureCountAsync();
 
         // Then
-        actualCount.Should().BeGreaterThanOrEqualTo(0);
+
+        actualCount.Should()
+            .BeGreaterThanOrEqualTo(expected: 0);
     }
 
     [Fact]
@@ -28,10 +34,8 @@ public sealed partial class CultureControllerTests
             await GetCulturesAsync();
 
         // Then
-        actualCultures.Should().NotBeNull();
+
+        actualCultures.Should()
+            .NotBeNull();
     }
 }
-
-
-
-

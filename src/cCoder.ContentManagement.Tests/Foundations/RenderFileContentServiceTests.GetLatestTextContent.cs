@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -15,7 +19,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Foundations;
 
 public partial class RenderFileContentServiceTests
@@ -23,10 +26,14 @@ public partial class RenderFileContentServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionOnGetLatestTextContentWhenAppIdIsInvalid()
     {
-        Action action = () => renderFileContentService.GetLatestTextContent(0, "/path/file.txt");
+        // Given
+        // When
+        Action action = () => renderFileContentService.GetLatestTextContent(appId: 0, path: "/path/file.txt");
 
-        action.Should().Throw<ValidationException>()
-            .WithMessage("appId must be greater than 0.");
+        // Then
+        action.Should()
+            .Throw<ValidationException>()
+            .WithMessage(expectedWildcardPattern: "appId must be greater than 0.");
 
         renderFileContentBrokerMock.VerifyNoOtherCalls();
     }
@@ -34,10 +41,14 @@ public partial class RenderFileContentServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionOnGetLatestTextContentWhenPathIsInvalid()
     {
-        Action action = () => renderFileContentService.GetLatestTextContent(1, " ");
+        // Given
+        // When
+        Action action = () => renderFileContentService.GetLatestTextContent(appId: 1, path: " ");
 
-        action.Should().Throw<ValidationException>()
-            .WithMessage("path is required.");
+        // Then
+        action.Should()
+            .Throw<ValidationException>()
+            .WithMessage(expectedWildcardPattern: "path is required.");
 
         renderFileContentBrokerMock.VerifyNoOtherCalls();
     }
@@ -45,35 +56,41 @@ public partial class RenderFileContentServiceTests
     [Fact]
     public void ShouldReturnEmptyStringOnGetLatestTextContentWhenRawDataIsMissing()
     {
+        // Given
         renderFileContentBrokerMock
-            .Setup(broker => broker.GetLatestRawData(1, "/assets/file.txt"))
-            .Returns([]);
+            .Setup(expression: broker => broker.GetLatestRawData(appId: 1, path: "/assets/file.txt"))
+            .Returns(value: []);
 
-        string result = renderFileContentService.GetLatestTextContent(1, "/assets/file.txt");
+        // When
+        string result = renderFileContentService.GetLatestTextContent(appId: 1, path: "/assets/file.txt");
 
-        result.Should().BeEmpty();
-        renderFileContentBrokerMock.Verify(broker => broker.GetLatestRawData(1, "/assets/file.txt"), Times.Once);
+        // Then
+        result.Should()
+            .BeEmpty();
+
+        renderFileContentBrokerMock.Verify(expression: broker => broker.GetLatestRawData(appId: 1, path: "/assets/file.txt"), times: Times.Once);
         renderFileContentBrokerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
     public void ShouldReturnDecodedTextOnGetLatestTextContent()
     {
+        // Given
         string expected = "rendered file content";
-        byte[] rawData = Encoding.UTF8.GetBytes(expected);
+        byte[] rawData = Encoding.UTF8.GetBytes(s: expected);
 
         renderFileContentBrokerMock
-            .Setup(broker => broker.GetLatestRawData(7, "/assets/content.txt"))
-            .Returns(rawData);
+            .Setup(expression: broker => broker.GetLatestRawData(appId: 7, path: "/assets/content.txt"))
+            .Returns(value: rawData);
 
-        string result = renderFileContentService.GetLatestTextContent(7, "/assets/content.txt");
+        // When
+        string result = renderFileContentService.GetLatestTextContent(appId: 7, path: "/assets/content.txt");
 
-        result.Should().Be(expected);
-        renderFileContentBrokerMock.Verify(broker => broker.GetLatestRawData(7, "/assets/content.txt"), Times.Once);
+        // Then
+        result.Should()
+            .Be(expected: expected);
+
+        renderFileContentBrokerMock.Verify(expression: broker => broker.GetLatestRawData(appId: 7, path: "/assets/content.txt"), times: Times.Once);
         renderFileContentBrokerMock.VerifyNoOtherCalls();
     }
 }
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,30 +27,16 @@ public partial class ContentProcessingServiceTests
         // Given
         Content entity = CreateRandomContent();
         var id = entity.Id;
-        contentServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        contentServiceMock.Setup(expression: x => x.DeleteAsync(contentId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await contentProcessingService.DeleteAllAsync(new[] { entity });
+        await contentProcessingService.DeleteAllContentAsync(deletedContent: new[] { entity });
 
         // Then
-        contentServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
+        contentServiceMock.Verify(expression: x => x.DeleteAsync(contentId: id), times: Times.Once);
         contentServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

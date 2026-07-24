@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -18,33 +22,19 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Events;
 public partial class CommonObjectEventServiceTests
 {
     private readonly Mock<ICommonObjectEventBroker> commonObjectEventBrokerMock;
-    private readonly Mock<ICoreAuthInfo> authInfoMock;
     private readonly cCoder.ContentManagement.Services.Foundations.Events.CommonObjectEventService service;
     private const string CurrentUserId = "test-user";
 
     public CommonObjectEventServiceTests()
     {
-        commonObjectEventBrokerMock = new Mock<ICommonObjectEventBroker>(MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(MockBehavior.Strict);
-        commonObjectEventBrokerMock = new(MockBehavior.Strict);
-        authInfoMock = new();
-        authInfoMock.SetupGet(x => x.SSOUserId).Returns(CurrentUserId);
+        commonObjectEventBrokerMock = new Mock<ICommonObjectEventBroker>(behavior: MockBehavior.Strict);
+        commonObjectEventBrokerMock = new(behavior: MockBehavior.Strict);
+
+        commonObjectEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
+
         service = new cCoder.ContentManagement.Services.Foundations.Events.CommonObjectEventService(
-            commonObjectEventBrokerMock.Object,
-            authInfoMock.Object
+commonObjectEventBroker: commonObjectEventBrokerMock.Object
         );
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

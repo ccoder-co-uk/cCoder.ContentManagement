@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,40 +27,24 @@ public partial class CultureOrchestrationServiceTests
     {
         // Given
         Culture entity = CreateRandomCulture();
-        cultureProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+
+        cultureProcessingServiceMock.Setup(expression: x => x.UpdateCultureAsync(updatedCulture: entity))
+            .ReturnsAsync(value: entity);
 
         cultureEventProcessingServiceMock
-            .Setup(x => x.RaiseCultureUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseCultureUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Culture result = await orchestrationService.UpdateAsync(entity);
+        Culture result = await orchestrationService.UpdateCultureAsync(updatedCulture: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        cultureProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
-        cultureEventProcessingServiceMock.Verify(x => x.RaiseCultureUpdateEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        cultureProcessingServiceMock.Verify(expression: x => x.UpdateCultureAsync(updatedCulture: entity), times: Times.Once);
+        cultureEventProcessingServiceMock.Verify(expression: x => x.RaiseCultureUpdateEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

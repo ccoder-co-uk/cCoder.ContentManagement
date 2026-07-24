@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -14,7 +18,6 @@ using Moq;
 using System.Security;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class AppServiceTests
@@ -25,14 +28,17 @@ public partial class AppServiceTests
         // Given
         App app = CreateRandomApp(id: 5);
 
-        appBrokerMock.Setup(x => x.GetAllApps(false)).Returns(new[] { app }.AsQueryable());
+        appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: false))
+            .Returns(value: new[] { app }.AsQueryable());
 
         // When
-        App result = appService.Get(5);
+        App result = appService.GetApp(appId: 5);
 
         // Then
-        result.Should().BeEquivalentTo(app);
-        appBrokerMock.Verify(x => x.GetAllApps(false), Times.Once);
+        result.Should()
+            .BeEquivalentTo(expectation: app);
+
+        appBrokerMock.Verify(expression: x => x.GetAllApps(ignoreFilters: false), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
@@ -40,14 +46,20 @@ public partial class AppServiceTests
     [Fact]
     public void ShouldReturnAppWhenGetIgnoringFilters()
     {
+        // Given
         App app = CreateRandomApp(id: 7);
 
-        appBrokerMock.Setup(x => x.GetAllApps(true)).Returns(new[] { app }.AsQueryable());
+        appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: true))
+            .Returns(value: new[] { app }.AsQueryable());
 
-        App result = appService.Get(7, ignoreFilters: true);
+        // When
+        App result = appService.GetApp(appId: 7, ignoreFilters: true);
 
-        result.Should().BeEquivalentTo(app);
-        appBrokerMock.Verify(x => x.GetAllApps(true), Times.Once);
+        // Then
+        result.Should()
+            .BeEquivalentTo(expectation: app);
+
+        appBrokerMock.Verify(expression: x => x.GetAllApps(ignoreFilters: true), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
@@ -55,36 +67,28 @@ public partial class AppServiceTests
     [Fact]
     public void ShouldThrowSecurityExceptionWhenAppExistsOnlyInIgnoredQuery()
     {
+        // Given
         App app = CreateRandomApp(id: 9);
 
-        appBrokerMock.Setup(x => x.GetAllApps(false)).Returns(Array.Empty<cCoder.Data.Models.CMS.App>().AsQueryable());
-        appBrokerMock.Setup(x => x.GetAllApps(true)).Returns(new[] { app }.AsQueryable());
+        appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: false))
+            .Returns(value: Array.Empty<cCoder.Data.Models.CMS.App>()
+            .AsQueryable());
 
-        Action act = () => appService.Get(9);
+        appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: true))
+            .Returns(value: new[] { app }.AsQueryable());
 
-        act.Should().Throw<SecurityException>().WithMessage("Access Denied!");
-        appBrokerMock.Verify(x => x.GetAllApps(false), Times.Once);
-        appBrokerMock.Verify(x => x.GetAllApps(true), Times.Once);
+        // When
+        Action act = () => appService.GetApp(appId: 9);
+
+        // Then
+        act.Should()
+            .Throw<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        appBrokerMock.Verify(expression: x => x.GetAllApps(ignoreFilters: false), times: Times.Once);
+        appBrokerMock.Verify(expression: x => x.GetAllApps(ignoreFilters: true), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

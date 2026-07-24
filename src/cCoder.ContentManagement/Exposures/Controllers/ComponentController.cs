@@ -1,8 +1,11 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.Data.Extensions;
-using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Deltas;
@@ -15,32 +18,27 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class ComponentController : ODataController
 {
-    protected IComponentOrchestrationService Service { get; }
-    protected IComponentRenderer Renderer { get; }
+    private readonly IComponentManager manager;
 
-    public ComponentController(
-        IComponentOrchestrationService service,
-        IComponentRenderer renderer,
-        ILogger<ComponentController> log)
-    {
-        Service = service;
-        Renderer = renderer;
-    }
+    public ComponentController(IComponentManager manager) =>
+        this.manager = manager;
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Render(int appId, string name, string culture, string theme) =>
-        Ok(Renderer.Render(appId, name, culture, theme));
+    [ActionName("Render")]
+    public IActionResult GetRender(int appId, string name, string culture, string theme) =>
+        Ok(value: manager.Render(appId: appId, name: name, culture: culture, theme: theme));
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Component)) : new MetadataContainer(typeof(Component), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Component)) : new MetadataContainer(type: typeof(Component), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Component> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: manager.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -49,8 +47,10 @@ public class ComponentController : ODataController
     {
         try
         {
-            IQueryable<Component> result = Service.GetAll().Where(component => component.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<Component> result = manager.GetAll()
+                .Where(predicate: component => component.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -60,39 +60,47 @@ public class ComponentController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Component entity)
+    public async Task<IActionResult> Post([FromBody] Component newComponent)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.AddAsync(entity));
+        return Ok(value: await manager.AddAsync(newComponent: newComponent));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Component entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Component updatedComponent)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.UpdateAsync(entity));
+        return Ok(value: await manager.UpdateAsync(updatedComponent: updatedComponent));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<Component> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Component> updatedComponent)
     {
-        Component originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Component originalEntity = manager.Get(componentId: key);
 
-        delta.Patch(originalEntity);
-        return Ok(await Service.UpdateAsync(originalEntity));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        updatedComponent.Patch(original: originalEntity);
+        return Ok(value: await manager.UpdateAsync(updatedComponent: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(key);
+        await manager.DeleteAsync(componentId: key);
         return Ok();
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,41 +27,24 @@ public partial class PageInfoOrchestrationServiceTests
     {
         // Given
         PageInfo entity = CreateRandomPageInfo();
-        pageInfoProcessingServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
+
+        pageInfoProcessingServiceMock.Setup(expression: x => x.AddPageInfoAsync(newPageInfo: entity))
+            .ReturnsAsync(value: entity);
 
         pageInfoEventProcessingServiceMock
-            .Setup(x => x.RaisePageInfoAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageInfoAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        PageInfo result = await orchestrationService.AddAsync(entity);
+        PageInfo result = await orchestrationService.AddPageInfoAsync(newPageInfo: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        pageInfoProcessingServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
-        pageInfoEventProcessingServiceMock.Verify(x => x.RaisePageInfoAddEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        pageInfoProcessingServiceMock.Verify(expression: x => x.AddPageInfoAsync(newPageInfo: entity), times: Times.Once);
+        pageInfoEventProcessingServiceMock.Verify(expression: x => x.RaisePageInfoAddEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

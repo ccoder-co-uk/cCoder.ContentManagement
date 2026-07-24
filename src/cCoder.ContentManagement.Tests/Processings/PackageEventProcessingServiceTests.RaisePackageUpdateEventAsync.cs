@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,30 +27,17 @@ public partial class PackageEventProcessingServiceTests
     {
         // Given
         Package entity = CreateRandomPackage();
+
         packageEventServiceMock
-            .Setup(x => x.RaisePackageUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePackageUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePackageUpdateEventAsync(entity);
+        await service.RaisePackageUpdateEventAsync(package: entity);
 
         // Then
-        packageEventServiceMock.Verify(x => x.RaisePackageUpdateEventAsync(entity), Times.Once);
+        packageEventServiceMock.Verify(expression: x => x.RaisePackageUpdateEventAsync(entity: entity), times: Times.Once);
         packageEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
@@ -5,7 +9,6 @@ using cCoder.Data.Models.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ContentMetadataCache = cCoder.ContentManagement.Exposures.Caching.IMetadataCache;
-
 
 namespace Web.AcceptanceTests.Infrastructure;
 
@@ -35,31 +38,35 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
     public async Task SeedAsync()
     {
         using IServiceScope scope = services.CreateScope();
+
         using DbContext core = scope.ServiceProvider
             .GetRequiredService<cCoder.Data.ICoreContextFactory>()
             .CreateCoreContext();
 
-        await EnsureAppAsync(core);
-        await EnsureGuestUserAsync(core);
-        await EnsureGuestAdminAsync(core);
-        await SeedCapturedAppDataAsync(core);
-        await SeedCommonObjectsAsync(core);
-        RefreshCaches(scope.ServiceProvider);
+        await EnsureAppAsync(core: core);
+        await EnsureGuestUserAsync(core: core);
+        await EnsureGuestAdminAsync(core: core);
+        await SeedCapturedAppDataAsync(core: core);
+        await SeedCommonObjectsAsync(core: core);
+        RefreshCaches(services: scope.ServiceProvider);
     }
 
     private static async Task EnsureAppAsync(DbContext core)
     {
-        if (await core.Set<App>().AnyAsync(app => app.Id == AppId))
+        if (await core.Set<App>()
+            .AnyAsync(predicate: app => app.Id == AppId))
+        {
             return;
+        }
 
-        core.Add(new App
+        core.Add(entity: new App
         {
             Name = "Acceptance",
             Domain = AppDomain,
             DefaultTheme = "Default",
             DefaultCultureId = string.Empty,
             TenantId = "acceptance",
-            ConfigJson = AcceptanceAssetLoader.LoadText("DefaultAppConfig.json"),
+            ConfigJson = AcceptanceAssetLoader.LoadText(fileName: "DefaultAppConfig.json"),
         });
 
         await core.SaveChangesAsync();
@@ -67,7 +74,8 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
 
     private static async Task EnsureGuestAdminAsync(DbContext core)
     {
-        Role role = await core.Set<Role>().FirstOrDefaultAsync(existing =>
+        Role role = await core.Set<Role>()
+            .FirstOrDefaultAsync(predicate: existing =>
             existing.AppId == AppId && existing.Name == AcceptanceAdminRoleName);
 
         if (role is null)
@@ -81,31 +89,38 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
                 Privs = AcceptanceAdminPrivileges,
             };
 
-            core.Add(role);
+            core.Add(entity: role);
             await core.SaveChangesAsync();
         }
-        else if (role.Privs != AcceptanceAdminPrivileges)
+        else
         {
-            role.Privs = AcceptanceAdminPrivileges;
-            await core.SaveChangesAsync();
+            if (role.Privs != AcceptanceAdminPrivileges)
+            {
+                role.Privs = AcceptanceAdminPrivileges;
+                await core.SaveChangesAsync();
+            }
         }
 
-        bool hasGuestRole = await core.Set<UserRole>().AnyAsync(existing =>
+        bool hasGuestRole = await core.Set<UserRole>()
+            .AnyAsync(predicate: existing =>
             existing.RoleId == role.Id && existing.UserId == "Guest");
 
         if (!hasGuestRole)
         {
-            core.Add(new UserRole { RoleId = role.Id, UserId = "Guest" });
+            core.Add(entity: new UserRole { RoleId = role.Id, UserId = "Guest" });
             await core.SaveChangesAsync();
         }
     }
 
     private static async Task EnsureGuestUserAsync(DbContext core)
     {
-        if (await core.Set<User>().AnyAsync(existing => existing.Id == "Guest"))
+        if (await core.Set<User>()
+            .AnyAsync(predicate: existing => existing.Id == "Guest"))
+        {
             return;
+        }
 
-        core.Add(new User
+        core.Add(entity: new User
         {
             Id = "Guest",
             DefaultCultureId = string.Empty,
@@ -119,21 +134,24 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
 
     private static async Task SeedCapturedAppDataAsync(DbContext core)
     {
-        await SeedLayoutsAsync(core);
-        await SeedTemplatesAsync(core);
-        await SeedResourcesAsync(core);
-        await SeedComponentsAsync(core);
-        await SeedScriptsAsync(core);
+        await SeedLayoutsAsync(core: core);
+        await SeedTemplatesAsync(core: core);
+        await SeedResourcesAsync(core: core);
+        await SeedComponentsAsync(core: core);
+        await SeedScriptsAsync(core: core);
     }
 
     private static async Task SeedCommonObjectsAsync(DbContext core)
     {
-        if (await core.Set<CommonObject>().AnyAsync())
+        if (await core.Set<CommonObject>()
+            .AnyAsync())
+        {
             return;
+        }
 
         CommonObject[] commonObjects = AcceptanceSeedData
             .LoadCommonObjects()
-            .Select(item => new CommonObject
+            .Select(selector: item => new CommonObject
             {
                 Name = item.Name,
                 Description = item.Description,
@@ -149,7 +167,9 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
             })
             .ToArray();
 
-        await core.Set<CommonObject>().AddRangeAsync(commonObjects);
+        await core.Set<CommonObject>()
+            .AddRangeAsync(entities: commonObjects);
+
         await core.SaveChangesAsync();
     }
 
@@ -157,6 +177,7 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
     {
         cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache commonObjectCache =
             services.GetRequiredService<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache>();
+
         ContentMetadataCache metadataCache = services.GetRequiredService<ContentMetadataCache>();
 
         commonObjectCache.Refresh();
@@ -165,12 +186,15 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
 
     private static async Task SeedLayoutsAsync(DbContext core)
     {
-        if (await core.Set<Layout>().AnyAsync(layout => layout.AppId == AppId))
+        if (await core.Set<Layout>()
+            .AnyAsync(predicate: layout => layout.AppId == AppId))
+        {
             return;
+        }
 
         Layout[] layouts = AcceptanceSeedData
-            .LoadPackageItems<Layout>("Layouts", "Core/Layout")
-            .Select(layout => new Layout
+            .LoadLayoutPackageItems(packageName: "Layouts", itemType: "Core/Layout")
+            .Select(selector: layout => new Layout
             {
                 AppId = AppId,
                 Name = layout.Name,
@@ -185,18 +209,23 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
             })
             .ToArray();
 
-        await core.Set<Layout>().AddRangeAsync(layouts);
+        await core.Set<Layout>()
+            .AddRangeAsync(entities: layouts);
+
         await core.SaveChangesAsync();
     }
 
     private static async Task SeedTemplatesAsync(DbContext core)
     {
-        if (await core.Set<Template>().AnyAsync(template => template.AppId == AppId))
+        if (await core.Set<Template>()
+            .AnyAsync(predicate: template => template.AppId == AppId))
+        {
             return;
+        }
 
         Template[] templates = AcceptanceSeedData
-            .LoadPackageItems<Template>("Templates", "Core/Template")
-            .Select(template => new Template
+            .LoadTemplatePackageItems(packageName: "Templates", itemType: "Core/Template")
+            .Select(selector: template => new Template
             {
                 AppId = AppId,
                 Name = template.Name,
@@ -210,18 +239,23 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
             })
             .ToArray();
 
-        await core.Set<Template>().AddRangeAsync(templates);
+        await core.Set<Template>()
+            .AddRangeAsync(entities: templates);
+
         await core.SaveChangesAsync();
     }
 
     private static async Task SeedResourcesAsync(DbContext core)
     {
-        if (await core.Set<Resource>().AnyAsync(resource => resource.AppId == AppId))
+        if (await core.Set<Resource>()
+            .AnyAsync(predicate: resource => resource.AppId == AppId))
+        {
             return;
+        }
 
         Resource[] resources = AcceptanceSeedData
-            .LoadPackageItems<Resource>("Resources", "Core/Resource")
-            .Select(resource => new Resource
+            .LoadResourcePackageItems(packageName: "Resources", itemType: "Core/Resource")
+            .Select(selector: resource => new Resource
             {
                 AppId = AppId,
                 Name = resource.Name,
@@ -237,18 +271,23 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
             })
             .ToArray();
 
-        await core.Set<Resource>().AddRangeAsync(resources);
+        await core.Set<Resource>()
+            .AddRangeAsync(entities: resources);
+
         await core.SaveChangesAsync();
     }
 
     private static async Task SeedComponentsAsync(DbContext core)
     {
-        if (await core.Set<Component>().AnyAsync(component => component.AppId == AppId))
+        if (await core.Set<Component>()
+            .AnyAsync(predicate: component => component.AppId == AppId))
+        {
             return;
+        }
 
         Component[] components = AcceptanceSeedData
-            .LoadPackageItems<Component>("Components", "Core/Component")
-            .Select(component => new Component
+            .LoadComponentPackageItems(packageName: "Components", itemType: "Core/Component")
+            .Select(selector: component => new Component
             {
                 AppId = AppId,
                 Name = component.Name,
@@ -264,18 +303,23 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
             })
             .ToArray();
 
-        await core.Set<Component>().AddRangeAsync(components);
+        await core.Set<Component>()
+            .AddRangeAsync(entities: components);
+
         await core.SaveChangesAsync();
     }
 
     private static async Task SeedScriptsAsync(DbContext core)
     {
-        if (await core.Set<Script>().AnyAsync(script => script.AppId == AppId))
+        if (await core.Set<Script>()
+            .AnyAsync(predicate: script => script.AppId == AppId))
+        {
             return;
+        }
 
         Script[] scripts = AcceptanceSeedData
-            .LoadPackageItems<Script>("Scripts", "Core/Script")
-            .Select(script => new Script
+            .LoadScriptPackageItems(packageName: "Scripts", itemType: "Core/Script")
+            .Select(selector: script => new Script
             {
                 AppId = AppId,
                 Name = script.Name,
@@ -289,11 +333,9 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
             })
             .ToArray();
 
-        await core.Set<Script>().AddRangeAsync(scripts);
+        await core.Set<Script>()
+            .AddRangeAsync(entities: scripts);
+
         await core.SaveChangesAsync();
     }
 }
-
-
-
-

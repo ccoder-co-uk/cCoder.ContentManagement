@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
 
@@ -5,17 +9,17 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface IPageInfoProcessingService
 {
-    PageInfo Get(int id);
+    PageInfo GetPageInfo(int pageInfoId);
 
-    IQueryable<PageInfo> GetAll(bool ignoreFilters = false);
+    IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false);
 
-    ValueTask<PageInfo> AddAsync(PageInfo entity);
+    ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo);
 
-    ValueTask<PageInfo> UpdateAsync(PageInfo entity);
+    ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int pageInfoId);
 
-    ValueTask<IEnumerable<Result<PageInfo>>> AddOrUpdate(IEnumerable<PageInfo> items);
+    ValueTask<IEnumerable<OperationResult<PageInfo>>> AddOrUpdatePageInfoResult(IEnumerable<PageInfo> newPageInfo);
 
-    ValueTask DeleteAllAsync(IEnumerable<PageInfo> items);
+    ValueTask DeleteAllPageInfoAsync(IEnumerable<PageInfo> deletedPageInfo);
 }

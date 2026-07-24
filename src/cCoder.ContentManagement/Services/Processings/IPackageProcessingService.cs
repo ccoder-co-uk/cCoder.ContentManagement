@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.Packaging;
 using cCoder.ContentManagement.Models;
 
@@ -5,21 +9,17 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface IPackageProcessingService
 {
-    Package ExportPackage(int appId, string packageName);
+    Package GetPackage(Guid packageId);
 
-    Package[] ExportPackages(int appId, string[] packageNames);
+    IQueryable<Package> GetAllPackage(bool ignoreFilters = false);
 
-    Package Get(Guid id);
+    ValueTask<Package> AddPackageAsync(Package newPackage);
 
-    IQueryable<Package> GetAll(bool ignoreFilters = false);
+    ValueTask<Package> UpdatePackageAsync(Package updatedPackage);
 
-    ValueTask<Package> AddAsync(Package entity);
+    ValueTask DeleteAsync(Guid packageId);
 
-    ValueTask<Package> UpdateAsync(Package entity);
+    ValueTask<IEnumerable<OperationResult<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage);
 
-    ValueTask DeleteAsync(Guid id);
-
-    ValueTask<IEnumerable<Result<Package>>> AddOrUpdate(IEnumerable<Package> items);
-
-    ValueTask DeleteAllAsync(IEnumerable<Package> items);
+    ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage);
 }

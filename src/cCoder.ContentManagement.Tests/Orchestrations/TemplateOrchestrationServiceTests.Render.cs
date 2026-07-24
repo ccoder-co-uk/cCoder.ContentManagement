@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -13,7 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class TemplateRenderOrchestrationServiceTests
@@ -21,7 +24,9 @@ public partial class TemplateRenderOrchestrationServiceTests
     [Fact]
     public void ShouldReturnRenderServiceResult()
     {
+        // Given
         object model = new();
+
         User user = new()
         {
             Id = "test-user",
@@ -31,44 +36,28 @@ public partial class TemplateRenderOrchestrationServiceTests
             IsActive = true,
             Roles = [],
         };
+
         templateRenderProcessingServiceMock
-            .Setup(x =>
-                x.Render(
-                    1,
-                    "template",
-                    model,
-                    It.IsAny<User>(),
-                    "en-GB",
-                    It.IsAny<cCoder.ContentManagement.Models.Config>(),
-                    loggerMock.Object
-                )
-            )
-            .Returns("rendered");
+            .Setup(
+                expression: service =>
+                    service.RenderTemplateRenderOperation(
+                        operation: It.Is<TemplateRenderOperation>(
+                            match: operation =>
+                                operation.AppId == 1
+                                && operation.Name == "template"
+                                && operation.Model == model
+                                && operation.User == user
+                                && operation.Culture == "en-GB")))
+            .Returns(value: "rendered");
 
-        string result = renderOrchestrationService.Render(1, "template", "en-GB", model, user);
+        // When
+        string result = renderOrchestrationService.RenderUser(appId: 1, name: "template", culture: "en-GB", model: model, user: user);
 
-        result.Should().Be("rendered");
+        // Then
+        result.Should()
+            .Be(expected: "rendered");
+
         templateRenderProcessingServiceMock.VerifyAll();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

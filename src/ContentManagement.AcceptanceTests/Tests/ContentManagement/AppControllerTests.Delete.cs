@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
 
@@ -10,19 +14,20 @@ public sealed partial class AppControllerTests
     public async Task Delete_RemovesApp()
     {
         // Given
-        SeededApp seededApp = await SeedDatabase("app_delete");
+        SeededApp seededApp = await SeedDatabase(privileges: "app_delete");
 
         // When
-        int actualStatusCode = await DeleteAppAsync(seededApp.Domain, seededApp.AppId);
-        int actualReadStatusCode = await GetAppStatusCodeAsync(seededApp.Domain, seededApp.AppId);
+        int actualStatusCode = await DeleteAppAsync(host: seededApp.Domain, id: seededApp.AppId);
+        int actualReadStatusCode = await GetAppStatusCodeAsync(host: seededApp.Domain, id: seededApp.AppId);
 
         // Then
-        actualStatusCode.Should().Be(200);
-        actualReadStatusCode.Should().Be(404);
 
-        await Teardown(seededApp);
+        actualStatusCode.Should()
+            .Be(expected: 200);
+
+        actualReadStatusCode.Should()
+            .Be(expected: 404);
+
+        await Teardown(seededApp: seededApp);
     }
 }
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,31 +27,20 @@ public partial class CultureProcessingServiceTests
     {
         // Given
         Culture entity = CreateRandomCulture();
-        cultureServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+
+        cultureServiceMock.Setup(expression: x => x.UpdateCultureAsync(updatedCulture: entity))
+            .ReturnsAsync(value: entity);
 
         // When
-        Culture result = await cultureProcessingService.UpdateAsync(entity);
+        Culture result = await cultureProcessingService.UpdateCultureAsync(updatedCulture: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        cultureServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        cultureServiceMock.Verify(expression: x => x.UpdateCultureAsync(updatedCulture: entity), times: Times.Once);
         cultureServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

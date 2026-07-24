@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,11 +32,12 @@ public partial class AppCultureServiceTests
 
     public AppCultureServiceTests()
     {
-        appCultureBrokerMock = new Mock<IAppCultureBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        appCultureBrokerMock = new Mock<IAppCultureBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         appCultureService = new AppCultureService(
-            appCultureBrokerMock.Object,
-            authorizationBrokerMock.Object
+appCultureBroker: appCultureBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -49,24 +54,3 @@ public partial class AppCultureServiceTests
         return appCulture;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

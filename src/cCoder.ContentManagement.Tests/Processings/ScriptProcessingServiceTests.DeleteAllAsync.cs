@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,30 +27,16 @@ public partial class ScriptProcessingServiceTests
         // Given
         Script entity = CreateRandomScript();
         var id = entity.Id;
-        scriptServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        scriptServiceMock.Setup(expression: x => x.DeleteAsync(scriptId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await scriptProcessingService.DeleteAllAsync(new[] { entity });
+        await scriptProcessingService.DeleteAllScriptAsync(deletedScript: new[] { entity });
 
         // Then
-        scriptServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
+        scriptServiceMock.Verify(expression: x => x.DeleteAsync(scriptId: id), times: Times.Once);
         scriptServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,38 +1,53 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Services.Foundations.Events;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class AppEventProcessingService(IAppEventService eventService) : IAppEventProcessingService
+internal partial class AppEventProcessingService(IAppEventService eventService) : IAppEventProcessingService
 {
-    public ValueTask RaiseAppAddEventAsync(App app)
+    public ValueTask RaiseAppAddEventAsync(App app) =>
+        TryCatch(operation: () =>
     {
-        ValidateApp(app, "app");
+        ValidateRaiseAppAddEventAsync(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
 
-        return eventService.RaiseAppAddEventAsync(app);
-    }
+        return eventService.RaiseAppAddEventAsync(app: app);
 
-    public ValueTask RaiseAppDeleteEventAsync(App app)
+    }, isValueTask: true);
+
+    public ValueTask RaiseAppDeleteEventAsync(App app) =>
+        TryCatch(operation: () =>
     {
-        ValidateApp(app, "app");
+        ValidateRaiseAppDeleteEventAsync(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
 
-        return eventService.RaiseAppDeleteEventAsync(app);
-    }
+        return eventService.RaiseAppDeleteEventAsync(app: app);
 
-    public ValueTask RaiseAppUpdateEventAsync(App app)
+    }, isValueTask: true);
+
+    public ValueTask RaiseAppUpdateEventAsync(App app) =>
+        TryCatch(operation: () =>
     {
-        ValidateApp(app, "app");
+        ValidateRaiseAppUpdateEventAsync(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
 
-        return eventService.RaiseAppUpdateEventAsync(app);
-    }
+        return eventService.RaiseAppUpdateEventAsync(app: app);
+
+    }, isValueTask: true);
 
     private static void ValidateApp(App app, string parameterName) =>
-        ThrowIf(app == null, parameterName + " is required.");
+        ThrowIf(condition: app == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

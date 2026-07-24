@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,40 +32,36 @@ public partial class LayoutEventServiceTests
         EventMessage<CmsDataModels.Layout> actualMessage = null;
 
         layoutEventBrokerMock
-            .Setup(x => x.RaiseLayoutUpdateEventAsync(It.IsAny<EventMessage<CmsDataModels.Layout>>()))
-            .Callback<EventMessage<CmsDataModels.Layout>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseLayoutUpdateEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Layout>>()))
+            .Callback<EventMessage<CmsDataModels.Layout>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseLayoutUpdateEventAsync(entity);
+        await service.RaiseLayoutUpdateEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         layoutEventBrokerMock.Verify(
-            x => x.RaiseLayoutUpdateEventAsync(It.IsAny<EventMessage<CmsDataModels.Layout>>()),
-            Times.Once
+expression: x => x.RaiseLayoutUpdateEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Layout>>()),
+times: Times.Once
         );
+
+        layoutEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         layoutEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

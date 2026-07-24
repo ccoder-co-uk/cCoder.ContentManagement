@@ -1,16 +1,20 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface IPageInfoService
 {
-    PageInfo Get(int id, bool ignoreFilters = false);
+    PageInfo GetPageInfo(int pageInfoId, bool ignoreFilters = false);
 
-    IQueryable<PageInfo> GetAll(bool ignoreFilters = false);
+    IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false);
 
-    ValueTask<PageInfo> AddAsync(PageInfo pageInfo);
+    ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo);
 
-    ValueTask<PageInfo> UpdateAsync(PageInfo pageInfo);
+    ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int pageInfoId);
 }

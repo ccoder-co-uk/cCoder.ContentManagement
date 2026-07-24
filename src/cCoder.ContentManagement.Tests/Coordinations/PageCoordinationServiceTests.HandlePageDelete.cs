@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,11 +31,20 @@ public partial class PageCoordinationServiceTests
         // Given
         Page page = CreateRandomPage();
 
-        PageInfo pageInfo = Builder<PageInfo>.CreateNew().With(item => item.PageId = page.Id).Build();
-        Content content = Builder<Content>.CreateNew().With(item => item.PageId = page.Id).Build();
-        PageRole pageRole = Builder<PageRole>.CreateNew().With(item => item.PageId = page.Id).Build();
+        PageInfo pageInfo = Builder<PageInfo>.CreateNew()
+            .With(func: item => item.PageId = page.Id)
+            .Build();
 
-        LocalPageInfo[] localPageInfos = ToLocalPageInfos([pageInfo]);
+        Content content = Builder<Content>.CreateNew()
+            .With(func: item => item.PageId = page.Id)
+            .Build();
+
+        PageRole pageRole = Builder<PageRole>.CreateNew()
+            .With(func: item => item.PageId = page.Id)
+            .Build();
+
+        LocalPageInfo[] localPageInfos = ToLocalPageInfos(pageInfos: [pageInfo]);
+
         IQueryable<LocalPageRole> pageRoles = new[]
         {
             new LocalPageRole
@@ -40,6 +53,7 @@ public partial class PageCoordinationServiceTests
                 RoleId = pageRole.RoleId
             }
         }.AsQueryable();
+
         IQueryable<LocalContent> contents = new[]
         {
             new LocalContent
@@ -51,51 +65,61 @@ public partial class PageCoordinationServiceTests
                 Html = content.Html,
             }
         }.AsQueryable();
+
         IQueryable<LocalPageInfo> pageInfos = localPageInfos.AsQueryable();
 
-        pageRoleOrchestrationServiceMock.Setup(service => service.GetAll(true)).Returns(pageRoles);
-        pageInfoOrchestrationServiceMock.Setup(service => service.GetAll(true)).Returns(pageInfos);
-        contentOrchestrationServiceMock.Setup(service => service.GetAll(true)).Returns(contents);
+        pageRoleOrchestrationServiceMock.Setup(expression: service => service.GetAllPageRole(ignoreFilters: true))
+            .Returns(value: pageRoles);
+
+        pageInfoOrchestrationServiceMock.Setup(expression: service => service.GetAllPageInfo(ignoreFilters: true))
+            .Returns(value: pageInfos);
+
+        contentOrchestrationServiceMock.Setup(expression: service => service.GetAllContent(ignoreFilters: true))
+            .Returns(value: contents);
 
         pageRoleOrchestrationServiceMock
-            .Setup(service => service.DeleteAllAsync(It.IsAny<IEnumerable<LocalPageRole>>()))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: service => service.DeleteAllPageRoleAsync(deletedPageRole: It.IsAny<IEnumerable<LocalPageRole>>()))
+            .Returns(value: ValueTask.CompletedTask);
 
         pageInfoOrchestrationServiceMock
-            .Setup(service => service.DeleteAllAsync(It.IsAny<IEnumerable<LocalPageInfo>>()))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: service => service.DeleteAllPageInfoAsync(deletedPageInfo: It.IsAny<IEnumerable<LocalPageInfo>>()))
+            .Returns(value: ValueTask.CompletedTask);
 
         contentOrchestrationServiceMock
-            .Setup(service => service.DeleteAllAsync(It.IsAny<IEnumerable<LocalContent>>()))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: service => service.DeleteAllContentAsync(deletedContent: It.IsAny<IEnumerable<LocalContent>>()))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await coordinationService.HandlePageDeleteAsync(page);
+        await coordinationService.HandlePageDeleteAsync(page: page);
+        await structureCoordinationService.HandlePageDeleteAsync(page: page);
 
         // Then
-        pageRoleOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
-        pageInfoOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
-        contentOrchestrationServiceMock.Verify(service => service.GetAll(true), Times.Once);
+        pageRoleOrchestrationServiceMock.Verify(expression: service => service.GetAllPageRole(ignoreFilters: true), times: Times.Once);
+        pageInfoOrchestrationServiceMock.Verify(expression: service => service.GetAllPageInfo(ignoreFilters: true), times: Times.Once);
+        contentOrchestrationServiceMock.Verify(expression: service => service.GetAllContent(ignoreFilters: true), times: Times.Once);
 
         pageRoleOrchestrationServiceMock.Verify(
-            service => service.DeleteAllAsync(
-                It.Is<IEnumerable<LocalPageRole>>(items => items.Single().PageId == page.Id)
+expression: service => service.DeleteAllPageRoleAsync(
+deletedPageRole: It.Is<IEnumerable<LocalPageRole>>(match: items => items.Single()
+            .PageId == page.Id)
             ),
-            Times.Once
+times: Times.Once
         );
 
         pageInfoOrchestrationServiceMock.Verify(
-            service => service.DeleteAllAsync(
-                It.Is<IEnumerable<LocalPageInfo>>(items => items.Single().PageId == page.Id)
+expression: service => service.DeleteAllPageInfoAsync(
+deletedPageInfo: It.Is<IEnumerable<LocalPageInfo>>(match: items => items.Single()
+            .PageId == page.Id)
             ),
-            Times.Once
+times: Times.Once
         );
 
         contentOrchestrationServiceMock.Verify(
-            service => service.DeleteAllAsync(
-                It.Is<IEnumerable<LocalContent>>(items => items.Single().PageId == page.Id)
+expression: service => service.DeleteAllContentAsync(
+deletedContent: It.Is<IEnumerable<LocalContent>>(match: items => items.Single()
+            .PageId == page.Id)
             ),
-            Times.Once
+times: Times.Once
         );
 
         pageRoleOrchestrationServiceMock.VerifyNoOtherCalls();
@@ -104,24 +128,3 @@ public partial class PageCoordinationServiceTests
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

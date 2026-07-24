@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,37 +26,23 @@ public partial class ResourceOrchestrationServiceTests
     {
         // Given
         Resource[] entities = [CreateRandomResource()];
-        resourceProcessingServiceMock.Setup(x => x.Get(entities[0].Id)).Returns(entities[0]);
-        resourceEventProcessingServiceMock.Setup(x => x.RaiseResourceDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
-        resourceProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
+
+        resourceProcessingServiceMock.Setup(expression: x => x.GetResource(resourceId: entities[0].Id))
+            .Returns(value: entities[0]);
+
+        resourceEventProcessingServiceMock.Setup(expression: x => x.RaiseResourceDeleteEventAsync(entity: entities[0]))
+            .Returns(value: ValueTask.CompletedTask);
+
+        resourceProcessingServiceMock.Setup(expression: x => x.DeleteAsync(resourceId: entities[0].Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllResourceAsync(deletedResource: entities);
 
         // Then
-        resourceProcessingServiceMock.Verify(x => x.Get(entities[0].Id), Times.Once);
-        resourceEventProcessingServiceMock.Verify(x => x.RaiseResourceDeleteEventAsync(entities[0]), Times.Once);
-        resourceProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
+        resourceProcessingServiceMock.Verify(expression: x => x.GetResource(resourceId: entities[0].Id), times: Times.Once);
+        resourceEventProcessingServiceMock.Verify(expression: x => x.RaiseResourceDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        resourceProcessingServiceMock.Verify(expression: x => x.DeleteAsync(resourceId: entities[0].Id), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

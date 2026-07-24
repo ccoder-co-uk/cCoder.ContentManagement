@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,30 +16,31 @@ public sealed partial class PageInfoControllerTests
     {
         // Given
         SeededPageInfoContext seededContext = await SeedDatabase(includePageInfo: true);
-        string updatedTitle = Unique("PatchedTitle");
+        string updatedTitle = Unique(prefix: "PatchedTitle");
         PageInfo actualPageInfo;
 
         // When
-        await PatchPageInfoAsync(seededContext.PageInfoId, new
+
+        await PatchPageInfoAsync(id: seededContext.PageInfoId, payload: new
         {
             title = updatedTitle,
             keywords = "patched",
         });
 
-        actualPageInfo = await GetPageInfoAsync(seededContext.PageInfoId);
+        actualPageInfo = await GetPageInfoAsync(id: seededContext.PageInfoId);
 
         // Then
-        actualPageInfo.Should().NotBeNull();
-        actualPageInfo!.Title.Should().Be(updatedTitle);
-        actualPageInfo.Keywords.Should().Be("patched");
 
-        await DeletePageInfoAsync(seededContext.PageInfoId);
-        await Teardown(seededContext);
+        actualPageInfo.Should()
+            .NotBeNull();
+
+        actualPageInfo!.Title.Should()
+            .Be(expected: updatedTitle);
+
+        actualPageInfo.Keywords.Should()
+            .Be(expected: "patched");
+
+        await DeletePageInfoAsync(id: seededContext.PageInfoId);
+        await Teardown(seededContext: seededContext);
     }
 }
-
-
-
-
-
-

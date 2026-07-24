@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
 
@@ -8,75 +12,93 @@ public sealed partial class PageEventTests
     [Fact]
     public async Task Post_GivenPageUpdateEvent_ShouldUpdatePageInfo()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
         {
-            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId);
-            await SeedPageInfoAsync(page);
+            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
+            await SeedPageInfoAsync(page: page);
 
-            await PostEventAsync("page_update", CreatePageWithPageInfo(page, "Updated landing"));
+            // When
+            await PostEventAsync(eventName: "page_update", data: CreatePageWithPageInfo(page: page, title: "Updated landing"));
 
+            // Then
             await WaitForAsync(
-                () => HasPageInfo(page.Id, "Updated landing"),
-                "page_update should update the page info child row");
+condition: () => HasPageInfo(pageId: page.Id, title: "Updated landing"),
+because: "page_update should update the page info child row");
 
-            HasPageInfo(page.Id, "Updated landing").Should().BeTrue();
+            HasPageInfo(pageId: page.Id, title: "Updated landing")
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
     [Fact]
     public async Task Post_GivenPageUpdateEvent_ShouldUpdateContent()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
         {
-            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId);
-            await SeedContentAsync(page);
+            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
+            await SeedContentAsync(page: page);
 
-            await PostEventAsync("page_update", CreatePageWithContent(page, "<p>Updated landing body</p>"));
+            // When
+            await PostEventAsync(eventName: "page_update", data: CreatePageWithContent(page: page, html: "<p>Updated landing body</p>"));
 
+            // Then
             await WaitForAsync(
-                () => HasContent(page.Id, "<p>Updated landing body</p>"),
-                "page_update should update the content child row");
+condition: () => HasContent(pageId: page.Id, html: "<p>Updated landing body</p>"),
+because: "page_update should update the content child row");
 
-            HasContent(page.Id, "<p>Updated landing body</p>").Should().BeTrue();
+            HasContent(pageId: page.Id, html: "<p>Updated landing body</p>")
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
     [Fact]
     public async Task Post_GivenPageUpdateEvent_ShouldUpdatePageRole()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
         {
-            Guid originalRoleId = await SeedRoleAsync(appId);
-            Guid updatedRoleId = await SeedRoleAsync(appId);
-            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId);
-            await SeedPageRoleAsync(page, originalRoleId);
+            Guid originalRoleId = await SeedRoleAsync(appId: appId);
+            Guid updatedRoleId = await SeedRoleAsync(appId: appId);
+            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
+            await SeedPageRoleAsync(page: page, roleId: originalRoleId);
 
-            await PostEventAsync("page_update", CreatePageWithPageRole(page, updatedRoleId));
+            // When
+            await PostEventAsync(eventName: "page_update", data: CreatePageWithPageRole(page: page, roleId: updatedRoleId));
 
+            // Then
             await WaitForAsync(
-                () => HasPageRole(page.Id, updatedRoleId) && !HasPageRole(page.Id, originalRoleId),
-                "page_update should update the page role child row");
+condition: () => HasPageRole(pageId: page.Id, roleId: updatedRoleId) && !HasPageRole(pageId: page.Id, roleId: originalRoleId),
+because: "page_update should update the page role child row");
 
-            HasPageRole(page.Id, updatedRoleId).Should().BeTrue();
-            HasPageRole(page.Id, originalRoleId).Should().BeFalse();
+            HasPageRole(pageId: page.Id, roleId: updatedRoleId)
+                .Should()
+                .BeTrue();
+
+            HasPageRole(pageId: page.Id, roleId: originalRoleId)
+                .Should()
+                .BeFalse();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 }

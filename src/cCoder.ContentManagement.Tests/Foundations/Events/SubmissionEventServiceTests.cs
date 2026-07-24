@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -19,33 +23,19 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Events;
 public partial class SubmissionEventServiceTests
 {
     private readonly Mock<ISubmissionEventBroker> submissionEventBrokerMock;
-    private readonly Mock<ICoreAuthInfo> authInfoMock;
     private readonly cCoder.ContentManagement.Services.Foundations.Events.SubmissionEventService service;
     private const string CurrentUserId = "test-user";
 
     public SubmissionEventServiceTests()
     {
-        submissionEventBrokerMock = new Mock<ISubmissionEventBroker>(MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(MockBehavior.Strict);
-        submissionEventBrokerMock = new(MockBehavior.Strict);
-        authInfoMock = new();
-        authInfoMock.SetupGet(x => x.SSOUserId).Returns(CurrentUserId);
+        submissionEventBrokerMock = new Mock<ISubmissionEventBroker>(behavior: MockBehavior.Strict);
+        submissionEventBrokerMock = new(behavior: MockBehavior.Strict);
+
+        submissionEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
+
         service = new cCoder.ContentManagement.Services.Foundations.Events.SubmissionEventService(
-            submissionEventBrokerMock.Object,
-            authInfoMock.Object
+submissionEventBroker: submissionEventBrokerMock.Object
         );
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

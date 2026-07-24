@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,50 +26,30 @@ public partial class CommonObjectProcessingServiceTests
     public async Task ShouldDeleteEachItemWhenUserHasDeletePrivilegeForDeleteAllAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
-        User actor = TestUsers.WithPrivilege("commonobject_delete");
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
+
+        User actor = TestUsers.WithPrivilege(privilege: "commonobject_delete");
         CommonObject first = CreateRandomCommonObject();
         CommonObject second = CreateRandomCommonObject();
         currentUser = actor;
 
         commonObjectServiceMock
-            .Setup(x => x.DeleteAsync(first.Id))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.DeleteAsync(commonObjectId: first.Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         commonObjectServiceMock
-            .Setup(x => x.DeleteAsync(second.Id))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.DeleteAsync(commonObjectId: second.Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await commonObjectProcessingService.DeleteAllAsync(new[] { first, second });
+        await commonObjectProcessingService.DeleteAllCommonObjectAsync(deletedCommonObject: new[] { first, second });
 
         // Then
-        commonObjectServiceMock.Verify(x => x.DeleteAsync(first.Id), Times.Once);
-        commonObjectServiceMock.Verify(x => x.DeleteAsync(second.Id), Times.Once);
+        commonObjectServiceMock.Verify(expression: x => x.DeleteAsync(commonObjectId: first.Id), times: Times.Once);
+        commonObjectServiceMock.Verify(expression: x => x.DeleteAsync(commonObjectId: second.Id), times: Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

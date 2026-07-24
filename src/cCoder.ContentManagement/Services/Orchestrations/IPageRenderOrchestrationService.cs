@@ -1,10 +1,16 @@
-using cCoder.ContentManagement.Models;
-using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Security;
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models;
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IPageRenderOrchestrationService
 {
-    RenderResult Render(Page page, User user, string theme, string culture, bool edit = false);
+    bool IsAdminOfApp(int appId);
+
+    string ResolveCulture(string culture);
+
+    PageRenderOperation ProcessPageRenderOperation(
+        PageRenderOperation operation);
 }

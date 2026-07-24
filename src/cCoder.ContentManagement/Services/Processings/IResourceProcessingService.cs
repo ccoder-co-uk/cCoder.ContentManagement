@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
 
@@ -5,17 +9,17 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface IResourceProcessingService
 {
-    Resource Get(int id);
+    Resource GetResource(int resourceId);
 
-    IQueryable<Resource> GetAll(bool ignoreFilters = false);
+    IQueryable<Resource> GetAllResource(bool ignoreFilters = false);
 
-    ValueTask<Resource> AddAsync(Resource entity);
+    ValueTask<Resource> AddResourceAsync(Resource newResource);
 
-    ValueTask<Resource> UpdateAsync(Resource entity);
+    ValueTask<Resource> UpdateResourceAsync(Resource updatedResource);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int resourceId);
 
-    ValueTask<IEnumerable<Result<Resource>>> AddOrUpdate(IEnumerable<Resource> items);
+    ValueTask<IEnumerable<OperationResult<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource);
 
-    ValueTask DeleteAllAsync(IEnumerable<Resource> items);
+    ValueTask DeleteAllResourceAsync(IEnumerable<Resource> deletedResource);
 }

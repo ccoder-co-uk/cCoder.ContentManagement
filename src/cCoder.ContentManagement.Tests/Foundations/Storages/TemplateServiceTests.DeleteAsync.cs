@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,19 +33,22 @@ public partial class TemplateServiceTests
         // Given
         Template template = CreateRandomTemplate(id: 5);
 
-        templateBrokerMock.Setup(x => x.GetAllTemplates(false)).Returns(new[] { template }.AsQueryable());
+        templateBrokerMock.Setup(expression: x => x.GetAllTemplates(ignoreFilters: false))
+            .Returns(value: new[] { template }.AsQueryable());
 
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "Template_delete"));
-        templateBrokerMock.Setup(x => x.DeleteTemplateAsync(It.IsAny<CmsDataModels.Template>())).ReturnsAsync(1);
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Template_delete"));
+
+        templateBrokerMock.Setup(expression: x => x.DeleteTemplateAsync(deletedTemplate: It.IsAny<CmsDataModels.Template>()))
+            .ReturnsAsync(value: 1);
 
         // When
-        await templateService.DeleteAsync(5);
+        await templateService.DeleteAsync(templateId: 5);
 
         // Then
-        templateBrokerMock.Verify(x => x.GetAllTemplates(false), Times.Once);
-        templateBrokerMock.Verify(x => x.DeleteTemplateAsync(It.Is<CmsDataModels.Template>(actual => actual.Id == template.Id)), Times.Once);
+        templateBrokerMock.Verify(expression: x => x.GetAllTemplates(ignoreFilters: false), times: Times.Once);
+        templateBrokerMock.Verify(expression: x => x.DeleteTemplateAsync(deletedTemplate: It.Is<CmsDataModels.Template>(match: actual => actual.Id == template.Id)), times: Times.Once);
         templateBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Template_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Template_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -51,36 +58,26 @@ public partial class TemplateServiceTests
         // Given
         Template template = CreateRandomTemplate(id: 5);
 
-        templateBrokerMock.Setup(x => x.GetAllTemplates(false)).Returns(new[] { template }.AsQueryable());
+        templateBrokerMock.Setup(expression: x => x.GetAllTemplates(ignoreFilters: false))
+            .Returns(value: new[] { template }.AsQueryable());
 
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "Template_delete"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Template_delete"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await templateService.DeleteAsync(5);
+        Func<Task> action = async () => await templateService.DeleteAsync(templateId: 5);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        templateBrokerMock.Verify(x => x.GetAllTemplates(false), Times.Once);
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        templateBrokerMock.Verify(expression: x => x.GetAllTemplates(ignoreFilters: false), times: Times.Once);
         templateBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Template_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Template_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

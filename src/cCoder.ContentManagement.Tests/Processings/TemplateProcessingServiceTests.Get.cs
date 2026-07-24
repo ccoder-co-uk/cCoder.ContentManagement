@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,31 +28,20 @@ public partial class TemplateProcessingServiceTests
         // Given
         Template entity = CreateRandomTemplate();
         var id = entity.Id;
-        templateServiceMock.Setup(x => x.Get(id)).Returns(entity);
+
+        templateServiceMock.Setup(expression: x => x.GetTemplate(templateId: id))
+            .Returns(value: entity);
 
         // When
-        Template result = templateProcessingService.Get(id);
+        Template result = templateProcessingService.GetTemplate(templateId: id);
 
         // Then
-        result.Should().BeSameAs(entity);
-        templateServiceMock.Verify(x => x.Get(id), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        templateServiceMock.Verify(expression: x => x.GetTemplate(templateId: id), times: Times.Once);
         templateServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

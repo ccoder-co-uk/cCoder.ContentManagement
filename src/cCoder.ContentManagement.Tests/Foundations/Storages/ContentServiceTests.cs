@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -30,13 +34,14 @@ public partial class ContentServiceTests
 
     public ContentServiceTests()
     {
-        contentBrokerMock = new Mock<IContentBroker>(MockBehavior.Strict);
-        pageBrokerMock = new Mock<IPageBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        contentBrokerMock = new Mock<IContentBroker>(behavior: MockBehavior.Strict);
+        pageBrokerMock = new Mock<IPageBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         contentService = new ContentService(
-            contentBrokerMock.Object,
-            pageBrokerMock.Object,
-            authorizationBrokerMock.Object
+contentBroker: contentBrokerMock.Object,
+pageBroker: pageBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -44,33 +49,13 @@ public partial class ContentServiceTests
     {
         Content content = Builder<Content>
             .CreateNew()
-            .With(x => x.Id = id)
-            .With(x => x.PageId = pageId)
-            .With(x => x.CultureId = "en-GB")
-            .With(x => x.Name = $"Content-{Guid.NewGuid():N}")
-            .With(x => x.Html = "<p>content</p>")
+            .With(func: x => x.Id = id)
+            .With(func: x => x.PageId = pageId)
+            .With(func: x => x.CultureId = "en-GB")
+            .With(func: x => x.Name = $"Content-{Guid.NewGuid():N}")
+            .With(func: x => x.Html = "<p>content</p>")
             .Build();
 
         return content;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

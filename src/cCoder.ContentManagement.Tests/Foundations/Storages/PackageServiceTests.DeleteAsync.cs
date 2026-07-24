@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -30,32 +34,36 @@ public partial class PackageServiceTests
         Guid packageId = Guid.NewGuid();
         Package package = CreateRandomPackage(id: packageId);
 
-        packageBrokerMock.Setup(x => x.GetAllPackages(false)).Returns(new[] { package }.AsQueryable());
+        packageBrokerMock.Setup(expression: x => x.GetAllPackages(ignoreFilters: false))
+            .Returns(value: new[] { package }.AsQueryable());
 
-        authorizationBrokerMock.Setup(x => x.Authorize(null, "Package_delete"));
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_delete"));
+
         packageBrokerMock
             .Setup(
-                x =>
+expression: x =>
                     x.DeletePackageAsync(
-                        It.Is<cCoder.Data.Models.Packaging.Package>(item => item.Id == package.Id)
+deletedPackage: It.Is<cCoder.Data.Models.Packaging.Package>(match: item => item.Id == package.Id)
                     )
             )
-            .ReturnsAsync(1);
+            .ReturnsAsync(value: 1);
 
         // When
-        await packageService.DeleteAsync(packageId);
+        await packageService.DeleteAsync(packageId: packageId);
 
         // Then
-        packageBrokerMock.Verify(x => x.GetAllPackages(false), Times.Once);
+        packageBrokerMock.Verify(expression: x => x.GetAllPackages(ignoreFilters: false), times: Times.Once);
+
         packageBrokerMock.Verify(
-            x =>
+expression: x =>
                 x.DeletePackageAsync(
-                    It.Is<cCoder.Data.Models.Packaging.Package>(item => item.Id == package.Id)
+deletedPackage: It.Is<cCoder.Data.Models.Packaging.Package>(match: item => item.Id == package.Id)
                 ),
-            Times.Once
+times: Times.Once
         );
+
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize(null, "Package_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -66,38 +74,26 @@ public partial class PackageServiceTests
         Guid packageId = Guid.NewGuid();
         Package package = CreateRandomPackage(id: packageId);
 
-        packageBrokerMock.Setup(x => x.GetAllPackages(false)).Returns(new[] { package }.AsQueryable());
+        packageBrokerMock.Setup(expression: x => x.GetAllPackages(ignoreFilters: false))
+            .Returns(value: new[] { package }.AsQueryable());
 
         authorizationBrokerMock
-            .Setup(x => x.Authorize(null, "Package_delete"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: null, privilege: "Package_delete"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await packageService.DeleteAsync(packageId);
+        Func<Task> action = async () => await packageService.DeleteAsync(packageId: packageId);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        packageBrokerMock.Verify(x => x.GetAllPackages(false), Times.Once);
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        packageBrokerMock.Verify(expression: x => x.GetAllPackages(ignoreFilters: false), times: Times.Once);
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize(null, "Package_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

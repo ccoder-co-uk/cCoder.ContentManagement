@@ -1,7 +1,10 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
-
 
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
@@ -11,12 +14,12 @@ public sealed partial class PageControllerTests
     public async Task Put_UpdatesGivenDefaultCulturePageInfo()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_update");
-        Page createdPage = await CreatePageAsync(CreateValidPagePayload(seededContext, Unique("Page")));
-        string updatedTitle = Unique("UpdatedTitle");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_update"]);
+        Page createdPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "Page")));
+        string updatedTitle = Unique(prefix: "UpdatedTitle");
 
         // When
-        _ = await UpdatePageAsync(createdPage.Id, new
+        _ = await UpdatePageAsync(id: createdPage.Id, payload: new
         {
             id = createdPage.Id,
             appId = seededContext.AppId,
@@ -37,31 +40,45 @@ public sealed partial class PageControllerTests
             },
         });
 
-        PageInfo[] actualPageInfos = GetPageInfos(createdPage.Id);
+        PageInfo[] actualPageInfos = GetPageInfos(pageId: createdPage.Id);
 
         // Then
-        actualPageInfos.Should().ContainSingle();
-        actualPageInfos[0].CultureId.Should().Be(string.Empty);
-        actualPageInfos[0].Title.Should().Be(updatedTitle);
-        actualPageInfos[0].Description.Should().Be("Updated description");
-        actualPageInfos[0].Keywords.Should().Be("updated,keywords");
+        actualPageInfos.Should()
+            .ContainSingle();
 
-        await Teardown(seededContext);
+        actualPageInfos[0].CultureId.Should()
+            .Be(expected: string.Empty);
+
+        actualPageInfos[0].Title.Should()
+            .Be(expected: updatedTitle);
+
+        actualPageInfos[0].Description.Should()
+            .Be(expected: "Updated description");
+
+        actualPageInfos[0].Keywords.Should()
+            .Be(expected: "updated,keywords");
+
+        await Teardown(seededContext: seededContext);
     }
 
     [Fact]
     public async Task Put_RecomputesChildPathsWhenParentNameChanges()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_update");
-        Page parentPage = await CreatePageAsync(CreateValidPagePayload(seededContext, Unique("ParentPage")));
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_update"]);
+        Page parentPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "ParentPage")));
+
         Page childPage = await CreatePageAsync(
-            CreateValidPagePayload(seededContext, Unique("ChildPage"), parentId: parentPage.Id)
+payload: CreateValidPagePayload(
+    seededContext: seededContext,
+    name: Unique(prefix: "ChildPage"),
+    parentId: parentPage.Id)
         );
-        string updatedParentName = Unique("RenamedParent");
+
+        string updatedParentName = Unique(prefix: "RenamedParent");
 
         // When
-        _ = await UpdatePageAsync(parentPage.Id, new
+        _ = await UpdatePageAsync(id: parentPage.Id, payload: new
         {
             id = parentPage.Id,
             appId = seededContext.AppId,
@@ -82,24 +99,28 @@ public sealed partial class PageControllerTests
             },
         });
 
-        Page actualParent = await GetPageAsync(parentPage.Id);
-        Page actualChild = await GetPageAsync(childPage.Id);
+        Page actualParent = await GetPageAsync(id: parentPage.Id);
+        Page actualChild = await GetPageAsync(id: childPage.Id);
 
         // Then
-        actualParent.Should().NotBeNull();
-        actualParent!.Name.Should().Be(updatedParentName);
-        actualParent.Path.Should().Be(updatedParentName);
+        actualParent.Should()
+            .NotBeNull();
 
-        actualChild.Should().NotBeNull();
-        actualChild!.ParentId.Should().Be(parentPage.Id);
-        actualChild.Path.Should().StartWith($"{updatedParentName}/");
+        actualParent!.Name.Should()
+            .Be(expected: updatedParentName);
 
-        await Teardown(seededContext);
+        actualParent.Path.Should()
+            .Be(expected: updatedParentName);
+
+        actualChild.Should()
+            .NotBeNull();
+
+        actualChild!.ParentId.Should()
+            .Be(expected: parentPage.Id);
+
+        actualChild.Path.Should()
+            .StartWith(expected: $"{updatedParentName}/");
+
+        await Teardown(seededContext: seededContext);
     }
 }
-
-
-
-
-
-

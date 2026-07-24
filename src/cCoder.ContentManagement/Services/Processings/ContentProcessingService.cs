@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
@@ -5,45 +9,65 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class ContentProcessingService(IContentService service) : IContentProcessingService
+internal partial class ContentProcessingService(IContentService service) : IContentProcessingService
 {
-    public Content Get(int id)
+    public Content GetContent(int contentId) =>
+        TryCatch<Content>(operation: () =>
     {
-        ValidateId(id, "id");
-        return service.Get(id);
-    }
+        ValidateContentOnGet(inputs: [contentId]);
+        ValidateId(contentId: contentId, parameterName: "id");
+        return service.GetContent(contentId: contentId);
 
-    public IQueryable<Content> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters);
+    });
 
-    public ValueTask<Content> AddAsync(Content entity)
+    public IQueryable<Content> GetAllContent(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Content>>(operation: () =>
     {
-        ValidateContent(entity, "entity");
-        return service.AddAsync(entity);
-    }
+        ValidateAllContentOnGet(inputs: [ignoreFilters]);
+        return service.GetAllContent(ignoreFilters: ignoreFilters);
+    });
 
-    public ValueTask<Content> UpdateAsync(Content entity)
+    public ValueTask<Content> AddContentAsync(Content newContent) =>
+        TryCatch<Content>(operation: () =>
     {
-        ValidateContent(entity, "entity");
-        return service.UpdateAsync(entity);
-    }
+        ValidateContentOnAdd(inputs: [newContent]);
+        ValidateContent(content: newContent, parameterName: "entity");
+        return service.AddContentAsync(newContent: newContent);
 
-    public ValueTask DeleteAsync(int id)
-    {
-        ValidateId(id, "id");
-        return service.DeleteAsync(id);
-    }
+    }, isValueTask: true);
 
-    public async ValueTask<IEnumerable<Result<Content>>> AddOrUpdate(IEnumerable<Content> items)
+    public ValueTask<Content> UpdateContentAsync(Content updatedContent) =>
+        TryCatch<Content>(operation: () =>
     {
-        ValidateContents(items, "items");
-        List<Result<Content>> results = new List<Result<Content>>();
-        foreach (Content item in items)
+        ValidateContentOnUpdate(inputs: [updatedContent]);
+        ValidateContent(content: updatedContent, parameterName: "entity");
+        return service.UpdateContentAsync(updatedContent: updatedContent);
+
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int contentId) =>
+        TryCatch(operation: () =>
+    {
+        ValidateDeleteAsync(inputs: [contentId]);
+        ValidateId(contentId: contentId, parameterName: "id");
+        return service.DeleteAsync(contentId: contentId);
+
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<OperationResult<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent) =>
+        TryCatch<IEnumerable<OperationResult<Content>>>(operation: async () =>
+    {
+        ValidateOrUpdateContentResultOnAdd(inputs: [newContent]);
+        ValidateContents(contents: newContent, parameterName: "items");
+        List<OperationResult<Content>> results = new List<OperationResult<Content>>();
+
+        foreach (Content item in newContent)
         {
             try
             {
-                Content savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new Result<Content>
+                Content savedItem = item.Id < 1 ? await ExecuteAddContentAsync(newContent: item) : await ExecuteUpdateContentAsync(updatedContent: item);
+
+                results.Add(item: new OperationResult<Content>
                 {
                     Success = true,
                     Item = savedItem,
@@ -52,7 +76,7 @@ internal class ContentProcessingService(IContentService service) : IContentProce
             }
             catch (Exception ex)
             {
-                results.Add(new Result<Content>
+                results.Add(item: new OperationResult<Content>
                 {
                     Success = false,
                     Item = item,
@@ -60,28 +84,56 @@ internal class ContentProcessingService(IContentService service) : IContentProce
                 });
             }
         }
+
         return results;
-    }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Content> items)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllContentAsync(IEnumerable<Content> deletedContent) =>
+        TryCatch(operation: async () =>
     {
-        ValidateContents(items, "items");
-        foreach (Content item in items)
-            await DeleteAsync(item.Id);
-    }
+        ValidateAllContentOnDelete(inputs: [deletedContent]);
+        ValidateContents(contents: deletedContent, parameterName: "items");
 
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(id < 1, parameterName + " must be greater than 0.");
+        foreach (Content item in deletedContent)
+        {
+            await ExecuteDeleteAsync(contentId: item.Id);
+        }
+
+    }, isValueTask: true);
+
+    private static void ValidateId(int contentId, string parameterName) =>
+        ThrowIf(condition: contentId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateContent(Content content, string parameterName) =>
-        ThrowIf(content == null, parameterName + " is required.");
+        ThrowIf(condition: content == null, message: parameterName + " is required.");
 
     private static void ValidateContents(IEnumerable<Content> contents, string parameterName) =>
-        ThrowIf(contents == null, parameterName + " is required.");
+        ThrowIf(condition: contents == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
+    }
+
+    private ValueTask<Content> ExecuteAddContentAsync(Content newContent)
+    {
+        ValidateContent(content: newContent, parameterName: "entity");
+        return service.AddContentAsync(newContent: newContent);
+    }
+
+    private ValueTask ExecuteDeleteAsync(int contentId)
+    {
+        ValidateId(contentId: contentId, parameterName: "id");
+        return service.DeleteAsync(contentId: contentId);
+    }
+
+    private ValueTask<Content> ExecuteUpdateContentAsync(Content updatedContent)
+    {
+        ValidateContent(content: updatedContent, parameterName: "entity");
+        return service.UpdateContentAsync(updatedContent: updatedContent);
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,40 +32,36 @@ public partial class AppEventServiceTests
         EventMessage<CmsDataModels.App> actualMessage = null;
 
         appEventBrokerMock
-            .Setup(x => x.RaiseAppAddEventAsync(It.IsAny<EventMessage<CmsDataModels.App>>()))
-            .Callback<EventMessage<CmsDataModels.App>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseAppAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.App>>()))
+            .Callback<EventMessage<CmsDataModels.App>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseAppAddEventAsync(entity);
+        await service.RaiseAppAddEventAsync(app: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         appEventBrokerMock.Verify(
-            x => x.RaiseAppAddEventAsync(It.IsAny<EventMessage<CmsDataModels.App>>()),
-            Times.Once
+expression: x => x.RaiseAppAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.App>>()),
+times: Times.Once
         );
+
+        appEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         appEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

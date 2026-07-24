@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,35 +29,16 @@ public partial class ScriptOrchestrationServiceTests
 
     public ScriptOrchestrationServiceTests()
     {
-        scriptProcessingServiceMock = new Mock<IScriptProcessingService>(MockBehavior.Strict);
-        scriptEventProcessingServiceMock = new Mock<IScriptEventProcessingService>(MockBehavior.Strict);
+        scriptProcessingServiceMock = new Mock<IScriptProcessingService>(behavior: MockBehavior.Strict);
+        scriptEventProcessingServiceMock = new Mock<IScriptEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new ScriptOrchestrationService(
-            scriptProcessingServiceMock.Object,
-            scriptEventProcessingServiceMock.Object
+processingService: scriptProcessingServiceMock.Object,
+eventService: scriptEventProcessingServiceMock.Object
         );
     }
 
-    private static Script CreateRandomScript() => Builder<Script>.CreateNew().Build();
+    private static Script CreateRandomScript() =>
+        Builder<Script>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

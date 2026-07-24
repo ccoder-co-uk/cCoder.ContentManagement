@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -13,7 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class AppOrchestrationServiceTests
@@ -21,37 +24,22 @@ public partial class AppOrchestrationServiceTests
     [Fact]
     public void ShouldReturnProcessingResultWhenResolveCurrentApp()
     {
+        // Given
         App app = CreateRandomApp();
-        appProcessingServiceMock.Setup(x => x.ResolveCurrentApp()).Returns(app);
 
+        appProcessingServiceMock.Setup(expression: x => x.ResolveCurrentApp())
+            .Returns(value: app);
+
+        // When
         App result = orchestrationService.ResolveCurrentApp();
 
-        result.Should().BeEquivalentTo(app, options => options.Excluding(entity => entity.Config));
-        appProcessingServiceMock.Verify(x => x.ResolveCurrentApp(), Times.Once);
+        // Then
+        result.Should()
+            .BeEquivalentTo(expectation: app, config: options => options.Excluding(expression: entity => entity.Config));
+
+        appProcessingServiceMock.Verify(expression: x => x.ResolveCurrentApp(), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

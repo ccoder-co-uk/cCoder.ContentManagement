@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,39 +29,16 @@ public partial class ComponentOrchestrationServiceTests
 
     public ComponentOrchestrationServiceTests()
     {
-        componentProcessingServiceMock = new Mock<IComponentProcessingService>(MockBehavior.Strict);
-        componentEventProcessingServiceMock = new Mock<IComponentEventProcessingService>(MockBehavior.Strict);
+        componentProcessingServiceMock = new Mock<IComponentProcessingService>(behavior: MockBehavior.Strict);
+        componentEventProcessingServiceMock = new Mock<IComponentEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new ComponentOrchestrationService(
-            componentProcessingServiceMock.Object,
-            componentEventProcessingServiceMock.Object
+processingService: componentProcessingServiceMock.Object,
+eventService: componentEventProcessingServiceMock.Object
         );
     }
 
-    private static Component CreateRandomComponent() => Builder<Component>.CreateNew().Build();
+    private static Component CreateRandomComponent() =>
+        Builder<Component>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

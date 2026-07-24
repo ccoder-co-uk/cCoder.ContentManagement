@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,44 +30,66 @@ public partial class ComponentRenderProcessingServiceTests
     [Fact]
     public async Task ShouldRenderDeclaredSupportedTagTypesForComponentRoot()
     {
+        // Given
         (RenderApp app, RenderUser user, RenderComponent component, RenderComponentParams renderParams) =
             CreateComponentRenderContext();
 
-        metadataCacheMock.Setup(x => x.Get("site-description", "en-GB")).Returns("Meta Description");
+        metadataCacheMock.Setup(expression: x => x.Get(key: "site-description", culture: "en-GB"))
+            .Returns(value: "Meta Description");
+
         commonObjectCacheMock
-            .Setup(x => x.Get<RenderScript>("script|bootstrap"))
-            .Returns(new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
-        renderFileContentServiceMock.Setup(x => x.GetLatestTextContent(app.Id, "snippets/info")).Returns("snippet-text");
+            .Setup(expression: x => x.Get<RenderScript>(key: "script|bootstrap"))
+            .Returns(value: new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
 
-        string result = await RenderTestWorkflowServer.RunAsync(
-            workflowBaseUrl => CreateSut(workflowBaseUrl).RenderComponent(component, renderParams));
+        renderFileContentServiceMock.Setup(expression: x => x.GetLatestTextContent(appId: app.Id, path: "snippets/info"))
+            .Returns(value: "snippet-text");
 
-        result.Should().Contain("snippet-text");
-        result.Should().Contain("bootstrap-script");
-        result.Should().Contain("Child Component");
-        result.Should().Contain("<script type='text/javascript'></script>");
-        result.Should().NotContain("defer async");
-        result.Should().Contain("Meta Description");
-        result.Should().Contain("Hello");
-        result.Should().Contain("Blue");
-        result.Should().Contain("executed");
+        // When
+        string result = await RenderTestWorkflowServer.RunStringAsync(
+action: workflowBaseUrl => CreateSut(workflowBaseUrl: workflowBaseUrl)
+            .RenderComponentComponentRenderParams(component: component, renderParams: renderParams));
+
+        // Then
+        result.Should()
+            .Contain(expected: "snippet-text");
+
+        result.Should()
+            .Contain(expected: "bootstrap-script");
+
+        result.Should()
+            .Contain(expected: "Child Component");
+
+        result.Should()
+            .Contain(expected: "<script type='text/javascript'></script>");
+
+        result.Should()
+            .NotContain(unexpected: "defer async");
+
+        result.Should()
+            .Contain(expected: "Meta Description");
+
+        result.Should()
+            .Contain(expected: "Hello");
+
+        result.Should()
+            .Contain(expected: "Blue");
+
+        result.Should()
+            .Contain(expected: "executed");
     }
 
     [Fact]
     public void ShouldThrowValidationExceptionWhenComponentIsNull()
     {
+        // Given
         (_, _, _, RenderComponentParams renderParams) = CreateComponentRenderContext();
 
-        Action act = () => CreateSut("http://127.0.0.1/").RenderComponent(null!, renderParams);
+        // When
+        Action act = () => CreateSut(workflowBaseUrl: "http://127.0.0.1/")
+            .RenderComponentComponentRenderParams(component: null!, renderParams: renderParams);
 
-        act.Should().Throw<ValidationException>();
+        // Then
+        act.Should()
+            .Throw<ValidationException>();
     }
 }
-
-
-
-
-
-
-
-

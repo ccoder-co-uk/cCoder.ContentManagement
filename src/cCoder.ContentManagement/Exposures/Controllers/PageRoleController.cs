@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Api.OData;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -10,39 +14,43 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class PageRoleController : ODataController
 {
-    protected IPageRoleOrchestrationService Service { get; }
+    private readonly IPageRoleOrchestrationService service;
 
     public PageRoleController(IPageRoleOrchestrationService service, ILogger<PageRoleController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok(new MetadataContainer(typeof(PageRole), isEntity: true, hasEndpoint: true));
+        Ok(value: new MetadataContainer(type: typeof(PageRole), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 3, MaxExpansionDepth = 3)]
     [ActionName("Get")]
     public IActionResult GetAll() =>
-        Ok(Service.GetAll());
+        Ok(value: service.GetAllPageRole());
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] PageRole entity)
+    public async Task<IActionResult> Post([FromBody] PageRole newPageRole)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.AddAsync(entity));
+        return Ok(value: await service.AddPageRoleAsync(newPageRole: newPageRole));
     }
 
     [HttpPost]
-    public async Task<IActionResult> DeleteAll([FromBody] IEnumerable<PageRole> items)
+    public async Task<IActionResult> DeleteAll([FromBody] IEnumerable<PageRole> deletedPageRole)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        await Service.DeleteAllAsync(items);
+        await service.DeleteAllPageRoleAsync(deletedPageRole: deletedPageRole);
         return Ok();
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,30 +27,16 @@ public partial class SubmissionProcessingServiceTests
         // Given
         Submission entity = CreateRandomSubmission();
         var id = entity.Id;
-        submissionServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        submissionServiceMock.Setup(expression: x => x.DeleteAsync(submissionId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await submissionProcessingService.DeleteAsync(id);
+        await submissionProcessingService.DeleteAsync(submissionId: id);
 
         // Then
-        submissionServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
+        submissionServiceMock.Verify(expression: x => x.DeleteAsync(submissionId: id), times: Times.Once);
         submissionServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

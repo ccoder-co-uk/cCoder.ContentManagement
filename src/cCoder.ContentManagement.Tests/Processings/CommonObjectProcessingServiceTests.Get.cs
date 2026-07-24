@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,33 +28,24 @@ public partial class CommonObjectProcessingServiceTests
     {
         // Given
         CommonObject commonObject = CreateRandomCommonObject();
-        commonObjectServiceMock.Setup(x => x.Get(commonObject.Id)).Returns(commonObject);
+
+        commonObjectServiceMock.Setup(expression: x => x.GetCommonObject(commonObjectId: commonObject.Id))
+            .Returns(value: commonObject);
 
         // When
-        CommonObject result = commonObjectProcessingService.Get(
-            commonObject.Id
+
+        CommonObject result = commonObjectProcessingService.GetCommonObject(
+commonObjectId: commonObject.Id
         );
 
         // Then
-        result.Should().BeSameAs(commonObject);
-        commonObjectServiceMock.Verify(x => x.Get(commonObject.Id), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: commonObject);
+
+        commonObjectServiceMock.Verify(expression: x => x.GetCommonObject(commonObjectId: commonObject.Id), times: Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

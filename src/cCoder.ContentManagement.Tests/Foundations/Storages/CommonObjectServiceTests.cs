@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,11 +30,12 @@ public partial class CommonObjectServiceTests
 
     public CommonObjectServiceTests()
     {
-        commonObjectBrokerMock = new Mock<ICommonObjectBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        commonObjectBrokerMock = new Mock<ICommonObjectBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         commonObjectService = new CommonObjectService(
-            commonObjectBrokerMock.Object,
-            authorizationBrokerMock.Object
+commonObjectBroker: commonObjectBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -38,17 +43,17 @@ public partial class CommonObjectServiceTests
     {
         CommonObject commonObject = Builder<CommonObject>
             .CreateNew()
-            .With(x => x.Id = id)
-            .With(x => x.Version = version)
-            .With(x => x.Key = $"key-{Guid.NewGuid():N}")
-            .With(x => x.Type = "Core/Resource")
-            .With(x => x.Json = "{}")
-            .With(x => x.Culture = "en-GB")
-            .With(x => x.Name = $"CommonObject-{Guid.NewGuid():N}")
-            .With(x => x.CreatedBy = "tester")
-            .With(x => x.LastUpdatedBy = "tester")
-            .With(x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(-5))
-            .With(x => x.LastUpdated = DateTimeOffset.UtcNow)
+            .With(func: x => x.Id = id)
+            .With(func: x => x.Version = version)
+            .With(func: x => x.Key = $"key-{Guid.NewGuid():N}")
+            .With(func: x => x.Type = "Core/Resource")
+            .With(func: x => x.Json = "{}")
+            .With(func: x => x.Culture = "en-GB")
+            .With(func: x => x.Name = $"CommonObject-{Guid.NewGuid():N}")
+            .With(func: x => x.CreatedBy = "tester")
+            .With(func: x => x.LastUpdatedBy = "tester")
+            .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
+            .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow)
             .Build();
 
         return commonObject;
@@ -71,27 +76,3 @@ public partial class CommonObjectServiceTests
             Culture = commonObject.Culture,
         };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

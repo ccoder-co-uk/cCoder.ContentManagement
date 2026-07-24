@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,23 +27,27 @@ public partial class AppCultureProcessingServiceTests
     {
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
+
         appCultureServiceMock
-            .Setup(x => x.Get(appCulture.AppId, appCulture.CultureId, false))
-            .Returns(appCulture);
-        appCultureServiceMock.Setup(x => x.DeleteAsync(appCulture)).Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.GetAppCulture(appId: appCulture.AppId, cultureId: appCulture.CultureId, ignoreFilters: false))
+            .Returns(value: appCulture);
+
+        appCultureServiceMock.Setup(expression: x => x.DeleteAppCultureAsync(deletedAppCulture: appCulture))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await appCultureProcessingService.DeleteAsync(appCulture);
+        await appCultureProcessingService.DeleteAppCultureAsync(deletedAppCulture: appCulture);
 
         // Then
+
         appCultureServiceMock.Verify(
-            x =>
-                x.DeleteAsync(
-                    It.Is<AppCulture>(item =>
+expression: x =>
+                x.DeleteAppCultureAsync(
+deletedAppCulture: It.Is<AppCulture>(match: item =>
                         item.AppId == appCulture.AppId && item.CultureId == appCulture.CultureId
                     )
                 ),
-            Times.Once
+times: Times.Once
         );
     }
 
@@ -48,16 +56,19 @@ public partial class AppCultureProcessingServiceTests
     {
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
+
         appCultureServiceMock
-            .Setup(x => x.Get(appCulture.AppId, appCulture.CultureId, false))
-            .Returns(appCulture);
+            .Setup(expression: x => x.GetAppCulture(appId: appCulture.AppId, cultureId: appCulture.CultureId, ignoreFilters: false))
+            .Returns(value: appCulture);
+
         appCultureServiceMock
-            .Setup(x => x.DeleteAsync(appCulture))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.DeleteAppCultureAsync(deletedAppCulture: appCulture))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await appCultureProcessingService.DeleteAsync(appCulture)
+
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
+            await appCultureProcessingService.DeleteAppCultureAsync(deletedAppCulture: appCulture)
         );
 
         // Then
@@ -68,29 +79,17 @@ public partial class AppCultureProcessingServiceTests
     {
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
+
         appCultureServiceMock
-            .Setup(x => x.Get(appCulture.AppId, appCulture.CultureId, false))
-            .Returns((AppCulture)null);
+            .Setup(expression: x => x.GetAppCulture(appId: appCulture.AppId, cultureId: appCulture.CultureId, ignoreFilters: false))
+            .Returns(value: (AppCulture)null);
 
         // When
-        await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            await appCultureProcessingService.DeleteAsync(appCulture));
+
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException>(testCode: async () =>
+            await appCultureProcessingService.DeleteAppCultureAsync(deletedAppCulture: appCulture));
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

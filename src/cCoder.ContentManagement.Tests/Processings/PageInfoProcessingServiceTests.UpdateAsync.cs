@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,14 +30,16 @@ public partial class PageInfoProcessingServiceTests
     {
         // Given
         PageInfo pageInfo = CreateRandomPageInfo();
-        pageInfoServiceMock.Setup(x => x.UpdateAsync(pageInfo)).ReturnsAsync(pageInfo);
+
+        pageInfoServiceMock.Setup(expression: x => x.UpdatePageInfoAsync(updatedPageInfo: pageInfo))
+            .ReturnsAsync(value: pageInfo);
 
         // When
-        PageInfo result = await pageInfoProcessingService.UpdateAsync(pageInfo);
+        PageInfo result = await pageInfoProcessingService.UpdatePageInfoAsync(updatedPageInfo: pageInfo);
 
         // Then
-        Assert.Same(pageInfo, result);
-        pageInfoServiceMock.Verify(x => x.UpdateAsync(pageInfo), Times.Once);
+        Assert.Same(expected: pageInfo, actual: result);
+        pageInfoServiceMock.Verify(expression: x => x.UpdatePageInfoAsync(updatedPageInfo: pageInfo), times: Times.Once);
     }
 
     [Fact]
@@ -43,30 +49,16 @@ public partial class PageInfoProcessingServiceTests
         PageInfo pageInfo = CreateRandomPageInfo();
 
         pageInfoServiceMock
-            .Setup(x => x.UpdateAsync(pageInfo))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.UpdatePageInfoAsync(updatedPageInfo: pageInfo))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await pageInfoProcessingService.UpdateAsync(pageInfo)
+
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
+            await pageInfoProcessingService.UpdatePageInfoAsync(updatedPageInfo: pageInfo)
         );
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

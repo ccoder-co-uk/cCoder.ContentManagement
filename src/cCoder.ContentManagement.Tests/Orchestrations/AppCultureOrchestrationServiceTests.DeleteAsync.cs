@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,38 +26,20 @@ public partial class AppCultureOrchestrationServiceTests
     {
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
-        appCultureProcessingServiceMock.Setup(x => x.DeleteAsync(appCulture)).Returns(ValueTask.CompletedTask);
+
+        appCultureProcessingServiceMock.Setup(expression: x => x.DeleteAppCultureAsync(deletedAppCulture: appCulture))
+            .Returns(value: ValueTask.CompletedTask);
 
         appCultureEventProcessingServiceMock
-            .Setup(x => x.RaiseAppCultureDeleteEventAsync(appCulture))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseAppCultureDeleteEventAsync(entity: appCulture))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(appCulture);
+        await orchestrationService.DeleteAppCultureAsync(deletedAppCulture: appCulture);
 
         // Then
-        appCultureProcessingServiceMock.Verify(x => x.DeleteAsync(appCulture), Times.Once);
-        appCultureEventProcessingServiceMock.Verify(x => x.RaiseAppCultureDeleteEventAsync(appCulture), Times.Once);
+        appCultureProcessingServiceMock.Verify(expression: x => x.DeleteAppCultureAsync(deletedAppCulture: appCulture), times: Times.Once);
+        appCultureEventProcessingServiceMock.Verify(expression: x => x.RaiseAppCultureDeleteEventAsync(entity: appCulture), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

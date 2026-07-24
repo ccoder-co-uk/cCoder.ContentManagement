@@ -1,12 +1,28 @@
-using cCoder.ContentManagement.Services.Coordinations;
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+using cCoder.ContentManagement.Services.Aggregations;
 
 namespace cCoder.ContentManagement.Exposures;
 
-internal sealed class PageRenderer(IPageRenderCoordinationService pageRenderCoordinationService) : IPageRenderer
+internal sealed class PageRenderer(
+    IPageRenderAggregationService pageRenderAggregationService)
+        : IPageRenderer
 {
-    public PageRenderResponse Render(PageRenderRequest request) =>
-        pageRenderCoordinationService.Render(request);
+    public PageRenderResponse Render(PageRenderRequest request)
+    {
+        request.OperationType = PageRenderOperationType.Render;
 
-    public PageRenderResponse RenderError(PageRenderRequest request) =>
-        pageRenderCoordinationService.RenderError(request);
+        return pageRenderAggregationService.RenderPageRenderOperation(
+            operation: request);
+    }
+
+    public PageRenderResponse RenderError(PageRenderRequest request)
+    {
+        request.OperationType = PageRenderOperationType.RenderError;
+
+        return pageRenderAggregationService.RenderPageRenderOperation(
+            operation: request);
+    }
 }

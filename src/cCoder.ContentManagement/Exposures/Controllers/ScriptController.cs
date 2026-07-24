@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
@@ -15,22 +19,23 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class ScriptController : ODataController
 {
-    protected IScriptOrchestrationService Service { get; }
+    private readonly IScriptOrchestrationService service;
 
     public ScriptController(IScriptOrchestrationService service, ILogger<ScriptController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Script)) : new MetadataContainer(typeof(Script), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Script)) : new MetadataContainer(type: typeof(Script), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Script> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: service.GetAllScript());
 
     [HttpGet]
     [AllowAnonymous]
@@ -39,8 +44,10 @@ public class ScriptController : ODataController
     {
         try
         {
-            IQueryable<Script> result = Service.GetAll().Where(script => script.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<Script> result = service.GetAllScript()
+                .Where(predicate: script => script.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -50,39 +57,47 @@ public class ScriptController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Script entity)
+    public async Task<IActionResult> Post([FromBody] Script newScript)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.AddAsync(entity));
+        return Ok(value: await service.AddScriptAsync(newScript: newScript));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Script entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Script updatedScript)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.UpdateAsync(entity));
+        return Ok(value: await service.UpdateScriptAsync(updatedScript: updatedScript));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<Script> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Script> updatedScript)
     {
-        Script originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Script originalEntity = service.GetScript(scriptId: key);
 
-        delta.Patch(originalEntity);
-        return Ok(await Service.UpdateAsync(originalEntity));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        updatedScript.Patch(original: originalEntity);
+        return Ok(value: await service.UpdateScriptAsync(updatedScript: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(key);
+        await service.DeleteAsync(scriptId: key);
         return Ok();
     }
 }

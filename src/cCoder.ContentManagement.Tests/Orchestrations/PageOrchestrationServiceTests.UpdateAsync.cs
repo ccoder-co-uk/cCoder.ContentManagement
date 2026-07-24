@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,23 +29,29 @@ public partial class PageOrchestrationServiceTests
         // Given
         Page entity = CreateRandomPage();
         entity.Layout = "Default";
+
         layoutProcessingServiceMock
-            .Setup(x => x.GetAll(true))
-            .Returns(new[] { CreateLayoutFor(entity) }.AsQueryable());
-        pageProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+            .Setup(expression: x => x.GetAllLayout(ignoreFilters: true))
+            .Returns(value: new[] { CreateLayoutFor(page: entity) }.AsQueryable());
+
+        pageProcessingServiceMock.Setup(expression: x => x.UpdatePageAsync(updatedPage: entity))
+            .ReturnsAsync(value: entity);
 
         pageEventProcessingServiceMock
-            .Setup(x => x.RaisePageUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Page result = await orchestrationService.UpdateAsync(entity);
+        Page result = await orchestrationService.UpdatePageAsync(updatedPage: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        layoutProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
-        pageProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
-        pageEventProcessingServiceMock.Verify(x => x.RaisePageUpdateEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        layoutProcessingServiceMock.Verify(expression: x => x.GetAllLayout(ignoreFilters: true), times: Times.Once);
+        pageProcessingServiceMock.Verify(expression: x => x.UpdatePageAsync(updatedPage: entity), times: Times.Once);
+        pageEventProcessingServiceMock.Verify(expression: x => x.RaisePageUpdateEventAsync(entity: entity), times: Times.Once);
     }
 
     [Fact]
@@ -50,39 +60,24 @@ public partial class PageOrchestrationServiceTests
         // Given
         Page entity = CreateRandomPage();
         entity.Layout = "MissingLayout";
+
         layoutProcessingServiceMock
-            .Setup(x => x.GetAll(true))
-            .Returns(Array.Empty<Layout>().AsQueryable());
+            .Setup(expression: x => x.GetAllLayout(ignoreFilters: true))
+            .Returns(value: Array.Empty<Layout>()
+            .AsQueryable());
 
         // When
-        Func<Task> act = async () => await orchestrationService.UpdateAsync(entity);
+        Func<Task> act = async () => await orchestrationService.UpdatePageAsync(updatedPage: entity);
 
         // Then
-        await act.Should().ThrowAsync<ValidationException>()
-            .WithMessage($"Layout '{entity.Layout}' does not exist for app {entity.AppId}.");
-        layoutProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+
+        await act.Should()
+            .ThrowAsync<ValidationException>()
+            .WithMessage(expectedWildcardPattern: $"Layout '{entity.Layout}' does not exist for app {entity.AppId}.");
+
+        layoutProcessingServiceMock.Verify(expression: x => x.GetAllLayout(ignoreFilters: true), times: Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

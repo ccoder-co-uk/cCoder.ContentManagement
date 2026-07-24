@@ -1,16 +1,20 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface ISubmissionService
 {
-    Submission Get(Guid id, bool ignoreFilters = false);
+    Submission GetSubmission(Guid submissionId, bool ignoreFilters = false);
 
-    IQueryable<Submission> GetAll(bool ignoreFilters = false);
+    IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false);
 
-    ValueTask<Submission> AddAsync(Submission submission);
+    ValueTask<Submission> AddSubmissionAsync(Submission newSubmission);
 
-    ValueTask<Submission> UpdateAsync(Submission submission);
+    ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission);
 
-    ValueTask DeleteAsync(Guid id);
+    ValueTask DeleteAsync(Guid submissionId);
 }

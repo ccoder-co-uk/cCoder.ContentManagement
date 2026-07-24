@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,27 +30,32 @@ public partial class CommonObjectProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
-        currentUser = TestUsers.WithPrivilege("commonobject_delete");
-        commonObjectServiceMock.Setup(x => x.DeleteAsync(42)).Returns(ValueTask.CompletedTask);
+        currentUser = TestUsers.WithPrivilege(privilege: "commonobject_delete");
+
+        commonObjectServiceMock.Setup(expression: x => x.DeleteAsync(commonObjectId: 42))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await commonObjectProcessingService.DeleteAsync(42);
+        await commonObjectProcessingService.DeleteAsync(commonObjectId: 42);
 
         // Then
-        commonObjectServiceMock.Verify(x => x.DeleteAsync(42), Times.Once);
+        commonObjectServiceMock.Verify(expression: x => x.DeleteAsync(commonObjectId: 42), times: Times.Once);
     }
 
     [Fact]
@@ -54,43 +63,31 @@ public partial class CommonObjectProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await commonObjectProcessingService.DeleteAsync(42)
+
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
+            await commonObjectProcessingService.DeleteAsync(commonObjectId: 42)
         );
 
         // Then
-        commonObjectServiceMock.Verify(x => x.DeleteAsync(It.IsAny<int>()), Times.Never);
+        commonObjectServiceMock.Verify(expression: x => x.DeleteAsync(commonObjectId: It.IsAny<int>()), times: Times.Never);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

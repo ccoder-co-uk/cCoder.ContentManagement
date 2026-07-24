@@ -1,9 +1,19 @@
-using cCoder.ContentManagement.Services.Coordinations;
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+using cCoder.ContentManagement.Services.Orchestrations;
 
 namespace cCoder.ContentManagement.Exposures;
 
-internal sealed class TemplateRenderer(ITemplateRenderCoordinationService renderCoordinationService) : ITemplateRenderer
+internal sealed class TemplateRenderer(
+    ITemplateRenderOrchestrationService renderOrchestrationService)
+        : ITemplateRenderer
 {
     public string Render(int appId, string name, string culture, dynamic model) =>
-        renderCoordinationService.Render(appId, name, culture, model);
+        renderOrchestrationService.Render(
+            appId: appId,
+            name: name,
+            culture: culture,
+            model: model);
 }

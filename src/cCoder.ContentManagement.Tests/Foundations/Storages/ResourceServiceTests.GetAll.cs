@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,31 +31,18 @@ public partial class ResourceServiceTests
         {
             CreateRandomResource(id: 1, appId: 7),
         };
+
         IQueryable<CmsDataModels.Resource> resources = expectedItems
-            .Select(item => item)
+            .Select(selector: item => item)
             .AsQueryable();
-        resourceBrokerMock.Setup(x => x.GetAllResources(false)).Returns(resources);
-        IQueryable<Resource> result = resourceService.GetAll();
+
+        resourceBrokerMock.Setup(expression: x => x.GetAllResources(ignoreFilters: false))
+            .Returns(value: resources);
+
+        IQueryable<Resource> result = resourceService.GetAllResource();
 
         // Then
-        Assert.Single(result);
+        Assert.Single(collection: result);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

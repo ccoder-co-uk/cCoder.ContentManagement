@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -30,13 +34,14 @@ public partial class CultureServiceTests
 
     public CultureServiceTests()
     {
-        cultureBrokerMock = new Mock<ICultureBroker>(MockBehavior.Strict);
-        appCultureBrokerMock = new Mock<IAppCultureBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        cultureBrokerMock = new Mock<ICultureBroker>(behavior: MockBehavior.Strict);
+        appCultureBrokerMock = new Mock<IAppCultureBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         cultureService = new CultureService(
-            cultureBrokerMock.Object,
-            appCultureBrokerMock.Object,
-            authorizationBrokerMock.Object
+cultureBroker: cultureBrokerMock.Object,
+appCultureBroker: appCultureBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -44,31 +49,10 @@ public partial class CultureServiceTests
     {
         Culture culture = Builder<Culture>
             .CreateNew()
-            .With(x => x.Id = id ?? $"culture-{Guid.NewGuid():N}")
-            .With(x => x.Name = $"Culture-{Guid.NewGuid():N}")
+            .With(func: x => x.Id = id ?? $"culture-{Guid.NewGuid():N}")
+            .With(func: x => x.Name = $"Culture-{Guid.NewGuid():N}")
             .Build();
 
         return culture;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

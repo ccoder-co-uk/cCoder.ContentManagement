@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -21,43 +25,28 @@ public partial class CultureOrchestrationServiceTests
     public async Task ShouldGetThenDeleteThenRaiseDeleteEventAsyncWhenDeleteAsync()
     {
         // Given
-        string id = Guid.NewGuid().ToString();
+        string id = Guid.NewGuid()
+            .ToString();
+
         Culture entity = CreateRandomCulture();
-        cultureProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
-        cultureProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        cultureProcessingServiceMock.Setup(expression: x => x.GetCulture(cultureId: id))
+            .Returns(value: entity);
+
+        cultureProcessingServiceMock.Setup(expression: x => x.DeleteAsync(cultureId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         cultureEventProcessingServiceMock
-            .Setup(x => x.RaiseCultureDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseCultureDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(cultureId: id);
 
         // Then
-        cultureProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
-        cultureProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        cultureEventProcessingServiceMock.Verify(x => x.RaiseCultureDeleteEventAsync(entity), Times.Once);
+        cultureProcessingServiceMock.Verify(expression: x => x.GetCulture(cultureId: id), times: Times.Once);
+        cultureProcessingServiceMock.Verify(expression: x => x.DeleteAsync(cultureId: id), times: Times.Once);
+        cultureEventProcessingServiceMock.Verify(expression: x => x.RaiseCultureDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

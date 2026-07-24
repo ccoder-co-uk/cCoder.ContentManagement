@@ -1,47 +1,54 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.Packaging;
 using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class PackageBroker(ICoreContextFactory coreContextFactory) : IPackageBroker
+internal sealed class PackageBroker(ICoreContextFactory coreContextFactory) : IPackageBroker
 {
     public IQueryable<Package> GetAllPackages(bool ignoreFilters)
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.Packages.IgnoreQueryFilters()
-            : coreDataContext.Packages;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Packages,
+            ignoreFilters: ignoreFilters);
     }
 
-    public async ValueTask<Package> AddPackageAsync(Package entity)
+    public async ValueTask<Package> AddPackageAsync(Package newPackage)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Package result = (await coreDataContext.Packages.AddAsync(entity)).Entity;
+        Package result = (await coreDataContext.Packages.AddAsync(entity: newPackage)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<Package> UpdatePackageAsync(Package entity)
+    public async ValueTask<Package> UpdatePackageAsync(Package updatedPackage)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        Package result = coreDataContext.Packages.Update(entity).Entity;
+
+        Package result = coreDataContext.Packages.Update(entity: updatedPackage)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeletePackageAsync(Package entity)
+    public async ValueTask<int> DeletePackageAsync(Package deletedPackage)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Packages.Remove(entity);
+        coreDataContext.Packages.Remove(entity: deletedPackage);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllPackagesAsync(IEnumerable<Package> items)
+    public async ValueTask DeleteAllPackagesAsync(IEnumerable<Package> deletedPackage)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.Packages.RemoveRange(items);
+        coreDataContext.Packages.RemoveRange(entities: deletedPackage);
         await coreDataContext.SaveChangesAsync();
     }
 }

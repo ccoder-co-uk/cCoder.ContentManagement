@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -11,42 +15,44 @@ public sealed partial class ScriptControllerTests
     public async Task Put_UpdatesScriptContent()
     {
         // Given
-        string scriptName = Unique("Script");
+        string scriptName = Unique(prefix: "Script");
+
         Script createdScript = await CreateScriptAsync(
-            new
-            {
-                appId = 1,
-                name = scriptName,
-                description = "Acceptance script",
-                key = "Acceptance",
-                content = "return 42;",
-            });
+payload: new
+{
+    appId = 1,
+    name = scriptName,
+    description = "Acceptance script",
+    key = "Acceptance",
+    content = "return 42;",
+});
+
         Script expectedScript = new() { Content = "return 43;" };
 
         // When
+
         await UpdateScriptAsync(
-            createdScript.Id,
-            new
-            {
-                id = createdScript.Id,
-                appId = 1,
-                name = scriptName,
-                description = "Updated acceptance script",
-                key = "Acceptance",
-                content = "return 43;",
-            });
-        Script actualScript = await GetScriptAsync(createdScript.Id);
+id: createdScript.Id,
+payload: new
+{
+    id = createdScript.Id,
+    appId = 1,
+    name = scriptName,
+    description = "Updated acceptance script",
+    key = "Acceptance",
+    content = "return 43;",
+});
+
+        Script actualScript = await GetScriptAsync(id: createdScript.Id);
 
         // Then
-        actualScript.Should().NotBeNull();
-        actualScript!.Content.Should().Be(expectedScript.Content);
 
-        await DeleteScriptAsync(createdScript.Id);
+        actualScript.Should()
+            .NotBeNull();
+
+        actualScript!.Content.Should()
+            .Be(expected: expectedScript.Content);
+
+        await DeleteScriptAsync(id: createdScript.Id);
     }
 }
-
-
-
-
-
-

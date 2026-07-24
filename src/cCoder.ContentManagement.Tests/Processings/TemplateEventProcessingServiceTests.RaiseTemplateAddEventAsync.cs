@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class TemplateEventProcessingServiceTests
     {
         // Given
         Template entity = CreateRandomTemplate();
+
         templateEventServiceMock
-            .Setup(x => x.RaiseTemplateAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseTemplateAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseTemplateAddEventAsync(entity);
+        await service.RaiseTemplateAddEventAsync(entity: entity);
 
         // Then
-        templateEventServiceMock.Verify(x => x.RaiseTemplateAddEventAsync(entity), Times.Once);
+        templateEventServiceMock.Verify(expression: x => x.RaiseTemplateAddEventAsync(entity: entity), times: Times.Once);
         templateEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class ContentEventProcessingServiceTests
     {
         // Given
         Content entity = CreateRandomContent();
+
         contentEventServiceMock
-            .Setup(x => x.RaiseContentAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseContentAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseContentAddEventAsync(entity);
+        await service.RaiseContentAddEventAsync(entity: entity);
 
         // Then
-        contentEventServiceMock.Verify(x => x.RaiseContentAddEventAsync(entity), Times.Once);
+        contentEventServiceMock.Verify(expression: x => x.RaiseContentAddEventAsync(entity: entity), times: Times.Once);
         contentEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

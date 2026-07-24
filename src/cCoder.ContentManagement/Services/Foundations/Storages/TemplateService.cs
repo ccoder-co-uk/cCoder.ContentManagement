@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -7,110 +11,181 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class TemplateService(ITemplateBroker templateBroker, IAuthorizationBroker authorizationBroker) : ITemplateService
 {
-    public Template Get(int id, bool ignoreFilters = false)
+    public Template GetTemplate(int templateId, bool ignoreFilters = false) =>
+        TryCatch<Template>(operation: () =>
     {
-        ValidateId(id, "id");
+        ValidateTemplateOnGet(inputs: [templateId, ignoreFilters]);
+        ValidateId(templateId: templateId, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Template i) => i.Id == id);
+        {
+            return ExecuteGetAllTemplate(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
+        }
 
-        Template template = GetAll().FirstOrDefault((Template i) => i.Id == id);
+        Template template = ExecuteGetAllTemplate()
+            .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
+
         if (template != null)
+        {
             return template;
+        }
 
-        Template template2 = GetAll(ignoreFilters: true).FirstOrDefault((Template i) => i.Id == id);
+        Template template2 = ExecuteGetAllTemplate(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
+
         if (template2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
-    }
 
-    public IQueryable<Template> GetAll(bool ignoreFilters = false) =>
-        templateBroker.GetAllTemplates(ignoreFilters);
+    });
 
-    public async ValueTask<Template> AddAsync(Template template)
+    public IQueryable<Template> GetAllTemplate(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Template>>(operation: () =>
     {
-        ValidateTemplate(template, "template");
-        authorizationBroker.Authorize(template.AppId, "Template_create");
-        Template newTemplate = CreateStorageTemplate(template);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
-        DateTimeOffset now = (newTemplate.CreatedOn = DateTimeOffset.UtcNow);
-        newTemplate.CreatedBy = currentUserId;
-        newTemplate.LastUpdated = now;
-        newTemplate.LastUpdatedBy = currentUserId;
-        Template result = await templateBroker.AddTemplateAsync(newTemplate);
-        template.Id = result.Id;
-        template.Name = result.Name;
-        template.Description = result.Description;
-        template.LastUpdated = result.LastUpdated;
-        template.LastUpdatedBy = result.LastUpdatedBy;
-        template.CreatedOn = result.CreatedOn;
-        template.CreatedBy = result.CreatedBy;
-        template.AppId = result.AppId;
-        template.ResourceKey = result.ResourceKey;
-        template.RawString = result.RawString;
-        return template;
-    }
+        ValidateAllTemplateOnGet(inputs: [ignoreFilters]);
+        return templateBroker.GetAllTemplates(ignoreFilters: ignoreFilters);
+    });
 
-    public async ValueTask<Template> UpdateAsync(Template template)
+    public ValueTask<Template> AddTemplateAsync(Template newTemplate) =>
+        TryCatch<Template>(operation: async () =>
     {
-        ValidateTemplate(template, "template");
-        authorizationBroker.Authorize(template.AppId, "Template_update");
-        Template updateTemplate = CreateStorageTemplate(template);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateTemplateOnAdd(inputs: [newTemplate]);
+        ValidateTemplate(template: newTemplate, parameterName: "template");
+        authorizationBroker.Authorize(appId: newTemplate.AppId, privilege: "Template_create");
+        Template storageTemplate = CreateStorageTemplate(newTemplate: newTemplate);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
+        DateTimeOffset now = (storageTemplate.CreatedOn = DateTimeOffset.UtcNow);
+        storageTemplate.CreatedBy = currentUserId;
+        storageTemplate.LastUpdated = now;
+        storageTemplate.LastUpdatedBy = currentUserId;
+        Template result = await templateBroker.AddTemplateAsync(newTemplate: storageTemplate);
+        newTemplate.Id = result.Id;
+        newTemplate.Name = result.Name;
+        newTemplate.Description = result.Description;
+        newTemplate.LastUpdated = result.LastUpdated;
+        newTemplate.LastUpdatedBy = result.LastUpdatedBy;
+        newTemplate.CreatedOn = result.CreatedOn;
+        newTemplate.CreatedBy = result.CreatedBy;
+        newTemplate.AppId = result.AppId;
+        newTemplate.ResourceKey = result.ResourceKey;
+        newTemplate.RawString = result.RawString;
+        return newTemplate;
+
+    }, isValueTask: true);
+
+    public ValueTask<Template> UpdateTemplateAsync(Template updatedTemplate) =>
+        TryCatch<Template>(operation: async () =>
+    {
+        ValidateTemplateOnUpdate(inputs: [updatedTemplate]);
+        ValidateTemplate(template: updatedTemplate, parameterName: "template");
+        authorizationBroker.Authorize(appId: updatedTemplate.AppId, privilege: "Template_update");
+        Template updateTemplate = CreateStorageTemplate(newTemplate: updatedTemplate);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateTemplate.LastUpdated = now;
         updateTemplate.LastUpdatedBy = currentUserId;
-        Template result = await templateBroker.UpdateTemplateAsync(updateTemplate);
-        template.Id = result.Id;
-        template.Name = result.Name;
-        template.Description = result.Description;
-        template.LastUpdated = result.LastUpdated;
-        template.LastUpdatedBy = result.LastUpdatedBy;
-        template.CreatedOn = result.CreatedOn;
-        template.CreatedBy = result.CreatedBy;
-        template.AppId = result.AppId;
-        template.ResourceKey = result.ResourceKey;
-        template.RawString = result.RawString;
-        return template;
-    }
+        Template result = await templateBroker.UpdateTemplateAsync(updatedTemplate: updateTemplate);
+        updatedTemplate.Id = result.Id;
+        updatedTemplate.Name = result.Name;
+        updatedTemplate.Description = result.Description;
+        updatedTemplate.LastUpdated = result.LastUpdated;
+        updatedTemplate.LastUpdatedBy = result.LastUpdatedBy;
+        updatedTemplate.CreatedOn = result.CreatedOn;
+        updatedTemplate.CreatedBy = result.CreatedBy;
+        updatedTemplate.AppId = result.AppId;
+        updatedTemplate.ResourceKey = result.ResourceKey;
+        updatedTemplate.RawString = result.RawString;
+        return updatedTemplate;
 
-    public async ValueTask DeleteAsync(int id)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int templateId) =>
+        TryCatch(operation: async () =>
     {
-        ValidateId(id, "id");
+        ValidateDeleteAsync(inputs: [templateId]);
+        ValidateId(templateId: templateId, parameterName: "id");
         Template template;
+
         try
         {
-            template = Get(id);
+            template = ExecuteGetTemplate(templateId: templateId);
         }
         catch (SecurityException)
         {
-            template = Get(id, ignoreFilters: true);
+            template = ExecuteGetTemplate(templateId: templateId, ignoreFilters: true);
         }
 
         if (template == null)
+        {
             return;
+        }
 
-        authorizationBroker.Authorize(template.AppId, "Template_delete");
-        await templateBroker.DeleteTemplateAsync(CreateStorageTemplate(template));
-    }
+        authorizationBroker.Authorize(appId: template.AppId, privilege: "Template_delete");
+        await templateBroker.DeleteTemplateAsync(deletedTemplate: CreateStorageTemplate(newTemplate: template));
 
-    private static Template CreateStorageTemplate(Template template)
+    }, isValueTask: true);
+
+    private static Template CreateStorageTemplate(Template newTemplate)
     {
-        if (template == null)
+        if (newTemplate == null)
+        {
             return null;
+        }
 
         return new Template
         {
-            Id = template.Id,
-            Name = template.Name,
-            Description = template.Description,
-            LastUpdated = template.LastUpdated,
-            LastUpdatedBy = template.LastUpdatedBy,
-            CreatedOn = template.CreatedOn,
-            CreatedBy = template.CreatedBy,
-            ResourceKey = template.ResourceKey,
-            RawString = template.RawString,
-            AppId = template.AppId
+            Id = newTemplate.Id,
+            Name = newTemplate.Name,
+            Description = newTemplate.Description,
+            LastUpdated = newTemplate.LastUpdated,
+            LastUpdatedBy = newTemplate.LastUpdatedBy,
+            CreatedOn = newTemplate.CreatedOn,
+            CreatedBy = newTemplate.CreatedBy,
+            ResourceKey = newTemplate.ResourceKey,
+            RawString = newTemplate.RawString,
+            AppId = newTemplate.AppId
         };
+    }
+
+    private IQueryable<Template> ExecuteGetAllTemplate(bool ignoreFilters = false) =>
+        templateBroker.GetAllTemplates(ignoreFilters: ignoreFilters);
+
+    private Template ExecuteGetTemplate(int templateId, bool ignoreFilters = false)
+    {
+        ValidateId(templateId: templateId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllTemplate(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
+        }
+
+        Template template = ExecuteGetAllTemplate()
+            .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
+
+        if (template != null)
+        {
+            return template;
+        }
+
+        Template template2 = ExecuteGetAllTemplate(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
+
+        if (template2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

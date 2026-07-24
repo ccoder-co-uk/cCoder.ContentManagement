@@ -1,6 +1,9 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
-
 
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
@@ -10,19 +13,17 @@ public sealed partial class PageControllerTests
     public async Task Menu_ReturnsPageMenu()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_delete");
-        string title = Unique("MenuPage");
-        int id = (await CreatePageAsync(CreateValidPagePayload(seededContext, title))).Id;
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_delete"]);
+        string title = Unique(prefix: "MenuPage");
+        int id = (await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: title))).Id;
 
         // When
-        MenuResponse actualMenu = await GetMenuAsync(id);
+        MenuResponse actualMenu = await GetMenuAsync(id: id);
 
         // Then
-        actualMenu.Success.Should().BeTrue();
+        actualMenu.Success.Should()
+            .BeTrue();
 
-        await Teardown(seededContext);
+        await Teardown(seededContext: seededContext);
     }
 }
-
-
-

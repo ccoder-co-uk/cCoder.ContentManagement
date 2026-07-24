@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
@@ -15,22 +19,23 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class ResourceController : ODataController
 {
-    protected IResourceOrchestrationService Service { get; }
+    private readonly IResourceOrchestrationService service;
 
     public ResourceController(IResourceOrchestrationService service, ILogger<ResourceController> log)
     {
-        Service = service;
+        this.service = service;
     }
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok((base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build().EDMModel.GetExtendedMetadataForType("ContentManagement", typeof(Resource)) : new MetadataContainer(typeof(Resource), isEntity: true, hasEndpoint: true));
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Resource)) : new MetadataContainer(type: typeof(Resource), isEntity: true, hasEndpoint: true));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Resource> queryOptions) =>
-        Ok(Service.GetAll());
+        Ok(value: service.GetAllResource());
 
     [HttpGet]
     [AllowAnonymous]
@@ -39,8 +44,10 @@ public class ResourceController : ODataController
     {
         try
         {
-            IQueryable<Resource> result = Service.GetAll().Where(resource => resource.Id == key);
-            return Ok(SingleResult.Create(result));
+            IQueryable<Resource> result = service.GetAllResource()
+                .Where(predicate: resource => resource.Id == key);
+
+            return Ok(value: SingleResult.Create(queryable: result));
         }
         catch (SecurityException)
         {
@@ -50,39 +57,47 @@ public class ResourceController : ODataController
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] Resource entity)
+    public async Task<IActionResult> Post([FromBody] Resource newResource)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.AddAsync(entity));
+        return Ok(value: await service.AddResourceAsync(newResource: newResource));
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Resource entity)
+    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Resource updatedResource)
     {
         if (!base.ModelState.IsValid)
-            return new BadRequestResult(base.ModelState);
+        {
+            return new BadRequestResult(modelState: base.ModelState);
+        }
 
-        return Ok(await Service.UpdateAsync(entity));
+        return Ok(value: await service.UpdateResourceAsync(updatedResource: updatedResource));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<Resource> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Resource> updatedResource)
     {
-        Resource originalEntity = Service.Get(key);
-        if (originalEntity == null)
-            return NotFound();
+        Resource originalEntity = service.GetResource(resourceId: key);
 
-        delta.Patch(originalEntity);
-        return Ok(await Service.UpdateAsync(originalEntity));
+        if (originalEntity == null)
+        {
+            return NotFound();
+        }
+
+        updatedResource.Patch(original: originalEntity);
+        return Ok(value: await service.UpdateResourceAsync(updatedResource: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await Service.DeleteAsync(key);
+        await service.DeleteAsync(resourceId: key);
         return Ok();
     }
 }

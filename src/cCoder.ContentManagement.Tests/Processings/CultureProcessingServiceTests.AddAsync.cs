@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,14 +30,16 @@ public partial class CultureProcessingServiceTests
     {
         // Given
         Culture culture = CreateRandomCulture();
-        cultureServiceMock.Setup(x => x.AddAsync(culture)).ReturnsAsync(culture);
+
+        cultureServiceMock.Setup(expression: x => x.AddCultureAsync(newCulture: culture))
+            .ReturnsAsync(value: culture);
 
         // When
-        Culture result = await cultureProcessingService.AddAsync(culture);
+        Culture result = await cultureProcessingService.AddCultureAsync(newCulture: culture);
 
         // Then
-        Assert.Same(culture, result);
-        cultureServiceMock.Verify(x => x.AddAsync(culture), Times.Once);
+        Assert.Same(expected: culture, actual: result);
+        cultureServiceMock.Verify(expression: x => x.AddCultureAsync(newCulture: culture), times: Times.Once);
     }
 
     [Fact]
@@ -43,29 +49,16 @@ public partial class CultureProcessingServiceTests
         Culture culture = CreateRandomCulture();
 
         cultureServiceMock
-            .Setup(x => x.AddAsync(culture))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.AddCultureAsync(newCulture: culture))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await cultureProcessingService.AddAsync(culture)
+
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
+            await cultureProcessingService.AddCultureAsync(newCulture: culture)
         );
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

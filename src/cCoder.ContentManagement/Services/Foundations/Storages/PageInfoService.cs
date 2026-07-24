@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -10,95 +14,158 @@ internal partial class PageInfoService(
     IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IPageInfoService
 {
-    public PageInfo Get(int id, bool ignoreFilters = false)
+    public PageInfo GetPageInfo(int pageInfoId, bool ignoreFilters = false) =>
+        TryCatch<PageInfo>(operation: () =>
     {
-        ValidateId(id, "id");
+        ValidatePageInfoOnGet(inputs: [pageInfoId, ignoreFilters]);
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((PageInfo i) => i.Id == id);
+        {
+            return ExecuteGetAllPageInfo(ignoreFilters: true)
+                .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
+        }
 
-        PageInfo pageInfo = GetAll().FirstOrDefault((PageInfo i) => i.Id == id);
+        PageInfo pageInfo = ExecuteGetAllPageInfo()
+            .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
+
         if (pageInfo != null)
+        {
             return pageInfo;
+        }
 
-        PageInfo pageInfo2 = GetAll(ignoreFilters: true).FirstOrDefault((PageInfo i) => i.Id == id);
+        PageInfo pageInfo2 = ExecuteGetAllPageInfo(ignoreFilters: true)
+            .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
+
         if (pageInfo2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
-    }
 
-    public IQueryable<PageInfo> GetAll(bool ignoreFilters = false) =>
-        pageInfoBroker.GetAllPageInfo(ignoreFilters);
+    });
 
-    public async ValueTask<PageInfo> AddAsync(PageInfo pageInfo)
+    public IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<PageInfo>>(operation: () =>
     {
-        ValidatePageInfo(pageInfo, "pageInfo");
-        authorizationBroker.Authorize(GetAppId(pageInfo.PageId), "PageInfo_create");
-        PageInfo result = await pageInfoBroker.AddPageInfoAsync(CreateStoragePageInfo(pageInfo));
-        pageInfo.Id = result.Id;
-        pageInfo.PageId = result.PageId;
-        pageInfo.CultureId = result.CultureId;
-        pageInfo.Title = result.Title;
-        pageInfo.Description = result.Description;
-        pageInfo.Keywords = result.Keywords;
-        return pageInfo;
-    }
+        ValidateAllPageInfoOnGet(inputs: [ignoreFilters]);
+        return pageInfoBroker.GetAllPageInfo(ignoreFilters: ignoreFilters);
+    });
 
-    public async ValueTask<PageInfo> UpdateAsync(PageInfo pageInfo)
+    public ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo) =>
+        TryCatch<PageInfo>(operation: async () =>
     {
-        ValidatePageInfo(pageInfo, "pageInfo");
-        authorizationBroker.Authorize(GetAppId(pageInfo.PageId), "PageInfo_update");
-        PageInfo result = await pageInfoBroker.UpdatePageInfoAsync(CreateStoragePageInfo(pageInfo));
-        pageInfo.Id = result.Id;
-        pageInfo.PageId = result.PageId;
-        pageInfo.CultureId = result.CultureId;
-        pageInfo.Title = result.Title;
-        pageInfo.Description = result.Description;
-        pageInfo.Keywords = result.Keywords;
-        return pageInfo;
-    }
+        ValidatePageInfoOnAdd(inputs: [newPageInfo]);
+        ValidatePageInfo(pageInfo: newPageInfo, parameterName: "pageInfo");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: newPageInfo.PageId), privilege: "PageInfo_create");
+        PageInfo result = await pageInfoBroker.AddPageInfoAsync(newPageInfo: CreateStoragePageInfo(newPageInfo: newPageInfo));
+        newPageInfo.Id = result.Id;
+        newPageInfo.PageId = result.PageId;
+        newPageInfo.CultureId = result.CultureId;
+        newPageInfo.Title = result.Title;
+        newPageInfo.Description = result.Description;
+        newPageInfo.Keywords = result.Keywords;
+        return newPageInfo;
 
-    public async ValueTask DeleteAsync(int id)
+    }, isValueTask: true);
+
+    public ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo) =>
+        TryCatch<PageInfo>(operation: async () =>
     {
-        ValidateId(id, "id");
+        ValidatePageInfoOnUpdate(inputs: [updatedPageInfo]);
+        ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "pageInfo");
+        authorizationBroker.Authorize(appId: GetAppId(pageId: updatedPageInfo.PageId), privilege: "PageInfo_update");
+        PageInfo result = await pageInfoBroker.UpdatePageInfoAsync(updatedPageInfo: CreateStoragePageInfo(newPageInfo: updatedPageInfo));
+        updatedPageInfo.Id = result.Id;
+        updatedPageInfo.PageId = result.PageId;
+        updatedPageInfo.CultureId = result.CultureId;
+        updatedPageInfo.Title = result.Title;
+        updatedPageInfo.Description = result.Description;
+        updatedPageInfo.Keywords = result.Keywords;
+        return updatedPageInfo;
+
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int pageInfoId) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateDeleteAsync(inputs: [pageInfoId]);
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
         PageInfo pageInfo;
+
         try
         {
-            pageInfo = Get(id);
+            pageInfo = ExecuteGetPageInfo(pageInfoId: pageInfoId);
         }
         catch (SecurityException)
         {
-            pageInfo = Get(id, ignoreFilters: true);
+            pageInfo = ExecuteGetPageInfo(pageInfoId: pageInfoId, ignoreFilters: true);
         }
 
         if (pageInfo == null)
+        {
             return;
+        }
 
-        authorizationBroker.Authorize(GetAppId(pageInfo.PageId), "PageInfo_delete");
-        await pageInfoBroker.DeletePageInfoAsync(CreateStoragePageInfo(pageInfo));
-    }
+        authorizationBroker.Authorize(appId: GetAppId(pageId: pageInfo.PageId), privilege: "PageInfo_delete");
+        await pageInfoBroker.DeletePageInfoAsync(deletedPageInfo: CreateStoragePageInfo(newPageInfo: pageInfo));
 
-    private static PageInfo CreateStoragePageInfo(PageInfo pageInfo)
+    }, isValueTask: true);
+
+    private static PageInfo CreateStoragePageInfo(PageInfo newPageInfo)
     {
-        if (pageInfo == null)
+        if (newPageInfo == null)
+        {
             return null;
+        }
 
         return new PageInfo
         {
-            Id = pageInfo.Id,
-            PageId = pageInfo.PageId,
-            CultureId = pageInfo.CultureId,
-            Title = pageInfo.Title,
-            Description = pageInfo.Description,
-            Keywords = pageInfo.Keywords
+            Id = newPageInfo.Id,
+            PageId = newPageInfo.PageId,
+            CultureId = newPageInfo.CultureId,
+            Title = newPageInfo.Title,
+            Description = newPageInfo.Description,
+            Keywords = newPageInfo.Keywords
         };
     }
 
-    private int? GetAppId(int pageId)
+    private int? GetAppId(int pageId) =>
+        pageBroker.GetAllPages(ignoreFilters: true)
+        .Where(predicate: page => page.Id == pageId)
+        .Select(selector: page => (int?)page.AppId)
+        .FirstOrDefault();
+
+    private IQueryable<PageInfo> ExecuteGetAllPageInfo(bool ignoreFilters = false) =>
+        pageInfoBroker.GetAllPageInfo(ignoreFilters: ignoreFilters);
+
+    private PageInfo ExecuteGetPageInfo(int pageInfoId, bool ignoreFilters = false)
     {
-        return pageBroker.GetAllPages(ignoreFilters: true)
-            .Where(page => page.Id == pageId)
-            .Select(page => (int?)page.AppId)
-            .FirstOrDefault();
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllPageInfo(ignoreFilters: true)
+                .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
+        }
+
+        PageInfo pageInfo = ExecuteGetAllPageInfo()
+            .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
+
+        if (pageInfo != null)
+        {
+            return pageInfo;
+        }
+
+        PageInfo pageInfo2 = ExecuteGetAllPageInfo(ignoreFilters: true)
+            .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
+
+        if (pageInfo2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

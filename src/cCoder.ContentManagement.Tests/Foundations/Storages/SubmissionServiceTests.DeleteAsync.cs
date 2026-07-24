@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,22 +31,25 @@ public partial class SubmissionServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForDeleteAsync()
     {
         // Given
-        Guid submissionId = new Guid("11111111-1111-1111-1111-111111111111");
-        Submission submission = CreateRandomSubmission(submissionId);
+        Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
+        Submission submission = CreateRandomSubmission(id: submissionId);
 
-        submissionBrokerMock.Setup(x => x.GetAllSubmissions(false)).Returns(new[] { submission }.AsQueryable());
+        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions(ignoreFilters: false))
+            .Returns(value: new[] { submission }.AsQueryable());
 
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "Submission_delete"));
-        submissionBrokerMock.Setup(x => x.DeleteSubmissionAsync(It.IsAny<CmsDataModels.Submission>())).ReturnsAsync(1);
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"));
+
+        submissionBrokerMock.Setup(expression: x => x.DeleteSubmissionAsync(deletedSubmission: It.IsAny<CmsDataModels.Submission>()))
+            .ReturnsAsync(value: 1);
 
         // When
-        await submissionService.DeleteAsync(submissionId);
+        await submissionService.DeleteAsync(submissionId: submissionId);
 
         // Then
-        submissionBrokerMock.Verify(x => x.GetAllSubmissions(false), Times.Once);
-        submissionBrokerMock.Verify(x => x.DeleteSubmissionAsync(It.Is<CmsDataModels.Submission>(actual => actual.Id == submission.Id)), Times.Once);
+        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(ignoreFilters: false), times: Times.Once);
+        submissionBrokerMock.Verify(expression: x => x.DeleteSubmissionAsync(deletedSubmission: It.Is<CmsDataModels.Submission>(match: actual => actual.Id == submission.Id)), times: Times.Once);
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Submission_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -50,39 +57,29 @@ public partial class SubmissionServiceTests
     public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
     {
         // Given
-        Guid submissionId = new Guid("11111111-1111-1111-1111-111111111111");
-        Submission submission = CreateRandomSubmission(submissionId);
+        Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
+        Submission submission = CreateRandomSubmission(id: submissionId);
 
-        submissionBrokerMock.Setup(x => x.GetAllSubmissions(false)).Returns(new[] { submission }.AsQueryable());
+        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions(ignoreFilters: false))
+            .Returns(value: new[] { submission }.AsQueryable());
 
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "Submission_delete"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await submissionService.DeleteAsync(submissionId);
+        Func<Task> action = async () => await submissionService.DeleteAsync(submissionId: submissionId);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        submissionBrokerMock.Verify(x => x.GetAllSubmissions(false), Times.Once);
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(ignoreFilters: false), times: Times.Once);
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Submission_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

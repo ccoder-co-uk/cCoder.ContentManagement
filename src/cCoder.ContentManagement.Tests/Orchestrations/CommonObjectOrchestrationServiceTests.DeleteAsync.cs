@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,40 +26,24 @@ public partial class CommonObjectOrchestrationServiceTests
         // Given
         int id = 1;
         CommonObject entity = CreateRandomCommonObject();
-        commonObjectProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
-        commonObjectProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        commonObjectProcessingServiceMock.Setup(expression: x => x.GetCommonObject(commonObjectId: id))
+            .Returns(value: entity);
+
+        commonObjectProcessingServiceMock.Setup(expression: x => x.DeleteAsync(commonObjectId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         commonObjectEventProcessingServiceMock
-            .Setup(x => x.RaiseCommonObjectDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseCommonObjectDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(commonObjectId: id);
 
         // Then
-        commonObjectProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
-        commonObjectProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        commonObjectEventProcessingServiceMock.Verify(x => x.RaiseCommonObjectDeleteEventAsync(entity), Times.Once);
+        commonObjectProcessingServiceMock.Verify(expression: x => x.GetCommonObject(commonObjectId: id), times: Times.Once);
+        commonObjectProcessingServiceMock.Verify(expression: x => x.DeleteAsync(commonObjectId: id), times: Times.Once);
+        commonObjectEventProcessingServiceMock.Verify(expression: x => x.RaiseCommonObjectDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,40 +27,24 @@ public partial class ComponentOrchestrationServiceTests
         // Given
         int id = 1;
         Component entity = CreateRandomComponent();
-        componentProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
-        componentProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        componentProcessingServiceMock.Setup(expression: x => x.GetComponent(componentId: id))
+            .Returns(value: entity);
+
+        componentProcessingServiceMock.Setup(expression: x => x.DeleteAsync(componentId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         componentEventProcessingServiceMock
-            .Setup(x => x.RaiseComponentDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseComponentDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(componentId: id);
 
         // Then
-        componentProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
-        componentProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        componentEventProcessingServiceMock.Verify(x => x.RaiseComponentDeleteEventAsync(entity), Times.Once);
+        componentProcessingServiceMock.Verify(expression: x => x.GetComponent(componentId: id), times: Times.Once);
+        componentProcessingServiceMock.Verify(expression: x => x.DeleteAsync(componentId: id), times: Times.Once);
+        componentEventProcessingServiceMock.Verify(expression: x => x.RaiseComponentDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -11,7 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
-using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
@@ -19,25 +22,16 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class TemplateRenderOrchestrationServiceTests
 {
     private readonly Mock<ITemplateRenderProcessingService> templateRenderProcessingServiceMock;
-    private readonly Mock<ILogger<TemplateRenderOrchestrationService>> loggerMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly TemplateRenderOrchestrationService renderOrchestrationService;
 
     public TemplateRenderOrchestrationServiceTests()
     {
-        templateRenderProcessingServiceMock = new Mock<ITemplateRenderProcessingService>(MockBehavior.Strict);
-        loggerMock = new Mock<ILogger<TemplateRenderOrchestrationService>>(MockBehavior.Loose);
-
+        templateRenderProcessingServiceMock = new Mock<ITemplateRenderProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new Mock<IAuthorizationProcessingService>(behavior: MockBehavior.Strict);
         renderOrchestrationService = new TemplateRenderOrchestrationService(
-            templateRenderProcessingServiceMock.Object,
-            new Config(),
-            loggerMock.Object
+templateRenderProcessingService: templateRenderProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 }
-
-
-
-
-
-
-

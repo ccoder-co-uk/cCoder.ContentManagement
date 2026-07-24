@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
@@ -6,11 +10,11 @@ public interface IPageBroker
 {
     IQueryable<Page> GetAllPages(bool ignoreFilters);
 
-    ValueTask<Page> AddPageAsync(Page entity);
+    ValueTask<Page> AddPageAsync(Page newPage);
 
-    ValueTask<Page> UpdatePageAsync(Page entity);
+    ValueTask<Page> UpdatePageAsync(Page updatedPage);
 
-    ValueTask<int> DeletePageAsync(Page entity);
+    ValueTask<int> DeletePageAsync(Page deletedPage);
 
-    ValueTask DeleteAllPagesAsync(IEnumerable<Page> items);
+    ValueTask DeleteAllPagesAsync(IEnumerable<Page> deletedPage);
 }

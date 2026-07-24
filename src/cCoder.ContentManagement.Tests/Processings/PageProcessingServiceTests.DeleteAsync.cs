@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -11,8 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -24,68 +26,78 @@ public partial class PageProcessingServiceTests
     [Fact]
     public async Task ShouldDelegateToFoundationServiceWhenUserCanDeletePageForDeleteAsync()
     {
+        // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
-        User user = TestUsers.WithPrivilege("page_delete", 1);
-        Page page = CreateRandomPage(user);
+        User user = TestUsers.WithPrivilege(privilege: "page_delete", appId: 1);
+        Page page = CreateRandomPage(user: user);
         currentUser = user;
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { page }.AsQueryable());
-        pageServiceMock.Setup(x => x.DeleteAsync(page.Id)).Returns(ValueTask.CompletedTask);
 
-        await pageProcessingService.DeleteAsync(page.Id);
+        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: new[] { page }.AsQueryable());
 
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
-        pageServiceMock.Verify(x => x.DeleteAsync(page.Id), Times.Once);
+        pageServiceMock.Setup(expression: x => x.DeleteAsync(pageId: page.Id))
+            .Returns(value: ValueTask.CompletedTask);
+
+        // When
+        await pageProcessingService.DeleteAsync(pageId: page.Id);
+
+        // Then
+        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.DeleteAsync(pageId: page.Id), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
     {
+        // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         Page page = CreateRandomPage();
         currentUser = TestUsers.WithoutPrivileges();
-        pageServiceMock.Setup(x => x.GetAll(false)).Returns(new[] { page }.AsQueryable());
 
-        Func<Task> act = async () => await pageProcessingService.DeleteAsync(page.Id);
+        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: new[] { page }.AsQueryable());
 
-        await act.Should().ThrowAsync<SecurityException>();
-        pageServiceMock.Verify(x => x.GetAll(false), Times.Once);
+        // When
+        Func<Task> act = async () => await pageProcessingService.DeleteAsync(pageId: page.Id);
+
+        // Then
+        await act.Should()
+            .ThrowAsync<SecurityException>();
+
+        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }
-
-
-
-
-
-
-
-
-
-

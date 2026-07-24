@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -7,116 +11,187 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class ResourceService(IResourceBroker resourceBroker, IAuthorizationBroker authorizationBroker) : IResourceService
 {
-    public Resource Get(int id, bool ignoreFilters = false)
+    public Resource GetResource(int resourceId, bool ignoreFilters = false) =>
+        TryCatch<Resource>(operation: () =>
     {
-        ValidateId(id, "id");
+        ValidateResourceOnGet(inputs: [resourceId, ignoreFilters]);
+        ValidateId(resourceId: resourceId, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Resource i) => i.Id == id);
+        {
+            return ExecuteGetAllResource(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
+        }
 
-        Resource resource = GetAll().FirstOrDefault((Resource i) => i.Id == id);
+        Resource resource = ExecuteGetAllResource()
+            .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
+
         if (resource != null)
+        {
             return resource;
+        }
 
-        Resource resource2 = GetAll(ignoreFilters: true).FirstOrDefault((Resource i) => i.Id == id);
+        Resource resource2 = ExecuteGetAllResource(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
+
         if (resource2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
-    }
 
-    public IQueryable<Resource> GetAll(bool ignoreFilters = false) =>
-        resourceBroker.GetAllResources(ignoreFilters);
+    });
 
-    public async ValueTask<Resource> AddAsync(Resource resource)
+    public IQueryable<Resource> GetAllResource(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Resource>>(operation: () =>
     {
-        ValidateResource(resource, "resource");
-        authorizationBroker.Authorize(resource.AppId, "Resource_create");
-        Resource newResource = CreateStorageResource(resource);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
-        DateTimeOffset now = (newResource.CreatedOn = DateTimeOffset.UtcNow);
-        newResource.CreatedBy = currentUserId;
-        newResource.LastUpdated = now;
-        newResource.LastUpdatedBy = currentUserId;
-        Resource result = await resourceBroker.AddResourceAsync(newResource);
-        resource.Id = result.Id;
-        resource.Name = result.Name;
-        resource.Description = result.Description;
-        resource.LastUpdated = result.LastUpdated;
-        resource.LastUpdatedBy = result.LastUpdatedBy;
-        resource.CreatedOn = result.CreatedOn;
-        resource.CreatedBy = result.CreatedBy;
-        resource.AppId = result.AppId;
-        resource.Key = result.Key;
-        resource.Culture = result.Culture;
-        resource.DisplayName = result.DisplayName;
-        resource.ShortDisplayName = result.ShortDisplayName;
-        return resource;
-    }
+        ValidateAllResourceOnGet(inputs: [ignoreFilters]);
+        return resourceBroker.GetAllResources(ignoreFilters: ignoreFilters);
+    });
 
-    public async ValueTask<Resource> UpdateAsync(Resource resource)
+    public ValueTask<Resource> AddResourceAsync(Resource newResource) =>
+        TryCatch<Resource>(operation: async () =>
     {
-        ValidateResource(resource, "resource");
-        authorizationBroker.Authorize(resource.AppId, "Resource_update");
-        Resource updateResource = CreateStorageResource(resource);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateResourceOnAdd(inputs: [newResource]);
+        ValidateResource(resource: newResource, parameterName: "resource");
+        authorizationBroker.Authorize(appId: newResource.AppId, privilege: "Resource_create");
+        Resource storageResource = CreateStorageResource(newResource: newResource);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
+        DateTimeOffset now = (storageResource.CreatedOn = DateTimeOffset.UtcNow);
+        storageResource.CreatedBy = currentUserId;
+        storageResource.LastUpdated = now;
+        storageResource.LastUpdatedBy = currentUserId;
+        Resource result = await resourceBroker.AddResourceAsync(newResource: storageResource);
+        newResource.Id = result.Id;
+        newResource.Name = result.Name;
+        newResource.Description = result.Description;
+        newResource.LastUpdated = result.LastUpdated;
+        newResource.LastUpdatedBy = result.LastUpdatedBy;
+        newResource.CreatedOn = result.CreatedOn;
+        newResource.CreatedBy = result.CreatedBy;
+        newResource.AppId = result.AppId;
+        newResource.Key = result.Key;
+        newResource.Culture = result.Culture;
+        newResource.DisplayName = result.DisplayName;
+        newResource.ShortDisplayName = result.ShortDisplayName;
+        return newResource;
+
+    }, isValueTask: true);
+
+    public ValueTask<Resource> UpdateResourceAsync(Resource updatedResource) =>
+        TryCatch<Resource>(operation: async () =>
+    {
+        ValidateResourceOnUpdate(inputs: [updatedResource]);
+        ValidateResource(resource: updatedResource, parameterName: "resource");
+        authorizationBroker.Authorize(appId: updatedResource.AppId, privilege: "Resource_update");
+        Resource updateResource = CreateStorageResource(newResource: updatedResource);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateResource.LastUpdated = now;
         updateResource.LastUpdatedBy = currentUserId;
-        Resource result = await resourceBroker.UpdateResourceAsync(updateResource);
-        resource.Id = result.Id;
-        resource.Name = result.Name;
-        resource.Description = result.Description;
-        resource.LastUpdated = result.LastUpdated;
-        resource.LastUpdatedBy = result.LastUpdatedBy;
-        resource.CreatedOn = result.CreatedOn;
-        resource.CreatedBy = result.CreatedBy;
-        resource.AppId = result.AppId;
-        resource.Key = result.Key;
-        resource.Culture = result.Culture;
-        resource.DisplayName = result.DisplayName;
-        resource.ShortDisplayName = result.ShortDisplayName;
-        return resource;
-    }
+        Resource result = await resourceBroker.UpdateResourceAsync(updatedResource: updateResource);
+        updatedResource.Id = result.Id;
+        updatedResource.Name = result.Name;
+        updatedResource.Description = result.Description;
+        updatedResource.LastUpdated = result.LastUpdated;
+        updatedResource.LastUpdatedBy = result.LastUpdatedBy;
+        updatedResource.CreatedOn = result.CreatedOn;
+        updatedResource.CreatedBy = result.CreatedBy;
+        updatedResource.AppId = result.AppId;
+        updatedResource.Key = result.Key;
+        updatedResource.Culture = result.Culture;
+        updatedResource.DisplayName = result.DisplayName;
+        updatedResource.ShortDisplayName = result.ShortDisplayName;
+        return updatedResource;
 
-    public async ValueTask DeleteAsync(int id)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int resourceId) =>
+        TryCatch(operation: async () =>
     {
-        ValidateId(id, "id");
+        ValidateDeleteAsync(inputs: [resourceId]);
+        ValidateId(resourceId: resourceId, parameterName: "id");
         Resource resource;
+
         try
         {
-            resource = Get(id);
+            resource = ExecuteGetResource(resourceId: resourceId);
         }
         catch (SecurityException)
         {
-            resource = Get(id, ignoreFilters: true);
+            resource = ExecuteGetResource(resourceId: resourceId, ignoreFilters: true);
         }
 
         if (resource == null)
+        {
             return;
+        }
 
-        authorizationBroker.Authorize(resource.AppId, "Resource_delete");
-        await resourceBroker.DeleteResourceAsync(CreateStorageResource(resource));
-    }
+        authorizationBroker.Authorize(appId: resource.AppId, privilege: "Resource_delete");
+        await resourceBroker.DeleteResourceAsync(deletedResource: CreateStorageResource(newResource: resource));
 
-    private static Resource CreateStorageResource(Resource resource)
+    }, isValueTask: true);
+
+    private static Resource CreateStorageResource(Resource newResource)
     {
-        if (resource == null)
+        if (newResource == null)
+        {
             return null;
+        }
 
         return new Resource
         {
-            Id = resource.Id,
-            Name = resource.Name,
-            Description = resource.Description,
-            LastUpdated = resource.LastUpdated,
-            LastUpdatedBy = resource.LastUpdatedBy,
-            CreatedOn = resource.CreatedOn,
-            CreatedBy = resource.CreatedBy,
-            AppId = resource.AppId,
-            Key = resource.Key,
-            Culture = resource.Culture,
-            DisplayName = resource.DisplayName,
-            ShortDisplayName = resource.ShortDisplayName
+            Id = newResource.Id,
+            Name = newResource.Name,
+            Description = newResource.Description,
+            LastUpdated = newResource.LastUpdated,
+            LastUpdatedBy = newResource.LastUpdatedBy,
+            CreatedOn = newResource.CreatedOn,
+            CreatedBy = newResource.CreatedBy,
+            AppId = newResource.AppId,
+            Key = newResource.Key,
+            Culture = newResource.Culture,
+            DisplayName = newResource.DisplayName,
+            ShortDisplayName = newResource.ShortDisplayName
         };
+    }
+
+    private IQueryable<Resource> ExecuteGetAllResource(bool ignoreFilters = false) =>
+        resourceBroker.GetAllResources(ignoreFilters: ignoreFilters);
+
+    private Resource ExecuteGetResource(int resourceId, bool ignoreFilters = false)
+    {
+        ValidateId(resourceId: resourceId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllResource(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
+        }
+
+        Resource resource = ExecuteGetAllResource()
+            .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
+
+        if (resource != null)
+        {
+            return resource;
+        }
+
+        Resource resource2 = ExecuteGetAllResource(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
+
+        if (resource2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

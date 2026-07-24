@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,36 +29,18 @@ public partial class CultureProcessingServiceTests
 
     public CultureProcessingServiceTests()
     {
-        cultureProcessingService = new CultureProcessingService(cultureServiceMock.Object);
+        cultureProcessingService = new CultureProcessingService(service: cultureServiceMock.Object);
     }
 
     private static Culture CreateRandomCulture() =>
         Builder<Culture>
             .CreateNew()
-            .With(x => x.Id = $"culture-{Guid.NewGuid():N}")
-            .With(x => x.Name = $"Culture-{Guid.NewGuid():N}")
-            .With(x => x.Apps = [])
-            .With(x => x.Users = [])
-            .With(x => x.PageInfos = [])
-            .With(x => x.PageContents = [])
-            .With(x => x.MetaItems = [])
-            .Build();
+        .With(func: x => x.Id = $"culture-{Guid.NewGuid():N}")
+        .With(func: x => x.Name = $"Culture-{Guid.NewGuid():N}")
+        .With(func: x => x.Apps = [])
+        .With(func: x => x.Users = [])
+        .With(func: x => x.PageInfos = [])
+        .With(func: x => x.PageContents = [])
+        .With(func: x => x.MetaItems = [])
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

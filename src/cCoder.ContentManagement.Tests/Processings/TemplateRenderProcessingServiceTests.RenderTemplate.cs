@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,42 +31,73 @@ public partial class TemplateRenderProcessingServiceTests
     [Fact]
     public async Task ShouldRenderDeclaredSupportedTagTypesForTemplateRoot()
     {
-        TemplateRenderProcessingService sut = CreateSut();
+        // Given
         (RenderApp app, RenderUser user, RenderTemplate template) = CreateTemplateRenderContext();
-        RenderTemplateParams renderParams = new(app, user, "en-GB");
+        RenderTemplateParams renderParams = new(app: app, user: user, culture: "en-GB");
 
-        metadataCacheMock.Setup(x => x.Get("site-description", "en-GB")).Returns("Meta Description");
+        metadataCacheMock.Setup(expression: x => x.Get(key: "site-description", culture: "en-GB"))
+            .Returns(value: "Meta Description");
+
         commonObjectCacheMock
-            .Setup(x => x.Get<RenderScript>("script|bootstrap"))
-            .Returns(new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
+            .Setup(expression: x => x.Get<RenderScript>(key: "script|bootstrap"))
+            .Returns(value: new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
 
-        string result = await RenderTestWorkflowServer.RunAsync(workflowBaseUrl =>
-            sut.RenderTemplate(template, new { Name = "Taylor" }, renderParams, CreateConfig(workflowBaseUrl)));
+        // When
+        string result = await RenderTestWorkflowServer.RunStringAsync(action: workflowBaseUrl =>
+        {
+            TemplateRenderProcessingService sut = CreateSut(
+                config: CreateConfig(workflowBaseUrl: workflowBaseUrl));
 
-        result.Should().Contain("App|Blue|Taylor|bootstrap-script|");
-        result.Should().Contain("Hero Taylor");
-        result.Should().Contain("<script type='text/javascript'></script>");
-        result.Should().NotContain("defer async");
-        result.Should().Contain("Meta Description");
-        result.Should().Contain("Hello");
-        result.Should().Contain("executed");
+            return sut.RenderTemplateRenderParams(
+                template: template,
+                model: new { Name = "Taylor" },
+                renderParams: renderParams);
+        });
+
+        // Then
+        result.Should()
+            .Contain(expected: "App|Blue|Taylor|bootstrap-script|");
+
+        result.Should()
+            .Contain(expected: "Hero Taylor");
+
+        result.Should()
+            .Contain(expected: "<script type='text/javascript'></script>");
+
+        result.Should()
+            .NotContain(unexpected: "defer async");
+
+        result.Should()
+            .Contain(expected: "Meta Description");
+
+        result.Should()
+            .Contain(expected: "Hello");
+
+        result.Should()
+            .Contain(expected: "executed");
     }
 
     [Fact]
     public void ShouldThrowValidationExceptionWhenTemplateIsNull()
     {
-        TemplateRenderProcessingService sut = CreateSut();
+        // Given
+        Config config = CreateConfig(
+            workflowBaseUrl: "http://127.0.0.1/");
+
+        TemplateRenderProcessingService sut = CreateSut(config: config);
         (RenderApp app, RenderUser user, _) = CreateTemplateRenderContext();
 
-        Action act = () => sut.RenderTemplate(null!, new { Name = "Taylor" }, new RenderTemplateParams(app, user, "en-GB"), CreateConfig("http://127.0.0.1/"));
+        // When
+        Action act = () => sut.RenderTemplateRenderParams(
+            template: null!,
+            model: new { Name = "Taylor" },
+            renderParams: new RenderTemplateParams(
+                app: app,
+                user: user,
+                culture: "en-GB"));
 
-        act.Should().Throw<ValidationException>();
+        // Then
+        act.Should()
+            .Throw<ValidationException>();
     }
 }
-
-
-
-
-
-
-

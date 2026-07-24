@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 namespace cCoder.ContentManagement.Models;
 
 public class RenderResult
@@ -32,8 +36,10 @@ public class RenderResult
 
     public string BodyHtml { get; set; }
 
-    public int StatusCode { get; set; } = 200;
+    public int StatusCode { get; set; }
 
-    public dynamic KeyInfo() =>
-        new { AppId, PageId, ParentId };
+    public RenderResult()
+    {
+        StatusCode = 200;
+    }
 }

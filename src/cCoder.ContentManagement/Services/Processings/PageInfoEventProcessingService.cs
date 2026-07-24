@@ -1,38 +1,53 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PageInfoEventProcessingService(IPageInfoEventService eventService) : IPageInfoEventProcessingService
+internal partial class PageInfoEventProcessingService(IPageInfoEventService eventService) : IPageInfoEventProcessingService
 {
-    public ValueTask RaisePageInfoAddEventAsync(PageInfo entity)
+    public ValueTask RaisePageInfoAddEventAsync(PageInfo entity) =>
+        TryCatch(operation: () =>
     {
-        ValidatePageInfo(entity, "entity");
+        ValidateRaisePageInfoAddEventAsync(inputs: [entity]);
+        ValidatePageInfo(pageInfo: entity, parameterName: "entity");
 
-        return eventService.RaisePageInfoAddEventAsync(entity);
-    }
+        return eventService.RaisePageInfoAddEventAsync(entity: entity);
 
-    public ValueTask RaisePageInfoUpdateEventAsync(PageInfo entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageInfoUpdateEventAsync(PageInfo entity) =>
+        TryCatch(operation: () =>
     {
-        ValidatePageInfo(entity, "entity");
+        ValidateRaisePageInfoUpdateEventAsync(inputs: [entity]);
+        ValidatePageInfo(pageInfo: entity, parameterName: "entity");
 
-        return eventService.RaisePageInfoUpdateEventAsync(entity);
-    }
+        return eventService.RaisePageInfoUpdateEventAsync(entity: entity);
 
-    public ValueTask RaisePageInfoDeleteEventAsync(PageInfo entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageInfoDeleteEventAsync(PageInfo entity) =>
+        TryCatch(operation: () =>
     {
-        ValidatePageInfo(entity, "entity");
+        ValidateRaisePageInfoDeleteEventAsync(inputs: [entity]);
+        ValidatePageInfo(pageInfo: entity, parameterName: "entity");
 
-        return eventService.RaisePageInfoDeleteEventAsync(entity);
-    }
+        return eventService.RaisePageInfoDeleteEventAsync(entity: entity);
+
+    }, isValueTask: true);
 
     private static void ValidatePageInfo(PageInfo pageInfo, string parameterName) =>
-        ThrowIf(pageInfo == null, parameterName + " is required.");
+        ThrowIf(condition: pageInfo == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

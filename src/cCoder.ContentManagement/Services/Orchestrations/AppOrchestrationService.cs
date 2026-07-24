@@ -1,101 +1,161 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Brokers;
 using Microsoft.EntityFrameworkCore;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal class AppOrchestrationService(
+internal partial class AppOrchestrationService(
     IAppProcessingService processingService,
     IAppEventProcessingService eventService,
-    IAuthorizationBroker authorizationBroker) : IAppOrchestrationService
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IAppOrchestrationService
 {
-    public App Get(int id)
+    public App GetApp(int appId) =>
+        TryCatch<App>(operation: () =>
     {
-        ValidateId(id, "id");
-        return processingService.Get(id);
-    }
+        ValidateAppOnGet(inputs: [appId]);
+        ValidateId(appId: appId, parameterName: "id");
+        return processingService.GetApp(appId: appId);
 
-    public App GetByDomain(string domain, bool ignoreFilters = false)
+    });
+
+    public bool IsAdminApp(int appId, string userName) =>
+        TryCatch<bool>(operation: () =>
     {
-        ValidateDomain(domain, "domain");
-        return processingService.GetByDomain(domain, ignoreFilters);
-    }
+        ValidateIsAdminApp(inputs: [appId, userName]);
+        ValidateId(appId: appId, parameterName: "appId");
+        ValidateUserName(userName: userName, parameterName: "userName");
 
-    public IQueryable<App> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters);
+        return authorizationProcessingService.IsAdmin(
+            appId: appId,
+            userName: userName);
+    });
 
-    public async ValueTask<App> AddAsync(App entity)
+    public App GetByDomainApp(string domain, bool ignoreFilters = false) =>
+        TryCatch<App>(operation: () =>
     {
-        ValidateApp(entity, "entity");
-        App result = await processingService.AddAsync(entity);
-        await eventService.RaiseAppAddEventAsync(result);
+        ValidateByDomainAppOnGet(inputs: [domain, ignoreFilters]);
+        ValidateDomain(domain: domain, parameterName: "domain");
+        return processingService.GetByDomainApp(domain: domain, ignoreFilters: ignoreFilters);
+
+    });
+
+    public IQueryable<App> GetAllApp(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<App>>(operation: () =>
+    {
+        ValidateAllAppOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllApp(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<App> AddAppAsync(App newApp) =>
+        TryCatch<App>(operation: async () =>
+    {
+        ValidateAppOnAdd(inputs: [newApp]);
+        ValidateApp(app: newApp, parameterName: "entity");
+        App result = await processingService.AddAppAsync(newApp: newApp);
+        await eventService.RaiseAppAddEventAsync(app: result);
         return result;
-    }
 
-    public async ValueTask<App> UpdateAsync(App entity)
+    }, isValueTask: true);
+
+    public ValueTask<App> UpdateAppAsync(App updatedApp) =>
+        TryCatch<App>(operation: async () =>
     {
-        ValidateApp(entity, "entity");
-        App result = await processingService.UpdateAsync(entity);
-        ReflectUpdatedApp(result, entity);
-        await eventService.RaiseAppUpdateEventAsync(entity);
+        ValidateAppOnUpdate(inputs: [updatedApp]);
+        ValidateApp(app: updatedApp, parameterName: "entity");
+        App result = await processingService.UpdateAppAsync(updatedApp: updatedApp);
+        ReflectUpdatedApp(source: result, target: updatedApp);
+        await eventService.RaiseAppUpdateEventAsync(app: updatedApp);
         return result;
-    }
 
-    public async ValueTask DeleteAsync(int id)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int appId) =>
+        TryCatch(operation: async () =>
     {
-        ValidateId(id, "id");
-        App app = processingService.GetAll(ignoreFilters: true)
-            .Include(foundApp => foundApp.Roles)
-            .FirstOrDefault(foundApp => foundApp.Id == id);
+        ValidateDeleteAsync(inputs: [appId]);
+        ValidateId(appId: appId, parameterName: "id");
+
+        App app = processingService.GetAllApp(ignoreFilters: true)
+            .Include(navigationPropertyPath: foundApp => foundApp.Roles)
+            .FirstOrDefault(predicate: foundApp => foundApp.Id == appId);
 
         if (app?.Roles?.Any() == true)
-            authorizationBroker.Authorize(id, "app_delete");
+        {
+            authorizationProcessingService.Authorize(
+                appId: appId,
+                privilege: "app_delete");
+        }
 
         if (app != null)
-            await eventService.RaiseAppDeleteEventAsync(app);
+        {
+            await eventService.RaiseAppDeleteEventAsync(app: app);
+        }
 
-        await processingService.DeleteAsync(id);
-    }
+        await processingService.DeleteAsync(appId: appId);
 
-    public ValueTask<IEnumerable<Result<App>>> AddOrUpdate(IEnumerable<App> items) =>
-        processingService.AddOrUpdate(ValidateApps(items, "items"));
+    }, isValueTask: true);
 
-    public ValueTask DeleteAllAsync(IEnumerable<App> items) =>
-        processingService.DeleteAllAsync(ValidateApps(items, "items"));
-
-    public IQueryable<User> GetAppUsers(int appId)
+    public ValueTask<IEnumerable<OperationResult<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp) =>
+        TryCatch<IEnumerable<OperationResult<App>>>(operation: () =>
     {
-        ValidateId(appId, "appId");
-        return processingService.GetAppUsers(appId);
-    }
+        ValidateOrUpdateAppResultOnAdd(inputs: [newApp]);
+        return processingService.AddOrUpdateAppResult(newApp: ValidateApps(apps: newApp, parameterName: "items"));
+    }, isValueTask: true);
 
-    public ValueTask UpdatePageOrderAsync(int key, App app) =>
-        processingService.UpdatePageOrderAsync(key, ValidateApp(app, "app"));
+    public ValueTask DeleteAllAppAsync(IEnumerable<App> deletedApp) =>
+        TryCatch(operation: () =>
+    {
+        ValidateAllAppOnDelete(inputs: [deletedApp]);
+        return processingService.DeleteAllAppAsync(deletedApp: ValidateApps(apps: deletedApp, parameterName: "items"));
+    }, isValueTask: true);
 
-    public App ResolveCurrentApp() => processingService.ResolveCurrentApp();
+    public ValueTask UpdatePageOrderAppAsync(int key, App updatedApp) =>
+        TryCatch(operation: () =>
+    {
+        ValidatePageOrderAppOnUpdate(inputs: [key, updatedApp]);
+        return processingService.UpdatePageOrderAppAsync(key: key, updatedApp: ValidateApp(app: updatedApp, parameterName: "app"));
+    }, isValueTask: true);
 
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(id < 1, parameterName + " must be greater than 0.");
+    public App ResolveCurrentApp() =>
+        TryCatch<App>(operation: () =>
+    {
+        ValidateResolveCurrentApp(inputs: []);
+        return processingService.ResolveCurrentApp();
+    });
+
+    private static void ValidateId(int appId, string parameterName) =>
+        ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
 
     private static App ValidateApp(App app, string parameterName)
     {
         if (app == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return app;
     }
 
     private static void ValidateDomain(string domain, string parameterName) =>
-        ThrowIf(string.IsNullOrWhiteSpace(domain), parameterName + " is required.");
+        ThrowIf(condition: string.IsNullOrWhiteSpace(value: domain), message: parameterName + " is required.");
+
+    private static void ValidateUserName(string userName, string parameterName) =>
+        ThrowIf(condition: string.IsNullOrWhiteSpace(value: userName), message: parameterName + " is required.");
 
     private static IEnumerable<App> ValidateApps(IEnumerable<App> apps, string parameterName)
     {
         if (apps == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return apps;
     }
@@ -122,6 +182,8 @@ internal class AppOrchestrationService(
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

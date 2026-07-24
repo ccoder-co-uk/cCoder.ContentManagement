@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -10,9 +14,11 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Foundations;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
+using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
-using IMetadataCache = cCoder.ContentManagement.Exposures.Caching.IMetadataCache;
+using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
 using RenderApp = cCoder.Data.Models.CMS.App;
 using RenderComponent = cCoder.Data.Models.CMS.Component;
@@ -27,20 +33,42 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class ComponentRenderProcessingServiceTests
 {
     private readonly Mock<IMetadataCache> metadataCacheMock = new();
-    private readonly Mock<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache> commonObjectCacheMock = new();
+    private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
     private readonly Mock<IRenderFileContentService> renderFileContentServiceMock = new();
 
-    private ComponentRenderProcessingService CreateSut(string workflowBaseUrl) =>
-        new(
-            metadataCacheMock.Object,
-            commonObjectCacheMock.Object,
-            new JsonBroker(),
-            new RenderConfig
+    private ComponentRenderProcessingService CreateSut(string workflowBaseUrl)
+    {
+        Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
+
+        serviceProviderBrokerMock
+            .Setup(expression: broker =>
+                broker.GetRequiredService<IRenderFileContentService>(
+                    name: "RenderFileContent"))
+            .Returns(value: renderFileContentServiceMock.Object);
+
+        ComponentRenderService componentRenderService =
+            new(
+                serviceProviderBroker: serviceProviderBrokerMock.Object);
+
+        RenderConfig config = new()
+        {
+            Settings = new Dictionary<string, string>
             {
-                Settings = new Dictionary<string, string> { ["sslPort"] = "443" },
-                Services = new Dictionary<string, string> { ["Workflow"] = workflowBaseUrl },
+                ["sslPort"] = "443",
             },
-            renderFileContentServiceMock.Object);
+            Services = new Dictionary<string, string>
+            {
+                ["Workflow"] = workflowBaseUrl,
+            },
+        };
+
+        return new ComponentRenderProcessingService(
+            metadataCache: metadataCacheMock.Object,
+            objectCache: commonObjectCacheMock.Object,
+            jsonBroker: new JsonBroker(),
+            config: config,
+            componentRenderService: componentRenderService);
+    }
 
     private static (RenderApp app, RenderUser user, RenderComponent component, RenderComponentParams renderParams) CreateComponentRenderContext()
     {
@@ -106,26 +134,20 @@ public partial class ComponentRenderProcessingServiceTests
             Name = "Hero",
             ResourceKey = "Default",
             Content = string.Join(
-                "",
-                "[dms[snippets/info]]|",
-                "[script[Bootstrap]]|",
-                "[component[Child]]|",
-                "[meta[site-description]]|",
-                "[resource_displayname[Greeting]]|",
-                "[theme[Color]]|",
-                "[execute]return 'ignored';[/execute]"
-            ),
+                separator: "",
+                value:
+                [
+                    "[dms[snippets/info]]|",
+                    "[script[Bootstrap]]|",
+                    "[component[Child]]|",
+                    "[meta[site-description]]|",
+                    "[resource_displayname[Greeting]]|",
+                    "[theme[Color]]|",
+                    "[execute]return 'ignored';[/execute]"
+                ]),
             Script = string.Empty,
         };
 
-        return (app, user, component, new RenderComponentParams("Default", app, user, "en-GB"));
+        return (app, user, component, new RenderComponentParams(theme: "Default", app: app, user: user, culture: "en-GB"));
     }
 }
-
-
-
-
-
-
-
-

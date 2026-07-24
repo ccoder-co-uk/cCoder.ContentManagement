@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,40 +32,36 @@ public partial class AppCultureEventServiceTests
         EventMessage<CmsDataModels.AppCulture> actualMessage = null;
 
         appCultureEventBrokerMock
-            .Setup(x => x.RaiseAppCultureAddEventAsync(It.IsAny<EventMessage<CmsDataModels.AppCulture>>()))
-            .Callback<EventMessage<CmsDataModels.AppCulture>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseAppCultureAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.AppCulture>>()))
+            .Callback<EventMessage<CmsDataModels.AppCulture>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseAppCultureAddEventAsync(entity);
+        await service.RaiseAppCultureAddEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         appCultureEventBrokerMock.Verify(
-            x => x.RaiseAppCultureAddEventAsync(It.IsAny<EventMessage<CmsDataModels.AppCulture>>()),
-            Times.Once
+expression: x => x.RaiseAppCultureAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.AppCulture>>()),
+times: Times.Once
         );
+
+        appCultureEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         appCultureEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -7,113 +11,184 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationBroker authorizationBroker) : ILayoutService
 {
-    public Layout Get(int id, bool ignoreFilters = false)
+    public Layout GetLayout(int layoutId, bool ignoreFilters = false) =>
+        TryCatch<Layout>(operation: () =>
     {
-        ValidateId(id, "id");
+        ValidateLayoutOnGet(inputs: [layoutId, ignoreFilters]);
+        ValidateId(layoutId: layoutId, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Layout i) => i.Id == id);
+        {
+            return ExecuteGetAllLayout(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
+        }
 
-        Layout layout = GetAll().FirstOrDefault((Layout i) => i.Id == id);
+        Layout layout = ExecuteGetAllLayout()
+            .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
+
         if (layout != null)
+        {
             return layout;
+        }
 
-        Layout layout2 = GetAll(ignoreFilters: true).FirstOrDefault((Layout i) => i.Id == id);
+        Layout layout2 = ExecuteGetAllLayout(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
+
         if (layout2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
-    }
 
-    public IQueryable<Layout> GetAll(bool ignoreFilters = false) =>
-        layoutBroker.GetAllLayouts(ignoreFilters);
+    });
 
-    public async ValueTask<Layout> AddAsync(Layout layout)
+    public IQueryable<Layout> GetAllLayout(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Layout>>(operation: () =>
     {
-        ValidateLayout(layout, "layout");
-        authorizationBroker.Authorize(layout.AppId, "Layout_create");
-        Layout newLayout = CreateStorageLayout(layout);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
-        DateTimeOffset now = (newLayout.CreatedOn = DateTimeOffset.UtcNow);
-        newLayout.CreatedBy = currentUserId;
-        newLayout.LastUpdated = now;
-        newLayout.LastUpdatedBy = currentUserId;
-        Layout result = await layoutBroker.AddLayoutAsync(newLayout);
-        layout.Id = result.Id;
-        layout.Name = result.Name;
-        layout.Description = result.Description;
-        layout.LastUpdated = result.LastUpdated;
-        layout.LastUpdatedBy = result.LastUpdatedBy;
-        layout.CreatedOn = result.CreatedOn;
-        layout.CreatedBy = result.CreatedBy;
-        layout.AppId = result.AppId;
-        layout.HeaderHtml = result.HeaderHtml;
-        layout.Html = result.Html;
-        layout.Script = result.Script;
-        return layout;
-    }
+        ValidateAllLayoutOnGet(inputs: [ignoreFilters]);
+        return layoutBroker.GetAllLayouts(ignoreFilters: ignoreFilters);
+    });
 
-    public async ValueTask<Layout> UpdateAsync(Layout layout)
+    public ValueTask<Layout> AddLayoutAsync(Layout newLayout) =>
+        TryCatch<Layout>(operation: async () =>
     {
-        ValidateLayout(layout, "layout");
-        authorizationBroker.Authorize(layout.AppId, "Layout_update");
-        Layout updateLayout = CreateStorageLayout(layout);
-        string currentUserId = authorizationBroker.GetCurrentUser().Id;
+        ValidateLayoutOnAdd(inputs: [newLayout]);
+        ValidateLayout(layout: newLayout, parameterName: "layout");
+        authorizationBroker.Authorize(appId: newLayout.AppId, privilege: "Layout_create");
+        Layout storageLayout = CreateStorageLayout(newLayout: newLayout);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
+        DateTimeOffset now = (storageLayout.CreatedOn = DateTimeOffset.UtcNow);
+        storageLayout.CreatedBy = currentUserId;
+        storageLayout.LastUpdated = now;
+        storageLayout.LastUpdatedBy = currentUserId;
+        Layout result = await layoutBroker.AddLayoutAsync(newLayout: storageLayout);
+        newLayout.Id = result.Id;
+        newLayout.Name = result.Name;
+        newLayout.Description = result.Description;
+        newLayout.LastUpdated = result.LastUpdated;
+        newLayout.LastUpdatedBy = result.LastUpdatedBy;
+        newLayout.CreatedOn = result.CreatedOn;
+        newLayout.CreatedBy = result.CreatedBy;
+        newLayout.AppId = result.AppId;
+        newLayout.HeaderHtml = result.HeaderHtml;
+        newLayout.Html = result.Html;
+        newLayout.Script = result.Script;
+        return newLayout;
+
+    }, isValueTask: true);
+
+    public ValueTask<Layout> UpdateLayoutAsync(Layout updatedLayout) =>
+        TryCatch<Layout>(operation: async () =>
+    {
+        ValidateLayoutOnUpdate(inputs: [updatedLayout]);
+        ValidateLayout(layout: updatedLayout, parameterName: "layout");
+        authorizationBroker.Authorize(appId: updatedLayout.AppId, privilege: "Layout_update");
+        Layout updateLayout = CreateStorageLayout(newLayout: updatedLayout);
+
+        string currentUserId = authorizationBroker.GetCurrentUser()
+            .Id;
+
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateLayout.LastUpdated = now;
         updateLayout.LastUpdatedBy = currentUserId;
-        Layout result = await layoutBroker.UpdateLayoutAsync(updateLayout);
-        layout.Id = result.Id;
-        layout.Name = result.Name;
-        layout.Description = result.Description;
-        layout.LastUpdated = result.LastUpdated;
-        layout.LastUpdatedBy = result.LastUpdatedBy;
-        layout.CreatedOn = result.CreatedOn;
-        layout.CreatedBy = result.CreatedBy;
-        layout.AppId = result.AppId;
-        layout.HeaderHtml = result.HeaderHtml;
-        layout.Html = result.Html;
-        layout.Script = result.Script;
-        return layout;
-    }
+        Layout result = await layoutBroker.UpdateLayoutAsync(updatedLayout: updateLayout);
+        updatedLayout.Id = result.Id;
+        updatedLayout.Name = result.Name;
+        updatedLayout.Description = result.Description;
+        updatedLayout.LastUpdated = result.LastUpdated;
+        updatedLayout.LastUpdatedBy = result.LastUpdatedBy;
+        updatedLayout.CreatedOn = result.CreatedOn;
+        updatedLayout.CreatedBy = result.CreatedBy;
+        updatedLayout.AppId = result.AppId;
+        updatedLayout.HeaderHtml = result.HeaderHtml;
+        updatedLayout.Html = result.Html;
+        updatedLayout.Script = result.Script;
+        return updatedLayout;
 
-    public async ValueTask DeleteAsync(int id)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int layoutId) =>
+        TryCatch(operation: async () =>
     {
-        ValidateId(id, "id");
+        ValidateDeleteAsync(inputs: [layoutId]);
+        ValidateId(layoutId: layoutId, parameterName: "id");
         Layout layout;
+
         try
         {
-            layout = Get(id);
+            layout = ExecuteGetLayout(layoutId: layoutId);
         }
         catch (SecurityException)
         {
-            layout = Get(id, ignoreFilters: true);
+            layout = ExecuteGetLayout(layoutId: layoutId, ignoreFilters: true);
         }
 
         if (layout == null)
+        {
             return;
+        }
 
-        authorizationBroker.Authorize(layout.AppId, "Layout_delete");
-        await layoutBroker.DeleteLayoutAsync(CreateStorageLayout(layout));
-    }
+        authorizationBroker.Authorize(appId: layout.AppId, privilege: "Layout_delete");
+        await layoutBroker.DeleteLayoutAsync(deletedLayout: CreateStorageLayout(newLayout: layout));
 
-    private static Layout CreateStorageLayout(Layout layout)
+    }, isValueTask: true);
+
+    private static Layout CreateStorageLayout(Layout newLayout)
     {
-        if (layout == null)
+        if (newLayout == null)
+        {
             return null;
+        }
 
         return new Layout
         {
-            Id = layout.Id,
-            Name = layout.Name,
-            Description = layout.Description,
-            LastUpdated = layout.LastUpdated,
-            LastUpdatedBy = layout.LastUpdatedBy,
-            CreatedOn = layout.CreatedOn,
-            CreatedBy = layout.CreatedBy,
-            AppId = layout.AppId,
-            HeaderHtml = layout.HeaderHtml,
-            Html = layout.Html,
-            Script = layout.Script
+            Id = newLayout.Id,
+            Name = newLayout.Name,
+            Description = newLayout.Description,
+            LastUpdated = newLayout.LastUpdated,
+            LastUpdatedBy = newLayout.LastUpdatedBy,
+            CreatedOn = newLayout.CreatedOn,
+            CreatedBy = newLayout.CreatedBy,
+            AppId = newLayout.AppId,
+            HeaderHtml = newLayout.HeaderHtml,
+            Html = newLayout.Html,
+            Script = newLayout.Script
         };
+    }
+
+    private IQueryable<Layout> ExecuteGetAllLayout(bool ignoreFilters = false) =>
+        layoutBroker.GetAllLayouts(ignoreFilters: ignoreFilters);
+
+    private Layout ExecuteGetLayout(int layoutId, bool ignoreFilters = false)
+    {
+        ValidateId(layoutId: layoutId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllLayout(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
+        }
+
+        Layout layout = ExecuteGetAllLayout()
+            .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
+
+        if (layout != null)
+        {
+            return layout;
+        }
+
+        Layout layout2 = ExecuteGetAllLayout(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
+
+        if (layout2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

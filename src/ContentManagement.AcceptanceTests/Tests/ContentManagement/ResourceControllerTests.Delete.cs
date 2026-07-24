@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,28 +16,28 @@ public sealed partial class ResourceControllerTests
     {
         // Given
         Resource createdResource = await CreateResourceAsync(
-            new
-            {
-                appId = 1,
-                name = Unique("resource").ToLowerInvariant(),
-                description = "Acceptance resource",
-                key = Unique("Key"),
-                culture = "",
-                displayName = "Acceptance Resource",
-                shortDisplayName = "Acceptance Resource",
-            });
+payload: new
+{
+    appId = 1,
+    name = Unique(prefix: "resource")
+            .ToLowerInvariant(),
+    description = "Acceptance resource",
+    key = Unique(prefix: "Key"),
+    culture = "",
+    displayName = "Acceptance Resource",
+    shortDisplayName = "Acceptance Resource",
+});
 
         // When
-        int actualStatusCode = await DeleteResourceAsync(createdResource.Id);
-        int actualReadStatusCode = await GetResourceStatusCodeAsync(createdResource.Id);
+        int actualStatusCode = await DeleteResourceAsync(id: createdResource.Id);
+        int actualReadStatusCode = await GetResourceStatusCodeAsync(id: createdResource.Id);
 
         // Then
-        actualStatusCode.Should().Be(200);
-        actualReadStatusCode.Should().Be(404);
+
+        actualStatusCode.Should()
+            .Be(expected: 200);
+
+        actualReadStatusCode.Should()
+            .Be(expected: 404);
     }
 }
-
-
-
-
-

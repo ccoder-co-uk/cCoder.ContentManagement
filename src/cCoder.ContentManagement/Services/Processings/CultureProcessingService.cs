@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
@@ -5,54 +9,74 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class CultureProcessingService(ICultureService service) : ICultureProcessingService
+internal partial class CultureProcessingService(ICultureService service) : ICultureProcessingService
 {
-    public Culture Get(string id)
+    public Culture GetCulture(string cultureId) =>
+        TryCatch<Culture>(operation: () =>
     {
-        ValidateId(id, "id");
-        return service.Get(id);
-    }
+        ValidateCultureOnGet(inputs: [cultureId]);
+        ValidateId(cultureId: cultureId, parameterName: "id");
+        return service.GetCulture(cultureId: cultureId);
 
-    public IQueryable<Culture> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters);
+    });
 
-    public ValueTask<Culture> AddAsync(Culture entity)
+    public IQueryable<Culture> GetAllCulture(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Culture>>(operation: () =>
     {
-        ValidateCulture(entity, "entity");
-        return service.AddAsync(entity);
-    }
+        ValidateAllCultureOnGet(inputs: [ignoreFilters]);
+        return service.GetAllCulture(ignoreFilters: ignoreFilters);
+    });
 
-    public ValueTask<Culture> UpdateAsync(Culture entity)
+    public ValueTask<Culture> AddCultureAsync(Culture newCulture) =>
+        TryCatch<Culture>(operation: () =>
     {
-        ValidateCulture(entity, "entity");
-        return service.UpdateAsync(entity);
-    }
+        ValidateCultureOnAdd(inputs: [newCulture]);
+        ValidateCulture(culture: newCulture, parameterName: "entity");
+        return service.AddCultureAsync(newCulture: newCulture);
 
-    public ValueTask DeleteAsync(string id)
-    {
-        ValidateId(id, "id");
-        return service.DeleteAsync(id);
-    }
+    }, isValueTask: true);
 
-    public async ValueTask<IEnumerable<Result<Culture>>> AddOrUpdate(IEnumerable<Culture> items)
+    public ValueTask<Culture> UpdateCultureAsync(Culture updatedCulture) =>
+        TryCatch<Culture>(operation: () =>
     {
-        ValidateCultures(items, "items");
-        List<Result<Culture>> results = new List<Result<Culture>>();
-        foreach (Culture item in items)
+        ValidateCultureOnUpdate(inputs: [updatedCulture]);
+        ValidateCulture(culture: updatedCulture, parameterName: "entity");
+        return service.UpdateCultureAsync(updatedCulture: updatedCulture);
+
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(string cultureId) =>
+        TryCatch(operation: () =>
+    {
+        ValidateDeleteAsync(inputs: [cultureId]);
+        ValidateId(cultureId: cultureId, parameterName: "id");
+        return service.DeleteAsync(cultureId: cultureId);
+
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<OperationResult<Culture>>> AddOrUpdateCultureResult(IEnumerable<Culture> newCulture) =>
+        TryCatch<IEnumerable<OperationResult<Culture>>>(operation: async () =>
+    {
+        ValidateOrUpdateCultureResultOnAdd(inputs: [newCulture]);
+        ValidateCultures(cultures: newCulture, parameterName: "items");
+        List<OperationResult<Culture>> results = new List<OperationResult<Culture>>();
+
+        foreach (Culture item in newCulture)
         {
             try
             {
-                Culture savedItem = string.IsNullOrWhiteSpace(item.Id) ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new Result<Culture>
+                Culture savedItem = string.IsNullOrWhiteSpace(value: item.Id) ? await ExecuteAddCultureAsync(newCulture: item) : await ExecuteUpdateCultureAsync(updatedCulture: item);
+
+                results.Add(item: new OperationResult<Culture>
                 {
                     Success = true,
                     Item = savedItem,
-                    Message = string.IsNullOrWhiteSpace(item.Id) ? "Added Successfully" : "Updated Successfully"
+                    Message = string.IsNullOrWhiteSpace(value: item.Id) ? "Added Successfully" : "Updated Successfully"
                 });
             }
             catch (Exception ex)
             {
-                results.Add(new Result<Culture>
+                results.Add(item: new OperationResult<Culture>
                 {
                     Success = false,
                     Item = item,
@@ -60,28 +84,56 @@ internal class CultureProcessingService(ICultureService service) : ICultureProce
                 });
             }
         }
+
         return results;
-    }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Culture> items)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllCultureAsync(IEnumerable<Culture> deletedCulture) =>
+        TryCatch(operation: async () =>
     {
-        ValidateCultures(items, "items");
-        foreach (Culture item in items)
-            await DeleteAsync(item.Id);
-    }
+        ValidateAllCultureOnDelete(inputs: [deletedCulture]);
+        ValidateCultures(cultures: deletedCulture, parameterName: "items");
 
-    private static void ValidateId(string id, string parameterName) =>
-        ThrowIf(string.IsNullOrWhiteSpace(id), parameterName + " is required.");
+        foreach (Culture item in deletedCulture)
+        {
+            await ExecuteDeleteAsync(cultureId: item.Id);
+        }
+
+    }, isValueTask: true);
+
+    private static void ValidateId(string cultureId, string parameterName) =>
+        ThrowIf(condition: string.IsNullOrWhiteSpace(value: cultureId), message: parameterName + " is required.");
 
     private static void ValidateCulture(Culture culture, string parameterName) =>
-        ThrowIf((object)culture == null, parameterName + " is required.");
+        ThrowIf(condition: (object)culture == null, message: parameterName + " is required.");
 
     private static void ValidateCultures(IEnumerable<Culture> cultures, string parameterName) =>
-        ThrowIf(cultures == null, parameterName + " is required.");
+        ThrowIf(condition: cultures == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
+    }
+
+    private ValueTask<Culture> ExecuteAddCultureAsync(Culture newCulture)
+    {
+        ValidateCulture(culture: newCulture, parameterName: "entity");
+        return service.AddCultureAsync(newCulture: newCulture);
+    }
+
+    private ValueTask ExecuteDeleteAsync(string cultureId)
+    {
+        ValidateId(cultureId: cultureId, parameterName: "id");
+        return service.DeleteAsync(cultureId: cultureId);
+    }
+
+    private ValueTask<Culture> ExecuteUpdateCultureAsync(Culture updatedCulture)
+    {
+        ValidateCulture(culture: updatedCulture, parameterName: "entity");
+        return service.UpdateCultureAsync(updatedCulture: updatedCulture);
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,38 +28,26 @@ public partial class CultureServiceTests
     {
         // Given
         Culture[] expectedItems = [CreateRandomCulture()];
+
         IQueryable<CmsDataModels.Culture> cultures = expectedItems
-            .Select(item => item)
+            .Select(selector: item => item)
             .AsQueryable();
 
-        cultureBrokerMock.Setup(x => x.GetAllCultures(false)).Returns(cultures);
+        cultureBrokerMock.Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Returns(value: cultures);
 
         // When
-        IQueryable<Culture> result = cultureService.GetAll();
+        IQueryable<Culture> result = cultureService.GetAllCulture();
 
         // Then
-        result.Should().BeEquivalentTo(expectedItems);
-        cultureBrokerMock.Verify(x => x.GetAllCultures(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: expectedItems);
+
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
         cultureBrokerMock.VerifyNoOtherCalls();
         appCultureBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

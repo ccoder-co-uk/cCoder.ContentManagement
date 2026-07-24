@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,58 +29,46 @@ public partial class PageCoordinationServiceTests
     private readonly Mock<IPageRoleOrchestrationService> pageRoleOrchestrationServiceMock;
     private readonly Mock<IPageOrchestrationService> pageOrchestrationServiceMock;
     private readonly PageCoordinationService coordinationService;
+    private readonly PageStructureCoordinationService structureCoordinationService;
 
     public PageCoordinationServiceTests()
     {
         pageInfoOrchestrationServiceMock = new Mock<IPageInfoOrchestrationService>(
-            MockBehavior.Strict
+behavior: MockBehavior.Strict
         );
+
         contentOrchestrationServiceMock = new Mock<IContentOrchestrationService>(
-            MockBehavior.Strict
+behavior: MockBehavior.Strict
         );
+
         pageRoleOrchestrationServiceMock = new Mock<IPageRoleOrchestrationService>(
-            MockBehavior.Strict
+behavior: MockBehavior.Strict
         );
-        pageOrchestrationServiceMock = new Mock<IPageOrchestrationService>(MockBehavior.Strict);
+
+        pageOrchestrationServiceMock = new Mock<IPageOrchestrationService>(behavior: MockBehavior.Strict);
 
         coordinationService = new PageCoordinationService(
-            pageInfoOrchestrationServiceMock.Object,
-            contentOrchestrationServiceMock.Object,
-            pageRoleOrchestrationServiceMock.Object,
-            pageOrchestrationServiceMock.Object
+pageInfoOrchestrationService: pageInfoOrchestrationServiceMock.Object,
+contentOrchestrationService: contentOrchestrationServiceMock.Object
+        );
+
+        structureCoordinationService = new PageStructureCoordinationService(
+pageRoleOrchestrationService: pageRoleOrchestrationServiceMock.Object,
+pageOrchestrationService: pageOrchestrationServiceMock.Object
         );
     }
 
     private static Page CreateRandomPage() =>
         Builder<Page>
             .CreateNew()
-            .With(page => page.PageInfo = [Builder<PageInfo>.CreateNew().Build()])
-            .With(page => page.Contents = [Builder<Content>.CreateNew().Build()])
-            .With(page => page.Roles = [Builder<PageRole>.CreateNew().Build()])
-            .Build();
+        .With(func: page => page.PageInfo = [Builder<PageInfo>.CreateNew()
+        .Build()])
+        .With(func: page => page.Contents = [Builder<Content>.CreateNew()
+        .Build()])
+        .With(func: page => page.Roles = [Builder<PageRole>.CreateNew()
+        .Build()])
+        .Build();
 
     private static LocalPageInfo[] ToLocalPageInfos(IEnumerable<PageInfo> pageInfos) =>
         [.. pageInfos];
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

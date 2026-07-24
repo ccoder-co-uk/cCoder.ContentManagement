@@ -1,170 +1,221 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
-internal class AppSupportingResourcesCoordinationService(
-    IAppCultureBroker appCultureBroker,
-    IScriptBroker scriptBroker,
-    IResourceBroker resourceBroker,
+internal partial class AppSupportingResourcesCoordinationService(
     IAppCultureOrchestrationService appCultureOrchestrationService,
     IScriptOrchestrationService scriptOrchestrationService,
     IResourceOrchestrationService resourceOrchestrationService) : IAppSupportingResourcesCoordinationService
 {
-    public async ValueTask HandleAppAddAsync(App app)
+    public ValueTask HandleAppAddAsync(App app) =>
+        TryCatch(operation: async () =>
     {
-        ValidateApp(app, "app");
-        StampChildrenWithApp(app);
-
-        if (app.Cultures != null)
-            await AddOrUpdateCulturesAsync(app);
-
-        if (app.Resources != null)
-            await AddOrUpdateResourcesAsync(app);
-
-        if (app.Scripts != null)
-            await AddOrUpdateScriptsAsync(app);
-    }
-
-    public async ValueTask HandleAppUpdateAsync(App app)
-    {
-        ValidateApp(app, "app");
-        StampChildrenWithApp(app);
+        ValidateHandleAppAddAsync(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
+        StampChildrenWithApp(app: app);
 
         if (app.Cultures != null)
         {
-            await DeleteMissingCulturesAsync(app);
-            await AddOrUpdateCulturesAsync(app);
+            await AddOrUpdateCulturesAsync(newApp: app);
         }
 
         if (app.Resources != null)
         {
-            await DeleteMissingResourcesAsync(app);
-            await AddOrUpdateResourcesAsync(app);
+            await AddOrUpdateResourcesAsync(newApp: app);
         }
 
         if (app.Scripts != null)
         {
-            await DeleteMissingScriptsAsync(app);
-            await AddOrUpdateScriptsAsync(app);
+            await AddOrUpdateScriptsAsync(newApp: app);
         }
-    }
 
-    public async ValueTask HandleAppDeleteAsync(App app)
+    }, isValueTask: true);
+
+    public ValueTask HandleAppUpdateAsync(App app) =>
+        TryCatch(operation: async () =>
     {
-        ValidateApp(app, "app");
-        await appCultureOrchestrationService.DeleteByAppIdAsync(app.Id);
-        await scriptOrchestrationService.DeleteByAppIdAsync(app.Id);
-        await resourceOrchestrationService.DeleteByAppIdAsync(app.Id);
-    }
+        ValidateHandleAppUpdateAsync(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
+        StampChildrenWithApp(app: app);
+
+        if (app.Cultures != null)
+        {
+            await DeleteMissingCulturesAsync(deletedApp: app);
+            await AddOrUpdateCulturesAsync(newApp: app);
+        }
+
+        if (app.Resources != null)
+        {
+            await DeleteMissingResourcesAsync(deletedApp: app);
+            await AddOrUpdateResourcesAsync(newApp: app);
+        }
+
+        if (app.Scripts != null)
+        {
+            await DeleteMissingScriptsAsync(deletedApp: app);
+            await AddOrUpdateScriptsAsync(newApp: app);
+        }
+
+    }, isValueTask: true);
+
+    public ValueTask HandleAppDeleteAsync(App app) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateHandleAppDeleteAsync(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
+        await appCultureOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
+        await scriptOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
+        await resourceOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
+
+    }, isValueTask: true);
 
     private static void StampChildrenWithApp(App app)
     {
         if (app.Cultures != null)
+        {
             foreach (AppCulture item in app.Cultures)
+            {
                 item.AppId = app.Id;
+            }
+        }
 
         if (app.Scripts != null)
+        {
             foreach (Script item2 in app.Scripts)
+            {
                 item2.AppId = app.Id;
+            }
+        }
 
         if (app.Resources != null)
+        {
             foreach (Resource item3 in app.Resources)
+            {
                 item3.AppId = app.Id;
+            }
+        }
     }
 
     private static void ValidateApp(App app, string parameterName) =>
-        ThrowIf(app == null, parameterName + " is required.");
+        ThrowIf(condition: app == null, message: parameterName + " is required.");
 
-    private async ValueTask DeleteMissingCulturesAsync(App app)
+    private async ValueTask DeleteMissingCulturesAsync(App deletedApp)
     {
-        string[] incomingCultureIds = app.Cultures
-            .Select(culture => culture.CultureId)
+        string[] incomingCultureIds = deletedApp.Cultures
+            .Select(selector: culture => culture.CultureId)
             .ToArray();
 
-        AppCulture[] culturesToDelete = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
-            .Where(culture => culture.AppId == app.Id && !((ReadOnlySpan<string>)incomingCultureIds).Contains(culture.CultureId))
+        AppCulture[] culturesToDelete = appCultureOrchestrationService.GetAllAppCulture(ignoreFilters: true)
+            .Where(predicate: culture => culture.AppId == deletedApp.Id && !((ReadOnlySpan<string>)incomingCultureIds).Contains(value: culture.CultureId))
             .ToArray();
 
         if (culturesToDelete.Length > 0)
-            await appCultureBroker.DeleteAllAppCulturesAsync(culturesToDelete);
+        {
+            await appCultureOrchestrationService.DeleteAllAppCultureAsync(deletedAppCulture: culturesToDelete);
+        }
     }
 
-    private async ValueTask DeleteMissingResourcesAsync(App app)
+    private async ValueTask DeleteMissingResourcesAsync(App deletedApp)
     {
-        int[] incomingResourceIds = app.Resources
-            .Where(resource => resource.Id > 0)
-            .Select(resource => resource.Id)
+        int[] incomingResourceIds = deletedApp.Resources
+            .Where(predicate: resource => resource.Id > 0)
+            .Select(selector: resource => resource.Id)
             .ToArray();
 
-        Resource[] resourcesToDelete = resourceBroker.GetAllResources(ignoreFilters: true)
-            .Where(resource => resource.AppId == app.Id && !((ReadOnlySpan<int>)incomingResourceIds).Contains(resource.Id))
+        Resource[] resourcesToDelete = resourceOrchestrationService.GetAllResource(ignoreFilters: true)
+            .Where(predicate: resource => resource.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingResourceIds).Contains(value: resource.Id))
             .ToArray();
 
         if (resourcesToDelete.Length > 0)
-            await resourceBroker.DeleteAllResourcesAsync(resourcesToDelete);
+        {
+            await resourceOrchestrationService.DeleteAllResourceAsync(deletedResource: resourcesToDelete);
+        }
     }
 
-    private async ValueTask DeleteMissingScriptsAsync(App app)
+    private async ValueTask DeleteMissingScriptsAsync(App deletedApp)
     {
-        int[] incomingScriptIds = app.Scripts
-            .Where(script => script.Id > 0)
-            .Select(script => script.Id)
+        int[] incomingScriptIds = deletedApp.Scripts
+            .Where(predicate: script => script.Id > 0)
+            .Select(selector: script => script.Id)
             .ToArray();
 
-        Script[] scriptsToDelete = scriptBroker.GetAllScripts(ignoreFilters: true)
-            .Where(script => script.AppId == app.Id && !((ReadOnlySpan<int>)incomingScriptIds).Contains(script.Id))
+        Script[] scriptsToDelete = scriptOrchestrationService.GetAllScript(ignoreFilters: true)
+            .Where(predicate: script => script.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingScriptIds).Contains(value: script.Id))
             .ToArray();
 
         if (scriptsToDelete.Length > 0)
-            await scriptBroker.DeleteAllScriptsAsync(scriptsToDelete);
+        {
+            await scriptOrchestrationService.DeleteAllScriptAsync(deletedScript: scriptsToDelete);
+        }
     }
 
-    private async ValueTask AddOrUpdateCulturesAsync(App app)
+    private async ValueTask AddOrUpdateCulturesAsync(App newApp)
     {
-        HashSet<string> existingCultureIds = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
-            .Where(culture => culture.AppId == app.Id)
-            .Select(culture => culture.CultureId)
-            .ToHashSet(StringComparer.Ordinal);
+        HashSet<string> existingCultureIds = appCultureOrchestrationService.GetAllAppCulture(ignoreFilters: true)
+            .Where(predicate: culture => culture.AppId == newApp.Id)
+            .Select(selector: culture => culture.CultureId)
+            .ToHashSet(comparer: StringComparer.Ordinal);
 
-        foreach (AppCulture culture in app.Cultures)
-            if (!existingCultureIds.Contains(culture.CultureId))
-                await appCultureBroker.AddAppCultureAsync(culture);
+        foreach (AppCulture culture in newApp.Cultures)
+        {
+            if (!existingCultureIds.Contains(item: culture.CultureId))
+            {
+                await appCultureOrchestrationService.AddAppCultureAsync(newAppCulture: culture);
+            }
+        }
     }
 
-    private async ValueTask AddOrUpdateResourcesAsync(App app)
+    private async ValueTask AddOrUpdateResourcesAsync(App newApp)
     {
-        HashSet<int> existingResourceIds = resourceBroker.GetAllResources(ignoreFilters: true)
-            .Where(resource => resource.AppId == app.Id)
-            .Select(resource => resource.Id)
+        HashSet<int> existingResourceIds = resourceOrchestrationService.GetAllResource(ignoreFilters: true)
+            .Where(predicate: resource => resource.AppId == newApp.Id)
+            .Select(selector: resource => resource.Id)
             .ToHashSet();
 
-        foreach (Resource resource in app.Resources)
-            if (existingResourceIds.Contains(resource.Id))
-                await resourceBroker.UpdateResourceAsync(resource);
+        foreach (Resource resource in newApp.Resources)
+        {
+            if (existingResourceIds.Contains(item: resource.Id))
+            {
+                await resourceOrchestrationService.UpdateResourceAsync(updatedResource: resource);
+            }
             else
-                await resourceBroker.AddResourceAsync(resource);
+            {
+                await resourceOrchestrationService.AddResourceAsync(newResource: resource);
+            }
+        }
     }
 
-    private async ValueTask AddOrUpdateScriptsAsync(App app)
+    private async ValueTask AddOrUpdateScriptsAsync(App newApp)
     {
-        HashSet<int> existingScriptIds = scriptBroker.GetAllScripts(ignoreFilters: true)
-            .Where(script => script.AppId == app.Id)
-            .Select(script => script.Id)
+        HashSet<int> existingScriptIds = scriptOrchestrationService.GetAllScript(ignoreFilters: true)
+            .Where(predicate: script => script.AppId == newApp.Id)
+            .Select(selector: script => script.Id)
             .ToHashSet();
 
-        foreach (Script script in app.Scripts)
-            if (existingScriptIds.Contains(script.Id))
-                await scriptBroker.UpdateScriptAsync(script);
+        foreach (Script script in newApp.Scripts)
+        {
+            if (existingScriptIds.Contains(item: script.Id))
+            {
+                await scriptOrchestrationService.UpdateScriptAsync(updatedScript: script);
+            }
             else
-                await scriptBroker.AddScriptAsync(script);
+            {
+                await scriptOrchestrationService.AddScriptAsync(newScript: script);
+            }
+        }
     }
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

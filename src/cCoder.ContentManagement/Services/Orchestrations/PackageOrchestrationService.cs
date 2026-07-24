@@ -1,89 +1,122 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.Packaging;
 using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal class PackageOrchestrationService(
-    IContentManagementMigrationAggregationService contentManagementMigrationAggregationService,
-    IPackageExportProcessingService packageExportProcessingService,
+internal partial class PackageOrchestrationService(
     IPackageProcessingService processingService,
+    IPackageItemProcessingService packageItemProcessingService,
     IPackageEventProcessingService eventService) : IPackageOrchestrationService
 {
-    public Package[] ExportPagackages(int appId, string[] packageNames)
+    public Package GetPackage(Guid packageId) =>
+        TryCatch<Package>(operation: () =>
     {
-        return ValidatePackageNames(packageNames, "packageNames")
-            .Select(packageName => packageExportProcessingService.ExportPackage(appId, packageName))
+        ValidatePackageOnGet(inputs: [packageId]);
+        return processingService.GetPackage(packageId: ValidateId(packageId: packageId, parameterName: "id"));
+    });
+
+    public IQueryable<Package> GetAllPackage(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Package>>(operation: () =>
+    {
+        ValidateAllPackageOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllPackage(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Package> AddPackageAsync(Package newPackage) =>
+        TryCatch<Package>(operation: async () =>
+    {
+        ValidatePackageOnAdd(inputs: [newPackage]);
+        ValidatePackage(package: newPackage, parameterName: "entity");
+
+        Package result = await processingService.AddPackageAsync(newPackage: newPackage);
+        await eventService.RaisePackageAddEventAsync(entity: result);
+        return result;
+
+    }, isValueTask: true);
+
+    public ValueTask<Package> UpdatePackageAsync(Package updatedPackage) =>
+        TryCatch<Package>(operation: async () =>
+    {
+        ValidatePackageOnUpdate(inputs: [updatedPackage]);
+        ValidatePackage(package: updatedPackage, parameterName: "entity");
+
+        Package result = await processingService.UpdatePackageAsync(updatedPackage: updatedPackage);
+        await SynchronizePackageItemsAsync(updatedPackage: updatedPackage, packageId: result.Id);
+        await eventService.RaisePackageUpdateEventAsync(entity: result);
+        return result;
+
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(Guid packageId) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateDeleteAsync(inputs: [packageId]);
+        ValidateId(packageId: packageId, parameterName: "id");
+
+        Package entity = processingService.GetPackage(packageId: packageId);
+        await eventService.RaisePackageDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(packageId: packageId);
+
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<OperationResult<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage) =>
+        TryCatch<IEnumerable<OperationResult<Package>>>(operation: async () =>
+    {
+        ValidateOrUpdatePackageResultOnAdd(inputs: [newPackage]);
+
+        Package[] packages = ValidatePackages(packages: newPackage, parameterName: "items")
             .ToArray();
-    }
 
-    public async ValueTask ImportPackageAsync(int appId, Package package)
+        bool[] existingPackages = packages
+            .Select(selector: package => package.Id != Guid.Empty)
+            .ToArray();
+
+        OperationResult<Package>[] results = (
+            await processingService.AddOrUpdatePackageResult(newPackage: packages))
+            .ToArray();
+
+        for (int index = 0; index < packages.Length && index < results.Length; index++)
+        {
+            if (existingPackages[index] && results[index].Success)
+            {
+                await SynchronizePackageItemsAsync(
+                    updatedPackage: packages[index],
+                    packageId: results[index].Item.Id);
+            }
+        }
+
+        return results;
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage) =>
+        TryCatch(operation: () =>
     {
-        ValidateAppId(appId, "appId");
-        ValidatePackage(package, "package");
-        await contentManagementMigrationAggregationService.ImportPackageAsync(appId, package);
-    }
+        ValidateAllPackageOnDelete(inputs: [deletedPackage]);
+        return processingService.DeleteAllPackageAsync(deletedPackage: ValidatePackages(packages: deletedPackage, parameterName: "items"));
+    }, isValueTask: true);
 
-    public Package Get(Guid id) => processingService.Get(ValidateId(id, "id"));
-
-    public IQueryable<Package> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters);
-
-    public async ValueTask<Package> AddAsync(Package entity)
+    private static Guid ValidateId(Guid packageId, string parameterName)
     {
-        ValidatePackage(entity, "entity");
+        if (packageId == Guid.Empty)
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
-        Package result = await processingService.AddAsync(entity);
-        await eventService.RaisePackageAddEventAsync(result);
-        return result;
-    }
-
-    public async ValueTask<Package> UpdateAsync(Package entity)
-    {
-        ValidatePackage(entity, "entity");
-
-        Package result = await processingService.UpdateAsync(entity);
-        await eventService.RaisePackageUpdateEventAsync(result);
-        return result;
-    }
-
-    public async ValueTask DeleteAsync(Guid id)
-    {
-        ValidateId(id, "id");
-
-        Package entity = processingService.Get(id);
-        await eventService.RaisePackageDeleteEventAsync(entity);
-        await processingService.DeleteAsync(id);
-    }
-
-    public ValueTask<IEnumerable<Result<Package>>> AddOrUpdate(IEnumerable<Package> items) =>
-        processingService.AddOrUpdate(ValidatePackages(items, "items"));
-
-    public ValueTask DeleteAllAsync(IEnumerable<Package> items) =>
-        processingService.DeleteAllAsync(ValidatePackages(items, "items"));
-
-    private static int ValidateAppId(int appId, string parameterName)
-    {
-        if (appId < 1)
-            throw new ValidationException(parameterName + " must be greater than 0.");
-
-        return appId;
-    }
-
-    private static Guid ValidateId(Guid id, string parameterName)
-    {
-        if (id == Guid.Empty)
-            throw new ValidationException(parameterName + " is required.");
-
-        return id;
+        return packageId;
     }
 
     private static Package ValidatePackage(Package package, string parameterName)
     {
         if (package == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return package;
     }
@@ -91,16 +124,39 @@ internal class PackageOrchestrationService(
     private static IEnumerable<Package> ValidatePackages(IEnumerable<Package> packages, string parameterName)
     {
         if (packages == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return packages;
     }
 
-    private static string[] ValidatePackageNames(string[] packageNames, string parameterName)
+    private async ValueTask SynchronizePackageItemsAsync(
+        Package updatedPackage,
+        Guid packageId)
     {
-        if (packageNames == null)
-            throw new ValidationException(parameterName + " is required.");
+        if (updatedPackage.Items == null)
+        {
+            return;
+        }
 
-        return packageNames;
+        PackageItem[] deletedPackageItems = packageItemProcessingService
+            .GetAllPackageItem()
+            .Where(predicate: packageItem => packageItem.PackageId == packageId)
+            .ToArray();
+
+        await packageItemProcessingService.DeleteAllPackageItemAsync(
+            deletedPackageItem: deletedPackageItems);
+
+        foreach (PackageItem packageItem in updatedPackage.Items)
+        {
+            packageItem.PackageId = packageId;
+        }
+
+        if (updatedPackage.Items.Any())
+        {
+            await packageItemProcessingService.AddOrUpdatePackageItemResult(
+                newPackageItem: updatedPackage.Items);
+        }
     }
 }

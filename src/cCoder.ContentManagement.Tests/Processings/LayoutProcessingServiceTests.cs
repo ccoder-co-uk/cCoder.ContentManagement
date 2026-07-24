@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,32 +29,14 @@ public partial class LayoutProcessingServiceTests
 
     public LayoutProcessingServiceTests()
     {
-        layoutProcessingService = new LayoutProcessingService(layoutServiceMock.Object);
+        layoutProcessingService = new LayoutProcessingService(service: layoutServiceMock.Object);
     }
 
     private static Layout CreateRandomLayout() =>
         Builder<Layout>
             .CreateNew()
-            .With(x => x.Id = Random.Shared.Next(1, 10000))
-            .With(x => x.AppId = 1)
-            .With(x => x.Name = $"Layout-{Guid.NewGuid():N}")
-            .Build();
+        .With(func: x => x.Id = Random.Shared.Next(minValue: 1, maxValue: 10000))
+        .With(func: x => x.AppId = 1)
+        .With(func: x => x.Name = $"Layout-{Guid.NewGuid():N}")
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

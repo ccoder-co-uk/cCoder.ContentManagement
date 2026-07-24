@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,29 +16,28 @@ public sealed partial class SubmissionControllerTests
     {
         // Given
         Submission createdSubmission = await CreateSubmissionAsync(
-            new
-            {
-                appId = 1,
-                createdBy = "Guest",
-                lastUpdatedBy = "Guest",
-                createdOn = DateTimeOffset.UtcNow,
-                lastUpdatedOn = DateTimeOffset.UtcNow,
-                sourceComponent = "Acceptance",
-                state = "New",
-                dataJson = "{\"name\":\"Acceptance\"}",
-            });
+payload: new
+{
+    appId = 1,
+    createdBy = "Guest",
+    lastUpdatedBy = "Guest",
+    createdOn = DateTimeOffset.UtcNow,
+    lastUpdatedOn = DateTimeOffset.UtcNow,
+    sourceComponent = "Acceptance",
+    state = "New",
+    dataJson = "{\"name\":\"Acceptance\"}",
+});
 
         // When
-        int actualStatusCode = await DeleteSubmissionAsync(createdSubmission.Id);
-        int actualReadStatusCode = await GetSubmissionStatusCodeAsync(createdSubmission.Id);
+        int actualStatusCode = await DeleteSubmissionAsync(id: createdSubmission.Id);
+        int actualReadStatusCode = await GetSubmissionStatusCodeAsync(id: createdSubmission.Id);
 
         // Then
-        actualStatusCode.Should().Be(200);
-        actualReadStatusCode.Should().Be(404);
+
+        actualStatusCode.Should()
+            .Be(expected: 200);
+
+        actualReadStatusCode.Should()
+            .Be(expected: 404);
     }
 }
-
-
-
-
-

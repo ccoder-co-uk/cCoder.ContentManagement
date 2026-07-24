@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,46 +31,83 @@ public partial class PageRenderProcessingServiceTests
     [Fact]
     public async Task ShouldRenderDeclaredSupportedTagTypesForPageRoot()
     {
-        PageRenderProcessingService sut = CreateSut();
+        // Given
         RenderApp app = CreateApp();
-        RenderPage page = app.Pages.First(foundPage => foundPage.Id == 10);
+        RenderPage page = app.Pages.First(predicate: foundPage => foundPage.Id == 10);
         RenderUser user = CreateUser();
 
-        metadataReaderBroker.Set("site-description", "en-GB", "Meta Description");
+        metadataReaderBroker.Set(name: "site-description", culture: "en-GB", value: "Meta Description");
 
-        RenderResult result = await RenderTestWorkflowServer.RunAsync(workflowBaseUrl =>
-            sut.RenderPage(page, user, CreateConfig(workflowBaseUrl), "Default", "en-GB"));
+        // When
+        RenderResult result = await RenderTestWorkflowServer.RunRenderResultAsync(action: workflowBaseUrl =>
+        {
+            PageRenderProcessingService sut = CreateSut(
+                config: CreateConfig(workflowBaseUrl: workflowBaseUrl));
 
-        result.HeaderHtml.Should().Contain("<title>Home</title>");
-        result.HeaderHtml.Should().Contain("Meta Description");
-        result.HeaderHtml.Should().Contain("bootstrap-script");
-        result.BodyHtml.Should().Contain("Body Content");
-        result.BodyHtml.Should().Contain("Hero Component");
-        result.BodyHtml.Should().Contain("<script type='text/javascript'>hero-component-script</script>");
-        result.BodyHtml.Should().Contain("Hello|Hi|Greeting Description");
-        result.BodyHtml.Should().Contain("Blue|App|");
-        result.BodyHtml.Should().Contain("executed");
-        result.BodyHtml.Should().Contain("href='/Summary'");
-        result.BodyHtml.Should().Contain("dropdown-menu");
+            return sut.RenderPageUserRenderResult(
+                page: page,
+                user: user,
+                theme: "Default",
+                culture: "en-GB");
+        });
 
-        metadataReaderBroker.Requests.Should().ContainSingle(request =>
+        // Then
+        result.HeaderHtml.Should()
+            .Contain(expected: "<title>Home</title>");
+
+        result.HeaderHtml.Should()
+            .Contain(expected: "Meta Description");
+
+        result.HeaderHtml.Should()
+            .Contain(expected: "bootstrap-script");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "Body Content");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "Hero Component");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "<script type='text/javascript'>hero-component-script</script>");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "Hello|Hi|Greeting Description");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "Blue|App|");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "executed");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "href='/Summary'");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "dropdown-menu");
+
+        metadataReaderBroker.Requests.Should()
+            .ContainSingle(predicate: request =>
             request.Name == "site-description" && request.Culture == "en-GB");
     }
 
     [Fact]
     public void ShouldThrowValidationExceptionWhenPageIsNull()
     {
-        PageRenderProcessingService sut = CreateSut();
+        // Given
+        Config config = CreateConfig(
+            workflowBaseUrl: "http://127.0.0.1/");
 
-        Action act = () => sut.RenderPage(null!, CreateUser(), CreateConfig("http://127.0.0.1/"), "Default", "en-GB");
+        PageRenderProcessingService sut = CreateSut(config: config);
 
-        act.Should().Throw<ValidationException>();
+        // When
+        Action act = () => sut.RenderPageUserRenderResult(
+            page: null!,
+            user: CreateUser(),
+            theme: "Default",
+            culture: "en-GB");
+
+        // Then
+        act.Should()
+            .Throw<ValidationException>();
     }
 }
-
-
-
-
-
-
-

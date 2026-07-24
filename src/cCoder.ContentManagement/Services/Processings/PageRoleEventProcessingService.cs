@@ -1,31 +1,43 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PageRoleEventProcessingService(IPageRoleEventService eventService) : IPageRoleEventProcessingService
+internal partial class PageRoleEventProcessingService(IPageRoleEventService eventService) : IPageRoleEventProcessingService
 {
-    public ValueTask RaisePageRoleAddEventAsync(PageRole entity)
+    public ValueTask RaisePageRoleAddEventAsync(PageRole entity) =>
+        TryCatch(operation: () =>
     {
-        ValidatePageRole(entity, "entity");
+        ValidateRaisePageRoleAddEventAsync(inputs: [entity]);
+        ValidatePageRole(pageRole: entity, parameterName: "entity");
 
-        return eventService.RaisePageRoleAddEventAsync(entity);
-    }
+        return eventService.RaisePageRoleAddEventAsync(entity: entity);
 
-    public ValueTask RaisePageRoleDeleteEventAsync(PageRole entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageRoleDeleteEventAsync(PageRole entity) =>
+        TryCatch(operation: () =>
     {
-        ValidatePageRole(entity, "entity");
+        ValidateRaisePageRoleDeleteEventAsync(inputs: [entity]);
+        ValidatePageRole(pageRole: entity, parameterName: "entity");
 
-        return eventService.RaisePageRoleDeleteEventAsync(entity);
-    }
+        return eventService.RaisePageRoleDeleteEventAsync(entity: entity);
+
+    }, isValueTask: true);
 
     private static void ValidatePageRole(PageRole pageRole, string parameterName) =>
-        ThrowIf(pageRole == null, parameterName + " is required.");
+        ThrowIf(condition: pageRole == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

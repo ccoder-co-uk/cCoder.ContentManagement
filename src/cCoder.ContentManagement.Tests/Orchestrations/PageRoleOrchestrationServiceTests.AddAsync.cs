@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,37 +27,24 @@ public partial class PageRoleOrchestrationServiceTests
     {
         // Given
         PageRole entity = CreateRandomPageRole();
-        pageRoleProcessingServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
+
+        pageRoleProcessingServiceMock.Setup(expression: x => x.AddPageRoleAsync(newPageRole: entity))
+            .ReturnsAsync(value: entity);
 
         pageRoleEventProcessingServiceMock
-            .Setup(x => x.RaisePageRoleAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageRoleAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        PageRole result = await orchestrationService.AddAsync(entity);
+        PageRole result = await orchestrationService.AddPageRoleAsync(newPageRole: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        pageRoleProcessingServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
-        pageRoleEventProcessingServiceMock.Verify(x => x.RaisePageRoleAddEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        pageRoleProcessingServiceMock.Verify(expression: x => x.AddPageRoleAsync(newPageRole: entity), times: Times.Once);
+        pageRoleEventProcessingServiceMock.Verify(expression: x => x.RaisePageRoleAddEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

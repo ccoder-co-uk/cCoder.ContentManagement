@@ -1,7 +1,12 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models.OData;
 using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
 using Config = cCoder.ContentManagement.Models.Config;
 using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
@@ -13,7 +18,6 @@ using cCoder.ContentManagement.Api.OData;
 using FluentAssertions;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Foundations;
 
 public partial class ContentManagementMetadataTypeServiceTests
@@ -21,20 +25,32 @@ public partial class ContentManagementMetadataTypeServiceTests
     [Fact]
     public void ShouldReturnKnownMetadataSetsOnGetKnownMetadata()
     {
-        MetadataContainerSet[] result = service.GetKnownMetadata().ToArray();
+        // Given
+        // When
+        MetadataContainerSet[] result = service.GetKnownMetadata()
+            .ToArray();
 
-        result.Select(set => set.Name).Should().Equal("ContentManagement", "System");
+        // Then
+        result.Select(selector: set => set.Name)
+            .Should()
+            .Equal(elements: ["ContentManagement", "System"]);
     }
 
     [Fact]
     public void ShouldReturnExpectedContentManagementTypesOnGetKnownMetadata()
     {
-        MetadataContainerSet result = service.GetKnownMetadata().Single(set => set.Name == "ContentManagement");
+        // Given
+        // When
+        MetadataContainerSet result = service.GetKnownMetadata()
+            .Single(predicate: set => set.Name == "ContentManagement");
 
-        result.UriBase.Should().Be("ContentManagement");
-        result.Types.Select(type => type.Name)
+        // Then
+        result.UriBase.Should()
+            .Be(expected: "ContentManagement");
+
+        result.Types.Select(selector: type => type.Name)
             .Should()
-            .Contain([
+            .Contain(expected: [
                 nameof(App),
                 nameof(Page),
                 nameof(PageInfo),
@@ -43,22 +59,23 @@ public partial class ContentManagementMetadataTypeServiceTests
                 nameof(RenderResult),
             ]);
 
-        result.Types.Select(type => type.Name)
+        result.Types.Select(selector: type => type.Name)
             .Should()
-            .NotContain([
+            .NotContain(unexpected: [
                 nameof(Package),
                 nameof(User),
             ]);
 
-        result.Types.Single(type => type.Name == nameof(App)).HasEndpoint.Should().BeTrue();
-        result.Types.Single(type => type.Name == nameof(App)).IsEntity.Should().BeTrue();
-        result.Types.Single(type => type.Name == nameof(RenderResult)).HasEndpoint.Should().BeFalse();
+        result.Types.Single(predicate: type => type.Name == nameof(App))
+            .HasEndpoint.Should()
+            .BeTrue();
+
+        result.Types.Single(predicate: type => type.Name == nameof(App))
+            .IsEntity.Should()
+            .BeTrue();
+
+        result.Types.Single(predicate: type => type.Name == nameof(RenderResult))
+            .HasEndpoint.Should()
+            .BeFalse();
     }
 }
-
-
-
-
-
-
-

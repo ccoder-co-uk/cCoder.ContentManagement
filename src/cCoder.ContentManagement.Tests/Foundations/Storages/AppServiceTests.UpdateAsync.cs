@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -31,46 +35,63 @@ public partial class AppServiceTests
 
         CmsDataModels.App submitted = null;
 
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)app.Id, "App_update"));
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"));
 
         appBrokerMock
-            .Setup(x => x.UpdateAppAsync(It.IsAny<CmsDataModels.App>()))
-            .Callback<CmsDataModels.App>(candidate => submitted = candidate)
-            .ReturnsAsync((CmsDataModels.App value) => value);
+            .Setup(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<CmsDataModels.App>()))
+            .Callback<CmsDataModels.App>(action: candidate => submitted = candidate)
+            .ReturnsAsync(valueFunction: (CmsDataModels.App value) => value);
 
         // When
-        App result = await appService.UpdateAsync(app);
+        App result = await appService.UpdateAppAsync(updatedApp: app);
 
         // Then
-        result.Should().BeSameAs(app);
-        submitted.Should().NotBeNull();
-        submitted.Should().NotBeSameAs(app);
-        result.Should().NotBeSameAs(submitted);
-        result.Should().BeEquivalentTo(new
-        {
-            app.Id,
-            app.DefaultCultureId,
-            app.TenantId,
-            app.Name,
-            app.Domain,
-            app.DefaultTheme,
-            app.ConfigJson
-        });
-        submitted.Should().BeEquivalentTo(new
-        {
-            app.Id,
-            app.DefaultCultureId,
-            app.TenantId,
-            app.Name,
-            app.Domain,
-            app.DefaultTheme,
-            app.ConfigJson
-        });
-        submitted.Roles.Should().BeNull();
-        result.Roles.Should().BeNull();
-        appBrokerMock.Verify(x => x.UpdateAppAsync(It.IsAny<CmsDataModels.App>()), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: app);
+
+        submitted.Should()
+            .NotBeNull();
+
+        submitted.Should()
+            .NotBeSameAs(unexpected: app);
+
+        result.Should()
+            .NotBeSameAs(unexpected: submitted);
+
+        result.Should()
+            .BeEquivalentTo(expectation: new
+            {
+                app.Id,
+                app.DefaultCultureId,
+                app.TenantId,
+                app.Name,
+                app.Domain,
+                app.DefaultTheme,
+                app.ConfigJson
+            });
+
+        submitted.Should()
+            .BeEquivalentTo(expectation: new
+            {
+                app.Id,
+                app.DefaultCultureId,
+                app.TenantId,
+                app.Name,
+                app.Domain,
+                app.DefaultTheme,
+                app.ConfigJson
+            });
+
+        submitted.Roles.Should()
+            .BeNull();
+
+        result.Roles.Should()
+            .BeNull();
+
+        appBrokerMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<CmsDataModels.App>()), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)app.Id, "App_update"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -81,34 +102,21 @@ public partial class AppServiceTests
         App app = CreateRandomApp(id: 5);
 
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)app.Id, "App_update"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await appService.UpdateAsync(app);
+        Func<Task> action = async () => await appService.UpdateAppAsync(updatedApp: app);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)app.Id, "App_update"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

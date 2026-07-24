@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +16,7 @@ internal sealed class ScriptReaderBroker(ICoreContextFactory coreContextFactory)
 
         return coreDataContext.Scripts
             .IgnoreQueryFilters()
-            .Where(script => script.AppId == appId)
+            .Where(predicate: script => script.AppId == appId)
             .AsNoTracking()
             .ToArray();
     }
@@ -26,7 +30,7 @@ internal sealed class ScriptReaderBroker(ICoreContextFactory coreContextFactory)
         return coreDataContext.Scripts
             .IgnoreQueryFilters()
             .AsNoTracking()
-            .FirstOrDefault(script =>
+            .FirstOrDefault(predicate: script =>
                 script.AppId == appId
                 && script.Name != null
                 && script.Name.ToLower() == lowerName);

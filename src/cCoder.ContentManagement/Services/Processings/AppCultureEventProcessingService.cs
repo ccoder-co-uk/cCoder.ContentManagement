@@ -1,31 +1,43 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class AppCultureEventProcessingService(IAppCultureEventService eventService) : IAppCultureEventProcessingService
+internal partial class AppCultureEventProcessingService(IAppCultureEventService eventService) : IAppCultureEventProcessingService
 {
-    public ValueTask RaiseAppCultureAddEventAsync(AppCulture entity)
+    public ValueTask RaiseAppCultureAddEventAsync(AppCulture entity) =>
+        TryCatch(operation: () =>
     {
-        ValidateAppCulture(entity, "entity");
+        ValidateRaiseAppCultureAddEventAsync(inputs: [entity]);
+        ValidateAppCulture(appCulture: entity, parameterName: "entity");
 
-        return eventService.RaiseAppCultureAddEventAsync(entity);
-    }
+        return eventService.RaiseAppCultureAddEventAsync(entity: entity);
 
-    public ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity) =>
+        TryCatch(operation: () =>
     {
-        ValidateAppCulture(entity, "entity");
+        ValidateRaiseAppCultureDeleteEventAsync(inputs: [entity]);
+        ValidateAppCulture(appCulture: entity, parameterName: "entity");
 
-        return eventService.RaiseAppCultureDeleteEventAsync(entity);
-    }
+        return eventService.RaiseAppCultureDeleteEventAsync(entity: entity);
+
+    }, isValueTask: true);
 
     private static void ValidateAppCulture(AppCulture appCulture, string parameterName) =>
-        ThrowIf(appCulture == null, parameterName + " is required.");
+        ThrowIf(condition: appCulture == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

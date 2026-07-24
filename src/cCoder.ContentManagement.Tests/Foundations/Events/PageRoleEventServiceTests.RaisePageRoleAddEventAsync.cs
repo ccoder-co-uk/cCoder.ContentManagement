@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,41 +31,36 @@ public partial class PageRoleEventServiceTests
         EventMessage<PageRole> actualMessage = null;
 
         pageRoleEventBrokerMock
-            .Setup(x => x.RaisePageRoleAddEventAsync(It.IsAny<EventMessage<PageRole>>()))
-            .Callback<EventMessage<PageRole>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageRoleAddEventAsync(message: It.IsAny<EventMessage<PageRole>>()))
+            .Callback<EventMessage<PageRole>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageRoleAddEventAsync(entity);
+        await service.RaisePageRoleAddEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeSameAs(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeSameAs(expected: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         pageRoleEventBrokerMock.Verify(
-            x => x.RaisePageRoleAddEventAsync(It.IsAny<EventMessage<PageRole>>()),
-            Times.Once
+expression: x => x.RaisePageRoleAddEventAsync(message: It.IsAny<EventMessage<PageRole>>()),
+times: Times.Once
         );
+
+        pageRoleEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         pageRoleEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

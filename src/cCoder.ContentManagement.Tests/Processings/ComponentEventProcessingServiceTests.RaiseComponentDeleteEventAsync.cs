@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class ComponentEventProcessingServiceTests
     {
         // Given
         Component entity = CreateRandomComponent();
+
         componentEventServiceMock
-            .Setup(x => x.RaiseComponentDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseComponentDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseComponentDeleteEventAsync(entity);
+        await service.RaiseComponentDeleteEventAsync(entity: entity);
 
         // Then
-        componentEventServiceMock.Verify(x => x.RaiseComponentDeleteEventAsync(entity), Times.Once);
+        componentEventServiceMock.Verify(expression: x => x.RaiseComponentDeleteEventAsync(entity: entity), times: Times.Once);
         componentEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

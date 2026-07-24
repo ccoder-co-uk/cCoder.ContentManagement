@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,32 +28,16 @@ public partial class PageRoleOrchestrationServiceTests
 
     public PageRoleOrchestrationServiceTests()
     {
-        pageRoleProcessingServiceMock = new Mock<IPageRoleProcessingService>(MockBehavior.Strict);
-        pageRoleEventProcessingServiceMock = new Mock<IPageRoleEventProcessingService>(MockBehavior.Strict);
+        pageRoleProcessingServiceMock = new Mock<IPageRoleProcessingService>(behavior: MockBehavior.Strict);
+        pageRoleEventProcessingServiceMock = new Mock<IPageRoleEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new PageRoleOrchestrationService(
-            pageRoleProcessingServiceMock.Object,
-            pageRoleEventProcessingServiceMock.Object
+processingService: pageRoleProcessingServiceMock.Object,
+eventService: pageRoleEventProcessingServiceMock.Object
         );
     }
 
-    private static PageRole CreateRandomPageRole() => Builder<PageRole>.CreateNew().Build();
+    private static PageRole CreateRandomPageRole() =>
+        Builder<PageRole>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

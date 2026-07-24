@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,12 +27,7 @@ public partial class RenderFileContentServiceTests
 
     public RenderFileContentServiceTests()
     {
-        renderFileContentBrokerMock = new Mock<IRenderFileContentBroker>(MockBehavior.Strict);
-        renderFileContentService = new RenderFileContentService(renderFileContentBrokerMock.Object);
+        renderFileContentBrokerMock = new Mock<IRenderFileContentBroker>(behavior: MockBehavior.Strict);
+        renderFileContentService = new RenderFileContentService(broker: renderFileContentBrokerMock.Object);
     }
 }
-
-
-
-
-

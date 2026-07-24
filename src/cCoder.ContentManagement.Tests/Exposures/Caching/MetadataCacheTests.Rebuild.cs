@@ -1,9 +1,14 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
 using System.Text.Json;
 using cCoder.ContentManagement.Api.OData;
+using cCoder.ContentManagement.Models.OData;
 using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
 using Config = cCoder.ContentManagement.Models.Config;
 using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
@@ -12,10 +17,10 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Exposures.Caching;
+using cCoder.ContentManagement.Dependencies.Caching;
 using FluentAssertions;
 using Moq;
 using Xunit;
-
 
 namespace cCoder.Core.Services.Tests.CMS.Exposures.Caching;
 
@@ -24,28 +29,38 @@ public partial class MetadataCacheTests
     [Fact]
     public void ShouldSerializeAllKnownTypeSetsOnGetAll()
     {
+        // Given
         MetadataContainerSet core = new()
         {
             Name = "Core",
-            Types = [new ExtendedMetadataContainer(typeof(string)) { Category = "Core" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(string)) { Category = "Core" }],
         };
+
         MetadataContainerSet workflow = new()
         {
             Name = "Workflow",
-            Types = [new ExtendedMetadataContainer(typeof(int)) { Category = "Workflow" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(int)) { Category = "Workflow" }],
         };
 
-        MetadataCache subject = CreateSubject(core, workflow);
+        MetadataCacheDependency subject = CreateSubject(typeSets: [core, workflow]);
 
-        string result = subject.GetAll("en-GB");
+        // When
+        string result = subject.GetAll(culture: "en-GB");
 
-        result.Should().Contain("\"Name\":\"Core\"");
-        result.Should().Contain("\"Name\":\"Workflow\"");
-        metadataTypeCacheMock.Verify(cache => cache.GetAll(), Times.AtLeastOnce);
+        // Then
+        result.Should()
+            .Contain(expected: "\"Name\":\"Core\"");
+
+        result.Should()
+            .Contain(expected: "\"Name\":\"Workflow\"");
+
+        metadataTypeCacheMock.Verify(expression: cache => cache.GetAll(), times: Times.AtLeastOnce);
+
         commonObjectCacheMock.Verify(
-            cache => cache.GetAll<Resource>(),
-            Times.Once
+expression: cache => cache.GetAll<Resource>(),
+times: Times.Once
         );
+
         metadataTypeCacheMock.VerifyNoOtherCalls();
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
@@ -53,41 +68,52 @@ public partial class MetadataCacheTests
     [Fact]
     public void ShouldRebuildUsingLatestSharedMetadataTypeSets()
     {
+        // Given
         MetadataContainerSet initial = new()
         {
             Name = "Core",
-            Types = [new ExtendedMetadataContainer(typeof(string)) { Category = "Core" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(string)) { Category = "Core" }],
         };
+
         MetadataContainerSet updated = new()
         {
             Name = "Workflow",
-            Types = [new ExtendedMetadataContainer(typeof(int)) { Category = "Workflow" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(int)) { Category = "Workflow" }],
         };
 
-        string[] currentTypeSetPayloads = [JsonSerializer.Serialize(initial)];
+        string[] currentTypeSetPayloads = [JsonSerializer.Serialize(value: initial)];
 
         metadataTypeCacheMock
-            .Setup(cache => cache.GetAll())
-            .Returns(() => currentTypeSetPayloads);
+            .Setup(expression: cache => cache.GetAll())
+            .Returns(valueFunction: () => currentTypeSetPayloads);
 
         commonObjectCacheMock
-            .Setup(cache => cache.GetAll<Resource>())
-            .Returns([])
+            .Setup(expression: cache => cache.GetAll<Resource>())
+            .Returns(value: [])
             .Verifiable();
 
-        MetadataCache subject = new(metadataTypeCacheMock.Object, commonObjectCacheMock.Object);
+        MetadataCacheDependency subject = new(
+            metadataTypeCache: metadataTypeCacheMock.Object,
+            resourceCache: commonObjectCacheMock.Object);
 
-        currentTypeSetPayloads = [JsonSerializer.Serialize(updated)];
+        currentTypeSetPayloads = [JsonSerializer.Serialize(value: updated)];
         subject.Rebuild();
-        string result = subject.GetAll("en-GB");
+        // When
+        string result = subject.GetAll(culture: "en-GB");
 
-        result.Should().Contain("\"Name\":\"Workflow\"");
-        result.Should().NotContain("\"Name\":\"Core\"");
+        // Then
+        result.Should()
+            .Contain(expected: "\"Name\":\"Workflow\"");
+
+        result.Should()
+            .NotContain(unexpected: "\"Name\":\"Core\"");
+
         commonObjectCacheMock.Verify(
-            cache => cache.GetAll<Resource>(),
-            Times.Exactly(2)
+expression: cache => cache.GetAll<Resource>(),
+times: Times.Exactly(callCount: 2)
         );
-        metadataTypeCacheMock.Verify(cache => cache.GetAll(), Times.AtLeast(3));
+
+        metadataTypeCacheMock.Verify(expression: cache => cache.GetAll(), times: Times.AtLeast(callCount: 3));
         metadataTypeCacheMock.VerifyNoOtherCalls();
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
@@ -95,34 +121,42 @@ public partial class MetadataCacheTests
     [Fact]
     public void ShouldMergeTypeSetsWithTheSameNameOnGetAll()
     {
+        // Given
         MetadataContainerSet contentManagement = new()
         {
             Name = "Core",
             UriBase = "Core",
-            Types = [new ExtendedMetadataContainer(typeof(App)) { Category = "Core" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(App)) { Category = "Core" }],
         };
+
         MetadataContainerSet appSecurity = new()
         {
             Name = "Core",
             UriBase = "Core",
-            Types = [new ExtendedMetadataContainer(typeof(Role)) { Category = "Core" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(Role)) { Category = "Core" }],
         };
 
-        MetadataCache subject = CreateSubject(contentManagement, appSecurity);
+        MetadataCacheDependency subject = CreateSubject(typeSets: [contentManagement, appSecurity]);
 
-        string result = subject.GetAll("en-GB");
+        // When
+        string result = subject.GetAll(culture: "en-GB");
 
-        result.Should().Contain("\"Name\":\"Core\"");
-        result.Should().Contain("\"Name\":\"App\"");
-        result.Should().Contain("\"Name\":\"Role\"");
-        subject.Get("core/app", "en-GB").Should().Contain("\"Name\":\"App\"");
-        subject.Get("core/role", "en-GB").Should().Contain("\"Name\":\"Role\"");
+        // Then
+        result.Should()
+            .Contain(expected: "\"Name\":\"Core\"");
+
+        result.Should()
+            .Contain(expected: "\"Name\":\"App\"");
+
+        result.Should()
+            .Contain(expected: "\"Name\":\"Role\"");
+
+        subject.Get(key: "core/app", culture: "en-GB")
+            .Should()
+            .Contain(expected: "\"Name\":\"App\"");
+
+        subject.Get(key: "core/role", culture: "en-GB")
+            .Should()
+            .Contain(expected: "\"Name\":\"Role\"");
     }
 }
-
-
-
-
-
-
-

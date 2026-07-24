@@ -1,30 +1,34 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Text.RegularExpressions;
 
-namespace cCoder.ContentManagement.Rendering.Models;
+namespace cCoder.ContentManagement.Dependencies.Rendering;
 
 internal sealed class PageRenderSyntax
 {
-    public required Regex ContentRegex { get; init; }
+    public Regex ContentRegex { get; init; }
 
-    public required Regex ResourceDisplayNameRegex { get; init; }
+    public Regex ResourceDisplayNameRegex { get; init; }
 
-    public required Regex ResourceShortDisplayNameRegex { get; init; }
+    public Regex ResourceShortDisplayNameRegex { get; init; }
 
-    public required Regex ResourceDescriptionRegex { get; init; }
+    public Regex ResourceDescriptionRegex { get; init; }
 
-    public required Regex NavRegex { get; init; }
+    public Regex NavRegex { get; init; }
 
-    public required Regex NavExpandedRegex { get; init; }
+    public Regex NavExpandedRegex { get; init; }
 
-    public required Regex DmsRegex { get; init; }
+    public Regex DmsRegex { get; init; }
 
-    public required Regex ExecuteRegex { get; init; }
+    public Regex ExecuteRegex { get; init; }
 
-    public required Regex ComponentRegex { get; init; }
+    public Regex ComponentRegex { get; init; }
 
-    public required Regex ScriptRegex { get; init; }
+    public Regex ScriptRegex { get; init; }
 
-    public required Regex MetaRegex { get; init; }
+    public Regex MetaRegex { get; init; }
 
-    public required Regex CultureLinkRegex { get; init; }
+    public Regex CultureLinkRegex { get; init; }
 }

@@ -1,16 +1,20 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface ILayoutService
 {
-    Layout Get(int id, bool ignoreFilters = false);
+    Layout GetLayout(int layoutId, bool ignoreFilters = false);
 
-    IQueryable<Layout> GetAll(bool ignoreFilters = false);
+    IQueryable<Layout> GetAllLayout(bool ignoreFilters = false);
 
-    ValueTask<Layout> AddAsync(Layout layout);
+    ValueTask<Layout> AddLayoutAsync(Layout newLayout);
 
-    ValueTask<Layout> UpdateAsync(Layout layout);
+    ValueTask<Layout> UpdateLayoutAsync(Layout updatedLayout);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int layoutId);
 }

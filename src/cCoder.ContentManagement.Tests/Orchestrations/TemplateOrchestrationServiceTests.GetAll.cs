@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,37 +27,24 @@ public partial class TemplateOrchestrationServiceTests
     {
         // Given
         IQueryable<Template> entities = new[] { CreateRandomTemplate() }.AsQueryable();
-        templateProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+
+        templateProcessingServiceMock.Setup(expression: x => x.GetAllTemplate(ignoreFilters: true))
+            .Returns(value: entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+
+        var result = orchestrationService.GetAllTemplate(ignoreFilters: true)
+            .ToArray();
 
         // Then
-        result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        templateProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+
+        result.Select(selector: item => item.Id)
+            .Should()
+            .Equal(expected: entities.Select(selector: item => item.Id));
+
+        templateProcessingServiceMock.Verify(expression: x => x.GetAllTemplate(ignoreFilters: true), times: Times.Once);
         templateProcessingServiceMock.VerifyNoOtherCalls();
         templateEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

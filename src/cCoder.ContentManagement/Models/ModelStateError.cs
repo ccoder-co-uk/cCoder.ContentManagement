@@ -1,10 +1,20 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 namespace cCoder.ContentManagement.Models;
 
 public sealed class ModelStateError
 {
-    public string Key { get; set; } = string.Empty;
-
+    public string Key { get; set; }
     public object Value { get; set; }
 
-    public string[] Errors { get; set; } = Array.Empty<string>();
+    public string[] Errors { get; set; }
+
+    public ModelStateError
+()
+    {
+        this.Key = string.Empty;
+        this.Errors = Array.Empty<string>();
+    }
 }

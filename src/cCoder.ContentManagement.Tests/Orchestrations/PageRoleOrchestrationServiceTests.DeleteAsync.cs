@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,36 +26,20 @@ public partial class PageRoleOrchestrationServiceTests
     {
         // Given
         PageRole pageRole = CreateRandomPageRole();
-        pageRoleProcessingServiceMock.Setup(x => x.DeleteAsync(pageRole)).Returns(ValueTask.CompletedTask);
+
+        pageRoleProcessingServiceMock.Setup(expression: x => x.DeletePageRoleAsync(deletedPageRole: pageRole))
+            .Returns(value: ValueTask.CompletedTask);
 
         pageRoleEventProcessingServiceMock
-            .Setup(x => x.RaisePageRoleDeleteEventAsync(pageRole))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageRoleDeleteEventAsync(entity: pageRole))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(pageRole);
+        await orchestrationService.DeletePageRoleAsync(deletedPageRole: pageRole);
 
         // Then
-        pageRoleProcessingServiceMock.Verify(x => x.DeleteAsync(pageRole), Times.Once);
-        pageRoleEventProcessingServiceMock.Verify(x => x.RaisePageRoleDeleteEventAsync(pageRole), Times.Once);
+        pageRoleProcessingServiceMock.Verify(expression: x => x.DeletePageRoleAsync(deletedPageRole: pageRole), times: Times.Once);
+        pageRoleEventProcessingServiceMock.Verify(expression: x => x.RaisePageRoleDeleteEventAsync(entity: pageRole), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,7 +1,10 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
-
 
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
@@ -11,19 +14,20 @@ public sealed partial class PageControllerTests
     public async Task Render_ReturnsRenderedPageContent()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_delete");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_delete"]);
 
-        string title = Unique("Page");
+        string title = Unique(prefix: "Page");
+
         Page createdPage = await CreatePageAsync(
-            new
-            {
-                appId = seededContext.AppId,
-                name = title,
-                order = 1,
-                showOnMenus = true,
-                resourceKey = "Default",
-                layout = seededContext.LayoutName,
-                pageInfo = new[]
+payload: new
+{
+    appId = seededContext.AppId,
+    name = title,
+    order = 1,
+    showOnMenus = true,
+    resourceKey = "Default",
+    layout = seededContext.LayoutName,
+    pageInfo = new[]
                 {
                     new
                     {
@@ -33,7 +37,7 @@ public sealed partial class PageControllerTests
                         keywords = "acceptance",
                     },
                 },
-                contents = new[]
+    contents = new[]
                 {
                     new
                     {
@@ -42,36 +46,41 @@ public sealed partial class PageControllerTests
                         html = "<p>Acceptance page body</p>",
                     },
                 },
-            });
+});
 
-        await EnsurePageChildrenAsync(createdPage.Id, title, "Acceptance page", "acceptance", "body", "<p>Acceptance page body</p>");
+        await EnsurePageChildrenAsync(pageId: createdPage.Id, title: title, description: "Acceptance page", keywords: "acceptance", contentName: "body", html: "<p>Acceptance page body</p>");
         Page actualRootPage;
         MenuResponse actualMenu;
         Page actualPage;
         string actualRenderContent;
 
         // When
-        actualRootPage = await GetRootPageAsync(createdPage.Id);
-        actualMenu = await GetMenuAsync(createdPage.Id);
-        actualPage = await GetPageAsync(createdPage.Id);
-        actualRenderContent = await RenderPageAsync(seededContext.AppId, actualPage!.Path ?? string.Empty);
+        actualRootPage = await GetRootPageAsync(id: createdPage.Id);
+        actualMenu = await GetMenuAsync(id: createdPage.Id);
+        actualPage = await GetPageAsync(id: createdPage.Id);
+        actualRenderContent = await RenderPageAsync(appId: seededContext.AppId, path: actualPage!.Path ?? string.Empty);
 
         // Then
-        actualRootPage.Should().NotBeNull();
-        actualRootPage!.Id.Should().Be(createdPage.Id);
-        actualMenu.Success.Should().BeTrue();
-        actualPage.Should().NotBeNull();
-        actualPage.Path.Should().NotBeNullOrWhiteSpace();
-        actualRenderContent.Should().Contain("Acceptance page body");
+        actualRootPage.Should()
+            .NotBeNull();
 
-        await DeletePageChildrenAsync(createdPage.Id);
-        await DeletePageAsync(createdPage.Id);
-        await Teardown(seededContext);
+        actualRootPage!.Id.Should()
+            .Be(expected: createdPage.Id);
+
+        actualMenu.Success.Should()
+            .BeTrue();
+
+        actualPage.Should()
+            .NotBeNull();
+
+        actualPage.Path.Should()
+            .NotBeNullOrWhiteSpace();
+
+        actualRenderContent.Should()
+            .Contain(expected: "Acceptance page body");
+
+        await DeletePageChildrenAsync(pageId: createdPage.Id);
+        await DeletePageAsync(id: createdPage.Id);
+        await Teardown(seededContext: seededContext);
     }
 }
-
-
-
-
-
-

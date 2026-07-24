@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -10,10 +14,13 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Rendering.Models;
+using cCoder.ContentManagement.Dependencies.Rendering;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
+using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Services.Foundations;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
@@ -33,21 +40,42 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class PageRenderProcessingServiceTests
 {
     private readonly TestMetadataReaderBroker metadataReaderBroker = new();
-    private readonly TestCommonObjectReaderBroker commonObjectReaderBroker = new();
+    private readonly Mock<ICommonObjectReaderBroker> commonObjectReaderBrokerMock =
+        CreateCommonObjectReaderBrokerMock();
     private readonly TestComponentReaderBroker componentReaderBroker = new();
     private readonly TestScriptReaderBroker scriptReaderBroker = new();
-    private readonly Mock<IRenderFileContentService> renderFileContentServiceMock = new();
+    private readonly Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new();
 
-    private PageRenderProcessingService CreateSut() =>
-        new(
-            new PageRenderExecutionOrchestrationService(
-                new MetadataCacheService(metadataReaderBroker),
-                new CommonObjectCacheService(commonObjectReaderBroker),
-                new MarkupRenderService(
-                    componentReaderBroker,
-                    scriptReaderBroker,
-                    new JsonBroker(),
-                    renderFileContentServiceMock.Object)));
+    private PageRenderProcessingService CreateSut(RenderConfig config)
+    {
+        PageRenderExecutionOrchestrationService executionOrchestrationService =
+            new(
+                metadataCacheService: new MetadataCacheService(
+                    broker: metadataReaderBroker),
+                commonObjectCacheService: new CommonObjectCacheService(
+                    broker: commonObjectReaderBrokerMock.Object),
+                markupRenderService: new MarkupRenderService(
+                    componentReaderBroker: componentReaderBroker,
+                    scriptReaderBroker: scriptReaderBroker,
+                    jsonBroker: new JsonBroker(),
+                    renderFileContentBroker: renderFileContentBrokerMock.Object));
+
+        Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
+
+        serviceProviderBrokerMock
+            .Setup(expression: broker =>
+                broker.GetRequiredService<IPageRenderExecutionOrchestrationService>(
+                    name: "PageRenderExecution"))
+            .Returns(value: executionOrchestrationService);
+
+        PageRenderService pageRenderService =
+            new(
+                serviceProviderBroker: serviceProviderBrokerMock.Object);
+
+        return new PageRenderProcessingService(
+            pageRenderService: pageRenderService,
+            config: config);
+    }
 
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()
@@ -150,7 +178,9 @@ public partial class PageRenderProcessingServiceTests
                 Name = "Default",
                 HeaderHtml = "<title>[page[title]]</title><meta>[meta[site-description]]</meta><script>[script[Bootstrap]]</script>",
                 Html = string.Join(
-                    "",
+                separator: "",
+                value:
+                [
                     "<nav>[nav[0]]</nav>",
                     "<nav class='expanded'>[navExpanded[0]]</nav>",
                     "<main>[content[Body]]</main>",
@@ -158,7 +188,7 @@ public partial class PageRenderProcessingServiceTests
                     "<section>[resource_displayname[Greeting]]|[resource_shortdisplayname[Greeting]]|[resource_description[Greeting]]</section>",
                     "<section>[theme[Color]]|[app[name]]|[page[path]]</section>",
                     "<section>[execute]return 'ignored';[/execute]</section>"
-                ),
+                ]),
                 Script = string.Empty,
             },
         ];
@@ -228,18 +258,21 @@ public partial class PageRenderProcessingServiceTests
 
     private sealed class TestMetadataReaderBroker : IMetadataReaderBroker
     {
-        private readonly Dictionary<string, string> values = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string> values = new(comparer: StringComparer.OrdinalIgnoreCase);
 
         public IList<(string Name, string Culture)> Requests { get; } = [];
 
         public void Set(string name, string culture, string value) =>
-            values[BuildKey(name, culture)] = value;
+            values[BuildKey(name: name, culture: culture)] = value;
+
+        public string Get(string key, string culture) =>
+            GetMetadata(name: key, culture: culture);
 
         public string GetMetadata(string name, string culture)
         {
-            Requests.Add((name, culture));
+            Requests.Add(item: (name, culture));
 
-            return values.TryGetValue(BuildKey(name, culture), out string value)
+            return values.TryGetValue(key: BuildKey(name: name, culture: culture), value: out string value)
                 ? value
                 : string.Empty;
         }
@@ -248,22 +281,32 @@ public partial class PageRenderProcessingServiceTests
             $"{name}|{culture}";
     }
 
-    private sealed class TestCommonObjectReaderBroker : ICommonObjectReaderBroker
+    private static Mock<ICommonObjectReaderBroker> CreateCommonObjectReaderBrokerMock()
     {
-        public IReadOnlyDictionary<string, PageRenderResource> ResourcesByLookup { get; init; } =
-            new Dictionary<string, PageRenderResource>(StringComparer.OrdinalIgnoreCase);
+        IReadOnlyDictionary<string, PageRenderResource> resourcesByLookup =
+            new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
 
-        public IReadOnlyDictionary<string, PageRenderComponent> ComponentsByName { get; init; } =
-            new Dictionary<string, PageRenderComponent>(StringComparer.OrdinalIgnoreCase);
+        IReadOnlyDictionary<string, PageRenderComponent> componentsByName =
+            new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
 
-        public IReadOnlyDictionary<string, PageRenderScript> ScriptsByName { get; init; } =
-            new Dictionary<string, PageRenderScript>(StringComparer.OrdinalIgnoreCase);
+        IReadOnlyDictionary<string, PageRenderScript> scriptsByName =
+            new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
 
-        public IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup() => ResourcesByLookup;
+        Mock<ICommonObjectReaderBroker> brokerMock = new();
 
-        public IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName() => ComponentsByName;
+        brokerMock
+            .Setup(expression: broker => broker.GetResourcesByLookup())
+            .Returns(value: resourcesByLookup);
 
-        public IReadOnlyDictionary<string, PageRenderScript> GetScriptsByName() => ScriptsByName;
+        brokerMock
+            .Setup(expression: broker => broker.GetComponentsByName())
+            .Returns(value: componentsByName);
+
+        brokerMock
+            .Setup(expression: broker => broker.GetScriptsByName())
+            .Returns(value: scriptsByName);
+
+        return brokerMock;
     }
 
     private sealed class TestComponentReaderBroker : IComponentReaderBroker
@@ -271,7 +314,8 @@ public partial class PageRenderProcessingServiceTests
         public IEnumerable<cCoder.Data.Models.CMS.Component> GetComponents(int appId) =>
             Array.Empty<cCoder.Data.Models.CMS.Component>();
 
-        public cCoder.Data.Models.CMS.Component GetComponent(int appId, string name) => null;
+        public cCoder.Data.Models.CMS.Component GetComponent(int appId, string name) =>
+            null;
     }
 
     private sealed class TestScriptReaderBroker : IScriptReaderBroker
@@ -279,13 +323,7 @@ public partial class PageRenderProcessingServiceTests
         public IEnumerable<cCoder.Data.Models.CMS.Script> GetScripts(int appId) =>
             Array.Empty<cCoder.Data.Models.CMS.Script>();
 
-        public cCoder.Data.Models.CMS.Script GetScript(int appId, string name) => null;
+        public cCoder.Data.Models.CMS.Script GetScript(int appId, string name) =>
+            null;
     }
 }
-
-
-
-
-
-
-

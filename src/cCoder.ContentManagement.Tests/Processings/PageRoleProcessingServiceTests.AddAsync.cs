@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,21 +32,25 @@ public partial class PageRoleProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
-        User user = TestUsers.WithPrivilege("pagerole_create", 1);
+        User user = TestUsers.WithPrivilege(privilege: "pagerole_create", appId: 1);
         UserRole currentUserRole = user.Roles.First();
+
         SecurityDataModels.Role roleToAdd = new()
         {
             Id = Guid.NewGuid(),
@@ -50,6 +58,7 @@ public partial class PageRoleProcessingServiceTests
             Name = "Editors",
             Privs = "page_read",
         };
+
         Page page = new()
         {
             Id = 8,
@@ -67,18 +76,25 @@ public partial class PageRoleProcessingServiceTests
                 }
             ],
         };
+
         LocalPageRole link = new() { PageId = page.Id, RoleId = roleToAdd.Id };
         currentUser = user;
-        roleBrokerMock.Setup(x => x.GetAllRoles(true)).Returns(new[] { roleToAdd }.AsQueryable());
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { page }.AsQueryable());
-        pageRoleServiceMock.Setup(x => x.AddAsync(link)).ReturnsAsync(link);
+
+        roleBrokerMock.Setup(expression: x => x.GetAllRoles(ignoreFilters: true))
+            .Returns(value: new[] { roleToAdd }.AsQueryable());
+
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { page }.AsQueryable());
+
+        pageRoleServiceMock.Setup(expression: x => x.AddPageRoleAsync(newPageRole: link))
+            .ReturnsAsync(value: link);
 
         // When
-        LocalPageRole result = await pageRoleProcessingService.AddAsync(link);
+        LocalPageRole result = await pageRoleProcessingService.AddPageRoleAsync(newPageRole: link);
 
         // Then
-        Assert.Same(link, result);
-        pageRoleServiceMock.Verify(x => x.AddAsync(link), Times.Once);
+        Assert.Same(expected: link, actual: result);
+        pageRoleServiceMock.Verify(expression: x => x.AddPageRoleAsync(newPageRole: link), times: Times.Once);
     }
 
     [Fact]
@@ -86,18 +102,21 @@ public partial class PageRoleProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         SecurityDataModels.Role roleToAdd = new()
         {
@@ -106,6 +125,7 @@ public partial class PageRoleProcessingServiceTests
             Name = "Editors",
             Privs = "page_read",
         };
+
         Page page = new()
         {
             Id = 8,
@@ -115,13 +135,18 @@ public partial class PageRoleProcessingServiceTests
             PageInfo = [new PageInfo { CultureId = string.Empty, Title = "Home" }],
             Roles = [],
         };
-        roleBrokerMock.Setup(x => x.GetAllRoles(true)).Returns(new[] { roleToAdd }.AsQueryable());
-        pageServiceMock.Setup(x => x.GetAll(true)).Returns(new[] { page }.AsQueryable());
+
+        roleBrokerMock.Setup(expression: x => x.GetAllRoles(ignoreFilters: true))
+            .Returns(value: new[] { roleToAdd }.AsQueryable());
+
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { page }.AsQueryable());
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await pageRoleProcessingService.AddAsync(
-                new LocalPageRole { PageId = page.Id, RoleId = roleToAdd.Id }
+
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
+            await pageRoleProcessingService.AddPageRoleAsync(
+newPageRole: new LocalPageRole { PageId = page.Id, RoleId = roleToAdd.Id }
             )
         );
 
@@ -129,23 +154,3 @@ public partial class PageRoleProcessingServiceTests
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

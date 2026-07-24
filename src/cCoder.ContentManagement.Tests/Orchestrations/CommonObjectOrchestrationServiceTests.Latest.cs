@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -13,8 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class CommonObjectOrchestrationServiceTests
@@ -22,36 +24,23 @@ public partial class CommonObjectOrchestrationServiceTests
     [Fact]
     public void ShouldReturnProcessingResultsWhenLatest()
     {
+        // Given
         const string type = "TestType";
         CommonObject[] items = [CreateRandomCommonObject()];
-        commonObjectProcessingServiceMock.Setup(x => x.Latest(type)).Returns(items);
 
-        IEnumerable<CommonObject> result = orchestrationService.Latest(type);
+        commonObjectProcessingServiceMock.Setup(expression: x => x.LatestCommonObject(type: type))
+            .Returns(value: items);
 
-        result.Should().BeSameAs(items);
-        commonObjectProcessingServiceMock.Verify(x => x.Latest(type), Times.Once);
+        // When
+        IEnumerable<CommonObject> result = orchestrationService.LatestCommonObject(type: type);
+
+        // Then
+        result.Should()
+            .BeSameAs(expected: items);
+
+        commonObjectProcessingServiceMock.Verify(expression: x => x.LatestCommonObject(type: type), times: Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class CultureEventProcessingServiceTests
     {
         // Given
         Culture entity = CreateRandomCulture();
+
         cultureEventServiceMock
-            .Setup(x => x.RaiseCultureUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseCultureUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCultureUpdateEventAsync(entity);
+        await service.RaiseCultureUpdateEventAsync(entity: entity);
 
         // Then
-        cultureEventServiceMock.Verify(x => x.RaiseCultureUpdateEventAsync(entity), Times.Once);
+        cultureEventServiceMock.Verify(expression: x => x.RaiseCultureUpdateEventAsync(entity: entity), times: Times.Once);
         cultureEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

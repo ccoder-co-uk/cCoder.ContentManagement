@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,63 +28,53 @@ public partial class PackageExportProcessingServiceTests
 
     public PackageExportProcessingServiceTests()
     {
-        packageExportServiceMock = new Mock<IPackageExportService>(MockBehavior.Strict);
-        processingService = new PackageExportProcessingService(packageExportServiceMock.Object);
+        packageExportServiceMock = new Mock<IPackageExportService>(behavior: MockBehavior.Strict);
+        processingService = new PackageExportProcessingService(packageExportService: packageExportServiceMock.Object);
     }
 
-    private static Package CreatePackage(string name) => new(name) { Items = [] };
+    private static Package CreatePackage(string name) =>
+        new(name: name) { Items = [] };
 
     private void SetupKnownPackageExport(int appId, string packageName, Package expectedPackage)
     {
         switch (packageName)
         {
             case "Roles":
-                packageExportServiceMock.Setup(x => x.ExportRoles(appId)).Returns(expectedPackage);
+                packageExportServiceMock.Setup(expression: x => x.ExportRolesPackage(appId: appId))
+                    .Returns(value: expectedPackage);
                 break;
             case "Layouts":
-                packageExportServiceMock.Setup(x => x.ExportLayouts(appId)).Returns(expectedPackage);
+                packageExportServiceMock.Setup(expression: x => x.ExportLayoutsPackage(appId: appId))
+                    .Returns(value: expectedPackage);
                 break;
             case "Templates":
                 packageExportServiceMock
-                    .Setup(x => x.ExportTemplates(appId))
-                    .Returns(expectedPackage);
+                    .Setup(expression: x => x.ExportTemplatesPackage(appId: appId))
+                    .Returns(value: expectedPackage);
                 break;
             case "Components":
                 packageExportServiceMock
-                    .Setup(x => x.ExportComponents(appId))
-                    .Returns(expectedPackage);
+                    .Setup(expression: x => x.ExportComponentsPackage(appId: appId))
+                    .Returns(value: expectedPackage);
                 break;
             case "Scripts":
-                packageExportServiceMock.Setup(x => x.ExportScripts(appId)).Returns(expectedPackage);
+                packageExportServiceMock.Setup(expression: x => x.ExportScriptsPackage(appId: appId))
+                    .Returns(value: expectedPackage);
                 break;
             case "Resources":
                 packageExportServiceMock
-                    .Setup(x => x.ExportResources(appId))
-                    .Returns(expectedPackage);
+                    .Setup(expression: x => x.ExportResourcesPackage(appId: appId))
+                    .Returns(value: expectedPackage);
                 break;
             case "Pages":
-                packageExportServiceMock.Setup(x => x.ExportPages(appId)).Returns(expectedPackage);
+                packageExportServiceMock.Setup(expression: x => x.ExportPagesPackage(appId: appId))
+                    .Returns(value: expectedPackage);
                 break;
             case "PageRoles":
                 packageExportServiceMock
-                    .Setup(x => x.ExportPageRoles(appId))
-                    .Returns(expectedPackage);
+                    .Setup(expression: x => x.ExportPageRolesPackage(appId: appId))
+                    .Returns(value: expectedPackage);
                 break;
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

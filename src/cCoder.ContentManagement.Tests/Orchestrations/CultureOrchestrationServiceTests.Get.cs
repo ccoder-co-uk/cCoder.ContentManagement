@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,38 +28,21 @@ public partial class CultureOrchestrationServiceTests
         // Given
         string id = "en-GB";
         Culture entity = CreateRandomCulture();
-        cultureProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+
+        cultureProcessingServiceMock.Setup(expression: x => x.GetCulture(cultureId: id))
+            .Returns(value: entity);
 
         // When
-        Culture result = orchestrationService.Get(id);
+        Culture result = orchestrationService.GetCulture(cultureId: id);
 
         // Then
-        result.Should().BeEquivalentTo(entity);
-        cultureProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        cultureProcessingServiceMock.Verify(expression: x => x.GetCulture(cultureId: id), times: Times.Once);
         cultureProcessingServiceMock.VerifyNoOtherCalls();
         cultureEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

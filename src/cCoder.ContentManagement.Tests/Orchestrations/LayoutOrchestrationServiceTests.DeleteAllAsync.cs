@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,37 +26,23 @@ public partial class LayoutOrchestrationServiceTests
     {
         // Given
         Layout[] entities = [CreateRandomLayout()];
-        layoutProcessingServiceMock.Setup(x => x.Get(entities[0].Id)).Returns(entities[0]);
-        layoutEventProcessingServiceMock.Setup(x => x.RaiseLayoutDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
-        layoutProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
+
+        layoutProcessingServiceMock.Setup(expression: x => x.GetLayout(layoutId: entities[0].Id))
+            .Returns(value: entities[0]);
+
+        layoutEventProcessingServiceMock.Setup(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entities[0]))
+            .Returns(value: ValueTask.CompletedTask);
+
+        layoutProcessingServiceMock.Setup(expression: x => x.DeleteAsync(layoutId: entities[0].Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllLayoutAsync(deletedLayout: entities);
 
         // Then
-        layoutProcessingServiceMock.Verify(x => x.Get(entities[0].Id), Times.Once);
-        layoutEventProcessingServiceMock.Verify(x => x.RaiseLayoutDeleteEventAsync(entities[0]), Times.Once);
-        layoutProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
+        layoutProcessingServiceMock.Verify(expression: x => x.GetLayout(layoutId: entities[0].Id), times: Times.Once);
+        layoutEventProcessingServiceMock.Verify(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        layoutProcessingServiceMock.Verify(expression: x => x.DeleteAsync(layoutId: entities[0].Id), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

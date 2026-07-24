@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,14 +30,16 @@ public partial class LayoutProcessingServiceTests
     {
         // Given
         Layout layout = CreateRandomLayout();
-        layoutServiceMock.Setup(x => x.AddAsync(layout)).ReturnsAsync(layout);
+
+        layoutServiceMock.Setup(expression: x => x.AddLayoutAsync(newLayout: layout))
+            .ReturnsAsync(value: layout);
 
         // When
-        Layout result = await layoutProcessingService.AddAsync(layout);
+        Layout result = await layoutProcessingService.AddLayoutAsync(newLayout: layout);
 
         // Then
-        Assert.Same(layout, result);
-        layoutServiceMock.Verify(x => x.AddAsync(layout), Times.Once);
+        Assert.Same(expected: layout, actual: result);
+        layoutServiceMock.Verify(expression: x => x.AddLayoutAsync(newLayout: layout), times: Times.Once);
     }
 
     [Fact]
@@ -43,29 +49,16 @@ public partial class LayoutProcessingServiceTests
         Layout layout = CreateRandomLayout();
 
         layoutServiceMock
-            .Setup(x => x.AddAsync(layout))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.AddLayoutAsync(newLayout: layout))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await layoutProcessingService.AddAsync(layout)
+
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
+            await layoutProcessingService.AddLayoutAsync(newLayout: layout)
         );
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

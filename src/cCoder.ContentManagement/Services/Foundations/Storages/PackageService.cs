@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -7,72 +11,134 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PackageService(IPackageBroker packageBroker, IAuthorizationBroker authorizationBroker) : IPackageService
 {
-    public Package Get(Guid id, bool ignoreFilters = false)
+    public Package GetPackage(Guid packageId, bool ignoreFilters = false) =>
+        TryCatch<Package>(operation: () =>
     {
-        ValidateId(id, "id");
+        ValidatePackageOnGet(inputs: [packageId, ignoreFilters]);
+        ValidateId(packageId: packageId, parameterName: "id");
+
         if (ignoreFilters)
-            return GetAll(ignoreFilters: true).FirstOrDefault((Package i) => i.Id == id);
+        {
+            return ExecuteGetAllPackage(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
+        }
 
-        Package package = GetAll().FirstOrDefault((Package i) => i.Id == id);
+        Package package = ExecuteGetAllPackage()
+            .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
+
         if (package != null)
+        {
             return package;
+        }
 
-        Package package2 = GetAll(ignoreFilters: true).FirstOrDefault((Package i) => i.Id == id);
+        Package package2 = ExecuteGetAllPackage(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
+
         if (package2 != null)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
 
         return null;
-    }
 
-    public IQueryable<Package> GetAll(bool ignoreFilters = false) =>
-        packageBroker.GetAllPackages(ignoreFilters);
+    });
 
-    public async ValueTask<Package> AddAsync(Package package)
+    public IQueryable<Package> GetAllPackage(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Package>>(operation: () =>
     {
-        ValidatePackage(package, "package");
-        authorizationBroker.Authorize(null, "Package_create");
-        Package result = await packageBroker.AddPackageAsync(CreateStoragePackage(package));
-        package.Id = result.Id;
-        package.Name = result.Name;
-        package.Description = result.Description;
-        package.Category = result.Category;
-        package.SourceApi = result.SourceApi;
-        return package;
-    }
+        ValidateAllPackageOnGet(inputs: [ignoreFilters]);
+        return packageBroker.GetAllPackages(ignoreFilters: ignoreFilters);
+    });
 
-    public async ValueTask<Package> UpdateAsync(Package package)
+    public ValueTask<Package> AddPackageAsync(Package newPackage) =>
+        TryCatch<Package>(operation: async () =>
     {
-        ValidatePackage(package, "package");
-        authorizationBroker.Authorize(null, "Package_update");
-        Package result = await packageBroker.UpdatePackageAsync(CreateStoragePackage(package));
-        package.Id = result.Id;
-        package.Name = result.Name;
-        package.Description = result.Description;
-        package.Category = result.Category;
-        package.SourceApi = result.SourceApi;
-        return package;
-    }
+        ValidatePackageOnAdd(inputs: [newPackage]);
+        ValidatePackage(package: newPackage, parameterName: "package");
+        authorizationBroker.Authorize(appId: null, privilege: "Package_create");
+        Package result = await packageBroker.AddPackageAsync(newPackage: CreateStoragePackage(newPackage: newPackage));
+        newPackage.Id = result.Id;
+        newPackage.Name = result.Name;
+        newPackage.Description = result.Description;
+        newPackage.Category = result.Category;
+        newPackage.SourceApi = result.SourceApi;
+        return newPackage;
 
-    public async ValueTask DeleteAsync(Guid id)
-    {
-        ValidateId(id, "id");
-        Package package = Get(id);
-        authorizationBroker.Authorize(null, "Package_delete");
-        await packageBroker.DeletePackageAsync(CreateStoragePackage(package));
-    }
+    }, isValueTask: true);
 
-    private static Package CreateStoragePackage(Package package)
+    public ValueTask<Package> UpdatePackageAsync(Package updatedPackage) =>
+        TryCatch<Package>(operation: async () =>
     {
-        if (package == null)
+        ValidatePackageOnUpdate(inputs: [updatedPackage]);
+        ValidatePackage(package: updatedPackage, parameterName: "package");
+        authorizationBroker.Authorize(appId: null, privilege: "Package_update");
+        Package result = await packageBroker.UpdatePackageAsync(updatedPackage: CreateStoragePackage(newPackage: updatedPackage));
+        updatedPackage.Id = result.Id;
+        updatedPackage.Name = result.Name;
+        updatedPackage.Description = result.Description;
+        updatedPackage.Category = result.Category;
+        updatedPackage.SourceApi = result.SourceApi;
+        return updatedPackage;
+
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(Guid packageId) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateDeleteAsync(inputs: [packageId]);
+        ValidateId(packageId: packageId, parameterName: "id");
+        Package package = ExecuteGetPackage(packageId: packageId);
+        authorizationBroker.Authorize(appId: null, privilege: "Package_delete");
+        await packageBroker.DeletePackageAsync(deletedPackage: CreateStoragePackage(newPackage: package));
+
+    }, isValueTask: true);
+
+    private static Package CreateStoragePackage(Package newPackage)
+    {
+        if (newPackage == null)
+        {
             return null;
+        }
 
         return new Package
         {
-            Id = package.Id,
-            Name = package.Name,
-            Description = package.Description,
-            Category = package.Category,
-            SourceApi = package.SourceApi
+            Id = newPackage.Id,
+            Name = newPackage.Name,
+            Description = newPackage.Description,
+            Category = newPackage.Category,
+            SourceApi = newPackage.SourceApi
         };
+    }
+
+    private IQueryable<Package> ExecuteGetAllPackage(bool ignoreFilters = false) =>
+        packageBroker.GetAllPackages(ignoreFilters: ignoreFilters);
+
+    private Package ExecuteGetPackage(Guid packageId, bool ignoreFilters = false)
+    {
+        ValidateId(packageId: packageId, parameterName: "id");
+
+        if (ignoreFilters)
+        {
+            return ExecuteGetAllPackage(ignoreFilters: true)
+                .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
+        }
+
+        Package package = ExecuteGetAllPackage()
+            .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
+
+        if (package != null)
+        {
+            return package;
+        }
+
+        Package package2 = ExecuteGetAllPackage(ignoreFilters: true)
+            .FirstOrDefault(predicate: (Package i) => i.Id == packageId);
+
+        if (package2 != null)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return null;
     }
 }

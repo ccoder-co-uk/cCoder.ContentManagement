@@ -1,17 +1,22 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using cCoder.Eventing;
 using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public class LayoutEventBroker(IEventHub eventHub) : ILayoutEventBroker
+internal sealed class LayoutEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
+    : AuthenticatedEventBroker(eventInfrastructureDependency), ILayoutEventBroker
 {
     public ValueTask RaiseLayoutAddEventAsync(EventMessage<Layout> message) =>
-        eventHub.RaiseEventAsync("layout_add", message);
+        RaiseEventAsync(name: "layout_add", message: message);
 
     public ValueTask RaiseLayoutUpdateEventAsync(EventMessage<Layout> message) =>
-        eventHub.RaiseEventAsync("layout_update", message);
+        RaiseEventAsync(name: "layout_update", message: message);
 
     public ValueTask RaiseLayoutDeleteEventAsync(EventMessage<Layout> message) =>
-        eventHub.RaiseEventAsync("layout_delete", message);
+        RaiseEventAsync(name: "layout_delete", message: message);
 }

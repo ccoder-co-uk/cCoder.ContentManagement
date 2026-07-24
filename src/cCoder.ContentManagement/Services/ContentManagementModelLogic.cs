@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
@@ -11,33 +15,37 @@ internal static class ContentManagementModelLogic
         operation = operation?.ToLowerInvariant() ?? string.Empty;
 
         return user != null
-            && ((appId.HasValue && IsAdminOfApp(user, appId.Value))
-                || (user.Roles?.Any(role =>
+            && ((appId.HasValue && IsAdminOfApp(user: user, appId: appId.Value))
+                || (user.Roles?.Any(predicate: role =>
                     (!appId.HasValue || role.Role?.AppId == appId.Value)
-                    && (role.Role?.Privileges?.Contains(operation) ?? false)) ?? false));
+                    && (role.Role?.Privileges?.Contains(item: operation) ?? false)) ?? false));
     }
 
     internal static bool IsAdminOfApp(User user, int appId) =>
-        user?.Roles?.Any(role => role.Role?.AppId == appId && (role.Role?.Privileges?.Contains("app_admin") ?? false)) ?? false;
+        user?.Roles?.Any(predicate: role => role.Role?.AppId == appId && (role.Role?.Privileges?.Contains(item: "app_admin") ?? false)) ?? false;
 
     internal static bool UserCan(Page page, User user, string privilege)
     {
-        Guid[] userRoles = user?.Roles?.Select(role => role.RoleId).ToArray() ?? [];
+        Guid[] userRoles = user?.Roles?.Select(selector: role => role.RoleId)
+            .ToArray() ?? [];
 
-        return IsAdminOfApp(user, page.AppId)
-            || (page.Roles?.Where(pageRole => userRoles.Contains(pageRole.RoleId))
-                    .SelectMany(pageRole => pageRole.Role?.Privileges ?? [])
-                    .Contains(privilege?.ToLowerInvariant() ?? string.Empty) ?? false);
+        return IsAdminOfApp(user: user, appId: page.AppId)
+            || (page.Roles?.Where(predicate: pageRole => userRoles.Contains(value: pageRole.RoleId))
+            .SelectMany(selector: pageRole => pageRole.Role?.Privileges ?? [])
+            .Contains(value: privilege?.ToLowerInvariant() ?? string.Empty) ?? false);
     }
 
     internal static string Title(Page page, string culture) =>
-        InfoForCulture(page, culture).Title ?? string.Empty;
+        InfoForCulture(page: page, culture: culture)
+        .Title ?? string.Empty;
 
     internal static string Description(Page page, string culture) =>
-        InfoForCulture(page, culture).Description ?? string.Empty;
+        InfoForCulture(page: page, culture: culture)
+        .Description ?? string.Empty;
 
     internal static string Keywords(Page page, string culture) =>
-        InfoForCulture(page, culture).Keywords ?? string.Empty;
+        InfoForCulture(page: page, culture: culture)
+        .Keywords ?? string.Empty;
 
     internal static PageInfo InfoForCulture(Page page, string culture)
     {
@@ -55,9 +63,9 @@ internal static class ContentManagementModelLogic
         }
 
         IOrderedEnumerable<PageInfo> orderedInfo = page.PageInfo
-            .OrderByDescending(info => info.CultureId?.Length ?? 0);
+            .OrderByDescending(keySelector: info => info.CultureId?.Length ?? 0);
 
-        return orderedInfo.FirstOrDefault(info => culture == info.CultureId || culture.Contains(info.CultureId ?? string.Empty))
+        return orderedInfo.FirstOrDefault(predicate: info => culture == info.CultureId || culture.Contains(value: info.CultureId ?? string.Empty))
             ?? orderedInfo.FirstOrDefault()
             ?? new PageInfo
             {
@@ -73,11 +81,11 @@ internal static class ContentManagementModelLogic
         culture ??= string.Empty;
 
         Content result = page?.Contents?
-            .Where(content => (content.CultureId?.Length ?? 0) <= culture.Length)
-            .OrderByDescending(content => content.CultureId?.Length ?? 0)
-            .FirstOrDefault(content => content.Name == name && culture.Contains(content.CultureId ?? string.Empty));
+            .Where(predicate: content => (content.CultureId?.Length ?? 0) <= culture.Length)
+            .OrderByDescending(keySelector: content => content.CultureId?.Length ?? 0)
+            .FirstOrDefault(predicate: content => content.Name == name && culture.Contains(value: content.CultureId ?? string.Empty));
 
-        result ??= page?.Contents?.FirstOrDefault(content => content.Name == name && string.IsNullOrEmpty(content.CultureId));
+        result ??= page?.Contents?.FirstOrDefault(predicate: content => content.Name == name && string.IsNullOrEmpty(value: content.CultureId));
 
         return result ?? new Content
         {
@@ -90,6 +98,8 @@ internal static class ContentManagementModelLogic
     internal static void ThrowIfNoAccess(bool hasAccess)
     {
         if (!hasAccess)
-            throw new SecurityException("Access Denied!");
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Models;
@@ -5,30 +9,79 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal sealed class TemplateRenderOrchestrationService(
+internal sealed partial class TemplateRenderOrchestrationService(
     ITemplateRenderProcessingService templateRenderProcessingService,
-    Config config,
-    ILogger<TemplateRenderOrchestrationService> log) : ITemplateRenderOrchestrationService
+    IAuthorizationProcessingService authorizationProcessingService)
+        : ITemplateRenderOrchestrationService
 {
-    public string Render(int appId, string name, string culture, dynamic model, User user)
+    public string Render(int appId, string name, string culture, dynamic model) =>
+        TryCatch<string>(operation: () =>
     {
-        ValidateAppId(appId, "appId");
-        ValidateTemplateName(name, "name");
-        ValidateUser(user, "user");
+        ValidateRender(inputs: [appId, name, culture, model]);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidateTemplateName(name: name, parameterName: "name");
 
-        return templateRenderProcessingService.Render(appId, name, model, user, culture, config, log);
+        RenderAuthorization authorization = authorizationProcessingService
+            .ResolveRenderAuthorization(culture: culture);
+
+        return ExecuteRenderUser(
+            appId: appId,
+            name: name,
+            culture: authorization.Culture,
+            model: model,
+            user: authorization.User);
+
+    });
+
+    public string RenderUser(int appId, string name, string culture, dynamic model, User user) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateRenderUser(inputs: [appId, name, culture, model, user]);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidateTemplateName(name: name, parameterName: "name");
+        ValidateUser(user: user, parameterName: "user");
+
+        return ExecuteRenderUser(
+            appId: appId,
+            name: name,
+            culture: culture,
+            model: model,
+            user: user);
+
+    });
+
+    private string ExecuteRenderUser(
+        int appId,
+        string name,
+        string culture,
+        dynamic model,
+        User user)
+    {
+        TemplateRenderOperation operation = new()
+        {
+            AppId = appId,
+            Name = name,
+            Model = model,
+            User = user,
+            Culture = culture
+        };
+
+        return templateRenderProcessingService.RenderTemplateRenderOperation(
+            operation: operation);
     }
 
     private static void ValidateAppId(int appId, string parameterName) =>
-        ThrowIf(appId < 1, parameterName + " must be greater than 0.");
+        ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidateTemplateName(string name, string parameterName) =>
-        ThrowIf(string.IsNullOrWhiteSpace(name), parameterName + " is required.");
+        ThrowIf(condition: string.IsNullOrWhiteSpace(value: name), message: parameterName + " is required.");
 
     private static User ValidateUser(User user, string parameterName)
     {
         if (user == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return user;
     }
@@ -36,6 +89,8 @@ internal sealed class TemplateRenderOrchestrationService(
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

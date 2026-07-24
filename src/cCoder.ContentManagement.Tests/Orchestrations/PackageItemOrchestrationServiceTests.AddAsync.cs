@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -13,8 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class PackageItemOrchestrationServiceTests
@@ -22,38 +24,27 @@ public partial class PackageItemOrchestrationServiceTests
     [Fact]
     public async Task ShouldCallProcessingThenRaiseAddEventAsyncWhenAddAsync()
     {
+        // Given
         PackageItem entity = CreateRandomPackageItem();
-        packageItemProcessingServiceMock.Setup(x => x.AddAsync(entity)).ReturnsAsync(entity);
+
+        packageItemProcessingServiceMock.Setup(expression: x => x.AddPackageItemAsync(newPackageItem: entity))
+            .ReturnsAsync(value: entity);
+
         packageItemEventProcessingServiceMock
-            .Setup(x => x.RaisePackageItemAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePackageItemAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
-        PackageItem result = await orchestrationService.AddAsync(entity);
+        // When
+        PackageItem result = await orchestrationService.AddPackageItemAsync(newPackageItem: entity);
 
-        result.Should().BeSameAs(entity);
-        packageItemProcessingServiceMock.Verify(x => x.AddAsync(entity), Times.Once);
+        // Then
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        packageItemProcessingServiceMock.Verify(expression: x => x.AddPackageItemAsync(newPackageItem: entity), times: Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
-        packageItemEventProcessingServiceMock.Verify(x => x.RaisePackageItemAddEventAsync(entity), Times.Once);
+        packageItemEventProcessingServiceMock.Verify(expression: x => x.RaisePackageItemAddEventAsync(entity: entity), times: Times.Once);
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

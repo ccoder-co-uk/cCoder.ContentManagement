@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,27 +28,14 @@ public partial class AppCultureProcessingServiceTests
         AppCulture link = CreateRandomAppCulture();
 
         // When
+
         Func<Task> act = async () =>
-            await appCultureProcessingService.DeleteAllAsync(new[] { link });
+            await appCultureProcessingService.DeleteAllAppCultureAsync(deletedAppCulture: new[] { link });
 
         // Then
-        await act.Should().ThrowAsync<InvalidOperationException>();
+
+        await act.Should()
+            .ThrowAsync<InvalidOperationException>();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

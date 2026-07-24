@@ -1,22 +1,26 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Exports;
 
 public interface IPackageExportService
 {
-    Package ExportRoles(int appId);
+    Package ExportRolesPackage(int appId);
 
-    Package ExportLayouts(int appId);
+    Package ExportLayoutsPackage(int appId);
 
-    Package ExportTemplates(int appId);
+    Package ExportTemplatesPackage(int appId);
 
-    Package ExportComponents(int appId);
+    Package ExportComponentsPackage(int appId);
 
-    Package ExportScripts(int appId);
+    Package ExportScriptsPackage(int appId);
 
-    Package ExportResources(int appId);
+    Package ExportResourcesPackage(int appId);
 
-    Package ExportPages(int appId);
+    Package ExportPagesPackage(int appId);
 
-    Package ExportPageRoles(int appId);
+    Package ExportPageRolesPackage(int appId);
 }

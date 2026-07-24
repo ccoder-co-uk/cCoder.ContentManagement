@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,35 +29,16 @@ public partial class AppCultureOrchestrationServiceTests
 
     public AppCultureOrchestrationServiceTests()
     {
-        appCultureProcessingServiceMock = new Mock<IAppCultureProcessingService>(MockBehavior.Strict);
-        appCultureEventProcessingServiceMock = new Mock<IAppCultureEventProcessingService>(MockBehavior.Strict);
+        appCultureProcessingServiceMock = new Mock<IAppCultureProcessingService>(behavior: MockBehavior.Strict);
+        appCultureEventProcessingServiceMock = new Mock<IAppCultureEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new AppCultureOrchestrationService(
-            appCultureProcessingServiceMock.Object,
-            appCultureEventProcessingServiceMock.Object
+processingService: appCultureProcessingServiceMock.Object,
+eventService: appCultureEventProcessingServiceMock.Object
         );
     }
 
-    private static AppCulture CreateRandomAppCulture() => Builder<AppCulture>.CreateNew().Build();
+    private static AppCulture CreateRandomAppCulture() =>
+        Builder<AppCulture>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

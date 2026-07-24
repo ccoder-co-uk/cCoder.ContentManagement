@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -9,7 +13,6 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
@@ -21,46 +24,25 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class PackageOrchestrationServiceTests
 {
-    private readonly Mock<IContentManagementMigrationAggregationService> contentManagementMigrationAggregationServiceMock;
-    private readonly Mock<IPackageExportProcessingService> packageExportProcessingServiceMock;
     private readonly Mock<IPackageProcessingService> packageProcessingServiceMock;
+    private readonly Mock<IPackageItemProcessingService> packageItemProcessingServiceMock;
     private readonly Mock<IPackageEventProcessingService> packageEventProcessingServiceMock;
     private readonly PackageOrchestrationService orchestrationService;
 
     public PackageOrchestrationServiceTests()
     {
-        contentManagementMigrationAggregationServiceMock = new Mock<IContentManagementMigrationAggregationService>(MockBehavior.Strict);
-        packageExportProcessingServiceMock = new Mock<IPackageExportProcessingService>(MockBehavior.Strict);
-        packageProcessingServiceMock = new Mock<IPackageProcessingService>(MockBehavior.Strict);
-        packageEventProcessingServiceMock = new Mock<IPackageEventProcessingService>(MockBehavior.Strict);
+        packageProcessingServiceMock = new Mock<IPackageProcessingService>(behavior: MockBehavior.Strict);
+        packageItemProcessingServiceMock = new Mock<IPackageItemProcessingService>(behavior: MockBehavior.Strict);
+        packageEventProcessingServiceMock = new Mock<IPackageEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new PackageOrchestrationService(
-            contentManagementMigrationAggregationServiceMock.Object,
-            packageExportProcessingServiceMock.Object,
-            packageProcessingServiceMock.Object,
-            packageEventProcessingServiceMock.Object
+processingService: packageProcessingServiceMock.Object,
+packageItemProcessingService: packageItemProcessingServiceMock.Object,
+eventService: packageEventProcessingServiceMock.Object
         );
     }
 
-    private static Package CreateRandomPackage() => Builder<Package>.CreateNew().Build();
+    private static Package CreateRandomPackage() =>
+        Builder<Package>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

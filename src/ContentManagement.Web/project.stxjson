@@ -1,0 +1,303 @@
+{
+  "Classes": [
+    {
+      "Name": "Apps.Shared.DomainApiHosting",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "UseDomainApiShell",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "UseDomainDefaultCors",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "UseDomainExceptionHandling",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            },
+            {
+              "Name": "errorHandler",
+              "Type": "RequestDelegate"
+            }
+          ],
+          "ReturnType": "System.Void"
+        }
+      ]
+    },
+    {
+      "Name": "Apps.Shared.Hosting.NoOpSession",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Id",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Instance",
+          "Type": "Apps.Shared.Hosting.NoOpSession"
+        },
+        {
+          "Name": "IsAvailable",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "Keys",
+          "Type": "System.Collections.Generic.IEnumerable\u003CSystem.String\u003E"
+        }
+      ],
+      "Methods": [
+        {
+          "Name": "Clear",
+          "Inputs": [],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "CommitAsync",
+          "Inputs": [
+            {
+              "Name": "cancellationToken",
+              "Type": "System.Threading.CancellationToken"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task"
+        },
+        {
+          "Name": "LoadAsync",
+          "Inputs": [
+            {
+              "Name": "cancellationToken",
+              "Type": "System.Threading.CancellationToken"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task"
+        },
+        {
+          "Name": "Remove",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "Set",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            },
+            {
+              "Name": "value",
+              "Type": "System.Byte[]"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "TryGetValue",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            },
+            {
+              "Name": "value",
+              "Type": "System.Byte[]"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        }
+      ]
+    },
+    {
+      "Name": "Apps.Shared.Hosting.NoOpSessionFeature",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Session",
+          "Type": "ISession"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "Apps.Shared.Models.Config",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "ConnectionStrings",
+          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, System.String\u003E"
+        },
+        {
+          "Name": "DebugInfo",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "LogSQL",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "Services",
+          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, System.String\u003E"
+        },
+        {
+          "Name": "Settings",
+          "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, System.String\u003E"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "ContentManagement.Web.Controllers.HomeController",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Get",
+          "Inputs": [
+            {
+              "Name": "path",
+              "Type": "System.String"
+            },
+            {
+              "Name": "theme",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "edit",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "IActionResult"
+        }
+      ]
+    },
+    {
+      "Name": "ContentManagement.Web.Controllers.PackageController",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "PostImportAsync",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "newPackage",
+              "Type": "cCoder.Data.Models.Packaging.Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
+        }
+      ]
+    },
+    {
+      "Name": "ContentManagement.Web.NoApiRouteConstraint",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Match",
+          "Inputs": [
+            {
+              "Name": "httpContext",
+              "Type": "HttpContext"
+            },
+            {
+              "Name": "route",
+              "Type": "IRouter"
+            },
+            {
+              "Name": "routeKey",
+              "Type": "System.String"
+            },
+            {
+              "Name": "values",
+              "Type": "RouteValueDictionary"
+            },
+            {
+              "Name": "routeDirection",
+              "Type": "RouteDirection"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        }
+      ]
+    },
+    {
+      "Name": "ContentManagement.Web.Program",
+      "StandardElementType": "App",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Main",
+          "Inputs": [
+            {
+              "Name": "args",
+              "Type": "System.String[]"
+            }
+          ],
+          "ReturnType": "System.Void"
+        }
+      ]
+    },
+    {
+      "Name": "ContentManagement.Web.WebApplicationExtensions",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "AddContentManagementApplication",
+          "Inputs": [
+            {
+              "Name": "services",
+              "Type": "IServiceCollection"
+            },
+            {
+              "Name": "builder",
+              "Type": "WebApplicationBuilder"
+            }
+          ],
+          "ReturnType": "IServiceCollection"
+        },
+        {
+          "Name": "UseContentManagementApplication",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            }
+          ],
+          "ReturnType": "WebApplication"
+        }
+      ]
+    }
+  ],
+  "Links": [],
+  "AnalysisItems": []
+}

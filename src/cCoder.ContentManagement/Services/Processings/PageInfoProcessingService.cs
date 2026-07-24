@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
@@ -5,45 +9,65 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PageInfoProcessingService(IPageInfoService service) : IPageInfoProcessingService
+internal partial class PageInfoProcessingService(IPageInfoService service) : IPageInfoProcessingService
 {
-    public PageInfo Get(int id)
+    public PageInfo GetPageInfo(int pageInfoId) =>
+        TryCatch<PageInfo>(operation: () =>
     {
-        ValidateId(id, "id");
-        return service.Get(id);
-    }
+        ValidatePageInfoOnGet(inputs: [pageInfoId]);
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
+        return service.GetPageInfo(pageInfoId: pageInfoId);
 
-    public IQueryable<PageInfo> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters);
+    });
 
-    public ValueTask<PageInfo> AddAsync(PageInfo entity)
+    public IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<PageInfo>>(operation: () =>
     {
-        ValidatePageInfo(entity, "entity");
-        return service.AddAsync(entity);
-    }
+        ValidateAllPageInfoOnGet(inputs: [ignoreFilters]);
+        return service.GetAllPageInfo(ignoreFilters: ignoreFilters);
+    });
 
-    public ValueTask<PageInfo> UpdateAsync(PageInfo entity)
+    public ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo) =>
+        TryCatch<PageInfo>(operation: () =>
     {
-        ValidatePageInfo(entity, "entity");
-        return service.UpdateAsync(entity);
-    }
+        ValidatePageInfoOnAdd(inputs: [newPageInfo]);
+        ValidatePageInfo(pageInfo: newPageInfo, parameterName: "entity");
+        return service.AddPageInfoAsync(newPageInfo: newPageInfo);
 
-    public ValueTask DeleteAsync(int id)
-    {
-        ValidateId(id, "id");
-        return service.DeleteAsync(id);
-    }
+    }, isValueTask: true);
 
-    public async ValueTask<IEnumerable<Result<PageInfo>>> AddOrUpdate(IEnumerable<PageInfo> items)
+    public ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo) =>
+        TryCatch<PageInfo>(operation: () =>
     {
-        ValidatePageInfos(items, "items");
-        List<Result<PageInfo>> results = new List<Result<PageInfo>>();
-        foreach (PageInfo item in items)
+        ValidatePageInfoOnUpdate(inputs: [updatedPageInfo]);
+        ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "entity");
+        return service.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo);
+
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int pageInfoId) =>
+        TryCatch(operation: () =>
+    {
+        ValidateDeleteAsync(inputs: [pageInfoId]);
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
+        return service.DeleteAsync(pageInfoId: pageInfoId);
+
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<OperationResult<PageInfo>>> AddOrUpdatePageInfoResult(IEnumerable<PageInfo> newPageInfo) =>
+        TryCatch<IEnumerable<OperationResult<PageInfo>>>(operation: async () =>
+    {
+        ValidateOrUpdatePageInfoResultOnAdd(inputs: [newPageInfo]);
+        ValidatePageInfos(pageInfos: newPageInfo, parameterName: "items");
+        List<OperationResult<PageInfo>> results = new List<OperationResult<PageInfo>>();
+
+        foreach (PageInfo item in newPageInfo)
         {
             try
             {
-                PageInfo savedItem = item.Id < 1 ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new Result<PageInfo>
+                PageInfo savedItem = item.Id < 1 ? await ExecuteAddPageInfoAsync(newPageInfo: item) : await ExecuteUpdatePageInfoAsync(updatedPageInfo: item);
+
+                results.Add(item: new OperationResult<PageInfo>
                 {
                     Success = true,
                     Item = savedItem,
@@ -52,7 +76,7 @@ internal class PageInfoProcessingService(IPageInfoService service) : IPageInfoPr
             }
             catch (Exception ex)
             {
-                results.Add(new Result<PageInfo>
+                results.Add(item: new OperationResult<PageInfo>
                 {
                     Success = false,
                     Item = item,
@@ -60,28 +84,56 @@ internal class PageInfoProcessingService(IPageInfoService service) : IPageInfoPr
                 });
             }
         }
+
         return results;
-    }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<PageInfo> items)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllPageInfoAsync(IEnumerable<PageInfo> deletedPageInfo) =>
+        TryCatch(operation: async () =>
     {
-        ValidatePageInfos(items, "items");
-        foreach (PageInfo item in items)
-            await DeleteAsync(item.Id);
-    }
+        ValidateAllPageInfoOnDelete(inputs: [deletedPageInfo]);
+        ValidatePageInfos(pageInfos: deletedPageInfo, parameterName: "items");
 
-    private static void ValidateId(int id, string parameterName) =>
-        ThrowIf(id < 1, parameterName + " must be greater than 0.");
+        foreach (PageInfo item in deletedPageInfo)
+        {
+            await ExecuteDeleteAsync(pageInfoId: item.Id);
+        }
+
+    }, isValueTask: true);
+
+    private static void ValidateId(int pageInfoId, string parameterName) =>
+        ThrowIf(condition: pageInfoId < 1, message: parameterName + " must be greater than 0.");
 
     private static void ValidatePageInfo(PageInfo pageInfo, string parameterName) =>
-        ThrowIf(pageInfo == null, parameterName + " is required.");
+        ThrowIf(condition: pageInfo == null, message: parameterName + " is required.");
 
     private static void ValidatePageInfos(IEnumerable<PageInfo> pageInfos, string parameterName) =>
-        ThrowIf(pageInfos == null, parameterName + " is required.");
+        ThrowIf(condition: pageInfos == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
+    }
+
+    private ValueTask<PageInfo> ExecuteAddPageInfoAsync(PageInfo newPageInfo)
+    {
+        ValidatePageInfo(pageInfo: newPageInfo, parameterName: "entity");
+        return service.AddPageInfoAsync(newPageInfo: newPageInfo);
+    }
+
+    private ValueTask ExecuteDeleteAsync(int pageInfoId)
+    {
+        ValidateId(pageInfoId: pageInfoId, parameterName: "id");
+        return service.DeleteAsync(pageInfoId: pageInfoId);
+    }
+
+    private ValueTask<PageInfo> ExecuteUpdatePageInfoAsync(PageInfo updatedPageInfo)
+    {
+        ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "entity");
+        return service.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo);
     }
 }

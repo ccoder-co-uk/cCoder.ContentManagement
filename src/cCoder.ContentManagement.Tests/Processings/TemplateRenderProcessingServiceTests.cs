@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -10,8 +14,10 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
+using cCoder.ContentManagement.Brokers.ServiceProviders;
 using Moq;
-using IMetadataCache = cCoder.ContentManagement.Exposures.Caching.IMetadataCache;
+using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
 using RenderApp = cCoder.Data.Models.CMS.App;
 using RenderComponent = cCoder.Data.Models.CMS.Component;
@@ -26,10 +32,23 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class TemplateRenderProcessingServiceTests
 {
     private readonly Mock<IMetadataCache> metadataCacheMock = new();
-    private readonly Mock<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache> commonObjectCacheMock = new();
+    private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
 
-    private TemplateRenderProcessingService CreateSut() =>
-        new(metadataCacheMock.Object, commonObjectCacheMock.Object, new JsonBroker());
+    private TemplateRenderProcessingService CreateSut(RenderConfig config)
+    {
+        Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
+
+        TemplateRenderService templateRenderService =
+            new(
+                serviceProviderBroker: serviceProviderBrokerMock.Object);
+
+        return new TemplateRenderProcessingService(
+            metadataCache: metadataCacheMock.Object,
+            objectCache: commonObjectCacheMock.Object,
+            jsonBroker: new JsonBroker(),
+            templateRenderService: templateRenderService,
+            config: config);
+    }
 
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()
@@ -103,25 +122,20 @@ public partial class TemplateRenderProcessingServiceTests
             Name = "Welcome",
             ResourceKey = "Default",
             RawString = string.Join(
-                "",
-                "[app[name]]|",
-                "[theme[Color]]|",
-                "[model[Name]]|",
-                "[script[Bootstrap]]|",
-                "[component[Hero]]|",
-                "[meta[site-description]]|",
-                "[resource_displayname[Greeting]]|",
-                "[execute]return 'ignored';[/execute]"
-            ),
+                separator: "",
+                value:
+                [
+                    "[app[name]]|",
+                    "[theme[Color]]|",
+                    "[model[Name]]|",
+                    "[script[Bootstrap]]|",
+                    "[component[Hero]]|",
+                    "[meta[site-description]]|",
+                    "[resource_displayname[Greeting]]|",
+                    "[execute]return 'ignored';[/execute]"
+                ]),
         };
 
         return (app, user, template);
     }
 }
-
-
-
-
-
-
-

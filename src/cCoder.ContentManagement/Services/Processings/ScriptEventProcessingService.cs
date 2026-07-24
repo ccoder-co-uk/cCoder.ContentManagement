@@ -1,38 +1,53 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class ScriptEventProcessingService(IScriptEventService eventService) : IScriptEventProcessingService
+internal partial class ScriptEventProcessingService(IScriptEventService eventService) : IScriptEventProcessingService
 {
-    public ValueTask RaiseScriptAddEventAsync(Script entity)
+    public ValueTask RaiseScriptAddEventAsync(Script entity) =>
+        TryCatch(operation: () =>
     {
-        ValidateScript(entity, "entity");
+        ValidateRaiseScriptAddEventAsync(inputs: [entity]);
+        ValidateScript(script: entity, parameterName: "entity");
 
-        return eventService.RaiseScriptAddEventAsync(entity);
-    }
+        return eventService.RaiseScriptAddEventAsync(entity: entity);
 
-    public ValueTask RaiseScriptUpdateEventAsync(Script entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseScriptUpdateEventAsync(Script entity) =>
+        TryCatch(operation: () =>
     {
-        ValidateScript(entity, "entity");
+        ValidateRaiseScriptUpdateEventAsync(inputs: [entity]);
+        ValidateScript(script: entity, parameterName: "entity");
 
-        return eventService.RaiseScriptUpdateEventAsync(entity);
-    }
+        return eventService.RaiseScriptUpdateEventAsync(entity: entity);
 
-    public ValueTask RaiseScriptDeleteEventAsync(Script entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseScriptDeleteEventAsync(Script entity) =>
+        TryCatch(operation: () =>
     {
-        ValidateScript(entity, "entity");
+        ValidateRaiseScriptDeleteEventAsync(inputs: [entity]);
+        ValidateScript(script: entity, parameterName: "entity");
 
-        return eventService.RaiseScriptDeleteEventAsync(entity);
-    }
+        return eventService.RaiseScriptDeleteEventAsync(entity: entity);
+
+    }, isValueTask: true);
 
     private static void ValidateScript(Script script, string parameterName) =>
-        ThrowIf(script == null, parameterName + " is required.");
+        ThrowIf(condition: script == null, message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
-            throw new ValidationException(message);
+        {
+            throw new ValidationException(message: message);
+        }
     }
 }

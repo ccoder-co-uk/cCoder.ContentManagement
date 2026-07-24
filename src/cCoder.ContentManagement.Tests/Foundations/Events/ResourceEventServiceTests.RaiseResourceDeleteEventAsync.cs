@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,40 +32,36 @@ public partial class ResourceEventServiceTests
         EventMessage<CmsDataModels.Resource> actualMessage = null;
 
         resourceEventBrokerMock
-            .Setup(x => x.RaiseResourceDeleteEventAsync(It.IsAny<EventMessage<CmsDataModels.Resource>>()))
-            .Callback<EventMessage<CmsDataModels.Resource>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseResourceDeleteEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Resource>>()))
+            .Callback<EventMessage<CmsDataModels.Resource>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseResourceDeleteEventAsync(entity);
+        await service.RaiseResourceDeleteEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         resourceEventBrokerMock.Verify(
-            x => x.RaiseResourceDeleteEventAsync(It.IsAny<EventMessage<CmsDataModels.Resource>>()),
-            Times.Once
+expression: x => x.RaiseResourceDeleteEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Resource>>()),
+times: Times.Once
         );
+
+        resourceEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         resourceEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

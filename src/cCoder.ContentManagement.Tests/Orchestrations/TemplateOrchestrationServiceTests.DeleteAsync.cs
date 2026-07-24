@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,40 +27,24 @@ public partial class TemplateOrchestrationServiceTests
         // Given
         int id = 1;
         Template entity = CreateRandomTemplate();
-        templateProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
-        templateProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        templateProcessingServiceMock.Setup(expression: x => x.GetTemplate(templateId: id))
+            .Returns(value: entity);
+
+        templateProcessingServiceMock.Setup(expression: x => x.DeleteAsync(templateId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         templateEventProcessingServiceMock
-            .Setup(x => x.RaiseTemplateDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(templateId: id);
 
         // Then
-        templateProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
-        templateProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        templateEventProcessingServiceMock.Verify(x => x.RaiseTemplateDeleteEventAsync(entity), Times.Once);
+        templateProcessingServiceMock.Verify(expression: x => x.GetTemplate(templateId: id), times: Times.Once);
+        templateProcessingServiceMock.Verify(expression: x => x.DeleteAsync(templateId: id), times: Times.Once);
+        templateEventProcessingServiceMock.Verify(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,40 +27,24 @@ public partial class ContentOrchestrationServiceTests
         // Given
         int id = 1;
         Content entity = CreateRandomContent();
-        contentProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
-        contentProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        contentProcessingServiceMock.Setup(expression: x => x.GetContent(contentId: id))
+            .Returns(value: entity);
+
+        contentProcessingServiceMock.Setup(expression: x => x.DeleteAsync(contentId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         contentEventProcessingServiceMock
-            .Setup(x => x.RaiseContentDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseContentDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(contentId: id);
 
         // Then
-        contentProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
-        contentProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        contentEventProcessingServiceMock.Verify(x => x.RaiseContentDeleteEventAsync(entity), Times.Once);
+        contentProcessingServiceMock.Verify(expression: x => x.GetContent(contentId: id), times: Times.Once);
+        contentProcessingServiceMock.Verify(expression: x => x.DeleteAsync(contentId: id), times: Times.Once);
+        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

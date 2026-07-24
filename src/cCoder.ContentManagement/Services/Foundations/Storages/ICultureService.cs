@@ -1,16 +1,20 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface ICultureService
 {
-    Culture Get(string id, bool ignoreFilters = false);
+    Culture GetCulture(string cultureId, bool ignoreFilters = false);
 
-    IQueryable<Culture> GetAll(bool ignoreFilters = false);
+    IQueryable<Culture> GetAllCulture(bool ignoreFilters = false);
 
-    ValueTask<Culture> AddAsync(Culture culture);
+    ValueTask<Culture> AddCultureAsync(Culture newCulture);
 
-    ValueTask<Culture> UpdateAsync(Culture culture);
+    ValueTask<Culture> UpdateCultureAsync(Culture updatedCulture);
 
-    ValueTask DeleteAsync(string id);
+    ValueTask DeleteAsync(string cultureId);
 }

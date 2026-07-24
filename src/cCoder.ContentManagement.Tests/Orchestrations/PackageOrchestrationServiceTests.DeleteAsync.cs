@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,39 +28,24 @@ public partial class PackageOrchestrationServiceTests
         // Given
         Guid id = Guid.NewGuid();
         Package entity = CreateRandomPackage();
-        packageProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
-        packageProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        packageProcessingServiceMock.Setup(expression: x => x.GetPackage(packageId: id))
+            .Returns(value: entity);
+
+        packageProcessingServiceMock.Setup(expression: x => x.DeleteAsync(packageId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         packageEventProcessingServiceMock
-            .Setup(x => x.RaisePackageDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePackageDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(packageId: id);
 
         // Then
-        packageProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
-        packageProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        packageEventProcessingServiceMock.Verify(x => x.RaisePackageDeleteEventAsync(entity), Times.Once);
+        packageProcessingServiceMock.Verify(expression: x => x.GetPackage(packageId: id), times: Times.Once);
+        packageProcessingServiceMock.Verify(expression: x => x.DeleteAsync(packageId: id), times: Times.Once);
+        packageEventProcessingServiceMock.Verify(expression: x => x.RaisePackageDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

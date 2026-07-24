@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,32 +27,16 @@ public partial class PageInfoProcessingServiceTests
         // Given
         PageInfo entity = CreateRandomPageInfo();
         var id = entity.Id;
-        pageInfoServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        pageInfoServiceMock.Setup(expression: x => x.DeleteAsync(pageInfoId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await pageInfoProcessingService.DeleteAllAsync(new[] { entity });
+        await pageInfoProcessingService.DeleteAllPageInfoAsync(deletedPageInfo: new[] { entity });
 
         // Then
-        pageInfoServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
+        pageInfoServiceMock.Verify(expression: x => x.DeleteAsync(pageInfoId: id), times: Times.Once);
         pageInfoServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

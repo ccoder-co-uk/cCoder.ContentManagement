@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,32 +27,17 @@ public partial class CommonObjectEventProcessingServiceTests
     {
         // Given
         CommonObject entity = CreateRandomCommonObject();
+
         commonObjectEventServiceMock
-            .Setup(x => x.RaiseCommonObjectDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseCommonObjectDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCommonObjectDeleteEventAsync(entity);
+        await service.RaiseCommonObjectDeleteEventAsync(entity: entity);
 
         // Then
-        commonObjectEventServiceMock.Verify(x => x.RaiseCommonObjectDeleteEventAsync(entity), Times.Once);
+        commonObjectEventServiceMock.Verify(expression: x => x.RaiseCommonObjectDeleteEventAsync(entity: entity), times: Times.Once);
         commonObjectEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

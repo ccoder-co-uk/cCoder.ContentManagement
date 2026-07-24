@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,35 +27,17 @@ public partial class CommonObjectOrchestrationServiceTests
     {
         // Given
         CommonObject[] entities = [CreateRandomCommonObject()];
-        commonObjectProcessingServiceMock.Setup(x => x.DeleteAllAsync(entities)).Returns(ValueTask.CompletedTask);
+
+        commonObjectProcessingServiceMock.Setup(expression: x => x.DeleteAllCommonObjectAsync(deletedCommonObject: entities))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAsync(entities);
+        await orchestrationService.DeleteAllCommonObjectAsync(deletedCommonObject: entities);
 
         // Then
-        commonObjectProcessingServiceMock.Verify(x => x.DeleteAllAsync(entities), Times.Once);
+        commonObjectProcessingServiceMock.Verify(expression: x => x.DeleteAllCommonObjectAsync(deletedCommonObject: entities), times: Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

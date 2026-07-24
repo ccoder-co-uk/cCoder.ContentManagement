@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,33 +29,15 @@ public partial class PackageItemOrchestrationServiceTests
     private readonly PackageItemOrchestrationService orchestrationService;
     public PackageItemOrchestrationServiceTests()
     {
-        packageItemProcessingServiceMock = new Mock<IPackageItemProcessingService>(MockBehavior.Strict);
-        packageItemEventProcessingServiceMock = new Mock<IPackageItemEventProcessingService>(MockBehavior.Strict);
+        packageItemProcessingServiceMock = new Mock<IPackageItemProcessingService>(behavior: MockBehavior.Strict);
+        packageItemEventProcessingServiceMock = new Mock<IPackageItemEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new PackageItemOrchestrationService(
-            packageItemProcessingServiceMock.Object,
-            packageItemEventProcessingServiceMock.Object
+processingService: packageItemProcessingServiceMock.Object,
+eventService: packageItemEventProcessingServiceMock.Object
         );
     }
-    private static PackageItem CreateRandomPackageItem() => Builder<PackageItem>.CreateNew().Build();
+    private static PackageItem CreateRandomPackageItem() =>
+        Builder<PackageItem>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

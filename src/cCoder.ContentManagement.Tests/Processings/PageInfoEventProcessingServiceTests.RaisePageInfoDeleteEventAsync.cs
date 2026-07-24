@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,34 +26,17 @@ public partial class PageInfoEventProcessingServiceTests
     {
         // Given
         PageInfo entity = CreateRandomPageInfo();
+
         pageInfoEventServiceMock
-            .Setup(x => x.RaisePageInfoDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageInfoDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageInfoDeleteEventAsync(entity);
+        await service.RaisePageInfoDeleteEventAsync(entity: entity);
 
         // Then
-        pageInfoEventServiceMock.Verify(x => x.RaisePageInfoDeleteEventAsync(entity), Times.Once);
+        pageInfoEventServiceMock.Verify(expression: x => x.RaisePageInfoDeleteEventAsync(entity: entity), times: Times.Once);
         pageInfoEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

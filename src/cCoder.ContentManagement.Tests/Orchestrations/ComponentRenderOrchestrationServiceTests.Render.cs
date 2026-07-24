@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -10,10 +14,10 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.ComponentModel.DataAnnotations;
-
-
+using cCoder.ContentManagement.Models;
 
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
@@ -21,8 +25,59 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class ComponentRenderOrchestrationServiceTests
 {
     [Fact]
+    public void ShouldResolveAuthorizationAndRenderComponent()
+    {
+        // Given
+        User user = new()
+        {
+            DefaultCultureId = "en-GB"
+        };
+
+        RenderAuthorization authorization = new()
+        {
+            Culture = "en-GB",
+            User = user
+        };
+
+        string expectedHtml = "<section>component</section>";
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.ResolveRenderAuthorization(
+                culture: null))
+            .Returns(value: authorization);
+
+        componentRenderProcessingServiceMock
+            .Setup(
+                expression: service =>
+                    service.RenderComponentRenderOperation(
+                        operation: It.Is<ComponentRenderOperation>(
+                            match: operation =>
+                                operation.AppId == 1
+                                && operation.Name == "Hero"
+                                && operation.User == user
+                                && operation.Culture == "en-GB"
+                                && operation.Theme == "Default")))
+            .Returns(value: expectedHtml);
+
+        // When
+        string result = renderOrchestrationService.Render(
+            appId: 1,
+            name: "Hero",
+            culture: null,
+            theme: "Default");
+
+        // Then
+        result.Should()
+            .Be(expected: expectedHtml);
+
+        authorizationProcessingServiceMock.VerifyAll();
+        componentRenderProcessingServiceMock.VerifyAll();
+    }
+
+    [Fact]
     public void ShouldRenderComponentThroughProcessingService()
     {
+        // Given
         User user = new()
         {
             Id = "test-user",
@@ -32,27 +87,42 @@ public partial class ComponentRenderOrchestrationServiceTests
             IsActive = true,
             Roles = []
         };
+
         string expectedHtml = "<section>component</section>";
 
         componentRenderProcessingServiceMock
-            .Setup(x => x.Render(1, "Hero", user, "en-GB", "Default"))
-            .Returns(expectedHtml);
+            .Setup(
+                expression: service =>
+                    service.RenderComponentRenderOperation(
+                        operation: It.Is<ComponentRenderOperation>(
+                            match: operation =>
+                                operation.AppId == 1
+                                && operation.Name == "Hero"
+                                && operation.User == user
+                                && operation.Culture == "en-GB"
+                                && operation.Theme == "Default")))
+            .Returns(value: expectedHtml);
 
-        string result = renderOrchestrationService.Render(1, "Hero", user, "en-GB", "Default");
+        // When
+        string result = renderOrchestrationService.RenderUser(appId: 1, name: "Hero", user: user, culture: "en-GB", theme: "Default");
 
-        result.Should().Be(expectedHtml);
+        // Then
+        result.Should()
+            .Be(expected: expectedHtml);
+
         componentRenderProcessingServiceMock.VerifyAll();
     }
 
     [Fact]
     public void ShouldThrowValidationExceptionWhenUserIsNull()
     {
-        Action act = () => renderOrchestrationService.Render(1, "Hero", null!, "en-GB", "Default");
+        // Given
+        // When
+        Action act = () => renderOrchestrationService.RenderUser(appId: 1, name: "Hero", user: null!, culture: "en-GB", theme: "Default");
 
-        act.Should().Throw<ValidationException>().WithMessage("user is required.");
+        // Then
+        act.Should()
+            .Throw<ValidationException>()
+            .WithMessage(expectedWildcardPattern: "user is required.");
     }
 }
-
-
-
-

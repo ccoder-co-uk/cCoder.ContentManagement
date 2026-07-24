@@ -1,6 +1,11 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Models.Exports;
 using cCoder.Data.Extensions;
 using Newtonsoft.Json;
 using cCoder.Data.Models.Packaging;
@@ -17,156 +22,146 @@ internal partial class PackageExportService(
     IResourceBroker resourceBroker,
     IPageBroker pageBroker) : IPackageExportService
 {
-    private sealed class ExportPage
+    public Package ExportRolesPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
-        public int Id { get; init; }
-        public int? ParentId { get; init; }
-        public string Path { get; set; }
-        public string Name { get; init; }
-        public string ResourceKey { get; init; }
-        public bool ShowOnMenus { get; init; }
-        public int Order { get; init; }
-        public DateTimeOffset LastUpdated { get; init; }
-        public string Layout { get; init; }
-        public ExportContent[] Contents { get; init; }
-        public ExportPageInfo[] PageInfo { get; init; }
-    }
-
-    private sealed class ExportContent
-    {
-        public string CultureId { get; init; }
-        public string Name { get; init; }
-        public string Html { get; init; }
-    }
-
-    private sealed class ExportPageInfo
-    {
-        public string CultureId { get; init; }
-        public string Description { get; init; }
-        public string Keywords { get; init; }
-        public string Title { get; init; }
-    }
-
-    public Package ExportRoles(int appId)
-    {
-        EnsureAdmin(ValidateAppId(appId, "appId"));
+        ValidateExportRolesPackage(inputs: [appId]);
+        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
-            "Roles",
-            "Core/Role",
-            roleBroker.GetAllRoles(ignoreFilters: true)
-                .Where(role => role.AppId == appId)
-                .Select(role => new { role.Name, role.Privs })
-                .ToArray());
-    }
+name: "Roles",
+itemType: "Core/Role",
+data: roleBroker.GetAllRoles(ignoreFilters: true)
+            .Where(predicate: role => role.AppId == appId)
+            .Select(selector: role => new { role.Name, role.Privs })
+            .ToArray());
 
-    public Package ExportLayouts(int appId)
+    });
+
+    public Package ExportLayoutsPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
-        EnsureAdmin(ValidateAppId(appId, "appId"));
+        ValidateExportLayoutsPackage(inputs: [appId]);
+        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
-            "Layouts",
-            "Core/Layout",
-            layoutBroker.GetAllLayouts(ignoreFilters: true)
-                .Where(layout => layout.AppId == appId)
-                .Select(layout => new
-                {
-                    layout.Name,
-                    layout.HeaderHtml,
-                    layout.Html,
-                    layout.Script,
-                    layout.LastUpdated
-                })
-                .ToArray());
-    }
+name: "Layouts",
+itemType: "Core/Layout",
+data: layoutBroker.GetAllLayouts(ignoreFilters: true)
+            .Where(predicate: layout => layout.AppId == appId)
+            .Select(selector: layout => new
+            {
+                layout.Name,
+                layout.HeaderHtml,
+                layout.Html,
+                layout.Script,
+                layout.LastUpdated
+            })
+            .ToArray());
 
-    public Package ExportTemplates(int appId)
+    });
+
+    public Package ExportTemplatesPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
-        EnsureAdmin(ValidateAppId(appId, "appId"));
+        ValidateExportTemplatesPackage(inputs: [appId]);
+        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
-            "Templates",
-            "Core/Template",
-            templateBroker.GetAllTemplates(ignoreFilters: true)
-                .Where(template => template.AppId == appId)
-                .Select(template => new
-                {
-                    template.Name,
-                    template.ResourceKey,
-                    template.RawString,
-                    template.LastUpdated
-                })
-                .ToArray());
-    }
+name: "Templates",
+itemType: "Core/Template",
+data: templateBroker.GetAllTemplates(ignoreFilters: true)
+            .Where(predicate: template => template.AppId == appId)
+            .Select(selector: template => new
+            {
+                template.Name,
+                template.ResourceKey,
+                template.RawString,
+                template.LastUpdated
+            })
+            .ToArray());
 
-    public Package ExportComponents(int appId)
+    });
+
+    public Package ExportComponentsPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
-        EnsureAdmin(ValidateAppId(appId, "appId"));
+        ValidateExportComponentsPackage(inputs: [appId]);
+        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
-            "Components",
-            "Core/Component",
-            componentBroker.GetAllComponents(ignoreFilters: true)
-                .Where(component => component.AppId == appId)
-                .Select(component => new
-                {
-                    component.Name,
-                    component.Key,
-                    component.ResourceKey,
-                    component.Script,
-                    component.Content,
-                    component.LastUpdated
-                })
-                .ToArray());
-    }
+name: "Components",
+itemType: "Core/Component",
+data: componentBroker.GetAllComponents(ignoreFilters: true)
+            .Where(predicate: component => component.AppId == appId)
+            .Select(selector: component => new
+            {
+                component.Name,
+                component.Key,
+                component.ResourceKey,
+                component.Script,
+                component.Content,
+                component.LastUpdated
+            })
+            .ToArray());
 
-    public Package ExportScripts(int appId)
+    });
+
+    public Package ExportScriptsPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
-        EnsureAdmin(ValidateAppId(appId, "appId"));
+        ValidateExportScriptsPackage(inputs: [appId]);
+        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
-            "Scripts",
-            "Core/Script",
-            scriptBroker.GetAllScripts(ignoreFilters: true)
-                .Where(script => script.AppId == appId)
-                .Select(script => new
-                {
-                    script.Name,
-                    script.Content,
-                    script.LastUpdated
-                })
-                .ToArray());
-    }
+name: "Scripts",
+itemType: "Core/Script",
+data: scriptBroker.GetAllScripts(ignoreFilters: true)
+            .Where(predicate: script => script.AppId == appId)
+            .Select(selector: script => new
+            {
+                script.Name,
+                script.Content,
+                script.LastUpdated
+            })
+            .ToArray());
 
-    public Package ExportResources(int appId)
+    });
+
+    public Package ExportResourcesPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
-        EnsureAdmin(ValidateAppId(appId, "appId"));
+        ValidateExportResourcesPackage(inputs: [appId]);
+        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
-            "Resources",
-            "Core/Resource",
-            resourceBroker.GetAllResources(ignoreFilters: true)
-                .Where(resource => resource.AppId == appId)
-                .Select(resource => new
-                {
-                    resource.Culture,
-                    resource.Key,
-                    resource.Name,
-                    resource.DisplayName,
-                    resource.ShortDisplayName,
-                    resource.Description,
-                    resource.LastUpdated
-                })
-                .ToArray());
-    }
+name: "Resources",
+itemType: "Core/Resource",
+data: resourceBroker.GetAllResources(ignoreFilters: true)
+            .Where(predicate: resource => resource.AppId == appId)
+            .Select(selector: resource => new
+            {
+                resource.Culture,
+                resource.Key,
+                resource.Name,
+                resource.DisplayName,
+                resource.ShortDisplayName,
+                resource.Description,
+                resource.LastUpdated
+            })
+            .ToArray());
 
-    public Package ExportPages(int appId)
+    });
+
+    public Package ExportPagesPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
-        EnsureAdmin(ValidateAppId(appId, "appId"));
+        ValidateExportPagesPackage(inputs: [appId]);
+        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         List<ExportPage> pages = pageBroker.GetAllPages(ignoreFilters: true)
-            .Where(page => page.AppId == appId)
-            .Select(page => new ExportPage
+            .Where(predicate: page => page.AppId == appId)
+            .Select(selector: page => new ExportPage
             {
                 Id = page.Id,
                 ParentId = page.ParentId,
@@ -178,94 +173,105 @@ internal partial class PackageExportService(
                 LastUpdated = page.LastUpdated,
                 Layout = page.Layout,
                 Contents = page.Contents
-                    .Select(content => new ExportContent
+                    .Select(selector: content => new ExportContent
                     {
                         CultureId = content.CultureId,
                         Name = content.Name,
                         Html = content.Html
                     })
-                    .ToArray(),
+            .ToArray(),
                 PageInfo = page.PageInfo
-                    .Select(info => new ExportPageInfo
+                    .Select(selector: info => new ExportPageInfo
                     {
                         CultureId = info.CultureId,
                         Description = info.Description,
                         Keywords = info.Keywords,
                         Title = info.Title
                     })
-                    .ToArray()
+            .ToArray()
             })
             .ToList();
 
-        Dictionary<int, ExportPage> pagesById = pages.ToDictionary(page => page.Id);
+        Dictionary<int, ExportPage> pagesById = pages.ToDictionary(keySelector: page => page.Id);
 
-        foreach (ExportPage page in pages.Where(page => page.ParentId.HasValue))
+        foreach (ExportPage page in pages.Where(predicate: page => page.ParentId.HasValue))
         {
             ExportPage root = page;
 
-            while (root.ParentId.HasValue && pagesById.TryGetValue(root.ParentId.Value, out ExportPage parent))
+            while (root.ParentId.HasValue && pagesById.TryGetValue(key: root.ParentId.Value, value: out ExportPage parent))
+            {
                 root = parent;
+            }
 
-            if (string.IsNullOrEmpty(root.Path) && !string.IsNullOrEmpty(page.Path))
-                page.Path = "/" + page.Path.TrimStart('/');
+            if (string.IsNullOrEmpty(value: root.Path) && !string.IsNullOrEmpty(value: page.Path))
+            {
+                page.Path = "/" + page.Path.TrimStart(trimChar: '/');
+            }
         }
 
         return CreatePackage(
-            "Pages",
-            "Core/Page",
-            pages.Select(page => new
-            {
-                page.Path,
-                page.Name,
-                page.ResourceKey,
-                page.ShowOnMenus,
-                page.Order,
-                page.LastUpdated,
-                page.Layout,
-                page.Contents,
-                page.PageInfo
-            }).ToArray());
-    }
+name: "Pages",
+itemType: "Core/Page",
+data: pages.Select(selector: page => new
+{
+    page.Path,
+    page.Name,
+    page.ResourceKey,
+    page.ShowOnMenus,
+    page.Order,
+    page.LastUpdated,
+    page.Layout,
+    page.Contents,
+    page.PageInfo
+})
+            .ToArray());
 
-    public Package ExportPageRoles(int appId)
+    });
+
+    public Package ExportPageRolesPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
-        EnsureAdmin(ValidateAppId(appId, "appId"));
+        ValidateExportPageRolesPackage(inputs: [appId]);
+        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
-            "PageRoles",
-            "Core/PageRole",
-            pageBroker.GetAllPages(ignoreFilters: true)
-                .Where(page => page.AppId == appId)
-                .SelectMany(page => page.Roles.Select(role => new
-                {
-                    page.Path,
-                    Role = role.Role.Name
-                }))
-                .ToArray());
-    }
+name: "PageRoles",
+itemType: "Core/PageRole",
+data: pageBroker.GetAllPages(ignoreFilters: true)
+            .Where(predicate: page => page.AppId == appId)
+            .SelectMany(selector: page => page.Roles.Select(selector: role => new
+            {
+                page.Path,
+                Role = role.Role.Name
+            }))
+            .ToArray());
 
-    private Package CreatePackage(string name, string itemType, object data)
-    {
-        return new Package(name)
+    });
+
+    private Package CreatePackage(string name, string itemType, object data) =>
+        new Package(name: name)
         {
             Items =
             [
                 new PackageItem
                 {
                     Type = itemType,
-                    Data = JsonConvert.SerializeObject(data, CreateSerializerSettings())
+                    Data = JsonConvert.SerializeObject(
+                        value: data,
+                        settings: CreateJsonSerializerSettings())
                 }
             ]
         };
-    }
 
     private void EnsureAdmin(int appId)
     {
-        if (!authorizationBroker.IsAdminOfApp(appId))
-            throw new SecurityException("Access Denied!");
+        if (!authorizationBroker.IsAdminOfApp(appId: appId))
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
     }
 
-    private static JsonSerializerSettings CreateSerializerSettings()
+    private static JsonSerializerSettings CreateJsonSerializerSettings()
     {
         JsonSerializerSettings settings = ObjectExtensions.GetJSONSettings();
         settings.TypeNameHandling = TypeNameHandling.None;

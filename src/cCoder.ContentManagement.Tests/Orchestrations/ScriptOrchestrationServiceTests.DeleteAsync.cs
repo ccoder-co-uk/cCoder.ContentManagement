@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,40 +27,24 @@ public partial class ScriptOrchestrationServiceTests
         // Given
         int id = 1;
         Script entity = CreateRandomScript();
-        scriptProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
-        scriptProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        scriptProcessingServiceMock.Setup(expression: x => x.GetScript(scriptId: id))
+            .Returns(value: entity);
+
+        scriptProcessingServiceMock.Setup(expression: x => x.DeleteAsync(scriptId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         scriptEventProcessingServiceMock
-            .Setup(x => x.RaiseScriptDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseScriptDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(scriptId: id);
 
         // Then
-        scriptProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
-        scriptProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        scriptEventProcessingServiceMock.Verify(x => x.RaiseScriptDeleteEventAsync(entity), Times.Once);
+        scriptProcessingServiceMock.Verify(expression: x => x.GetScript(scriptId: id), times: Times.Once);
+        scriptProcessingServiceMock.Verify(expression: x => x.DeleteAsync(scriptId: id), times: Times.Once);
+        scriptEventProcessingServiceMock.Verify(expression: x => x.RaiseScriptDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class SubmissionEventProcessingServiceTests
     {
         // Given
         Submission entity = CreateRandomSubmission();
+
         submissionEventServiceMock
-            .Setup(x => x.RaiseSubmissionUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseSubmissionUpdateEventAsync(entity);
+        await service.RaiseSubmissionUpdateEventAsync(entity: entity);
 
         // Then
-        submissionEventServiceMock.Verify(x => x.RaiseSubmissionUpdateEventAsync(entity), Times.Once);
+        submissionEventServiceMock.Verify(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity), times: Times.Once);
         submissionEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

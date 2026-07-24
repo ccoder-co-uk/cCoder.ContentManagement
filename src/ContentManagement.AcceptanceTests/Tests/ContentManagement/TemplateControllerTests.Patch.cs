@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,30 +16,29 @@ public sealed partial class TemplateControllerTests
     {
         // Given
         Template createdTemplate = await CreateTemplateAsync(
-            new
-            {
-                appId = 1,
-                name = Unique("Template"),
-                description = "Acceptance template",
-                resourceKey = "Default",
-                rawString = "<html><body><h1>[model[title]]</h1></body></html>",
-            });
+payload: new
+{
+    appId = 1,
+    name = Unique(prefix: "Template"),
+    description = "Acceptance template",
+    resourceKey = "Default",
+    rawString = "<html><body><h1>[model[title]]</h1></body></html>",
+});
+
         Template expectedTemplate = new() { Description = "Patched template" };
 
         // When
-        await PatchTemplateAsync(createdTemplate.Id, new { description = "Patched template" });
-        Template actualTemplate = await GetTemplateAsync(createdTemplate.Id);
+        await PatchTemplateAsync(id: createdTemplate.Id, payload: new { description = "Patched template" });
+        Template actualTemplate = await GetTemplateAsync(id: createdTemplate.Id);
 
         // Then
-        actualTemplate.Should().NotBeNull();
-        actualTemplate!.Description.Should().Be(expectedTemplate.Description);
 
-        await DeleteTemplateAsync(createdTemplate.Id);
+        actualTemplate.Should()
+            .NotBeNull();
+
+        actualTemplate!.Description.Should()
+            .Be(expected: expectedTemplate.Description);
+
+        await DeleteTemplateAsync(id: createdTemplate.Id);
     }
 }
-
-
-
-
-
-

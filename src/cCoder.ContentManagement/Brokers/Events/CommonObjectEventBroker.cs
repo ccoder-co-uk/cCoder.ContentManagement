@@ -1,17 +1,22 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Eventing;
 using cCoder.Eventing.Models;
 using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public class CommonObjectEventBroker(IEventHub eventHub) : ICommonObjectEventBroker
+internal sealed class CommonObjectEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
+    : AuthenticatedEventBroker(eventInfrastructureDependency), ICommonObjectEventBroker
 {
     public ValueTask RaiseCommonObjectAddEventAsync(EventMessage<CommonObject> message) =>
-        eventHub.RaiseEventAsync("common_object_add", message);
+        RaiseEventAsync(name: "common_object_add", message: message);
 
     public ValueTask RaiseCommonObjectUpdateEventAsync(EventMessage<CommonObject> message) =>
-        eventHub.RaiseEventAsync("common_object_update", message);
+        RaiseEventAsync(name: "common_object_update", message: message);
 
     public ValueTask RaiseCommonObjectDeleteEventAsync(EventMessage<CommonObject> message) =>
-        eventHub.RaiseEventAsync("common_object_delete", message);
+        RaiseEventAsync(name: "common_object_delete", message: message);
 }

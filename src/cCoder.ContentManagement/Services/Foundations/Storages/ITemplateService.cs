@@ -1,16 +1,20 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 public interface ITemplateService
 {
-    Template Get(int id, bool ignoreFilters = false);
+    Template GetTemplate(int templateId, bool ignoreFilters = false);
 
-    IQueryable<Template> GetAll(bool ignoreFilters = false);
+    IQueryable<Template> GetAllTemplate(bool ignoreFilters = false);
 
-    ValueTask<Template> AddAsync(Template template);
+    ValueTask<Template> AddTemplateAsync(Template newTemplate);
 
-    ValueTask<Template> UpdateAsync(Template template);
+    ValueTask<Template> UpdateTemplateAsync(Template updatedTemplate);
 
-    ValueTask DeleteAsync(int id);
+    ValueTask DeleteAsync(int templateId);
 }

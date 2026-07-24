@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,38 +27,24 @@ public partial class CultureOrchestrationServiceTests
     {
         // Given
         IQueryable<Culture> entities = new[] { CreateRandomCulture() }.AsQueryable();
-        cultureProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+
+        cultureProcessingServiceMock.Setup(expression: x => x.GetAllCulture(ignoreFilters: true))
+            .Returns(value: entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+
+        var result = orchestrationService.GetAllCulture(ignoreFilters: true)
+            .ToArray();
 
         // Then
-        result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        cultureProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+
+        result.Select(selector: item => item.Id)
+            .Should()
+            .Equal(expected: entities.Select(selector: item => item.Id));
+
+        cultureProcessingServiceMock.Verify(expression: x => x.GetAllCulture(ignoreFilters: true), times: Times.Once);
         cultureProcessingServiceMock.VerifyNoOtherCalls();
         cultureEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class AppEventProcessingServiceTests
     {
         // Given
         App app = CreateRandomApp();
+
         appEventServiceMock
-            .Setup(x => x.RaiseAppDeleteEventAsync(app))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseAppDeleteEventAsync(app: app))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseAppDeleteEventAsync(app);
+        await service.RaiseAppDeleteEventAsync(app: app);
 
         // Then
-        appEventServiceMock.Verify(x => x.RaiseAppDeleteEventAsync(app), Times.Once);
+        appEventServiceMock.Verify(expression: x => x.RaiseAppDeleteEventAsync(app: app), times: Times.Once);
         appEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

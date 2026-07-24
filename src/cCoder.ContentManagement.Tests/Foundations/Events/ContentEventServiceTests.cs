@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -19,33 +23,19 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Events;
 public partial class ContentEventServiceTests
 {
     private readonly Mock<IContentEventBroker> contentEventBrokerMock;
-    private readonly Mock<ICoreAuthInfo> authInfoMock;
     private readonly cCoder.ContentManagement.Services.Foundations.Events.ContentEventService service;
     private const string CurrentUserId = "test-user";
 
     public ContentEventServiceTests()
     {
-        contentEventBrokerMock = new Mock<IContentEventBroker>(MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(MockBehavior.Strict);
-        contentEventBrokerMock = new(MockBehavior.Strict);
-        authInfoMock = new();
-        authInfoMock.SetupGet(x => x.SSOUserId).Returns(CurrentUserId);
+        contentEventBrokerMock = new Mock<IContentEventBroker>(behavior: MockBehavior.Strict);
+        contentEventBrokerMock = new(behavior: MockBehavior.Strict);
+
+        contentEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
+
         service = new cCoder.ContentManagement.Services.Foundations.Events.ContentEventService(
-            contentEventBrokerMock.Object,
-            authInfoMock.Object
+contentEventBroker: contentEventBrokerMock.Object
         );
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

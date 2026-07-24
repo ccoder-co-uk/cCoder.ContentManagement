@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,31 +27,20 @@ public partial class ContentProcessingServiceTests
     {
         // Given
         IQueryable<Content> entities = new[] { CreateRandomContent() }.AsQueryable();
-        contentServiceMock.Setup(x => x.GetAll()).Returns(entities);
+
+        contentServiceMock.Setup(expression: x => x.GetAllContent())
+            .Returns(value: entities);
 
         // When
-        IQueryable<Content> result = contentProcessingService.GetAll();
+        IQueryable<Content> result = contentProcessingService.GetAllContent();
 
         // Then
-        result.Should().BeSameAs(entities);
-        contentServiceMock.Verify(x => x.GetAll(), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entities);
+
+        contentServiceMock.Verify(expression: x => x.GetAllContent(), times: Times.Once);
         contentServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

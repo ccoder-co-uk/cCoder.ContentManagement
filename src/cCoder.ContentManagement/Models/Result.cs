@@ -1,43 +1,17 @@
-using System.ComponentModel.DataAnnotations;
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+using cCoder.ContentManagement.Dependencies.Results;
 
 namespace cCoder.ContentManagement.Models;
 
-public class Result
+public class Result : OperationResult
 {
-    [Key]
-    public virtual string Id { get; set; }
-    public bool Success { get; set; }
-    public string Message { get; set; }
 }
 
-public class Result<T> : Result
+public class Result<T> : OperationResult<T>
 {
-    private string id;
-
-    [Key]
-    public override string Id
-    {
-        get
-        {
-            if (id != null)
-                return id;
-
-            try
-            {
-                return Item is null ? null : ((dynamic)Item).Id?.ToString();
-            }
-            catch
-            {
-                return null;
-            }
-        }
-        set => id = value;
-    }
-
-    public T Item { get; set; }
-
-    public Result<TNew> ToNew<TNew>(TNew item) =>
-        new() { Success = Success, Message = Message, Item = item };
 }
 
 public class AuditResultsByUser

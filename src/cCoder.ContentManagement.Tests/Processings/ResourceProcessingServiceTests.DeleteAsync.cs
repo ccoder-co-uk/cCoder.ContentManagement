@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,27 +30,29 @@ public partial class ResourceProcessingServiceTests
         secondVersion.AppId = rootResource.AppId;
         secondVersion.Key = rootResource.Key;
         secondVersion.Name = rootResource.Name;
-        User currentUser = TestUsers.WithPrivilege("resource_delete", rootResource.AppId);
-        resourceServiceMock.Setup(x => x.Get(rootResource.Id)).Returns(rootResource);
+        User currentUser = TestUsers.WithPrivilege(privilege: "resource_delete", appId: rootResource.AppId);
+
+        resourceServiceMock.Setup(expression: x => x.GetResource(resourceId: rootResource.Id))
+            .Returns(value: rootResource);
 
         resourceServiceMock
-            .Setup(x => x.GetAll())
-            .Returns(new[] { rootResource, secondVersion }.AsQueryable());
+            .Setup(expression: x => x.GetAllResource())
+            .Returns(value: new[] { rootResource, secondVersion }.AsQueryable());
 
         resourceServiceMock
-            .Setup(x => x.DeleteAsync(rootResource.Id))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.DeleteAsync(resourceId: rootResource.Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         resourceServiceMock
-            .Setup(x => x.DeleteAsync(secondVersion.Id))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.DeleteAsync(resourceId: secondVersion.Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await resourceProcessingService.DeleteAsync(rootResource.Id);
+        await resourceProcessingService.DeleteAsync(resourceId: rootResource.Id);
 
         // Then
-        resourceServiceMock.Verify(x => x.DeleteAsync(rootResource.Id), Times.Once);
-        resourceServiceMock.Verify(x => x.DeleteAsync(secondVersion.Id), Times.Once);
+        resourceServiceMock.Verify(expression: x => x.DeleteAsync(resourceId: rootResource.Id), times: Times.Once);
+        resourceServiceMock.Verify(expression: x => x.DeleteAsync(resourceId: secondVersion.Id), times: Times.Once);
     }
 
     [Fact]
@@ -54,14 +60,18 @@ public partial class ResourceProcessingServiceTests
     {
         // Given
         Resource resource = CreateRandomResource(id: 42, culture: "en-GB");
-        resourceServiceMock.Setup(x => x.Get(resource.Id)).Returns(resource);
-        resourceServiceMock.Setup(x => x.DeleteAsync(resource.Id)).Returns(ValueTask.CompletedTask);
+
+        resourceServiceMock.Setup(expression: x => x.GetResource(resourceId: resource.Id))
+            .Returns(value: resource);
+
+        resourceServiceMock.Setup(expression: x => x.DeleteAsync(resourceId: resource.Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await resourceProcessingService.DeleteAsync(resource.Id);
+        await resourceProcessingService.DeleteAsync(resourceId: resource.Id);
 
         // Then
-        resourceServiceMock.Verify(x => x.DeleteAsync(resource.Id), Times.Once);
+        resourceServiceMock.Verify(expression: x => x.DeleteAsync(resourceId: resource.Id), times: Times.Once);
     }
 
     [Fact]
@@ -69,29 +79,16 @@ public partial class ResourceProcessingServiceTests
     {
         // Given
         int resourceId = 42;
-        resourceServiceMock.Setup(x => x.Get(resourceId)).Returns((Resource)null!);
+
+        resourceServiceMock.Setup(expression: x => x.GetResource(resourceId: resourceId))
+            .Returns(value: (Resource)null!);
 
         // When
-        await resourceProcessingService.DeleteAsync(resourceId);
+        await resourceProcessingService.DeleteAsync(resourceId: resourceId);
 
         // Then
-        resourceServiceMock.Verify(x => x.Get(resourceId), Times.Once);
+        resourceServiceMock.Verify(expression: x => x.GetResource(resourceId: resourceId), times: Times.Once);
         resourceServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,38 +32,36 @@ public partial class PackageEventServiceTests
         EventMessage<cCoder.Data.Models.Packaging.Package> actualMessage = null;
 
         packageEventBrokerMock
-            .Setup(x => x.RaisePackageAddEventAsync(It.IsAny<EventMessage<cCoder.Data.Models.Packaging.Package>>()))
-            .Callback<EventMessage<cCoder.Data.Models.Packaging.Package>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePackageAddEventAsync(message: It.IsAny<EventMessage<cCoder.Data.Models.Packaging.Package>>()))
+            .Callback<EventMessage<cCoder.Data.Models.Packaging.Package>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePackageAddEventAsync(entity);
+        await service.RaisePackageAddEventAsync(package: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         packageEventBrokerMock.Verify(
-            x => x.RaisePackageAddEventAsync(It.IsAny<EventMessage<cCoder.Data.Models.Packaging.Package>>()),
-            Times.Once
+expression: x => x.RaisePackageAddEventAsync(message: It.IsAny<EventMessage<cCoder.Data.Models.Packaging.Package>>()),
+times: Times.Once
         );
+
+        packageEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         packageEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

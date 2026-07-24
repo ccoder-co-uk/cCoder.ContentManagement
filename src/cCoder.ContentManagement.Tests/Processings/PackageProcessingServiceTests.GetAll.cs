@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,28 +28,20 @@ public partial class PackageProcessingServiceTests
     {
         // Given
         IQueryable<Package> entities = new[] { CreateRandomPackage() }.AsQueryable();
-        packageServiceMock.Setup(x => x.GetAll()).Returns(entities);
+
+        packageServiceMock.Setup(expression: x => x.GetAllPackage())
+            .Returns(value: entities);
 
         // When
-        IQueryable<Package> result = packageProcessingService.GetAll();
+        IQueryable<Package> result = packageProcessingService.GetAllPackage();
 
         // Then
-        result.Should().BeSameAs(entities);
-        packageServiceMock.Verify(x => x.GetAll(), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entities);
+
+        packageServiceMock.Verify(expression: x => x.GetAllPackage(), times: Times.Once);
         packageServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

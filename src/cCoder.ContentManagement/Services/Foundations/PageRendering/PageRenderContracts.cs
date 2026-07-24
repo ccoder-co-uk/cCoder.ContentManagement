@@ -1,5 +1,9 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Rendering.Models;
+
+using cCoder.ContentManagement.Dependencies.Rendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
@@ -10,10 +14,10 @@ internal interface IMetadataCacheService
 
 internal interface ICommonObjectCacheService
 {
-    PageCacheSlice Get(PageRenderEngineRequest request);
+    PageCacheSlice GetPageRenderEngineRequestPageCacheSlice(PageRenderEngineRequest request);
 }
 
 internal interface IMarkupRenderService
 {
-    PageRenderResult Render(PageRenderSession session);
+    PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session);
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,34 +28,43 @@ public partial class CommonObjectServiceTests
     {
         // Given
         CommonObject commonObject = CreateRandomCommonObject(id: 9);
-        DataCommonObject dataCommonObject = ToDataCommonObject(commonObject);
+        DataCommonObject dataCommonObject = ToDataCommonObject(commonObject: commonObject);
 
-        commonObjectBrokerMock.Setup(x => x.GetAllCommonObjects(false)).Returns(new[] { dataCommonObject }.AsQueryable());
+        commonObjectBrokerMock.Setup(expression: x => x.GetAllCommonObjects(ignoreFilters: false))
+            .Returns(value: new[] { dataCommonObject }.AsQueryable());
 
-        commonObjectBrokerMock.Setup(x => x.GetAppId(It.IsAny<DataCommonObject>())).Returns((int?)7);
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "CommonObject_delete"));
+        commonObjectBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()))
+            .Returns(value: (int?)7);
+
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_delete"));
+
         commonObjectBrokerMock
-            .Setup(x => x.DeleteCommonObjectAsync(It.Is<DataCommonObject>(candidate => candidate.Id == commonObject.Id)))
-            .ReturnsAsync(1);
+            .Setup(expression: x => x.DeleteCommonObjectAsync(deletedCommonObject: It.Is<DataCommonObject>(match: candidate => candidate.Id == commonObject.Id)))
+            .ReturnsAsync(value: 1);
 
         // When
-        await commonObjectService.DeleteAsync(9);
+        await commonObjectService.DeleteAsync(commonObjectId: 9);
 
         // Then
-        commonObjectBrokerMock.Verify(x => x.GetAllCommonObjects(false), Times.Once);
+        commonObjectBrokerMock.Verify(expression: x => x.GetAllCommonObjects(ignoreFilters: false), times: Times.Once);
+
         commonObjectBrokerMock.Verify(
-            x => x.DeleteCommonObjectAsync(It.Is<DataCommonObject>(candidate => candidate.Id == commonObject.Id)),
-            Times.Once
+expression: x => x.DeleteCommonObjectAsync(deletedCommonObject: It.Is<DataCommonObject>(match: candidate => candidate.Id == commonObject.Id)),
+times: Times.Once
         );
+
         commonObjectBrokerMock.Verify(
-            x => x.GetAppId(It.IsAny<DataCommonObject>()),
-            Times.AtMostOnce()
+expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()),
+times: Times.AtMostOnce()
         );
+
         commonObjectBrokerMock.VerifyNoOtherCalls();
+
         authorizationBrokerMock.Verify(
-            x => x.Authorize((int?)7, "CommonObject_delete"),
-            Times.Once
+expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_delete"),
+times: Times.Once
         );
+
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -62,50 +75,40 @@ public partial class CommonObjectServiceTests
         CommonObject commonObject = CreateRandomCommonObject(id: 9);
 
         commonObjectBrokerMock
-            .Setup(x => x.GetAllCommonObjects(false))
-            .Returns(new[] { ToDataCommonObject(commonObject) }.AsQueryable());
+            .Setup(expression: x => x.GetAllCommonObjects(ignoreFilters: false))
+            .Returns(value: new[] { ToDataCommonObject(commonObject: commonObject) }.AsQueryable());
 
-        commonObjectBrokerMock.Setup(x => x.GetAppId(It.IsAny<DataCommonObject>())).Returns((int?)7);
+        commonObjectBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()))
+            .Returns(value: (int?)7);
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "CommonObject_delete"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_delete"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await commonObjectService.DeleteAsync(9);
+        Func<Task> action = async () => await commonObjectService.DeleteAsync(commonObjectId: 9);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        commonObjectBrokerMock.Verify(x => x.GetAllCommonObjects(false), Times.Once);
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        commonObjectBrokerMock.Verify(expression: x => x.GetAllCommonObjects(ignoreFilters: false), times: Times.Once);
+
         commonObjectBrokerMock.Verify(
-            x => x.GetAppId(It.IsAny<DataCommonObject>()),
-            Times.AtMostOnce()
+expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()),
+times: Times.AtMostOnce()
         );
+
         commonObjectBrokerMock.VerifyNoOtherCalls();
+
         authorizationBrokerMock.Verify(
-            x => x.Authorize((int?)7, "CommonObject_delete"),
-            Times.Once
+expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_delete"),
+times: Times.Once
         );
+
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

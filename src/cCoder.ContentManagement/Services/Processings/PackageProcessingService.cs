@@ -1,5 +1,8 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Extensions;
 using cCoder.Data.Models.Packaging;
@@ -7,91 +10,72 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PackageProcessingService(
-    IPackageService service,
-    IPackageItemProcessingService packageItemService,
-    IPackageExportService packageExportService) : IPackageProcessingService
+internal partial class PackageProcessingService(
+    IPackageService service) : IPackageProcessingService
 {
-    public Package ExportPackage(int appId, string packageName)
+    public Package GetPackage(Guid packageId) =>
+        TryCatch<Package>(operation: () =>
     {
-        string text = ValidatePackageName(packageName, "packageName");
-        Package result = text switch
+        ValidatePackageOnGet(inputs: [packageId]);
+        return service.GetPackage(packageId: ValidateId(packageId: packageId, parameterName: "id"));
+    });
+
+    public IQueryable<Package> GetAllPackage(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Package>>(operation: () =>
+    {
+        ValidateAllPackageOnGet(inputs: [ignoreFilters]);
+        return service.GetAllPackage(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Package> AddPackageAsync(Package newPackage) =>
+        TryCatch<Package>(operation: () =>
+    {
+        ValidatePackageOnAdd(inputs: [newPackage]);
+        ValidatePackage(package: newPackage, parameterName: "entity");
+
+        if (newPackage.Items != null && newPackage.Items.Any())
         {
-            "Roles" => packageExportService.ExportRoles(ValidateAppId(appId, "appId")),
-            "Layouts" => packageExportService.ExportLayouts(ValidateAppId(appId, "appId")),
-            "Templates" => packageExportService.ExportTemplates(ValidateAppId(appId, "appId")),
-            "Components" => packageExportService.ExportComponents(ValidateAppId(appId, "appId")),
-            "Scripts" => packageExportService.ExportScripts(ValidateAppId(appId, "appId")),
-            "Resources" => packageExportService.ExportResources(ValidateAppId(appId, "appId")),
-            "Pages" => packageExportService.ExportPages(ValidateAppId(appId, "appId")),
-            "PageRoles" => packageExportService.ExportPageRoles(ValidateAppId(appId, "appId")),
-            var ignoredPackage => new Package(packageName)
+            newPackage.Items.ForEach(action: item =>
             {
-                Items = Array.Empty<PackageItem>()
-            },
-        };
-        return result;
-    }
-
-    public Package[] ExportPackages(int appId, string[] packageNames)
-    {
-        return ValidatePackageNames(packageNames, "packageNames")
-            .Select(name => ExportPackage(appId, name))
-            .ToArray();
-    }
-
-    public Package Get(Guid id) =>
-        service.Get(ValidateId(id, "id"));
-
-    public IQueryable<Package> GetAll(bool ignoreFilters = false) =>
-        service.GetAll(ignoreFilters);
-
-    public ValueTask<Package> AddAsync(Package entity)
-    {
-        ValidatePackage(entity, "entity");
-        if (entity.Items != null && entity.Items.Any())
-        {
-            entity.Items.ForEach(item =>
-            {
-                item.PackageId = entity.Id;
+                item.PackageId = newPackage.Id;
                 item.Package = null;
             });
         }
-        return service.AddAsync(entity);
-    }
 
-    public async ValueTask<Package> UpdateAsync(Package entity)
+        return service.AddPackageAsync(newPackage: newPackage);
+
+    }, isValueTask: true);
+
+    public ValueTask<Package> UpdatePackageAsync(Package updatedPackage) =>
+        TryCatch<Package>(operation: async () =>
     {
-        ValidatePackage(entity, "entity");
-        Package result = await service.UpdateAsync(entity);
-        if (entity.Items != null)
-        {
-            await packageItemService.DeleteAllAsync(packageItemService.GetAll()
-                .Where(item => item.PackageId == result.Id)
-                .ToArray());
+        ValidatePackageOnUpdate(inputs: [updatedPackage]);
+        ValidatePackage(package: updatedPackage, parameterName: "entity");
+        return await service.UpdatePackageAsync(updatedPackage: updatedPackage);
 
-            entity.Items.ForEach(item => item.PackageId = result.Id);
+    }, isValueTask: true);
 
-            if (entity.Items.Any())
-                await packageItemService.AddOrUpdate(entity.Items);
-        }
-
-        return result;
-    }
-
-    public ValueTask DeleteAsync(Guid id) =>
-        service.DeleteAsync(ValidateId(id, "id"));
-
-    public async ValueTask<IEnumerable<Result<Package>>> AddOrUpdate(IEnumerable<Package> items)
+    public ValueTask DeleteAsync(Guid packageId) =>
+        TryCatch(operation: () =>
     {
-        ValidatePackages(items, "items");
-        List<Result<Package>> results = new List<Result<Package>>();
-        foreach (Package item in items)
+        ValidateDeleteAsync(inputs: [packageId]);
+        return service.DeleteAsync(packageId: ValidateId(packageId: packageId, parameterName: "id"));
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<OperationResult<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage) =>
+        TryCatch<IEnumerable<OperationResult<Package>>>(operation: async () =>
+    {
+        ValidateOrUpdatePackageResultOnAdd(inputs: [newPackage]);
+        ValidatePackages(packages: newPackage, parameterName: "items");
+        List<OperationResult<Package>> results = new List<OperationResult<Package>>();
+
+        foreach (Package item in newPackage)
         {
             try
             {
-                Package savedItem = item.Id == Guid.Empty ? await AddAsync(item) : await UpdateAsync(item);
-                results.Add(new Result<Package>
+                Package savedItem = item.Id == Guid.Empty ? await ExecuteAddPackageAsync(newPackage: item) : await ExecuteUpdatePackageAsync(updatedPackage: item);
+
+                results.Add(item: new OperationResult<Package>
                 {
                     Success = true,
                     Item = savedItem,
@@ -100,7 +84,7 @@ internal class PackageProcessingService(
             }
             catch (Exception ex)
             {
-                results.Add(new Result<Package>
+                results.Add(item: new OperationResult<Package>
                 {
                     Success = false,
                     Item = item,
@@ -108,36 +92,40 @@ internal class PackageProcessingService(
                 });
             }
         }
+
         return results;
-    }
 
-    public async ValueTask DeleteAllAsync(IEnumerable<Package> items)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage) =>
+        TryCatch(operation: async () =>
     {
-        ValidatePackages(items, "items");
-        foreach (Package item in items)
-            await DeleteAsync(item.Id);
-    }
+        ValidateAllPackageOnDelete(inputs: [deletedPackage]);
+        ValidatePackages(packages: deletedPackage, parameterName: "items");
 
-    private static int ValidateAppId(int appId, string parameterName)
+        foreach (Package item in deletedPackage)
+        {
+            await ExecuteDeleteAsync(packageId: item.Id);
+        }
+
+    }, isValueTask: true);
+
+    private static Guid ValidateId(Guid packageId, string parameterName)
     {
-        if (appId < 1)
-            throw new ValidationException(parameterName + " must be greater than 0.");
+        if (packageId == Guid.Empty)
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
-        return appId;
-    }
-
-    private static Guid ValidateId(Guid id, string parameterName)
-    {
-        if (id == Guid.Empty)
-            throw new ValidationException(parameterName + " is required.");
-
-        return id;
+        return packageId;
     }
 
     private static Package ValidatePackage(Package package, string parameterName)
     {
         if (package == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return package;
     }
@@ -145,24 +133,35 @@ internal class PackageProcessingService(
     private static IEnumerable<Package> ValidatePackages(IEnumerable<Package> packages, string parameterName)
     {
         if (packages == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return packages;
     }
 
-    private static string ValidatePackageName(string packageName, string parameterName)
+    private ValueTask<Package> ExecuteAddPackageAsync(Package newPackage)
     {
-        if (string.IsNullOrWhiteSpace(packageName))
-            throw new ValidationException(parameterName + " is required.");
+        ValidatePackage(package: newPackage, parameterName: "entity");
 
-        return packageName;
+        if (newPackage.Items != null && newPackage.Items.Any())
+        {
+            newPackage.Items.ForEach(action: item =>
+            {
+                item.PackageId = newPackage.Id;
+                item.Package = null;
+            });
+        }
+
+        return service.AddPackageAsync(newPackage: newPackage);
     }
 
-    private static string[] ValidatePackageNames(string[] packageNames, string parameterName)
-    {
-        if (packageNames == null)
-            throw new ValidationException(parameterName + " is required.");
+    private ValueTask ExecuteDeleteAsync(Guid packageId) =>
+        service.DeleteAsync(packageId: ValidateId(packageId: packageId, parameterName: "id"));
 
-        return packageNames;
+    private async ValueTask<Package> ExecuteUpdatePackageAsync(Package updatedPackage)
+    {
+        ValidatePackage(package: updatedPackage, parameterName: "entity");
+        return await service.UpdatePackageAsync(updatedPackage: updatedPackage);
     }
 }

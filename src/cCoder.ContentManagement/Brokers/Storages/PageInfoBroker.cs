@@ -1,47 +1,54 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class PageInfoBroker(ICoreContextFactory coreContextFactory) : IPageInfoBroker
+internal sealed class PageInfoBroker(ICoreContextFactory coreContextFactory) : IPageInfoBroker
 {
     public IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters)
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.PageInfo.IgnoreQueryFilters()
-            : coreDataContext.PageInfo;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.PageInfo,
+            ignoreFilters: ignoreFilters);
     }
 
-    public async ValueTask<PageInfo> AddPageInfoAsync(PageInfo entity)
+    public async ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        PageInfo result = (await coreDataContext.PageInfo.AddAsync(entity)).Entity;
+        PageInfo result = (await coreDataContext.PageInfo.AddAsync(entity: newPageInfo)).Entity;
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo entity)
+    public async ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        PageInfo result = coreDataContext.PageInfo.Update(entity).Entity;
+
+        PageInfo result = coreDataContext.PageInfo.Update(entity: updatedPageInfo)
+            .Entity;
+
         await coreDataContext.SaveChangesAsync();
         return result;
     }
 
-    public async ValueTask<int> DeletePageInfoAsync(PageInfo entity)
+    public async ValueTask<int> DeletePageInfoAsync(PageInfo deletedPageInfo)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.PageInfo.Remove(entity);
+        coreDataContext.PageInfo.Remove(entity: deletedPageInfo);
         return await coreDataContext.SaveChangesAsync();
     }
 
-    public async ValueTask DeleteAllPageInfoAsync(IEnumerable<PageInfo> items)
+    public async ValueTask DeleteAllPageInfoAsync(IEnumerable<PageInfo> deletedPageInfo)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.PageInfo.RemoveRange(items);
+        coreDataContext.PageInfo.RemoveRange(entities: deletedPageInfo);
         await coreDataContext.SaveChangesAsync();
     }
 }

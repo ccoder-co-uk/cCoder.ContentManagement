@@ -1,16 +1,21 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Exposures.Setup;
 
 public static partial class UIBaseline
 {
-    static Package PageRoles => new()
-    {
-        Name = "Content Management Page Roles",
-        Category = "CMS",
-        Description = "Content Management Page Roles.",
-        SourceApi = "https://ccoder.co.uk/Api/",
-        Items =
+    static Package PageRoles =>
+        new()
+        {
+            Name = "Content Management Page Roles",
+            Category = "CMS",
+            Description = "Content Management Page Roles.",
+            SourceApi = "https://ccoder.co.uk/Api/",
+            Items =
         [
             new PackageItem
             {
@@ -533,5 +538,5 @@ public static partial class UIBaseline
 """
             }
         ]
-    };
+        };
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
@@ -5,60 +9,90 @@ using cCoder.ContentManagement.Services.Processings;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal class SubmissionOrchestrationService(
+internal partial class SubmissionOrchestrationService(
     ISubmissionProcessingService processingService,
     ISubmissionEventProcessingService eventService) : ISubmissionOrchestrationService
 {
-    public Submission Get(Guid id) => processingService.Get(ValidateId(id, "id"));
-
-    public IQueryable<Submission> GetAll(bool ignoreFilters = false) =>
-        processingService.GetAll(ignoreFilters);
-
-    public async ValueTask<Submission> AddAsync(Submission entity)
+    public Submission GetSubmission(Guid submissionId) =>
+        TryCatch<Submission>(operation: () =>
     {
-        ValidateSubmission(entity, "entity");
+        ValidateSubmissionOnGet(inputs: [submissionId]);
+        return processingService.GetSubmission(submissionId: ValidateId(submissionId: submissionId, parameterName: "id"));
+    });
 
-        Submission result = await processingService.AddAsync(entity);
-        await eventService.RaiseSubmissionAddEventAsync(result);
+    public IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false) =>
+        TryCatch<IQueryable<Submission>>(operation: () =>
+    {
+        ValidateAllSubmissionOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllSubmission(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Submission> AddSubmissionAsync(Submission newSubmission) =>
+        TryCatch<Submission>(operation: async () =>
+    {
+        ValidateSubmissionOnAdd(inputs: [newSubmission]);
+        ValidateSubmission(submission: newSubmission, parameterName: "entity");
+
+        Submission result = await processingService.AddSubmissionAsync(newSubmission: newSubmission);
+        await eventService.RaiseSubmissionAddEventAsync(entity: result);
         return result;
-    }
 
-    public async ValueTask<Submission> UpdateAsync(Submission entity)
+    }, isValueTask: true);
+
+    public ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission) =>
+        TryCatch<Submission>(operation: async () =>
     {
-        ValidateSubmission(entity, "entity");
+        ValidateSubmissionOnUpdate(inputs: [updatedSubmission]);
+        ValidateSubmission(submission: updatedSubmission, parameterName: "entity");
 
-        Submission result = await processingService.UpdateAsync(entity);
-        await eventService.RaiseSubmissionUpdateEventAsync(result);
+        Submission result = await processingService.UpdateSubmissionAsync(updatedSubmission: updatedSubmission);
+        await eventService.RaiseSubmissionUpdateEventAsync(entity: result);
         return result;
-    }
 
-    public async ValueTask DeleteAsync(Guid id)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(Guid submissionId) =>
+        TryCatch(operation: async () =>
     {
-        ValidateId(id, "id");
+        ValidateDeleteAsync(inputs: [submissionId]);
+        ValidateId(submissionId: submissionId, parameterName: "id");
 
-        Submission entity = processingService.Get(id);
-        await eventService.RaiseSubmissionDeleteEventAsync(entity);
-        await processingService.DeleteAsync(id);
-    }
+        Submission entity = processingService.GetSubmission(submissionId: submissionId);
+        await eventService.RaiseSubmissionDeleteEventAsync(entity: entity);
+        await processingService.DeleteAsync(submissionId: submissionId);
 
-    public ValueTask<IEnumerable<Result<Submission>>> AddOrUpdate(IEnumerable<Submission> items) =>
-        processingService.AddOrUpdate(ValidateSubmissions(items, "items"));
+    }, isValueTask: true);
 
-    public ValueTask DeleteAllAsync(IEnumerable<Submission> items) =>
-        processingService.DeleteAllAsync(ValidateSubmissions(items, "items"));
-
-    private static Guid ValidateId(Guid id, string parameterName)
+    public ValueTask<IEnumerable<OperationResult<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission) =>
+        TryCatch<IEnumerable<OperationResult<Submission>>>(operation: () =>
     {
-        if (id == Guid.Empty)
-            throw new ValidationException(parameterName + " is required.");
+        ValidateOrUpdateSubmissionResultOnAdd(inputs: [newSubmission]);
+        return processingService.AddOrUpdateSubmissionResult(newSubmission: ValidateSubmissions(submissions: newSubmission, parameterName: "items"));
+    }, isValueTask: true);
 
-        return id;
+    public ValueTask DeleteAllSubmissionAsync(IEnumerable<Submission> deletedSubmission) =>
+        TryCatch(operation: () =>
+    {
+        ValidateAllSubmissionOnDelete(inputs: [deletedSubmission]);
+        return processingService.DeleteAllSubmissionAsync(deletedSubmission: ValidateSubmissions(submissions: deletedSubmission, parameterName: "items"));
+    }, isValueTask: true);
+
+    private static Guid ValidateId(Guid submissionId, string parameterName)
+    {
+        if (submissionId == Guid.Empty)
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
+
+        return submissionId;
     }
 
     private static Submission ValidateSubmission(Submission submission, string parameterName)
     {
         if (submission == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return submission;
     }
@@ -66,7 +100,9 @@ internal class SubmissionOrchestrationService(
     private static IEnumerable<Submission> ValidateSubmissions(IEnumerable<Submission> submissions, string parameterName)
     {
         if (submissions == null)
-            throw new ValidationException(parameterName + " is required.");
+        {
+            throw new ValidationException(message: parameterName + " is required.");
+        }
 
         return submissions;
     }

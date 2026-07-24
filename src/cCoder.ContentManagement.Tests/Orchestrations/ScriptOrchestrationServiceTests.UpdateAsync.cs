@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,39 +27,24 @@ public partial class ScriptOrchestrationServiceTests
     {
         // Given
         Script entity = CreateRandomScript();
-        scriptProcessingServiceMock.Setup(x => x.UpdateAsync(entity)).ReturnsAsync(entity);
+
+        scriptProcessingServiceMock.Setup(expression: x => x.UpdateScriptAsync(updatedScript: entity))
+            .ReturnsAsync(value: entity);
 
         scriptEventProcessingServiceMock
-            .Setup(x => x.RaiseScriptUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseScriptUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Script result = await orchestrationService.UpdateAsync(entity);
+        Script result = await orchestrationService.UpdateScriptAsync(updatedScript: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        scriptProcessingServiceMock.Verify(x => x.UpdateAsync(entity), Times.Once);
-        scriptEventProcessingServiceMock.Verify(x => x.RaiseScriptUpdateEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        scriptProcessingServiceMock.Verify(expression: x => x.UpdateScriptAsync(updatedScript: entity), times: Times.Once);
+        scriptEventProcessingServiceMock.Verify(expression: x => x.RaiseScriptUpdateEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

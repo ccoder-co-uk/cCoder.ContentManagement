@@ -1,5 +1,10 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Security.Data.EF;
+using cCoder.Security.Data.EF.Dependencies;
 using cCoder.Security.Data.EF.Interfaces;
 using cCoder.Security.Objects;
 using ContentManagement.Web;
@@ -20,42 +25,46 @@ internal sealed class ContentManagementIntegrationFactory(
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Acceptance");
-        builder.ConfigureAppConfiguration((_, config) =>
+        builder.UseEnvironment(environment: "Acceptance");
+
+        builder.ConfigureAppConfiguration(configureDelegate: (_, config) =>
         {
             config.AddInMemoryCollection(
-            [
-                new KeyValuePair<string, string>("ConnectionStrings:Core", coreConnectionString),
-                new KeyValuePair<string, string>("ConnectionStrings:SSO", ssoConnectionString),
-                new KeyValuePair<string, string>("Settings:DecryptionKey", decryptionKey),
-                new KeyValuePair<string, string>("Settings:enableExternalEventing", "true"),
-                new KeyValuePair<string, string>("Eventing:ProviderType", "Http"),
-                new KeyValuePair<string, string>("Eventing:Http:MaxConcurrency", "1"),
+initialData: [
+                new KeyValuePair<string, string>(key: "ConnectionStrings:Core", value: coreConnectionString),
+                new KeyValuePair<string, string>(key: "ConnectionStrings:SSO", value: ssoConnectionString),
+                new KeyValuePair<string, string>(key: "Settings:DecryptionKey", value: decryptionKey),
+                new KeyValuePair<string, string>(key: "Settings:enableExternalEventing", value: "true"),
+                new KeyValuePair<string, string>(key: "Eventing:ProviderType", value: "Http"),
+                new KeyValuePair<string, string>(key: "Eventing:Http:MaxConcurrency", value: "1"),
             ]);
         });
-        builder.ConfigureTestServices(services =>
+
+        builder.ConfigureTestServices(servicesConfiguration: services =>
         {
             services.RemoveAll<ICoreContextFactory>();
             services.RemoveAll<ISecurityDbContextFactory>();
 
             services.AddSingleton(
-                new Config
-                {
-                    ConnectionStrings = new Dictionary<string, string>
-                    {
-                        ["Core"] = coreConnectionString,
-                        ["SSO"] = ssoConnectionString,
-                    },
-                    Settings = new Dictionary<string, string>
-                    {
-                        ["DecryptionKey"] = decryptionKey,
-                        ["enableExternalEventing"] = "true",
-                    },
-                    Services = new Dictionary<string, string>(),
-                });
+implementationInstance: new Config
+{
+    ConnectionStrings = new Dictionary<string, string>
+    {
+        ["Core"] = coreConnectionString,
+        ["SSO"] = ssoConnectionString,
+    },
+    Settings = new Dictionary<string, string>
+    {
+        ["DecryptionKey"] = decryptionKey,
+        ["enableExternalEventing"] = "true",
+    },
+    Services = new Dictionary<string, string>(),
+});
+
             services.AddSingleton<ISecurityDbContextFactory>(
-                _ => new MSSQLSecurityDbContextFactory(ssoConnectionString));
-            services.AddCoreData(coreConnectionString);
+implementationFactory: _ => new MSSQLSecurityDbContextFactory(connectionString: ssoConnectionString));
+
+            services.AddCoreData(connectionString: coreConnectionString);
         });
     }
 }

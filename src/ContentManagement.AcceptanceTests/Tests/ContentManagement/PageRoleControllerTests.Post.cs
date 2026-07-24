@@ -1,7 +1,10 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.Security;
 using FluentAssertions;
 using Xunit;
-
 
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
@@ -11,26 +14,26 @@ public sealed partial class PageRoleControllerTests
     public async Task Post_CreatesPageRole()
     {
         // Given
-        SeededPageRoleContext seededContext = await SeedDatabase(false, "app_admin", "page_read", "pagerole_create", "pagerole_delete");
+        SeededPageRoleContext seededContext = await SeedDatabase(includePageRole: false, privileges: ["app_admin", "page_read", "pagerole_create", "pagerole_delete"]);
         PageRole actualPageRole;
 
         // When
-        actualPageRole = await CreatePageRoleAsync(new
+        actualPageRole = await CreatePageRoleAsync(payload: new
         {
             pageId = seededContext.PageId,
             roleId = seededContext.RoleId,
         });
 
         // Then
-        actualPageRole.Should().NotBeNull();
-        actualPageRole.PageId.Should().Be(seededContext.PageId);
-        actualPageRole.RoleId.Should().Be(seededContext.RoleId);
+        actualPageRole.Should()
+            .NotBeNull();
 
-        await Teardown(seededContext);
+        actualPageRole.PageId.Should()
+            .Be(expected: seededContext.PageId);
+
+        actualPageRole.RoleId.Should()
+            .Be(expected: seededContext.RoleId);
+
+        await Teardown(seededContext: seededContext);
     }
 }
-
-
-
-
-

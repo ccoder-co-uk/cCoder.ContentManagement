@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class PageEventProcessingServiceTests
     {
         // Given
         Page entity = CreateRandomPage();
+
         pageEventServiceMock
-            .Setup(x => x.RaisePageAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageAddEventAsync(entity);
+        await service.RaisePageAddEventAsync(entity: entity);
 
         // Then
-        pageEventServiceMock.Verify(x => x.RaisePageAddEventAsync(entity), Times.Once);
+        pageEventServiceMock.Verify(expression: x => x.RaisePageAddEventAsync(entity: entity), times: Times.Once);
         pageEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

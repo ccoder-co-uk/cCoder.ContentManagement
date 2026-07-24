@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,37 +28,21 @@ public partial class ResourceOrchestrationServiceTests
         // Given
         int id = 1;
         Resource entity = CreateRandomResource();
-        resourceProcessingServiceMock.Setup(x => x.Get(id)).Returns(entity);
+
+        resourceProcessingServiceMock.Setup(expression: x => x.GetResource(resourceId: id))
+            .Returns(value: entity);
 
         // When
-        Resource result = orchestrationService.Get(id);
+        Resource result = orchestrationService.GetResource(resourceId: id);
 
         // Then
-        result.Should().BeEquivalentTo(entity);
-        resourceProcessingServiceMock.Verify(x => x.Get(id), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        resourceProcessingServiceMock.Verify(expression: x => x.GetResource(resourceId: id), times: Times.Once);
         resourceProcessingServiceMock.VerifyNoOtherCalls();
         resourceEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

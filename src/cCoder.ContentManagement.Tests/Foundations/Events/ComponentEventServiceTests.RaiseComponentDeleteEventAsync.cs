@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,40 +32,36 @@ public partial class ComponentEventServiceTests
         EventMessage<CmsDataModels.Component> actualMessage = null;
 
         componentEventBrokerMock
-            .Setup(x => x.RaiseComponentDeleteEventAsync(It.IsAny<EventMessage<CmsDataModels.Component>>()))
-            .Callback<EventMessage<CmsDataModels.Component>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseComponentDeleteEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Component>>()))
+            .Callback<EventMessage<CmsDataModels.Component>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseComponentDeleteEventAsync(entity);
+        await service.RaiseComponentDeleteEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         componentEventBrokerMock.Verify(
-            x => x.RaiseComponentDeleteEventAsync(It.IsAny<EventMessage<CmsDataModels.Component>>()),
-            Times.Once
+expression: x => x.RaiseComponentDeleteEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Component>>()),
+times: Times.Once
         );
+
+        componentEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
+
+
         componentEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

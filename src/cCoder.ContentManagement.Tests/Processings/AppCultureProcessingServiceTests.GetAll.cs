@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,31 +27,20 @@ public partial class AppCultureProcessingServiceTests
     {
         // Given
         IQueryable<AppCulture> entities = new[] { CreateRandomAppCulture() }.AsQueryable();
-        appCultureServiceMock.Setup(x => x.GetAll()).Returns(entities);
+
+        appCultureServiceMock.Setup(expression: x => x.GetAllAppCulture())
+            .Returns(value: entities);
 
         // When
-        IQueryable<AppCulture> result = appCultureProcessingService.GetAll();
+        IQueryable<AppCulture> result = appCultureProcessingService.GetAllAppCulture();
 
         // Then
-        result.Should().BeSameAs(entities);
-        appCultureServiceMock.Verify(x => x.GetAll(), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entities);
+
+        appCultureServiceMock.Verify(expression: x => x.GetAllAppCulture(), times: Times.Once);
         appCultureServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

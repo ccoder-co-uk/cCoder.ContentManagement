@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.Data;
 using cCoder.Eventing.Models;
@@ -5,44 +9,59 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal partial class ResourceEventService(IResourceEventBroker resourceEventBroker, ICoreAuthInfo authInfo) : IResourceEventService
+internal partial class ResourceEventService(IResourceEventBroker resourceEventBroker) : IResourceEventService
 {
-    public async ValueTask RaiseResourceAddEventAsync(Resource entity)
+    public ValueTask RaiseResourceAddEventAsync(Resource entity) =>
+        TryCatch(operation: async () =>
     {
-        EventMessage<Resource> message = new EventMessage<Resource>
-        {
-            AuthInfo = new EventAuthInfo
-            {
-                SSOUserId = authInfo.SSOUserId
-            },
-            Data = entity
-        };
-        await resourceEventBroker.RaiseResourceAddEventAsync(message);
-    }
+        ValidateRaiseResourceAddEventAsync(inputs: [entity]);
 
-    public async ValueTask RaiseResourceUpdateEventAsync(Resource entity)
-    {
         EventMessage<Resource> message = new EventMessage<Resource>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = resourceEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
-        await resourceEventBroker.RaiseResourceUpdateEventAsync(message);
-    }
 
-    public async ValueTask RaiseResourceDeleteEventAsync(Resource entity)
+        await resourceEventBroker.RaiseResourceAddEventAsync(message: message);
+
+    }, isValueTask: true);
+
+    public ValueTask RaiseResourceUpdateEventAsync(Resource entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseResourceUpdateEventAsync(inputs: [entity]);
+
         EventMessage<Resource> message = new EventMessage<Resource>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = authInfo.SSOUserId
+                SSOUserId = resourceEventBroker.GetCurrentUserId()
             },
             Data = entity
         };
-        await resourceEventBroker.RaiseResourceDeleteEventAsync(message);
-    }
+
+        await resourceEventBroker.RaiseResourceUpdateEventAsync(message: message);
+
+    }, isValueTask: true);
+
+    public ValueTask RaiseResourceDeleteEventAsync(Resource entity) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateRaiseResourceDeleteEventAsync(inputs: [entity]);
+
+        EventMessage<Resource> message = new EventMessage<Resource>
+        {
+            AuthInfo = new EventAuthInfo
+            {
+                SSOUserId = resourceEventBroker.GetCurrentUserId()
+            },
+            Data = entity
+        };
+
+        await resourceEventBroker.RaiseResourceDeleteEventAsync(message: message);
+
+    }, isValueTask: true);
 }

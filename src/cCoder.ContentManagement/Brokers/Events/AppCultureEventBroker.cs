@@ -1,14 +1,19 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using cCoder.Eventing;
 using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public class AppCultureEventBroker(IEventHub eventHub) : IAppCultureEventBroker
+internal sealed class AppCultureEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
+    : AuthenticatedEventBroker(eventInfrastructureDependency), IAppCultureEventBroker
 {
     public ValueTask RaiseAppCultureAddEventAsync(EventMessage<AppCulture> message) =>
-        eventHub.RaiseEventAsync("app_culture_add", message);
+        RaiseEventAsync(name: "app_culture_add", message: message);
 
     public ValueTask RaiseAppCultureDeleteEventAsync(EventMessage<AppCulture> message) =>
-        eventHub.RaiseEventAsync("app_culture_delete", message);
+        RaiseEventAsync(name: "app_culture_delete", message: message);
 }

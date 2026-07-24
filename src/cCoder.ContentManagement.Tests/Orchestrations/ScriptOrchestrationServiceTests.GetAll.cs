@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,37 +27,24 @@ public partial class ScriptOrchestrationServiceTests
     {
         // Given
         IQueryable<Script> entities = new[] { CreateRandomScript() }.AsQueryable();
-        scriptProcessingServiceMock.Setup(x => x.GetAll(true)).Returns(entities);
+
+        scriptProcessingServiceMock.Setup(expression: x => x.GetAllScript(ignoreFilters: true))
+            .Returns(value: entities);
 
         // When
-        var result = orchestrationService.GetAll(true).ToArray();
+
+        var result = orchestrationService.GetAllScript(ignoreFilters: true)
+            .ToArray();
 
         // Then
-        result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        scriptProcessingServiceMock.Verify(x => x.GetAll(true), Times.Once);
+
+        result.Select(selector: item => item.Id)
+            .Should()
+            .Equal(expected: entities.Select(selector: item => item.Id));
+
+        scriptProcessingServiceMock.Verify(expression: x => x.GetAllScript(ignoreFilters: true), times: Times.Once);
         scriptProcessingServiceMock.VerifyNoOtherCalls();
         scriptEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
