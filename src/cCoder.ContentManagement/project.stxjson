@@ -11176,18 +11176,6 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Coordinations.AppSupportingResourcesCoordinationService",
-      "ToType": "cCoder.ContentManagement.Brokers.Storages.AppCultureBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.AppSupportingResourcesCoordinationService",
-      "ToType": "cCoder.ContentManagement.Brokers.Storages.ResourceBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.AppSupportingResourcesCoordinationService",
-      "ToType": "cCoder.ContentManagement.Brokers.Storages.ScriptBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.AppSupportingResourcesCoordinationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService"
     },
     {
@@ -12020,11 +12008,11 @@
       "LineNumber": 12
     },
     {
-      "Code": "STXC001",
-      "Description": "The service must have two or three OrchestrationService dependencies.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Coordinations.AppSupportingResourcesCoordinationService",
-      "LineNumber": 12
+      "LineNumber": 221
     },
     {
       "Code": "STXC001",

@@ -3,16 +3,12 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
 internal partial class AppSupportingResourcesCoordinationService(
-    IAppCultureBroker appCultureBroker,
-    IScriptBroker scriptBroker,
-    IResourceBroker resourceBroker,
     IAppCultureOrchestrationService appCultureOrchestrationService,
     IScriptOrchestrationService scriptOrchestrationService,
     IResourceOrchestrationService resourceOrchestrationService) : IAppSupportingResourcesCoordinationService
@@ -115,13 +111,13 @@ internal partial class AppSupportingResourcesCoordinationService(
             .Select(selector: culture => culture.CultureId)
             .ToArray();
 
-        AppCulture[] culturesToDelete = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
+        AppCulture[] culturesToDelete = appCultureOrchestrationService.GetAllAppCulture(ignoreFilters: true)
             .Where(predicate: culture => culture.AppId == deletedApp.Id && !((ReadOnlySpan<string>)incomingCultureIds).Contains(value: culture.CultureId))
             .ToArray();
 
         if (culturesToDelete.Length > 0)
         {
-            await appCultureBroker.DeleteAllAppCulturesAsync(deletedAppCulture: culturesToDelete);
+            await appCultureOrchestrationService.DeleteAllAppCultureAsync(deletedAppCulture: culturesToDelete);
         }
     }
 
@@ -132,13 +128,13 @@ internal partial class AppSupportingResourcesCoordinationService(
             .Select(selector: resource => resource.Id)
             .ToArray();
 
-        Resource[] resourcesToDelete = resourceBroker.GetAllResources(ignoreFilters: true)
+        Resource[] resourcesToDelete = resourceOrchestrationService.GetAllResource(ignoreFilters: true)
             .Where(predicate: resource => resource.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingResourceIds).Contains(value: resource.Id))
             .ToArray();
 
         if (resourcesToDelete.Length > 0)
         {
-            await resourceBroker.DeleteAllResourcesAsync(deletedResource: resourcesToDelete);
+            await resourceOrchestrationService.DeleteAllResourceAsync(deletedResource: resourcesToDelete);
         }
     }
 
@@ -149,19 +145,19 @@ internal partial class AppSupportingResourcesCoordinationService(
             .Select(selector: script => script.Id)
             .ToArray();
 
-        Script[] scriptsToDelete = scriptBroker.GetAllScripts(ignoreFilters: true)
+        Script[] scriptsToDelete = scriptOrchestrationService.GetAllScript(ignoreFilters: true)
             .Where(predicate: script => script.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingScriptIds).Contains(value: script.Id))
             .ToArray();
 
         if (scriptsToDelete.Length > 0)
         {
-            await scriptBroker.DeleteAllScriptsAsync(deletedScript: scriptsToDelete);
+            await scriptOrchestrationService.DeleteAllScriptAsync(deletedScript: scriptsToDelete);
         }
     }
 
     private async ValueTask AddOrUpdateCulturesAsync(App newApp)
     {
-        HashSet<string> existingCultureIds = appCultureBroker.GetAllAppCultures(ignoreFilters: true)
+        HashSet<string> existingCultureIds = appCultureOrchestrationService.GetAllAppCulture(ignoreFilters: true)
             .Where(predicate: culture => culture.AppId == newApp.Id)
             .Select(selector: culture => culture.CultureId)
             .ToHashSet(comparer: StringComparer.Ordinal);
@@ -170,14 +166,14 @@ internal partial class AppSupportingResourcesCoordinationService(
         {
             if (!existingCultureIds.Contains(item: culture.CultureId))
             {
-                await appCultureBroker.AddAppCultureAsync(newAppCulture: culture);
+                await appCultureOrchestrationService.AddAppCultureAsync(newAppCulture: culture);
             }
         }
     }
 
     private async ValueTask AddOrUpdateResourcesAsync(App newApp)
     {
-        HashSet<int> existingResourceIds = resourceBroker.GetAllResources(ignoreFilters: true)
+        HashSet<int> existingResourceIds = resourceOrchestrationService.GetAllResource(ignoreFilters: true)
             .Where(predicate: resource => resource.AppId == newApp.Id)
             .Select(selector: resource => resource.Id)
             .ToHashSet();
@@ -186,18 +182,18 @@ internal partial class AppSupportingResourcesCoordinationService(
         {
             if (existingResourceIds.Contains(item: resource.Id))
             {
-                await resourceBroker.UpdateResourceAsync(updatedResource: resource);
+                await resourceOrchestrationService.UpdateResourceAsync(updatedResource: resource);
             }
             else
             {
-                await resourceBroker.AddResourceAsync(newResource: resource);
+                await resourceOrchestrationService.AddResourceAsync(newResource: resource);
             }
         }
     }
 
     private async ValueTask AddOrUpdateScriptsAsync(App newApp)
     {
-        HashSet<int> existingScriptIds = scriptBroker.GetAllScripts(ignoreFilters: true)
+        HashSet<int> existingScriptIds = scriptOrchestrationService.GetAllScript(ignoreFilters: true)
             .Where(predicate: script => script.AppId == newApp.Id)
             .Select(selector: script => script.Id)
             .ToHashSet();
@@ -206,11 +202,11 @@ internal partial class AppSupportingResourcesCoordinationService(
         {
             if (existingScriptIds.Contains(item: script.Id))
             {
-                await scriptBroker.UpdateScriptAsync(updatedScript: script);
+                await scriptOrchestrationService.UpdateScriptAsync(updatedScript: script);
             }
             else
             {
-                await scriptBroker.AddScriptAsync(newScript: script);
+                await scriptOrchestrationService.AddScriptAsync(newScript: script);
             }
         }
     }

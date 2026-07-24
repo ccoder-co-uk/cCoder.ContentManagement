@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
@@ -13,9 +12,6 @@ namespace cCoder.Core.Services.Tests.CMS.Coordinations;
 
 public partial class AppSupportingResourcesCoordinationServiceTests
 {
-    private readonly Mock<IAppCultureBroker> appCultureBrokerMock = new(behavior: MockBehavior.Strict);
-    private readonly Mock<IScriptBroker> scriptBrokerMock = new(behavior: MockBehavior.Strict);
-    private readonly Mock<IResourceBroker> resourceBrokerMock = new(behavior: MockBehavior.Strict);
     private readonly Mock<IAppCultureOrchestrationService> appCultureOrchestrationServiceMock = new(behavior: MockBehavior.Strict);
     private readonly Mock<IScriptOrchestrationService> scriptOrchestrationServiceMock = new(behavior: MockBehavior.Strict);
     private readonly Mock<IResourceOrchestrationService> resourceOrchestrationServiceMock = new(behavior: MockBehavior.Strict);
@@ -24,9 +20,6 @@ public partial class AppSupportingResourcesCoordinationServiceTests
     public AppSupportingResourcesCoordinationServiceTests()
     {
         coordinationService = new AppSupportingResourcesCoordinationService(
-appCultureBroker: appCultureBrokerMock.Object,
-scriptBroker: scriptBrokerMock.Object,
-resourceBroker: resourceBrokerMock.Object,
 appCultureOrchestrationService: appCultureOrchestrationServiceMock.Object,
 scriptOrchestrationService: scriptOrchestrationServiceMock.Object,
 resourceOrchestrationService: resourceOrchestrationServiceMock.Object);
@@ -57,9 +50,6 @@ resourceOrchestrationService: resourceOrchestrationServiceMock.Object);
         appCultureOrchestrationServiceMock.Verify(expression: service => service.DeleteByAppIdAsync(appId: app.Id), times: Times.Once);
         scriptOrchestrationServiceMock.Verify(expression: service => service.DeleteByAppIdAsync(appId: app.Id), times: Times.Once);
         resourceOrchestrationServiceMock.Verify(expression: service => service.DeleteByAppIdAsync(appId: app.Id), times: Times.Once);
-        appCultureBrokerMock.VerifyNoOtherCalls();
-        scriptBrokerMock.VerifyNoOtherCalls();
-        resourceBrokerMock.VerifyNoOtherCalls();
         appCultureOrchestrationServiceMock.VerifyNoOtherCalls();
         scriptOrchestrationServiceMock.VerifyNoOtherCalls();
         resourceOrchestrationServiceMock.VerifyNoOtherCalls();
@@ -81,9 +71,6 @@ resourceOrchestrationService: resourceOrchestrationServiceMock.Object);
         await coordinationService.HandleAppUpdateAsync(app: app);
 
         // Then
-        appCultureBrokerMock.VerifyNoOtherCalls();
-        scriptBrokerMock.VerifyNoOtherCalls();
-        resourceBrokerMock.VerifyNoOtherCalls();
         appCultureOrchestrationServiceMock.VerifyNoOtherCalls();
         scriptOrchestrationServiceMock.VerifyNoOtherCalls();
         resourceOrchestrationServiceMock.VerifyNoOtherCalls();
@@ -105,30 +92,30 @@ resourceOrchestrationService: resourceOrchestrationServiceMock.Object);
         Script existingScript = new() { Id = 456, AppId = app.Id };
         Resource existingResource = new() { Id = 789, AppId = app.Id };
 
-        appCultureBrokerMock
-            .Setup(expression: broker => broker.GetAllAppCultures(ignoreFilters: true))
+        appCultureOrchestrationServiceMock
+            .Setup(expression: service => service.GetAllAppCulture(ignoreFilters: true))
             .Returns(value: new[] { existingCulture }.AsQueryable());
 
-        scriptBrokerMock
-            .Setup(expression: broker => broker.GetAllScripts(ignoreFilters: true))
+        scriptOrchestrationServiceMock
+            .Setup(expression: service => service.GetAllScript(ignoreFilters: true))
             .Returns(value: new[] { existingScript }.AsQueryable());
 
-        resourceBrokerMock
-            .Setup(expression: broker => broker.GetAllResources(ignoreFilters: true))
+        resourceOrchestrationServiceMock
+            .Setup(expression: service => service.GetAllResource(ignoreFilters: true))
             .Returns(value: new[] { existingResource }.AsQueryable());
 
-        appCultureBrokerMock
-            .Setup(expression: broker => broker.DeleteAllAppCulturesAsync(
+        appCultureOrchestrationServiceMock
+            .Setup(expression: service => service.DeleteAllAppCultureAsync(
 deletedAppCulture: It.Is<IEnumerable<AppCulture>>(match: items => items.Single() == existingCulture)))
             .Returns(value: ValueTask.CompletedTask);
 
-        scriptBrokerMock
-            .Setup(expression: broker => broker.DeleteAllScriptsAsync(
+        scriptOrchestrationServiceMock
+            .Setup(expression: service => service.DeleteAllScriptAsync(
 deletedScript: It.Is<IEnumerable<Script>>(match: items => items.Single() == existingScript)))
             .Returns(value: ValueTask.CompletedTask);
 
-        resourceBrokerMock
-            .Setup(expression: broker => broker.DeleteAllResourcesAsync(
+        resourceOrchestrationServiceMock
+            .Setup(expression: service => service.DeleteAllResourceAsync(
 deletedResource: It.Is<IEnumerable<Resource>>(match: items => items.Single() == existingResource)))
             .Returns(value: ValueTask.CompletedTask);
 
@@ -136,28 +123,33 @@ deletedResource: It.Is<IEnumerable<Resource>>(match: items => items.Single() == 
         await coordinationService.HandleAppUpdateAsync(app: app);
 
         // Then
-        appCultureBrokerMock.Verify(expression: broker => broker.GetAllAppCultures(ignoreFilters: true), times: Times.Exactly(callCount: 2));
-        scriptBrokerMock.Verify(expression: broker => broker.GetAllScripts(ignoreFilters: true), times: Times.Exactly(callCount: 2));
-        resourceBrokerMock.Verify(expression: broker => broker.GetAllResources(ignoreFilters: true), times: Times.Exactly(callCount: 2));
+        appCultureOrchestrationServiceMock.Verify(
+            expression: service => service.GetAllAppCulture(ignoreFilters: true),
+            times: Times.Exactly(callCount: 2));
 
-        appCultureBrokerMock.Verify(
-expression: broker => broker.DeleteAllAppCulturesAsync(
+        scriptOrchestrationServiceMock.Verify(
+            expression: service => service.GetAllScript(ignoreFilters: true),
+            times: Times.Exactly(callCount: 2));
+
+        resourceOrchestrationServiceMock.Verify(
+            expression: service => service.GetAllResource(ignoreFilters: true),
+            times: Times.Exactly(callCount: 2));
+
+        appCultureOrchestrationServiceMock.Verify(
+expression: service => service.DeleteAllAppCultureAsync(
 deletedAppCulture: It.Is<IEnumerable<AppCulture>>(match: items => items.Single() == existingCulture)),
 times: Times.Once);
 
-        scriptBrokerMock.Verify(
-expression: broker => broker.DeleteAllScriptsAsync(
+        scriptOrchestrationServiceMock.Verify(
+expression: service => service.DeleteAllScriptAsync(
 deletedScript: It.Is<IEnumerable<Script>>(match: items => items.Single() == existingScript)),
 times: Times.Once);
 
-        resourceBrokerMock.Verify(
-expression: broker => broker.DeleteAllResourcesAsync(
+        resourceOrchestrationServiceMock.Verify(
+expression: service => service.DeleteAllResourceAsync(
 deletedResource: It.Is<IEnumerable<Resource>>(match: items => items.Single() == existingResource)),
 times: Times.Once);
 
-        appCultureBrokerMock.VerifyNoOtherCalls();
-        scriptBrokerMock.VerifyNoOtherCalls();
-        resourceBrokerMock.VerifyNoOtherCalls();
         appCultureOrchestrationServiceMock.VerifyNoOtherCalls();
         scriptOrchestrationServiceMock.VerifyNoOtherCalls();
         resourceOrchestrationServiceMock.VerifyNoOtherCalls();
