@@ -99,8 +99,8 @@ internal sealed partial class ContentManagementMetadataTypeService : IContentMan
 
     private static ExtendedMetadataContainer Create(Type type, string category, bool isEntity = false, bool hasEndpoint = false) =>
         new ExtendedMetadataContainer(type: type, isEntity: isEntity, hasEndpoint: hasEndpoint)
-    {
-        Category = category
-    };
+        {
+            Category = category
+        };
 
 }

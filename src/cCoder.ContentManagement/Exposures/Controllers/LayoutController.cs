@@ -81,7 +81,7 @@ public class LayoutController : ODataController
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Layout> updatedDelta)
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Layout> updatedLayout)
     {
         Layout originalEntity = Service.GetLayout(layoutId: key);
 
@@ -90,7 +90,7 @@ public class LayoutController : ODataController
             return NotFound();
         }
 
-        updatedDelta.Patch(original: originalEntity);
+        updatedLayout.Patch(original: originalEntity);
         return Ok(value: await Service.UpdateLayoutAsync(updatedLayout: originalEntity));
     }
 

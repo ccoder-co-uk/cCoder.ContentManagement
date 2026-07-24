@@ -50,34 +50,34 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
         return layoutBroker.GetAllLayouts(ignoreFilters: ignoreFilters);
     });
 
-    public ValueTask<Layout> AddLayoutAsync(Layout layout) =>
+    public ValueTask<Layout> AddLayoutAsync(Layout newLayout) =>
         TryCatch<Layout>(operation: async () =>
     {
-        ValidateLayoutOnAdd(inputs: [layout]);
-        ValidateLayout(layout: layout, parameterName: "layout");
-        authorizationBroker.Authorize(appId: layout.AppId, privilege: "Layout_create");
-        Layout newLayout = CreateStorageLayout(newLayout: layout);
+        ValidateLayoutOnAdd(inputs: [newLayout]);
+        ValidateLayout(layout: newLayout, parameterName: "layout");
+        authorizationBroker.Authorize(appId: newLayout.AppId, privilege: "Layout_create");
+        Layout storageLayout = CreateStorageLayout(newLayout: newLayout);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
 
-        DateTimeOffset now = (newLayout.CreatedOn = DateTimeOffset.UtcNow);
-        newLayout.CreatedBy = currentUserId;
-        newLayout.LastUpdated = now;
-        newLayout.LastUpdatedBy = currentUserId;
-        Layout result = await layoutBroker.AddLayoutAsync(newLayout: newLayout);
-        layout.Id = result.Id;
-        layout.Name = result.Name;
-        layout.Description = result.Description;
-        layout.LastUpdated = result.LastUpdated;
-        layout.LastUpdatedBy = result.LastUpdatedBy;
-        layout.CreatedOn = result.CreatedOn;
-        layout.CreatedBy = result.CreatedBy;
-        layout.AppId = result.AppId;
-        layout.HeaderHtml = result.HeaderHtml;
-        layout.Html = result.Html;
-        layout.Script = result.Script;
-        return layout;
+        DateTimeOffset now = (storageLayout.CreatedOn = DateTimeOffset.UtcNow);
+        storageLayout.CreatedBy = currentUserId;
+        storageLayout.LastUpdated = now;
+        storageLayout.LastUpdatedBy = currentUserId;
+        Layout result = await layoutBroker.AddLayoutAsync(newLayout: storageLayout);
+        newLayout.Id = result.Id;
+        newLayout.Name = result.Name;
+        newLayout.Description = result.Description;
+        newLayout.LastUpdated = result.LastUpdated;
+        newLayout.LastUpdatedBy = result.LastUpdatedBy;
+        newLayout.CreatedOn = result.CreatedOn;
+        newLayout.CreatedBy = result.CreatedBy;
+        newLayout.AppId = result.AppId;
+        newLayout.HeaderHtml = result.HeaderHtml;
+        newLayout.Html = result.Html;
+        newLayout.Script = result.Script;
+        return newLayout;
 
     }, isValueTask: true);
 

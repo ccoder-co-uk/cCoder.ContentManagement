@@ -92,7 +92,7 @@ public class ComponentController : ODataController
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Component> updatedDelta)
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Component> updatedComponent)
     {
         Component originalEntity = Service.GetComponent(componentId: key);
 
@@ -101,7 +101,7 @@ public class ComponentController : ODataController
             return NotFound();
         }
 
-        updatedDelta.Patch(original: originalEntity);
+        updatedComponent.Patch(original: originalEntity);
         return Ok(value: await Service.UpdateComponentAsync(updatedComponent: originalEntity));
     }
 

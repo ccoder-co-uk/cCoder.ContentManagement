@@ -204,10 +204,10 @@ internal partial class PageRoleProcessingService(
     private (Role role, Page page) GetRoleAndPage(PageRole entity) =>
         (
             role: roleBroker.GetAllRoles(ignoreFilters: true)
-            .Where(predicate: role => role.Id == entity.RoleId)
-            .FirstOrDefault(),
+        .Where(predicate: role => role.Id == entity.RoleId)
+        .FirstOrDefault(),
             page: pageService.GetAllPage(ignoreFilters: true)
-            .FirstOrDefault(predicate: page => page.Id == entity.PageId));
+        .FirstOrDefault(predicate: page => page.Id == entity.PageId));
 
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");

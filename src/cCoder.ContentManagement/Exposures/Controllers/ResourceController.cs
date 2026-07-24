@@ -81,7 +81,7 @@ public class ResourceController : ODataController
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Resource> updatedDelta)
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Resource> updatedResource)
     {
         Resource originalEntity = Service.GetResource(resourceId: key);
 
@@ -90,7 +90,7 @@ public class ResourceController : ODataController
             return NotFound();
         }
 
-        updatedDelta.Patch(original: originalEntity);
+        updatedResource.Patch(original: originalEntity);
         return Ok(value: await Service.UpdateResourceAsync(updatedResource: originalEntity));
     }
 

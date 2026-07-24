@@ -50,7 +50,7 @@ newCommonObject: It.IsAny<DataCommonObject>()
             .ReturnsAsync(valueFunction: (DataCommonObject value) => value);
 
         // When
-        CommonObject result = await commonObjectService.AddCommonObjectAsync(commonObject: commonObject);
+        CommonObject result = await commonObjectService.AddCommonObjectAsync(newCommonObject: commonObject);
 
         // Then
 
@@ -178,7 +178,7 @@ times: Times.Once
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await commonObjectService.AddCommonObjectAsync(commonObject: commonObject);
+        Func<Task> action = async () => await commonObjectService.AddCommonObjectAsync(newCommonObject: commonObject);
 
         // Then
 

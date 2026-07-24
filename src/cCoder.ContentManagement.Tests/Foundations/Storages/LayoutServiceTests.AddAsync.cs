@@ -50,7 +50,7 @@ public partial class LayoutServiceTests
             .ReturnsAsync(valueFunction: (CmsDataModels.Layout value) => value);
 
         // When
-        Layout result = await layoutService.AddLayoutAsync(layout: layout);
+        Layout result = await layoutService.AddLayoutAsync(newLayout: layout);
 
         // Then
 
@@ -163,7 +163,7 @@ times: Times.Once
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await layoutService.AddLayoutAsync(layout: layout);
+        Func<Task> action = async () => await layoutService.AddLayoutAsync(newLayout: layout);
 
         // Then
 

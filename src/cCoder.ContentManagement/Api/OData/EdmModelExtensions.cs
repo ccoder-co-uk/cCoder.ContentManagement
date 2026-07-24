@@ -120,7 +120,7 @@ public static class EdmModelExtensions
                 {
                     "odata:key",
                     Type.GetType(typeName: type.ServerType)?.GetIdProperty()?.GetType()
-            .FullName
+        .FullName
                 } }
             },
             new OperationContainer
@@ -163,7 +163,7 @@ public static class EdmModelExtensions
                     {
                         "odata:key",
                         Type.GetType(typeName: type.ServerType)?.GetIdProperty()?.GetType()
-            .FullName
+        .FullName
                     },
                     { "body:entity", type.ServerType }
                 }
@@ -179,7 +179,7 @@ public static class EdmModelExtensions
                 {
                     "odata:key",
                     Type.GetType(typeName: type.ServerType)?.GetIdProperty()?.GetType()
-            .FullName
+        .FullName
                 } }
             },
             new OperationContainer

@@ -59,8 +59,8 @@ internal partial class PageRoleService(
 
     private int? GetAppId(int pageId) =>
         pageBroker.GetAllPages(ignoreFilters: true)
-            .Where(predicate: page => page.Id == pageId)
-            .Select(selector: page => (int?)page.AppId)
-            .FirstOrDefault();
+        .Where(predicate: page => page.Id == pageId)
+        .Select(selector: page => (int?)page.AppId)
+        .FirstOrDefault();
 
 }

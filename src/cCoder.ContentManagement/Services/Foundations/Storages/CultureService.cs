@@ -106,9 +106,9 @@ internal partial class CultureService(
 
     private int? GetAppId(string cultureId) =>
         appCultureBroker.GetAllAppCultures(ignoreFilters: true)
-            .Where(predicate: appCulture => appCulture.CultureId == cultureId)
-            .Select(selector: appCulture => (int?)appCulture.AppId)
-            .FirstOrDefault();
+        .Where(predicate: appCulture => appCulture.CultureId == cultureId)
+        .Select(selector: appCulture => (int?)appCulture.AppId)
+        .FirstOrDefault();
 
     private IQueryable<Culture> ExecuteGetAllCulture(bool ignoreFilters = false) =>
         cultureBroker.GetAllCultures(ignoreFilters: ignoreFilters);

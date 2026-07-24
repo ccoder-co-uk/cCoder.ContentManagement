@@ -73,7 +73,7 @@ public partial class PageProcessingServiceTests
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
-        Page result = await pageProcessingService.AddPageAsync(page: page);
+        Page result = await pageProcessingService.AddPageAsync(newPage: page);
 
         result.Should()
             .BeSameAs(expected: addedPage);
@@ -158,7 +158,7 @@ times: Times.Once
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { parent }.AsQueryable());
 
-        Page result = await pageProcessingService.AddPageAsync(page: page);
+        Page result = await pageProcessingService.AddPageAsync(newPage: page);
 
         result.Should()
             .BeSameAs(expected: addedPage);
@@ -215,7 +215,7 @@ times: Times.Once
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { existingPage }.AsQueryable());
 
-        Func<Task> act = async () => await pageProcessingService.AddPageAsync(page: page);
+        Func<Task> act = async () => await pageProcessingService.AddPageAsync(newPage: page);
 
         await act.Should()
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
@@ -278,7 +278,7 @@ times: Times.Once
         pageServiceMock.Setup(expression: x => x.AddPageAsync(newPage: It.IsAny<Page>()))
             .ReturnsAsync(value: addedPage);
 
-        Page result = await pageProcessingService.AddPageAsync(page: page);
+        Page result = await pageProcessingService.AddPageAsync(newPage: page);
 
         result.Should()
             .BeSameAs(expected: addedPage);
@@ -358,7 +358,7 @@ times: Times.Once);
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { parent, hiddenDuplicate }.AsQueryable());
 
-        Func<Task> act = async () => await pageProcessingService.AddPageAsync(page: page);
+        Func<Task> act = async () => await pageProcessingService.AddPageAsync(newPage: page);
 
         await act.Should()
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()

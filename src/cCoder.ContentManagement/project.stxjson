@@ -2692,7 +2692,7 @@
               "Type": "System.Int32"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedApp",
               "Type": "Delta\u003CApp\u003E"
             }
           ],
@@ -2841,7 +2841,7 @@
               "Type": "System.Int32"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedCommonObject",
               "Type": "Delta\u003CCommonObject\u003E"
             }
           ],
@@ -2943,7 +2943,7 @@
               "Type": "System.Int32"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedComponent",
               "Type": "Delta\u003CComponent\u003E"
             }
           ],
@@ -3023,7 +3023,7 @@
               "Type": "System.Int32"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedContent",
               "Type": "Delta\u003CContent\u003E"
             }
           ],
@@ -3103,7 +3103,7 @@
               "Type": "System.String"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedCulture",
               "Type": "Delta\u003CCulture\u003E"
             }
           ],
@@ -3183,7 +3183,7 @@
               "Type": "System.Int32"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedLayout",
               "Type": "Delta\u003CLayout\u003E"
             }
           ],
@@ -3309,7 +3309,7 @@
               "Type": "System.Int32"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedPage",
               "Type": "Delta\u003CPage\u003E"
             }
           ],
@@ -3389,7 +3389,7 @@
               "Type": "System.Int32"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedPageInfo",
               "Type": "Delta\u003CPageInfo\u003E"
             }
           ],
@@ -3506,7 +3506,7 @@
               "Type": "System.Int32"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedResource",
               "Type": "Delta\u003CResource\u003E"
             }
           ],
@@ -3586,7 +3586,7 @@
               "Type": "System.Int32"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedScript",
               "Type": "Delta\u003CScript\u003E"
             }
           ],
@@ -3666,7 +3666,7 @@
               "Type": "System.Guid"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedSubmission",
               "Type": "Delta\u003CSubmission\u003E"
             }
           ],
@@ -3774,7 +3774,7 @@
               "Type": "System.Int32"
             },
             {
-              "Name": "updatedDelta",
+              "Name": "updatedTemplate",
               "Type": "Delta\u003CTemplate\u003E"
             }
           ],
@@ -6375,7 +6375,7 @@
           "Name": "AddCommonObjectAsync",
           "Inputs": [
             {
-              "Name": "commonObject",
+              "Name": "newCommonObject",
               "Type": "CommonObject"
             }
           ],
@@ -6436,7 +6436,7 @@
           "Name": "AddComponentAsync",
           "Inputs": [
             {
-              "Name": "component",
+              "Name": "newComponent",
               "Type": "Component"
             }
           ],
@@ -6619,7 +6619,7 @@
           "Name": "AddLayoutAsync",
           "Inputs": [
             {
-              "Name": "layout",
+              "Name": "newLayout",
               "Type": "Layout"
             }
           ],
@@ -6900,7 +6900,7 @@
           "Name": "AddPageAsync",
           "Inputs": [
             {
-              "Name": "page",
+              "Name": "newPage",
               "Type": "Page"
             }
           ],
@@ -6961,7 +6961,7 @@
           "Name": "AddResourceAsync",
           "Inputs": [
             {
-              "Name": "resource",
+              "Name": "newResource",
               "Type": "Resource"
             }
           ],
@@ -7022,7 +7022,7 @@
           "Name": "AddScriptAsync",
           "Inputs": [
             {
-              "Name": "script",
+              "Name": "newScript",
               "Type": "Script"
             }
           ],
@@ -7083,7 +7083,7 @@
           "Name": "AddSubmissionAsync",
           "Inputs": [
             {
-              "Name": "submission",
+              "Name": "newSubmission",
               "Type": "Submission"
             }
           ],
@@ -7144,7 +7144,7 @@
           "Name": "AddTemplateAsync",
           "Inputs": [
             {
-              "Name": "template",
+              "Name": "newTemplate",
               "Type": "Template"
             }
           ],
@@ -9023,7 +9023,7 @@
           "Name": "UpdateAppAsync",
           "Inputs": [
             {
-              "Name": "app",
+              "Name": "updatedApp",
               "Type": "App"
             }
           ],
@@ -10175,7 +10175,7 @@
           "Name": "AddPageAsync",
           "Inputs": [
             {
-              "Name": "page",
+              "Name": "newPage",
               "Type": "Page"
             }
           ],

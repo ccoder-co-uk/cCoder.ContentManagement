@@ -133,9 +133,9 @@ internal partial class PageInfoService(
 
     private int? GetAppId(int pageId) =>
         pageBroker.GetAllPages(ignoreFilters: true)
-            .Where(predicate: page => page.Id == pageId)
-            .Select(selector: page => (int?)page.AppId)
-            .FirstOrDefault();
+        .Where(predicate: page => page.Id == pageId)
+        .Select(selector: page => (int?)page.AppId)
+        .FirstOrDefault();
 
     private IQueryable<PageInfo> ExecuteGetAllPageInfo(bool ignoreFilters = false) =>
         pageInfoBroker.GetAllPageInfo(ignoreFilters: ignoreFilters);

@@ -50,33 +50,33 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         return scriptBroker.GetAllScripts(ignoreFilters: ignoreFilters);
     });
 
-    public ValueTask<Script> AddScriptAsync(Script script) =>
+    public ValueTask<Script> AddScriptAsync(Script newScript) =>
         TryCatch<Script>(operation: async () =>
     {
-        ValidateScriptOnAdd(inputs: [script]);
-        ValidateScript(script: script, parameterName: "script");
-        authorizationBroker.Authorize(appId: script.AppId, privilege: "Script_create");
-        Script newScript = CreateStorageScript(newScript: script);
+        ValidateScriptOnAdd(inputs: [newScript]);
+        ValidateScript(script: newScript, parameterName: "script");
+        authorizationBroker.Authorize(appId: newScript.AppId, privilege: "Script_create");
+        Script storageScript = CreateStorageScript(newScript: newScript);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
 
-        DateTimeOffset now = (newScript.CreatedOn = DateTimeOffset.UtcNow);
-        newScript.CreatedBy = currentUserId;
-        newScript.LastUpdated = now;
-        newScript.LastUpdatedBy = currentUserId;
-        Script result = await scriptBroker.AddScriptAsync(newScript: newScript);
-        script.Id = result.Id;
-        script.Name = result.Name;
-        script.Description = result.Description;
-        script.LastUpdated = result.LastUpdated;
-        script.LastUpdatedBy = result.LastUpdatedBy;
-        script.CreatedOn = result.CreatedOn;
-        script.CreatedBy = result.CreatedBy;
-        script.AppId = result.AppId;
-        script.Key = result.Key;
-        script.Content = result.Content;
-        return script;
+        DateTimeOffset now = (storageScript.CreatedOn = DateTimeOffset.UtcNow);
+        storageScript.CreatedBy = currentUserId;
+        storageScript.LastUpdated = now;
+        storageScript.LastUpdatedBy = currentUserId;
+        Script result = await scriptBroker.AddScriptAsync(newScript: storageScript);
+        newScript.Id = result.Id;
+        newScript.Name = result.Name;
+        newScript.Description = result.Description;
+        newScript.LastUpdated = result.LastUpdated;
+        newScript.LastUpdatedBy = result.LastUpdatedBy;
+        newScript.CreatedOn = result.CreatedOn;
+        newScript.CreatedBy = result.CreatedBy;
+        newScript.AppId = result.AppId;
+        newScript.Key = result.Key;
+        newScript.Content = result.Content;
+        return newScript;
 
     }, isValueTask: true);
 

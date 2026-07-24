@@ -118,49 +118,49 @@ internal partial class AppProcessingService(
 
     }, isValueTask: true);
 
-    public ValueTask<App> UpdateAppAsync(App app) =>
+    public ValueTask<App> UpdateAppAsync(App updatedApp) =>
         TryCatch<App>(operation: async () =>
     {
-        ValidateAppOnUpdate(inputs: [app]);
-        ValidateApp(app: app, parameterName: "app");
-        App existingApp = service.GetApp(appId: app.Id, ignoreFilters: true);
+        ValidateAppOnUpdate(inputs: [updatedApp]);
+        ValidateApp(app: updatedApp, parameterName: "app");
+        App existingApp = service.GetApp(appId: updatedApp.Id, ignoreFilters: true);
 
         if (existingApp == null)
         {
             throw new SecurityException(message: "Access Denied!");
         }
 
-        existingApp.DefaultCultureId = app.DefaultCultureId;
-        existingApp.TenantId = app.TenantId;
-        existingApp.Name = app.Name;
-        existingApp.Domain = app.Domain;
-        existingApp.DefaultTheme = app.DefaultTheme;
-        existingApp.ConfigJson = app.ConfigJson;
-        existingApp.Cultures = app.Cultures ?? existingApp.Cultures;
-        existingApp.Pages = app.Pages ?? existingApp.Pages;
-        existingApp.Components = app.Components ?? existingApp.Components;
-        existingApp.Scripts = app.Scripts ?? existingApp.Scripts;
-        existingApp.Roles = app.Roles ?? existingApp.Roles;
-        existingApp.Templates = app.Templates ?? existingApp.Templates;
-        existingApp.Resources = app.Resources ?? existingApp.Resources;
-        existingApp.Layouts = app.Layouts ?? existingApp.Layouts;
+        existingApp.DefaultCultureId = updatedApp.DefaultCultureId;
+        existingApp.TenantId = updatedApp.TenantId;
+        existingApp.Name = updatedApp.Name;
+        existingApp.Domain = updatedApp.Domain;
+        existingApp.DefaultTheme = updatedApp.DefaultTheme;
+        existingApp.ConfigJson = updatedApp.ConfigJson;
+        existingApp.Cultures = updatedApp.Cultures ?? existingApp.Cultures;
+        existingApp.Pages = updatedApp.Pages ?? existingApp.Pages;
+        existingApp.Components = updatedApp.Components ?? existingApp.Components;
+        existingApp.Scripts = updatedApp.Scripts ?? existingApp.Scripts;
+        existingApp.Roles = updatedApp.Roles ?? existingApp.Roles;
+        existingApp.Templates = updatedApp.Templates ?? existingApp.Templates;
+        existingApp.Resources = updatedApp.Resources ?? existingApp.Resources;
+        existingApp.Layouts = updatedApp.Layouts ?? existingApp.Layouts;
 
-        if (app.Cultures != null)
+        if (updatedApp.Cultures != null)
         {
             existingApp.Cultures = BuildCulturesForApp(newApp: existingApp);
         }
 
-        App updatedApp = await service.UpdateAppAsync(updatedApp: existingApp);
+        App storageApp = await service.UpdateAppAsync(updatedApp: existingApp);
 
-        if (updatedApp.Roles != null)
+        if (storageApp.Roles != null)
         {
             Role[] existingRoles = roleBroker.GetAllRoles(ignoreFilters: true)
-                .Where(predicate: role => role.AppId == updatedApp.Id)
+                .Where(predicate: role => role.AppId == storageApp.Id)
                 .ToArray();
 
-            foreach (Role role in updatedApp.Roles)
+            foreach (Role role in storageApp.Roles)
             {
-                role.AppId = updatedApp.Id;
+                role.AppId = storageApp.Id;
                 role.App = null;
 
                 if (existingRoles.Any(predicate: existingRole => existingRole.Id == role.Id))
@@ -221,8 +221,8 @@ internal partial class AppProcessingService(
             }
         }
 
-        StampAppChildren(app: updatedApp);
-        return updatedApp;
+        StampAppChildren(app: storageApp);
+        return storageApp;
 
     }, isValueTask: true);
 

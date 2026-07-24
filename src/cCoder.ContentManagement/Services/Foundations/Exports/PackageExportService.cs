@@ -250,8 +250,8 @@ data: pageBroker.GetAllPages(ignoreFilters: true)
 
     private Package CreatePackage(string name, string itemType, object data) =>
         new Package(name: name)
-    {
-        Items =
+        {
+            Items =
             [
                 new PackageItem
                 {
@@ -259,7 +259,7 @@ data: pageBroker.GetAllPages(ignoreFilters: true)
                     Data = JsonConvert.SerializeObject(value: data, settings: CreateSerializerSettings())
                 }
             ]
-    };
+        };
 
     private void EnsureAdmin(int appId)
     {

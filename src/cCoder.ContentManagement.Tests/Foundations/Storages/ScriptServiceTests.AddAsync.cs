@@ -50,7 +50,7 @@ public partial class ScriptServiceTests
             .ReturnsAsync(valueFunction: (CmsDataModels.Script value) => value);
 
         // When
-        Script result = await scriptService.AddScriptAsync(script: script);
+        Script result = await scriptService.AddScriptAsync(newScript: script);
 
         // Then
 
@@ -163,7 +163,7 @@ times: Times.Once
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await scriptService.AddScriptAsync(script: script);
+        Func<Task> action = async () => await scriptService.AddScriptAsync(newScript: script);
 
         // Then
 

@@ -51,11 +51,11 @@ public class PageController : ODataController
     [ActionName("Menu")]
     public IActionResult GetMenu([FromRoute] int key, string culture) =>
         Ok(value: new Result<string>
-    {
-        Id = key.ToString(),
-        Item = Service.MenuFor(pageId: key, culture: culture),
-        Success = true
-    });
+        {
+            Id = key.ToString(),
+            Item = Service.MenuFor(pageId: key, culture: culture),
+            Success = true
+        });
 
     [HttpGet]
     [AllowAnonymous]
@@ -113,7 +113,7 @@ public class PageController : ODataController
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Page> updatedDelta)
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Page> updatedPage)
     {
         Page originalEntity = Service.GetPage(pageId: key);
 
@@ -122,7 +122,7 @@ public class PageController : ODataController
             return NotFound();
         }
 
-        updatedDelta.Patch(original: originalEntity);
+        updatedPage.Patch(original: originalEntity);
         return Ok(value: CreateResponsePage(newPage: await Service.UpdatePageAsync(updatedPage: originalEntity)));
     }
 

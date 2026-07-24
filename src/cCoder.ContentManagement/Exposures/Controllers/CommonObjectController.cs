@@ -103,7 +103,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<CommonObject> updatedDelta)
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<CommonObject> updatedCommonObject)
     {
         CommonObject originalEntity = Service.GetCommonObject(commonObjectId: key);
 
@@ -112,7 +112,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
             return NotFound();
         }
 
-        updatedDelta.Patch(original: originalEntity);
+        updatedCommonObject.Patch(original: originalEntity);
         return Ok(value: await Service.UpdateCommonObjectAsync(updatedCommonObject: originalEntity));
     }
 

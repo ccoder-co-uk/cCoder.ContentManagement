@@ -50,35 +50,35 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
         return resourceBroker.GetAllResources(ignoreFilters: ignoreFilters);
     });
 
-    public ValueTask<Resource> AddResourceAsync(Resource resource) =>
+    public ValueTask<Resource> AddResourceAsync(Resource newResource) =>
         TryCatch<Resource>(operation: async () =>
     {
-        ValidateResourceOnAdd(inputs: [resource]);
-        ValidateResource(resource: resource, parameterName: "resource");
-        authorizationBroker.Authorize(appId: resource.AppId, privilege: "Resource_create");
-        Resource newResource = CreateStorageResource(newResource: resource);
+        ValidateResourceOnAdd(inputs: [newResource]);
+        ValidateResource(resource: newResource, parameterName: "resource");
+        authorizationBroker.Authorize(appId: newResource.AppId, privilege: "Resource_create");
+        Resource storageResource = CreateStorageResource(newResource: newResource);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
 
-        DateTimeOffset now = (newResource.CreatedOn = DateTimeOffset.UtcNow);
-        newResource.CreatedBy = currentUserId;
-        newResource.LastUpdated = now;
-        newResource.LastUpdatedBy = currentUserId;
-        Resource result = await resourceBroker.AddResourceAsync(newResource: newResource);
-        resource.Id = result.Id;
-        resource.Name = result.Name;
-        resource.Description = result.Description;
-        resource.LastUpdated = result.LastUpdated;
-        resource.LastUpdatedBy = result.LastUpdatedBy;
-        resource.CreatedOn = result.CreatedOn;
-        resource.CreatedBy = result.CreatedBy;
-        resource.AppId = result.AppId;
-        resource.Key = result.Key;
-        resource.Culture = result.Culture;
-        resource.DisplayName = result.DisplayName;
-        resource.ShortDisplayName = result.ShortDisplayName;
-        return resource;
+        DateTimeOffset now = (storageResource.CreatedOn = DateTimeOffset.UtcNow);
+        storageResource.CreatedBy = currentUserId;
+        storageResource.LastUpdated = now;
+        storageResource.LastUpdatedBy = currentUserId;
+        Resource result = await resourceBroker.AddResourceAsync(newResource: storageResource);
+        newResource.Id = result.Id;
+        newResource.Name = result.Name;
+        newResource.Description = result.Description;
+        newResource.LastUpdated = result.LastUpdated;
+        newResource.LastUpdatedBy = result.LastUpdatedBy;
+        newResource.CreatedOn = result.CreatedOn;
+        newResource.CreatedBy = result.CreatedBy;
+        newResource.AppId = result.AppId;
+        newResource.Key = result.Key;
+        newResource.Culture = result.Culture;
+        newResource.DisplayName = result.DisplayName;
+        newResource.ShortDisplayName = result.ShortDisplayName;
+        return newResource;
 
     }, isValueTask: true);
 

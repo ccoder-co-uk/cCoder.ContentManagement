@@ -308,19 +308,19 @@ internal partial class TemplateRenderProcessingService(
 
     private static string SerializeForOData(object model) =>
         JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
-    {
-        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-        TypeNameHandling = TypeNameHandling.None,
-        Formatting = Formatting.None,
-        DateFormatHandling = DateFormatHandling.IsoDateFormat,
-        NullValueHandling = NullValueHandling.Ignore,
-        DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-        ContractResolver = new DefaultContractResolver
         {
-            IgnoreSerializableAttribute = true
-        },
-        MaxDepth = 4
-    });
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.None,
+            Formatting = Formatting.None,
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            NullValueHandling = NullValueHandling.Ignore,
+            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+            ContractResolver = new DefaultContractResolver
+            {
+                IgnoreSerializableAttribute = true
+            },
+            MaxDepth = 4
+        });
 
     private void Resource(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements)
     {
@@ -528,8 +528,8 @@ internal partial class TemplateRenderProcessingService(
 
     private IEnumerable<Replacement> BuildIEnumerableThemeReplacements<T>(T model, string prefix) =>
         model.GetType()
-            .GetProperties()
-            .SelectMany(selector: property =>
+        .GetProperties()
+        .SelectMany(selector: property =>
             {
                 object value = property.GetValue(obj: model);
                 string text = ((prefix.Length > 0) ? (prefix + "." + property.Name) : property.Name);
@@ -564,7 +564,7 @@ internal partial class TemplateRenderProcessingService(
 
                 return result;
             })
-            .Where(predicate: replacement => replacement.Old != null && replacement.New != null);
+        .Where(predicate: replacement => replacement.Old != null && replacement.New != null);
 
     private IEnumerable<Replacement> BuildJObjectThemeReplacements<T>(T model, string prefix)
     {
@@ -664,8 +664,8 @@ internal partial class TemplateRenderProcessingService(
 
     private IEnumerable<Replacement> BuildModelReplacementsForObject(object model, string prefix) =>
         model.GetType()
-            .GetProperties()
-            .SelectMany(selector: property =>
+        .GetProperties()
+        .SelectMany(selector: property =>
             {
                 object value = property.GetValue(obj: model);
                 string text = ((prefix.Length > 0) ? (prefix + "." + property.Name) : property.Name);
@@ -693,8 +693,8 @@ internal partial class TemplateRenderProcessingService(
 
                 return result;
             })
-            .Where(predicate: replacement => replacement.Old != null && replacement.New != null)
-            .ToList();
+        .Where(predicate: replacement => replacement.Old != null && replacement.New != null)
+        .ToList();
 
     private IEnumerable<Replacement> BuildModelReplacementsForJObject(object model, string prefix)
     {

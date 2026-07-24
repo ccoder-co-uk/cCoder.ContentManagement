@@ -52,7 +52,7 @@ newSubmission: It.Is<CmsDataModels.Submission>(match: candidate => !ReferenceEqu
             .ReturnsAsync(valueFunction: (CmsDataModels.Submission value) => value);
 
         // When
-        Submission result = await submissionService.AddSubmissionAsync(submission: submission);
+        Submission result = await submissionService.AddSubmissionAsync(newSubmission: submission);
 
         // Then
 
@@ -168,7 +168,7 @@ times: Times.Once
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await submissionService.AddSubmissionAsync(submission: submission);
+        Func<Task> action = async () => await submissionService.AddSubmissionAsync(newSubmission: submission);
 
         // Then
 

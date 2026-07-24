@@ -82,7 +82,7 @@ public class CultureController : ODataController
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] string key, Delta<Culture> updatedDelta)
+    public async Task<IActionResult> PutPatch([FromRoute] string key, Delta<Culture> updatedCulture)
     {
         Culture originalEntity = Service.GetCulture(cultureId: key);
 
@@ -91,7 +91,7 @@ public class CultureController : ODataController
             return NotFound();
         }
 
-        updatedDelta.Patch(original: originalEntity);
+        updatedCulture.Patch(original: originalEntity);
         return Ok(value: CreateResponseCulture(newCulture: await Service.UpdateCultureAsync(updatedCulture: originalEntity)));
     }
 

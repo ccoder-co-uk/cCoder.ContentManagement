@@ -52,7 +52,7 @@ newTemplate: It.Is<CmsDataModels.Template>(match: candidate => !ReferenceEquals(
             .ReturnsAsync(valueFunction: (CmsDataModels.Template value) => value);
 
         // When
-        Template result = await templateService.AddTemplateAsync(template: template);
+        Template result = await templateService.AddTemplateAsync(newTemplate: template);
 
         // Then
 
@@ -168,7 +168,7 @@ times: Times.Once
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await templateService.AddTemplateAsync(template: template);
+        Func<Task> action = async () => await templateService.AddTemplateAsync(newTemplate: template);
 
         // Then
 

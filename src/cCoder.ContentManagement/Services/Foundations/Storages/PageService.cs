@@ -50,36 +50,36 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         return pageBroker.GetAllPages(ignoreFilters: ignoreFilters);
     });
 
-    public ValueTask<Page> AddPageAsync(Page page) =>
+    public ValueTask<Page> AddPageAsync(Page newPage) =>
         TryCatch<Page>(operation: async () =>
     {
-        ValidatePageOnAdd(inputs: [page]);
-        ValidatePage(page: page, parameterName: "page");
-        authorizationBroker.Authorize(appId: page.AppId, privilege: "Page_create");
-        Page newPage = CreateStoragePage(newPage: page);
+        ValidatePageOnAdd(inputs: [newPage]);
+        ValidatePage(page: newPage, parameterName: "page");
+        authorizationBroker.Authorize(appId: newPage.AppId, privilege: "Page_create");
+        Page storagePage = CreateStoragePage(newPage: newPage);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
 
-        DateTimeOffset now = (newPage.CreatedOn = DateTimeOffset.UtcNow);
-        newPage.CreatedBy = currentUserId;
-        newPage.LastUpdated = now;
-        newPage.LastUpdatedBy = currentUserId;
-        Page result = await pageBroker.AddPageAsync(newPage: newPage);
-        page.Id = result.Id;
-        page.ParentId = result.ParentId;
-        page.AppId = result.AppId;
-        page.Order = result.Order;
-        page.ShowOnMenus = result.ShowOnMenus;
-        page.Name = result.Name;
-        page.LastUpdated = result.LastUpdated;
-        page.LastUpdatedBy = result.LastUpdatedBy;
-        page.CreatedOn = result.CreatedOn;
-        page.CreatedBy = result.CreatedBy;
-        page.Path = result.Path;
-        page.ResourceKey = result.ResourceKey;
-        page.Layout = result.Layout;
-        return page;
+        DateTimeOffset now = (storagePage.CreatedOn = DateTimeOffset.UtcNow);
+        storagePage.CreatedBy = currentUserId;
+        storagePage.LastUpdated = now;
+        storagePage.LastUpdatedBy = currentUserId;
+        Page result = await pageBroker.AddPageAsync(newPage: storagePage);
+        newPage.Id = result.Id;
+        newPage.ParentId = result.ParentId;
+        newPage.AppId = result.AppId;
+        newPage.Order = result.Order;
+        newPage.ShowOnMenus = result.ShowOnMenus;
+        newPage.Name = result.Name;
+        newPage.LastUpdated = result.LastUpdated;
+        newPage.LastUpdatedBy = result.LastUpdatedBy;
+        newPage.CreatedOn = result.CreatedOn;
+        newPage.CreatedBy = result.CreatedBy;
+        newPage.Path = result.Path;
+        newPage.ResourceKey = result.ResourceKey;
+        newPage.Layout = result.Layout;
+        return newPage;
 
     }, isValueTask: true);
 

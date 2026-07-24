@@ -115,18 +115,18 @@ builder: builder);
         string documentName,
         ContentManagementConfiguration newContentManagementConfiguration,
         bool useFullSchemaIds) =>
-            services.AddSwaggerGen(setupAction: options =>
+        services.AddSwaggerGen(setupAction: options =>
                                   {
                                       options.ResolveConflictingActions(resolver: apiDescriptions => apiDescriptions.First());
                                       AddSwaggerDocuments(options: options, documentName: documentName, newContentManagementConfiguration: newContentManagementConfiguration);
 
                                       options.DocInclusionPredicate(
-                          predicate: (swaggerDocumentName, apiDescription) =>
+predicate: (swaggerDocumentName, apiDescription) =>
                                               ShouldIncludeInDocument(
-                          swaggerDocumentName: swaggerDocumentName,
-                          relativePath: apiDescription.RelativePath,
-                          documentName: documentName,
-                          configuration: newContentManagementConfiguration));
+swaggerDocumentName: swaggerDocumentName,
+relativePath: apiDescription.RelativePath,
+documentName: documentName,
+configuration: newContentManagementConfiguration));
 
                                       if (useFullSchemaIds)
                                       {

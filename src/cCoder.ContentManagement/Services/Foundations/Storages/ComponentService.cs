@@ -50,35 +50,35 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
         return componentBroker.GetAllComponents(ignoreFilters: ignoreFilters);
     });
 
-    public ValueTask<Component> AddComponentAsync(Component component) =>
+    public ValueTask<Component> AddComponentAsync(Component newComponent) =>
         TryCatch<Component>(operation: async () =>
     {
-        ValidateComponentOnAdd(inputs: [component]);
-        ValidateComponent(component: component, parameterName: "component");
-        authorizationBroker.Authorize(appId: component.AppId, privilege: "Component_create");
-        Component newComponent = CreateStorageComponent(newComponent: component);
+        ValidateComponentOnAdd(inputs: [newComponent]);
+        ValidateComponent(component: newComponent, parameterName: "component");
+        authorizationBroker.Authorize(appId: newComponent.AppId, privilege: "Component_create");
+        Component storageComponent = CreateStorageComponent(newComponent: newComponent);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
 
-        DateTimeOffset now = (newComponent.CreatedOn = DateTimeOffset.UtcNow);
-        newComponent.CreatedBy = currentUserId;
-        newComponent.LastUpdated = now;
-        newComponent.LastUpdatedBy = currentUserId;
-        Component result = await componentBroker.AddComponentAsync(newComponent: newComponent);
-        component.Id = result.Id;
-        component.Name = result.Name;
-        component.Description = result.Description;
-        component.LastUpdated = result.LastUpdated;
-        component.LastUpdatedBy = result.LastUpdatedBy;
-        component.CreatedOn = result.CreatedOn;
-        component.CreatedBy = result.CreatedBy;
-        component.AppId = result.AppId;
-        component.ResourceKey = result.ResourceKey;
-        component.Content = result.Content;
-        component.Script = result.Script;
-        component.Key = result.Key;
-        return component;
+        DateTimeOffset now = (storageComponent.CreatedOn = DateTimeOffset.UtcNow);
+        storageComponent.CreatedBy = currentUserId;
+        storageComponent.LastUpdated = now;
+        storageComponent.LastUpdatedBy = currentUserId;
+        Component result = await componentBroker.AddComponentAsync(newComponent: storageComponent);
+        newComponent.Id = result.Id;
+        newComponent.Name = result.Name;
+        newComponent.Description = result.Description;
+        newComponent.LastUpdated = result.LastUpdated;
+        newComponent.LastUpdatedBy = result.LastUpdatedBy;
+        newComponent.CreatedOn = result.CreatedOn;
+        newComponent.CreatedBy = result.CreatedBy;
+        newComponent.AppId = result.AppId;
+        newComponent.ResourceKey = result.ResourceKey;
+        newComponent.Content = result.Content;
+        newComponent.Script = result.Script;
+        newComponent.Key = result.Key;
+        return newComponent;
 
     }, isValueTask: true);
 

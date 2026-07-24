@@ -50,33 +50,33 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
         return templateBroker.GetAllTemplates(ignoreFilters: ignoreFilters);
     });
 
-    public ValueTask<Template> AddTemplateAsync(Template template) =>
+    public ValueTask<Template> AddTemplateAsync(Template newTemplate) =>
         TryCatch<Template>(operation: async () =>
     {
-        ValidateTemplateOnAdd(inputs: [template]);
-        ValidateTemplate(template: template, parameterName: "template");
-        authorizationBroker.Authorize(appId: template.AppId, privilege: "Template_create");
-        Template newTemplate = CreateStorageTemplate(newTemplate: template);
+        ValidateTemplateOnAdd(inputs: [newTemplate]);
+        ValidateTemplate(template: newTemplate, parameterName: "template");
+        authorizationBroker.Authorize(appId: newTemplate.AppId, privilege: "Template_create");
+        Template storageTemplate = CreateStorageTemplate(newTemplate: newTemplate);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
 
-        DateTimeOffset now = (newTemplate.CreatedOn = DateTimeOffset.UtcNow);
-        newTemplate.CreatedBy = currentUserId;
-        newTemplate.LastUpdated = now;
-        newTemplate.LastUpdatedBy = currentUserId;
-        Template result = await templateBroker.AddTemplateAsync(newTemplate: newTemplate);
-        template.Id = result.Id;
-        template.Name = result.Name;
-        template.Description = result.Description;
-        template.LastUpdated = result.LastUpdated;
-        template.LastUpdatedBy = result.LastUpdatedBy;
-        template.CreatedOn = result.CreatedOn;
-        template.CreatedBy = result.CreatedBy;
-        template.AppId = result.AppId;
-        template.ResourceKey = result.ResourceKey;
-        template.RawString = result.RawString;
-        return template;
+        DateTimeOffset now = (storageTemplate.CreatedOn = DateTimeOffset.UtcNow);
+        storageTemplate.CreatedBy = currentUserId;
+        storageTemplate.LastUpdated = now;
+        storageTemplate.LastUpdatedBy = currentUserId;
+        Template result = await templateBroker.AddTemplateAsync(newTemplate: storageTemplate);
+        newTemplate.Id = result.Id;
+        newTemplate.Name = result.Name;
+        newTemplate.Description = result.Description;
+        newTemplate.LastUpdated = result.LastUpdated;
+        newTemplate.LastUpdatedBy = result.LastUpdatedBy;
+        newTemplate.CreatedOn = result.CreatedOn;
+        newTemplate.CreatedBy = result.CreatedBy;
+        newTemplate.AppId = result.AppId;
+        newTemplate.ResourceKey = result.ResourceKey;
+        newTemplate.RawString = result.RawString;
+        return newTemplate;
 
     }, isValueTask: true);
 

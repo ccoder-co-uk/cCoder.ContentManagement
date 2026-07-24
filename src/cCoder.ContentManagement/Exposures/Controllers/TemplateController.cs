@@ -111,7 +111,7 @@ public class TemplateController : ODataController
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Template> updatedDelta)
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Template> updatedTemplate)
     {
         Template originalEntity = Service.GetTemplate(templateId: key);
 
@@ -120,7 +120,7 @@ public class TemplateController : ODataController
             return NotFound();
         }
 
-        updatedDelta.Patch(original: originalEntity);
+        updatedTemplate.Patch(original: originalEntity);
         return Ok(value: await Service.UpdateTemplateAsync(updatedTemplate: originalEntity));
     }
 

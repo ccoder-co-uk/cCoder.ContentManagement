@@ -262,19 +262,19 @@ values: session.App.PagesById.Values
 
     private static string SerializeForOData(object model) =>
         JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
-    {
-        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-        TypeNameHandling = TypeNameHandling.None,
-        Formatting = Formatting.None,
-        DateFormatHandling = DateFormatHandling.IsoDateFormat,
-        NullValueHandling = NullValueHandling.Ignore,
-        DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-        ContractResolver = new DefaultContractResolver
         {
-            IgnoreSerializableAttribute = true
-        },
-        MaxDepth = 4
-    });
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.None,
+            Formatting = Formatting.None,
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            NullValueHandling = NullValueHandling.Ignore,
+            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+            ContractResolver = new DefaultContractResolver
+            {
+                IgnoreSerializableAttribute = true
+            },
+            MaxDepth = 4
+        });
 
     private void Meta(StringBuilder source, PageRenderSession session) =>
         RegexReplace(source: source, regex: syntax.MetaRegex, action: match => session.MetadataResolver(arg: GetName(match: match)) ?? string.Empty);
@@ -480,8 +480,8 @@ values: session.App.PagesById.Values
 
     private IEnumerable<Replacement> BuildObjectReplacements(object model, string prefix) =>
         model.GetType()
-            .GetProperties()
-            .SelectMany(selector: property =>
+        .GetProperties()
+        .SelectMany(selector: property =>
             {
                 object value = property.GetValue(obj: model);
                 string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
@@ -498,7 +498,7 @@ values: session.App.PagesById.Values
 
     private IEnumerable<Replacement> BuildJObjectReplacements(JObject model, string prefix) =>
         model.Properties()
-            .SelectMany(selector: property =>
+        .SelectMany(selector: property =>
         {
             string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
 
@@ -575,8 +575,8 @@ values: session.App.PagesById.Values
 
     private IEnumerable<Replacement> BuildThemeObjectReplacements(object model, string prefix) =>
         model.GetType()
-            .GetProperties()
-            .SelectMany(selector: property =>
+        .GetProperties()
+        .SelectMany(selector: property =>
             {
                 object value = property.GetValue(obj: model);
                 string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
@@ -597,7 +597,7 @@ values: session.App.PagesById.Values
 
     private IEnumerable<Replacement> BuildThemeJObjectReplacements(JObject model, string prefix) =>
         model.Properties()
-            .SelectMany(selector: property =>
+        .SelectMany(selector: property =>
         {
             string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
 

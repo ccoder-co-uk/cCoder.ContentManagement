@@ -50,35 +50,35 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         return commonObjectBroker.GetAllCommonObjects(ignoreFilters: ignoreFilters);
     });
 
-    public ValueTask<CommonObject> AddCommonObjectAsync(CommonObject commonObject) =>
+    public ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject) =>
         TryCatch<CommonObject>(operation: async () =>
     {
-        ValidateCommonObjectOnAdd(inputs: [commonObject]);
-        ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
-        CommonObject newCommonObject = CreateStorageCommonObject(newCommonObject: commonObject);
-        authorizationBroker.Authorize(appId: commonObjectBroker.GetAppId(entity: newCommonObject), privilege: "CommonObject_create");
+        ValidateCommonObjectOnAdd(inputs: [newCommonObject]);
+        ValidateCommonObject(commonObject: newCommonObject, parameterName: "commonObject");
+        CommonObject storageCommonObject = CreateStorageCommonObject(newCommonObject: newCommonObject);
+        authorizationBroker.Authorize(appId: commonObjectBroker.GetAppId(entity: storageCommonObject), privilege: "CommonObject_create");
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
 
-        DateTimeOffset now = (newCommonObject.CreatedOn = DateTimeOffset.UtcNow);
-        newCommonObject.CreatedBy = currentUserId;
-        newCommonObject.LastUpdated = now;
-        newCommonObject.LastUpdatedBy = currentUserId;
-        CommonObject result = await commonObjectBroker.AddCommonObjectAsync(newCommonObject: newCommonObject);
-        commonObject.Id = result.Id;
-        commonObject.Name = result.Name;
-        commonObject.Description = result.Description;
-        commonObject.LastUpdated = result.LastUpdated;
-        commonObject.LastUpdatedBy = result.LastUpdatedBy;
-        commonObject.CreatedOn = result.CreatedOn;
-        commonObject.CreatedBy = result.CreatedBy;
-        commonObject.Version = result.Version;
-        commonObject.Key = result.Key;
-        commonObject.Type = result.Type;
-        commonObject.Json = result.Json;
-        commonObject.Culture = result.Culture;
-        return commonObject;
+        DateTimeOffset now = (storageCommonObject.CreatedOn = DateTimeOffset.UtcNow);
+        storageCommonObject.CreatedBy = currentUserId;
+        storageCommonObject.LastUpdated = now;
+        storageCommonObject.LastUpdatedBy = currentUserId;
+        CommonObject result = await commonObjectBroker.AddCommonObjectAsync(newCommonObject: storageCommonObject);
+        newCommonObject.Id = result.Id;
+        newCommonObject.Name = result.Name;
+        newCommonObject.Description = result.Description;
+        newCommonObject.LastUpdated = result.LastUpdated;
+        newCommonObject.LastUpdatedBy = result.LastUpdatedBy;
+        newCommonObject.CreatedOn = result.CreatedOn;
+        newCommonObject.CreatedBy = result.CreatedBy;
+        newCommonObject.Version = result.Version;
+        newCommonObject.Key = result.Key;
+        newCommonObject.Type = result.Type;
+        newCommonObject.Json = result.Json;
+        newCommonObject.Culture = result.Culture;
+        return newCommonObject;
 
     }, isValueTask: true);
 

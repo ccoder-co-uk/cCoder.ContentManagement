@@ -12,59 +12,59 @@ internal sealed class CommonObjectReaderBroker(ICommonObjectCache commonObjectCa
 {
     public IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup() =>
         commonObjectCache.GetAll<Resource>()
-            .GroupBy(keySelector: resource => BuildResourceLookupKey(key: resource.Key ?? string.Empty, name: resource.Name ?? string.Empty, culture: resource.Culture ?? string.Empty), comparer: StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
+        .GroupBy(keySelector: resource => BuildResourceLookupKey(key: resource.Key ?? string.Empty, name: resource.Name ?? string.Empty, culture: resource.Culture ?? string.Empty), comparer: StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(
 keySelector: group => group.Key,
 elementSelector: group => new PageRenderResource
 {
     Key = group.First()
-            .Key ?? string.Empty,
+        .Key ?? string.Empty,
     Culture = group.First()
-            .Culture ?? string.Empty,
+        .Culture ?? string.Empty,
     Name = group.First()
-            .Name ?? string.Empty,
+        .Name ?? string.Empty,
     DisplayName = group.First()
-            .DisplayName ?? group.First()
-            .Name ?? string.Empty,
+        .DisplayName ?? group.First()
+        .Name ?? string.Empty,
     ShortDisplayName = group.First()
-            .ShortDisplayName ?? group.First()
-            .Name ?? string.Empty,
+        .ShortDisplayName ?? group.First()
+        .Name ?? string.Empty,
     Description = group.First()
-            .Description ?? string.Empty
+        .Description ?? string.Empty
 },
 comparer: StringComparer.OrdinalIgnoreCase);
 
     public IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName() =>
         commonObjectCache.GetAll<Component>()
-            .GroupBy(keySelector: component => component.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
+        .GroupBy(keySelector: component => component.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(
 keySelector: group => group.Key,
 elementSelector: group => new PageRenderComponent
 {
     Id = group.First()
-            .Id,
+        .Id,
     Name = group.First()
-            .Name ?? string.Empty,
+        .Name ?? string.Empty,
     ResourceKey = group.First()
-            .ResourceKey ?? string.Empty,
+        .ResourceKey ?? string.Empty,
     Content = group.First()
-            .Content ?? string.Empty,
+        .Content ?? string.Empty,
     Script = group.First()
-            .Script ?? string.Empty
+        .Script ?? string.Empty
 },
 comparer: StringComparer.OrdinalIgnoreCase);
 
     public IReadOnlyDictionary<string, PageRenderScript> GetScriptsByName() =>
         commonObjectCache.GetAll<Script>()
-            .GroupBy(keySelector: script => script.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
+        .GroupBy(keySelector: script => script.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(
 keySelector: group => group.Key,
 elementSelector: group => new PageRenderScript
 {
     Name = group.First()
-            .Name ?? string.Empty,
+        .Name ?? string.Empty,
     Content = group.First()
-            .Content ?? string.Empty
+        .Content ?? string.Empty
 },
 comparer: StringComparer.OrdinalIgnoreCase);
 

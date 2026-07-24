@@ -108,7 +108,7 @@ public class AppController : ODataController
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<App> updatedDelta)
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<App> updatedApp)
     {
         App originalEntity = Service.GetApp(appId: key);
 
@@ -117,7 +117,7 @@ public class AppController : ODataController
             return NotFound();
         }
 
-        updatedDelta.Patch(original: originalEntity);
+        updatedApp.Patch(original: originalEntity);
         return Ok(value: CreateResponseApp(newApp: await Service.UpdateAppAsync(updatedApp: originalEntity)));
     }
 

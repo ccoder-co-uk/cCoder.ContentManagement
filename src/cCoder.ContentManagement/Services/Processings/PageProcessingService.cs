@@ -133,65 +133,65 @@ internal partial class PageProcessingService(
 
     }, isValueTask: true);
 
-    public ValueTask<Page> AddPageAsync(Page page) =>
+    public ValueTask<Page> AddPageAsync(Page newPage) =>
         TryCatch<Page>(operation: async () =>
     {
-        ValidatePageOnAdd(inputs: [page]);
-        ValidatePage(page: page, parameterName: "page");
+        ValidatePageOnAdd(inputs: [newPage]);
+        ValidatePage(page: newPage, parameterName: "page");
 
-        if (!authorizationBroker.IsAdminOfApp(appId: page.AppId) && page.ParentId.HasValue)
+        if (!authorizationBroker.IsAdminOfApp(appId: newPage.AppId) && newPage.ParentId.HasValue)
         {
-            UserCan(privKey: "page_create", pageId: page.ParentId.Value);
+            UserCan(privKey: "page_create", pageId: newPage.ParentId.Value);
         }
 
         Page parent = null;
 
-        if (page.ParentId.HasValue)
+        if (newPage.ParentId.HasValue)
         {
             parent = service.GetAllPage(ignoreFilters: false)
-                .Where(predicate: existingPage => existingPage.Id == page.ParentId.Value)
+                .Where(predicate: existingPage => existingPage.Id == newPage.ParentId.Value)
                 .FirstOrDefault();
         }
         else
         {
-            if (page.Path != null && page.Path.Contains(value: '/'))
+            if (newPage.Path != null && newPage.Path.Contains(value: '/'))
             {
-                string parentPath = GetParentPath(path: page.Path);
+                string parentPath = GetParentPath(path: newPage.Path);
 
                 string normalizedParentPath = parentPath.TrimStart(trimChar: '/')
                     .ToLower();
 
                 parent = service.GetAllPage(ignoreFilters: false)
                     .Where(predicate: existingPage =>
-                        existingPage.AppId == page.AppId &&
+                        existingPage.AppId == newPage.AppId &&
                         existingPage.Path.ToLower() == normalizedParentPath)
                     .FirstOrDefault();
             }
         }
 
-        page.Path = BuildPath(pageName: page.Name, parentPath: parent?.Path);
-        page.ParentId = parent?.Id;
-        ValidatePathDoesNotExistForApp(page: page);
+        newPage.Path = BuildPath(pageName: newPage.Name, parentPath: parent?.Path);
+        newPage.ParentId = parent?.Id;
+        ValidatePathDoesNotExistForApp(page: newPage);
 
-        Page newPage = new Page
+        Page storagePage = new Page
         {
-            ParentId = page.ParentId,
-            AppId = page.AppId,
-            Order = page.Order,
-            ShowOnMenus = page.ShowOnMenus,
-            Name = page.Name,
-            LastUpdated = page.LastUpdated,
-            LastUpdatedBy = page.LastUpdatedBy,
-            CreatedBy = page.CreatedBy,
-            Path = page.Path,
-            ResourceKey = page.ResourceKey,
-            Layout = page.Layout
+            ParentId = newPage.ParentId,
+            AppId = newPage.AppId,
+            Order = newPage.Order,
+            ShowOnMenus = newPage.ShowOnMenus,
+            Name = newPage.Name,
+            LastUpdated = newPage.LastUpdated,
+            LastUpdatedBy = newPage.LastUpdatedBy,
+            CreatedBy = newPage.CreatedBy,
+            Path = newPage.Path,
+            ResourceKey = newPage.ResourceKey,
+            Layout = newPage.Layout
         };
 
-        newPage.ParentId = parent?.Id;
-        newPage.Parent = null;
+        storagePage.ParentId = parent?.Id;
+        storagePage.Parent = null;
 
-        newPage.PageInfo = page.PageInfo.Select(selector: (PageInfo info) => new PageInfo
+        storagePage.PageInfo = newPage.PageInfo.Select(selector: (PageInfo info) => new PageInfo
         {
             Id = 0,
             CultureId = info.CultureId,
@@ -201,7 +201,7 @@ internal partial class PageProcessingService(
         })
             .ToList();
 
-        newPage.Contents = (page.Contents ?? new List<Content>()).Select(selector: (Content content) => new Content
+        storagePage.Contents = (newPage.Contents ?? new List<Content>()).Select(selector: (Content content) => new Content
         {
             Id = 0,
             CultureId = content.CultureId,
@@ -210,14 +210,14 @@ internal partial class PageProcessingService(
         })
             .ToList();
 
-        newPage.Roles = ResolveRolesForNewPage(page: page, parent: parent)
+        storagePage.Roles = ResolveRolesForNewPage(page: newPage, parent: parent)
             .Select(selector: role => new PageRole
             {
                 RoleId = role.RoleId
             })
             .ToList();
 
-        return await service.AddPageAsync(newPage: newPage);
+        return await service.AddPageAsync(newPage: storagePage);
 
     }, isValueTask: true);
 

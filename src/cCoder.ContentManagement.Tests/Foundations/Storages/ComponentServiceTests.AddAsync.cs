@@ -52,7 +52,7 @@ newComponent: It.Is<CmsDataModels.Component>(match: candidate => !ReferenceEqual
             .ReturnsAsync(valueFunction: (CmsDataModels.Component value) => value);
 
         // When
-        Component result = await componentService.AddComponentAsync(component: component);
+        Component result = await componentService.AddComponentAsync(newComponent: component);
 
         // Then
 
@@ -168,7 +168,7 @@ times: Times.Once
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await componentService.AddComponentAsync(component: component);
+        Func<Task> action = async () => await componentService.AddComponentAsync(newComponent: component);
 
         // Then
 

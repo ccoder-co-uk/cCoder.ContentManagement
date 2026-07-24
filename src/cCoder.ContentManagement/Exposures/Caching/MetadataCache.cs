@@ -100,11 +100,11 @@ internal class MetadataCache : IMetadataCache
 
     private MetadataContainerSet[] GetTypeSets() =>
         metadataTypeCache.GetAll()
-            .Select(selector: payload => JsonConvert.DeserializeObject<MetadataContainerSet>(value: payload))
-            .GroupBy(keySelector: typeSet => typeSet.Name, comparer: StringComparer.OrdinalIgnoreCase)
-            .Select(selector: MergeTypeSetGroup)
-            .OrderBy(keySelector: typeSet => typeSet.Name)
-            .ToArray();
+        .Select(selector: payload => JsonConvert.DeserializeObject<MetadataContainerSet>(value: payload))
+        .GroupBy(keySelector: typeSet => typeSet.Name, comparer: StringComparer.OrdinalIgnoreCase)
+        .Select(selector: MergeTypeSetGroup)
+        .OrderBy(keySelector: typeSet => typeSet.Name)
+        .ToArray();
 
     private static MetadataContainerSet MergeTypeSetGroup(
         IGrouping<string, MetadataContainerSet> group)
@@ -136,19 +136,19 @@ values: metadataTypeCache
 
     private static string ToJsonForOData(object model) =>
         JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
-    {
-        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-        TypeNameHandling = TypeNameHandling.None,
-        Formatting = Formatting.None,
-        DateFormatHandling = DateFormatHandling.IsoDateFormat,
-        NullValueHandling = NullValueHandling.Ignore,
-        DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-        ContractResolver = new DefaultContractResolver
         {
-            IgnoreSerializableAttribute = true
-        },
-        MaxDepth = 4
-    });
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.None,
+            Formatting = Formatting.None,
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            NullValueHandling = NullValueHandling.Ignore,
+            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+            ContractResolver = new DefaultContractResolver
+            {
+                IgnoreSerializableAttribute = true
+            },
+            MaxDepth = 4
+        });
 
     public void Dispose()
     {

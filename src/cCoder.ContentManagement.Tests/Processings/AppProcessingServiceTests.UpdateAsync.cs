@@ -64,7 +64,7 @@ public partial class AppProcessingServiceTests
             .ReturnsAsync(value: dbApp);
 
         // When
-        App result = await appProcessingService.UpdateAppAsync(app: app);
+        App result = await appProcessingService.UpdateAppAsync(updatedApp: app);
 
         // Then
 
@@ -111,7 +111,7 @@ public partial class AppProcessingServiceTests
             .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> act = async () => await appProcessingService.UpdateAppAsync(app: app);
+        Func<Task> act = async () => await appProcessingService.UpdateAppAsync(updatedApp: app);
 
         // Then
 

@@ -51,7 +51,7 @@ newResource: It.Is<CmsDataModels.Resource>(match: candidate => !ReferenceEquals(
             .ReturnsAsync(valueFunction: (CmsDataModels.Resource value) => value);
 
         // When
-        Resource result = await resourceService.AddResourceAsync(resource: resource);
+        Resource result = await resourceService.AddResourceAsync(newResource: resource);
 
         // Then
 
@@ -168,7 +168,7 @@ times: Times.Once
         // When
 
         await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
-            await resourceService.AddResourceAsync(resource: resource)
+            await resourceService.AddResourceAsync(newResource: resource)
         );
 
         // Then

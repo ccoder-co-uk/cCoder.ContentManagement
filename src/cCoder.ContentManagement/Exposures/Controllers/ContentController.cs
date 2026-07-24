@@ -75,7 +75,7 @@ public class ContentController(IContentOrchestrationService contentOrchestration
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Content> updatedDelta)
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Content> updatedContent)
     {
         Content originalEntity = contentOrchestrationService.GetContent(contentId: key);
 
@@ -84,7 +84,7 @@ public class ContentController(IContentOrchestrationService contentOrchestration
             return NotFound();
         }
 
-        updatedDelta.Patch(original: originalEntity);
+        updatedContent.Patch(original: originalEntity);
         return Ok(value: await contentOrchestrationService.UpdateContentAsync(updatedContent: originalEntity));
     }
 

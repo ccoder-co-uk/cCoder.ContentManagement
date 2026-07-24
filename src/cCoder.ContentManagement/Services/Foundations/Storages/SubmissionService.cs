@@ -50,33 +50,33 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         return submissionBroker.GetAllSubmissions(ignoreFilters: ignoreFilters);
     });
 
-    public ValueTask<Submission> AddSubmissionAsync(Submission submission) =>
+    public ValueTask<Submission> AddSubmissionAsync(Submission newSubmission) =>
         TryCatch<Submission>(operation: async () =>
     {
-        ValidateSubmissionOnAdd(inputs: [submission]);
-        ValidateSubmission(submission: submission, parameterName: "submission");
-        authorizationBroker.Authorize(appId: submission.AppId, privilege: "Submission_create");
-        Submission newSubmission = CreateStorageSubmission(newSubmission: submission);
-        newSubmission.Id = ((submission.Id == Guid.Empty) ? Guid.NewGuid() : submission.Id);
+        ValidateSubmissionOnAdd(inputs: [newSubmission]);
+        ValidateSubmission(submission: newSubmission, parameterName: "submission");
+        authorizationBroker.Authorize(appId: newSubmission.AppId, privilege: "Submission_create");
+        Submission storageSubmission = CreateStorageSubmission(newSubmission: newSubmission);
+        storageSubmission.Id = ((newSubmission.Id == Guid.Empty) ? Guid.NewGuid() : newSubmission.Id);
 
         string currentUserId = authorizationBroker.GetCurrentUser()
             .Id;
 
-        DateTimeOffset now = (newSubmission.CreatedOn = DateTimeOffset.UtcNow);
-        newSubmission.CreatedBy = currentUserId;
-        newSubmission.LastUpdatedOn = now;
-        newSubmission.LastUpdatedBy = currentUserId;
-        Submission result = await submissionBroker.AddSubmissionAsync(newSubmission: newSubmission);
-        submission.Id = result.Id;
-        submission.AppId = result.AppId;
-        submission.CreatedBy = result.CreatedBy;
-        submission.LastUpdatedBy = result.LastUpdatedBy;
-        submission.CreatedOn = result.CreatedOn;
-        submission.LastUpdatedOn = result.LastUpdatedOn;
-        submission.SourceComponent = result.SourceComponent;
-        submission.State = result.State;
-        submission.DataJson = result.DataJson;
-        return submission;
+        DateTimeOffset now = (storageSubmission.CreatedOn = DateTimeOffset.UtcNow);
+        storageSubmission.CreatedBy = currentUserId;
+        storageSubmission.LastUpdatedOn = now;
+        storageSubmission.LastUpdatedBy = currentUserId;
+        Submission result = await submissionBroker.AddSubmissionAsync(newSubmission: storageSubmission);
+        newSubmission.Id = result.Id;
+        newSubmission.AppId = result.AppId;
+        newSubmission.CreatedBy = result.CreatedBy;
+        newSubmission.LastUpdatedBy = result.LastUpdatedBy;
+        newSubmission.CreatedOn = result.CreatedOn;
+        newSubmission.LastUpdatedOn = result.LastUpdatedOn;
+        newSubmission.SourceComponent = result.SourceComponent;
+        newSubmission.State = result.State;
+        newSubmission.DataJson = result.DataJson;
+        return newSubmission;
 
     }, isValueTask: true);
 

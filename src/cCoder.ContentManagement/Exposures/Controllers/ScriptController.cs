@@ -81,7 +81,7 @@ public class ScriptController : ODataController
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Script> updatedDelta)
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Script> updatedScript)
     {
         Script originalEntity = Service.GetScript(scriptId: key);
 
@@ -90,7 +90,7 @@ public class ScriptController : ODataController
             return NotFound();
         }
 
-        updatedDelta.Patch(original: originalEntity);
+        updatedScript.Patch(original: originalEntity);
         return Ok(value: await Service.UpdateScriptAsync(updatedScript: originalEntity));
     }
 
