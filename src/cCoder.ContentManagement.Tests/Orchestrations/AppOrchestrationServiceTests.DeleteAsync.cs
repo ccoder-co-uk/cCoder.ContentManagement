@@ -31,7 +31,7 @@ public partial class AppOrchestrationServiceTests
         app.Id = id;
         app.Roles = [new Role { Id = Guid.NewGuid(), AppId = id, Users = [] }];
 
-        authorizationBrokerMock
+        authorizationProcessingServiceMock
             .Setup(expression: x => x.Authorize(appId: id, privilege: "app_delete"));
 
         appProcessingServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: true))
@@ -48,7 +48,7 @@ public partial class AppOrchestrationServiceTests
         await orchestrationService.DeleteAsync(appId: id);
 
         // Then
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: id, privilege: "app_delete"), times: Times.Once);
+        authorizationProcessingServiceMock.Verify(expression: x => x.Authorize(appId: id, privilege: "app_delete"), times: Times.Once);
         appProcessingServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
         appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppDeleteEventAsync(app: app), times: Times.Once);
         appProcessingServiceMock.Verify(expression: x => x.DeleteAsync(appId: id), times: Times.Once);

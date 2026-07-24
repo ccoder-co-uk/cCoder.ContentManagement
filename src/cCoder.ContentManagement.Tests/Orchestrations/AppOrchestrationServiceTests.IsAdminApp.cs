@@ -18,7 +18,7 @@ public partial class AppOrchestrationServiceTests
         const string userName = "user-id";
         const bool expectedResult = true;
 
-        authorizationBrokerMock
+        authorizationProcessingServiceMock
             .Setup(expression: broker => broker.IsAdmin(appId: appId, userName: userName))
             .Returns(value: expectedResult);
 
@@ -31,11 +31,11 @@ public partial class AppOrchestrationServiceTests
         actualResult.Should()
             .Be(expected: expectedResult);
 
-        authorizationBrokerMock.Verify(
+        authorizationProcessingServiceMock.Verify(
             expression: broker => broker.IsAdmin(appId: appId, userName: userName),
             times: Times.Once);
 
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationProcessingServiceMock.VerifyNoOtherCalls();
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }

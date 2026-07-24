@@ -5565,9 +5565,37 @@
       "Properties": [],
       "Methods": [
         {
+          "Name": "Authorize",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32?"
+            },
+            {
+              "Name": "privilege",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
           "Name": "GetCurrentUser",
           "Inputs": [],
           "ReturnType": "User"
+        },
+        {
+          "Name": "IsAdmin",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "userName",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Boolean"
         },
         {
           "Name": "IsAdminOfApp",
@@ -9186,6 +9214,34 @@
       "Properties": [],
       "Methods": [
         {
+          "Name": "Authorize",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32?"
+            },
+            {
+              "Name": "privilege",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "IsAdmin",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "userName",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        },
+        {
           "Name": "IsAdminOfApp",
           "Inputs": [
             {
@@ -11688,15 +11744,15 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.AppEventProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.AppProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService",
@@ -12143,7 +12199,7 @@
       "Description": "An API controller must have exactly one business dependency.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 24
+      "LineNumber": 23
     },
     {
       "Code": "STXAPI001",
@@ -12188,11 +12244,32 @@
       "LineNumber": 16
     },
     {
-      "Code": "STXO001",
-      "Description": "An orchestration must have two or three foundation or processing dependencies and must not mix them.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Authorization.AuthorizationService",
+      "LineNumber": 19
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Authorization.AuthorizationService",
+      "LineNumber": 37
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Authorization.AuthorizationService",
+      "LineNumber": 50
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService",
-      "LineNumber": 15
+      "LineNumber": 198
     },
     {
       "Code": "STXO001",
@@ -12221,6 +12298,27 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
       "LineNumber": 16
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService",
+      "LineNumber": 22
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService",
+      "LineNumber": 49
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService",
+      "LineNumber": 50
     },
     {
       "Code": "STXP001",

@@ -5,7 +5,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Brokers;
 using Microsoft.EntityFrameworkCore;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.Security;
@@ -15,7 +14,8 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 internal partial class AppOrchestrationService(
     IAppProcessingService processingService,
     IAppEventProcessingService eventService,
-    IAuthorizationBroker authorizationBroker) : IAppOrchestrationService
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IAppOrchestrationService
 {
     public App GetApp(int appId) =>
         TryCatch<App>(operation: () =>
@@ -33,7 +33,9 @@ internal partial class AppOrchestrationService(
         ValidateId(appId: appId, parameterName: "appId");
         ValidateUserName(userName: userName, parameterName: "userName");
 
-        return authorizationBroker.IsAdmin(appId: appId, userName: userName);
+        return authorizationProcessingService.IsAdmin(
+            appId: appId,
+            userName: userName);
     });
 
     public App GetByDomainApp(string domain, bool ignoreFilters = false) =>
@@ -87,7 +89,9 @@ internal partial class AppOrchestrationService(
 
         if (app?.Roles?.Any() == true)
         {
-            authorizationBroker.Authorize(appId: appId, privilege: "app_delete");
+            authorizationProcessingService.Authorize(
+                appId: appId,
+                privilege: "app_delete");
         }
 
         if (app != null)

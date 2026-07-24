@@ -10,5 +10,9 @@ public interface IAuthorizationService
 {
     User GetCurrentUser();
 
+    void Authorize(int? appId, string privilege);
+
+    bool IsAdmin(int appId, string userName);
+
     bool IsAdminOfApp(int appId);
 }
