@@ -7,7 +7,6 @@ using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using System.Text;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.Data.Extensions;
-using cCoder.ContentManagement.Services.Orchestrations;
 using iText.Html2pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,17 +21,10 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class TemplateController : ODataController
 {
-    private readonly ITemplateOrchestrationService service;
-    private readonly ITemplateRenderer renderer;
+    private readonly ITemplateManager manager;
 
-    public TemplateController(
-        ITemplateOrchestrationService service,
-        ITemplateRenderer renderer,
-        ILogger<TemplateController> log)
-    {
-        this.service = service;
-        this.renderer = renderer;
-    }
+    public TemplateController(ITemplateManager manager) =>
+        this.manager = manager;
 
     [HttpPost]
     [AllowAnonymous]
@@ -41,7 +33,7 @@ public class TemplateController : ODataController
     {
         using StreamReader reader = new StreamReader(stream: base.Request.Body);
         dynamic m = JsonConvert.DeserializeObject(value: await reader.ReadToEndAsync());
-        return Content(content: renderer.Render(appId: appId, name: name, culture: culture, model: m), contentType: "text/plain", contentEncoding: Encoding.UTF8);
+        return Content(content: manager.Render(appId: appId, name: name, culture: culture, model: m), contentType: "text/plain", contentEncoding: Encoding.UTF8);
     }
 
     [HttpPost]
@@ -65,7 +57,7 @@ public class TemplateController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Template> queryOptions) =>
-        Ok(value: service.GetAllTemplate());
+        Ok(value: manager.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -74,7 +66,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            IQueryable<Template> result = service.GetAllTemplate()
+            IQueryable<Template> result = manager.GetAll()
                 .Where(predicate: template => template.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -94,7 +86,7 @@ public class TemplateController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await service.AddTemplateAsync(newTemplate: newTemplate));
+        return Ok(value: await manager.AddAsync(newTemplate: newTemplate));
     }
 
     [HttpPut]
@@ -106,14 +98,14 @@ public class TemplateController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await service.UpdateTemplateAsync(updatedTemplate: updatedTemplate));
+        return Ok(value: await manager.UpdateAsync(updatedTemplate: updatedTemplate));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Template> updatedTemplate)
     {
-        Template originalEntity = service.GetTemplate(templateId: key);
+        Template originalEntity = manager.Get(templateId: key);
 
         if (originalEntity == null)
         {
@@ -121,13 +113,13 @@ public class TemplateController : ODataController
         }
 
         updatedTemplate.Patch(original: originalEntity);
-        return Ok(value: await service.UpdateTemplateAsync(updatedTemplate: originalEntity));
+        return Ok(value: await manager.UpdateAsync(updatedTemplate: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await service.DeleteAsync(templateId: key);
+        await manager.DeleteAsync(templateId: key);
         return Ok();
     }
 }

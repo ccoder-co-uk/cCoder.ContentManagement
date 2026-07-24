@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Dependencies.Caching;
@@ -23,6 +24,7 @@ using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Foundations.Serialization;
+using cCoder.ContentManagement.Services.Foundations.ServiceProviders;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
@@ -58,12 +60,52 @@ public static partial class IServiceCollectionExtensions
     {
         services.AddEventingTypes();
         services.AddBrokers();
+        services.AddServiceProviderDependencies();
         services.AddFoundations();
         services.AddProcessings();
         services.AddOrchestrations();
         services.AddCoordinations();
         services.AddEventHandlers();
         services.AddRendering();
+    }
+
+    private static void AddServiceProviderDependencies(
+        this IServiceCollection services)
+    {
+        services.AddTransient<IServiceProviderBroker, ServiceProviderBroker>();
+        services.AddTransient<
+            IServiceProviderExecutionService,
+            ServiceProviderExecutionService>();
+
+        services.AddKeyedTransient<IComponentOrchestrationService>(
+            serviceKey: "Component",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IComponentOrchestrationService>());
+
+        services.AddKeyedTransient<IComponentRenderOrchestrationService>(
+            serviceKey: "ComponentRender",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IComponentRenderOrchestrationService>());
+
+        services.AddKeyedTransient<IPageOrchestrationService>(
+            serviceKey: "Page",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IPageOrchestrationService>());
+
+        services.AddKeyedTransient<IPageRenderAggregationService>(
+            serviceKey: "PageRender",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IPageRenderAggregationService>());
+
+        services.AddKeyedTransient<ITemplateOrchestrationService>(
+            serviceKey: "Template",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<ITemplateOrchestrationService>());
+
+        services.AddKeyedTransient<ITemplateRenderOrchestrationService>(
+            serviceKey: "TemplateRender",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<ITemplateRenderOrchestrationService>());
     }
 
     private static void AddContentManagementWeb(this IServiceCollection services, ODataConventionModelBuilder builder = null) =>
@@ -146,9 +188,13 @@ public static partial class IServiceCollectionExtensions
     private static void AddEventHandlers(this IServiceCollection services)
     {
         services.AddTransient<IAppManager, AppManager>();
+        services.AddTransient<IBaselineManager, BaselineManager>();
+        services.AddTransient<IComponentManager, ComponentManager>();
         services.AddTransient<IContentManagementPackageManager, ContentManagementPackageManager>();
         services.AddTransient<IComponentRenderer, ComponentRenderer>();
+        services.AddTransient<IPageManager, PageManager>();
         services.AddTransient<IPageRenderer, PageRenderer>();
+        services.AddTransient<ITemplateManager, TemplateManager>();
         services.AddTransient<ITemplateRenderer, TemplateRenderer>();
         services.AddTransient<IContentManagementEventHandlers, ContentManagementEventHandlers>();
     }

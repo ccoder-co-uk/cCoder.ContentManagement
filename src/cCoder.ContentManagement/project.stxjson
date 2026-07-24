@@ -1036,6 +1036,23 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Brokers.ServiceProviders.ServiceProviderBroker",
+      "StandardElementType": "Broker",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "GetRequiredService",
+          "Inputs": [
+            {
+              "Name": "name",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "TService"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Brokers.Storages.AppBroker",
       "StandardElementType": "Broker",
       "Properties": [],
@@ -2288,6 +2305,92 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CApp\u003E"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Exposures.BaselineManager",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "GetPackages",
+          "Inputs": [],
+          "ReturnType": "Package[]"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Exposures.ComponentManager",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "AddAsync",
+          "Inputs": [
+            {
+              "Name": "newComponent",
+              "Type": "Component"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CComponent\u003E"
+        },
+        {
+          "Name": "DeleteAsync",
+          "Inputs": [
+            {
+              "Name": "componentId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask"
+        },
+        {
+          "Name": "Get",
+          "Inputs": [
+            {
+              "Name": "componentId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "Component"
+        },
+        {
+          "Name": "GetAll",
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CComponent\u003E"
+        },
+        {
+          "Name": "Render",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "theme",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.String"
+        },
+        {
+          "Name": "UpdateAsync",
+          "Inputs": [
+            {
+              "Name": "updatedComponent",
+              "Type": "Component"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CComponent\u003E"
         }
       ]
     },
@@ -3580,6 +3683,104 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Exposures.PageManager",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "AddAsync",
+          "Inputs": [
+            {
+              "Name": "newPage",
+              "Type": "Page"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPage\u003E"
+        },
+        {
+          "Name": "DeleteAsync",
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask"
+        },
+        {
+          "Name": "Get",
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "Page"
+        },
+        {
+          "Name": "GetAll",
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CPage\u003E"
+        },
+        {
+          "Name": "GetMenu",
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.String"
+        },
+        {
+          "Name": "GetRoot",
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "Page"
+        },
+        {
+          "Name": "Render",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "path",
+              "Type": "System.String"
+            },
+            {
+              "Name": "theme",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Object"
+        },
+        {
+          "Name": "UpdateAsync",
+          "Inputs": [
+            {
+              "Name": "updatedPage",
+              "Type": "Page"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPage\u003E"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Exposures.PageRenderer",
       "StandardElementType": "Exposure",
       "Properties": [],
@@ -3616,6 +3817,80 @@
         }
       ],
       "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Exposures.TemplateManager",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "AddAsync",
+          "Inputs": [
+            {
+              "Name": "newTemplate",
+              "Type": "Template"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CTemplate\u003E"
+        },
+        {
+          "Name": "DeleteAsync",
+          "Inputs": [
+            {
+              "Name": "templateId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask"
+        },
+        {
+          "Name": "Get",
+          "Inputs": [
+            {
+              "Name": "templateId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "Template"
+        },
+        {
+          "Name": "GetAll",
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CTemplate\u003E"
+        },
+        {
+          "Name": "Render",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "model",
+              "Type": "dynamic"
+            }
+          ],
+          "ReturnType": "System.String"
+        },
+        {
+          "Name": "UpdateAsync",
+          "Inputs": [
+            {
+              "Name": "updatedTemplate",
+              "Type": "Template"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CTemplate\u003E"
+        }
+      ]
     },
     {
       "Name": "cCoder.ContentManagement.Exposures.TemplateRenderer",
@@ -6341,6 +6616,27 @@
             }
           ],
           "ReturnType": "T"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService",
+      "StandardElementType": "FoundationService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Execute",
+          "Inputs": [
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "operation",
+              "Type": "System.Func\u003CTService, TResult\u003E"
+            }
+          ],
+          "ReturnType": "TResult"
         }
       ]
     },
@@ -11268,6 +11564,10 @@
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Exposures.ComponentManager",
+      "ToType": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Exposures.ComponentRenderer",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentRenderOrchestrationService"
     },
@@ -11284,16 +11584,16 @@
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.BaselineController",
+      "ToType": "cCoder.ContentManagement.Exposures.BaselineManager"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
-      "ToType": "cCoder.ContentManagement.Exposures.ComponentRenderer"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService"
+      "ToType": "cCoder.ContentManagement.Exposures.ComponentManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.ContentController",
@@ -11309,11 +11609,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "ToType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService"
+      "ToType": "cCoder.ContentManagement.Exposures.PageManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController",
@@ -11337,11 +11633,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
-      "ToType": "cCoder.ContentManagement.Exposures.TemplateRenderer"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService"
+      "ToType": "cCoder.ContentManagement.Exposures.TemplateManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.CurrentAppManager",
@@ -11352,8 +11644,16 @@
       "ToType": "cCoder.ContentManagement.Services.Foundations.Events.EventHandlerService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Exposures.PageManager",
+      "ToType": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Exposures.PageRenderer",
       "ToType": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.TemplateManager",
+      "ToType": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.TemplateRenderer",
@@ -11634,6 +11934,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Serialization.JsonService",
       "ToType": "cCoder.ContentManagement.Brokers.JsonBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService",
+      "ToType": "cCoder.ContentManagement.Brokers.ServiceProviders.ServiceProviderBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.AppCultureService",
@@ -12238,32 +12542,11 @@
   ],
   "AnalysisItems": [
     {
-      "Code": "STXAPI001",
-      "Description": "An API controller must have exactly one business dependency.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.BaselineController",
-      "LineNumber": 10
-    },
-    {
-      "Code": "STXAPI001",
-      "Description": "An API controller must have exactly one business dependency.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
-      "LineNumber": 20
-    },
-    {
-      "Code": "STXAPI001",
-      "Description": "An API controller must have exactly one business dependency.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageController",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STXAPI001",
-      "Description": "An API controller must have exactly one business dependency.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
-      "LineNumber": 23
+      "Type": "cCoder.ContentManagement.Brokers.ServiceProviders.ServiceProviderBroker",
+      "LineNumber": 16
     },
     {
       "Code": "STX0007",
@@ -12297,8 +12580,22 @@
       "Code": "STXFORMAT001",
       "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageRenderOrchestrationService",
-      "LineNumber": 122
+      "Type": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService",
+      "LineNumber": 29
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService",
+      "LineNumber": 33
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService",
+      "LineNumber": 49
     },
     {
       "Code": "STX0007",
@@ -12306,13 +12603,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService",
       "LineNumber": 12
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService",
-      "LineNumber": 89
     },
     {
       "Code": "STXP001",
@@ -12329,25 +12619,11 @@
       "LineNumber": 25
     },
     {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
-      "LineNumber": 13
-    },
-    {
       "Code": "STXP001",
       "Description": "A processing service may use only one foundation service and no higher-level service.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
       "LineNumber": 15
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
-      "LineNumber": 300
     },
     {
       "Code": "STX0007",
@@ -12364,25 +12640,11 @@
       "LineNumber": 16
     },
     {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 16
-    },
-    {
       "Code": "STXP001",
       "Description": "A processing service may use only one foundation service and no higher-level service.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
       "LineNumber": 24
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 875
     }
   ]
 }

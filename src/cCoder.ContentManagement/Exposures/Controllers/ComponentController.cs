@@ -6,7 +6,6 @@ using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.Data.Extensions;
-using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Deltas;
@@ -19,23 +18,16 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class ComponentController : ODataController
 {
-    private readonly IComponentOrchestrationService service;
-    private readonly IComponentRenderer renderer;
+    private readonly IComponentManager manager;
 
-    public ComponentController(
-        IComponentOrchestrationService service,
-        IComponentRenderer renderer,
-        ILogger<ComponentController> log)
-    {
-        this.service = service;
-        this.renderer = renderer;
-    }
+    public ComponentController(IComponentManager manager) =>
+        this.manager = manager;
 
     [HttpGet]
     [AllowAnonymous]
     [ActionName("Render")]
     public IActionResult GetRender(int appId, string name, string culture, string theme) =>
-        Ok(value: renderer.Render(appId: appId, name: name, culture: culture, theme: theme));
+        Ok(value: manager.Render(appId: appId, name: name, culture: culture, theme: theme));
 
     [HttpGet]
     public IActionResult GetMetadata() =>
@@ -46,7 +38,7 @@ public class ComponentController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
     public IActionResult GetAll(ODataQueryOptions<Component> queryOptions) =>
-        Ok(value: service.GetAllComponent());
+        Ok(value: manager.GetAll());
 
     [HttpGet]
     [AllowAnonymous]
@@ -55,7 +47,7 @@ public class ComponentController : ODataController
     {
         try
         {
-            IQueryable<Component> result = service.GetAllComponent()
+            IQueryable<Component> result = manager.GetAll()
                 .Where(predicate: component => component.Id == key);
 
             return Ok(value: SingleResult.Create(queryable: result));
@@ -75,7 +67,7 @@ public class ComponentController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await service.AddComponentAsync(newComponent: newComponent));
+        return Ok(value: await manager.AddAsync(newComponent: newComponent));
     }
 
     [HttpPut]
@@ -87,14 +79,14 @@ public class ComponentController : ODataController
             return new BadRequestResult(modelState: base.ModelState);
         }
 
-        return Ok(value: await service.UpdateComponentAsync(updatedComponent: updatedComponent));
+        return Ok(value: await manager.UpdateAsync(updatedComponent: updatedComponent));
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Component> updatedComponent)
     {
-        Component originalEntity = service.GetComponent(componentId: key);
+        Component originalEntity = manager.Get(componentId: key);
 
         if (originalEntity == null)
         {
@@ -102,13 +94,13 @@ public class ComponentController : ODataController
         }
 
         updatedComponent.Patch(original: originalEntity);
-        return Ok(value: await service.UpdateComponentAsync(updatedComponent: originalEntity));
+        return Ok(value: await manager.UpdateAsync(updatedComponent: originalEntity));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await service.DeleteAsync(componentId: key);
+        await manager.DeleteAsync(componentId: key);
         return Ok();
     }
 }

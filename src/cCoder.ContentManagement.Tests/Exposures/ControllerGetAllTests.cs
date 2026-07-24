@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Controllers;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
@@ -74,17 +75,15 @@ log: Mock.Of<ILogger<CultureController>>());
     public void PageGetAll_ShouldReturnServiceQueryableUntouched()
     {
         // Given
-        Mock<IPageOrchestrationService> serviceMock = new();
+        Mock<IPageManager> managerMock = new();
         IQueryable<Page> expectedPages = new[] { new Page { Id = 1, AppId = 1, Name = "Admin", Path = "Admin" } }.AsQueryable();
 
-        serviceMock.Setup(expression: service => service.GetAllPage(ignoreFilters: false))
+        managerMock.Setup(expression: manager => manager.GetAll())
             .Returns(value: expectedPages);
 
         // When
         PageController controller = new(
-service: serviceMock.Object,
-renderService: Mock.Of<IPageRenderAggregationService>(),
-log: Mock.Of<ILogger<PageController>>());
+            manager: managerMock.Object);
 
         // Then
         OkObjectResult result = controller.Get(queryOptions: null!)
