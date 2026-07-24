@@ -8,12 +8,6 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class PackageOrchestrationService
 {
-    private static void ValidateExportPagackages(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
-
-    private static void ValidateImportPackageAsync(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
-
     private static void ValidatePackageOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

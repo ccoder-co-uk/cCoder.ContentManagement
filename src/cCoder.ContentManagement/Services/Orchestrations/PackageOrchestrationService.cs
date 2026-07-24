@@ -3,7 +3,6 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.Packaging;
 using cCoder.ContentManagement.Models;
@@ -11,33 +10,10 @@ using cCoder.ContentManagement.Models;
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class PackageOrchestrationService(
-    IContentManagementMigrationAggregationService contentManagementMigrationAggregationService,
-    IPackageExportProcessingService packageExportProcessingService,
     IPackageProcessingService processingService,
     IPackageItemProcessingService packageItemProcessingService,
     IPackageEventProcessingService eventService) : IPackageOrchestrationService
 {
-    public Package[] ExportPagackages(int appId, string[] packageNames) =>
-        TryCatch<Package[]>(operation: () =>
-    {
-        ValidateExportPagackages(inputs: [appId, packageNames]);
-
-        return ValidatePackageNames(packageNames: packageNames, parameterName: "packageNames")
-            .Select(selector: packageName => packageExportProcessingService.ExportPackage(appId: appId, packageName: packageName))
-            .ToArray();
-
-    });
-
-    public ValueTask ImportPackageAsync(int appId, Package package) =>
-        TryCatch(operation: async () =>
-    {
-        ValidateImportPackageAsync(inputs: [appId, package]);
-        ValidateAppId(appId: appId, parameterName: "appId");
-        ValidatePackage(package: package, parameterName: "package");
-        await contentManagementMigrationAggregationService.ImportPackageAsync(appId: appId, package: package);
-
-    }, isValueTask: true);
-
     public Package GetPackage(Guid packageId) =>
         TryCatch<Package>(operation: () =>
     {
@@ -125,16 +101,6 @@ internal partial class PackageOrchestrationService(
         return processingService.DeleteAllPackageAsync(deletedPackage: ValidatePackages(packages: deletedPackage, parameterName: "items"));
     }, isValueTask: true);
 
-    private static int ValidateAppId(int appId, string parameterName)
-    {
-        if (appId < 1)
-        {
-            throw new ValidationException(message: parameterName + " must be greater than 0.");
-        }
-
-        return appId;
-    }
-
     private static Guid ValidateId(Guid packageId, string parameterName)
     {
         if (packageId == Guid.Empty)
@@ -163,16 +129,6 @@ internal partial class PackageOrchestrationService(
         }
 
         return packages;
-    }
-
-    private static string[] ValidatePackageNames(string[] packageNames, string parameterName)
-    {
-        if (packageNames == null)
-        {
-            throw new ValidationException(message: parameterName + " is required.");
-        }
-
-        return packageNames;
     }
 
     private async ValueTask SynchronizePackageItemsAsync(

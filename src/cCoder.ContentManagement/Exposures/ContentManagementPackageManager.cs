@@ -3,17 +3,19 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Services.Aggregations;
-using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Exposures;
 
-internal class ContentManagementPackageManager(IContentManagementMigrationAggregationService contentManagementMigrationAggregationService, IPackageOrchestrationService packageOrchestrationService) : IContentManagementPackageManager
+internal class ContentManagementPackageManager(
+    IContentManagementMigrationAggregationService contentManagementMigrationAggregationService)
+    : IContentManagementPackageManager
 {
     public ValueTask ImportPackageAsync(int appId, Package package) =>
         contentManagementMigrationAggregationService.ImportPackageAsync(appId: appId, package: package);
 
     public Package ExportPackage(int appId, string packageName) =>
-        packageOrchestrationService.ExportPagackages(appId: appId, packageNames: new string[1] { packageName })
+        contentManagementMigrationAggregationService
+        .ExportPackages(appId: appId, packageNames: [packageName])
         .SingleOrDefault();
 }

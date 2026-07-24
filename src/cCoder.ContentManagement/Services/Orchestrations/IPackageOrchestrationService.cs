@@ -9,10 +9,6 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IPackageOrchestrationService
 {
-    Package[] ExportPagackages(int appId, string[] packageNames);
-
-    ValueTask ImportPackageAsync(int appId, Package package);
-
     Package GetPackage(Guid packageId);
 
     IQueryable<Package> GetAllPackage(bool ignoreFilters = false);

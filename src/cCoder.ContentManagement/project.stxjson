@@ -5271,6 +5271,20 @@
       "Properties": [],
       "Methods": [
         {
+          "Name": "ExportPackages",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "packageNames",
+              "Type": "System.String[]"
+            }
+          ],
+          "ReturnType": "Package[]"
+        },
+        {
           "Name": "ImportPackageAsync",
           "Inputs": [
             {
@@ -7988,20 +8002,6 @@
           "ReturnType": "System.Threading.Tasks.ValueTask"
         },
         {
-          "Name": "ExportPagackages",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "packageNames",
-              "Type": "System.String[]"
-            }
-          ],
-          "ReturnType": "Package[]"
-        },
-        {
           "Name": "GetAllPackage",
           "Inputs": [
             {
@@ -8020,20 +8020,6 @@
             }
           ],
           "ReturnType": "Package"
-        },
-        {
-          "Name": "ImportPackageAsync",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "package",
-              "Type": "Package"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask"
         },
         {
           "Name": "UpdatePackageAsync",
@@ -11009,10 +10995,6 @@
       "ToType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService"
     },
     {
-      "FromType": "cCoder.ContentManagement.Exposures.ContentManagementPackageManager",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService"
-    },
-    {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.AppController",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService"
     },
@@ -11171,6 +11153,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.PackageExportProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Coordinations.AppRenderableCoordinationService",
@@ -11614,15 +11600,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.PackageEventProcessingService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Services.Processings.PackageExportProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService",
@@ -11979,13 +11957,6 @@
   ],
   "AnalysisItems": [
     {
-      "Code": "STXE003",
-      "Description": "An exposure may communicate with only one business service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.ContentManagementPackageManager",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXAPI001",
       "Description": "An API controller must have exactly one business dependency.",
       "Severity": "Warning",
@@ -12039,7 +12010,7 @@
       "Description": "An aggregation service may have any number of dependencies, but they must share the same service variation.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "LineNumber": 15
+      "LineNumber": 16
     },
     {
       "Code": "STXC001",
@@ -12103,13 +12074,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.ComponentRenderOrchestrationService",
       "LineNumber": 11
-    },
-    {
-      "Code": "STXO001",
-      "Description": "An orchestration must have two or three foundation or processing dependencies and must not mix them.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService",
-      "LineNumber": 13
     },
     {
       "Code": "STXO001",

@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Brokers;
 using Newtonsoft.Json.Linq;
 using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.CMS;
@@ -14,6 +15,7 @@ namespace cCoder.ContentManagement.Services.Aggregations;
 
 internal partial class ContentManagementMigrationAggregationService(
     IJsonBroker jsonBroker,
+    IPackageExportProcessingService packageExportProcessingService,
     IComponentOrchestrationService componentOrchestrationService,
     ILayoutOrchestrationService layoutOrchestrationService,
     IPageOrchestrationService pageOrchestrationService,
@@ -30,6 +32,23 @@ internal partial class ContentManagementMigrationAggregationService(
         "CreatedOn",
         "CreatedBy"
     };
+
+    public Package[] ExportPackages(int appId, string[] packageNames) =>
+        TryCatch<Package[]>(operation: () =>
+    {
+        ValidateExportPackages(inputs: [appId, packageNames]);
+        ValidateAppId(appId: appId, parameterName: "appId");
+
+        return ValidatePackageNames(
+            packageNames: packageNames,
+            parameterName: "packageNames")
+            .Select(selector: packageName =>
+                packageExportProcessingService.ExportPackage(
+                    appId: appId,
+                    packageName: packageName))
+            .ToArray();
+
+    });
 
     public ValueTask ImportPackageAsync(int appId, Package package) =>
         TryCatch(operation: async () =>
@@ -197,6 +216,19 @@ internal partial class ContentManagementMigrationAggregationService(
         }
 
         return package;
+    }
+
+    private static string[] ValidatePackageNames(
+        string[] packageNames,
+        string parameterName)
+    {
+        if (packageNames == null)
+        {
+            throw new ValidationException(
+                message: parameterName + " is required.");
+        }
+
+        return packageNames;
     }
 
     private static PackageItem ValidatePackageItem(PackageItem packageItem, string parameterName)

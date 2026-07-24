@@ -5,6 +5,7 @@
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.Packaging;
 using FluentAssertions;
 using Moq;
@@ -134,6 +135,7 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
     }
 
     private static ContentManagementMigrationAggregationService CreateService(
+        IPackageExportProcessingService packageExportProcessingService = null,
         IComponentOrchestrationService componentOrchestrationService = null,
         ILayoutOrchestrationService layoutOrchestrationService = null,
         IPageOrchestrationService pageOrchestrationService = null,
@@ -144,6 +146,7 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
         =>
         new(
 jsonBroker: new JsonBroker(),
+packageExportProcessingService: packageExportProcessingService ?? Mock.Of<IPackageExportProcessingService>(),
 componentOrchestrationService: componentOrchestrationService ?? Mock.Of<IComponentOrchestrationService>(),
 layoutOrchestrationService: layoutOrchestrationService ?? Mock.Of<ILayoutOrchestrationService>(),
 pageOrchestrationService: pageOrchestrationService ?? Mock.Of<IPageOrchestrationService>(),
