@@ -239,6 +239,9 @@ separator: "",
         public void Set(string name, string culture, string value) =>
             values[BuildKey(name: name, culture: culture)] = value;
 
+        public string Get(string key, string culture) =>
+            GetMetadata(name: key, culture: culture);
+
         public string GetMetadata(string name, string culture)
         {
             Requests.Add(item: (name, culture));
@@ -254,6 +257,19 @@ separator: "",
 
     private sealed class TestCommonObjectReaderBroker : ICommonObjectReaderBroker
     {
+        public T[] GetAll<T>() =>
+            [];
+
+        public T Get<T>(string key) =>
+            default;
+
+        public void Set(string key, object item)
+        {
+        }
+
+        public IEnumerable<CommonObject> GetLatestSet() =>
+            [];
+
         public IReadOnlyDictionary<string, PageRenderResource> ResourcesByLookup { get; init; } =
             new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
 

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Exposures.Caching;
+using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using Newtonsoft.Json;
@@ -23,8 +23,8 @@ using cCoder.Data.Models.Security;
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class ComponentRenderProcessingService(
-    IMetadataCache metadataCache,
-    ICommonObjectCache objectCache,
+    IMetadataReaderBroker metadataCache,
+    ICommonObjectReaderBroker objectCache,
     IJsonBroker jsonBroker,
     Config config,
     IRenderFileContentService renderFileContentService,

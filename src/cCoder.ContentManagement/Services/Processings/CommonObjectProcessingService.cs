@@ -4,7 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Exposures.Caching;
+using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
@@ -13,7 +13,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class CommonObjectProcessingService(ICommonObjectService service, ICommonObjectCache cache, IAuthorizationBroker authorizationBroker, IJsonBroker jsonBroker) : ICommonObjectProcessingService
+internal partial class CommonObjectProcessingService(ICommonObjectService service, ICommonObjectReaderBroker cache, IAuthorizationBroker authorizationBroker, IJsonBroker jsonBroker) : ICommonObjectProcessingService
 {
     private User GetCurrentUser() =>
         authorizationBroker.GetCurrentUser();

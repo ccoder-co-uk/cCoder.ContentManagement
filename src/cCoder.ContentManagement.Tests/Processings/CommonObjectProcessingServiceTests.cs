@@ -26,7 +26,7 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class CommonObjectProcessingServiceTests
 {
-    private readonly Mock<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache> commonObjectCacheMock = new();
+    private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<ICommonObjectService> commonObjectServiceMock = new();
     private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();

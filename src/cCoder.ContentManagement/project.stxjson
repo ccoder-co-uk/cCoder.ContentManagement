@@ -4503,9 +4503,29 @@
       "Properties": [],
       "Methods": [
         {
+          "Name": "Get",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "T"
+        },
+        {
+          "Name": "GetAll",
+          "Inputs": [],
+          "ReturnType": "T[]"
+        },
+        {
           "Name": "GetComponentsByName",
           "Inputs": [],
           "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderComponent\u003E"
+        },
+        {
+          "Name": "GetLatestSet",
+          "Inputs": [],
+          "ReturnType": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
         },
         {
           "Name": "GetResourcesByLookup",
@@ -4516,6 +4536,20 @@
           "Name": "GetScriptsByName",
           "Inputs": [],
           "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Rendering.Models.PageRenderScript\u003E"
+        },
+        {
+          "Name": "Set",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            },
+            {
+              "Name": "item",
+              "Type": "System.Object"
+            }
+          ],
+          "ReturnType": "System.Void"
         }
       ]
     },
@@ -4555,6 +4589,20 @@
       "StandardElementType": "Broker",
       "Properties": [],
       "Methods": [
+        {
+          "Name": "Get",
+          "Inputs": [
+            {
+              "Name": "key",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.String"
+        },
         {
           "Name": "GetMetadata",
           "Inputs": [
@@ -10882,7 +10930,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Dependencies.Caching.MetadataCacheDependency",
-      "ToType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency"
+      "ToType": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.AppManager",
@@ -11646,7 +11694,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "ToType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency"
+      "ToType": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
@@ -11666,15 +11714,15 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Dependencies.Caching.MetadataCacheDependency"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
       "ToType": "cCoder.ContentManagement.Models.Config"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
+      "ToType": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
+      "ToType": "cCoder.ContentManagement.Rendering.Brokers.MetadataReaderBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
@@ -11842,11 +11890,11 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency"
+      "ToType": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "ToType": "cCoder.ContentManagement.Dependencies.Caching.MetadataCacheDependency"
+      "ToType": "cCoder.ContentManagement.Rendering.Brokers.MetadataReaderBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
@@ -11870,13 +11918,6 @@
     }
   ],
   "AnalysisItems": [
-    {
-      "Code": "STXD001",
-      "Description": "Dependency elements may only be consumed by brokers.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Dependencies.Caching.MetadataCacheDependency",
-      "LineNumber": 16
-    },
     {
       "Code": "STXE003",
       "Description": "An exposure may communicate with only one business service.",
@@ -12165,20 +12206,6 @@
       "LineNumber": 16
     },
     {
-      "Code": "STXD001",
-      "Description": "Dependency elements may only be consumed by brokers.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "LineNumber": 16
-    },
-    {
-      "Code": "STXD001",
-      "Description": "Dependency elements may only be consumed by brokers.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 25
-    },
-    {
       "Code": "STXP001",
       "Description": "A processing service may use only one foundation service and no higher-level service.",
       "Severity": "Warning",
@@ -12230,13 +12257,6 @@
     {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 24
-    },
-    {
-      "Code": "STXD001",
-      "Description": "Dependency elements may only be consumed by brokers.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
       "LineNumber": 24

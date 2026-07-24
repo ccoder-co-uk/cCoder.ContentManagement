@@ -16,7 +16,7 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
-using IMetadataCache = cCoder.ContentManagement.Exposures.Caching.IMetadataCache;
+using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
 using RenderApp = cCoder.Data.Models.CMS.App;
 using RenderComponent = cCoder.Data.Models.CMS.Component;
@@ -31,7 +31,7 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class ComponentRenderProcessingServiceTests
 {
     private readonly Mock<IMetadataCache> metadataCacheMock = new();
-    private readonly Mock<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache> commonObjectCacheMock = new();
+    private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
     private readonly Mock<IRenderFileContentService> renderFileContentServiceMock = new();
 
     private ComponentRenderProcessingService CreateSut(string workflowBaseUrl) =>

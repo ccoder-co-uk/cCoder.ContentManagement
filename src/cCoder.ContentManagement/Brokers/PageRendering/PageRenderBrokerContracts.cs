@@ -4,6 +4,7 @@
 
 
 using cCoder.ContentManagement.Rendering.Models;
+using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Rendering.Brokers;
@@ -24,11 +25,21 @@ internal interface IScriptReaderBroker
 
 internal interface IMetadataReaderBroker
 {
+    string Get(string key, string culture);
+
     string GetMetadata(string name, string culture);
 }
 
 internal interface ICommonObjectReaderBroker
 {
+    T[] GetAll<T>();
+
+    T Get<T>(string key);
+
+    void Set(string key, object item);
+
+    IEnumerable<CommonObject> GetLatestSet();
+
     IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup();
 
     IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName();

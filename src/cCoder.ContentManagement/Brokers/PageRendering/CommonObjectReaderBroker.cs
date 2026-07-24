@@ -4,12 +4,25 @@
 
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Rendering.Models;
+using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Rendering.Brokers;
 
 internal sealed class CommonObjectReaderBroker(ICommonObjectCache commonObjectCache) : ICommonObjectReaderBroker
 {
+    public T[] GetAll<T>() =>
+        commonObjectCache.GetAll<T>();
+
+    public T Get<T>(string key) =>
+        commonObjectCache.Get<T>(key: key);
+
+    public void Set(string key, object item) =>
+        commonObjectCache.Set(key: key, item: item);
+
+    public IEnumerable<CommonObject> GetLatestSet() =>
+        commonObjectCache.GetLatestSet();
+
     public IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup() =>
         commonObjectCache.GetAll<Resource>()
         .GroupBy(keySelector: resource => BuildResourceLookupKey(key: resource.Key ?? string.Empty, name: resource.Name ?? string.Empty, culture: resource.Culture ?? string.Empty), comparer: StringComparer.OrdinalIgnoreCase)
