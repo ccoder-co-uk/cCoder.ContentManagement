@@ -14,12 +14,10 @@ internal sealed class PageRoleBroker(ICoreContextFactory coreContextFactory) : I
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.PageRoles
-                .IgnoreQueryFilters()
-            .Include(navigationPropertyPath: pageRole => pageRole.Role)
-            : coreDataContext.PageRoles
-                .Include(navigationPropertyPath: pageRole => pageRole.Role);
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.PageRoles,
+            ignoreFilters: ignoreFilters)
+            .Include(navigationPropertyPath: pageRole => pageRole.Role);
     }
 
     public async ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole)

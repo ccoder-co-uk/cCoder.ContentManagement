@@ -2041,6 +2041,12 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Dependencies.QueryFilterDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Exposures.AppManager",
       "StandardElementType": "Exposure",
       "Properties": [],
@@ -11899,13 +11905,6 @@
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.AppBroker",
-      "LineNumber": 18
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.AppBroker",
       "LineNumber": 60
     },
     {
@@ -11914,20 +11913,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.AppBroker",
       "LineNumber": 67
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.AppCultureBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker",
-      "LineNumber": 17
     },
     {
       "Code": "STXB003",
@@ -11947,106 +11932,8 @@
       "Code": "STXB002",
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.ComponentBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.ContentBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.CultureBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.LayoutBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PackageBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PackageItemBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PageBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PageInfoBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PageRoleBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PrivilegeBroker",
-      "LineNumber": 22
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.RenderFileContentBroker",
       "LineNumber": 23
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.ResourceBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.ScriptBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.SubmissionBroker",
-      "LineNumber": 17
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.TemplateBroker",
-      "LineNumber": 17
     },
     {
       "Code": "STXB002",

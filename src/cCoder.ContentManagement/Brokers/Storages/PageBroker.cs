@@ -14,9 +14,9 @@ internal sealed class PageBroker(ICoreContextFactory coreContextFactory) : IPage
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.Pages.IgnoreQueryFilters()
-            : coreDataContext.Pages;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Pages,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<Page> AddPageAsync(Page newPage)

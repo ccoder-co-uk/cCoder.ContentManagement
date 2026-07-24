@@ -14,9 +14,9 @@ internal sealed class LayoutBroker(ICoreContextFactory coreContextFactory) : ILa
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.Layouts.IgnoreQueryFilters()
-            : coreDataContext.Layouts;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Layouts,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<Layout> AddLayoutAsync(Layout newLayout)

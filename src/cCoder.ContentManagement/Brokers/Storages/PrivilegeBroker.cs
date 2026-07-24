@@ -19,9 +19,8 @@ internal sealed class PrivilegeBroker(ICoreContextFactory coreContextFactory) : 
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.Set<Privilege>()
-            .IgnoreQueryFilters()
-            : coreDataContext.Set<Privilege>();
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Set<Privilege>(),
+            ignoreFilters: ignoreFilters);
     }
 }

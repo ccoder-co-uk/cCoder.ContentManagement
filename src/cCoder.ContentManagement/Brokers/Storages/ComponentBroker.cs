@@ -14,9 +14,9 @@ internal sealed class ComponentBroker(ICoreContextFactory coreContextFactory) : 
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.Components.IgnoreQueryFilters()
-            : coreDataContext.Components;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Components,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<Component> AddComponentAsync(Component newComponent)

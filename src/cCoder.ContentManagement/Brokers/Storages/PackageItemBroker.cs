@@ -14,9 +14,9 @@ internal sealed class PackageItemBroker(ICoreContextFactory coreContextFactory) 
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.PackageItems.IgnoreQueryFilters()
-            : coreDataContext.PackageItems;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.PackageItems,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<PackageItem> AddPackageItemAsync(PackageItem newPackageItem)

@@ -14,9 +14,9 @@ internal sealed class ResourceBroker(ICoreContextFactory coreContextFactory) : I
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.Resources.IgnoreQueryFilters()
-            : coreDataContext.Resources;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Resources,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<Resource> AddResourceAsync(Resource newResource)

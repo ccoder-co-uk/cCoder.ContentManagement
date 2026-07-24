@@ -14,9 +14,9 @@ internal sealed class CommonObjectBroker(ICoreContextFactory coreContextFactory)
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.CommonObjects.IgnoreQueryFilters()
-            : coreDataContext.CommonObjects;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.CommonObjects,
+            ignoreFilters: ignoreFilters);
     }
 
     public CommonObject[] GetLatestCommonObjectsPaged(int pageSize = 500)

@@ -14,9 +14,9 @@ internal sealed class TemplateBroker(ICoreContextFactory coreContextFactory) : I
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.Templates.IgnoreQueryFilters()
-            : coreDataContext.Templates;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Templates,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<Template> AddTemplateAsync(Template newTemplate)

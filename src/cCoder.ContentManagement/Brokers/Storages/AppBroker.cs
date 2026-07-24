@@ -15,9 +15,9 @@ internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBr
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.Apps.IgnoreQueryFilters()
-            : coreDataContext.Apps;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Apps,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<App> AddAppAsync(App newApp)

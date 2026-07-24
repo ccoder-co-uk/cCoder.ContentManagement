@@ -14,9 +14,9 @@ internal sealed class AppCultureBroker(ICoreContextFactory coreContextFactory) :
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.AppCultures.IgnoreQueryFilters()
-            : coreDataContext.AppCultures;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.AppCultures,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture)

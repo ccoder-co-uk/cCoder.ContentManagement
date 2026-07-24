@@ -14,9 +14,9 @@ internal sealed class ContentBroker(ICoreContextFactory coreContextFactory) : IC
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.Contents.IgnoreQueryFilters()
-            : coreDataContext.Contents;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Contents,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<Content> AddContentAsync(Content newContent)

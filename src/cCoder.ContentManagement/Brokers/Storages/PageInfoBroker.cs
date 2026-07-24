@@ -14,9 +14,9 @@ internal sealed class PageInfoBroker(ICoreContextFactory coreContextFactory) : I
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return ignoreFilters
-            ? coreDataContext.PageInfo.IgnoreQueryFilters()
-            : coreDataContext.PageInfo;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.PageInfo,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo)
