@@ -8,28 +8,37 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class TemplateEventProcessingService(ITemplateEventService eventService) : ITemplateEventProcessingService
+internal partial class TemplateEventProcessingService(ITemplateEventService eventService) : ITemplateEventProcessingService
 {
-    public ValueTask RaiseTemplateAddEventAsync(Template entity)
+    public ValueTask RaiseTemplateAddEventAsync(Template entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseTemplateAddEventAsync(inputs: [entity]);
         ValidateTemplate(template: entity, parameterName: "entity");
 
         return eventService.RaiseTemplateAddEventAsync(entity: entity);
-    }
 
-    public ValueTask RaiseTemplateUpdateEventAsync(Template entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseTemplateUpdateEventAsync(Template entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseTemplateUpdateEventAsync(inputs: [entity]);
         ValidateTemplate(template: entity, parameterName: "entity");
 
         return eventService.RaiseTemplateUpdateEventAsync(entity: entity);
-    }
 
-    public ValueTask RaiseTemplateDeleteEventAsync(Template entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseTemplateDeleteEventAsync(Template entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseTemplateDeleteEventAsync(inputs: [entity]);
         ValidateTemplate(template: entity, parameterName: "entity");
 
         return eventService.RaiseTemplateDeleteEventAsync(entity: entity);
-    }
+
+    }, isValueTask: true);
 
     private static void ValidateTemplate(Template template, string parameterName) =>
         ThrowIf(condition: template == null, message: parameterName + " is required.");

@@ -11,8 +11,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class ContentEventService(IContentEventBroker contentEventBroker, ICoreAuthInfo authInfo) : IContentEventService
 {
-    public async ValueTask RaiseContentAddEventAsync(Content entity)
+    public ValueTask RaiseContentAddEventAsync(Content entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseContentAddEventAsync(inputs: [entity]);
+
         EventMessage<Content> message = new EventMessage<Content>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
         };
 
         await contentEventBroker.RaiseContentAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseContentUpdateEventAsync(Content entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseContentUpdateEventAsync(Content entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseContentUpdateEventAsync(inputs: [entity]);
+
         EventMessage<Content> message = new EventMessage<Content>
         {
             AuthInfo = new EventAuthInfo
@@ -37,10 +44,14 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
         };
 
         await contentEventBroker.RaiseContentUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseContentDeleteEventAsync(Content entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseContentDeleteEventAsync(Content entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseContentDeleteEventAsync(inputs: [entity]);
+
         EventMessage<Content> message = new EventMessage<Content>
         {
             AuthInfo = new EventAuthInfo
@@ -51,5 +62,6 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
         };
 
         await contentEventBroker.RaiseContentDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

@@ -22,7 +22,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class ComponentRenderProcessingService(
+internal partial class ComponentRenderProcessingService(
     IMetadataCache metadataCache,
     ICommonObjectCache objectCache,
     IJsonBroker jsonBroker,
@@ -35,8 +35,10 @@ internal class ComponentRenderProcessingService(
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
 
-    public string RenderUser(int appId, string name, User user, string culture, string theme)
+    public string RenderUser(int appId, string name, User user, string culture, string theme) =>
+        TryCatch<string>(operation: () =>
     {
+        ValidateRenderUser(inputs: [appId, name, user, culture, theme]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateName(name: name, parameterName: "name");
         ValidateTheme(theme: theme, parameterName: "theme");
@@ -83,15 +85,19 @@ internal class ComponentRenderProcessingService(
 
         ComponentRenderParams renderParams = new(theme: theme, app: app, user: user, culture: culture);
         return ExecuteRenderComponentComponentRenderParams(component: component, renderParams: renderParams);
-    }
 
-    public string RenderComponentComponentRenderParams(Component component, ComponentRenderParams renderParams)
+    });
+
+    public string RenderComponentComponentRenderParams(Component component, ComponentRenderParams renderParams) =>
+        TryCatch<string>(operation: () =>
     {
+        ValidateRenderComponentComponentRenderParams(inputs: [component, renderParams]);
         ValidateComponent(component: component, parameterName: "component");
         ValidateComponentRenderParams(renderParams: renderParams, parameterName: "renderParams");
         ICollection<Replacement> replacements = DefaultReplacements(renderParams: renderParams);
         return $"<section name='{component.Name}' class='component' data-id='{component.Id}' data-resource-key='{component.ResourceKey}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}<script type='text/javascript'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script></section>";
-    }
+
+    });
 
     private ICollection<Replacement> DefaultReplacements(RenderParams renderParams)
     {
@@ -576,8 +582,10 @@ internal class ComponentRenderProcessingService(
         });
     }
 
-    public static IEnumerable<Resource> SectionForCultureResource(IEnumerable<Resource> potentials, string key, string culture)
+    public static IEnumerable<Resource> SectionForCultureResource(IEnumerable<Resource> potentials, string key, string culture) =>
+        TryCatch<IEnumerable<Resource>>(operation: () =>
     {
+        ValidateSectionForCultureResource(inputs: [potentials, key, culture]);
         List<Resource> list = new List<Resource>();
 
         foreach (IGrouping<string, Resource> item in potentials
@@ -593,10 +601,13 @@ internal class ComponentRenderProcessingService(
         }
 
         return list;
-    }
 
-    public static Resource GetClosestCulturalMatchResource(IEnumerable<Resource> potentials, string culture)
+    });
+
+    public static Resource GetClosestCulturalMatchResource(IEnumerable<Resource> potentials, string culture) =>
+        TryCatch<Resource>(operation: () =>
     {
+        ValidateClosestCulturalMatchResourceOnGet(inputs: [potentials, culture]);
         Resource resource = null;
 
         List<string> list = (culture ?? string.Empty).ToLowerInvariant()
@@ -619,7 +630,8 @@ internal class ComponentRenderProcessingService(
         }
 
         return resource ?? potentials.FirstOrDefault(predicate: (Resource resource2) => string.IsNullOrEmpty(value: resource2.Culture));
-    }
+
+    });
 
     private static Component ValidateComponent(Component component, string parameterName)
     {

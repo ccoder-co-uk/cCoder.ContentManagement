@@ -11,17 +11,21 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations;
 
-internal sealed class ContentManagementMetadataTypeService : IContentManagementMetadataTypeService
+internal sealed partial class ContentManagementMetadataTypeService : IContentManagementMetadataTypeService
 {
-    public IEnumerable<MetadataContainerSet> GetKnownMetadata()
+    public IEnumerable<MetadataContainerSet> GetKnownMetadata() =>
+        TryCatch<IEnumerable<MetadataContainerSet>>(operation: () =>
     {
+        ValidateKnownMetadataOnGet(inputs: []);
+
         return new MetadataContainerSet[2]
         {
             ContentManagementTypes(),
             SystemTypes()
         }.OrderBy(keySelector: (MetadataContainerSet set) => set.Name)
             .ToArray();
-    }
+
+    });
 
     private static MetadataContainerSet ContentManagementTypes()
     {

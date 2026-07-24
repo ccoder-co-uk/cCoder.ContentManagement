@@ -8,28 +8,37 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class ComponentEventProcessingService(IComponentEventService eventService) : IComponentEventProcessingService
+internal partial class ComponentEventProcessingService(IComponentEventService eventService) : IComponentEventProcessingService
 {
-    public ValueTask RaiseComponentAddEventAsync(Component entity)
+    public ValueTask RaiseComponentAddEventAsync(Component entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseComponentAddEventAsync(inputs: [entity]);
         ValidateComponent(component: entity, parameterName: "entity");
 
         return eventService.RaiseComponentAddEventAsync(entity: entity);
-    }
 
-    public ValueTask RaiseComponentUpdateEventAsync(Component entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseComponentUpdateEventAsync(Component entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseComponentUpdateEventAsync(inputs: [entity]);
         ValidateComponent(component: entity, parameterName: "entity");
 
         return eventService.RaiseComponentUpdateEventAsync(entity: entity);
-    }
 
-    public ValueTask RaiseComponentDeleteEventAsync(Component entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseComponentDeleteEventAsync(Component entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseComponentDeleteEventAsync(inputs: [entity]);
         ValidateComponent(component: entity, parameterName: "entity");
 
         return eventService.RaiseComponentDeleteEventAsync(entity: entity);
-    }
+
+    }, isValueTask: true);
 
     private static void ValidateComponent(Component component, string parameterName) =>
         ThrowIf(condition: component == null, message: parameterName + " is required.");

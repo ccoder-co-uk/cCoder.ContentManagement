@@ -8,28 +8,37 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class CultureEventProcessingService(ICultureEventService eventService) : ICultureEventProcessingService
+internal partial class CultureEventProcessingService(ICultureEventService eventService) : ICultureEventProcessingService
 {
-    public ValueTask RaiseCultureAddEventAsync(Culture entity)
+    public ValueTask RaiseCultureAddEventAsync(Culture entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseCultureAddEventAsync(inputs: [entity]);
         ValidateCulture(culture: entity, parameterName: "entity");
 
         return eventService.RaiseCultureAddEventAsync(entity: entity);
-    }
 
-    public ValueTask RaiseCultureUpdateEventAsync(Culture entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseCultureUpdateEventAsync(Culture entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseCultureUpdateEventAsync(inputs: [entity]);
         ValidateCulture(culture: entity, parameterName: "entity");
 
         return eventService.RaiseCultureUpdateEventAsync(entity: entity);
-    }
 
-    public ValueTask RaiseCultureDeleteEventAsync(Culture entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseCultureDeleteEventAsync(Culture entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseCultureDeleteEventAsync(inputs: [entity]);
         ValidateCulture(culture: entity, parameterName: "entity");
 
         return eventService.RaiseCultureDeleteEventAsync(entity: entity);
-    }
+
+    }, isValueTask: true);
 
     private static Culture ValidateCulture(Culture culture, string parameterName)
     {

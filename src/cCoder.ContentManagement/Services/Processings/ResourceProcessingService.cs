@@ -11,40 +11,55 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class ResourceProcessingService(IResourceService service, IAuthorizationBroker authorizationBroker) : IResourceProcessingService
+internal partial class ResourceProcessingService(IResourceService service, IAuthorizationBroker authorizationBroker) : IResourceProcessingService
 {
     private User User =>
         authorizationBroker.GetCurrentUser();
 
-    public Resource GetResource(int resourceId)
+    public Resource GetResource(int resourceId) =>
+        TryCatch<Resource>(operation: () =>
     {
+        ValidateResourceOnGet(inputs: [resourceId]);
         ValidateId(resourceId: resourceId, parameterName: "id");
         return service.GetResource(resourceId: resourceId);
-    }
+
+    });
 
     public IQueryable<Resource> GetAllResource(bool ignoreFilters = false) =>
-        service.GetAllResource(ignoreFilters: ignoreFilters);
-
-    public ValueTask<Resource> AddResourceAsync(Resource newResource)
+        TryCatch<IQueryable<Resource>>(operation: () =>
     {
+        ValidateAllResourceOnGet(inputs: [ignoreFilters]);
+        return service.GetAllResource(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Resource> AddResourceAsync(Resource newResource) =>
+        TryCatch<Resource>(operation: () =>
+    {
+        ValidateResourceOnAdd(inputs: [newResource]);
         ValidateResource(resource: newResource, parameterName: "entity");
         newResource.CreatedOn = DateTimeOffset.Now;
         newResource.CreatedBy = User.Id;
         newResource.LastUpdated = newResource.CreatedOn;
         newResource.LastUpdatedBy = User.Id;
         return service.AddResourceAsync(newResource: newResource);
-    }
 
-    public ValueTask<Resource> UpdateResourceAsync(Resource updatedResource)
+    }, isValueTask: true);
+
+    public ValueTask<Resource> UpdateResourceAsync(Resource updatedResource) =>
+        TryCatch<Resource>(operation: () =>
     {
+        ValidateResourceOnUpdate(inputs: [updatedResource]);
         ValidateResource(resource: updatedResource, parameterName: "entity");
         updatedResource.LastUpdated = DateTimeOffset.Now;
         updatedResource.LastUpdatedBy = User.Id;
         return service.UpdateResourceAsync(updatedResource: updatedResource);
-    }
 
-    public async ValueTask DeleteAsync(int resourceId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int resourceId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [resourceId]);
         ValidateId(resourceId: resourceId, parameterName: "id");
         Resource resource = ExecuteGetResource(resourceId: resourceId);
 
@@ -70,10 +85,13 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
         {
             await service.DeleteAsync(resourceId: resourceId);
         }
-    }
 
-    public async ValueTask<IEnumerable<Result<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource) =>
+        TryCatch<IEnumerable<Result<Resource>>>(operation: async () =>
     {
+        ValidateOrUpdateResourceResultOnAdd(inputs: [newResource]);
         ValidateResources(resources: newResource, parameterName: "items");
         List<Result<Resource>> results = new List<Result<Resource>>();
 
@@ -102,10 +120,13 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllResourceAsync(IEnumerable<Resource> deletedResource)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllResourceAsync(IEnumerable<Resource> deletedResource) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllResourceOnDelete(inputs: [deletedResource]);
         ValidateResources(resources: deletedResource, parameterName: "items");
         HashSet<string> deletedIds = new HashSet<string>();
 
@@ -138,7 +159,8 @@ internal class ResourceProcessingService(IResourceService service, IAuthorizatio
 
             await ExecuteDeleteAsync(resourceId: item.Id);
         }
-    }
+
+    }, isValueTask: true);
 
     private static void ValidateId(int resourceId, string parameterName) =>
         ThrowIf(condition: resourceId < 1, message: parameterName + " must be greater than 0.");

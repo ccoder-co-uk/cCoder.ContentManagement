@@ -11,8 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationBroker authorizationBroker) : IScriptService
 {
-    public Script GetScript(int scriptId, bool ignoreFilters = false)
+    public Script GetScript(int scriptId, bool ignoreFilters = false) =>
+        TryCatch<Script>(operation: () =>
     {
+        ValidateScriptOnGet(inputs: [scriptId, ignoreFilters]);
         ValidateId(scriptId: scriptId, parameterName: "id");
 
         if (ignoreFilters)
@@ -38,13 +40,20 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         }
 
         return null;
-    }
+
+    });
 
     public IQueryable<Script> GetAllScript(bool ignoreFilters = false) =>
-        scriptBroker.GetAllScripts(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Script> AddScriptAsync(Script script)
+        TryCatch<IQueryable<Script>>(operation: () =>
     {
+        ValidateAllScriptOnGet(inputs: [ignoreFilters]);
+        return scriptBroker.GetAllScripts(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Script> AddScriptAsync(Script script) =>
+        TryCatch<Script>(operation: async () =>
+    {
+        ValidateScriptOnAdd(inputs: [script]);
         ValidateScript(script: script, parameterName: "script");
         authorizationBroker.Authorize(appId: script.AppId, privilege: "Script_create");
         Script newScript = CreateStorageScript(newScript: script);
@@ -68,10 +77,13 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         script.Key = result.Key;
         script.Content = result.Content;
         return script;
-    }
 
-    public async ValueTask<Script> UpdateScriptAsync(Script updatedScript)
+    }, isValueTask: true);
+
+    public ValueTask<Script> UpdateScriptAsync(Script updatedScript) =>
+        TryCatch<Script>(operation: async () =>
     {
+        ValidateScriptOnUpdate(inputs: [updatedScript]);
         ValidateScript(script: updatedScript, parameterName: "script");
         authorizationBroker.Authorize(appId: updatedScript.AppId, privilege: "Script_update");
         Script updateScript = CreateStorageScript(newScript: updatedScript);
@@ -94,10 +106,13 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         updatedScript.Key = result.Key;
         updatedScript.Content = result.Content;
         return updatedScript;
-    }
 
-    public async ValueTask DeleteAsync(int scriptId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int scriptId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [scriptId]);
         ValidateId(scriptId: scriptId, parameterName: "id");
         Script script;
 
@@ -117,7 +132,8 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
 
         authorizationBroker.Authorize(appId: script.AppId, privilege: "Script_delete");
         await scriptBroker.DeleteScriptAsync(deletedScript: CreateStorageScript(newScript: script));
-    }
+
+    }, isValueTask: true);
 
     private static Script CreateStorageScript(Script newScript)
     {

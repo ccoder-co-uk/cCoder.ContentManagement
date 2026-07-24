@@ -11,8 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PageEventService(IPageEventBroker pageEventBroker, ICoreAuthInfo authInfo) : IPageEventService
 {
-    public async ValueTask RaisePageAddEventAsync(Page entity)
+    public ValueTask RaisePageAddEventAsync(Page entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePageAddEventAsync(inputs: [entity]);
         ValidatePage(page: entity, parameterName: "entity");
 
         EventMessage<Page> message = new EventMessage<Page>
@@ -25,10 +27,13 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker, ICoreA
         };
 
         await pageEventBroker.RaisePageAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaisePageUpdateEventAsync(Page entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageUpdateEventAsync(Page entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePageUpdateEventAsync(inputs: [entity]);
         ValidatePage(page: entity, parameterName: "entity");
 
         EventMessage<Page> message = new EventMessage<Page>
@@ -41,10 +46,13 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker, ICoreA
         };
 
         await pageEventBroker.RaisePageUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaisePageDeleteEventAsync(Page entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageDeleteEventAsync(Page entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePageDeleteEventAsync(inputs: [entity]);
         ValidatePage(page: entity, parameterName: "entity");
 
         EventMessage<Page> message = new EventMessage<Page>
@@ -57,5 +65,6 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker, ICoreA
         };
 
         await pageEventBroker.RaisePageDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

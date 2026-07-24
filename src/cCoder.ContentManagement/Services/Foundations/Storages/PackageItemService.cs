@@ -11,8 +11,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PackageItemService(IPackageItemBroker packageItemBroker, IAuthorizationBroker authorizationBroker) : IPackageItemService
 {
-    public PackageItem GetPackageItem(Guid packageItemId, bool ignoreFilters = false)
+    public PackageItem GetPackageItem(Guid packageItemId, bool ignoreFilters = false) =>
+        TryCatch<PackageItem>(operation: () =>
     {
+        ValidatePackageItemOnGet(inputs: [packageItemId, ignoreFilters]);
+
         if (ignoreFilters)
         {
             return ExecuteGetAllPackageItem(ignoreFilters: true)
@@ -36,13 +39,20 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
         }
 
         return null;
-    }
+
+    });
 
     public IQueryable<PackageItem> GetAllPackageItem(bool ignoreFilters = false) =>
-        packageItemBroker.GetAllPackageItems(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<PackageItem> AddPackageItemAsync(PackageItem newPackageItem)
+        TryCatch<IQueryable<PackageItem>>(operation: () =>
     {
+        ValidateAllPackageItemOnGet(inputs: [ignoreFilters]);
+        return packageItemBroker.GetAllPackageItems(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<PackageItem> AddPackageItemAsync(PackageItem newPackageItem) =>
+        TryCatch<PackageItem>(operation: async () =>
+    {
+        ValidatePackageItemOnAdd(inputs: [newPackageItem]);
         PackageItem dataPackageItem = CreateStoragePackageItem(newPackageItem: newPackageItem);
         authorizationBroker.Authorize(appId: packageItemBroker.GetAppId(entity: dataPackageItem), privilege: "PackageItem_create");
         PackageItem result = await packageItemBroker.AddPackageItemAsync(newPackageItem: dataPackageItem);
@@ -51,10 +61,13 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
         newPackageItem.Type = result.Type;
         newPackageItem.Data = result.Data;
         return newPackageItem;
-    }
 
-    public async ValueTask<PackageItem> UpdatePackageItemAsync(PackageItem updatedPackageItem)
+    }, isValueTask: true);
+
+    public ValueTask<PackageItem> UpdatePackageItemAsync(PackageItem updatedPackageItem) =>
+        TryCatch<PackageItem>(operation: async () =>
     {
+        ValidatePackageItemOnUpdate(inputs: [updatedPackageItem]);
         PackageItem dataPackageItem = CreateStoragePackageItem(newPackageItem: updatedPackageItem);
         authorizationBroker.Authorize(appId: packageItemBroker.GetAppId(entity: dataPackageItem), privilege: "PackageItem_update");
         PackageItem result = await packageItemBroker.UpdatePackageItemAsync(updatedPackageItem: dataPackageItem);
@@ -63,15 +76,19 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
         updatedPackageItem.Type = result.Type;
         updatedPackageItem.Data = result.Data;
         return updatedPackageItem;
-    }
 
-    public async ValueTask DeleteAsync(Guid packageItemId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(Guid packageItemId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [packageItemId]);
         PackageItem packageItem = ExecuteGetPackageItem(packageItemId: packageItemId);
         PackageItem dataPackageItem = CreateStoragePackageItem(newPackageItem: packageItem);
         authorizationBroker.Authorize(appId: packageItemBroker.GetAppId(entity: dataPackageItem), privilege: "PackageItem_delete");
         await packageItemBroker.DeletePackageItemAsync(deletedPackageItem: dataPackageItem);
-    }
+
+    }, isValueTask: true);
 
     private static PackageItem CreateStoragePackageItem(PackageItem newPackageItem)
     {

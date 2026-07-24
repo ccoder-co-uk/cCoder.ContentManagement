@@ -52,7 +52,7 @@ public partial class AppCultureProcessingServiceTests
 
         // When
 
-        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
             await appCultureProcessingService.AddAppCultureAsync(newAppCulture: appCulture)
         );
 
@@ -75,7 +75,7 @@ innerException: new Exception(message: "The INSERT statement conflicted with the
 
         // When
 
-        await Assert.ThrowsAsync<InvalidOperationException>(testCode: async () =>
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException>(testCode: async () =>
             await appCultureProcessingService.AddAppCultureAsync(newAppCulture: appCulture));
 
         // Then

@@ -13,7 +13,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PageRoleProcessingService(
+internal partial class PageRoleProcessingService(
     IPageRoleService service,
     IPageRoleBroker pageRoleBroker,
     IRoleBroker roleBroker,
@@ -24,10 +24,16 @@ internal class PageRoleProcessingService(
         authorizationBroker.GetCurrentUser();
 
     public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
-        service.GetAllPageRole(ignoreFilters: ignoreFilters);
-
-    public ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole)
+        TryCatch<IQueryable<PageRole>>(operation: () =>
     {
+        ValidateAllPageRoleOnGet(inputs: [ignoreFilters]);
+        return service.GetAllPageRole(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole) =>
+        TryCatch<PageRole>(operation: () =>
+    {
+        ValidatePageRoleOnAdd(inputs: [newPageRole]);
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
         var (role, page) = GetRoleAndPage(entity: newPageRole);
 
@@ -39,10 +45,13 @@ internal class PageRoleProcessingService(
         }
 
         throw new SecurityException(message: "Access Denied!");
-    }
 
-    public async ValueTask DeletePageRoleAsync(PageRole deletedPageRole)
+    }, isValueTask: true);
+
+    public ValueTask DeletePageRoleAsync(PageRole deletedPageRole) =>
+        TryCatch(operation: async () =>
     {
+        ValidatePageRoleOnDelete(inputs: [deletedPageRole]);
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "link");
 
         Page page = pageService.GetAllPage(ignoreFilters: true)
@@ -57,10 +66,13 @@ internal class PageRoleProcessingService(
         }
 
         await service.DeletePageRoleAsync(deletedPageRole: dbVersion);
-    }
 
-    public async ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole) =>
+        TryCatch<IEnumerable<Result<PageRole>>>(operation: async () =>
     {
+        ValidateOrUpdatePageRoleResultOnAdd(inputs: [newPageRole]);
         ValidatePageRoles(pageRoles: newPageRole, parameterName: "items");
         PageRole[] itemArray = newPageRole.ToArray();
 
@@ -111,10 +123,13 @@ internal class PageRoleProcessingService(
         }
 
         return results;
-    }
 
-    public async ValueTask ImportPageRolesAsync(int appId, PageRoleInfo[] items)
+    }, isValueTask: true);
+
+    public ValueTask ImportPageRolesAsync(int appId, PageRoleInfo[] items) =>
+        TryCatch(operation: async () =>
     {
+        ValidateImportPageRolesAsync(inputs: [appId, items]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePageRoleInfos(pageRoleInfos: items, parameterName: "items");
 
@@ -170,17 +185,21 @@ internal class PageRoleProcessingService(
         {
             await pageRoleBroker.AddPageRoleAsync(newPageRole: pageRole);
         }
-    }
 
-    public async ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllPageRoleOnDelete(inputs: [deletedPageRole]);
         ValidatePageRoles(pageRoles: deletedPageRole, parameterName: "items");
 
         foreach (PageRole item in deletedPageRole)
         {
             await ExecuteDeletePageRoleAsync(deletedPageRole: item);
         }
-    }
+
+    }, isValueTask: true);
 
     private (Role role, Page page) GetRoleAndPage(PageRole entity)
     {

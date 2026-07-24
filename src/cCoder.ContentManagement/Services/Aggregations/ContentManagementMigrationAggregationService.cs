@@ -12,7 +12,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
-internal class ContentManagementMigrationAggregationService(
+internal partial class ContentManagementMigrationAggregationService(
     IJsonBroker jsonBroker,
     IComponentOrchestrationService componentOrchestrationService,
     ILayoutOrchestrationService layoutOrchestrationService,
@@ -31,8 +31,10 @@ internal class ContentManagementMigrationAggregationService(
         "CreatedBy"
     };
 
-    public async ValueTask ImportPackageAsync(int appId, Package package)
+    public ValueTask ImportPackageAsync(int appId, Package package) =>
+        TryCatch(operation: async () =>
     {
+        ValidateImportPackageAsync(inputs: [appId, package]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackage(package: package, parameterName: "package");
 
@@ -66,7 +68,8 @@ internal class ContentManagementMigrationAggregationService(
                 }
             }
         }
-    }
+
+    }, isValueTask: true);
 
     private async ValueTask ImportComponentsAsync(int appId, PackageItem item)
     {

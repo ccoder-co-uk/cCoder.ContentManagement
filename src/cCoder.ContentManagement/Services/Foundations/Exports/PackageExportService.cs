@@ -51,8 +51,10 @@ internal partial class PackageExportService(
         public string Title { get; init; }
     }
 
-    public Package ExportRolesPackage(int appId)
+    public Package ExportRolesPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidateExportRolesPackage(inputs: [appId]);
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
@@ -62,10 +64,13 @@ data: roleBroker.GetAllRoles(ignoreFilters: true)
             .Where(predicate: role => role.AppId == appId)
             .Select(selector: role => new { role.Name, role.Privs })
             .ToArray());
-    }
 
-    public Package ExportLayoutsPackage(int appId)
+    });
+
+    public Package ExportLayoutsPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidateExportLayoutsPackage(inputs: [appId]);
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
@@ -82,10 +87,13 @@ data: layoutBroker.GetAllLayouts(ignoreFilters: true)
                 layout.LastUpdated
             })
             .ToArray());
-    }
 
-    public Package ExportTemplatesPackage(int appId)
+    });
+
+    public Package ExportTemplatesPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidateExportTemplatesPackage(inputs: [appId]);
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
@@ -101,10 +109,13 @@ data: templateBroker.GetAllTemplates(ignoreFilters: true)
                 template.LastUpdated
             })
             .ToArray());
-    }
 
-    public Package ExportComponentsPackage(int appId)
+    });
+
+    public Package ExportComponentsPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidateExportComponentsPackage(inputs: [appId]);
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
@@ -122,10 +133,13 @@ data: componentBroker.GetAllComponents(ignoreFilters: true)
                 component.LastUpdated
             })
             .ToArray());
-    }
 
-    public Package ExportScriptsPackage(int appId)
+    });
+
+    public Package ExportScriptsPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidateExportScriptsPackage(inputs: [appId]);
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
@@ -140,10 +154,13 @@ data: scriptBroker.GetAllScripts(ignoreFilters: true)
                 script.LastUpdated
             })
             .ToArray());
-    }
 
-    public Package ExportResourcesPackage(int appId)
+    });
+
+    public Package ExportResourcesPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidateExportResourcesPackage(inputs: [appId]);
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
@@ -162,10 +179,13 @@ data: resourceBroker.GetAllResources(ignoreFilters: true)
                 resource.LastUpdated
             })
             .ToArray());
-    }
 
-    public Package ExportPagesPackage(int appId)
+    });
+
+    public Package ExportPagesPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidateExportPagesPackage(inputs: [appId]);
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         List<ExportPage> pages = pageBroker.GetAllPages(ignoreFilters: true)
@@ -234,10 +254,13 @@ data: pages.Select(selector: page => new
     page.PageInfo
 })
             .ToArray());
-    }
 
-    public Package ExportPageRolesPackage(int appId)
+    });
+
+    public Package ExportPageRolesPackage(int appId) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidateExportPageRolesPackage(inputs: [appId]);
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
         return CreatePackage(
@@ -251,7 +274,8 @@ data: pageBroker.GetAllPages(ignoreFilters: true)
                 Role = role.Role.Name
             }))
             .ToArray());
-    }
+
+    });
 
     private Package CreatePackage(string name, string itemType, object data)
     {

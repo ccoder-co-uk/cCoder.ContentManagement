@@ -8,28 +8,37 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class SubmissionEventProcessingService(ISubmissionEventService eventService) : ISubmissionEventProcessingService
+internal partial class SubmissionEventProcessingService(ISubmissionEventService eventService) : ISubmissionEventProcessingService
 {
-    public ValueTask RaiseSubmissionAddEventAsync(Submission entity)
+    public ValueTask RaiseSubmissionAddEventAsync(Submission entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseSubmissionAddEventAsync(inputs: [entity]);
         ValidateSubmission(submission: entity, parameterName: "entity");
 
         return eventService.RaiseSubmissionAddEventAsync(entity: entity);
-    }
 
-    public ValueTask RaiseSubmissionUpdateEventAsync(Submission entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseSubmissionUpdateEventAsync(Submission entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseSubmissionUpdateEventAsync(inputs: [entity]);
         ValidateSubmission(submission: entity, parameterName: "entity");
 
         return eventService.RaiseSubmissionUpdateEventAsync(entity: entity);
-    }
 
-    public ValueTask RaiseSubmissionDeleteEventAsync(Submission entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseSubmissionDeleteEventAsync(Submission entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseSubmissionDeleteEventAsync(inputs: [entity]);
         ValidateSubmission(submission: entity, parameterName: "entity");
 
         return eventService.RaiseSubmissionDeleteEventAsync(entity: entity);
-    }
+
+    }, isValueTask: true);
 
     private static void ValidateSubmission(Submission submission, string parameterName) =>
         ThrowIf(condition: submission == null, message: parameterName + " is required.");

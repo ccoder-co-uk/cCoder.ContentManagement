@@ -11,8 +11,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, ICoreAuthInfo authInfo) : ILayoutEventService
 {
-    public async ValueTask RaiseLayoutAddEventAsync(Layout entity)
+    public ValueTask RaiseLayoutAddEventAsync(Layout entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseLayoutAddEventAsync(inputs: [entity]);
+
         EventMessage<Layout> message = new EventMessage<Layout>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, 
         };
 
         await layoutEventBroker.RaiseLayoutAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseLayoutUpdateEventAsync(Layout entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseLayoutUpdateEventAsync(Layout entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseLayoutUpdateEventAsync(inputs: [entity]);
+
         EventMessage<Layout> message = new EventMessage<Layout>
         {
             AuthInfo = new EventAuthInfo
@@ -37,10 +44,14 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, 
         };
 
         await layoutEventBroker.RaiseLayoutUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseLayoutDeleteEventAsync(Layout entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseLayoutDeleteEventAsync(Layout entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseLayoutDeleteEventAsync(inputs: [entity]);
+
         EventMessage<Layout> message = new EventMessage<Layout>
         {
             AuthInfo = new EventAuthInfo
@@ -51,5 +62,6 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker, 
         };
 
         await layoutEventBroker.RaiseLayoutDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

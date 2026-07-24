@@ -19,17 +19,26 @@ internal partial class PageProcessingService(
     private User User =>
         authorizationBroker.GetCurrentUser();
 
-    public Page GetPage(int pageId)
+    public Page GetPage(int pageId) =>
+        TryCatch<Page>(operation: () =>
     {
+        ValidatePageOnGet(inputs: [pageId]);
         ValidateId(pageId: pageId, parameterName: "id");
         return service.GetPage(pageId: pageId);
-    }
+
+    });
 
     public IQueryable<Page> GetAllPage(bool ignoreFilters = false) =>
-        service.GetAllPage(ignoreFilters: ignoreFilters);
-
-    public string MenuFor(int pageId, string culture)
+        TryCatch<IQueryable<Page>>(operation: () =>
     {
+        ValidateAllPageOnGet(inputs: [ignoreFilters]);
+        return service.GetAllPage(ignoreFilters: ignoreFilters);
+    });
+
+    public string MenuFor(int pageId, string culture) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateMenuFor(inputs: [pageId, culture]);
         ValidateId(pageId: pageId, parameterName: "id");
 
         IEnumerable<string> enumerable = service.GetAllPage(ignoreFilters: false)
@@ -39,10 +48,13 @@ internal partial class PageProcessingService(
 
         string text = (enumerable.Any() ? string.Join(separator: "", values: enumerable) : string.Empty);
         return "<ul class='submenu'>" + text + "</ul>";
-    }
 
-    public Page GetRootPage(int pageId)
+    });
+
+    public Page GetRootPage(int pageId) =>
+        TryCatch<Page>(operation: () =>
     {
+        ValidateRootPageOnGet(inputs: [pageId]);
         ValidateId(pageId: pageId, parameterName: "id");
         Page page = ExecuteGetPage(pageId: pageId);
 
@@ -53,18 +65,24 @@ internal partial class PageProcessingService(
         }
 
         return page;
-    }
 
-    public IEnumerable<Page> GetChildrenPage(int pageId)
+    });
+
+    public IEnumerable<Page> GetChildrenPage(int pageId) =>
+        TryCatch<IEnumerable<Page>>(operation: () =>
     {
+        ValidateChildrenPageOnGet(inputs: [pageId]);
         ValidateId(pageId: pageId, parameterName: "id");
 
         return ExecuteGetAllPage()
             .Where(predicate: page => page.ParentId == (int?)pageId);
-    }
 
-    public ValueTask DeleteAsync(int pageId)
+    });
+
+    public ValueTask DeleteAsync(int pageId) =>
+        TryCatch(operation: () =>
     {
+        ValidateDeleteAsync(inputs: [pageId]);
         ValidateId(pageId: pageId, parameterName: "id");
 
         if (!UserCan(privKey: "page_delete", pageId: pageId))
@@ -73,10 +91,13 @@ internal partial class PageProcessingService(
         }
 
         return service.DeleteAsync(pageId: pageId);
-    }
 
-    public async ValueTask<Page> UpdatePageAsync(Page updatedPage)
+    }, isValueTask: true);
+
+    public ValueTask<Page> UpdatePageAsync(Page updatedPage) =>
+        TryCatch<Page>(operation: async () =>
     {
+        ValidatePageOnUpdate(inputs: [updatedPage]);
         ValidatePage(page: updatedPage, parameterName: "page");
 
         Page dbVersion = service.GetAllPage(ignoreFilters: true)
@@ -109,10 +130,13 @@ internal partial class PageProcessingService(
         dbVersion.Path = BuildPath(pageName: updatedPage.Name, parentPath: parent?.Path);
 
         return await service.UpdatePageAsync(updatedPage: dbVersion);
-    }
 
-    public async ValueTask<Page> AddPageAsync(Page page)
+    }, isValueTask: true);
+
+    public ValueTask<Page> AddPageAsync(Page page) =>
+        TryCatch<Page>(operation: async () =>
     {
+        ValidatePageOnAdd(inputs: [page]);
         ValidatePage(page: page, parameterName: "page");
 
         if (!authorizationBroker.IsAdminOfApp(appId: page.AppId) && page.ParentId.HasValue)
@@ -194,10 +218,13 @@ internal partial class PageProcessingService(
             .ToList();
 
         return await service.AddPageAsync(newPage: newPage);
-    }
 
-    public async ValueTask<IEnumerable<Result<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage) =>
+        TryCatch<IEnumerable<Result<Page>>>(operation: async () =>
     {
+        ValidateOrUpdatePageResultOnAdd(inputs: [newPage]);
         ValidatePages(pages: newPage, parameterName: "items");
         List<Result<Page>> results = new List<Result<Page>>();
 
@@ -226,20 +253,26 @@ internal partial class PageProcessingService(
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllPageAsync(IEnumerable<Page> deletedPage)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllPageAsync(IEnumerable<Page> deletedPage) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllPageOnDelete(inputs: [deletedPage]);
         ValidatePages(pages: deletedPage, parameterName: "items");
 
         foreach (Page item in deletedPage)
         {
             await ExecuteDeleteAsync(pageId: item.Id);
         }
-    }
 
-    public async ValueTask RecomputeAllForAppAsync(int appId)
+    }, isValueTask: true);
+
+    public ValueTask RecomputeAllForAppAsync(int appId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRecomputeAllForAppAsync(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
         if (!authorizationBroker.IsAdminOfApp(appId: appId))
@@ -248,7 +281,8 @@ internal partial class PageProcessingService(
         }
 
         await RecomputePathsAsync(appId: appId);
-    }
+
+    }, isValueTask: true);
 
     private async ValueTask RecomputePathsAsync(int appId)
     {

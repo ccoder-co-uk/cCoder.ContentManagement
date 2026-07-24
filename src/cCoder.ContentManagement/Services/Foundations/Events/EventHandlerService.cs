@@ -12,13 +12,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEventHandlerService
 {
-    public void ListenToAllEvents()
+    public void ListenToAllEvents() =>
+        TryCatch(operation: () =>
     {
+        ValidateListenToAllEvents(inputs: []);
         ValidateEventHubBroker(broker: eventHubBroker, parameterName: "eventHubBroker");
         ListenToAppEvents();
         ListenToPageEvents();
         ListenToPackageEvents();
-    }
+
+    });
 
     private void ListenToAppEvents()
     {

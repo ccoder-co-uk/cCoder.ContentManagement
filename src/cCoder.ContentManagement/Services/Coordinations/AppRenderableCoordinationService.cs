@@ -9,14 +9,16 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
-internal class AppRenderableCoordinationService(
+internal partial class AppRenderableCoordinationService(
     IPageOrchestrationService pageOrchestrationService,
     IComponentOrchestrationService componentOrchestrationService,
     ITemplateOrchestrationService templateOrchestrationService,
     ILayoutOrchestrationService layoutOrchestrationService) : IAppRenderableCoordinationService
 {
-    public async ValueTask HandleAppAddAsync(App app)
+    public ValueTask HandleAppAddAsync(App app) =>
+        TryCatch(operation: async () =>
     {
+        ValidateHandleAppAddAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
         StampChildrenWithApp(app: app);
 
@@ -39,10 +41,13 @@ internal class AppRenderableCoordinationService(
         {
             await pageOrchestrationService.AddOrUpdatePageResult(newPage: app.Pages);
         }
-    }
 
-    public async ValueTask HandleAppUpdateAsync(App app)
+    }, isValueTask: true);
+
+    public ValueTask HandleAppUpdateAsync(App app) =>
+        TryCatch(operation: async () =>
     {
+        ValidateHandleAppUpdateAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
         StampChildrenWithApp(app: app);
 
@@ -69,16 +74,20 @@ internal class AppRenderableCoordinationService(
             await DeleteMissingPagesAsync(deletedApp: app);
             await pageOrchestrationService.AddOrUpdatePageResult(newPage: app.Pages);
         }
-    }
 
-    public async ValueTask HandleAppDeleteAsync(App app)
+    }, isValueTask: true);
+
+    public ValueTask HandleAppDeleteAsync(App app) =>
+        TryCatch(operation: async () =>
     {
+        ValidateHandleAppDeleteAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
         await pageOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
         await componentOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
         await templateOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
         await layoutOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
-    }
+
+    }, isValueTask: true);
 
     private static void StampChildrenWithApp(App app)
     {

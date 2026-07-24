@@ -11,8 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class TemplateService(ITemplateBroker templateBroker, IAuthorizationBroker authorizationBroker) : ITemplateService
 {
-    public Template GetTemplate(int templateId, bool ignoreFilters = false)
+    public Template GetTemplate(int templateId, bool ignoreFilters = false) =>
+        TryCatch<Template>(operation: () =>
     {
+        ValidateTemplateOnGet(inputs: [templateId, ignoreFilters]);
         ValidateId(templateId: templateId, parameterName: "id");
 
         if (ignoreFilters)
@@ -38,13 +40,20 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
         }
 
         return null;
-    }
+
+    });
 
     public IQueryable<Template> GetAllTemplate(bool ignoreFilters = false) =>
-        templateBroker.GetAllTemplates(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Template> AddTemplateAsync(Template template)
+        TryCatch<IQueryable<Template>>(operation: () =>
     {
+        ValidateAllTemplateOnGet(inputs: [ignoreFilters]);
+        return templateBroker.GetAllTemplates(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Template> AddTemplateAsync(Template template) =>
+        TryCatch<Template>(operation: async () =>
+    {
+        ValidateTemplateOnAdd(inputs: [template]);
         ValidateTemplate(template: template, parameterName: "template");
         authorizationBroker.Authorize(appId: template.AppId, privilege: "Template_create");
         Template newTemplate = CreateStorageTemplate(newTemplate: template);
@@ -68,10 +77,13 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
         template.ResourceKey = result.ResourceKey;
         template.RawString = result.RawString;
         return template;
-    }
 
-    public async ValueTask<Template> UpdateTemplateAsync(Template updatedTemplate)
+    }, isValueTask: true);
+
+    public ValueTask<Template> UpdateTemplateAsync(Template updatedTemplate) =>
+        TryCatch<Template>(operation: async () =>
     {
+        ValidateTemplateOnUpdate(inputs: [updatedTemplate]);
         ValidateTemplate(template: updatedTemplate, parameterName: "template");
         authorizationBroker.Authorize(appId: updatedTemplate.AppId, privilege: "Template_update");
         Template updateTemplate = CreateStorageTemplate(newTemplate: updatedTemplate);
@@ -94,10 +106,13 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
         updatedTemplate.ResourceKey = result.ResourceKey;
         updatedTemplate.RawString = result.RawString;
         return updatedTemplate;
-    }
 
-    public async ValueTask DeleteAsync(int templateId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int templateId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [templateId]);
         ValidateId(templateId: templateId, parameterName: "id");
         Template template;
 
@@ -117,7 +132,8 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
 
         authorizationBroker.Authorize(appId: template.AppId, privilege: "Template_delete");
         await templateBroker.DeleteTemplateAsync(deletedTemplate: CreateStorageTemplate(newTemplate: template));
-    }
+
+    }, isValueTask: true);
 
     private static Template CreateStorageTemplate(Template newTemplate)
     {

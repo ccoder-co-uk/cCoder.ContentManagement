@@ -9,13 +9,20 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class AppCultureProcessingService(IAppCultureService service) : IAppCultureProcessingService
+internal partial class AppCultureProcessingService(IAppCultureService service) : IAppCultureProcessingService
 {
     public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
-        service.GetAllAppCulture(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture)
+        TryCatch<IQueryable<AppCulture>>(operation: () =>
     {
+        ValidateAllAppCultureOnGet(inputs: [ignoreFilters]);
+        return service.GetAllAppCulture(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture) =>
+        TryCatch<AppCulture>(operation: async () =>
+    {
+        ValidateAppCultureOnAdd(inputs: [newAppCulture]);
+
         try
         {
             return await service.AddAppCultureAsync(newAppCulture: newAppCulture);
@@ -25,10 +32,13 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
         {
             throw new InvalidOperationException(message: "The app culture must reference an existing app and culture.", innerException: ex);
         }
-    }
 
-    public async ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAppCultureOnDelete(inputs: [deletedAppCulture]);
         AppCulture dbVersion = service.GetAppCulture(appId: deletedAppCulture.AppId, cultureId: deletedAppCulture.CultureId);
 
         if (dbVersion == null)
@@ -37,10 +47,13 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
         }
 
         await service.DeleteAppCultureAsync(deletedAppCulture: dbVersion);
-    }
 
-    public async ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture) =>
+        TryCatch<IEnumerable<Result<AppCulture>>>(operation: async () =>
     {
+        ValidateOrUpdateAppCultureResultOnAdd(inputs: [newAppCulture]);
         List<Result<AppCulture>> results = [];
 
         foreach (AppCulture item in newAppCulture)
@@ -70,15 +83,20 @@ internal class AppCultureProcessingService(IAppCultureService service) : IAppCul
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllAppCultureAsync(IEnumerable<AppCulture> deletedAppCulture)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllAppCultureAsync(IEnumerable<AppCulture> deletedAppCulture) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllAppCultureOnDelete(inputs: [deletedAppCulture]);
+
         foreach (AppCulture item in deletedAppCulture)
         {
             await ExecuteDeleteAppCultureAsync(deletedAppCulture: item);
         }
-    }
+
+    }, isValueTask: true);
 
     private async ValueTask<AppCulture> ExecuteAddAppCultureAsync(AppCulture newAppCulture)
     {

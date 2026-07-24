@@ -15,8 +15,10 @@ internal sealed partial class TemplateRenderCoordinationService(
     private User User =>
         authorizationBroker.GetCurrentUser();
 
-    public string Render(int appId, string name, string culture, dynamic model)
+    public string Render(int appId, string name, string culture, dynamic model) =>
+        TryCatch<string>(operation: () =>
     {
+        ValidateRender(inputs: [appId, name, culture, model]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateName(name: name, parameterName: "name");
         ValidateModel(model: model, parameterName: "model");
@@ -24,5 +26,6 @@ internal sealed partial class TemplateRenderCoordinationService(
         culture ??= User.DefaultCultureId;
 
         return templateRenderOrchestrationService.RenderUser(appId: appId, name: name, culture: culture, model: model, user: User);
-    }
+
+    });
 }

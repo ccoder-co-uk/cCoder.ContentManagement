@@ -9,7 +9,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
-internal class AppSupportingResourcesCoordinationService(
+internal partial class AppSupportingResourcesCoordinationService(
     IAppCultureBroker appCultureBroker,
     IScriptBroker scriptBroker,
     IResourceBroker resourceBroker,
@@ -17,8 +17,10 @@ internal class AppSupportingResourcesCoordinationService(
     IScriptOrchestrationService scriptOrchestrationService,
     IResourceOrchestrationService resourceOrchestrationService) : IAppSupportingResourcesCoordinationService
 {
-    public async ValueTask HandleAppAddAsync(App app)
+    public ValueTask HandleAppAddAsync(App app) =>
+        TryCatch(operation: async () =>
     {
+        ValidateHandleAppAddAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
         StampChildrenWithApp(app: app);
 
@@ -36,10 +38,13 @@ internal class AppSupportingResourcesCoordinationService(
         {
             await AddOrUpdateScriptsAsync(newApp: app);
         }
-    }
 
-    public async ValueTask HandleAppUpdateAsync(App app)
+    }, isValueTask: true);
+
+    public ValueTask HandleAppUpdateAsync(App app) =>
+        TryCatch(operation: async () =>
     {
+        ValidateHandleAppUpdateAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
         StampChildrenWithApp(app: app);
 
@@ -60,15 +65,19 @@ internal class AppSupportingResourcesCoordinationService(
             await DeleteMissingScriptsAsync(deletedApp: app);
             await AddOrUpdateScriptsAsync(newApp: app);
         }
-    }
 
-    public async ValueTask HandleAppDeleteAsync(App app)
+    }, isValueTask: true);
+
+    public ValueTask HandleAppDeleteAsync(App app) =>
+        TryCatch(operation: async () =>
     {
+        ValidateHandleAppDeleteAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
         await appCultureOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
         await scriptOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
         await resourceOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
-    }
+
+    }, isValueTask: true);
 
     private static void StampChildrenWithApp(App app)
     {

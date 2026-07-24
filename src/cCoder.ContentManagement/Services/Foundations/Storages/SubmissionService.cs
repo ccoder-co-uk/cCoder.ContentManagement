@@ -11,8 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAuthorizationBroker authorizationBroker) : ISubmissionService
 {
-    public Submission GetSubmission(Guid submissionId, bool ignoreFilters = false)
+    public Submission GetSubmission(Guid submissionId, bool ignoreFilters = false) =>
+        TryCatch<Submission>(operation: () =>
     {
+        ValidateSubmissionOnGet(inputs: [submissionId, ignoreFilters]);
         ValidateId(submissionId: submissionId, parameterName: "id");
 
         if (ignoreFilters)
@@ -38,13 +40,20 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         }
 
         return null;
-    }
+
+    });
 
     public IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false) =>
-        submissionBroker.GetAllSubmissions(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Submission> AddSubmissionAsync(Submission submission)
+        TryCatch<IQueryable<Submission>>(operation: () =>
     {
+        ValidateAllSubmissionOnGet(inputs: [ignoreFilters]);
+        return submissionBroker.GetAllSubmissions(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Submission> AddSubmissionAsync(Submission submission) =>
+        TryCatch<Submission>(operation: async () =>
+    {
+        ValidateSubmissionOnAdd(inputs: [submission]);
         ValidateSubmission(submission: submission, parameterName: "submission");
         authorizationBroker.Authorize(appId: submission.AppId, privilege: "Submission_create");
         Submission newSubmission = CreateStorageSubmission(newSubmission: submission);
@@ -68,10 +77,13 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         submission.State = result.State;
         submission.DataJson = result.DataJson;
         return submission;
-    }
 
-    public async ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission)
+    }, isValueTask: true);
+
+    public ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission) =>
+        TryCatch<Submission>(operation: async () =>
     {
+        ValidateSubmissionOnUpdate(inputs: [updatedSubmission]);
         ValidateSubmission(submission: updatedSubmission, parameterName: "submission");
         authorizationBroker.Authorize(appId: updatedSubmission.AppId, privilege: "Submission_update");
         Submission updateSubmission = CreateStorageSubmission(newSubmission: updatedSubmission);
@@ -93,15 +105,19 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         updatedSubmission.State = result.State;
         updatedSubmission.DataJson = result.DataJson;
         return updatedSubmission;
-    }
 
-    public async ValueTask DeleteAsync(Guid submissionId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(Guid submissionId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [submissionId]);
         ValidateId(submissionId: submissionId, parameterName: "id");
         Submission submission = ExecuteGetSubmission(submissionId: submissionId);
         authorizationBroker.Authorize(appId: submission.AppId, privilege: "Submission_delete");
         await submissionBroker.DeleteSubmissionAsync(deletedSubmission: CreateStorageSubmission(newSubmission: submission));
-    }
+
+    }, isValueTask: true);
 
     private static Submission CreateStorageSubmission(Submission newSubmission)
     {

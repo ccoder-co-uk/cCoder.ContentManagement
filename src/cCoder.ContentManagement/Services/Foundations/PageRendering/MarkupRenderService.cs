@@ -18,7 +18,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
-internal sealed class MarkupRenderService(
+internal sealed partial class MarkupRenderService(
     IComponentReaderBroker componentReaderBroker,
     IScriptReaderBroker scriptReaderBroker,
     IJsonBroker jsonBroker,
@@ -42,8 +42,10 @@ internal sealed class MarkupRenderService(
         CultureLinkRegex = new Regex(pattern: "\\[culturelink\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", options: regexOptions)
     };
 
-    public PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session)
+    public PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session) =>
+        TryCatch<PageRenderResult>(operation: () =>
     {
+        ValidateRenderPageRenderSessionPageRenderResult(inputs: [session]);
         string key = string.IsNullOrWhiteSpace(value: session.Page?.ResourceKey) ? "Default" : session.Page.ResourceKey;
         string culture = ResolveCulture(session: session);
 
@@ -69,7 +71,8 @@ internal sealed class MarkupRenderService(
             BodyHtml = RenderMarkup(key: key, content: session.Layout?.BodyHtml ?? string.Empty, session: session, replacements: replacements),
             StatusCode = session.Page == null ? 404 : 200
         };
-    }
+
+    });
 
     private string RenderMarkup(string key, string content, PageRenderSession session, IReadOnlyCollection<Replacement> replacements, bool allowContentTags = true)
     {

@@ -6,8 +6,8 @@ namespace cCoder.ContentManagement.Models.Exceptions;
 
 public sealed class ContentManagementDependencyException(
     Exception innerException)
-    : Exception(
-        message: "A content management dependency failed.",
+    : InvalidOperationException(
+        message: innerException.Message,
         innerException: innerException)
 {
 }

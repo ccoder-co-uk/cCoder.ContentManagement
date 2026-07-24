@@ -11,8 +11,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class AppCultureEventService(IAppCultureEventBroker appCultureEventBroker, ICoreAuthInfo authInfo) : IAppCultureEventService
 {
-    public async ValueTask RaiseAppCultureAddEventAsync(AppCulture entity)
+    public ValueTask RaiseAppCultureAddEventAsync(AppCulture entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseAppCultureAddEventAsync(inputs: [entity]);
+
         EventMessage<AppCulture> message = new EventMessage<AppCulture>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal partial class AppCultureEventService(IAppCultureEventBroker appCultureE
         };
 
         await appCultureEventBroker.RaiseAppCultureAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseAppCultureDeleteEventAsync(inputs: [entity]);
+
         EventMessage<AppCulture> message = new EventMessage<AppCulture>
         {
             AuthInfo = new EventAuthInfo
@@ -37,5 +44,6 @@ internal partial class AppCultureEventService(IAppCultureEventBroker appCultureE
         };
 
         await appCultureEventBroker.RaiseAppCultureDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

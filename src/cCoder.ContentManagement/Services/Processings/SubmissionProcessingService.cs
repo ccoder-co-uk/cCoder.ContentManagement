@@ -9,37 +9,55 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class SubmissionProcessingService(ISubmissionService service) : ISubmissionProcessingService
+internal partial class SubmissionProcessingService(ISubmissionService service) : ISubmissionProcessingService
 {
-    public Submission GetSubmission(Guid submissionId)
+    public Submission GetSubmission(Guid submissionId) =>
+        TryCatch<Submission>(operation: () =>
     {
+        ValidateSubmissionOnGet(inputs: [submissionId]);
         ValidateId(submissionId: submissionId, parameterName: "id");
         return service.GetSubmission(submissionId: submissionId);
-    }
+
+    });
 
     public IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false) =>
-        service.GetAllSubmission(ignoreFilters: ignoreFilters);
-
-    public ValueTask<Submission> AddSubmissionAsync(Submission newSubmission)
+        TryCatch<IQueryable<Submission>>(operation: () =>
     {
+        ValidateAllSubmissionOnGet(inputs: [ignoreFilters]);
+        return service.GetAllSubmission(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Submission> AddSubmissionAsync(Submission newSubmission) =>
+        TryCatch<Submission>(operation: () =>
+    {
+        ValidateSubmissionOnAdd(inputs: [newSubmission]);
         ValidateSubmission(submission: newSubmission, parameterName: "entity");
         return service.AddSubmissionAsync(newSubmission: newSubmission);
-    }
 
-    public ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission)
+    }, isValueTask: true);
+
+    public ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission) =>
+        TryCatch<Submission>(operation: () =>
     {
+        ValidateSubmissionOnUpdate(inputs: [updatedSubmission]);
         ValidateSubmission(submission: updatedSubmission, parameterName: "entity");
         return service.UpdateSubmissionAsync(updatedSubmission: updatedSubmission);
-    }
 
-    public ValueTask DeleteAsync(Guid submissionId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(Guid submissionId) =>
+        TryCatch(operation: () =>
     {
+        ValidateDeleteAsync(inputs: [submissionId]);
         ValidateId(submissionId: submissionId, parameterName: "id");
         return service.DeleteAsync(submissionId: submissionId);
-    }
 
-    public async ValueTask<IEnumerable<Result<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission) =>
+        TryCatch<IEnumerable<Result<Submission>>>(operation: async () =>
     {
+        ValidateOrUpdateSubmissionResultOnAdd(inputs: [newSubmission]);
         ValidateSubmissions(submissions: newSubmission, parameterName: "items");
         List<Result<Submission>> results = new List<Result<Submission>>();
 
@@ -68,17 +86,21 @@ internal class SubmissionProcessingService(ISubmissionService service) : ISubmis
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllSubmissionAsync(IEnumerable<Submission> deletedSubmission)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllSubmissionAsync(IEnumerable<Submission> deletedSubmission) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllSubmissionOnDelete(inputs: [deletedSubmission]);
         ValidateSubmissions(submissions: deletedSubmission, parameterName: "items");
 
         foreach (Submission item in deletedSubmission)
         {
             await ExecuteDeleteAsync(submissionId: item.Id);
         }
-    }
+
+    }, isValueTask: true);
 
     private static void ValidateId(Guid submissionId, string parameterName) =>
         ThrowIf(condition: submissionId == Guid.Empty, message: parameterName + " is required.");

@@ -15,8 +15,10 @@ internal sealed partial class ComponentRenderCoordinationService(
     private User User =>
         authorizationBroker.GetCurrentUser();
 
-    public string Render(int appId, string name, string culture, string theme)
+    public string Render(int appId, string name, string culture, string theme) =>
+        TryCatch<string>(operation: () =>
     {
+        ValidateRender(inputs: [appId, name, culture, theme]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateName(name: name, parameterName: "name");
         ValidateTheme(theme: theme, parameterName: "theme");
@@ -24,5 +26,6 @@ internal sealed partial class ComponentRenderCoordinationService(
         culture ??= User.DefaultCultureId;
 
         return componentRenderOrchestrationService.RenderUser(appId: appId, name: name, user: User, culture: culture, theme: theme);
-    }
+
+    });
 }

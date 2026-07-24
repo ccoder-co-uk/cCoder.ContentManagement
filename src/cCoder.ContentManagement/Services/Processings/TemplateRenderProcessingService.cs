@@ -21,7 +21,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class TemplateRenderProcessingService(
+internal partial class TemplateRenderProcessingService(
     IMetadataCache metadataCache,
     ICommonObjectCache objectCache,
     IJsonBroker jsonBroker,
@@ -33,8 +33,10 @@ internal class TemplateRenderProcessingService(
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
 
-    public string RenderUserConfig(int appId, string name, object model, User user, string culture, Config config, ILogger log = null)
+    public string RenderUserConfig(int appId, string name, object model, User user, string culture, Config config, ILogger log = null) =>
+        TryCatch<string>(operation: () =>
     {
+        ValidateRenderUserConfig(inputs: [appId, name, model, user, culture, config, log]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateTemplateName(name: name, parameterName: "name");
         ValidateModel(model: model, parameterName: "model");
@@ -81,10 +83,13 @@ internal class TemplateRenderProcessingService(
 
         TemplateRenderParams templateRenderParams = new(app: app, user: user, culture: culture);
         return ExecuteRenderTemplateRenderParamsConfig(template: template, model: model, renderParams: templateRenderParams, config: config, log: log);
-    }
 
-    public string RenderTemplateRenderParamsConfig(Template template, object model, RenderParams renderParams, Config config, ILogger log = null)
+    });
+
+    public string RenderTemplateRenderParamsConfig(Template template, object model, RenderParams renderParams, Config config, ILogger log = null) =>
+        TryCatch<string>(operation: () =>
     {
+        ValidateRenderTemplateRenderParamsConfig(inputs: [template, model, renderParams, config, log]);
         ValidateTemplate(template: template, parameterName: "template");
         ValidateModel(model: model, parameterName: "model");
         ValidateRenderParamsArgument(renderParams: renderParams, parameterName: "renderParams");
@@ -101,7 +106,8 @@ internal class TemplateRenderProcessingService(
         }
 
         return ProcessContentString(key: template.ResourceKey, renderParams: renderParams, content: template.RawString, replacements: list);
-    }
+
+    });
 
     private ICollection<Replacement> DefaultReplacements(RenderParams renderParams, Config config = null)
     {

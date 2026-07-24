@@ -6,8 +6,8 @@ namespace cCoder.ContentManagement.Models.Exceptions;
 
 public sealed class ContentManagementValidationException(
     Exception innerException)
-    : Exception(
-        message: "Content management validation failed.",
+    : System.ComponentModel.DataAnnotations.ValidationException(
+        message: innerException.Message,
         innerException: innerException)
 {
 }

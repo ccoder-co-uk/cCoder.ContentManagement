@@ -144,7 +144,7 @@ public partial class PageRoleProcessingServiceTests
 
         // When
 
-        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
             await pageRoleProcessingService.AddPageRoleAsync(
 newPageRole: new LocalPageRole { PageId = page.Id, RoleId = roleToAdd.Id }
             )

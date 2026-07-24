@@ -9,14 +9,16 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
-internal class PageCoordinationService(
+internal partial class PageCoordinationService(
     IPageInfoOrchestrationService pageInfoOrchestrationService,
     IContentOrchestrationService contentOrchestrationService,
     IPageRoleOrchestrationService pageRoleOrchestrationService,
     IPageOrchestrationService pageOrchestrationService) : IPageCoordinationService
 {
-    public async ValueTask HandlePageAddAsync(Page page)
+    public ValueTask HandlePageAddAsync(Page page) =>
+        TryCatch(operation: async () =>
     {
+        ValidateHandlePageAddAsync(inputs: [page]);
         ValidatePage(page: page, parameterName: "page");
 
         if (page.PageInfo != null)
@@ -59,10 +61,13 @@ internal class PageCoordinationService(
 
             await pageRoleOrchestrationService.AddOrUpdatePageRoleResult(newPageRole: pageRoles);
         }
-    }
 
-    public async ValueTask HandlePageUpdateAsync(Page page)
+    }, isValueTask: true);
+
+    public ValueTask HandlePageUpdateAsync(Page page) =>
+        TryCatch(operation: async () =>
     {
+        ValidateHandlePageUpdateAsync(inputs: [page]);
         ValidatePage(page: page, parameterName: "page");
 
         if (page.PageInfo != null)
@@ -130,10 +135,13 @@ internal class PageCoordinationService(
         {
             await pageOrchestrationService.AddOrUpdatePageResult(newPage: existingChildrenToRecompute);
         }
-    }
 
-    public async ValueTask HandlePageDeleteAsync(Page page)
+    }, isValueTask: true);
+
+    public ValueTask HandlePageDeleteAsync(Page page) =>
+        TryCatch(operation: async () =>
     {
+        ValidateHandlePageDeleteAsync(inputs: [page]);
         ValidatePage(page: page, parameterName: "page");
 
         IEnumerable<PageRole> pageRolesToDelete = pageRoleOrchestrationService.GetAllPageRole(ignoreFilters: true)
@@ -151,7 +159,8 @@ internal class PageCoordinationService(
         await pageRoleOrchestrationService.DeleteAllPageRoleAsync(deletedPageRole: pageRolesToDelete);
         await pageInfoOrchestrationService.DeleteAllPageInfoAsync(deletedPageInfo: pageInfosToDelete);
         await contentOrchestrationService.DeleteAllContentAsync(deletedContent: contentsToDelete);
-    }
+
+    }, isValueTask: true);
 
     private static Page ValidatePage(Page page, string parameterName)
     {

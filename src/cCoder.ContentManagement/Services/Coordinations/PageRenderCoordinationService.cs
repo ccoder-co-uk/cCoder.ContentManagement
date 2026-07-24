@@ -32,8 +32,10 @@ internal sealed partial class PageRenderCoordinationService(
     private User User =>
         authorizationBroker.GetCurrentUser();
 
-    public PageRenderResponse Render(PageRenderRequest request)
+    public PageRenderResponse Render(PageRenderRequest request) =>
+        TryCatch<PageRenderResponse>(operation: () =>
     {
+        ValidateRender(inputs: [request]);
         ValidateRequest(request: request, parameterName: "request");
 
         try
@@ -55,10 +57,13 @@ internal sealed partial class PageRenderCoordinationService(
             request.Exception = exception;
             return ExecuteRenderError(request: request);
         }
-    }
 
-    public PageRenderResponse RenderError(PageRenderRequest request)
+    });
+
+    public PageRenderResponse RenderError(PageRenderRequest request) =>
+        TryCatch<PageRenderResponse>(operation: () =>
     {
+        ValidateRenderError(inputs: [request]);
         ValidateRequest(request: request, parameterName: "request");
         ValidateException(exception: request.Exception, parameterName: "Exception");
 
@@ -77,10 +82,13 @@ internal sealed partial class PageRenderCoordinationService(
             Culture = defaults.Culture,
             Edit = false
         };
-    }
 
-    public RenderResult RenderRenderResult(int appId, string path, string theme, string culture, bool edit = false)
+    });
+
+    public RenderResult RenderRenderResult(int appId, string path, string theme, string culture, bool edit = false) =>
+        TryCatch<RenderResult>(operation: () =>
     {
+        ValidateRenderRenderResult(inputs: [appId, path, theme, culture, edit]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateTheme(theme: theme, parameterName: "theme");
 
@@ -132,7 +140,8 @@ user: User,
 theme: theme,
 culture: culture,
 edit: edit && ContentManagementModelLogic.UserCan(page: page, user: User, privilege: "page_update"));
-    }
+
+    });
 
     private ResolvedPageRenderDefaults ResolveDefaults(PageRenderRequest request)
     {

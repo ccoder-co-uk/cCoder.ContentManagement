@@ -11,8 +11,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class SubmissionEventService(ISubmissionEventBroker submissionEventBroker, ICoreAuthInfo authInfo) : ISubmissionEventService
 {
-    public async ValueTask RaiseSubmissionAddEventAsync(Submission entity)
+    public ValueTask RaiseSubmissionAddEventAsync(Submission entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseSubmissionAddEventAsync(inputs: [entity]);
+
         EventMessage<Submission> message = new EventMessage<Submission>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
         };
 
         await submissionEventBroker.RaiseSubmissionAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseSubmissionUpdateEventAsync(Submission entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseSubmissionUpdateEventAsync(Submission entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseSubmissionUpdateEventAsync(inputs: [entity]);
+
         EventMessage<Submission> message = new EventMessage<Submission>
         {
             AuthInfo = new EventAuthInfo
@@ -37,10 +44,14 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
         };
 
         await submissionEventBroker.RaiseSubmissionUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseSubmissionDeleteEventAsync(Submission entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseSubmissionDeleteEventAsync(Submission entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseSubmissionDeleteEventAsync(inputs: [entity]);
+
         EventMessage<Submission> message = new EventMessage<Submission>
         {
             AuthInfo = new EventAuthInfo
@@ -51,5 +62,6 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
         };
 
         await submissionEventBroker.RaiseSubmissionDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

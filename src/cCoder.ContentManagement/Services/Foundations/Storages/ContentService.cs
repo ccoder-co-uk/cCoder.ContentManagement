@@ -14,8 +14,10 @@ internal partial class ContentService(
     IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IContentService
 {
-    public Content GetContent(int contentId, bool ignoreFilters = false)
+    public Content GetContent(int contentId, bool ignoreFilters = false) =>
+        TryCatch<Content>(operation: () =>
     {
+        ValidateContentOnGet(inputs: [contentId, ignoreFilters]);
         ValidateId(contentId: contentId, parameterName: "id");
 
         if (ignoreFilters)
@@ -41,13 +43,20 @@ internal partial class ContentService(
         }
 
         return null;
-    }
+
+    });
 
     public IQueryable<Content> GetAllContent(bool ignoreFilters = false) =>
-        contentBroker.GetAllContents(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Content> AddContentAsync(Content newContent)
+        TryCatch<IQueryable<Content>>(operation: () =>
     {
+        ValidateAllContentOnGet(inputs: [ignoreFilters]);
+        return contentBroker.GetAllContents(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Content> AddContentAsync(Content newContent) =>
+        TryCatch<Content>(operation: async () =>
+    {
+        ValidateContentOnAdd(inputs: [newContent]);
         ValidateContent(content: newContent, parameterName: "content");
         authorizationBroker.Authorize(appId: GetAppId(pageId: newContent.PageId), privilege: "Content_create");
         Content result = await contentBroker.AddContentAsync(newContent: CreateStorageContent(newContent: newContent));
@@ -57,10 +66,13 @@ internal partial class ContentService(
         newContent.Name = result.Name;
         newContent.Html = result.Html;
         return newContent;
-    }
 
-    public async ValueTask<Content> UpdateContentAsync(Content updatedContent)
+    }, isValueTask: true);
+
+    public ValueTask<Content> UpdateContentAsync(Content updatedContent) =>
+        TryCatch<Content>(operation: async () =>
     {
+        ValidateContentOnUpdate(inputs: [updatedContent]);
         ValidateContent(content: updatedContent, parameterName: "content");
         authorizationBroker.Authorize(appId: GetAppId(pageId: updatedContent.PageId), privilege: "Content_update");
         Content result = await contentBroker.UpdateContentAsync(updatedContent: CreateStorageContent(newContent: updatedContent));
@@ -70,10 +82,13 @@ internal partial class ContentService(
         updatedContent.Name = result.Name;
         updatedContent.Html = result.Html;
         return updatedContent;
-    }
 
-    public async ValueTask DeleteAsync(int contentId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int contentId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [contentId]);
         ValidateId(contentId: contentId, parameterName: "id");
         Content content;
 
@@ -93,7 +108,8 @@ internal partial class ContentService(
 
         authorizationBroker.Authorize(appId: GetAppId(pageId: content.PageId), privilege: "Content_delete");
         await contentBroker.DeleteContentAsync(deletedContent: CreateStorageContent(newContent: content));
-    }
+
+    }, isValueTask: true);
 
     private static Content CreateStorageContent(Content newContent)
     {

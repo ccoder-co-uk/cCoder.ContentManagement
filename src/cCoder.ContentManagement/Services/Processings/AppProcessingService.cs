@@ -13,7 +13,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class AppProcessingService(
+internal partial class AppProcessingService(
     IAppService service,
     ICultureService cultureService,
     IPrivilegeBroker privilegeBroker,
@@ -22,36 +22,51 @@ internal class AppProcessingService(
     IUserRoleBroker userRoleBroker,
     HttpContext httpContext = null) : IAppProcessingService
 {
-    public App GetApp(int appId)
+    public App GetApp(int appId) =>
+        TryCatch<App>(operation: () =>
     {
+        ValidateAppOnGet(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
         return service.GetApp(appId: appId);
-    }
 
-    public string GetDomain(int appId, bool ignoreFilters = false)
+    });
+
+    public string GetDomain(int appId, bool ignoreFilters = false) =>
+        TryCatch<string>(operation: () =>
     {
+        ValidateDomainOnGet(inputs: [appId, ignoreFilters]);
         ValidateId(appId: appId, parameterName: "id");
 
         return service.GetAllApp(ignoreFilters: ignoreFilters)
             .Where(predicate: app => app.Id == appId)
             .Select(selector: app => app.Domain)
             .FirstOrDefault();
-    }
 
-    public App GetByDomainApp(string domain, bool ignoreFilters = false)
+    });
+
+    public App GetByDomainApp(string domain, bool ignoreFilters = false) =>
+        TryCatch<App>(operation: () =>
     {
+        ValidateByDomainAppOnGet(inputs: [domain, ignoreFilters]);
         ValidateDomain(domain: domain, parameterName: "domain");
 
         return service.GetAllApp(ignoreFilters: ignoreFilters)
             .Where(predicate: app => app.Domain == domain)
             .FirstOrDefault();
-    }
+
+    });
 
     public IQueryable<App> GetAllApp(bool ignoreFilters = false) =>
-        service.GetAllApp(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<App> AddAppAsync(App newApp)
+        TryCatch<IQueryable<App>>(operation: () =>
     {
+        ValidateAllAppOnGet(inputs: [ignoreFilters]);
+        return service.GetAllApp(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<App> AddAppAsync(App newApp) =>
+        TryCatch<App>(operation: async () =>
+    {
+        ValidateAppOnAdd(inputs: [newApp]);
         ValidateApp(app: newApp, parameterName: "inputApp");
 
         if (string.IsNullOrEmpty(value: newApp.DefaultTheme))
@@ -100,10 +115,13 @@ internal class AppProcessingService(
 
         StampAppChildren(app: storedApp);
         return storedApp;
-    }
 
-    public async ValueTask<App> UpdateAppAsync(App app)
+    }, isValueTask: true);
+
+    public ValueTask<App> UpdateAppAsync(App app) =>
+        TryCatch<App>(operation: async () =>
     {
+        ValidateAppOnUpdate(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
         App existingApp = service.GetApp(appId: app.Id, ignoreFilters: true);
 
@@ -205,16 +223,22 @@ internal class AppProcessingService(
 
         StampAppChildren(app: updatedApp);
         return updatedApp;
-    }
 
-    public async ValueTask DeleteAsync(int appId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int appId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
         await service.DeleteAsync(appId: appId);
-    }
 
-    public async ValueTask<IEnumerable<Result<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp) =>
+        TryCatch<IEnumerable<Result<App>>>(operation: async () =>
     {
+        ValidateOrUpdateAppResultOnAdd(inputs: [newApp]);
         ValidateApps(apps: newApp, parameterName: "items");
         List<Result<App>> results = [];
 
@@ -245,20 +269,26 @@ internal class AppProcessingService(
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllAppAsync(IEnumerable<App> deletedApp)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllAppAsync(IEnumerable<App> deletedApp) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllAppOnDelete(inputs: [deletedApp]);
         ValidateApps(apps: deletedApp, parameterName: "items");
 
         foreach (App item in deletedApp)
         {
             await ExecuteDeleteAsync(appId: item.Id);
         }
-    }
 
-    public IQueryable<User> GetAppUsers(int appId)
+    }, isValueTask: true);
+
+    public IQueryable<User> GetAppUsers(int appId) =>
+        TryCatch<IQueryable<User>>(operation: () =>
     {
+        ValidateAppUsersOnGet(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "appId");
         App app = ExecuteGetApp(appId: appId);
 
@@ -269,10 +299,13 @@ internal class AppProcessingService(
         }
 
         throw new SecurityException(message: "Access Denied!");
-    }
 
-    public App ResolveCurrentApp()
+    });
+
+    public App ResolveCurrentApp() =>
+        TryCatch<App>(operation: () =>
     {
+        ValidateResolveCurrentApp(inputs: []);
         string text = httpContext?.Request.Path.Value ?? string.Empty;
 
         if (text.Contains(value: "/webdav", comparisonType: StringComparison.OrdinalIgnoreCase) && text.Contains(value: "Core/App(", comparisonType: StringComparison.OrdinalIgnoreCase))
@@ -293,14 +326,18 @@ internal class AppProcessingService(
 
         string domain = httpContext?.Request.Host.Host ?? string.Empty;
         return ExecuteGetByDomainApp(domain: domain);
-    }
 
-    public async ValueTask UpdatePageOrderAppAsync(int key, App updatedApp)
+    });
+
+    public ValueTask UpdatePageOrderAppAsync(int key, App updatedApp) =>
+        TryCatch(operation: async () =>
     {
+        ValidatePageOrderAppOnUpdate(inputs: [key, updatedApp]);
         ValidateId(appId: key, parameterName: "key");
         ValidateApp(app: updatedApp, parameterName: "app");
         await service.UpdatePageOrderAsync(appId: key, updatedPage: updatedApp.Pages ?? new List<Page>());
-    }
+
+    }, isValueTask: true);
 
     private ICollection<AppCulture> BuildCulturesForApp(App newApp)
     {

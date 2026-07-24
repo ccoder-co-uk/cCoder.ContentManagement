@@ -11,8 +11,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class TemplateEventService(ITemplateEventBroker templateEventBroker, ICoreAuthInfo authInfo) : ITemplateEventService
 {
-    public async ValueTask RaiseTemplateAddEventAsync(Template entity)
+    public ValueTask RaiseTemplateAddEventAsync(Template entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseTemplateAddEventAsync(inputs: [entity]);
+
         EventMessage<Template> message = new EventMessage<Template>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
         };
 
         await templateEventBroker.RaiseTemplateAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseTemplateUpdateEventAsync(Template entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseTemplateUpdateEventAsync(Template entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseTemplateUpdateEventAsync(inputs: [entity]);
+
         EventMessage<Template> message = new EventMessage<Template>
         {
             AuthInfo = new EventAuthInfo
@@ -37,10 +44,14 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
         };
 
         await templateEventBroker.RaiseTemplateUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseTemplateDeleteEventAsync(Template entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseTemplateDeleteEventAsync(Template entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseTemplateDeleteEventAsync(inputs: [entity]);
+
         EventMessage<Template> message = new EventMessage<Template>
         {
             AuthInfo = new EventAuthInfo
@@ -51,5 +62,6 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
         };
 
         await templateEventBroker.RaiseTemplateDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

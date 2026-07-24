@@ -11,8 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class ComponentService(IComponentBroker componentBroker, IAuthorizationBroker authorizationBroker) : IComponentService
 {
-    public Component GetComponent(int componentId, bool ignoreFilters = false)
+    public Component GetComponent(int componentId, bool ignoreFilters = false) =>
+        TryCatch<Component>(operation: () =>
     {
+        ValidateComponentOnGet(inputs: [componentId, ignoreFilters]);
         ValidateId(componentId: componentId, parameterName: "id");
 
         if (ignoreFilters)
@@ -38,13 +40,20 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
         }
 
         return null;
-    }
+
+    });
 
     public IQueryable<Component> GetAllComponent(bool ignoreFilters = false) =>
-        componentBroker.GetAllComponents(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Component> AddComponentAsync(Component component)
+        TryCatch<IQueryable<Component>>(operation: () =>
     {
+        ValidateAllComponentOnGet(inputs: [ignoreFilters]);
+        return componentBroker.GetAllComponents(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Component> AddComponentAsync(Component component) =>
+        TryCatch<Component>(operation: async () =>
+    {
+        ValidateComponentOnAdd(inputs: [component]);
         ValidateComponent(component: component, parameterName: "component");
         authorizationBroker.Authorize(appId: component.AppId, privilege: "Component_create");
         Component newComponent = CreateStorageComponent(newComponent: component);
@@ -70,10 +79,13 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
         component.Script = result.Script;
         component.Key = result.Key;
         return component;
-    }
 
-    public async ValueTask<Component> UpdateComponentAsync(Component updatedComponent)
+    }, isValueTask: true);
+
+    public ValueTask<Component> UpdateComponentAsync(Component updatedComponent) =>
+        TryCatch<Component>(operation: async () =>
     {
+        ValidateComponentOnUpdate(inputs: [updatedComponent]);
         ValidateComponent(component: updatedComponent, parameterName: "component");
         authorizationBroker.Authorize(appId: updatedComponent.AppId, privilege: "Component_update");
         Component updateComponent = CreateStorageComponent(newComponent: updatedComponent);
@@ -98,10 +110,13 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
         updatedComponent.Script = result.Script;
         updatedComponent.Key = result.Key;
         return updatedComponent;
-    }
 
-    public async ValueTask DeleteAsync(int componentId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int componentId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [componentId]);
         ValidateId(componentId: componentId, parameterName: "id");
         Component component;
 
@@ -121,7 +136,8 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
 
         authorizationBroker.Authorize(appId: component.AppId, privilege: "Component_delete");
         await componentBroker.DeleteComponentAsync(deletedComponent: CreateStorageComponent(newComponent: component));
-    }
+
+    }, isValueTask: true);
 
     private static Component CreateStorageComponent(Component newComponent)
     {

@@ -11,8 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationBroker authorizationBroker) : ILayoutService
 {
-    public Layout GetLayout(int layoutId, bool ignoreFilters = false)
+    public Layout GetLayout(int layoutId, bool ignoreFilters = false) =>
+        TryCatch<Layout>(operation: () =>
     {
+        ValidateLayoutOnGet(inputs: [layoutId, ignoreFilters]);
         ValidateId(layoutId: layoutId, parameterName: "id");
 
         if (ignoreFilters)
@@ -38,13 +40,20 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
         }
 
         return null;
-    }
+
+    });
 
     public IQueryable<Layout> GetAllLayout(bool ignoreFilters = false) =>
-        layoutBroker.GetAllLayouts(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Layout> AddLayoutAsync(Layout layout)
+        TryCatch<IQueryable<Layout>>(operation: () =>
     {
+        ValidateAllLayoutOnGet(inputs: [ignoreFilters]);
+        return layoutBroker.GetAllLayouts(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Layout> AddLayoutAsync(Layout layout) =>
+        TryCatch<Layout>(operation: async () =>
+    {
+        ValidateLayoutOnAdd(inputs: [layout]);
         ValidateLayout(layout: layout, parameterName: "layout");
         authorizationBroker.Authorize(appId: layout.AppId, privilege: "Layout_create");
         Layout newLayout = CreateStorageLayout(newLayout: layout);
@@ -69,10 +78,13 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
         layout.Html = result.Html;
         layout.Script = result.Script;
         return layout;
-    }
 
-    public async ValueTask<Layout> UpdateLayoutAsync(Layout updatedLayout)
+    }, isValueTask: true);
+
+    public ValueTask<Layout> UpdateLayoutAsync(Layout updatedLayout) =>
+        TryCatch<Layout>(operation: async () =>
     {
+        ValidateLayoutOnUpdate(inputs: [updatedLayout]);
         ValidateLayout(layout: updatedLayout, parameterName: "layout");
         authorizationBroker.Authorize(appId: updatedLayout.AppId, privilege: "Layout_update");
         Layout updateLayout = CreateStorageLayout(newLayout: updatedLayout);
@@ -96,10 +108,13 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
         updatedLayout.Html = result.Html;
         updatedLayout.Script = result.Script;
         return updatedLayout;
-    }
 
-    public async ValueTask DeleteAsync(int layoutId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int layoutId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [layoutId]);
         ValidateId(layoutId: layoutId, parameterName: "id");
         Layout layout;
 
@@ -119,7 +134,8 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationB
 
         authorizationBroker.Authorize(appId: layout.AppId, privilege: "Layout_delete");
         await layoutBroker.DeleteLayoutAsync(deletedLayout: CreateStorageLayout(newLayout: layout));
-    }
+
+    }, isValueTask: true);
 
     private static Layout CreateStorageLayout(Layout newLayout)
     {

@@ -11,13 +11,15 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PackageProcessingService(
+internal partial class PackageProcessingService(
     IPackageService service,
     IPackageItemProcessingService packageItemService,
     IPackageExportService packageExportService) : IPackageProcessingService
 {
-    public Package ExportPackage(int appId, string packageName)
+    public Package ExportPackage(int appId, string packageName) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidateExportPackage(inputs: [appId, packageName]);
         string text = ValidatePackageName(packageName: packageName, parameterName: "packageName");
 
         Package result = text switch
@@ -37,23 +39,38 @@ internal class PackageProcessingService(
         };
 
         return result;
-    }
 
-    public Package[] ExportPackages(int appId, string[] packageNames)
+    });
+
+    public Package[] ExportPackages(int appId, string[] packageNames) =>
+        TryCatch<Package[]>(operation: () =>
     {
+        ValidateExportPackages(inputs: [appId, packageNames]);
+
         return ValidatePackageNames(packageNames: packageNames, parameterName: "packageNames")
             .Select(selector: name => ExecuteExportPackage(appId: appId, packageName: name))
             .ToArray();
-    }
+
+    });
 
     public Package GetPackage(Guid packageId) =>
-        service.GetPackage(packageId: ValidateId(packageId: packageId, parameterName: "id"));
+        TryCatch<Package>(operation: () =>
+    {
+        ValidatePackageOnGet(inputs: [packageId]);
+        return service.GetPackage(packageId: ValidateId(packageId: packageId, parameterName: "id"));
+    });
 
     public IQueryable<Package> GetAllPackage(bool ignoreFilters = false) =>
-        service.GetAllPackage(ignoreFilters: ignoreFilters);
-
-    public ValueTask<Package> AddPackageAsync(Package newPackage)
+        TryCatch<IQueryable<Package>>(operation: () =>
     {
+        ValidateAllPackageOnGet(inputs: [ignoreFilters]);
+        return service.GetAllPackage(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Package> AddPackageAsync(Package newPackage) =>
+        TryCatch<Package>(operation: () =>
+    {
+        ValidatePackageOnAdd(inputs: [newPackage]);
         ValidatePackage(package: newPackage, parameterName: "entity");
 
         if (newPackage.Items != null && newPackage.Items.Any())
@@ -66,10 +83,13 @@ internal class PackageProcessingService(
         }
 
         return service.AddPackageAsync(newPackage: newPackage);
-    }
 
-    public async ValueTask<Package> UpdatePackageAsync(Package updatedPackage)
+    }, isValueTask: true);
+
+    public ValueTask<Package> UpdatePackageAsync(Package updatedPackage) =>
+        TryCatch<Package>(operation: async () =>
     {
+        ValidatePackageOnUpdate(inputs: [updatedPackage]);
         ValidatePackage(package: updatedPackage, parameterName: "entity");
         Package result = await service.UpdatePackageAsync(updatedPackage: updatedPackage);
 
@@ -88,13 +108,20 @@ internal class PackageProcessingService(
         }
 
         return result;
-    }
+
+    }, isValueTask: true);
 
     public ValueTask DeleteAsync(Guid packageId) =>
-        service.DeleteAsync(packageId: ValidateId(packageId: packageId, parameterName: "id"));
-
-    public async ValueTask<IEnumerable<Result<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage)
+        TryCatch(operation: () =>
     {
+        ValidateDeleteAsync(inputs: [packageId]);
+        return service.DeleteAsync(packageId: ValidateId(packageId: packageId, parameterName: "id"));
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage) =>
+        TryCatch<IEnumerable<Result<Package>>>(operation: async () =>
+    {
+        ValidateOrUpdatePackageResultOnAdd(inputs: [newPackage]);
         ValidatePackages(packages: newPackage, parameterName: "items");
         List<Result<Package>> results = new List<Result<Package>>();
 
@@ -123,17 +150,21 @@ internal class PackageProcessingService(
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllPackageOnDelete(inputs: [deletedPackage]);
         ValidatePackages(packages: deletedPackage, parameterName: "items");
 
         foreach (Package item in deletedPackage)
         {
             await ExecuteDeleteAsync(packageId: item.Id);
         }
-    }
+
+    }, isValueTask: true);
 
     private static int ValidateAppId(int appId, string parameterName)
     {

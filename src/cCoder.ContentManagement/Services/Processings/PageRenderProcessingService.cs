@@ -12,11 +12,13 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal sealed class PageRenderProcessingService(
+internal sealed partial class PageRenderProcessingService(
     IPageRenderExecutionOrchestrationService executionOrchestrationService) : IPageRenderProcessingService
 {
-    public RenderResult RenderPageUserConfigRenderResult(Page page, User user, Config config, string theme, string culture, bool edit = false)
+    public RenderResult RenderPageUserConfigRenderResult(Page page, User user, Config config, string theme, string culture, bool edit = false) =>
+        TryCatch<RenderResult>(operation: () =>
     {
+        ValidateRenderPageUserConfigRenderResult(inputs: [page, user, config, theme, culture, edit]);
         ValidatePage(page: page, parameterName: "page");
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");
@@ -41,7 +43,8 @@ internal sealed class PageRenderProcessingService(
             BodyHtml = pageRenderResult.BodyHtml,
             StatusCode = pageRenderResult.StatusCode
         };
-    }
+
+    });
 
     private static PageRenderSession BuildSession(Page page, User user, Config config, string theme, string culture, bool edit)
     {

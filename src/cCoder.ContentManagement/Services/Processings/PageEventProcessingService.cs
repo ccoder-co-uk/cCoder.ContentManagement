@@ -8,28 +8,37 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PageEventProcessingService(IPageEventService eventService) : IPageEventProcessingService
+internal partial class PageEventProcessingService(IPageEventService eventService) : IPageEventProcessingService
 {
-    public ValueTask RaisePageAddEventAsync(Page entity)
+    public ValueTask RaisePageAddEventAsync(Page entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaisePageAddEventAsync(inputs: [entity]);
         ValidatePage(page: entity, parameterName: "entity");
 
         return eventService.RaisePageAddEventAsync(entity: entity);
-    }
 
-    public ValueTask RaisePageUpdateEventAsync(Page entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageUpdateEventAsync(Page entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaisePageUpdateEventAsync(inputs: [entity]);
         ValidatePage(page: entity, parameterName: "entity");
 
         return eventService.RaisePageUpdateEventAsync(entity: entity);
-    }
 
-    public ValueTask RaisePageDeleteEventAsync(Page entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageDeleteEventAsync(Page entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaisePageDeleteEventAsync(inputs: [entity]);
         ValidatePage(page: entity, parameterName: "entity");
 
         return eventService.RaisePageDeleteEventAsync(entity: entity);
-    }
+
+    }, isValueTask: true);
 
     private static void ValidatePage(Page page, string parameterName) =>
         ThrowIf(condition: page == null, message: parameterName + " is required.");

@@ -10,18 +10,21 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal class PageRenderOrchestrationService(
+internal partial class PageRenderOrchestrationService(
     Config config,
     IPageRenderProcessingService pageRenderProcessingService) : IPageRenderOrchestrationService
 {
-    public RenderResult RenderPageUserRenderResult(Page page, User user, string theme, string culture, bool edit = false)
+    public RenderResult RenderPageUserRenderResult(Page page, User user, string theme, string culture, bool edit = false) =>
+        TryCatch<RenderResult>(operation: () =>
     {
+        ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit]);
         ValidatePage(page: page, parameterName: "page");
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");
 
         return pageRenderProcessingService.RenderPageUserConfigRenderResult(page: page, user: user, config: config, theme: theme, culture: culture, edit: edit);
-    }
+
+    });
 
     private static void ValidatePage(Page page, string parameterName) =>
         ThrowIf(condition: page == null, message: parameterName + " is required.");

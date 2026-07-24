@@ -13,30 +13,42 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class CommonObjectProcessingService(ICommonObjectService service, ICommonObjectCache cache, IAuthorizationBroker authorizationBroker, IJsonBroker jsonBroker) : ICommonObjectProcessingService
+internal partial class CommonObjectProcessingService(ICommonObjectService service, ICommonObjectCache cache, IAuthorizationBroker authorizationBroker, IJsonBroker jsonBroker) : ICommonObjectProcessingService
 {
     private User User =>
         authorizationBroker.GetCurrentUser();
 
-    public CommonObject GetCommonObject(int commonObjectId)
+    public CommonObject GetCommonObject(int commonObjectId) =>
+        TryCatch<CommonObject>(operation: () =>
     {
+        ValidateCommonObjectOnGet(inputs: [commonObjectId]);
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
         return service.GetCommonObject(commonObjectId: commonObjectId);
-    }
+
+    });
 
     public IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false) =>
-        service.GetAllCommonObject(ignoreFilters: ignoreFilters);
-
-    public IEnumerable<CommonObject> LatestCommonObject(string type)
+        TryCatch<IQueryable<CommonObject>>(operation: () =>
     {
+        ValidateAllCommonObjectOnGet(inputs: [ignoreFilters]);
+        return service.GetAllCommonObject(ignoreFilters: ignoreFilters);
+    });
+
+    public IEnumerable<CommonObject> LatestCommonObject(string type) =>
+        TryCatch<IEnumerable<CommonObject>>(operation: () =>
+    {
+        ValidateLatestCommonObject(inputs: [type]);
         ValidateType(type: type, parameterName: "type");
 
         return cache.LatestSet
             .Where(predicate: item => item.Type == type);
-    }
 
-    public async ValueTask<IEnumerable<Result<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items)
+    });
+
+    public ValueTask<IEnumerable<Result<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items) =>
+        TryCatch<IEnumerable<Result<CommonObject>>>(operation: async () =>
     {
+        ValidateImportCommonObjectResultAsync(inputs: [items]);
         ValidateCommonObjects(commonObjects: items, parameterName: "items");
         CommonObject[] commonObjects = (items as CommonObject[]) ?? items.ToArray();
 
@@ -85,17 +97,23 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
         {
             return dbc.Culture == commonObject.Culture && dbc.Name == commonObject.Name && dbc.Key == commonObject.Key;
         }
-    }
 
-    public async ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject)
+    }, isValueTask: true);
+
+    public ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject) =>
+        TryCatch<CommonObject>(operation: async () =>
     {
+        ValidateCommonObjectOnAdd(inputs: [newCommonObject]);
         ValidateCommonObject(commonObject: newCommonObject, parameterName: "entity");
         authorizationBroker.Authorize(appId: null, privilege: "commonobject_create");
         return await service.AddCommonObjectAsync(newCommonObject: newCommonObject);
-    }
 
-    public async ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject)
+    }, isValueTask: true);
+
+    public ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject) =>
+        TryCatch<CommonObject>(operation: async () =>
     {
+        ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject]);
         ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "entity");
         authorizationBroker.Authorize(appId: null, privilege: "commonobject_create");
         authorizationBroker.Authorize(appId: null, privilege: "commonobject_update");
@@ -169,17 +187,23 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
         }
 
         return updatedCommonObject;
-    }
 
-    public async ValueTask DeleteAsync(int commonObjectId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int commonObjectId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [commonObjectId]);
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
         authorizationBroker.Authorize(appId: null, privilege: "commonobject_delete");
         await service.DeleteAsync(commonObjectId: commonObjectId);
-    }
 
-    public async ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject) =>
+        TryCatch<IEnumerable<Result<CommonObject>>>(operation: async () =>
     {
+        ValidateOrUpdateCommonObjectResultOnAdd(inputs: [newCommonObject]);
         ValidateCommonObjects(commonObjects: newCommonObject, parameterName: "items");
         List<Result<CommonObject>> results = new List<Result<CommonObject>>();
 
@@ -208,17 +232,21 @@ internal class CommonObjectProcessingService(ICommonObjectService service, IComm
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllCommonObjectAsync(IEnumerable<CommonObject> deletedCommonObject)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllCommonObjectAsync(IEnumerable<CommonObject> deletedCommonObject) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllCommonObjectOnDelete(inputs: [deletedCommonObject]);
         ValidateCommonObjects(commonObjects: deletedCommonObject, parameterName: "items");
 
         foreach (CommonObject item in deletedCommonObject)
         {
             await ExecuteDeleteAsync(commonObjectId: item.Id);
         }
-    }
+
+    }, isValueTask: true);
 
     private static void ValidateId(int commonObjectId, string parameterName) =>
         ThrowIf(condition: commonObjectId < 1, message: parameterName + " must be greater than 0.");

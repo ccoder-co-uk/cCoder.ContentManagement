@@ -7,14 +7,26 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PackageItemEventProcessingService(IPackageItemEventService eventService) : IPackageItemEventProcessingService
+internal partial class PackageItemEventProcessingService(IPackageItemEventService eventService) : IPackageItemEventProcessingService
 {
     public ValueTask RaisePackageItemAddEventAsync(PackageItem entity) =>
-        eventService.RaisePackageItemAddEventAsync(entity: entity);
+        TryCatch(operation: () =>
+    {
+        ValidateRaisePackageItemAddEventAsync(inputs: [entity]);
+        return eventService.RaisePackageItemAddEventAsync(entity: entity);
+    }, isValueTask: true);
 
     public ValueTask RaisePackageItemUpdateEventAsync(PackageItem entity) =>
-        eventService.RaisePackageItemUpdateEventAsync(entity: entity);
+        TryCatch(operation: () =>
+    {
+        ValidateRaisePackageItemUpdateEventAsync(inputs: [entity]);
+        return eventService.RaisePackageItemUpdateEventAsync(entity: entity);
+    }, isValueTask: true);
 
     public ValueTask RaisePackageItemDeleteEventAsync(PackageItem entity) =>
-        eventService.RaisePackageItemDeleteEventAsync(entity: entity);
+        TryCatch(operation: () =>
+    {
+        ValidateRaisePackageItemDeleteEventAsync(inputs: [entity]);
+        return eventService.RaisePackageItemDeleteEventAsync(entity: entity);
+    }, isValueTask: true);
 }

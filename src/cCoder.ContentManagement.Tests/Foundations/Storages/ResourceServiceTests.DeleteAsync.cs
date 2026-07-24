@@ -73,7 +73,7 @@ public partial class ResourceServiceTests
 
         // When
 
-        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
             await resourceService.DeleteAsync(resourceId: 5)
         );
 

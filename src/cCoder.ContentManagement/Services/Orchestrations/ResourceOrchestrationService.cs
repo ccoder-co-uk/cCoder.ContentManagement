@@ -10,36 +10,52 @@ using cCoder.ContentManagement.Services.Processings;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal class ResourceOrchestrationService(
+internal partial class ResourceOrchestrationService(
     IResourceProcessingService processingService,
     IResourceEventProcessingService eventService) : IResourceOrchestrationService
 {
     public Resource GetResource(int resourceId) =>
-        processingService.GetResource(resourceId: ValidateId(resourceId: resourceId, parameterName: "id"));
+        TryCatch<Resource>(operation: () =>
+    {
+        ValidateResourceOnGet(inputs: [resourceId]);
+        return processingService.GetResource(resourceId: ValidateId(resourceId: resourceId, parameterName: "id"));
+    });
 
     public IQueryable<Resource> GetAllResource(bool ignoreFilters = false) =>
-        processingService.GetAllResource(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Resource> AddResourceAsync(Resource newResource)
+        TryCatch<IQueryable<Resource>>(operation: () =>
     {
+        ValidateAllResourceOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllResource(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Resource> AddResourceAsync(Resource newResource) =>
+        TryCatch<Resource>(operation: async () =>
+    {
+        ValidateResourceOnAdd(inputs: [newResource]);
         ValidateResource(resource: newResource, parameterName: "entity");
 
         Resource result = await processingService.AddResourceAsync(newResource: newResource);
         await eventService.RaiseResourceAddEventAsync(entity: result);
         return result;
-    }
 
-    public async ValueTask<Resource> UpdateResourceAsync(Resource updatedResource)
+    }, isValueTask: true);
+
+    public ValueTask<Resource> UpdateResourceAsync(Resource updatedResource) =>
+        TryCatch<Resource>(operation: async () =>
     {
+        ValidateResourceOnUpdate(inputs: [updatedResource]);
         ValidateResource(resource: updatedResource, parameterName: "entity");
 
         Resource result = await processingService.UpdateResourceAsync(updatedResource: updatedResource);
         await eventService.RaiseResourceUpdateEventAsync(entity: result);
         return result;
-    }
 
-    public async ValueTask DeleteAsync(int resourceId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int resourceId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [resourceId]);
         ValidateId(resourceId: resourceId, parameterName: "id");
 
         Resource entity;
@@ -61,10 +77,13 @@ internal class ResourceOrchestrationService(
 
         await eventService.RaiseResourceDeleteEventAsync(entity: entity);
         await processingService.DeleteAsync(resourceId: resourceId);
-    }
 
-    public async ValueTask DeleteByAppIdAsync(int appId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteByAppIdAsync(int appId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateByAppIdOnDelete(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
         Resource[] resourcesToDelete = [.. ExecuteGetAllResource(ignoreFilters: true)
@@ -74,10 +93,14 @@ internal class ResourceOrchestrationService(
         {
             await ExecuteDeleteAllResourceAsync(deletedResource: resourcesToDelete);
         }
-    }
 
-    public async ValueTask<IEnumerable<Result<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<Resource>>> AddOrUpdateResourceResult(IEnumerable<Resource> newResource) =>
+        TryCatch<IEnumerable<Result<Resource>>>(operation: async () =>
     {
+        ValidateOrUpdateResourceResultOnAdd(inputs: [newResource]);
+
         Resource[] resources = ValidateResources(resources: newResource, parameterName: "items")
             .ToArray();
 
@@ -110,10 +133,13 @@ internal class ResourceOrchestrationService(
         }
 
         return results;
-    }
 
-    public async ValueTask ImportResourcesAsync(int appId, Resource[] items)
+    }, isValueTask: true);
+
+    public ValueTask ImportResourcesAsync(int appId, Resource[] items) =>
+        TryCatch(operation: async () =>
     {
+        ValidateImportResourcesAsync(inputs: [appId, items]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
         Resource[] validatedItems = ValidateResources(resources: items, parameterName: "items")
@@ -137,10 +163,14 @@ internal class ResourceOrchestrationService(
         });
 
         await ExecuteAddOrUpdateResourceResult(newResource: validatedItems);
-    }
 
-    public async ValueTask DeleteAllResourceAsync(IEnumerable<Resource> deletedResource)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllResourceAsync(IEnumerable<Resource> deletedResource) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllResourceOnDelete(inputs: [deletedResource]);
+
         Resource[] resources = ValidateResources(resources: deletedResource, parameterName: "items")
             .ToArray();
 
@@ -148,7 +178,8 @@ internal class ResourceOrchestrationService(
         {
             await ExecuteDeleteAsync(resourceId: resource.Id);
         }
-    }
+
+    }, isValueTask: true);
 
     private static int ValidateId(int resourceId, string parameterName)
     {

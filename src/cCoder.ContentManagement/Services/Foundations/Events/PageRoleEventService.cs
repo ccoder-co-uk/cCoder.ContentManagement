@@ -9,10 +9,13 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker, ICoreAuthInfo authInfo) : IPageRoleEventService
+internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker, ICoreAuthInfo authInfo) : IPageRoleEventService
 {
-    public async ValueTask RaisePageRoleAddEventAsync(PageRole entity)
+    public ValueTask RaisePageRoleAddEventAsync(PageRole entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePageRoleAddEventAsync(inputs: [entity]);
+
         EventMessage<PageRole> message = new EventMessage<PageRole>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker, IC
         };
 
         await pageRoleEventBroker.RaisePageRoleAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaisePageRoleDeleteEventAsync(PageRole entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageRoleDeleteEventAsync(PageRole entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePageRoleDeleteEventAsync(inputs: [entity]);
+
         EventMessage<PageRole> message = new EventMessage<PageRole>
         {
             AuthInfo = new EventAuthInfo
@@ -37,5 +44,6 @@ internal class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker, IC
         };
 
         await pageRoleEventBroker.RaisePageRoleDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

@@ -8,28 +8,37 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class LayoutEventProcessingService(ILayoutEventService eventService) : ILayoutEventProcessingService
+internal partial class LayoutEventProcessingService(ILayoutEventService eventService) : ILayoutEventProcessingService
 {
-    public ValueTask RaiseLayoutAddEventAsync(Layout entity)
+    public ValueTask RaiseLayoutAddEventAsync(Layout entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseLayoutAddEventAsync(inputs: [entity]);
         ValidateLayout(layout: entity, parameterName: "entity");
 
         return eventService.RaiseLayoutAddEventAsync(entity: entity);
-    }
 
-    public ValueTask RaiseLayoutUpdateEventAsync(Layout entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseLayoutUpdateEventAsync(Layout entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseLayoutUpdateEventAsync(inputs: [entity]);
         ValidateLayout(layout: entity, parameterName: "entity");
 
         return eventService.RaiseLayoutUpdateEventAsync(entity: entity);
-    }
 
-    public ValueTask RaiseLayoutDeleteEventAsync(Layout entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseLayoutDeleteEventAsync(Layout entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaiseLayoutDeleteEventAsync(inputs: [entity]);
         ValidateLayout(layout: entity, parameterName: "entity");
 
         return eventService.RaiseLayoutDeleteEventAsync(entity: entity);
-    }
+
+    }, isValueTask: true);
 
     private static void ValidateLayout(Layout layout, string parameterName) =>
         ThrowIf(condition: layout == null, message: parameterName + " is required.");

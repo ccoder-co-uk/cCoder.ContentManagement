@@ -12,45 +12,63 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal class AppOrchestrationService(
+internal partial class AppOrchestrationService(
     IAppProcessingService processingService,
     IAppEventProcessingService eventService,
     IAuthorizationBroker authorizationBroker) : IAppOrchestrationService
 {
-    public App GetApp(int appId)
+    public App GetApp(int appId) =>
+        TryCatch<App>(operation: () =>
     {
+        ValidateAppOnGet(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
         return processingService.GetApp(appId: appId);
-    }
 
-    public App GetByDomainApp(string domain, bool ignoreFilters = false)
+    });
+
+    public App GetByDomainApp(string domain, bool ignoreFilters = false) =>
+        TryCatch<App>(operation: () =>
     {
+        ValidateByDomainAppOnGet(inputs: [domain, ignoreFilters]);
         ValidateDomain(domain: domain, parameterName: "domain");
         return processingService.GetByDomainApp(domain: domain, ignoreFilters: ignoreFilters);
-    }
+
+    });
 
     public IQueryable<App> GetAllApp(bool ignoreFilters = false) =>
-        processingService.GetAllApp(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<App> AddAppAsync(App newApp)
+        TryCatch<IQueryable<App>>(operation: () =>
     {
+        ValidateAllAppOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllApp(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<App> AddAppAsync(App newApp) =>
+        TryCatch<App>(operation: async () =>
+    {
+        ValidateAppOnAdd(inputs: [newApp]);
         ValidateApp(app: newApp, parameterName: "entity");
         App result = await processingService.AddAppAsync(newApp: newApp);
         await eventService.RaiseAppAddEventAsync(app: result);
         return result;
-    }
 
-    public async ValueTask<App> UpdateAppAsync(App updatedApp)
+    }, isValueTask: true);
+
+    public ValueTask<App> UpdateAppAsync(App updatedApp) =>
+        TryCatch<App>(operation: async () =>
     {
+        ValidateAppOnUpdate(inputs: [updatedApp]);
         ValidateApp(app: updatedApp, parameterName: "entity");
         App result = await processingService.UpdateAppAsync(updatedApp: updatedApp);
         ReflectUpdatedApp(source: result, target: updatedApp);
         await eventService.RaiseAppUpdateEventAsync(app: updatedApp);
         return result;
-    }
 
-    public async ValueTask DeleteAsync(int appId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int appId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
 
         App app = processingService.GetAllApp(ignoreFilters: true)
@@ -68,25 +86,45 @@ internal class AppOrchestrationService(
         }
 
         await processingService.DeleteAsync(appId: appId);
-    }
+
+    }, isValueTask: true);
 
     public ValueTask<IEnumerable<Result<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp) =>
-        processingService.AddOrUpdateAppResult(newApp: ValidateApps(apps: newApp, parameterName: "items"));
+        TryCatch<IEnumerable<Result<App>>>(operation: () =>
+    {
+        ValidateOrUpdateAppResultOnAdd(inputs: [newApp]);
+        return processingService.AddOrUpdateAppResult(newApp: ValidateApps(apps: newApp, parameterName: "items"));
+    }, isValueTask: true);
 
     public ValueTask DeleteAllAppAsync(IEnumerable<App> deletedApp) =>
-        processingService.DeleteAllAppAsync(deletedApp: ValidateApps(apps: deletedApp, parameterName: "items"));
-
-    public IQueryable<User> GetAppUsers(int appId)
+        TryCatch(operation: () =>
     {
+        ValidateAllAppOnDelete(inputs: [deletedApp]);
+        return processingService.DeleteAllAppAsync(deletedApp: ValidateApps(apps: deletedApp, parameterName: "items"));
+    }, isValueTask: true);
+
+    public IQueryable<User> GetAppUsers(int appId) =>
+        TryCatch<IQueryable<User>>(operation: () =>
+    {
+        ValidateAppUsersOnGet(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "appId");
         return processingService.GetAppUsers(appId: appId);
-    }
+
+    });
 
     public ValueTask UpdatePageOrderAppAsync(int key, App updatedApp) =>
-        processingService.UpdatePageOrderAppAsync(key: key, updatedApp: ValidateApp(app: updatedApp, parameterName: "app"));
+        TryCatch(operation: () =>
+    {
+        ValidatePageOrderAppOnUpdate(inputs: [key, updatedApp]);
+        return processingService.UpdatePageOrderAppAsync(key: key, updatedApp: ValidateApp(app: updatedApp, parameterName: "app"));
+    }, isValueTask: true);
 
     public App ResolveCurrentApp() =>
-        processingService.ResolveCurrentApp();
+        TryCatch<App>(operation: () =>
+    {
+        ValidateResolveCurrentApp(inputs: []);
+        return processingService.ResolveCurrentApp();
+    });
 
     private static void ValidateId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");

@@ -9,10 +9,13 @@ using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal class CommonObjectEventService(ICommonObjectEventBroker commonObjectEventBroker, ICoreAuthInfo authInfo) : ICommonObjectEventService
+internal partial class CommonObjectEventService(ICommonObjectEventBroker commonObjectEventBroker, ICoreAuthInfo authInfo) : ICommonObjectEventService
 {
-    public async ValueTask RaiseCommonObjectAddEventAsync(CommonObject entity)
+    public ValueTask RaiseCommonObjectAddEventAsync(CommonObject entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseCommonObjectAddEventAsync(inputs: [entity]);
+
         EventMessage<CommonObject> message = new EventMessage<CommonObject>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal class CommonObjectEventService(ICommonObjectEventBroker commonObjectEve
         };
 
         await commonObjectEventBroker.RaiseCommonObjectAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseCommonObjectUpdateEventAsync(CommonObject entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseCommonObjectUpdateEventAsync(CommonObject entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseCommonObjectUpdateEventAsync(inputs: [entity]);
+
         EventMessage<CommonObject> message = new EventMessage<CommonObject>
         {
             AuthInfo = new EventAuthInfo
@@ -37,10 +44,14 @@ internal class CommonObjectEventService(ICommonObjectEventBroker commonObjectEve
         };
 
         await commonObjectEventBroker.RaiseCommonObjectUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseCommonObjectDeleteEventAsync(CommonObject entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseCommonObjectDeleteEventAsync(CommonObject entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseCommonObjectDeleteEventAsync(inputs: [entity]);
+
         EventMessage<CommonObject> message = new EventMessage<CommonObject>
         {
             AuthInfo = new EventAuthInfo
@@ -51,5 +62,6 @@ internal class CommonObjectEventService(ICommonObjectEventBroker commonObjectEve
         };
 
         await commonObjectEventBroker.RaiseCommonObjectDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

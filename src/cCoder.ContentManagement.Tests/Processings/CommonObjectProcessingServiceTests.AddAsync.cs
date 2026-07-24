@@ -87,7 +87,7 @@ public partial class CommonObjectProcessingServiceTests
 
         // When
 
-        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
             await commonObjectProcessingService.AddCommonObjectAsync(newCommonObject: commonObject)
         );
 

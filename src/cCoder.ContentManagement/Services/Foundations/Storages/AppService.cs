@@ -15,8 +15,10 @@ internal partial class AppService(
     IPageBroker pageBroker,
     IAuthorizationBroker authorizationBroker) : IAppService
 {
-    public App GetApp(int appId, bool ignoreFilters = false)
+    public App GetApp(int appId, bool ignoreFilters = false) =>
+        TryCatch<App>(operation: () =>
     {
+        ValidateAppOnGet(inputs: [appId, ignoreFilters]);
         ValidateId(appId: appId, parameterName: "id");
 
         if (ignoreFilters)
@@ -42,13 +44,20 @@ internal partial class AppService(
         }
 
         return null;
-    }
+
+    });
 
     public IQueryable<App> GetAllApp(bool ignoreFilters = false) =>
-        appBroker.GetAllApps(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<App> AddAppAsync(App newApp)
+        TryCatch<IQueryable<App>>(operation: () =>
     {
+        ValidateAllAppOnGet(inputs: [ignoreFilters]);
+        return appBroker.GetAllApps(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<App> AddAppAsync(App newApp) =>
+        TryCatch<App>(operation: async () =>
+    {
+        ValidateAppOnAdd(inputs: [newApp]);
         ValidateApp(app: newApp, parameterName: "app");
         authorizationBroker.Authorize(appId: null, privilege: "App_create");
         App storedApp = CreateStorageApp(newApp: newApp);
@@ -61,10 +70,13 @@ internal partial class AppService(
         newApp.DefaultTheme = result.DefaultTheme;
         newApp.ConfigJson = result.ConfigJson;
         return newApp;
-    }
 
-    public async ValueTask<App> UpdateAppAsync(App updatedApp)
+    }, isValueTask: true);
+
+    public ValueTask<App> UpdateAppAsync(App updatedApp) =>
+        TryCatch<App>(operation: async () =>
     {
+        ValidateAppOnUpdate(inputs: [updatedApp]);
         ValidateApp(app: updatedApp, parameterName: "app");
         authorizationBroker.Authorize(appId: updatedApp.Id, privilege: "App_update");
         App storedApp = CreateStorageApp(newApp: updatedApp);
@@ -77,10 +89,13 @@ internal partial class AppService(
         updatedApp.DefaultTheme = result.DefaultTheme;
         updatedApp.ConfigJson = result.ConfigJson;
         return updatedApp;
-    }
 
-    public async ValueTask UpdatePageOrderAsync(int appId, IEnumerable<Page> updatedPage)
+    }, isValueTask: true);
+
+    public ValueTask UpdatePageOrderAsync(int appId, IEnumerable<Page> updatedPage) =>
+        TryCatch(operation: async () =>
     {
+        ValidatePageOrderOnUpdate(inputs: [appId, updatedPage]);
         ValidateId(appId: appId, parameterName: "id");
         ValidatePages(pages: updatedPage, parameterName: "pages");
         authorizationBroker.Authorize(appId: appId, privilege: "App_update");
@@ -99,10 +114,13 @@ internal partial class AppService(
                 await pageBroker.UpdatePageAsync(updatedPage: existingPage);
             }
         }
-    }
 
-    public async ValueTask DeleteAsync(int appId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int appId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
         App app = GetAppForDelete(appId: appId);
 
@@ -117,7 +135,8 @@ internal partial class AppService(
         }
 
         await appBroker.DeleteAppAggregateAsync(deletedApp: app);
-    }
+
+    }, isValueTask: true);
 
     private App GetAppForDelete(int appId) =>
         appBroker.GetAllApps(ignoreFilters: true)

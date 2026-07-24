@@ -11,8 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker authorizationBroker) : IPageService
 {
-    public Page GetPage(int pageId, bool ignoreFilters = false)
+    public Page GetPage(int pageId, bool ignoreFilters = false) =>
+        TryCatch<Page>(operation: () =>
     {
+        ValidatePageOnGet(inputs: [pageId, ignoreFilters]);
         ValidateId(pageId: pageId, parameterName: "id");
 
         if (ignoreFilters)
@@ -38,13 +40,20 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         }
 
         return null;
-    }
+
+    });
 
     public IQueryable<Page> GetAllPage(bool ignoreFilters = false) =>
-        pageBroker.GetAllPages(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Page> AddPageAsync(Page page)
+        TryCatch<IQueryable<Page>>(operation: () =>
     {
+        ValidateAllPageOnGet(inputs: [ignoreFilters]);
+        return pageBroker.GetAllPages(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Page> AddPageAsync(Page page) =>
+        TryCatch<Page>(operation: async () =>
+    {
+        ValidatePageOnAdd(inputs: [page]);
         ValidatePage(page: page, parameterName: "page");
         authorizationBroker.Authorize(appId: page.AppId, privilege: "Page_create");
         Page newPage = CreateStoragePage(newPage: page);
@@ -71,10 +80,13 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         page.ResourceKey = result.ResourceKey;
         page.Layout = result.Layout;
         return page;
-    }
 
-    public async ValueTask<Page> UpdatePageAsync(Page updatedPage)
+    }, isValueTask: true);
+
+    public ValueTask<Page> UpdatePageAsync(Page updatedPage) =>
+        TryCatch<Page>(operation: async () =>
     {
+        ValidatePageOnUpdate(inputs: [updatedPage]);
         ValidatePage(page: updatedPage, parameterName: "page");
         authorizationBroker.Authorize(appId: updatedPage.AppId, privilege: "Page_update");
         Page updatePage = CreateStoragePage(newPage: updatedPage);
@@ -100,10 +112,13 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         updatedPage.ResourceKey = result.ResourceKey;
         updatedPage.Layout = result.Layout;
         return updatedPage;
-    }
 
-    public async ValueTask DeleteAsync(int pageId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int pageId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [pageId]);
         ValidateId(pageId: pageId, parameterName: "id");
         Page page;
 
@@ -123,7 +138,8 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
 
         authorizationBroker.Authorize(appId: page.AppId, privilege: "Page_delete");
         await pageBroker.DeletePageAsync(deletedPage: CreateStoragePage(newPage: page));
-    }
+
+    }, isValueTask: true);
 
     private static Page CreateStoragePage(Page newPage)
     {

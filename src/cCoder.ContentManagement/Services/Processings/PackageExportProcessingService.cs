@@ -7,10 +7,13 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PackageExportProcessingService(IPackageExportService packageExportService) : IPackageExportProcessingService
+internal partial class PackageExportProcessingService(IPackageExportService packageExportService) : IPackageExportProcessingService
 {
-    public Package ExportPackage(int appId, string packageName)
+    public Package ExportPackage(int appId, string packageName) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidateExportPackage(inputs: [appId, packageName]);
+
         Package result = packageName switch
         {
             "Roles" => packageExportService.ExportRolesPackage(appId: appId),
@@ -28,5 +31,6 @@ internal class PackageExportProcessingService(IPackageExportService packageExpor
         };
 
         return result;
-    }
+
+    });
 }

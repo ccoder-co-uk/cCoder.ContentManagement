@@ -155,7 +155,7 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
 
         // When
 
-        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
             await resourceService.UpdateResourceAsync(updatedResource: resource)
         );
 

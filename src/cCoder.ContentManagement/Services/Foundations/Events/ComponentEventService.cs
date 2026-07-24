@@ -11,8 +11,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class ComponentEventService(IComponentEventBroker componentEventBroker, ICoreAuthInfo authInfo) : IComponentEventService
 {
-    public async ValueTask RaiseComponentAddEventAsync(Component entity)
+    public ValueTask RaiseComponentAddEventAsync(Component entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseComponentAddEventAsync(inputs: [entity]);
+
         EventMessage<Component> message = new EventMessage<Component>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal partial class ComponentEventService(IComponentEventBroker componentEven
         };
 
         await componentEventBroker.RaiseComponentAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseComponentUpdateEventAsync(Component entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseComponentUpdateEventAsync(Component entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseComponentUpdateEventAsync(inputs: [entity]);
+
         EventMessage<Component> message = new EventMessage<Component>
         {
             AuthInfo = new EventAuthInfo
@@ -37,10 +44,14 @@ internal partial class ComponentEventService(IComponentEventBroker componentEven
         };
 
         await componentEventBroker.RaiseComponentUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseComponentDeleteEventAsync(Component entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseComponentDeleteEventAsync(Component entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseComponentDeleteEventAsync(inputs: [entity]);
+
         EventMessage<Component> message = new EventMessage<Component>
         {
             AuthInfo = new EventAuthInfo
@@ -51,5 +62,6 @@ internal partial class ComponentEventService(IComponentEventBroker componentEven
         };
 
         await componentEventBroker.RaiseComponentDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

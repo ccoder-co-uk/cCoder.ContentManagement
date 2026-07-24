@@ -8,25 +8,47 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PackageItemProcessingService(IPackageItemService service) : IPackageItemProcessingService
+internal partial class PackageItemProcessingService(IPackageItemService service) : IPackageItemProcessingService
 {
     public PackageItem GetPackageItem(Guid packageItemId) =>
-        service.GetPackageItem(packageItemId: packageItemId);
+        TryCatch<PackageItem>(operation: () =>
+    {
+        ValidatePackageItemOnGet(inputs: [packageItemId]);
+        return service.GetPackageItem(packageItemId: packageItemId);
+    });
 
     public IQueryable<PackageItem> GetAllPackageItem(bool ignoreFilters = false) =>
-        service.GetAllPackageItem(ignoreFilters: ignoreFilters);
+        TryCatch<IQueryable<PackageItem>>(operation: () =>
+    {
+        ValidateAllPackageItemOnGet(inputs: [ignoreFilters]);
+        return service.GetAllPackageItem(ignoreFilters: ignoreFilters);
+    });
 
     public ValueTask<PackageItem> AddPackageItemAsync(PackageItem newPackageItem) =>
-        service.AddPackageItemAsync(newPackageItem: newPackageItem);
+        TryCatch<PackageItem>(operation: () =>
+    {
+        ValidatePackageItemOnAdd(inputs: [newPackageItem]);
+        return service.AddPackageItemAsync(newPackageItem: newPackageItem);
+    }, isValueTask: true);
 
     public ValueTask<PackageItem> UpdatePackageItemAsync(PackageItem updatedPackageItem) =>
-        service.UpdatePackageItemAsync(updatedPackageItem: updatedPackageItem);
+        TryCatch<PackageItem>(operation: () =>
+    {
+        ValidatePackageItemOnUpdate(inputs: [updatedPackageItem]);
+        return service.UpdatePackageItemAsync(updatedPackageItem: updatedPackageItem);
+    }, isValueTask: true);
 
     public ValueTask DeleteAsync(Guid packageItemId) =>
-        service.DeleteAsync(packageItemId: packageItemId);
-
-    public async ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdatePackageItemResult(IEnumerable<PackageItem> newPackageItem)
+        TryCatch(operation: () =>
     {
+        ValidateDeleteAsync(inputs: [packageItemId]);
+        return service.DeleteAsync(packageItemId: packageItemId);
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<PackageItem>>> AddOrUpdatePackageItemResult(IEnumerable<PackageItem> newPackageItem) =>
+        TryCatch<IEnumerable<Result<PackageItem>>>(operation: async () =>
+    {
+        ValidateOrUpdatePackageItemResultOnAdd(inputs: [newPackageItem]);
         List<Result<PackageItem>> results = new List<Result<PackageItem>>();
 
         foreach (PackageItem item in newPackageItem)
@@ -54,20 +76,27 @@ internal class PackageItemProcessingService(IPackageItemService service) : IPack
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllPackageItemAsync(IEnumerable<PackageItem> deletedPackageItem)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllPackageItemAsync(IEnumerable<PackageItem> deletedPackageItem) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllPackageItemOnDelete(inputs: [deletedPackageItem]);
+
         foreach (PackageItem item in deletedPackageItem)
         {
             await ExecuteDeleteAsync(packageItemId: item.Id);
         }
-    }
+
+    }, isValueTask: true);
 
     private ValueTask<PackageItem> ExecuteAddPackageItemAsync(PackageItem newPackageItem) =>
         service.AddPackageItemAsync(newPackageItem: newPackageItem);
+
     private ValueTask ExecuteDeleteAsync(Guid packageItemId) =>
         service.DeleteAsync(packageItemId: packageItemId);
+
     private ValueTask<PackageItem> ExecuteUpdatePackageItemAsync(PackageItem updatedPackageItem) =>
         service.UpdatePackageItemAsync(updatedPackageItem: updatedPackageItem);
 }

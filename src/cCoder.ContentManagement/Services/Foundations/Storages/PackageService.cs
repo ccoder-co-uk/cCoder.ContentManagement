@@ -11,8 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PackageService(IPackageBroker packageBroker, IAuthorizationBroker authorizationBroker) : IPackageService
 {
-    public Package GetPackage(Guid packageId, bool ignoreFilters = false)
+    public Package GetPackage(Guid packageId, bool ignoreFilters = false) =>
+        TryCatch<Package>(operation: () =>
     {
+        ValidatePackageOnGet(inputs: [packageId, ignoreFilters]);
         ValidateId(packageId: packageId, parameterName: "id");
 
         if (ignoreFilters)
@@ -38,13 +40,20 @@ internal partial class PackageService(IPackageBroker packageBroker, IAuthorizati
         }
 
         return null;
-    }
+
+    });
 
     public IQueryable<Package> GetAllPackage(bool ignoreFilters = false) =>
-        packageBroker.GetAllPackages(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Package> AddPackageAsync(Package newPackage)
+        TryCatch<IQueryable<Package>>(operation: () =>
     {
+        ValidateAllPackageOnGet(inputs: [ignoreFilters]);
+        return packageBroker.GetAllPackages(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Package> AddPackageAsync(Package newPackage) =>
+        TryCatch<Package>(operation: async () =>
+    {
+        ValidatePackageOnAdd(inputs: [newPackage]);
         ValidatePackage(package: newPackage, parameterName: "package");
         authorizationBroker.Authorize(appId: null, privilege: "Package_create");
         Package result = await packageBroker.AddPackageAsync(newPackage: CreateStoragePackage(newPackage: newPackage));
@@ -54,10 +63,13 @@ internal partial class PackageService(IPackageBroker packageBroker, IAuthorizati
         newPackage.Category = result.Category;
         newPackage.SourceApi = result.SourceApi;
         return newPackage;
-    }
 
-    public async ValueTask<Package> UpdatePackageAsync(Package updatedPackage)
+    }, isValueTask: true);
+
+    public ValueTask<Package> UpdatePackageAsync(Package updatedPackage) =>
+        TryCatch<Package>(operation: async () =>
     {
+        ValidatePackageOnUpdate(inputs: [updatedPackage]);
         ValidatePackage(package: updatedPackage, parameterName: "package");
         authorizationBroker.Authorize(appId: null, privilege: "Package_update");
         Package result = await packageBroker.UpdatePackageAsync(updatedPackage: CreateStoragePackage(newPackage: updatedPackage));
@@ -67,15 +79,19 @@ internal partial class PackageService(IPackageBroker packageBroker, IAuthorizati
         updatedPackage.Category = result.Category;
         updatedPackage.SourceApi = result.SourceApi;
         return updatedPackage;
-    }
 
-    public async ValueTask DeleteAsync(Guid packageId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(Guid packageId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [packageId]);
         ValidateId(packageId: packageId, parameterName: "id");
         Package package = ExecuteGetPackage(packageId: packageId);
         authorizationBroker.Authorize(appId: null, privilege: "Package_delete");
         await packageBroker.DeletePackageAsync(deletedPackage: CreateStoragePackage(newPackage: package));
-    }
+
+    }, isValueTask: true);
 
     private static Package CreateStoragePackage(Package newPackage)
     {

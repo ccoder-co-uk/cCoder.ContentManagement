@@ -12,8 +12,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PackageEventService(IPackageEventBroker packageEventBroker, ICoreAuthInfo authInfo) : IPackageEventService
 {
-    public async ValueTask RaisePackageImportEventAsync(int appId, Package package)
+    public ValueTask RaisePackageImportEventAsync(int appId, Package package) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePackageImportEventAsync(inputs: [appId, package]);
+
         EventMessage<(int, DataPackage)> message = new EventMessage<(int, DataPackage)>
         {
             AuthInfo = new EventAuthInfo
@@ -24,10 +27,14 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
         };
 
         await packageEventBroker.RaisePackageImportEventAsync(message: message);
-    }
 
-    public async ValueTask RaisePackageAddEventAsync(Package package)
+    }, isValueTask: true);
+
+    public ValueTask RaisePackageAddEventAsync(Package package) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePackageAddEventAsync(inputs: [package]);
+
         EventMessage<DataPackage> message = new EventMessage<DataPackage>
         {
             AuthInfo = new EventAuthInfo
@@ -38,10 +45,14 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
         };
 
         await packageEventBroker.RaisePackageAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaisePackageUpdateEventAsync(Package package)
+    }, isValueTask: true);
+
+    public ValueTask RaisePackageUpdateEventAsync(Package package) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePackageUpdateEventAsync(inputs: [package]);
+
         EventMessage<DataPackage> message = new EventMessage<DataPackage>
         {
             AuthInfo = new EventAuthInfo
@@ -52,10 +63,14 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
         };
 
         await packageEventBroker.RaisePackageUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaisePackageDeleteEventAsync(Package package)
+    }, isValueTask: true);
+
+    public ValueTask RaisePackageDeleteEventAsync(Package package) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePackageDeleteEventAsync(inputs: [package]);
+
         EventMessage<DataPackage> message = new EventMessage<DataPackage>
         {
             AuthInfo = new EventAuthInfo
@@ -66,5 +81,6 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
         };
 
         await packageEventBroker.RaisePackageDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

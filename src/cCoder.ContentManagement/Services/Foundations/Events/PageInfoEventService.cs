@@ -9,10 +9,13 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker, ICoreAuthInfo authInfo) : IPageInfoEventService
+internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker, ICoreAuthInfo authInfo) : IPageInfoEventService
 {
-    public async ValueTask RaisePageInfoAddEventAsync(PageInfo entity)
+    public ValueTask RaisePageInfoAddEventAsync(PageInfo entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePageInfoAddEventAsync(inputs: [entity]);
+
         EventMessage<PageInfo> message = new EventMessage<PageInfo>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker, IC
         };
 
         await pageInfoEventBroker.RaisePageInfoAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaisePageInfoUpdateEventAsync(PageInfo entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageInfoUpdateEventAsync(PageInfo entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePageInfoUpdateEventAsync(inputs: [entity]);
+
         EventMessage<PageInfo> message = new EventMessage<PageInfo>
         {
             AuthInfo = new EventAuthInfo
@@ -37,10 +44,14 @@ internal class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker, IC
         };
 
         await pageInfoEventBroker.RaisePageInfoUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaisePageInfoDeleteEventAsync(PageInfo entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageInfoDeleteEventAsync(PageInfo entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePageInfoDeleteEventAsync(inputs: [entity]);
+
         EventMessage<PageInfo> message = new EventMessage<PageInfo>
         {
             AuthInfo = new EventAuthInfo
@@ -51,5 +62,6 @@ internal class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker, IC
         };
 
         await pageInfoEventBroker.RaisePageInfoDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

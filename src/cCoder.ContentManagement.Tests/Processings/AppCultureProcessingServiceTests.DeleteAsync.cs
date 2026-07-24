@@ -67,7 +67,7 @@ times: Times.Once
 
         // When
 
-        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
             await appCultureProcessingService.DeleteAppCultureAsync(deletedAppCulture: appCulture)
         );
 
@@ -86,7 +86,7 @@ times: Times.Once
 
         // When
 
-        await Assert.ThrowsAsync<InvalidOperationException>(testCode: async () =>
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException>(testCode: async () =>
             await appCultureProcessingService.DeleteAppCultureAsync(deletedAppCulture: appCulture));
 
         // Then

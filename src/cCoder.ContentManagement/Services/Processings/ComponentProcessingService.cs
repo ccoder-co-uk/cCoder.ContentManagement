@@ -9,25 +9,47 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class ComponentProcessingService(IComponentService service) : IComponentProcessingService
+internal partial class ComponentProcessingService(IComponentService service) : IComponentProcessingService
 {
     public Component GetComponent(int componentId) =>
-        service.GetComponent(componentId: componentId);
+        TryCatch<Component>(operation: () =>
+    {
+        ValidateComponentOnGet(inputs: [componentId]);
+        return service.GetComponent(componentId: componentId);
+    });
 
     public IQueryable<Component> GetAllComponent(bool ignoreFilters = false) =>
-        service.GetAllComponent(ignoreFilters: ignoreFilters);
+        TryCatch<IQueryable<Component>>(operation: () =>
+    {
+        ValidateAllComponentOnGet(inputs: [ignoreFilters]);
+        return service.GetAllComponent(ignoreFilters: ignoreFilters);
+    });
 
     public ValueTask<Component> AddComponentAsync(Component newComponent) =>
-        service.AddComponentAsync(newComponent: newComponent);
+        TryCatch<Component>(operation: () =>
+    {
+        ValidateComponentOnAdd(inputs: [newComponent]);
+        return service.AddComponentAsync(newComponent: newComponent);
+    }, isValueTask: true);
 
     public ValueTask<Component> UpdateComponentAsync(Component updatedComponent) =>
-        service.UpdateComponentAsync(updatedComponent: updatedComponent);
+        TryCatch<Component>(operation: () =>
+    {
+        ValidateComponentOnUpdate(inputs: [updatedComponent]);
+        return service.UpdateComponentAsync(updatedComponent: updatedComponent);
+    }, isValueTask: true);
 
     public ValueTask DeleteAsync(int componentId) =>
-        service.DeleteAsync(componentId: componentId);
-
-    public async ValueTask<IEnumerable<Result<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent)
+        TryCatch(operation: () =>
     {
+        ValidateDeleteAsync(inputs: [componentId]);
+        return service.DeleteAsync(componentId: componentId);
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<Component>>> AddOrUpdateComponentResult(IEnumerable<Component> newComponent) =>
+        TryCatch<IEnumerable<Result<Component>>>(operation: async () =>
+    {
+        ValidateOrUpdateComponentResultOnAdd(inputs: [newComponent]);
         ValidateComponents(components: newComponent, parameterName: "items");
         List<Result<Component>> results = new List<Result<Component>>();
 
@@ -56,17 +78,21 @@ internal class ComponentProcessingService(IComponentService service) : IComponen
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllComponentAsync(IEnumerable<Component> deletedComponent)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllComponentAsync(IEnumerable<Component> deletedComponent) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllComponentOnDelete(inputs: [deletedComponent]);
         ValidateComponents(components: deletedComponent, parameterName: "items");
 
         foreach (Component item in deletedComponent)
         {
             await ExecuteDeleteAsync(componentId: item.Id);
         }
-    }
+
+    }, isValueTask: true);
 
     private static void ValidateComponents(IEnumerable<Component> components, string parameterName) =>
         ThrowIf(condition: components == null, message: parameterName + " is required.");
@@ -81,8 +107,10 @@ internal class ComponentProcessingService(IComponentService service) : IComponen
 
     private ValueTask<Component> ExecuteAddComponentAsync(Component newComponent) =>
         service.AddComponentAsync(newComponent: newComponent);
+
     private ValueTask ExecuteDeleteAsync(int componentId) =>
         service.DeleteAsync(componentId: componentId);
+
     private ValueTask<Component> ExecuteUpdateComponentAsync(Component updatedComponent) =>
         service.UpdateComponentAsync(updatedComponent: updatedComponent);
 }

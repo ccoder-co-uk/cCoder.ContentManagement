@@ -11,8 +11,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, ICoreAuthInfo authInfo) : IScriptEventService
 {
-    public async ValueTask RaiseScriptAddEventAsync(Script entity)
+    public ValueTask RaiseScriptAddEventAsync(Script entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseScriptAddEventAsync(inputs: [entity]);
+
         EventMessage<Script> message = new EventMessage<Script>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, 
         };
 
         await scriptEventBroker.RaiseScriptAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseScriptUpdateEventAsync(Script entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseScriptUpdateEventAsync(Script entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseScriptUpdateEventAsync(inputs: [entity]);
+
         EventMessage<Script> message = new EventMessage<Script>
         {
             AuthInfo = new EventAuthInfo
@@ -37,10 +44,14 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, 
         };
 
         await scriptEventBroker.RaiseScriptUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseScriptDeleteEventAsync(Script entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseScriptDeleteEventAsync(Script entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseScriptDeleteEventAsync(inputs: [entity]);
+
         EventMessage<Script> message = new EventMessage<Script>
         {
             AuthInfo = new EventAuthInfo
@@ -51,5 +62,6 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker, 
         };
 
         await scriptEventBroker.RaiseScriptDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

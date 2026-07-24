@@ -11,33 +11,46 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAuthorizationBroker authorizationBroker) : IAppCultureService
 {
     public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
-        appCultureBroker.GetAllAppCultures(ignoreFilters: ignoreFilters);
-
-    public AppCulture GetAppCulture(int appId, string cultureId, bool ignoreFilters = false)
+        TryCatch<IQueryable<AppCulture>>(operation: () =>
     {
+        ValidateAllAppCultureOnGet(inputs: [ignoreFilters]);
+        return appCultureBroker.GetAllAppCultures(ignoreFilters: ignoreFilters);
+    });
+
+    public AppCulture GetAppCulture(int appId, string cultureId, bool ignoreFilters = false) =>
+        TryCatch<AppCulture>(operation: () =>
+    {
+        ValidateAppCultureOnGet(inputs: [appId, cultureId, ignoreFilters]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateCultureId(cultureId: cultureId, parameterName: "cultureId");
 
         return appCultureBroker.GetAllAppCultures(ignoreFilters: ignoreFilters)
             .FirstOrDefault(predicate: appCulture => appCulture.AppId == appId && appCulture.CultureId == cultureId);
-    }
 
-    public async ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture)
+    });
+
+    public ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture) =>
+        TryCatch<AppCulture>(operation: async () =>
     {
+        ValidateAppCultureOnAdd(inputs: [newAppCulture]);
         ValidateAppCulture(appCulture: newAppCulture, parameterName: "appCulture");
         authorizationBroker.Authorize(appId: newAppCulture.AppId, privilege: "AppCulture_create");
         AppCulture result = await appCultureBroker.AddAppCultureAsync(newAppCulture: CreateStorageAppCulture(newAppCulture: newAppCulture));
         newAppCulture.AppId = result.AppId;
         newAppCulture.CultureId = result.CultureId;
         return newAppCulture;
-    }
 
-    public async ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAppCultureOnDelete(inputs: [deletedAppCulture]);
         ValidateAppCulture(appCulture: deletedAppCulture, parameterName: "appCulture");
         authorizationBroker.Authorize(appId: deletedAppCulture.AppId, privilege: "AppCulture_delete");
         await appCultureBroker.DeleteAppCultureAsync(deletedAppCulture: CreateStorageAppCulture(newAppCulture: deletedAppCulture));
-    }
+
+    }, isValueTask: true);
 
     private static AppCulture CreateStorageAppCulture(AppCulture newAppCulture)
     {

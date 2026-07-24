@@ -11,8 +11,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class CultureEventService(ICultureEventBroker cultureEventBroker, ICoreAuthInfo authInfo) : ICultureEventService
 {
-    public async ValueTask RaiseCultureAddEventAsync(Culture entity)
+    public ValueTask RaiseCultureAddEventAsync(Culture entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseCultureAddEventAsync(inputs: [entity]);
+
         EventMessage<Culture> message = new EventMessage<Culture>
         {
             AuthInfo = new EventAuthInfo
@@ -23,10 +26,14 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
         };
 
         await cultureEventBroker.RaiseCultureAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseCultureUpdateEventAsync(Culture entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseCultureUpdateEventAsync(Culture entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseCultureUpdateEventAsync(inputs: [entity]);
+
         EventMessage<Culture> message = new EventMessage<Culture>
         {
             AuthInfo = new EventAuthInfo
@@ -37,10 +44,14 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
         };
 
         await cultureEventBroker.RaiseCultureUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseCultureDeleteEventAsync(Culture entity)
+    }, isValueTask: true);
+
+    public ValueTask RaiseCultureDeleteEventAsync(Culture entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseCultureDeleteEventAsync(inputs: [entity]);
+
         EventMessage<Culture> message = new EventMessage<Culture>
         {
             AuthInfo = new EventAuthInfo
@@ -51,5 +62,6 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
         };
 
         await cultureEventBroker.RaiseCultureDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

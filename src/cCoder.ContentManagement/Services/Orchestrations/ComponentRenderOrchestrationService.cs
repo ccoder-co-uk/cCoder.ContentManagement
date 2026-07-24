@@ -8,18 +8,21 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal sealed class ComponentRenderOrchestrationService(
+internal sealed partial class ComponentRenderOrchestrationService(
     IComponentRenderProcessingService componentRenderProcessingService) : IComponentRenderOrchestrationService
 {
-    public string RenderUser(int appId, string name, User user, string culture, string theme)
+    public string RenderUser(int appId, string name, User user, string culture, string theme) =>
+        TryCatch<string>(operation: () =>
     {
+        ValidateRenderUser(inputs: [appId, name, user, culture, theme]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateName(name: name, parameterName: "name");
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");
 
         return componentRenderProcessingService.RenderUser(appId: appId, name: name, user: user, culture: culture, theme: theme);
-    }
+
+    });
 
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");

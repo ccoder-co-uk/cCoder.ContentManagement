@@ -54,7 +54,7 @@ public partial class ComponentProcessingServiceTests
 
         // When
 
-        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
             await componentProcessingService.AddComponentAsync(newComponent: component)
         );
 

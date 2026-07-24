@@ -7,15 +7,19 @@ using cCoder.ContentManagement.Rendering.Models;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
-internal sealed class CommonObjectCacheService(ICommonObjectReaderBroker broker) : ICommonObjectCacheService
+internal sealed partial class CommonObjectCacheService(ICommonObjectReaderBroker broker) : ICommonObjectCacheService
 {
-    public PageCacheSlice GetPageRenderEngineRequestPageCacheSlice(PageRenderEngineRequest request)
+    public PageCacheSlice GetPageRenderEngineRequestPageCacheSlice(PageRenderEngineRequest request) =>
+        TryCatch<PageCacheSlice>(operation: () =>
     {
+        ValidatePageRenderEngineRequestPageCacheSliceOnGet(inputs: [request]);
+
         return new PageCacheSlice
         {
             CommonResourcesByLookup = broker.GetResourcesByLookup(),
             CommonComponentsByName = broker.GetComponentsByName(),
             CommonScriptsByName = broker.GetScriptsByName()
         };
-    }
+
+    });
 }

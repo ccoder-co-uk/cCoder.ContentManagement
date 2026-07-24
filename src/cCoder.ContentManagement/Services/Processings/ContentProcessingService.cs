@@ -9,37 +9,55 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class ContentProcessingService(IContentService service) : IContentProcessingService
+internal partial class ContentProcessingService(IContentService service) : IContentProcessingService
 {
-    public Content GetContent(int contentId)
+    public Content GetContent(int contentId) =>
+        TryCatch<Content>(operation: () =>
     {
+        ValidateContentOnGet(inputs: [contentId]);
         ValidateId(contentId: contentId, parameterName: "id");
         return service.GetContent(contentId: contentId);
-    }
+
+    });
 
     public IQueryable<Content> GetAllContent(bool ignoreFilters = false) =>
-        service.GetAllContent(ignoreFilters: ignoreFilters);
-
-    public ValueTask<Content> AddContentAsync(Content newContent)
+        TryCatch<IQueryable<Content>>(operation: () =>
     {
+        ValidateAllContentOnGet(inputs: [ignoreFilters]);
+        return service.GetAllContent(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Content> AddContentAsync(Content newContent) =>
+        TryCatch<Content>(operation: () =>
+    {
+        ValidateContentOnAdd(inputs: [newContent]);
         ValidateContent(content: newContent, parameterName: "entity");
         return service.AddContentAsync(newContent: newContent);
-    }
 
-    public ValueTask<Content> UpdateContentAsync(Content updatedContent)
+    }, isValueTask: true);
+
+    public ValueTask<Content> UpdateContentAsync(Content updatedContent) =>
+        TryCatch<Content>(operation: () =>
     {
+        ValidateContentOnUpdate(inputs: [updatedContent]);
         ValidateContent(content: updatedContent, parameterName: "entity");
         return service.UpdateContentAsync(updatedContent: updatedContent);
-    }
 
-    public ValueTask DeleteAsync(int contentId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int contentId) =>
+        TryCatch(operation: () =>
     {
+        ValidateDeleteAsync(inputs: [contentId]);
         ValidateId(contentId: contentId, parameterName: "id");
         return service.DeleteAsync(contentId: contentId);
-    }
 
-    public async ValueTask<IEnumerable<Result<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent) =>
+        TryCatch<IEnumerable<Result<Content>>>(operation: async () =>
     {
+        ValidateOrUpdateContentResultOnAdd(inputs: [newContent]);
         ValidateContents(contents: newContent, parameterName: "items");
         List<Result<Content>> results = new List<Result<Content>>();
 
@@ -68,17 +86,21 @@ internal class ContentProcessingService(IContentService service) : IContentProce
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllContentAsync(IEnumerable<Content> deletedContent)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllContentAsync(IEnumerable<Content> deletedContent) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllContentOnDelete(inputs: [deletedContent]);
         ValidateContents(contents: deletedContent, parameterName: "items");
 
         foreach (Content item in deletedContent)
         {
             await ExecuteDeleteAsync(contentId: item.Id);
         }
-    }
+
+    }, isValueTask: true);
 
     private static void ValidateId(int contentId, string parameterName) =>
         ThrowIf(condition: contentId < 1, message: parameterName + " must be greater than 0.");

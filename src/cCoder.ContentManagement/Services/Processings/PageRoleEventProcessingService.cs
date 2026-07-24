@@ -8,21 +8,27 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal class PageRoleEventProcessingService(IPageRoleEventService eventService) : IPageRoleEventProcessingService
+internal partial class PageRoleEventProcessingService(IPageRoleEventService eventService) : IPageRoleEventProcessingService
 {
-    public ValueTask RaisePageRoleAddEventAsync(PageRole entity)
+    public ValueTask RaisePageRoleAddEventAsync(PageRole entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaisePageRoleAddEventAsync(inputs: [entity]);
         ValidatePageRole(pageRole: entity, parameterName: "entity");
 
         return eventService.RaisePageRoleAddEventAsync(entity: entity);
-    }
 
-    public ValueTask RaisePageRoleDeleteEventAsync(PageRole entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePageRoleDeleteEventAsync(PageRole entity) =>
+        TryCatch(operation: () =>
     {
+        ValidateRaisePageRoleDeleteEventAsync(inputs: [entity]);
         ValidatePageRole(pageRole: entity, parameterName: "entity");
 
         return eventService.RaisePageRoleDeleteEventAsync(entity: entity);
-    }
+
+    }, isValueTask: true);
 
     private static void ValidatePageRole(PageRole pageRole, string parameterName) =>
         ThrowIf(condition: pageRole == null, message: parameterName + " is required.");

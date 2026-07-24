@@ -10,36 +10,52 @@ using cCoder.ContentManagement.Services.Processings;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal class ContentOrchestrationService(
+internal partial class ContentOrchestrationService(
     IContentProcessingService processingService,
     IContentEventProcessingService eventService) : IContentOrchestrationService
 {
     public Content GetContent(int contentId) =>
-        processingService.GetContent(contentId: ValidateId(contentId: contentId, parameterName: "id"));
+        TryCatch<Content>(operation: () =>
+    {
+        ValidateContentOnGet(inputs: [contentId]);
+        return processingService.GetContent(contentId: ValidateId(contentId: contentId, parameterName: "id"));
+    });
 
     public IQueryable<Content> GetAllContent(bool ignoreFilters = false) =>
-        processingService.GetAllContent(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Content> AddContentAsync(Content newContent)
+        TryCatch<IQueryable<Content>>(operation: () =>
     {
+        ValidateAllContentOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllContent(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Content> AddContentAsync(Content newContent) =>
+        TryCatch<Content>(operation: async () =>
+    {
+        ValidateContentOnAdd(inputs: [newContent]);
         ValidateContent(content: newContent, parameterName: "entity");
 
         Content result = await processingService.AddContentAsync(newContent: newContent);
         await eventService.RaiseContentAddEventAsync(entity: result);
         return result;
-    }
 
-    public async ValueTask<Content> UpdateContentAsync(Content updatedContent)
+    }, isValueTask: true);
+
+    public ValueTask<Content> UpdateContentAsync(Content updatedContent) =>
+        TryCatch<Content>(operation: async () =>
     {
+        ValidateContentOnUpdate(inputs: [updatedContent]);
         ValidateContent(content: updatedContent, parameterName: "entity");
 
         Content result = await processingService.UpdateContentAsync(updatedContent: updatedContent);
         await eventService.RaiseContentUpdateEventAsync(entity: result);
         return result;
-    }
 
-    public async ValueTask DeleteAsync(int contentId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int contentId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [contentId]);
         ValidateId(contentId: contentId, parameterName: "id");
 
         Content entity;
@@ -61,10 +77,14 @@ internal class ContentOrchestrationService(
 
         await eventService.RaiseContentDeleteEventAsync(entity: entity);
         await processingService.DeleteAsync(contentId: contentId);
-    }
 
-    public async ValueTask<IEnumerable<Result<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent) =>
+        TryCatch<IEnumerable<Result<Content>>>(operation: async () =>
     {
+        ValidateOrUpdateContentResultOnAdd(inputs: [newContent]);
+
         Content[] contents = ValidateContents(contents: newContent, parameterName: "items")
             .ToArray();
 
@@ -97,10 +117,14 @@ internal class ContentOrchestrationService(
         }
 
         return results;
-    }
 
-    public async ValueTask DeleteAllContentAsync(IEnumerable<Content> deletedContent)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllContentAsync(IEnumerable<Content> deletedContent) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllContentOnDelete(inputs: [deletedContent]);
+
         Content[] contents = ValidateContents(contents: deletedContent, parameterName: "items")
             .ToArray();
 
@@ -108,7 +132,8 @@ internal class ContentOrchestrationService(
         {
             await ExecuteDeleteAsync(contentId: content.Id);
         }
-    }
+
+    }, isValueTask: true);
 
     private static int ValidateId(int contentId, string parameterName)
     {

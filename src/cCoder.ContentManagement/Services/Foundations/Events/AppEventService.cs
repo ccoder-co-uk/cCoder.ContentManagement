@@ -11,8 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuthInfo authInfo) : IAppEventService
 {
-    public async ValueTask RaiseAppAddEventAsync(App app)
+    public ValueTask RaiseAppAddEventAsync(App app) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseAppAddEventAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
 
         EventMessage<App> message = new EventMessage<App>
@@ -25,10 +27,13 @@ internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuth
         };
 
         await appEventBroker.RaiseAppAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseAppUpdateEventAsync(App app)
+    }, isValueTask: true);
+
+    public ValueTask RaiseAppUpdateEventAsync(App app) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseAppUpdateEventAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
 
         EventMessage<App> message = new EventMessage<App>
@@ -41,10 +46,13 @@ internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuth
         };
 
         await appEventBroker.RaiseAppUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaiseAppDeleteEventAsync(App app)
+    }, isValueTask: true);
+
+    public ValueTask RaiseAppDeleteEventAsync(App app) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaiseAppDeleteEventAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
 
         EventMessage<App> message = new EventMessage<App>
@@ -57,5 +65,6 @@ internal partial class AppEventService(IAppEventBroker appEventBroker, ICoreAuth
         };
 
         await appEventBroker.RaiseAppDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

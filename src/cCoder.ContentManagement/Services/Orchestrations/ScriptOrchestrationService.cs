@@ -10,36 +10,52 @@ using cCoder.ContentManagement.Services.Processings;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal class ScriptOrchestrationService(
+internal partial class ScriptOrchestrationService(
     IScriptProcessingService processingService,
     IScriptEventProcessingService eventService) : IScriptOrchestrationService
 {
     public Script GetScript(int scriptId) =>
-        processingService.GetScript(scriptId: ValidateId(scriptId: scriptId, parameterName: "id"));
+        TryCatch<Script>(operation: () =>
+    {
+        ValidateScriptOnGet(inputs: [scriptId]);
+        return processingService.GetScript(scriptId: ValidateId(scriptId: scriptId, parameterName: "id"));
+    });
 
     public IQueryable<Script> GetAllScript(bool ignoreFilters = false) =>
-        processingService.GetAllScript(ignoreFilters: ignoreFilters);
-
-    public async ValueTask<Script> AddScriptAsync(Script newScript)
+        TryCatch<IQueryable<Script>>(operation: () =>
     {
+        ValidateAllScriptOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllScript(ignoreFilters: ignoreFilters);
+    });
+
+    public ValueTask<Script> AddScriptAsync(Script newScript) =>
+        TryCatch<Script>(operation: async () =>
+    {
+        ValidateScriptOnAdd(inputs: [newScript]);
         ValidateScript(script: newScript, parameterName: "entity");
 
         Script result = await processingService.AddScriptAsync(newScript: newScript);
         await eventService.RaiseScriptAddEventAsync(entity: result);
         return result;
-    }
 
-    public async ValueTask<Script> UpdateScriptAsync(Script updatedScript)
+    }, isValueTask: true);
+
+    public ValueTask<Script> UpdateScriptAsync(Script updatedScript) =>
+        TryCatch<Script>(operation: async () =>
     {
+        ValidateScriptOnUpdate(inputs: [updatedScript]);
         ValidateScript(script: updatedScript, parameterName: "entity");
 
         Script result = await processingService.UpdateScriptAsync(updatedScript: updatedScript);
         await eventService.RaiseScriptUpdateEventAsync(entity: result);
         return result;
-    }
 
-    public async ValueTask DeleteAsync(int scriptId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAsync(int scriptId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateDeleteAsync(inputs: [scriptId]);
         ValidateId(scriptId: scriptId, parameterName: "id");
 
         Script entity;
@@ -61,10 +77,13 @@ internal class ScriptOrchestrationService(
 
         await eventService.RaiseScriptDeleteEventAsync(entity: entity);
         await processingService.DeleteAsync(scriptId: scriptId);
-    }
 
-    public async ValueTask DeleteByAppIdAsync(int appId)
+    }, isValueTask: true);
+
+    public ValueTask DeleteByAppIdAsync(int appId) =>
+        TryCatch(operation: async () =>
     {
+        ValidateByAppIdOnDelete(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
         Script[] scriptsToDelete = [.. ExecuteGetAllScript(ignoreFilters: true)
@@ -74,10 +93,14 @@ internal class ScriptOrchestrationService(
         {
             await ExecuteDeleteAllScriptAsync(deletedScript: scriptsToDelete);
         }
-    }
 
-    public async ValueTask<IEnumerable<Result<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript)
+    }, isValueTask: true);
+
+    public ValueTask<IEnumerable<Result<Script>>> AddOrUpdateScriptResult(IEnumerable<Script> newScript) =>
+        TryCatch<IEnumerable<Result<Script>>>(operation: async () =>
     {
+        ValidateOrUpdateScriptResultOnAdd(inputs: [newScript]);
+
         Script[] scripts = ValidateScripts(scripts: newScript, parameterName: "items")
             .ToArray();
 
@@ -110,10 +133,13 @@ internal class ScriptOrchestrationService(
         }
 
         return results;
-    }
 
-    public async ValueTask ImportScriptsAsync(int appId, Script[] items)
+    }, isValueTask: true);
+
+    public ValueTask ImportScriptsAsync(int appId, Script[] items) =>
+        TryCatch(operation: async () =>
     {
+        ValidateImportScriptsAsync(inputs: [appId, items]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
         Script[] validatedItems = ValidateScripts(scripts: items, parameterName: "items")
@@ -136,10 +162,14 @@ internal class ScriptOrchestrationService(
         });
 
         await ExecuteAddOrUpdateScriptResult(newScript: validatedItems);
-    }
 
-    public async ValueTask DeleteAllScriptAsync(IEnumerable<Script> deletedScript)
+    }, isValueTask: true);
+
+    public ValueTask DeleteAllScriptAsync(IEnumerable<Script> deletedScript) =>
+        TryCatch(operation: async () =>
     {
+        ValidateAllScriptOnDelete(inputs: [deletedScript]);
+
         Script[] scripts = ValidateScripts(scripts: deletedScript, parameterName: "items")
             .ToArray();
 
@@ -147,7 +177,8 @@ internal class ScriptOrchestrationService(
         {
             await ExecuteDeleteAsync(scriptId: script.Id);
         }
-    }
+
+    }, isValueTask: true);
 
     private static int ValidateId(int scriptId, string parameterName)
     {

@@ -12,8 +12,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PackageItemEventService(IPackageItemEventBroker packageItemEventBroker, ICoreAuthInfo authInfo) : IPackageItemEventService
 {
-    public async ValueTask RaisePackageItemAddEventAsync(PackageItem entity)
+    public ValueTask RaisePackageItemAddEventAsync(PackageItem entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePackageItemAddEventAsync(inputs: [entity]);
+
         EventMessage<DataPackageItem> message = new EventMessage<DataPackageItem>
         {
             AuthInfo = new EventAuthInfo
@@ -24,10 +27,14 @@ internal partial class PackageItemEventService(IPackageItemEventBroker packageIt
         };
 
         await packageItemEventBroker.RaisePackageItemAddEventAsync(message: message);
-    }
 
-    public async ValueTask RaisePackageItemUpdateEventAsync(PackageItem entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePackageItemUpdateEventAsync(PackageItem entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePackageItemUpdateEventAsync(inputs: [entity]);
+
         EventMessage<DataPackageItem> message = new EventMessage<DataPackageItem>
         {
             AuthInfo = new EventAuthInfo
@@ -38,10 +45,14 @@ internal partial class PackageItemEventService(IPackageItemEventBroker packageIt
         };
 
         await packageItemEventBroker.RaisePackageItemUpdateEventAsync(message: message);
-    }
 
-    public async ValueTask RaisePackageItemDeleteEventAsync(PackageItem entity)
+    }, isValueTask: true);
+
+    public ValueTask RaisePackageItemDeleteEventAsync(PackageItem entity) =>
+        TryCatch(operation: async () =>
     {
+        ValidateRaisePackageItemDeleteEventAsync(inputs: [entity]);
+
         EventMessage<DataPackageItem> message = new EventMessage<DataPackageItem>
         {
             AuthInfo = new EventAuthInfo
@@ -52,5 +63,6 @@ internal partial class PackageItemEventService(IPackageItemEventBroker packageIt
         };
 
         await packageItemEventBroker.RaisePackageItemDeleteEventAsync(message: message);
-    }
+
+    }, isValueTask: true);
 }

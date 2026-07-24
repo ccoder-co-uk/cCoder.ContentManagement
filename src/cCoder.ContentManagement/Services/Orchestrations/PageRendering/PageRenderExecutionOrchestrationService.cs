@@ -7,13 +7,16 @@ using cCoder.ContentManagement.Rendering.Services.Foundations;
 
 namespace cCoder.ContentManagement.Rendering.Services.Orchestrations;
 
-internal sealed class PageRenderExecutionOrchestrationService(
+internal sealed partial class PageRenderExecutionOrchestrationService(
     IMetadataCacheService metadataCacheService,
     ICommonObjectCacheService commonObjectCacheService,
     IMarkupRenderService markupRenderService) : IPageRenderExecutionOrchestrationService
 {
-    public PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session)
+    public PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session) =>
+        TryCatch<PageRenderResult>(operation: () =>
     {
+        ValidateRenderPageRenderSessionPageRenderResult(inputs: [session]);
+
         string culture = !string.IsNullOrWhiteSpace(value: session.Request.Culture)
             ? session.Request.Culture
             : session.App?.DefaultCulture ?? string.Empty;
@@ -26,5 +29,6 @@ internal sealed class PageRenderExecutionOrchestrationService(
         session.CommonScriptsByName = pageCacheSlice.CommonScriptsByName;
 
         return markupRenderService.RenderPageRenderSessionPageRenderResult(session: session);
-    }
+
+    });
 }
