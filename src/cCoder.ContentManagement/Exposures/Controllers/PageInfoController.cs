@@ -80,7 +80,8 @@ public class PageInfoController : ODataController
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<PageInfo> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<PageInfo> updatedDelta)
     {
         PageInfo originalEntity = Service.GetPageInfo(pageInfoId: key);
 
@@ -89,7 +90,7 @@ public class PageInfoController : ODataController
             return NotFound();
         }
 
-        delta.Patch(original: originalEntity);
+        updatedDelta.Patch(original: originalEntity);
         return Ok(value: await Service.UpdatePageInfoAsync(updatedPageInfo: originalEntity));
     }
 

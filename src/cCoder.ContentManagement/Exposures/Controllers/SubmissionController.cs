@@ -81,7 +81,8 @@ public class SubmissionController : ODataController
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] Guid key, Delta<Submission> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] Guid key, Delta<Submission> updatedDelta)
     {
         Submission originalEntity = Service.GetSubmission(submissionId: key);
 
@@ -90,7 +91,7 @@ public class SubmissionController : ODataController
             return NotFound();
         }
 
-        delta.Patch(original: originalEntity);
+        updatedDelta.Patch(original: originalEntity);
         return new JsonResult(value: CreateResponseSubmission(newSubmission: await Service.UpdateSubmissionAsync(updatedSubmission: originalEntity)));
     }
 

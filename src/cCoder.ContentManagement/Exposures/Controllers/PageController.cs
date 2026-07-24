@@ -43,11 +43,13 @@ public class PageController : ODataController
     [HttpGet]
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
-    public IActionResult RootFor([FromRoute] int key) =>
+    [ActionName("RootFor")]
+    public IActionResult GetRootFor([FromRoute] int key) =>
         Ok(value: CreateResponsePage(newPage: Service.GetRootPage(pageId: key)));
 
     [HttpGet]
-    public IActionResult Menu([FromRoute] int key, string culture)
+    [ActionName("Menu")]
+    public IActionResult GetMenu([FromRoute] int key, string culture)
     {
         return Ok(value: new Result<string>
         {
@@ -59,7 +61,8 @@ public class PageController : ODataController
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Render(int appId, string path, string theme, string culture) =>
+    [ActionName("Render")]
+    public IActionResult GetRender(int appId, string path, string theme, string culture) =>
         Ok(value: RenderService.RenderRenderResult(appId: appId, path: path, theme: theme, culture: culture));
 
     [HttpGet]
@@ -111,7 +114,8 @@ public class PageController : ODataController
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<Page> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Page> updatedDelta)
     {
         Page originalEntity = Service.GetPage(pageId: key);
 
@@ -120,7 +124,7 @@ public class PageController : ODataController
             return NotFound();
         }
 
-        delta.Patch(original: originalEntity);
+        updatedDelta.Patch(original: originalEntity);
         return Ok(value: CreateResponsePage(newPage: await Service.UpdatePageAsync(updatedPage: originalEntity)));
     }
 

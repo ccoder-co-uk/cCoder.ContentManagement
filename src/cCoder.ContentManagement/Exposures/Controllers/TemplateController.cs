@@ -36,7 +36,8 @@ public class TemplateController : ODataController
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<IActionResult> Render(int appId, string name, string culture)
+    [ActionName("Render")]
+    public async Task<IActionResult> GetRender(int appId, string name, string culture)
     {
         using StreamReader reader = new StreamReader(stream: base.Request.Body);
         dynamic m = JsonConvert.DeserializeObject(value: await reader.ReadToEndAsync());
@@ -45,7 +46,8 @@ public class TemplateController : ODataController
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<IActionResult> HtmlToPdf(string name)
+    [ActionName("HtmlToPdf")]
+    public async Task<IActionResult> GetHtmlToPdf(string name)
     {
         using StreamReader reader = new StreamReader(stream: base.Request.Body);
         string htmlContent = await reader.ReadToEndAsync();
@@ -108,7 +110,8 @@ public class TemplateController : ODataController
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<Template> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Template> updatedDelta)
     {
         Template originalEntity = Service.GetTemplate(templateId: key);
 
@@ -117,7 +120,7 @@ public class TemplateController : ODataController
             return NotFound();
         }
 
-        delta.Patch(original: originalEntity);
+        updatedDelta.Patch(original: originalEntity);
         return Ok(value: await Service.UpdateTemplateAsync(updatedTemplate: originalEntity));
     }
 

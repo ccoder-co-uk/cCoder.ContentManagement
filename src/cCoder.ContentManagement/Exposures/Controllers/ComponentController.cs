@@ -33,7 +33,8 @@ public class ComponentController : ODataController
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Render(int appId, string name, string culture, string theme) =>
+    [ActionName("Render")]
+    public IActionResult GetRender(int appId, string name, string culture, string theme) =>
         Ok(value: Renderer.Render(appId: appId, name: name, culture: culture, theme: theme));
 
     [HttpGet]
@@ -90,7 +91,8 @@ public class ComponentController : ODataController
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<Component> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Component> updatedDelta)
     {
         Component originalEntity = Service.GetComponent(componentId: key);
 
@@ -99,7 +101,7 @@ public class ComponentController : ODataController
             return NotFound();
         }
 
-        delta.Patch(original: originalEntity);
+        updatedDelta.Patch(original: originalEntity);
         return Ok(value: await Service.UpdateComponentAsync(updatedComponent: originalEntity));
     }
 

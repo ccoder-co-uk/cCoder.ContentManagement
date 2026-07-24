@@ -24,11 +24,13 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
-    public IActionResult Latest(string type) =>
+    [ActionName("Latest")]
+    public IActionResult GetLatest(string type) =>
         Ok(value: Service.LatestCommonObject(type: type));
 
     [HttpPost]
-    public async Task<IActionResult> ImportAsync([FromBody] JsonElement payload)
+    [ActionName("Import")]
+    public async Task<IActionResult> PostImportAsync([FromBody] JsonElement payload)
     {
         if (!base.ModelState.IsValid)
         {
@@ -100,7 +102,8 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<CommonObject> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<CommonObject> updatedDelta)
     {
         CommonObject originalEntity = Service.GetCommonObject(commonObjectId: key);
 
@@ -109,7 +112,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
             return NotFound();
         }
 
-        delta.Patch(original: originalEntity);
+        updatedDelta.Patch(original: originalEntity);
         return Ok(value: await Service.UpdateCommonObjectAsync(updatedCommonObject: originalEntity));
     }
 

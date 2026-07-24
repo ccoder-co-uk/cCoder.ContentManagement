@@ -33,16 +33,19 @@ public class AppController : ODataController
     }
 
     [HttpGet]
-    public IActionResult IsAdmin([FromRoute] int key, string userName) =>
+    [ActionName("IsAdmin")]
+    public IActionResult GetIsAdmin([FromRoute] int key, string userName) =>
         Ok(value: AuthorizationBroker.IsAdmin(appId: key, userName: userName));
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
-    public IActionResult Users([FromRoute] int key) =>
+    [ActionName("Users")]
+    public IActionResult GetUsers([FromRoute] int key) =>
         Ok(value: Service.GetAppUsers(appId: key));
 
     [HttpPost]
-    public async Task<IActionResult> UpdatePageOrderAsync([FromRoute] int key, ODataActionParameters p)
+    [ActionName("UpdatePageOrder")]
+    public async Task<IActionResult> PostUpdatePageOrderAsync([FromRoute] int key, ODataActionParameters p)
     {
         App app = p["app"] as App;
         await Service.UpdatePageOrderAppAsync(key: key, updatedApp: app);
@@ -104,7 +107,8 @@ public class AppController : ODataController
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    public async Task<IActionResult> Patch([FromRoute] int key, Delta<App> delta)
+    [ActionName("Patch")]
+    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<App> updatedDelta)
     {
         App originalEntity = Service.GetApp(appId: key);
 
@@ -113,7 +117,7 @@ public class AppController : ODataController
             return NotFound();
         }
 
-        delta.Patch(original: originalEntity);
+        updatedDelta.Patch(original: originalEntity);
         return Ok(value: CreateResponseApp(newApp: await Service.UpdateAppAsync(updatedApp: originalEntity)));
     }
 
