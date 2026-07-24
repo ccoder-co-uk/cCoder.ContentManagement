@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Models;
@@ -22,7 +23,7 @@ internal sealed partial class MarkupRenderService(
     IComponentReaderBroker componentReaderBroker,
     IScriptReaderBroker scriptReaderBroker,
     IJsonBroker jsonBroker,
-    IRenderFileContentService renderFileContentService) : IMarkupRenderService
+    IRenderFileContentBroker renderFileContentBroker) : IMarkupRenderService
 {
     private static readonly RegexOptions regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline;
 
@@ -183,7 +184,11 @@ values: session.App.PagesById.Values
         RegexReplace(source: source, regex: syntax.DmsRegex, action: match =>
                                                                                                                                     {
                                                                                                                                         string name = GetName(match: match);
-                                                                                                                                        string latestTextContent = renderFileContentService.GetLatestTextContent(appId: session.App?.Id ?? 0, path: name);
+                                                                                                                                        byte[] latestRawData = renderFileContentBroker.GetLatestRawData(appId: session.App?.Id ?? 0, path: name);
+
+                                                                                                                                        string latestTextContent = latestRawData?.Length > 0
+                                                                                                                                            ? Encoding.UTF8.GetString(bytes: latestRawData)
+                                                                                                                                            : string.Empty;
 
                                                                                                                                         return string.IsNullOrEmpty(value: latestTextContent)
                                                                                                                                             ? string.Empty

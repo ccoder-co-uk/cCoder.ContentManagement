@@ -17,6 +17,7 @@ using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Models;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
+using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
@@ -40,7 +41,7 @@ public partial class PageRenderProcessingServiceTests
     private readonly TestCommonObjectReaderBroker commonObjectReaderBroker = new();
     private readonly TestComponentReaderBroker componentReaderBroker = new();
     private readonly TestScriptReaderBroker scriptReaderBroker = new();
-    private readonly Mock<IRenderFileContentService> renderFileContentServiceMock = new();
+    private readonly Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new();
 
     private PageRenderProcessingService CreateSut() =>
         new(
@@ -51,7 +52,7 @@ markupRenderService: new MarkupRenderService(
 componentReaderBroker: componentReaderBroker,
 scriptReaderBroker: scriptReaderBroker,
 jsonBroker: new JsonBroker(),
-renderFileContentService: renderFileContentServiceMock.Object)));
+renderFileContentBroker: renderFileContentBrokerMock.Object)));
 
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()

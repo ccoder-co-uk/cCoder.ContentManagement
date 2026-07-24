@@ -11156,15 +11156,15 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
+      "ToType": "cCoder.ContentManagement.Brokers.Storages.RenderFileContentBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
       "ToType": "cCoder.ContentManagement.Rendering.Brokers.ComponentReaderBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
       "ToType": "cCoder.ContentManagement.Rendering.Brokers.ScriptReaderBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.RenderFileContentService"
     },
     {
       "FromType": "cCoder.ContentManagement.Rendering.Services.Foundations.MetadataCacheService",
@@ -12025,13 +12025,6 @@
   ],
   "AnalysisItems": [
     {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.AuthenticatedEventBroker",
-      "LineNumber": 20
-    },
-    {
       "Code": "STXE003",
       "Description": "An exposure may communicate with only one business service.",
       "Severity": "Warning",
@@ -12074,25 +12067,25 @@
       "LineNumber": 10
     },
     {
-      "Code": "STX0004",
-      "Description": "A service must not depend on another service at the same layer.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 21
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 21
+      "LineNumber": 22
     },
     {
-      "Code": "STXF002",
-      "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
+      "Code": "STXFORMAT008",
+      "Description": "Wrapped statements must be separated from adjacent method statements by an empty line.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 21
+      "LineNumber": 188
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
+      "LineNumber": 803
     },
     {
       "Code": "STX0007",
