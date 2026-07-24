@@ -8,7 +8,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public class AppEventBroker(IEventHub eventHub) : IAppEventBroker
+internal sealed class AppEventBroker(IEventHub eventHub) : IAppEventBroker
 {
     public ValueTask RaiseAppAddEventAsync(EventMessage<App> message) =>
         eventHub.RaiseEventAsync(name: "app_add", message: message);

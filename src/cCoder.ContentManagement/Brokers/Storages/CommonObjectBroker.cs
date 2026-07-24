@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class CommonObjectBroker(ICoreContextFactory coreContextFactory) : ICommonObjectBroker
+internal sealed class CommonObjectBroker(ICoreContextFactory coreContextFactory) : ICommonObjectBroker
 {
     public IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters)
     {

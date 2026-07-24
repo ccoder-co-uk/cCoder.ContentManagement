@@ -8,7 +8,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public class ComponentEventBroker(IEventHub eventHub) : IComponentEventBroker
+internal sealed class ComponentEventBroker(IEventHub eventHub) : IComponentEventBroker
 {
     public ValueTask RaiseComponentAddEventAsync(EventMessage<Component> message) =>
         eventHub.RaiseEventAsync(name: "component_add", message: message);

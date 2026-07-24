@@ -13,7 +13,7 @@ public interface IPrivilegeBroker
     IQueryable<Privilege> GetAllPrivileges(bool ignoreFilters);
 }
 
-public class PrivilegeBroker(ICoreContextFactory coreContextFactory) : IPrivilegeBroker
+internal sealed class PrivilegeBroker(ICoreContextFactory coreContextFactory) : IPrivilegeBroker
 {
     public IQueryable<Privilege> GetAllPrivileges(bool ignoreFilters)
     {

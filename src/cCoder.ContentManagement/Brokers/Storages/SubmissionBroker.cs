@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class SubmissionBroker(ICoreContextFactory coreContextFactory) : ISubmissionBroker
+internal sealed class SubmissionBroker(ICoreContextFactory coreContextFactory) : ISubmissionBroker
 {
     public IQueryable<Submission> GetAllSubmissions(bool ignoreFilters)
     {

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class ComponentBroker(ICoreContextFactory coreContextFactory) : IComponentBroker
+internal sealed class ComponentBroker(ICoreContextFactory coreContextFactory) : IComponentBroker
 {
     public IQueryable<Component> GetAllComponents(bool ignoreFilters)
     {

@@ -8,7 +8,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public class PackageItemEventBroker(IEventHub eventHub) : IPackageItemEventBroker
+internal sealed class PackageItemEventBroker(IEventHub eventHub) : IPackageItemEventBroker
 {
     public ValueTask RaisePackageItemAddEventAsync(EventMessage<PackageItem> message) =>
         eventHub.RaiseEventAsync(name: "package_item_add", message: message);

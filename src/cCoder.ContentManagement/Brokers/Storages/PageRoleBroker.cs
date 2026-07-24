@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class PageRoleBroker(ICoreContextFactory coreContextFactory) : IPageRoleBroker
+internal sealed class PageRoleBroker(ICoreContextFactory coreContextFactory) : IPageRoleBroker
 {
     public IQueryable<PageRole> GetAllPageRoles(bool ignoreFilters)
     {

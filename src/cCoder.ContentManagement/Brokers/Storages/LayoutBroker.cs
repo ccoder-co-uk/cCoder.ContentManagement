@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class LayoutBroker(ICoreContextFactory coreContextFactory) : ILayoutBroker
+internal sealed class LayoutBroker(ICoreContextFactory coreContextFactory) : ILayoutBroker
 {
     public IQueryable<Layout> GetAllLayouts(bool ignoreFilters)
     {

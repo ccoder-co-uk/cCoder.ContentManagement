@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace cCoder.ContentManagement.Brokers;
 
-public class JsonBroker : IJsonBroker
+internal sealed class JsonBroker : IJsonBroker
 {
     public object ParseJson(string json) =>
         JsonConvert.DeserializeObject(value: json);

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class PackageItemBroker(ICoreContextFactory coreContextFactory) : IPackageItemBroker
+internal sealed class PackageItemBroker(ICoreContextFactory coreContextFactory) : IPackageItemBroker
 {
     public IQueryable<PackageItem> GetAllPackageItems(bool ignoreFilters)
     {

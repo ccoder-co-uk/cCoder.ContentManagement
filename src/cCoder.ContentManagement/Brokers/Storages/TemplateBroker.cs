@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class TemplateBroker(ICoreContextFactory coreContextFactory) : ITemplateBroker
+internal sealed class TemplateBroker(ICoreContextFactory coreContextFactory) : ITemplateBroker
 {
     public IQueryable<Template> GetAllTemplates(bool ignoreFilters)
     {

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class PageBroker(ICoreContextFactory coreContextFactory) : IPageBroker
+internal sealed class PageBroker(ICoreContextFactory coreContextFactory) : IPageBroker
 {
     public IQueryable<Page> GetAllPages(bool ignoreFilters)
     {

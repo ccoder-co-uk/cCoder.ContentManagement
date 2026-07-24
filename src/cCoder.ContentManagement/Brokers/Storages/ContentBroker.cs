@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class ContentBroker(ICoreContextFactory coreContextFactory) : IContentBroker
+internal sealed class ContentBroker(ICoreContextFactory coreContextFactory) : IContentBroker
 {
     public IQueryable<Content> GetAllContents(bool ignoreFilters)
     {

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class ResourceBroker(ICoreContextFactory coreContextFactory) : IResourceBroker
+internal sealed class ResourceBroker(ICoreContextFactory coreContextFactory) : IResourceBroker
 {
     public IQueryable<Resource> GetAllResources(bool ignoreFilters)
     {

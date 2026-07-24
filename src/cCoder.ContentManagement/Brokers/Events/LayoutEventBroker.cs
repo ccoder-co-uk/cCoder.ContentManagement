@@ -8,7 +8,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public class LayoutEventBroker(IEventHub eventHub) : ILayoutEventBroker
+internal sealed class LayoutEventBroker(IEventHub eventHub) : ILayoutEventBroker
 {
     public ValueTask RaiseLayoutAddEventAsync(EventMessage<Layout> message) =>
         eventHub.RaiseEventAsync(name: "layout_add", message: message);

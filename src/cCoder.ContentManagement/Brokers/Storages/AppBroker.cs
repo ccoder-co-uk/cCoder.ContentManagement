@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
+internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBroker
 {
     public IQueryable<App> GetAllApps(bool ignoreFilters)
     {

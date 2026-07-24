@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class ScriptBroker(ICoreContextFactory coreContextFactory) : IScriptBroker
+internal sealed class ScriptBroker(ICoreContextFactory coreContextFactory) : IScriptBroker
 {
     public IQueryable<Script> GetAllScripts(bool ignoreFilters)
     {

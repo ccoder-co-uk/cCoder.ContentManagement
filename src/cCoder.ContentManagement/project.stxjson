@@ -12046,125 +12046,6 @@
       "LineNumber": 85
     },
     {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.AppCultureEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.AppEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.CommonObjectEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.ComponentEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.ContentEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.CultureEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.LayoutEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.PackageItemEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.PageEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.PageInfoEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.PageRoleEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.ResourceEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.ScriptEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.SubmissionEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Events.TemplateEventBroker",
-      "LineNumber": 11
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.JsonBroker",
-      "LineNumber": 9
-    },
-    {
       "Code": "STXB002",
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
@@ -12177,13 +12058,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.RoleBroker",
       "LineNumber": 59
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.AppBroker",
-      "LineNumber": 12
     },
     {
       "Code": "STXB002",
@@ -12207,25 +12081,11 @@
       "LineNumber": 67
     },
     {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.AppCultureBroker",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXB002",
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.AppCultureBroker",
       "LineNumber": 17
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker",
-      "LineNumber": 11
     },
     {
       "Code": "STXB002",
@@ -12249,25 +12109,11 @@
       "LineNumber": 39
     },
     {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.ComponentBroker",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXB002",
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.ComponentBroker",
       "LineNumber": 17
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.ContentBroker",
-      "LineNumber": 11
     },
     {
       "Code": "STXB002",
@@ -12277,25 +12123,11 @@
       "LineNumber": 17
     },
     {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.CultureBroker",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXB002",
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.CultureBroker",
       "LineNumber": 17
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.LayoutBroker",
-      "LineNumber": 11
     },
     {
       "Code": "STXB002",
@@ -12305,25 +12137,11 @@
       "LineNumber": 17
     },
     {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PackageBroker",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXB002",
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.PackageBroker",
       "LineNumber": 17
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PackageItemBroker",
-      "LineNumber": 11
     },
     {
       "Code": "STXB002",
@@ -12333,25 +12151,11 @@
       "LineNumber": 17
     },
     {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PageBroker",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXB002",
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.PageBroker",
       "LineNumber": 17
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PageInfoBroker",
-      "LineNumber": 11
     },
     {
       "Code": "STXB002",
@@ -12361,25 +12165,11 @@
       "LineNumber": 17
     },
     {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PageRoleBroker",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXB002",
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.PageRoleBroker",
       "LineNumber": 17
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.PrivilegeBroker",
-      "LineNumber": 16
     },
     {
       "Code": "STXB002",
@@ -12396,25 +12186,11 @@
       "LineNumber": 23
     },
     {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.ResourceBroker",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXB002",
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.ResourceBroker",
       "LineNumber": 17
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.ScriptBroker",
-      "LineNumber": 11
     },
     {
       "Code": "STXB002",
@@ -12424,25 +12200,11 @@
       "LineNumber": 17
     },
     {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.SubmissionBroker",
-      "LineNumber": 11
-    },
-    {
       "Code": "STXB002",
       "Description": "A broker must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.SubmissionBroker",
       "LineNumber": 17
-    },
-    {
-      "Code": "STX0006",
-      "Description": "Business implementation classes should be internal by default.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.TemplateBroker",
-      "LineNumber": 11
     },
     {
       "Code": "STXB002",

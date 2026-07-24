@@ -8,7 +8,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public class PageInfoEventBroker(IEventHub eventHub) : IPageInfoEventBroker
+internal sealed class PageInfoEventBroker(IEventHub eventHub) : IPageInfoEventBroker
 {
     public ValueTask RaisePageInfoAddEventAsync(EventMessage<PageInfo> message) =>
         eventHub.RaiseEventAsync(name: "page_info_add", message: message);

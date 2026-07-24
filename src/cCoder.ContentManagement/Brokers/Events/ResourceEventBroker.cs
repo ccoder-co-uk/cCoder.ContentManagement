@@ -8,7 +8,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public class ResourceEventBroker(IEventHub eventHub) : IResourceEventBroker
+internal sealed class ResourceEventBroker(IEventHub eventHub) : IResourceEventBroker
 {
     public ValueTask RaiseResourceAddEventAsync(EventMessage<Resource> message) =>
         eventHub.RaiseEventAsync(name: "resource_add", message: message);

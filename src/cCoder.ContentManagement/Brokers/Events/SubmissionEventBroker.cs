@@ -8,7 +8,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public class SubmissionEventBroker(IEventHub eventHub) : ISubmissionEventBroker
+internal sealed class SubmissionEventBroker(IEventHub eventHub) : ISubmissionEventBroker
 {
     public ValueTask RaiseSubmissionAddEventAsync(EventMessage<Submission> message) =>
         eventHub.RaiseEventAsync(name: "submission_add", message: message);

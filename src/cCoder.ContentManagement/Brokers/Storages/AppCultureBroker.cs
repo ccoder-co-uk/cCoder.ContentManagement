@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
-public class AppCultureBroker(ICoreContextFactory coreContextFactory) : IAppCultureBroker
+internal sealed class AppCultureBroker(ICoreContextFactory coreContextFactory) : IAppCultureBroker
 {
     public IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters)
     {
