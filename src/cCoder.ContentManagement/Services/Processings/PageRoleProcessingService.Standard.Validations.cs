@@ -20,7 +20,7 @@ internal partial class PageRoleProcessingService
     private static void ValidateOrUpdatePageRoleResultOnAdd(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
-    private static void ValidateImportPageRolesAsync(object[] inputs) =>
+    private static void ValidateImportPageRoleInfosAsync(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
     private static void ValidateAllPageRoleOnDelete(object[] inputs) =>

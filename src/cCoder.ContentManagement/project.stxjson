@@ -8362,7 +8362,7 @@
           "ReturnType": "System.Linq.IQueryable\u003CPageRole\u003E"
         },
         {
-          "Name": "ImportPageRolesAsync",
+          "Name": "ImportPageRoleInfosAsync",
           "Inputs": [
             {
               "Name": "appId",
@@ -9299,20 +9299,6 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "GetClosestCulturalMatchResource",
-          "Inputs": [
-            {
-              "Name": "potentials",
-              "Type": "System.Collections.Generic.IEnumerable\u003CResource\u003E"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "Resource"
-        },
-        {
           "Name": "RenderComponentComponentRenderParams",
           "Inputs": [
             {
@@ -9351,24 +9337,6 @@
             }
           ],
           "ReturnType": "System.String"
-        },
-        {
-          "Name": "SectionForCultureResource",
-          "Inputs": [
-            {
-              "Name": "potentials",
-              "Type": "System.Collections.Generic.IEnumerable\u003CResource\u003E"
-            },
-            {
-              "Name": "key",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "System.Collections.Generic.IEnumerable\u003CResource\u003E"
         }
       ]
     },
@@ -10397,7 +10365,7 @@
           "ReturnType": "System.Linq.IQueryable\u003CPageRole\u003E"
         },
         {
-          "Name": "ImportPageRolesAsync",
+          "Name": "ImportPageRoleInfosAsync",
           "Inputs": [
             {
               "Name": "appId",
@@ -12300,22 +12268,8 @@
       "LineNumber": 56
     },
     {
-      "Code": "STXFORMAT005",
-      "Description": "Method call arguments must declare their parameter names.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 103
-    },
-    {
       "Code": "STXE002",
       "Description": "An exposure must not contain loops.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 108
-    },
-    {
-      "Code": "STXE001",
-      "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
       "LineNumber": 110
@@ -12325,49 +12279,56 @@
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 134
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 137
-    },
-    {
-      "Code": "STXE005",
-      "Description": "An exposure must not sequence multiple routine calls.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 154
+      "LineNumber": 112
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 163
+      "LineNumber": 136
     },
     {
       "Code": "STXE005",
       "Description": "An exposure must not sequence multiple routine calls.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 166
+      "LineNumber": 139
+    },
+    {
+      "Code": "STXE005",
+      "Description": "An exposure must not sequence multiple routine calls.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
+      "LineNumber": 156
+    },
+    {
+      "Code": "STXE001",
+      "Description": "An exposure must not contain branching logic.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
+      "LineNumber": 165
+    },
+    {
+      "Code": "STXE005",
+      "Description": "An exposure must not sequence multiple routine calls.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
+      "LineNumber": 168
     },
     {
       "Code": "STXE002",
       "Description": "An exposure must not contain loops.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 177
+      "LineNumber": 179
     },
     {
       "Code": "STXE001",
       "Description": "An exposure must not contain branching logic.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCache",
-      "LineNumber": 185
+      "LineNumber": 187
     },
     {
       "Code": "STX0002",
@@ -13525,13 +13486,6 @@
       "LineNumber": 10
     },
     {
-      "Code": "STX0022",
-      "Description": "Creation method names must include the concrete type they create.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.ContentManagementMetadataTypeService",
-      "LineNumber": 100
-    },
-    {
       "Code": "STXF002",
       "Description": "A foundation service may only depend on brokers, exposures, or nothing.",
       "Severity": "Warning",
@@ -13644,13 +13598,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0022",
-      "Description": "Creation method names must include the concrete type they create.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService",
-      "LineNumber": 272
-    },
-    {
       "Code": "STXO001",
       "Description": "An orchestration must have two or three foundation or processing dependencies and must not mix them.",
       "Severity": "Warning",
@@ -13686,13 +13633,6 @@
       "LineNumber": 12
     },
     {
-      "Code": "STX0018",
-      "Description": "Service method names must include each model type they operate on.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService",
-      "LineNumber": 100
-    },
-    {
       "Code": "STXO001",
       "Description": "An orchestration must have two or three foundation or processing dependencies and must not mix them.",
       "Severity": "Warning",
@@ -13712,13 +13652,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
       "LineNumber": 18
-    },
-    {
-      "Code": "STX0015",
-      "Description": "Every public service method must be declared by its local interface.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
-      "LineNumber": 25
     },
     {
       "Code": "STXP001",
@@ -13784,13 +13717,6 @@
       "LineNumber": 23
     },
     {
-      "Code": "STX0018",
-      "Description": "Service method names must include each model type they operate on.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "LineNumber": 129
-    },
-    {
       "Code": "STX0002",
       "Description": "Properties may only be declared on models.",
       "Severity": "Warning",
@@ -13810,20 +13736,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
       "LineNumber": 24
-    },
-    {
-      "Code": "STXFORMAT005",
-      "Description": "Method call arguments must declare their parameter names.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 105
-    },
-    {
-      "Code": "STXFORMAT005",
-      "Description": "Method call arguments must declare their parameter names.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 855
     }
   ]
 }

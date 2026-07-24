@@ -100,7 +100,9 @@ internal class CommonObjectCache : ICommonObjectCache, IDisposable
         }
         catch (Exception ex)
         {
-            log.LogError(message: "{Message} - {StackTrace}", ex.Message, ex.StackTrace);
+            log.LogError(
+                message: "{Message} - {StackTrace}",
+                args: [ex.Message, ex.StackTrace]);
         }
 
         data.Clear();

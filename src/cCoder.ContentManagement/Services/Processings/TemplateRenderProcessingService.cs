@@ -102,7 +102,9 @@ internal partial class TemplateRenderProcessingService(
 
         if (log != null && log.IsEnabled(logLevel: LogLevel.Debug))
         {
-            log.LogDebug(message: "Rendering template {Template} with {ReplacementCount} replacements.", template.Name, list.Count);
+            log.LogDebug(
+                message: "Rendering template {Template} with {ReplacementCount} replacements.",
+                args: [template.Name, list.Count]);
         }
 
         return ProcessContentString(key: template.ResourceKey, renderParams: renderParams, content: template.RawString, replacements: list);
@@ -852,7 +854,9 @@ internal partial class TemplateRenderProcessingService(
 
         if (log != null && log.IsEnabled(logLevel: LogLevel.Debug))
         {
-            log.LogDebug(message: "Rendering template {Template} with {ReplacementCount} replacements.", template.Name, list.Count);
+            log.LogDebug(
+                message: "Rendering template {Template} with {ReplacementCount} replacements.",
+                args: [template.Name, list.Count]);
         }
 
         return ProcessContentString(key: template.ResourceKey, renderParams: renderParams, content: template.RawString, replacements: list);

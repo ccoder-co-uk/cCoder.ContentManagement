@@ -126,10 +126,10 @@ internal partial class PageRoleProcessingService(
 
     }, isValueTask: true);
 
-    public ValueTask ImportPageRolesAsync(int appId, PageRoleInfo[] items) =>
+    public ValueTask ImportPageRoleInfosAsync(int appId, PageRoleInfo[] items) =>
         TryCatch(operation: async () =>
     {
-        ValidateImportPageRolesAsync(inputs: [appId, items]);
+        ValidateImportPageRoleInfosAsync(inputs: [appId, items]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePageRoleInfos(pageRoleInfos: items, parameterName: "items");
 

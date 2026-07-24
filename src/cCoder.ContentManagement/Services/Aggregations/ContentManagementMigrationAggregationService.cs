@@ -103,7 +103,10 @@ internal partial class ContentManagementMigrationAggregationService(
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackageItem(packageItem: item, parameterName: "item");
         PageRoleInfo[] pageRoles = ((!item.Data.StartsWith(value: "{")) ? jsonBroker.ParseJson<PageRoleInfo[]>(json: item.Data) : new PageRoleInfo[1] { jsonBroker.ParseJson<PageRoleInfo>(json: item.Data) });
-        await pageRoleOrchestrationService.ImportPageRolesAsync(appId: appId, items: pageRoles);
+
+        await pageRoleOrchestrationService.ImportPageRoleInfosAsync(
+            appId: appId,
+            items: pageRoles);
     }
 
     private async ValueTask ImportResourcesAsync(int appId, PackageItem item)

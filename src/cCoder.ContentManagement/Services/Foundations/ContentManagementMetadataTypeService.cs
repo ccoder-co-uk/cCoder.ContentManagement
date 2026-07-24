@@ -92,12 +92,22 @@ internal sealed partial class ContentManagementMetadataTypeService : IContentMan
     }
 
     private static ExtendedMetadataContainer Entity<T>() =>
-        Create(type: typeof(T), category: "ContentManagement", isEntity: true, hasEndpoint: true);
+        CreateExtendedMetadataContainer(
+            type: typeof(T),
+            category: "ContentManagement",
+            isEntity: true,
+            hasEndpoint: true);
 
     private static ExtendedMetadataContainer Complex<T>() =>
-        Create(type: typeof(T), category: "ContentManagement");
+        CreateExtendedMetadataContainer(
+            type: typeof(T),
+            category: "ContentManagement");
 
-    private static ExtendedMetadataContainer Create(Type type, string category, bool isEntity = false, bool hasEndpoint = false) =>
+    private static ExtendedMetadataContainer CreateExtendedMetadataContainer(
+        Type type,
+        string category,
+        bool isEntity = false,
+        bool hasEndpoint = false) =>
         new ExtendedMetadataContainer(type: type, isEntity: isEntity, hasEndpoint: hasEndpoint)
         {
             Category = category

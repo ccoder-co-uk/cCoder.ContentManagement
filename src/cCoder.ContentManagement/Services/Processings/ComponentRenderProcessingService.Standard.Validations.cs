@@ -14,9 +14,4 @@ internal partial class ComponentRenderProcessingService
     private static void ValidateRenderComponentComponentRenderParams(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
-    private static void ValidateSectionForCultureResource(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
-
-    private static void ValidateClosestCulturalMatchResourceOnGet(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
 }

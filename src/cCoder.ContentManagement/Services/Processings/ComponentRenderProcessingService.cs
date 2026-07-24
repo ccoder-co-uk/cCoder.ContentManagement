@@ -568,57 +568,6 @@ internal partial class ComponentRenderProcessingService(
         });
     }
 
-    public static IEnumerable<Resource> SectionForCultureResource(IEnumerable<Resource> potentials, string key, string culture) =>
-        TryCatch<IEnumerable<Resource>>(operation: () =>
-    {
-        ValidateSectionForCultureResource(inputs: [potentials, key, culture]);
-        List<Resource> list = new List<Resource>();
-
-        foreach (IGrouping<string, Resource> item in potentials
-            .Where(predicate: resource => string.Equals(a: resource.Key, b: key, comparisonType: StringComparison.OrdinalIgnoreCase))
-            .GroupBy(keySelector: resource => resource.Name.ToLowerInvariant()))
-        {
-            Resource closestCulturalMatch = ExecuteGetClosestCulturalMatchResource(potentials: item, culture: culture);
-
-            if (closestCulturalMatch != null)
-            {
-                list.Add(item: closestCulturalMatch);
-            }
-        }
-
-        return list;
-
-    });
-
-    public static Resource GetClosestCulturalMatchResource(IEnumerable<Resource> potentials, string culture) =>
-        TryCatch<Resource>(operation: () =>
-    {
-        ValidateClosestCulturalMatchResourceOnGet(inputs: [potentials, culture]);
-        Resource resource = null;
-
-        List<string> list = (culture ?? string.Empty).ToLowerInvariant()
-            .Split(separator: '-')
-            .ToList();
-
-        int num = list.Count;
-        string resultCulture = string.Empty;
-
-        while (resource == null && resultCulture != null)
-        {
-            resultCulture = string.Join(separator: "-", values: list.Take(count: num));
-            resource = potentials.FirstOrDefault(predicate: (Resource resource2) => string.Equals(a: resource2.Culture, b: resultCulture, comparisonType: StringComparison.OrdinalIgnoreCase));
-            num--;
-
-            if (num == 0)
-            {
-                resultCulture = null;
-            }
-        }
-
-        return resource ?? potentials.FirstOrDefault(predicate: (Resource resource2) => string.IsNullOrEmpty(value: resource2.Culture));
-
-    });
-
     private static Component ValidateComponent(Component component, string parameterName)
     {
         if (component == null)

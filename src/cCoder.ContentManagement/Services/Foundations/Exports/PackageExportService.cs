@@ -256,7 +256,9 @@ data: pageBroker.GetAllPages(ignoreFilters: true)
                 new PackageItem
                 {
                     Type = itemType,
-                    Data = JsonConvert.SerializeObject(value: data, settings: CreateSerializerSettings())
+                    Data = JsonConvert.SerializeObject(
+                        value: data,
+                        settings: CreateJsonSerializerSettings())
                 }
             ]
         };
@@ -269,7 +271,7 @@ data: pageBroker.GetAllPages(ignoreFilters: true)
         }
     }
 
-    private static JsonSerializerSettings CreateSerializerSettings()
+    private static JsonSerializerSettings CreateJsonSerializerSettings()
     {
         JsonSerializerSettings settings = ObjectExtensions.GetJSONSettings();
         settings.TypeNameHandling = TypeNameHandling.None;
