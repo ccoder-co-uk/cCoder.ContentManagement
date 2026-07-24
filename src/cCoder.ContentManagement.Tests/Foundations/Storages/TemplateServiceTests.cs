@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,11 +33,12 @@ public partial class TemplateServiceTests
 
     public TemplateServiceTests()
     {
-        templateBrokerMock = new Mock<ITemplateBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        templateBrokerMock = new Mock<ITemplateBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         templateService = new TemplateService(
-            templateBrokerMock.Object,
-            authorizationBrokerMock.Object
+templateBroker: templateBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -41,34 +46,14 @@ public partial class TemplateServiceTests
     {
         Template template = Builder<Template>
             .CreateNew()
-            .With(x => x.Id = id)
-            .With(x => x.Name = $"Template-{Guid.NewGuid():N}")
-            .With(x => x.ResourceKey = $"resource-{Guid.NewGuid():N}")
-            .With(x => x.RawString = "<html></html>")
-            .With(x => x.AppId = 7)
-            .With(x => x.LastUpdated = DateTimeOffset.UtcNow)
+            .With(func: x => x.Id = id)
+            .With(func: x => x.Name = $"Template-{Guid.NewGuid():N}")
+            .With(func: x => x.ResourceKey = $"resource-{Guid.NewGuid():N}")
+            .With(func: x => x.RawString = "<html></html>")
+            .With(func: x => x.AppId = 7)
+            .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow)
             .Build();
 
         return template;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

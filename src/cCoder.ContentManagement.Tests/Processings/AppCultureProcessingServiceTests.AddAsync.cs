@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,14 +28,16 @@ public partial class AppCultureProcessingServiceTests
     {
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
-        appCultureServiceMock.Setup(x => x.AddAppCultureAsync(appCulture)).ReturnsAsync(appCulture);
+
+        appCultureServiceMock.Setup(expression: x => x.AddAppCultureAsync(newAppCulture: appCulture))
+            .ReturnsAsync(value: appCulture);
 
         // When
-        AppCulture result = await appCultureProcessingService.AddAppCultureAsync(appCulture);
+        AppCulture result = await appCultureProcessingService.AddAppCultureAsync(newAppCulture: appCulture);
 
         // Then
-        Assert.Same(appCulture, result);
-        appCultureServiceMock.Verify(x => x.AddAppCultureAsync(appCulture), Times.Once);
+        Assert.Same(expected: appCulture, actual: result);
+        appCultureServiceMock.Verify(expression: x => x.AddAppCultureAsync(newAppCulture: appCulture), times: Times.Once);
     }
 
     [Fact]
@@ -39,13 +45,15 @@ public partial class AppCultureProcessingServiceTests
     {
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
+
         appCultureServiceMock
-            .Setup(x => x.AddAppCultureAsync(appCulture))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.AddAppCultureAsync(newAppCulture: appCulture))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await appCultureProcessingService.AddAppCultureAsync(appCulture)
+
+        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+            await appCultureProcessingService.AddAppCultureAsync(newAppCulture: appCulture)
         );
 
         // Then
@@ -56,33 +64,21 @@ public partial class AppCultureProcessingServiceTests
     {
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
+
         DbUpdateException exception = new(
-            "FK",
-            new Exception("The INSERT statement conflicted with the FOREIGN KEY constraint."));
+message: "FK",
+innerException: new Exception(message: "The INSERT statement conflicted with the FOREIGN KEY constraint."));
 
         appCultureServiceMock
-            .Setup(x => x.AddAppCultureAsync(appCulture))
-            .ThrowsAsync(exception);
+            .Setup(expression: x => x.AddAppCultureAsync(newAppCulture: appCulture))
+            .ThrowsAsync(exception: exception);
 
         // When
-        await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            await appCultureProcessingService.AddAppCultureAsync(appCulture));
+
+        await Assert.ThrowsAsync<InvalidOperationException>(testCode: async () =>
+            await appCultureProcessingService.AddAppCultureAsync(newAppCulture: appCulture));
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

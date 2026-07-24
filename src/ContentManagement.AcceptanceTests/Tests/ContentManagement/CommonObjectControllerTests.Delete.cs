@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
 
@@ -13,18 +17,17 @@ public sealed partial class CommonObjectControllerTests
         SeededCommonObjectContext seededContext = await SeedDatabase();
 
         // When
-        int actualStatusCode = await DeleteCommonObjectAsync(seededContext.Id);
-        int actualReadStatusCode = await GetCommonObjectStatusCodeAsync(seededContext.Id);
+        int actualStatusCode = await DeleteCommonObjectAsync(id: seededContext.Id);
+        int actualReadStatusCode = await GetCommonObjectStatusCodeAsync(id: seededContext.Id);
 
         // Then
-        actualStatusCode.Should().Be(200);
-        actualReadStatusCode.Should().Be(404);
 
-        await Teardown(seededContext.Id);
+        actualStatusCode.Should()
+            .Be(expected: 200);
+
+        actualReadStatusCode.Should()
+            .Be(expected: 404);
+
+        await Teardown(ids: seededContext.Id);
     }
 }
-
-
-
-
-

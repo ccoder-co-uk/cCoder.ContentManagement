@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,40 +32,33 @@ public partial class ContentEventServiceTests
         EventMessage<CmsDataModels.Content> actualMessage = null;
 
         contentEventBrokerMock
-            .Setup(x => x.RaiseContentDeleteEventAsync(It.IsAny<EventMessage<CmsDataModels.Content>>()))
-            .Callback<EventMessage<CmsDataModels.Content>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseContentDeleteEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Content>>()))
+            .Callback<EventMessage<CmsDataModels.Content>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseContentDeleteEventAsync(entity);
+        await service.RaiseContentDeleteEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         contentEventBrokerMock.Verify(
-            x => x.RaiseContentDeleteEventAsync(It.IsAny<EventMessage<CmsDataModels.Content>>()),
-            Times.Once
+expression: x => x.RaiseContentDeleteEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Content>>()),
+times: Times.Once
         );
+
         contentEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

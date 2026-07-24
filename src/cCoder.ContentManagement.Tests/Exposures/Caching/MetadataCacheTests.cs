@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,28 +29,21 @@ public partial class MetadataCacheTests
 
     public MetadataCacheTests()
     {
-        metadataTypeCacheMock = new Mock<IMetadataTypeCache>(MockBehavior.Strict);
-        commonObjectCacheMock = new Mock<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache>(MockBehavior.Strict);
+        metadataTypeCacheMock = new Mock<IMetadataTypeCache>(behavior: MockBehavior.Strict);
+        commonObjectCacheMock = new Mock<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache>(behavior: MockBehavior.Strict);
     }
 
     private MetadataCache CreateSubject(params MetadataContainerSet[] typeSets)
     {
         metadataTypeCacheMock
-            .Setup(cache => cache.GetAll())
-            .Returns(typeSets.Select(static typeSet => JsonSerializer.Serialize(typeSet)).ToArray());
+            .Setup(expression: cache => cache.GetAll())
+            .Returns(value: typeSets.Select(selector: static typeSet => JsonSerializer.Serialize(value: typeSet))
+            .ToArray());
 
         commonObjectCacheMock
-            .Setup(cache => cache.GetAll<Resource>())
-            .Returns([]);
+            .Setup(expression: cache => cache.GetAll<Resource>())
+            .Returns(value: []);
 
-        return new MetadataCache(metadataTypeCacheMock.Object, commonObjectCacheMock.Object);
+        return new MetadataCache(metadataTypeCache: metadataTypeCacheMock.Object, resourceCache: commonObjectCacheMock.Object);
     }
 }
-
-
-
-
-
-
-
-

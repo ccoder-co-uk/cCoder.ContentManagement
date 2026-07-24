@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,40 +28,26 @@ public partial class PackageItemServiceTests
     {
         // Given
         PackageItem[] expectedItems = [CreateRandomPackageItem()];
+
         IQueryable<cCoder.Data.Models.Packaging.PackageItem> packageItems = expectedItems
-            .Select(item => item)
+            .Select(selector: item => item)
             .AsQueryable();
 
-        packageItemBrokerMock.Setup(x => x.GetAllPackageItems(false)).Returns(packageItems);
+        packageItemBrokerMock.Setup(expression: x => x.GetAllPackageItems(ignoreFilters: false))
+            .Returns(value: packageItems);
 
         // When
         IQueryable<PackageItem> result = packageItemService.GetAllPackageItem();
 
         // Then
-        result.Should().BeEquivalentTo(expectedItems);
-        packageItemBrokerMock.Verify(x => x.GetAllPackageItems(false), Times.Once);
-        packageItemBrokerMock.Verify(x => x.GetAppId(It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), Times.AtMostOnce());
+
+        result.Should()
+            .BeEquivalentTo(expectation: expectedItems);
+
+        packageItemBrokerMock.Verify(expression: x => x.GetAllPackageItems(ignoreFilters: false), times: Times.Once);
+        packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
         packageItemBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

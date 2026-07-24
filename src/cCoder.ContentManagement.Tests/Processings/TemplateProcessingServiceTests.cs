@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,38 +27,16 @@ public partial class TemplateProcessingServiceTests
 
     public TemplateProcessingServiceTests()
     {
-        templateProcessingService = new TemplateProcessingService(templateServiceMock.Object);
+        templateProcessingService = new TemplateProcessingService(service: templateServiceMock.Object);
     }
 
     private static Template CreateRandomTemplate() =>
         new()
         {
-            Id = Random.Shared.Next(1, 10000),
+            Id = Random.Shared.Next(minValue: 1, maxValue: 10000),
             AppId = 1,
             Name = $"Template-{Guid.NewGuid():N}",
             ResourceKey = "template",
             RawString = "<html></html>",
         };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

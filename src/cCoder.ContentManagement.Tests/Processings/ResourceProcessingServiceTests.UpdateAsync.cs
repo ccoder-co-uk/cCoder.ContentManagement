@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -21,32 +25,19 @@ public partial class ResourceProcessingServiceTests
     public async Task ShouldStampLastUpdatedFields_AndDelegateToFoundationServiceWhenUpdateAsync()
     {
         // Given
-        Resource resource = CreateRandomResource(appId: 7);
-        User currentUser = TestUsers.WithPrivilege("resource_update");
-        resourceServiceMock.Setup(x => x.UpdateResourceAsync(resource)).ReturnsAsync(resource);
+        Resource resource = CreateRandomResource(id: 7);
+        User currentUser = TestUsers.WithPrivilege(privilege: "resource_update");
+
+        resourceServiceMock.Setup(expression: x => x.UpdateResourceAsync(updatedResource: resource))
+            .ReturnsAsync(value: resource);
 
         // When
-        Resource result = await resourceProcessingService.UpdateResourceAsync(resource);
+        Resource result = await resourceProcessingService.UpdateResourceAsync(updatedResource: resource);
 
         // Then
-        Assert.Same(resource, result);
-        Assert.Equal("test-user", resource.LastUpdatedBy);
-        resourceServiceMock.Verify(x => x.UpdateResourceAsync(resource), Times.Once);
+        Assert.Same(expected: resource, actual: result);
+        Assert.Equal(expected: "test-user", actual: resource.LastUpdatedBy);
+        resourceServiceMock.Verify(expression: x => x.UpdateResourceAsync(updatedResource: resource), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

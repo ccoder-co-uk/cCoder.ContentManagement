@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Exposures.Controllers;
 using cCoder.ContentManagement.Services.Coordinations;
@@ -22,16 +26,21 @@ public class ControllerGetAllTests
         Mock<IAppOrchestrationService> serviceMock = new();
         IQueryable<App> expectedApps = new[] { new App { Id = 1, Name = "App" } }.AsQueryable();
 
-        serviceMock.Setup(service => service.GetAllApp(false)).Returns(expectedApps);
+        serviceMock.Setup(expression: service => service.GetAllApp(ignoreFilters: false))
+            .Returns(value: expectedApps);
 
         AppController controller = new(
-            serviceMock.Object,
-            Mock.Of<IAuthorizationBroker>(),
-            Mock.Of<ILogger<AppController>>());
+service: serviceMock.Object,
+authorizationBroker: Mock.Of<IAuthorizationBroker>(),
+log: Mock.Of<ILogger<AppController>>());
 
-        OkObjectResult result = controller.GetAll(null!).Should().BeOfType<OkObjectResult>().Subject;
+        OkObjectResult result = controller.GetAll(queryOptions: null!)
+            .Should()
+            .BeOfType<OkObjectResult>()
+            .Subject;
 
-        result.Value.Should().BeSameAs(expectedApps);
+        result.Value.Should()
+            .BeSameAs(expected: expectedApps);
     }
 
     [Fact]
@@ -40,15 +49,20 @@ public class ControllerGetAllTests
         Mock<ICultureOrchestrationService> serviceMock = new();
         IQueryable<Culture> expectedCultures = new[] { new Culture { Id = "en-GB", Name = "English" } }.AsQueryable();
 
-        serviceMock.Setup(service => service.GetAllCulture(false)).Returns(expectedCultures);
+        serviceMock.Setup(expression: service => service.GetAllCulture(ignoreFilters: false))
+            .Returns(value: expectedCultures);
 
         CultureController controller = new(
-            serviceMock.Object,
-            Mock.Of<ILogger<CultureController>>());
+service: serviceMock.Object,
+log: Mock.Of<ILogger<CultureController>>());
 
-        OkObjectResult result = controller.GetAll(null!).Should().BeOfType<OkObjectResult>().Subject;
+        OkObjectResult result = controller.GetAll(queryOptions: null!)
+            .Should()
+            .BeOfType<OkObjectResult>()
+            .Subject;
 
-        result.Value.Should().BeSameAs(expectedCultures);
+        result.Value.Should()
+            .BeSameAs(expected: expectedCultures);
     }
 
     [Fact]
@@ -57,22 +71,28 @@ public class ControllerGetAllTests
         Mock<IPageOrchestrationService> serviceMock = new();
         IQueryable<Page> expectedPages = new[] { new Page { Id = 1, AppId = 1, Name = "Admin", Path = "Admin" } }.AsQueryable();
 
-        serviceMock.Setup(service => service.GetAllPage(false)).Returns(expectedPages);
+        serviceMock.Setup(expression: service => service.GetAllPage(ignoreFilters: false))
+            .Returns(value: expectedPages);
 
         PageController controller = new(
-            serviceMock.Object,
-            Mock.Of<IPageRenderCoordinationService>(),
-            Mock.Of<ILogger<PageController>>());
+service: serviceMock.Object,
+renderService: Mock.Of<IPageRenderCoordinationService>(),
+log: Mock.Of<ILogger<PageController>>());
 
-        OkObjectResult result = controller.Get(null!).Should().BeOfType<OkObjectResult>().Subject;
+        OkObjectResult result = controller.Get(queryOptions: null!)
+            .Should()
+            .BeOfType<OkObjectResult>()
+            .Subject;
 
-        result.Value.Should().BeSameAs(expectedPages);
+        result.Value.Should()
+            .BeSameAs(expected: expectedPages);
     }
 
     [Fact]
     public void SubmissionGetAll_ShouldReturnServiceQueryableUntouched()
     {
         Mock<ISubmissionOrchestrationService> serviceMock = new();
+
         IQueryable<Submission> expectedSubmissions = new[]
         {
             new Submission
@@ -84,14 +104,19 @@ public class ControllerGetAllTests
             }
         }.AsQueryable();
 
-        serviceMock.Setup(service => service.GetAllSubmission(false)).Returns(expectedSubmissions);
+        serviceMock.Setup(expression: service => service.GetAllSubmission(ignoreFilters: false))
+            .Returns(value: expectedSubmissions);
 
         SubmissionController controller = new(
-            serviceMock.Object,
-            Mock.Of<ILogger<SubmissionController>>());
+service: serviceMock.Object,
+log: Mock.Of<ILogger<SubmissionController>>());
 
-        OkObjectResult result = controller.GetAll(null!).Should().BeOfType<OkObjectResult>().Subject;
+        OkObjectResult result = controller.GetAll(queryOptions: null!)
+            .Should()
+            .BeOfType<OkObjectResult>()
+            .Subject;
 
-        result.Value.Should().BeSameAs(expectedSubmissions);
+        result.Value.Should()
+            .BeSameAs(expected: expectedSubmissions);
     }
 }

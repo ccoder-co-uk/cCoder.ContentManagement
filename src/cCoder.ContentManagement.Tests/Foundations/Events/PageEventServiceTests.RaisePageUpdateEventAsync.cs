@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,40 +32,33 @@ public partial class PageEventServiceTests
         EventMessage<CmsDataModels.Page> actualMessage = null;
 
         pageEventBrokerMock
-            .Setup(x => x.RaisePageUpdateEventAsync(It.IsAny<EventMessage<CmsDataModels.Page>>()))
-            .Callback<EventMessage<CmsDataModels.Page>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageUpdateEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Page>>()))
+            .Callback<EventMessage<CmsDataModels.Page>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageUpdateEventAsync(entity);
+        await service.RaisePageUpdateEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         pageEventBrokerMock.Verify(
-            x => x.RaisePageUpdateEventAsync(It.IsAny<EventMessage<CmsDataModels.Page>>()),
-            Times.Once
+expression: x => x.RaisePageUpdateEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Page>>()),
+times: Times.Once
         );
+
         pageEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

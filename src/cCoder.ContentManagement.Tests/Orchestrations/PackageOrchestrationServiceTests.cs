@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,38 +33,20 @@ public partial class PackageOrchestrationServiceTests
 
     public PackageOrchestrationServiceTests()
     {
-        contentManagementMigrationAggregationServiceMock = new Mock<IContentManagementMigrationAggregationService>(MockBehavior.Strict);
-        packageExportProcessingServiceMock = new Mock<IPackageExportProcessingService>(MockBehavior.Strict);
-        packageProcessingServiceMock = new Mock<IPackageProcessingService>(MockBehavior.Strict);
-        packageEventProcessingServiceMock = new Mock<IPackageEventProcessingService>(MockBehavior.Strict);
+        contentManagementMigrationAggregationServiceMock = new Mock<IContentManagementMigrationAggregationService>(behavior: MockBehavior.Strict);
+        packageExportProcessingServiceMock = new Mock<IPackageExportProcessingService>(behavior: MockBehavior.Strict);
+        packageProcessingServiceMock = new Mock<IPackageProcessingService>(behavior: MockBehavior.Strict);
+        packageEventProcessingServiceMock = new Mock<IPackageEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new PackageOrchestrationService(
-            contentManagementMigrationAggregationServiceMock.Object,
-            packageExportProcessingServiceMock.Object,
-            packageProcessingServiceMock.Object,
-            packageEventProcessingServiceMock.Object
+contentManagementMigrationAggregationService: contentManagementMigrationAggregationServiceMock.Object,
+packageExportProcessingService: packageExportProcessingServiceMock.Object,
+processingService: packageProcessingServiceMock.Object,
+eventService: packageEventProcessingServiceMock.Object
         );
     }
 
-    private static Package CreateRandomPackage() => Builder<Package>.CreateNew().Build();
+    private static Package CreateRandomPackage() =>
+        Builder<Package>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

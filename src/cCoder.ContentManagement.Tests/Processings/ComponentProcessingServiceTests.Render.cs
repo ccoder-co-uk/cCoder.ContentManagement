@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -31,6 +35,7 @@ public partial class ComponentRenderOrchestrationServiceTests
             IsActive = true,
             Roles = []
         };
+
         Component component = CreateRandomComponent();
         component.Name = "Hero";
         component.Content = "<div>content</div>";
@@ -42,39 +47,24 @@ public partial class ComponentRenderOrchestrationServiceTests
         };
 
         componentRenderProcessingServiceMock
-            .Setup(x => x.RenderUser(app.Id, "Hero", actor, string.Empty, "Default"))
-            .Returns("<section name='Hero' class='component'><div>content</div><script>console.log('component');</script></section>");
+            .Setup(expression: x => x.RenderUser(appId: app.Id, name: "Hero", user: actor, culture: string.Empty, theme: "Default"))
+            .Returns(value: "<section name='Hero' class='component'><div>content</div><script>console.log('component');</script></section>");
 
         // When
-        string result = renderOrchestrationService.RenderUser(app.Id, "Hero", actor, string.Empty, "Default");
+        string result = renderOrchestrationService.RenderUser(appId: app.Id, name: "Hero", user: actor, culture: string.Empty, theme: "Default");
 
         // Then
-        result.Should().Contain("<section name='Hero' class='component'");
-        result.Should().Contain("<div>content</div>");
-        result.Should().Contain("console.log('component');");
-        componentRenderProcessingServiceMock.Verify(x => x.RenderUser(app.Id, "Hero", actor, string.Empty, "Default"), Times.Once);
+
+        result.Should()
+            .Contain(expected: "<section name='Hero' class='component'");
+
+        result.Should()
+            .Contain(expected: "<div>content</div>");
+
+        result.Should()
+            .Contain(expected: "console.log('component');");
+
+        componentRenderProcessingServiceMock.Verify(expression: x => x.RenderUser(appId: app.Id, name: "Hero", user: actor, culture: string.Empty, theme: "Default"), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

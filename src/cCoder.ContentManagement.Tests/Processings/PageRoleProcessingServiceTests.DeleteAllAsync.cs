@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,28 +26,15 @@ public partial class PageRoleProcessingServiceTests
     public async Task ShouldThrowSecurityExceptionWhenItemUsesCompositeKeyForDeleteAllAsync()
     {
         // Given
-        LocalPageRole link = new() { PageId = Random.Shared.Next(1, 1000), RoleId = Guid.NewGuid() };
+        LocalPageRole link = new() { PageId = Random.Shared.Next(minValue: 1, maxValue: 1000), RoleId = Guid.NewGuid() };
 
         // When
-        Func<Task> act = async () => await pageRoleProcessingService.DeleteAllPageRoleAsync(new[] { link });
+        Func<Task> act = async () => await pageRoleProcessingService.DeleteAllPageRoleAsync(deletedPageRole: new[] { link });
 
         // Then
-        await act.Should().ThrowAsync<System.Security.SecurityException>();
+
+        await act.Should()
+            .ThrowAsync<System.Security.SecurityException>();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

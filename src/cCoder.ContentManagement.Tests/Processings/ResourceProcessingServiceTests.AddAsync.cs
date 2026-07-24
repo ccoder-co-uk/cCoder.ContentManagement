@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -21,34 +25,21 @@ public partial class ResourceProcessingServiceTests
     public async Task ShouldStampAuditFields_AndDelegateToFoundationServiceWhenAddAsync()
     {
         // Given
-        Resource resource = CreateRandomResource(appId: 7);
-        User currentUser = TestUsers.WithPrivilege("resource_create");
-        resourceServiceMock.Setup(x => x.AddResourceAsync(resource)).ReturnsAsync(resource);
+        Resource resource = CreateRandomResource(id: 7);
+        User currentUser = TestUsers.WithPrivilege(privilege: "resource_create");
+
+        resourceServiceMock.Setup(expression: x => x.AddResourceAsync(newResource: resource))
+            .ReturnsAsync(value: resource);
 
         // When
-        Resource result = await resourceProcessingService.AddResourceAsync(resource);
+        Resource result = await resourceProcessingService.AddResourceAsync(newResource: resource);
 
         // Then
-        Assert.Same(resource, result);
-        Assert.Equal("test-user", resource.CreatedBy);
-        Assert.Equal("test-user", resource.LastUpdatedBy);
-        Assert.Equal(resource.CreatedOn, resource.LastUpdated);
-        resourceServiceMock.Verify(x => x.AddResourceAsync(resource), Times.Once);
+        Assert.Same(expected: resource, actual: result);
+        Assert.Equal(expected: "test-user", actual: resource.CreatedBy);
+        Assert.Equal(expected: "test-user", actual: resource.LastUpdatedBy);
+        Assert.Equal(expected: resource.CreatedOn, actual: resource.LastUpdated);
+        resourceServiceMock.Verify(expression: x => x.AddResourceAsync(newResource: resource), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

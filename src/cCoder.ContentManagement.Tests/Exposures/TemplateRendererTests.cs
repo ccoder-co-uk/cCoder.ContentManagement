@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,19 +26,19 @@ public class TemplateRendererTests
     [Fact]
     public void ShouldRenderThroughCoordinationService()
     {
-        Mock<ITemplateRenderCoordinationService> coordinationServiceMock = new(MockBehavior.Strict);
-        TemplateRenderer renderer = new(coordinationServiceMock.Object);
+        Mock<ITemplateRenderCoordinationService> coordinationServiceMock = new(behavior: MockBehavior.Strict);
+        TemplateRenderer renderer = new(renderCoordinationService: coordinationServiceMock.Object);
         object model = new { Name = "Ward" };
 
         coordinationServiceMock
-            .Setup(x => x.Render(1, "Welcome", "en-GB", model))
-            .Returns("<main>welcome</main>");
+            .Setup(expression: x => x.Render(appId: 1, name: "Welcome", culture: "en-GB", model: model))
+            .Returns(value: "<main>welcome</main>");
 
-        string result = renderer.Render(1, "Welcome", "en-GB", model);
+        string result = renderer.Render(appId: 1, name: "Welcome", culture: "en-GB", model: model);
 
-        result.Should().Be("<main>welcome</main>");
+        result.Should()
+            .Be(expected: "<main>welcome</main>");
+
         coordinationServiceMock.VerifyAll();
     }
 }
-
-

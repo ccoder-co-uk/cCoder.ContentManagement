@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,37 +28,21 @@ public partial class PageOrchestrationServiceTests
         // Given
         int id = 1;
         Page entity = CreateRandomPage();
-        pageProcessingServiceMock.Setup(x => x.GetPage(id)).Returns(entity);
+
+        pageProcessingServiceMock.Setup(expression: x => x.GetPage(pageId: id))
+            .Returns(value: entity);
 
         // When
-        Page result = orchestrationService.GetPage(id);
+        Page result = orchestrationService.GetPage(pageId: id);
 
         // Then
-        result.Should().BeEquivalentTo(entity);
-        pageProcessingServiceMock.Verify(x => x.GetPage(id), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        pageProcessingServiceMock.Verify(expression: x => x.GetPage(pageId: id), times: Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -31,10 +35,10 @@ public partial class CommonObjectProcessingServiceTests
     public CommonObjectProcessingServiceTests()
     {
         commonObjectProcessingService = new CommonObjectProcessingService(
-            commonObjectServiceMock.Object,
-            commonObjectCacheMock.Object,
-            authorizationBrokerMock.Object,
-            new JsonBroker()
+service: commonObjectServiceMock.Object,
+cache: commonObjectCacheMock.Object,
+authorizationBroker: authorizationBrokerMock.Object,
+jsonBroker: new JsonBroker()
         );
     }
 
@@ -43,42 +47,16 @@ public partial class CommonObjectProcessingServiceTests
     ) =>
         Builder<CommonObject>
             .CreateNew()
-            .With(x => x.Id = Random.Shared.Next(1, 10000))
-            .With(x => x.Name = $"CommonObject-{Guid.NewGuid():N}")
-            .With(x => x.Key = $"key-{Guid.NewGuid():N}")
-            .With(x => x.Culture = "en-GB")
-            .With(x => x.Type = type)
-            .With(x => x.Json = "{}")
-            .With(x => x.Version = 1)
-            .With(x => x.CreatedBy = "seed-user")
-            .With(x => x.LastUpdatedBy = "seed-user")
-            .With(x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(-5))
-            .With(x => x.LastUpdated = DateTimeOffset.UtcNow.AddMinutes(-5))
-            .Build();
+        .With(func: x => x.Id = Random.Shared.Next(minValue: 1, maxValue: 10000))
+        .With(func: x => x.Name = $"CommonObject-{Guid.NewGuid():N}")
+        .With(func: x => x.Key = $"key-{Guid.NewGuid():N}")
+        .With(func: x => x.Culture = "en-GB")
+        .With(func: x => x.Type = type)
+        .With(func: x => x.Json = "{}")
+        .With(func: x => x.Version = 1)
+        .With(func: x => x.CreatedBy = "seed-user")
+        .With(func: x => x.LastUpdatedBy = "seed-user")
+        .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
+        .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

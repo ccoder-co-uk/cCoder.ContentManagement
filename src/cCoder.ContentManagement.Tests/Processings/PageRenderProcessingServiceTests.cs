@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -40,14 +44,14 @@ public partial class PageRenderProcessingServiceTests
 
     private PageRenderProcessingService CreateSut() =>
         new(
-            new PageRenderExecutionOrchestrationService(
-                new MetadataCacheService(metadataReaderBroker),
-                new CommonObjectCacheService(commonObjectReaderBroker),
-                new MarkupRenderService(
-                    componentReaderBroker,
-                    scriptReaderBroker,
-                    new JsonBroker(),
-                    renderFileContentServiceMock.Object)));
+executionOrchestrationService: new PageRenderExecutionOrchestrationService(
+metadataCacheService: new MetadataCacheService(broker: metadataReaderBroker),
+commonObjectCacheService: new CommonObjectCacheService(broker: commonObjectReaderBroker),
+markupRenderService: new MarkupRenderService(
+componentReaderBroker: componentReaderBroker,
+scriptReaderBroker: scriptReaderBroker,
+jsonBroker: new JsonBroker(),
+renderFileContentService: renderFileContentServiceMock.Object)));
 
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()
@@ -150,7 +154,7 @@ public partial class PageRenderProcessingServiceTests
                 Name = "Default",
                 HeaderHtml = "<title>[page[title]]</title><meta>[meta[site-description]]</meta><script>[script[Bootstrap]]</script>",
                 Html = string.Join(
-                    "",
+separator: "",
                     "<nav>[nav[0]]</nav>",
                     "<nav class='expanded'>[navExpanded[0]]</nav>",
                     "<main>[content[Body]]</main>",
@@ -228,18 +232,18 @@ public partial class PageRenderProcessingServiceTests
 
     private sealed class TestMetadataReaderBroker : IMetadataReaderBroker
     {
-        private readonly Dictionary<string, string> values = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string> values = new(comparer: StringComparer.OrdinalIgnoreCase);
 
         public IList<(string Name, string Culture)> Requests { get; } = [];
 
         public void Set(string name, string culture, string value) =>
-            values[BuildKey(name, culture)] = value;
+            values[BuildKey(name: name, culture: culture)] = value;
 
         public string GetMetadata(string name, string culture)
         {
-            Requests.Add((name, culture));
+            Requests.Add(item: (name, culture));
 
-            return values.TryGetValue(BuildKey(name, culture), out string value)
+            return values.TryGetValue(key: BuildKey(name: name, culture: culture), value: out string value)
                 ? value
                 : string.Empty;
         }
@@ -251,19 +255,22 @@ public partial class PageRenderProcessingServiceTests
     private sealed class TestCommonObjectReaderBroker : ICommonObjectReaderBroker
     {
         public IReadOnlyDictionary<string, PageRenderResource> ResourcesByLookup { get; init; } =
-            new Dictionary<string, PageRenderResource>(StringComparer.OrdinalIgnoreCase);
+            new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
 
         public IReadOnlyDictionary<string, PageRenderComponent> ComponentsByName { get; init; } =
-            new Dictionary<string, PageRenderComponent>(StringComparer.OrdinalIgnoreCase);
+            new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
 
         public IReadOnlyDictionary<string, PageRenderScript> ScriptsByName { get; init; } =
-            new Dictionary<string, PageRenderScript>(StringComparer.OrdinalIgnoreCase);
+            new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
 
-        public IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup() => ResourcesByLookup;
+        public IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup() =>
+            ResourcesByLookup;
 
-        public IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName() => ComponentsByName;
+        public IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName() =>
+            ComponentsByName;
 
-        public IReadOnlyDictionary<string, PageRenderScript> GetScriptsByName() => ScriptsByName;
+        public IReadOnlyDictionary<string, PageRenderScript> GetScriptsByName() =>
+            ScriptsByName;
     }
 
     private sealed class TestComponentReaderBroker : IComponentReaderBroker
@@ -271,7 +278,8 @@ public partial class PageRenderProcessingServiceTests
         public IEnumerable<cCoder.Data.Models.CMS.Component> GetComponents(int appId) =>
             Array.Empty<cCoder.Data.Models.CMS.Component>();
 
-        public cCoder.Data.Models.CMS.Component GetComponent(int appId, string name) => null;
+        public cCoder.Data.Models.CMS.Component GetComponent(int appId, string name) =>
+            null;
     }
 
     private sealed class TestScriptReaderBroker : IScriptReaderBroker
@@ -279,13 +287,7 @@ public partial class PageRenderProcessingServiceTests
         public IEnumerable<cCoder.Data.Models.CMS.Script> GetScripts(int appId) =>
             Array.Empty<cCoder.Data.Models.CMS.Script>();
 
-        public cCoder.Data.Models.CMS.Script GetScript(int appId, string name) => null;
+        public cCoder.Data.Models.CMS.Script GetScript(int appId, string name) =>
+            null;
     }
 }
-
-
-
-
-
-
-

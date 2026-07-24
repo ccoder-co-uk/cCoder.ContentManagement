@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -31,43 +35,44 @@ public class ComponentRenderCoordinationServiceTests
 
     public ComponentRenderCoordinationServiceTests()
     {
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(new DataUser
-        {
-            Id = "test-user",
-            DefaultCultureId = "en-GB",
-            DisplayName = "Test User",
-            Email = "test@example.com",
-            IsActive = true,
-            Roles = []
-        });
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(value: new DataUser
+            {
+                Id = "test-user",
+                DefaultCultureId = "en-GB",
+                DisplayName = "Test User",
+                Email = "test@example.com",
+                IsActive = true,
+                Roles = []
+            });
 
         coordinationService = new ComponentRenderCoordinationService(
-            authorizationBrokerMock.Object,
-            orchestrationServiceMock.Object);
+authorizationBroker: authorizationBrokerMock.Object,
+componentRenderOrchestrationService: orchestrationServiceMock.Object);
     }
 
     [Fact]
     public void ShouldDefaultCultureFromCurrentUser()
     {
         orchestrationServiceMock
-            .Setup(x => x.RenderUser(1, "Hero", It.Is<User>(user => user.Id == "test-user"), "en-GB", "Default"))
-            .Returns("<section>hero</section>");
+            .Setup(expression: x => x.RenderUser(appId: 1, name: "Hero", user: It.Is<User>(match: user => user.Id == "test-user"), culture: "en-GB", theme: "Default"))
+            .Returns(value: "<section>hero</section>");
 
-        string result = coordinationService.Render(1, "Hero", null, "Default");
+        string result = coordinationService.Render(appId: 1, name: "Hero", culture: null, theme: "Default");
 
-        result.Should().Be("<section>hero</section>");
+        result.Should()
+            .Be(expected: "<section>hero</section>");
+
         orchestrationServiceMock.VerifyAll();
     }
 
     [Fact]
     public void ShouldThrowValidationExceptionWhenThemeIsMissing()
     {
-        Action act = () => coordinationService.Render(1, "Hero", "en-GB", null);
+        Action act = () => coordinationService.Render(appId: 1, name: "Hero", culture: "en-GB", theme: null);
 
-        act.Should().Throw<ValidationException>().WithMessage("theme is required.");
+        act.Should()
+            .Throw<ValidationException>()
+            .WithMessage(expectedWildcardPattern: "theme is required.");
     }
 }
-
-
-
-

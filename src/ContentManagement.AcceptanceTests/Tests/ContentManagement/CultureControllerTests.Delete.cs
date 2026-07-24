@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
 
@@ -13,18 +17,17 @@ public sealed partial class CultureControllerTests
         SeededCultureContext seededContext = await SeedDatabase();
 
         // When
-        int actualStatusCode = await DeleteCultureAsync(seededContext.CultureId);
-        int actualReadStatusCode = await GetCultureStatusCodeAsync(seededContext.CultureId);
+        int actualStatusCode = await DeleteCultureAsync(id: seededContext.CultureId);
+        int actualReadStatusCode = await GetCultureStatusCodeAsync(id: seededContext.CultureId);
 
         // Then
-        actualStatusCode.Should().Be(200);
-        actualReadStatusCode.Should().Be(404);
 
-        await Teardown(seededContext.CultureId);
+        actualStatusCode.Should()
+            .Be(expected: 200);
+
+        actualReadStatusCode.Should()
+            .Be(expected: 404);
+
+        await Teardown(cultureIds: seededContext.CultureId);
     }
 }
-
-
-
-
-

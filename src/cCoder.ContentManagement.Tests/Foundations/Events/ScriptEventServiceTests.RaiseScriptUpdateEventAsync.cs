@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,40 +32,33 @@ public partial class ScriptEventServiceTests
         EventMessage<CmsDataModels.Script> actualMessage = null;
 
         scriptEventBrokerMock
-            .Setup(x => x.RaiseScriptUpdateEventAsync(It.IsAny<EventMessage<CmsDataModels.Script>>()))
-            .Callback<EventMessage<CmsDataModels.Script>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseScriptUpdateEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Script>>()))
+            .Callback<EventMessage<CmsDataModels.Script>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseScriptUpdateEventAsync(entity);
+        await service.RaiseScriptUpdateEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         scriptEventBrokerMock.Verify(
-            x => x.RaiseScriptUpdateEventAsync(It.IsAny<EventMessage<CmsDataModels.Script>>()),
-            Times.Once
+expression: x => x.RaiseScriptUpdateEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Script>>()),
+times: Times.Once
         );
+
         scriptEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

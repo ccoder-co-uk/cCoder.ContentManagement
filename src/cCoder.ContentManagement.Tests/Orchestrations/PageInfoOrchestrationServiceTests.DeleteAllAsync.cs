@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,39 +26,23 @@ public partial class PageInfoOrchestrationServiceTests
     {
         // Given
         PageInfo[] entities = [CreateRandomPageInfo()];
-        pageInfoProcessingServiceMock.Setup(x => x.GetPageInfo(entities[0].Id)).Returns(entities[0]);
-        pageInfoEventProcessingServiceMock.Setup(x => x.RaisePageInfoDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
-        pageInfoProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
+
+        pageInfoProcessingServiceMock.Setup(expression: x => x.GetPageInfo(pageInfoId: entities[0].Id))
+            .Returns(value: entities[0]);
+
+        pageInfoEventProcessingServiceMock.Setup(expression: x => x.RaisePageInfoDeleteEventAsync(entity: entities[0]))
+            .Returns(value: ValueTask.CompletedTask);
+
+        pageInfoProcessingServiceMock.Setup(expression: x => x.DeleteAsync(pageInfoId: entities[0].Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllPageInfoAsync(entities);
+        await orchestrationService.DeleteAllPageInfoAsync(deletedPageInfo: entities);
 
         // Then
-        pageInfoProcessingServiceMock.Verify(x => x.GetPageInfo(entities[0].Id), Times.Once);
-        pageInfoEventProcessingServiceMock.Verify(x => x.RaisePageInfoDeleteEventAsync(entities[0]), Times.Once);
-        pageInfoProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
+        pageInfoProcessingServiceMock.Verify(expression: x => x.GetPageInfo(pageInfoId: entities[0].Id), times: Times.Once);
+        pageInfoEventProcessingServiceMock.Verify(expression: x => x.RaisePageInfoDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        pageInfoProcessingServiceMock.Verify(expression: x => x.DeleteAsync(pageInfoId: entities[0].Id), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

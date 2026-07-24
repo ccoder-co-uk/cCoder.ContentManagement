@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,35 +28,21 @@ public partial class ContentServiceTests
         // Given
         Content content = CreateRandomContent(id: 7);
 
-        contentBrokerMock.Setup(x => x.GetAllContents(false)).Returns(new[] { content }.AsQueryable());
+        contentBrokerMock.Setup(expression: x => x.GetAllContents(ignoreFilters: false))
+            .Returns(value: new[] { content }.AsQueryable());
 
         // When
-        Content result = contentService.GetContent(7);
+        Content result = contentService.GetContent(contentId: 7);
 
         // Then
-        result.Should().BeEquivalentTo(content);
-        contentBrokerMock.Verify(x => x.GetAllContents(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: content);
+
+        contentBrokerMock.Verify(expression: x => x.GetAllContents(ignoreFilters: false), times: Times.Once);
         contentBrokerMock.VerifyNoOtherCalls();
         pageBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

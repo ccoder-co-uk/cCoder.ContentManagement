@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,35 +29,16 @@ public partial class ContentOrchestrationServiceTests
 
     public ContentOrchestrationServiceTests()
     {
-        contentProcessingServiceMock = new Mock<IContentProcessingService>(MockBehavior.Strict);
-        contentEventProcessingServiceMock = new Mock<IContentEventProcessingService>(MockBehavior.Strict);
+        contentProcessingServiceMock = new Mock<IContentProcessingService>(behavior: MockBehavior.Strict);
+        contentEventProcessingServiceMock = new Mock<IContentEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new ContentOrchestrationService(
-            contentProcessingServiceMock.Object,
-            contentEventProcessingServiceMock.Object
+processingService: contentProcessingServiceMock.Object,
+eventService: contentEventProcessingServiceMock.Object
         );
     }
 
-    private static Content CreateRandomContent() => Builder<Content>.CreateNew().Build();
+    private static Content CreateRandomContent() =>
+        Builder<Content>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

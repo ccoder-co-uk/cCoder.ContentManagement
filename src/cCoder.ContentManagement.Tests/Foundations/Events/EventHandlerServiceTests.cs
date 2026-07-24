@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using Moq;
@@ -11,7 +15,7 @@ public partial class EventHandlerServiceTests
 
     public EventHandlerServiceTests()
     {
-        eventHubBrokerMock = new Mock<IEventHubBroker>(MockBehavior.Strict);
-        service = new EventHandlerService(eventHubBrokerMock.Object);
+        eventHubBrokerMock = new Mock<IEventHubBroker>(behavior: MockBehavior.Strict);
+        service = new EventHandlerService(eventHubBroker: eventHubBrokerMock.Object);
     }
 }

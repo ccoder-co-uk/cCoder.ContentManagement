@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -17,11 +21,12 @@ namespace ContentManagement.IntegrationTests.Tests;
 [Collection(ContentManagementIntegrationCollection.Name)]
 public sealed partial class AppEventTests(ContentManagementIntegrationFixture fixture)
 {
-    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+    private static readonly JsonSerializerOptions JsonOptions = new(defaults: JsonSerializerDefaults.Web);
 
     private HttpClient Client { get; } = fixture.Client;
 
-    private IServiceProvider Services => fixture.Factory.Services;
+    private IServiceProvider Services =>
+        fixture.Factory.Services;
 
     private static string Unique(string prefix) =>
         $"{prefix}-{Guid.NewGuid():N}";
@@ -29,20 +34,23 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
     private async Task<int> SeedAppAsync()
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
         App app = new()
         {
-            Name = Unique("ContentManagementIntegration"),
-            Domain = $"{Unique("content")}.local",
+            Name = Unique(prefix: "ContentManagementIntegration"),
+            Domain = $"{Unique(prefix: "content")}.local",
             DefaultTheme = "Default",
             DefaultCultureId = string.Empty,
-            TenantId = Unique("tenant"),
+            TenantId = Unique(prefix: "tenant"),
             ConfigJson = "{}",
         };
 
-        await core.Set<App>().AddAsync(app);
+        await core.Set<App>()
+            .AddAsync(entity: app);
+
         await core.SaveChangesAsync();
         return app.Id;
     }
@@ -50,6 +58,7 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
     private async Task SeedAppAdministratorAsync(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
@@ -57,10 +66,10 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
         {
             Id = Guid.NewGuid(),
             AppId = appId,
-            Name = Unique("Administrators"),
+            Name = Unique(prefix: "Administrators"),
             Description = "Integration administrator role",
             Privs = string.Join(
-                ',',
+separator: ',',
                 "app_admin",
                 "appculture_create",
                 "appculture_update",
@@ -94,29 +103,39 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
                 "template_delete"),
         };
 
-        await core.Set<Role>().AddAsync(role);
-        await core.Set<UserRole>().AddAsync(new UserRole
-        {
-            RoleId = role.Id,
-            UserId = "Guest",
-        });
+        await core.Set<Role>()
+            .AddAsync(entity: role);
+
+        await core.Set<UserRole>()
+            .AddAsync(entity: new UserRole
+            {
+                RoleId = role.Id,
+                UserId = "Guest",
+            });
+
         await core.SaveChangesAsync();
     }
 
     private async Task SeedCultureAsync(string cultureId, string name)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        if (await core.Set<Culture>().IgnoreQueryFilters().AnyAsync(culture => culture.Id == cultureId))
-            return;
-
-        await core.Set<Culture>().AddAsync(new Culture
+        if (await core.Set<Culture>()
+            .IgnoreQueryFilters()
+            .AnyAsync(predicate: culture => culture.Id == cultureId))
         {
-            Id = cultureId,
-            Name = name,
-        });
+            return;
+        }
+
+        await core.Set<Culture>()
+            .AddAsync(entity: new Culture
+            {
+                Id = cultureId,
+                Name = name,
+            });
 
         await core.SaveChangesAsync();
     }
@@ -124,22 +143,25 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
     private async Task<HttpStatusCode> PostEventAsync(string eventName, object data)
     {
         using HttpResponseMessage response = await Client.PostAsJsonAsync(
-            "/Api/Eventing",
-            new HttpEventMessage
-            {
-                EventName = eventName,
-                SSOUserId = "Guest",
-                Data = JsonSerializer.Serialize(data, JsonOptions),
-            });
+requestUri: "/Api/Eventing",
+value: new HttpEventMessage
+{
+    EventName = eventName,
+    SSOUserId = "Guest",
+    Data = JsonSerializer.Serialize(value: data, options: JsonOptions),
+});
 
         string content = await response.Content.ReadAsStringAsync();
-        response.StatusCode.Should().Be(HttpStatusCode.Accepted, content);
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.Accepted, because: content);
+
         return response.StatusCode;
     }
 
     private static async Task WaitForAsync(Func<bool> condition, string because)
     {
-        DateTimeOffset stopAt = DateTimeOffset.UtcNow.AddSeconds(15);
+        DateTimeOffset stopAt = DateTimeOffset.UtcNow.AddSeconds(seconds: 15);
         Exception lastException = null;
 
         while (DateTimeOffset.UtcNow < stopAt)
@@ -147,147 +169,192 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
             try
             {
                 if (condition())
+                {
                     return;
+                }
             }
             catch (Exception exception)
             {
                 lastException = exception;
             }
 
-            await Task.Delay(100);
+            await Task.Delay(millisecondsDelay: 100);
         }
 
         if (lastException is not null)
-            throw new TimeoutException($"Timed out waiting because {because}.", lastException);
+        {
+            throw new TimeoutException(message: $"Timed out waiting because {because}.", innerException: lastException);
+        }
 
-        throw new TimeoutException($"Timed out waiting because {because}.");
+        throw new TimeoutException(message: $"Timed out waiting because {because}.");
     }
 
     private bool HasAppCulture(int appId, string cultureId = "en-GB")
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return core.Set<AppCulture>().IgnoreQueryFilters()
-            .Any(item => item.AppId == appId && item.CultureId == cultureId);
+        return core.Set<AppCulture>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId && item.CultureId == cultureId);
     }
 
     private bool HasComponent(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return core.Set<Component>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return core.Set<Component>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasLayout(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return core.Set<Layout>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return core.Set<Layout>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasPage(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return core.Set<Page>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return core.Set<Page>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasResource(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return core.Set<Resource>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return core.Set<Resource>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasScript(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return core.Set<Script>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return core.Set<Script>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasTemplate(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return core.Set<Template>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return core.Set<Template>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasNoAppCulture(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return !core.Set<AppCulture>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return !core.Set<AppCulture>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasNoComponent(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return !core.Set<Component>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return !core.Set<Component>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasNoLayout(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return !core.Set<Layout>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return !core.Set<Layout>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasNoPage(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return !core.Set<Page>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return !core.Set<Page>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasNoResource(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return !core.Set<Resource>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return !core.Set<Resource>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasNoScript(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return !core.Set<Script>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return !core.Set<Script>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private bool HasNoTemplate(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
-        return !core.Set<Template>().IgnoreQueryFilters().Any(item => item.AppId == appId);
+        return !core.Set<Template>()
+            .IgnoreQueryFilters()
+            .Any(predicate: item => item.AppId == appId);
     }
 
     private App CreateAppWithAppCulture(int appId, string cultureId = "en-GB") =>
@@ -313,10 +380,10 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
                 new Component
                 {
                     AppId = appId,
-                    Name = Unique("Component"),
+                    Name = Unique(prefix: "Component"),
                     Description = "Integration component",
                     ResourceKey = "Integration.Component",
-                    Key = Unique("component"),
+                    Key = Unique(prefix: "component"),
                     Content = "<p>Component</p>",
                     Script = string.Empty,
                     CreatedBy = "Guest",
@@ -336,7 +403,7 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
                 new Layout
                 {
                     AppId = appId,
-                    Name = Unique("Layout"),
+                    Name = Unique(prefix: "Layout"),
                     Description = "Integration layout",
                     HeaderHtml = string.Empty,
                     Html = "<main>[content[body]]</main>",
@@ -374,8 +441,8 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
                 new Page
                 {
                     AppId = appId,
-                    Name = Unique("Page"),
-                    Path = Unique("page"),
+                    Name = Unique(prefix: "Page"),
+                    Path = Unique(prefix: "page"),
                     Layout = "Default",
                     ResourceKey = "Integration.Page",
                     CreatedBy = "Guest",
@@ -414,9 +481,9 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
                 new Resource
                 {
                     AppId = appId,
-                    Name = Unique("Resource"),
+                    Name = Unique(prefix: "Resource"),
                     Description = "Integration resource",
-                    Key = Unique("resource"),
+                    Key = Unique(prefix: "resource"),
                     Culture = string.Empty,
                     DisplayName = "Integration Resource",
                     ShortDisplayName = "Resource",
@@ -437,9 +504,9 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
                 new Script
                 {
                     AppId = appId,
-                    Name = Unique("Script"),
+                    Name = Unique(prefix: "Script"),
                     Description = "Integration script",
-                    Key = Unique("script"),
+                    Key = Unique(prefix: "script"),
                     Content = "console.log('integration');",
                     CreatedBy = "Guest",
                     CreatedOn = DateTimeOffset.UtcNow,
@@ -458,7 +525,7 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
                 new Template
                 {
                     AppId = appId,
-                    Name = Unique("Template"),
+                    Name = Unique(prefix: "Template"),
                     Description = "Integration template",
                     ResourceKey = "Integration.Template",
                     RawString = "<p>Template</p>",
@@ -472,105 +539,133 @@ public sealed partial class AppEventTests(ContentManagementIntegrationFixture fi
 
     private async Task SeedAppCultureAsync(int appId)
     {
-        await SeedCultureAsync("en-GB", "English (UK)");
-        await PostEventAsync("app_add", CreateAppWithAppCulture(appId));
-        await WaitForAsync(() => HasAppCulture(appId), "app_add should create the app culture child row");
+        await SeedCultureAsync(cultureId: "en-GB", name: "English (UK)");
+        await PostEventAsync(eventName: "app_add", data: CreateAppWithAppCulture(appId: appId));
+        await WaitForAsync(condition: () => HasAppCulture(appId: appId), because: "app_add should create the app culture child row");
     }
 
     private async Task SeedComponentAsync(int appId)
     {
-        await PostEventAsync("app_add", CreateAppWithComponent(appId));
-        await WaitForAsync(() => HasComponent(appId), "app_add should create the component child row");
+        await PostEventAsync(eventName: "app_add", data: CreateAppWithComponent(appId: appId));
+        await WaitForAsync(condition: () => HasComponent(appId: appId), because: "app_add should create the component child row");
     }
 
     private async Task SeedLayoutAsync(int appId)
     {
-        await PostEventAsync("app_add", CreateAppWithLayout(appId));
-        await WaitForAsync(() => HasLayout(appId), "app_add should create the layout child row");
+        await PostEventAsync(eventName: "app_add", data: CreateAppWithLayout(appId: appId));
+        await WaitForAsync(condition: () => HasLayout(appId: appId), because: "app_add should create the layout child row");
     }
 
     private async Task SeedPageAsync(int appId)
     {
-        await PostEventAsync("app_add", CreateAppWithPage(appId));
-        await WaitForAsync(() => HasPage(appId), "app_add should create the page child row");
+        await PostEventAsync(eventName: "app_add", data: CreateAppWithPage(appId: appId));
+        await WaitForAsync(condition: () => HasPage(appId: appId), because: "app_add should create the page child row");
     }
 
     private async Task SeedResourceAsync(int appId)
     {
-        await PostEventAsync("app_add", CreateAppWithResource(appId));
-        await WaitForAsync(() => HasResource(appId), "app_add should create the resource child row");
+        await PostEventAsync(eventName: "app_add", data: CreateAppWithResource(appId: appId));
+        await WaitForAsync(condition: () => HasResource(appId: appId), because: "app_add should create the resource child row");
     }
 
     private async Task SeedScriptAsync(int appId)
     {
-        await PostEventAsync("app_add", CreateAppWithScript(appId));
-        await WaitForAsync(() => HasScript(appId), "app_add should create the script child row");
+        await PostEventAsync(eventName: "app_add", data: CreateAppWithScript(appId: appId));
+        await WaitForAsync(condition: () => HasScript(appId: appId), because: "app_add should create the script child row");
     }
 
     private async Task SeedTemplateAsync(int appId)
     {
-        await PostEventAsync("app_add", CreateAppWithTemplate(appId));
-        await WaitForAsync(() => HasTemplate(appId), "app_add should create the template child row");
+        await PostEventAsync(eventName: "app_add", data: CreateAppWithTemplate(appId: appId));
+        await WaitForAsync(condition: () => HasTemplate(appId: appId), because: "app_add should create the template child row");
     }
 
     private async Task TeardownAppAsync(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
+
         using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
             .CreateCoreContext();
 
         int[] pageIds =
         [
-            .. core.Set<Page>().IgnoreQueryFilters()
-                .Where(page => page.AppId == appId)
-                .Select(page => page.Id)
+            .. core.Set<Page>()
+            .IgnoreQueryFilters()
+            .Where(predicate: page => page.AppId == appId)
+            .Select(selector: page => page.Id)
         ];
 
-        await core.Set<PageRole>().IgnoreQueryFilters()
-            .Where(pageRole => pageIds.Contains(pageRole.PageId))
+        await core.Set<PageRole>()
+            .IgnoreQueryFilters()
+            .Where(predicate: pageRole => pageIds.Contains(value: pageRole.PageId))
             .ExecuteDeleteAsync();
-        await core.Set<PageInfo>().IgnoreQueryFilters()
-            .Where(pageInfo => pageIds.Contains(pageInfo.PageId))
+
+        await core.Set<PageInfo>()
+            .IgnoreQueryFilters()
+            .Where(predicate: pageInfo => pageIds.Contains(value: pageInfo.PageId))
             .ExecuteDeleteAsync();
-        await core.Set<Content>().IgnoreQueryFilters()
-            .Where(content => pageIds.Contains(content.PageId))
+
+        await core.Set<Content>()
+            .IgnoreQueryFilters()
+            .Where(predicate: content => pageIds.Contains(value: content.PageId))
             .ExecuteDeleteAsync();
-        await core.Set<Page>().IgnoreQueryFilters()
-            .Where(page => page.AppId == appId)
+
+        await core.Set<Page>()
+            .IgnoreQueryFilters()
+            .Where(predicate: page => page.AppId == appId)
             .ExecuteDeleteAsync();
-        await core.Set<AppCulture>().IgnoreQueryFilters()
-            .Where(culture => culture.AppId == appId)
+
+        await core.Set<AppCulture>()
+            .IgnoreQueryFilters()
+            .Where(predicate: culture => culture.AppId == appId)
             .ExecuteDeleteAsync();
-        await core.Set<Component>().IgnoreQueryFilters()
-            .Where(component => component.AppId == appId)
+
+        await core.Set<Component>()
+            .IgnoreQueryFilters()
+            .Where(predicate: component => component.AppId == appId)
             .ExecuteDeleteAsync();
-        await core.Set<Layout>().IgnoreQueryFilters()
-            .Where(layout => layout.AppId == appId)
+
+        await core.Set<Layout>()
+            .IgnoreQueryFilters()
+            .Where(predicate: layout => layout.AppId == appId)
             .ExecuteDeleteAsync();
-        await core.Set<Resource>().IgnoreQueryFilters()
-            .Where(resource => resource.AppId == appId)
+
+        await core.Set<Resource>()
+            .IgnoreQueryFilters()
+            .Where(predicate: resource => resource.AppId == appId)
             .ExecuteDeleteAsync();
-        await core.Set<Script>().IgnoreQueryFilters()
-            .Where(script => script.AppId == appId)
+
+        await core.Set<Script>()
+            .IgnoreQueryFilters()
+            .Where(predicate: script => script.AppId == appId)
             .ExecuteDeleteAsync();
-        await core.Set<Template>().IgnoreQueryFilters()
-            .Where(template => template.AppId == appId)
+
+        await core.Set<Template>()
+            .IgnoreQueryFilters()
+            .Where(predicate: template => template.AppId == appId)
             .ExecuteDeleteAsync();
+
         Guid[] roleIds =
         [
-            .. core.Set<Role>().IgnoreQueryFilters()
-                .Where(role => role.AppId == appId)
-                .Select(role => role.Id)
+            .. core.Set<Role>()
+            .IgnoreQueryFilters()
+            .Where(predicate: role => role.AppId == appId)
+            .Select(selector: role => role.Id)
         ];
 
-        await core.Set<UserRole>().IgnoreQueryFilters()
-            .Where(userRole => roleIds.Contains(userRole.RoleId))
+        await core.Set<UserRole>()
+            .IgnoreQueryFilters()
+            .Where(predicate: userRole => roleIds.Contains(value: userRole.RoleId))
             .ExecuteDeleteAsync();
-        await core.Set<Role>().IgnoreQueryFilters()
-            .Where(role => role.AppId == appId)
+
+        await core.Set<Role>()
+            .IgnoreQueryFilters()
+            .Where(predicate: role => role.AppId == appId)
             .ExecuteDeleteAsync();
-        await core.Set<App>().IgnoreQueryFilters()
-            .Where(app => app.Id == appId)
+
+        await core.Set<App>()
+            .IgnoreQueryFilters()
+            .Where(predicate: app => app.Id == appId)
             .ExecuteDeleteAsync();
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,39 +26,24 @@ public partial class CommonObjectOrchestrationServiceTests
     {
         // Given
         CommonObject entity = CreateRandomCommonObject();
-        commonObjectProcessingServiceMock.Setup(x => x.UpdateCommonObjectAsync(entity)).ReturnsAsync(entity);
+
+        commonObjectProcessingServiceMock.Setup(expression: x => x.UpdateCommonObjectAsync(updatedCommonObject: entity))
+            .ReturnsAsync(value: entity);
 
         commonObjectEventProcessingServiceMock
-            .Setup(x => x.RaiseCommonObjectUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseCommonObjectUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        CommonObject result = await orchestrationService.UpdateCommonObjectAsync(entity);
+        CommonObject result = await orchestrationService.UpdateCommonObjectAsync(updatedCommonObject: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        commonObjectProcessingServiceMock.Verify(x => x.UpdateCommonObjectAsync(entity), Times.Once);
-        commonObjectEventProcessingServiceMock.Verify(x => x.RaiseCommonObjectUpdateEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        commonObjectProcessingServiceMock.Verify(expression: x => x.UpdateCommonObjectAsync(updatedCommonObject: entity), times: Times.Once);
+        commonObjectEventProcessingServiceMock.Verify(expression: x => x.RaiseCommonObjectUpdateEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

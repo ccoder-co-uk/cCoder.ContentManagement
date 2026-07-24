@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,8 +29,9 @@ public partial class PageCoordinationServiceTests
     {
         // Given
         Page page = CreateRandomPage();
-        LocalPageInfo[] localPageInfos = ToLocalPageInfos(page.PageInfo);
-        LocalContent[] localContents = [.. page.Contents.Select(content => new LocalContent
+        LocalPageInfo[] localPageInfos = ToLocalPageInfos(pageInfos: page.PageInfo);
+
+        LocalContent[] localContents = [.. page.Contents.Select(selector: content => new LocalContent
         {
             Id = content.Id,
             PageId = page.Id,
@@ -34,68 +39,76 @@ public partial class PageCoordinationServiceTests
             CultureId = content.CultureId,
             Html = content.Html,
         })];
-        LocalPageRole[] localPageRoles = [.. page.Roles.Select(role => new LocalPageRole
+
+        LocalPageRole[] localPageRoles = [.. page.Roles.Select(selector: role => new LocalPageRole
         {
             PageId = page.Id,
             RoleId = role.RoleId,
         })];
 
         pageInfoOrchestrationServiceMock
-            .Setup(service =>
+            .Setup(expression: service =>
                 service.AddOrUpdatePageInfoResult(
-                    It.Is<IEnumerable<LocalPageInfo>>(items =>
-                        items.Select(i => i.Id).SequenceEqual(localPageInfos.Select(i => i.Id))
+newPageInfo: It.Is<IEnumerable<LocalPageInfo>>(match: items =>
+                        items.Select(selector: i => i.Id)
+            .SequenceEqual(second: localPageInfos.Select(selector: i => i.Id))
                     )
                 )
             )
-            .ReturnsAsync([]);
+            .ReturnsAsync(value: []);
 
         contentOrchestrationServiceMock
-            .Setup(service => service.AddOrUpdateContentResult(
-                It.Is<IEnumerable<LocalContent>>(items =>
-                    items.Select(item => item.PageId).SequenceEqual(localContents.Select(item => item.PageId))
+            .Setup(expression: service => service.AddOrUpdateContentResult(
+newContent: It.Is<IEnumerable<LocalContent>>(match: items =>
+                    items.Select(selector: item => item.PageId)
+            .SequenceEqual(second: localContents.Select(selector: item => item.PageId))
                 )
             ))
-            .ReturnsAsync([]);
+            .ReturnsAsync(value: []);
 
         pageRoleOrchestrationServiceMock
-            .Setup(service => service.AddOrUpdatePageRoleResult(
-                It.Is<IEnumerable<LocalPageRole>>(items =>
-                    items.Select(item => item.RoleId).SequenceEqual(localPageRoles.Select(item => item.RoleId))
+            .Setup(expression: service => service.AddOrUpdatePageRoleResult(
+newPageRole: It.Is<IEnumerable<LocalPageRole>>(match: items =>
+                    items.Select(selector: item => item.RoleId)
+            .SequenceEqual(second: localPageRoles.Select(selector: item => item.RoleId))
                 )
             ))
-            .ReturnsAsync([]);
+            .ReturnsAsync(value: []);
 
         // When
-        await coordinationService.HandlePageAddAsync(page);
+        await coordinationService.HandlePageAddAsync(page: page);
 
         // Then
+
         pageInfoOrchestrationServiceMock.Verify(
-            service =>
+expression: service =>
                 service.AddOrUpdatePageInfoResult(
-                    It.Is<IEnumerable<LocalPageInfo>>(items =>
-                        items.Select(i => i.Id).SequenceEqual(localPageInfos.Select(i => i.Id))
+newPageInfo: It.Is<IEnumerable<LocalPageInfo>>(match: items =>
+                        items.Select(selector: i => i.Id)
+            .SequenceEqual(second: localPageInfos.Select(selector: i => i.Id))
                     )
                 ),
-            Times.Once
+times: Times.Once
         );
 
         contentOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdateContentResult(
-                It.Is<IEnumerable<LocalContent>>(items =>
-                    items.Select(item => item.PageId).SequenceEqual(localContents.Select(item => item.PageId))
+expression: service => service.AddOrUpdateContentResult(
+newContent: It.Is<IEnumerable<LocalContent>>(match: items =>
+                    items.Select(selector: item => item.PageId)
+            .SequenceEqual(second: localContents.Select(selector: item => item.PageId))
                 )
             ),
-            Times.Once
+times: Times.Once
         );
 
         pageRoleOrchestrationServiceMock.Verify(
-            service => service.AddOrUpdatePageRoleResult(
-                It.Is<IEnumerable<LocalPageRole>>(items =>
-                    items.Select(item => item.RoleId).SequenceEqual(localPageRoles.Select(item => item.RoleId))
+expression: service => service.AddOrUpdatePageRoleResult(
+newPageRole: It.Is<IEnumerable<LocalPageRole>>(match: items =>
+                    items.Select(selector: item => item.RoleId)
+            .SequenceEqual(second: localPageRoles.Select(selector: item => item.RoleId))
                 )
             ),
-            Times.Once
+times: Times.Once
         );
 
         pageInfoOrchestrationServiceMock.VerifyNoOtherCalls();
@@ -104,24 +117,3 @@ public partial class PageCoordinationServiceTests
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

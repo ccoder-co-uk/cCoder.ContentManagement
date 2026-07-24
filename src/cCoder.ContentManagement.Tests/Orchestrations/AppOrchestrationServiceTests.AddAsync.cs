@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,43 +27,27 @@ public partial class AppOrchestrationServiceTests
     {
         // Given
         App entity = CreateRandomApp();
+
         appProcessingServiceMock
-            .Setup(x => x.AddAppAsync(entity))
-            .ReturnsAsync((App app) => app);
+            .Setup(expression: x => x.AddAppAsync(newApp: entity))
+            .ReturnsAsync(valueFunction: (App app) => app);
+
         appEventProcessingServiceMock
-            .Setup(x => x.RaiseAppAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseAppAddEventAsync(app: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        App result = await orchestrationService.AddAppAsync(entity);
+        App result = await orchestrationService.AddAppAsync(newApp: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        appProcessingServiceMock.Verify(x => x.AddAppAsync(It.IsAny<App>()), Times.Once);
-        appEventProcessingServiceMock.Verify(x => x.RaiseAppAddEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        appProcessingServiceMock.Verify(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()), times: Times.Once);
+        appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppAddEventAsync(app: entity), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

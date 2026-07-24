@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,27 +29,17 @@ public partial class TemplateEventServiceTests
 
     public TemplateEventServiceTests()
     {
-        templateEventBrokerMock = new Mock<ITemplateEventBroker>(MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(MockBehavior.Strict);
-        templateEventBrokerMock = new(MockBehavior.Strict);
+        templateEventBrokerMock = new Mock<ITemplateEventBroker>(behavior: MockBehavior.Strict);
+        authInfoMock = new Mock<ICoreAuthInfo>(behavior: MockBehavior.Strict);
+        templateEventBrokerMock = new(behavior: MockBehavior.Strict);
         authInfoMock = new();
-        authInfoMock.SetupGet(x => x.SSOUserId).Returns(CurrentUserId);
+
+        authInfoMock.SetupGet(expression: x => x.SSOUserId)
+            .Returns(value: CurrentUserId);
+
         service = new cCoder.ContentManagement.Services.Foundations.Events.TemplateEventService(
-            templateEventBrokerMock.Object,
-            authInfoMock.Object
+templateEventBroker: templateEventBrokerMock.Object,
+authInfo: authInfoMock.Object
         );
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

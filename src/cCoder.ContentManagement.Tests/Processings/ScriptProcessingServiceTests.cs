@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,32 +29,14 @@ public partial class ScriptProcessingServiceTests
 
     public ScriptProcessingServiceTests()
     {
-        scriptProcessingService = new ScriptProcessingService(scriptServiceMock.Object);
+        scriptProcessingService = new ScriptProcessingService(service: scriptServiceMock.Object);
     }
 
     private static Script CreateRandomScript() =>
         Builder<Script>
             .CreateNew()
-            .With(x => x.Id = Random.Shared.Next(1, 10000))
-            .With(x => x.AppId = 1)
-            .With(x => x.Name = $"Script-{Guid.NewGuid():N}")
-            .Build();
+        .With(func: x => x.Id = Random.Shared.Next(minValue: 1, maxValue: 10000))
+        .With(func: x => x.AppId = 1)
+        .With(func: x => x.Name = $"Script-{Guid.NewGuid():N}")
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

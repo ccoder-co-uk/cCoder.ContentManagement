@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,22 +26,16 @@ public partial class PageProcessingServiceTests
     {
         Page[] pages = [CreateRandomPage()];
         IQueryable<Page> queryablePages = pages.AsQueryable();
-        pageServiceMock.Setup(x => x.GetAllPage()).Returns(queryablePages);
+
+        pageServiceMock.Setup(expression: x => x.GetAllPage())
+            .Returns(value: queryablePages);
 
         IQueryable<Page> result = pageProcessingService.GetAllPage();
 
-        result.Should().BeSameAs(queryablePages);
-        pageServiceMock.Verify(x => x.GetAllPage(), Times.Once);
+        result.Should()
+            .BeSameAs(expected: queryablePages);
+
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }
-
-
-
-
-
-
-
-
-
-

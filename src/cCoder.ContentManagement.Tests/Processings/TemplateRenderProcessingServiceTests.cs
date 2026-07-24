@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,7 +33,7 @@ public partial class TemplateRenderProcessingServiceTests
     private readonly Mock<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache> commonObjectCacheMock = new();
 
     private TemplateRenderProcessingService CreateSut() =>
-        new(metadataCacheMock.Object, commonObjectCacheMock.Object, new JsonBroker());
+        new(metadataCache: metadataCacheMock.Object, objectCache: commonObjectCacheMock.Object, jsonBroker: new JsonBroker());
 
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()
@@ -103,7 +107,7 @@ public partial class TemplateRenderProcessingServiceTests
             Name = "Welcome",
             ResourceKey = "Default",
             RawString = string.Join(
-                "",
+separator: "",
                 "[app[name]]|",
                 "[theme[Color]]|",
                 "[model[Name]]|",
@@ -118,10 +122,3 @@ public partial class TemplateRenderProcessingServiceTests
         return (app, user, template);
     }
 }
-
-
-
-
-
-
-

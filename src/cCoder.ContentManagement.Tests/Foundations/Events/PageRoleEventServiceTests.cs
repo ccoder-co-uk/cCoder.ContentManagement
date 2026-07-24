@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,28 +29,17 @@ public partial class PageRoleEventServiceTests
 
     public PageRoleEventServiceTests()
     {
-        pageRoleEventBrokerMock = new Mock<IPageRoleEventBroker>(MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(MockBehavior.Strict);
-        pageRoleEventBrokerMock = new(MockBehavior.Strict);
+        pageRoleEventBrokerMock = new Mock<IPageRoleEventBroker>(behavior: MockBehavior.Strict);
+        authInfoMock = new Mock<ICoreAuthInfo>(behavior: MockBehavior.Strict);
+        pageRoleEventBrokerMock = new(behavior: MockBehavior.Strict);
         authInfoMock = new();
-        authInfoMock.SetupGet(x => x.SSOUserId).Returns(CurrentUserId);
+
+        authInfoMock.SetupGet(expression: x => x.SSOUserId)
+            .Returns(value: CurrentUserId);
+
         service = new cCoder.ContentManagement.Services.Foundations.Events.PageRoleEventService(
-            pageRoleEventBrokerMock.Object,
-            authInfoMock.Object
+pageRoleEventBroker: pageRoleEventBrokerMock.Object,
+authInfo: authInfoMock.Object
         );
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -32,15 +36,15 @@ public partial class ComponentRenderProcessingServiceTests
 
     private ComponentRenderProcessingService CreateSut(string workflowBaseUrl) =>
         new(
-            metadataCacheMock.Object,
-            commonObjectCacheMock.Object,
-            new JsonBroker(),
-            new RenderConfig
-            {
-                Settings = new Dictionary<string, string> { ["sslPort"] = "443" },
-                Services = new Dictionary<string, string> { ["Workflow"] = workflowBaseUrl },
-            },
-            renderFileContentServiceMock.Object);
+metadataCache: metadataCacheMock.Object,
+objectCache: commonObjectCacheMock.Object,
+jsonBroker: new JsonBroker(),
+config: new RenderConfig
+{
+    Settings = new Dictionary<string, string> { ["sslPort"] = "443" },
+    Services = new Dictionary<string, string> { ["Workflow"] = workflowBaseUrl },
+},
+renderFileContentService: renderFileContentServiceMock.Object);
 
     private static (RenderApp app, RenderUser user, RenderComponent component, RenderComponentParams renderParams) CreateComponentRenderContext()
     {
@@ -106,7 +110,7 @@ public partial class ComponentRenderProcessingServiceTests
             Name = "Hero",
             ResourceKey = "Default",
             Content = string.Join(
-                "",
+separator: "",
                 "[dms[snippets/info]]|",
                 "[script[Bootstrap]]|",
                 "[component[Child]]|",
@@ -118,14 +122,6 @@ public partial class ComponentRenderProcessingServiceTests
             Script = string.Empty,
         };
 
-        return (app, user, component, new RenderComponentParams("Default", app, user, "en-GB"));
+        return (app, user, component, new RenderComponentParams(theme: "Default", app: app, user: user, culture: "en-GB"));
     }
 }
-
-
-
-
-
-
-
-

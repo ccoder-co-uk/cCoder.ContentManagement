@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,38 +28,24 @@ public partial class PackageOrchestrationServiceTests
     {
         // Given
         Package entity = CreateRandomPackage();
-        packageProcessingServiceMock.Setup(x => x.UpdatePackageAsync(entity)).ReturnsAsync(entity);
+
+        packageProcessingServiceMock.Setup(expression: x => x.UpdatePackageAsync(updatedPackage: entity))
+            .ReturnsAsync(value: entity);
 
         packageEventProcessingServiceMock
-            .Setup(x => x.RaisePackageUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePackageUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Package result = await orchestrationService.UpdatePackageAsync(entity);
+        Package result = await orchestrationService.UpdatePackageAsync(updatedPackage: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        packageProcessingServiceMock.Verify(x => x.UpdatePackageAsync(entity), Times.Once);
-        packageEventProcessingServiceMock.Verify(x => x.RaisePackageUpdateEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        packageProcessingServiceMock.Verify(expression: x => x.UpdatePackageAsync(updatedPackage: entity), times: Times.Once);
+        packageEventProcessingServiceMock.Verify(expression: x => x.RaisePackageUpdateEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

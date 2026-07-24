@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -30,52 +34,31 @@ public partial class ResourceServiceTests
 
     public ResourceServiceTests()
     {
-        resourceBrokerMock = new Mock<IResourceBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        resourceBrokerMock = new Mock<IResourceBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
         resourceBrokerMock = new();
-        authorizationBrokerMock = new(MockBehavior.Strict);
+        authorizationBrokerMock = new(behavior: MockBehavior.Strict);
 
         authorizationBrokerMock
-            .Setup(x => x.GetCurrentUser())
-            .Returns(new SecurityDataModels.User { Id = "test-user" });
+            .Setup(expression: x => x.GetCurrentUser())
+            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         resourceService = new ResourceService(
-            resourceBrokerMock.Object,
-            authorizationBrokerMock.Object
+resourceBroker: resourceBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
     private static Resource CreateRandomResource(int id = 42, int appId = 1, string key = null) =>
         Builder<Resource>
             .CreateNew()
-            .With(x => x.Id = id)
-            .With(x => x.AppId = appId)
-            .With(x => x.Key = key ?? $"key-{Guid.NewGuid():N}")
-            .With(x => x.Culture = "en-GB")
-            .With(x => x.Name = $"Name-{Guid.NewGuid():N}")
-            .With(x => x.DisplayName = $"Display-{Guid.NewGuid():N}")
-            .With(x => x.ShortDisplayName = $"Short-{Guid.NewGuid():N}")
-            .With(x => x.LastUpdated = DateTimeOffset.UtcNow)
-            .Build();
+        .With(func: x => x.Id = id)
+        .With(func: x => x.AppId = appId)
+        .With(func: x => x.Key = key ?? $"key-{Guid.NewGuid():N}")
+        .With(func: x => x.Culture = "en-GB")
+        .With(func: x => x.Name = $"Name-{Guid.NewGuid():N}")
+        .With(func: x => x.DisplayName = $"Display-{Guid.NewGuid():N}")
+        .With(func: x => x.ShortDisplayName = $"Short-{Guid.NewGuid():N}")
+        .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow)
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,25 +31,32 @@ public partial class MetadataCacheTests
         MetadataContainerSet core = new()
         {
             Name = "Core",
-            Types = [new ExtendedMetadataContainer(typeof(string)) { Category = "Core" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(string)) { Category = "Core" }],
         };
+
         MetadataContainerSet workflow = new()
         {
             Name = "Workflow",
-            Types = [new ExtendedMetadataContainer(typeof(int)) { Category = "Workflow" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(int)) { Category = "Workflow" }],
         };
 
         MetadataCache subject = CreateSubject(core, workflow);
 
-        string result = subject.GetAll("en-GB");
+        string result = subject.GetAll(culture: "en-GB");
 
-        result.Should().Contain("\"Name\":\"Core\"");
-        result.Should().Contain("\"Name\":\"Workflow\"");
-        metadataTypeCacheMock.Verify(cache => cache.GetAll(), Times.AtLeastOnce);
+        result.Should()
+            .Contain(expected: "\"Name\":\"Core\"");
+
+        result.Should()
+            .Contain(expected: "\"Name\":\"Workflow\"");
+
+        metadataTypeCacheMock.Verify(expression: cache => cache.GetAll(), times: Times.AtLeastOnce);
+
         commonObjectCacheMock.Verify(
-            cache => cache.GetAll<Resource>(),
-            Times.Once
+expression: cache => cache.GetAll<Resource>(),
+times: Times.Once
         );
+
         metadataTypeCacheMock.VerifyNoOtherCalls();
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
@@ -56,38 +67,44 @@ public partial class MetadataCacheTests
         MetadataContainerSet initial = new()
         {
             Name = "Core",
-            Types = [new ExtendedMetadataContainer(typeof(string)) { Category = "Core" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(string)) { Category = "Core" }],
         };
+
         MetadataContainerSet updated = new()
         {
             Name = "Workflow",
-            Types = [new ExtendedMetadataContainer(typeof(int)) { Category = "Workflow" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(int)) { Category = "Workflow" }],
         };
 
-        string[] currentTypeSetPayloads = [JsonSerializer.Serialize(initial)];
+        string[] currentTypeSetPayloads = [JsonSerializer.Serialize(value: initial)];
 
         metadataTypeCacheMock
-            .Setup(cache => cache.GetAll())
-            .Returns(() => currentTypeSetPayloads);
+            .Setup(expression: cache => cache.GetAll())
+            .Returns(valueFunction: () => currentTypeSetPayloads);
 
         commonObjectCacheMock
-            .Setup(cache => cache.GetAll<Resource>())
-            .Returns([])
+            .Setup(expression: cache => cache.GetAll<Resource>())
+            .Returns(value: [])
             .Verifiable();
 
-        MetadataCache subject = new(metadataTypeCacheMock.Object, commonObjectCacheMock.Object);
+        MetadataCache subject = new(metadataTypeCache: metadataTypeCacheMock.Object, resourceCache: commonObjectCacheMock.Object);
 
-        currentTypeSetPayloads = [JsonSerializer.Serialize(updated)];
+        currentTypeSetPayloads = [JsonSerializer.Serialize(value: updated)];
         subject.Rebuild();
-        string result = subject.GetAll("en-GB");
+        string result = subject.GetAll(culture: "en-GB");
 
-        result.Should().Contain("\"Name\":\"Workflow\"");
-        result.Should().NotContain("\"Name\":\"Core\"");
+        result.Should()
+            .Contain(expected: "\"Name\":\"Workflow\"");
+
+        result.Should()
+            .NotContain(unexpected: "\"Name\":\"Core\"");
+
         commonObjectCacheMock.Verify(
-            cache => cache.GetAll<Resource>(),
-            Times.Exactly(2)
+expression: cache => cache.GetAll<Resource>(),
+times: Times.Exactly(callCount: 2)
         );
-        metadataTypeCacheMock.Verify(cache => cache.GetAll(), Times.AtLeast(3));
+
+        metadataTypeCacheMock.Verify(expression: cache => cache.GetAll(), times: Times.AtLeast(callCount: 3));
         metadataTypeCacheMock.VerifyNoOtherCalls();
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
@@ -99,30 +116,35 @@ public partial class MetadataCacheTests
         {
             Name = "Core",
             UriBase = "Core",
-            Types = [new ExtendedMetadataContainer(typeof(App)) { Category = "Core" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(App)) { Category = "Core" }],
         };
+
         MetadataContainerSet appSecurity = new()
         {
             Name = "Core",
             UriBase = "Core",
-            Types = [new ExtendedMetadataContainer(typeof(Role)) { Category = "Core" }],
+            Types = [new ExtendedMetadataContainer(type: typeof(Role)) { Category = "Core" }],
         };
 
         MetadataCache subject = CreateSubject(contentManagement, appSecurity);
 
-        string result = subject.GetAll("en-GB");
+        string result = subject.GetAll(culture: "en-GB");
 
-        result.Should().Contain("\"Name\":\"Core\"");
-        result.Should().Contain("\"Name\":\"App\"");
-        result.Should().Contain("\"Name\":\"Role\"");
-        subject.Get("core/app", "en-GB").Should().Contain("\"Name\":\"App\"");
-        subject.Get("core/role", "en-GB").Should().Contain("\"Name\":\"Role\"");
+        result.Should()
+            .Contain(expected: "\"Name\":\"Core\"");
+
+        result.Should()
+            .Contain(expected: "\"Name\":\"App\"");
+
+        result.Should()
+            .Contain(expected: "\"Name\":\"Role\"");
+
+        subject.Get(key: "core/app", culture: "en-GB")
+            .Should()
+            .Contain(expected: "\"Name\":\"App\"");
+
+        subject.Get(key: "core/role", culture: "en-GB")
+            .Should()
+            .Contain(expected: "\"Name\":\"Role\"");
     }
 }
-
-
-
-
-
-
-

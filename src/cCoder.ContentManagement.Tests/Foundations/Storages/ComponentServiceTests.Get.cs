@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,34 +28,20 @@ public partial class ComponentServiceTests
         // Given
         Component component = CreateRandomComponent(id: 7);
 
-        componentBrokerMock.Setup(x => x.GetAllComponents(false)).Returns(new[] { component }.AsQueryable());
+        componentBrokerMock.Setup(expression: x => x.GetAllComponents(ignoreFilters: false))
+            .Returns(value: new[] { component }.AsQueryable());
 
         // When
-        Component result = componentService.GetComponent(7);
+        Component result = componentService.GetComponent(componentId: 7);
 
         // Then
-        result.Should().BeEquivalentTo(component);
-        componentBrokerMock.Verify(x => x.GetAllComponents(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: component);
+
+        componentBrokerMock.Verify(expression: x => x.GetAllComponents(ignoreFilters: false), times: Times.Once);
         componentBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

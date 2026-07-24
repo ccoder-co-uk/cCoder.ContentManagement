@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,14 +28,14 @@ public partial class ComponentRenderOrchestrationServiceTests
     public ComponentRenderOrchestrationServiceTests()
     {
         renderOrchestrationService = new ComponentRenderOrchestrationService(
-            componentRenderProcessingServiceMock.Object
+componentRenderProcessingService: componentRenderProcessingServiceMock.Object
         );
     }
 
     private static Component CreateRandomComponent() =>
         new()
         {
-            Id = Random.Shared.Next(1, 10000),
+            Id = Random.Shared.Next(minValue: 1, maxValue: 10000),
             AppId = 1,
             Name = $"Component-{Guid.NewGuid():N}",
             ResourceKey = "component",
@@ -72,6 +76,3 @@ public partial class ComponentRenderOrchestrationServiceTests
         return user;
     }
 }
-
-
-

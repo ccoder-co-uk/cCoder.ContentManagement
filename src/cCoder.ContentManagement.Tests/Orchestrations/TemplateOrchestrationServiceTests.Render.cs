@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,6 +26,7 @@ public partial class TemplateRenderOrchestrationServiceTests
     public void ShouldReturnRenderServiceResult()
     {
         object model = new();
+
         User user = new()
         {
             Id = "test-user",
@@ -31,44 +36,27 @@ public partial class TemplateRenderOrchestrationServiceTests
             IsActive = true,
             Roles = [],
         };
+
         templateRenderProcessingServiceMock
-            .Setup(x =>
+            .Setup(expression: x =>
                 x.RenderUserConfig(
-                    1,
-                    "template",
-                    model,
-                    It.IsAny<User>(),
-                    "en-GB",
-                    It.IsAny<cCoder.ContentManagement.Models.Config>(),
-                    loggerMock.Object
+appId: 1,
+name: "template",
+model: model,
+user: It.IsAny<User>(),
+culture: "en-GB",
+config: It.IsAny<cCoder.ContentManagement.Models.Config>(),
+log: loggerMock.Object
                 )
             )
-            .Returns("rendered");
+            .Returns(value: "rendered");
 
-        string result = renderOrchestrationService.RenderUser(1, "template", "en-GB", model, user);
+        string result = renderOrchestrationService.RenderUser(appId: 1, name: "template", culture: "en-GB", model: model, user: user);
 
-        result.Should().Be("rendered");
+        result.Should()
+            .Be(expected: "rendered");
+
         templateRenderProcessingServiceMock.VerifyAll();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

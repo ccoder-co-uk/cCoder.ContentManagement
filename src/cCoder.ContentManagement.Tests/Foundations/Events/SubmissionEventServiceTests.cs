@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,27 +29,17 @@ public partial class SubmissionEventServiceTests
 
     public SubmissionEventServiceTests()
     {
-        submissionEventBrokerMock = new Mock<ISubmissionEventBroker>(MockBehavior.Strict);
-        authInfoMock = new Mock<ICoreAuthInfo>(MockBehavior.Strict);
-        submissionEventBrokerMock = new(MockBehavior.Strict);
+        submissionEventBrokerMock = new Mock<ISubmissionEventBroker>(behavior: MockBehavior.Strict);
+        authInfoMock = new Mock<ICoreAuthInfo>(behavior: MockBehavior.Strict);
+        submissionEventBrokerMock = new(behavior: MockBehavior.Strict);
         authInfoMock = new();
-        authInfoMock.SetupGet(x => x.SSOUserId).Returns(CurrentUserId);
+
+        authInfoMock.SetupGet(expression: x => x.SSOUserId)
+            .Returns(value: CurrentUserId);
+
         service = new cCoder.ContentManagement.Services.Foundations.Events.SubmissionEventService(
-            submissionEventBrokerMock.Object,
-            authInfoMock.Object
+submissionEventBroker: submissionEventBrokerMock.Object,
+authInfo: authInfoMock.Object
         );
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

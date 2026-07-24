@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,36 +29,21 @@ public partial class PackageItemOrchestrationServiceTests
         // Given
         Guid id = Guid.NewGuid();
         PackageItem entity = CreateRandomPackageItem();
-        packageItemProcessingServiceMock.Setup(x => x.GetPackageItem(id)).Returns(entity);
+
+        packageItemProcessingServiceMock.Setup(expression: x => x.GetPackageItem(packageItemId: id))
+            .Returns(value: entity);
 
         // When
-        PackageItem result = orchestrationService.GetPackageItem(id);
+        PackageItem result = orchestrationService.GetPackageItem(packageItemId: id);
 
         // Then
-        result.Should().BeEquivalentTo(entity);
-        packageItemProcessingServiceMock.Verify(x => x.GetPackageItem(id), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        packageItemProcessingServiceMock.Verify(expression: x => x.GetPackageItem(packageItemId: id), times: Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

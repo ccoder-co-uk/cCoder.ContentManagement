@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -34,35 +38,36 @@ public partial class TemplateRenderOrchestrationServiceTests
             IsActive = true,
             Roles = []
         };
+
         object model = new { Name = "Ward" };
         string expectedHtml = "<main>template</main>";
 
         templateRenderProcessingServiceMock
-            .Setup(x => x.RenderUserConfig(
-                1,
-                "Welcome",
-                model,
-                user,
-                "en-GB",
-                It.IsAny<Config>(),
-                It.IsAny<ILogger>()))
-            .Returns(expectedHtml);
+            .Setup(expression: x => x.RenderUserConfig(
+appId: 1,
+name: "Welcome",
+model: model,
+user: user,
+culture: "en-GB",
+config: It.IsAny<Config>(),
+log: It.IsAny<ILogger>()))
+            .Returns(value: expectedHtml);
 
-        string result = renderOrchestrationService.RenderUser(1, "Welcome", "en-GB", model, user);
+        string result = renderOrchestrationService.RenderUser(appId: 1, name: "Welcome", culture: "en-GB", model: model, user: user);
 
-        result.Should().Be(expectedHtml);
+        result.Should()
+            .Be(expected: expectedHtml);
+
         templateRenderProcessingServiceMock.VerifyAll();
     }
 
     [Fact]
     public void ShouldThrowValidationExceptionWhenUserIsNull()
     {
-        Action act = () => renderOrchestrationService.RenderUser(1, "Welcome", "en-GB", new { }, null!);
+        Action act = () => renderOrchestrationService.RenderUser(appId: 1, name: "Welcome", culture: "en-GB", model: new { }, user: null!);
 
-        act.Should().Throw<ValidationException>().WithMessage("user is required.");
+        act.Should()
+            .Throw<ValidationException>()
+            .WithMessage(expectedWildcardPattern: "user is required.");
     }
 }
-
-
-
-

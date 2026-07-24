@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,18 +26,18 @@ public class ComponentRendererTests
     [Fact]
     public void ShouldRenderThroughCoordinationService()
     {
-        Mock<IComponentRenderCoordinationService> coordinationServiceMock = new(MockBehavior.Strict);
-        ComponentRenderer renderer = new(coordinationServiceMock.Object);
+        Mock<IComponentRenderCoordinationService> coordinationServiceMock = new(behavior: MockBehavior.Strict);
+        ComponentRenderer renderer = new(renderCoordinationService: coordinationServiceMock.Object);
 
         coordinationServiceMock
-            .Setup(x => x.Render(1, "Hero", "en-GB", "Default"))
-            .Returns("<section>hero</section>");
+            .Setup(expression: x => x.Render(appId: 1, name: "Hero", culture: "en-GB", theme: "Default"))
+            .Returns(value: "<section>hero</section>");
 
-        string result = renderer.Render(1, "Hero", "en-GB", "Default");
+        string result = renderer.Render(appId: 1, name: "Hero", culture: "en-GB", theme: "Default");
 
-        result.Should().Be("<section>hero</section>");
+        result.Should()
+            .Be(expected: "<section>hero</section>");
+
         coordinationServiceMock.VerifyAll();
     }
 }
-
-

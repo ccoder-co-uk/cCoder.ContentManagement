@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -21,16 +25,18 @@ public partial class AppProcessingServiceTests
     public async Task ShouldDeleteAppWhenUserIsAppAdminForDeleteAsync()
     {
         // Given
-        User actor = TestUsers.WithPrivilege("app_admin", 5);
+        User actor = TestUsers.WithPrivilege(privilege: "app_admin", appId: 5);
 
         currentUser = actor;
-        appServiceMock.Setup(x => x.DeleteAsync(5)).Returns(ValueTask.CompletedTask);
+
+        appServiceMock.Setup(expression: x => x.DeleteAsync(appId: 5))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await appProcessingService.DeleteAsync(5);
+        await appProcessingService.DeleteAsync(appId: 5);
 
         // Then
-        appServiceMock.Verify(x => x.DeleteAsync(5), Times.Once);
+        appServiceMock.Verify(expression: x => x.DeleteAsync(appId: 5), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 
@@ -39,29 +45,17 @@ public partial class AppProcessingServiceTests
     {
         // Given
         currentUser = TestUsers.WithoutPrivileges();
-        appServiceMock.Setup(x => x.DeleteAsync(5)).Returns(ValueTask.CompletedTask);
+
+        appServiceMock.Setup(expression: x => x.DeleteAsync(appId: 5))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await appProcessingService.DeleteAsync(5);
+        await appProcessingService.DeleteAsync(appId: 5);
 
         // Then
-        appServiceMock.Verify(x => x.DeleteAsync(5), Times.Once);
+        appServiceMock.Verify(expression: x => x.DeleteAsync(appId: 5), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

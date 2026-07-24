@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -30,13 +34,14 @@ public partial class PageInfoServiceTests
 
     public PageInfoServiceTests()
     {
-        pageInfoBrokerMock = new Mock<IPageInfoBroker>(MockBehavior.Strict);
-        pageBrokerMock = new Mock<IPageBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        pageInfoBrokerMock = new Mock<IPageInfoBroker>(behavior: MockBehavior.Strict);
+        pageBrokerMock = new Mock<IPageBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         pageInfoService = new PageInfoService(
-            pageInfoBrokerMock.Object,
-            pageBrokerMock.Object,
-            authorizationBrokerMock.Object
+pageInfoBroker: pageInfoBrokerMock.Object,
+pageBroker: pageBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -48,12 +53,12 @@ public partial class PageInfoServiceTests
     {
         PageInfo pageInfo = Builder<PageInfo>
             .CreateNew()
-            .With(x => x.Id = id)
-            .With(x => x.PageId = pageId)
-            .With(x => x.CultureId = cultureId ?? "en-GB")
-            .With(x => x.Title = $"Title-{Guid.NewGuid():N}")
-            .With(x => x.Description = $"Description-{Guid.NewGuid():N}")
-            .With(x => x.Keywords = $"Keywords-{Guid.NewGuid():N}")
+            .With(func: x => x.Id = id)
+            .With(func: x => x.PageId = pageId)
+            .With(func: x => x.CultureId = cultureId ?? "en-GB")
+            .With(func: x => x.Title = $"Title-{Guid.NewGuid():N}")
+            .With(func: x => x.Description = $"Description-{Guid.NewGuid():N}")
+            .With(func: x => x.Keywords = $"Keywords-{Guid.NewGuid():N}")
             .Build();
 
         return pageInfo;
@@ -70,26 +75,3 @@ public partial class PageInfoServiceTests
             Keywords = pageInfo.Keywords,
         };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -21,20 +25,26 @@ public partial class ContentManagementMetadataTypeServiceTests
     [Fact]
     public void ShouldReturnKnownMetadataSetsOnGetKnownMetadata()
     {
-        MetadataContainerSet[] result = service.GetKnownMetadata().ToArray();
+        MetadataContainerSet[] result = service.GetKnownMetadata()
+            .ToArray();
 
-        result.Select(set => set.Name).Should().Equal("ContentManagement", "System");
+        result.Select(selector: set => set.Name)
+            .Should()
+            .Equal("ContentManagement", "System");
     }
 
     [Fact]
     public void ShouldReturnExpectedContentManagementTypesOnGetKnownMetadata()
     {
-        MetadataContainerSet result = service.GetKnownMetadata().Single(set => set.Name == "ContentManagement");
+        MetadataContainerSet result = service.GetKnownMetadata()
+            .Single(predicate: set => set.Name == "ContentManagement");
 
-        result.UriBase.Should().Be("ContentManagement");
-        result.Types.Select(type => type.Name)
+        result.UriBase.Should()
+            .Be(expected: "ContentManagement");
+
+        result.Types.Select(selector: type => type.Name)
             .Should()
-            .Contain([
+            .Contain(expected: [
                 nameof(App),
                 nameof(Page),
                 nameof(PageInfo),
@@ -43,22 +53,23 @@ public partial class ContentManagementMetadataTypeServiceTests
                 nameof(RenderResult),
             ]);
 
-        result.Types.Select(type => type.Name)
+        result.Types.Select(selector: type => type.Name)
             .Should()
-            .NotContain([
+            .NotContain(unexpected: [
                 nameof(Package),
                 nameof(User),
             ]);
 
-        result.Types.Single(type => type.Name == nameof(App)).HasEndpoint.Should().BeTrue();
-        result.Types.Single(type => type.Name == nameof(App)).IsEntity.Should().BeTrue();
-        result.Types.Single(type => type.Name == nameof(RenderResult)).HasEndpoint.Should().BeFalse();
+        result.Types.Single(predicate: type => type.Name == nameof(App))
+            .HasEndpoint.Should()
+            .BeTrue();
+
+        result.Types.Single(predicate: type => type.Name == nameof(App))
+            .IsEntity.Should()
+            .BeTrue();
+
+        result.Types.Single(predicate: type => type.Name == nameof(RenderResult))
+            .HasEndpoint.Should()
+            .BeFalse();
     }
 }
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,37 +28,21 @@ public partial class SubmissionOrchestrationServiceTests
         // Given
         Guid id = Guid.NewGuid();
         Submission entity = CreateRandomSubmission();
-        submissionProcessingServiceMock.Setup(x => x.GetSubmission(id)).Returns(entity);
+
+        submissionProcessingServiceMock.Setup(expression: x => x.GetSubmission(submissionId: id))
+            .Returns(value: entity);
 
         // When
-        Submission result = orchestrationService.GetSubmission(id);
+        Submission result = orchestrationService.GetSubmission(submissionId: id);
 
         // Then
-        result.Should().BeEquivalentTo(entity, options => options.Excluding(submission => submission.Data));
-        submissionProcessingServiceMock.Verify(x => x.GetSubmission(id), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: entity, config: options => options.Excluding(expression: submission => submission.Data));
+
+        submissionProcessingServiceMock.Verify(expression: x => x.GetSubmission(submissionId: id), times: Times.Once);
         submissionProcessingServiceMock.VerifyNoOtherCalls();
         submissionEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

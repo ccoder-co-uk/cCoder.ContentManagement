@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class ScriptEventProcessingServiceTests
     {
         // Given
         Script entity = CreateRandomScript();
+
         scriptEventServiceMock
-            .Setup(x => x.RaiseScriptAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseScriptAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseScriptAddEventAsync(entity);
+        await service.RaiseScriptAddEventAsync(entity: entity);
 
         // Then
-        scriptEventServiceMock.Verify(x => x.RaiseScriptAddEventAsync(entity), Times.Once);
+        scriptEventServiceMock.Verify(expression: x => x.RaiseScriptAddEventAsync(entity: entity), times: Times.Once);
         scriptEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

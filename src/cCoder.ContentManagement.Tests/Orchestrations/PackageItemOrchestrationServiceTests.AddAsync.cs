@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,37 +27,23 @@ public partial class PackageItemOrchestrationServiceTests
     public async Task ShouldCallProcessingThenRaiseAddEventAsyncWhenAddAsync()
     {
         PackageItem entity = CreateRandomPackageItem();
-        packageItemProcessingServiceMock.Setup(x => x.AddPackageItemAsync(entity)).ReturnsAsync(entity);
+
+        packageItemProcessingServiceMock.Setup(expression: x => x.AddPackageItemAsync(newPackageItem: entity))
+            .ReturnsAsync(value: entity);
+
         packageItemEventProcessingServiceMock
-            .Setup(x => x.RaisePackageItemAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePackageItemAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
-        PackageItem result = await orchestrationService.AddPackageItemAsync(entity);
+        PackageItem result = await orchestrationService.AddPackageItemAsync(newPackageItem: entity);
 
-        result.Should().BeSameAs(entity);
-        packageItemProcessingServiceMock.Verify(x => x.AddPackageItemAsync(entity), Times.Once);
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        packageItemProcessingServiceMock.Verify(expression: x => x.AddPackageItemAsync(newPackageItem: entity), times: Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
-        packageItemEventProcessingServiceMock.Verify(x => x.RaisePackageItemAddEventAsync(entity), Times.Once);
+        packageItemEventProcessingServiceMock.Verify(expression: x => x.RaisePackageItemAddEventAsync(entity: entity), times: Times.Once);
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

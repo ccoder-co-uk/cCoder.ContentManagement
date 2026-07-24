@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,112 +28,127 @@ public partial class CommonObjectServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(new SecurityDataModels.User { Id = "test-user" });
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
+
         CommonObject commonObject = CreateRandomCommonObject(id: 7);
 
         DataCommonObject submitted = null;
 
-        commonObjectBrokerMock.Setup(x => x.GetAppId(It.IsAny<DataCommonObject>())).Returns((int?)7);
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "CommonObject_update"));
+        commonObjectBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()))
+            .Returns(value: (int?)7);
+
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_update"));
 
         commonObjectBrokerMock
-            .Setup(x => x.UpdateCommonObjectAsync(It.IsAny<DataCommonObject>()))
-            .Callback<DataCommonObject>(candidate => submitted = candidate)
-            .ReturnsAsync((DataCommonObject value) => value);
+            .Setup(expression: x => x.UpdateCommonObjectAsync(updatedCommonObject: It.IsAny<DataCommonObject>()))
+            .Callback<DataCommonObject>(action: candidate => submitted = candidate)
+            .ReturnsAsync(valueFunction: (DataCommonObject value) => value);
 
         // When
-        CommonObject result = await commonObjectService.UpdateCommonObjectAsync(commonObject);
+        CommonObject result = await commonObjectService.UpdateCommonObjectAsync(updatedCommonObject: commonObject);
 
         // Then
-        result.Should().BeSameAs(commonObject);
-        submitted.Should().NotBeNull();
-        submitted.Should().NotBeSameAs(commonObject);
-        result.Should().NotBeSameAs(submitted);
+
+        result.Should()
+            .BeSameAs(expected: commonObject);
+
+        submitted.Should()
+            .NotBeNull();
+
+        submitted.Should()
+            .NotBeSameAs(unexpected: commonObject);
+
+        result.Should()
+            .NotBeSameAs(unexpected: submitted);
 
         submitted
             .Should()
             .BeEquivalentTo(
-                commonObject,
-                options =>
+expectation: commonObject,
+config: options =>
                     options
                         .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("CreatedOn")
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "CreatedOn")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("CreatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "CreatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdated")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdated")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdatedOn")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdatedOn")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("UpdatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "UpdatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("Created")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "Created")
                         )
             );
 
         result
             .Should()
             .BeEquivalentTo(
-                commonObject,
-                options =>
+expectation: commonObject,
+config: options =>
                     options
                         .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("CreatedOn")
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "CreatedOn")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("CreatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "CreatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdated")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdated")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdatedOn")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdatedOn")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("UpdatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "UpdatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("Created")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "Created")
                         )
             );
 
         commonObjectBrokerMock.Verify(
-            x => x.UpdateCommonObjectAsync(It.IsAny<DataCommonObject>()),
-            Times.Once
+expression: x => x.UpdateCommonObjectAsync(updatedCommonObject: It.IsAny<DataCommonObject>()),
+times: Times.Once
         );
+
         commonObjectBrokerMock.Verify(
-            x => x.GetAppId(It.IsAny<DataCommonObject>()),
-            Times.AtMostOnce()
+expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()),
+times: Times.AtMostOnce()
         );
+
         commonObjectBrokerMock.VerifyNoOtherCalls();
+
         authorizationBrokerMock.Verify(
-            x => x.Authorize((int?)7, "CommonObject_update"),
-            Times.Once
+expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_update"),
+times: Times.Once
         );
     }
 
@@ -137,48 +156,38 @@ public partial class CommonObjectServiceTests
     public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(new SecurityDataModels.User { Id = "test-user" });
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
+
         CommonObject commonObject = CreateRandomCommonObject(id: 7);
 
-        commonObjectBrokerMock.Setup(x => x.GetAppId(It.IsAny<DataCommonObject>())).Returns((int?)7);
+        commonObjectBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()))
+            .Returns(value: (int?)7);
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "CommonObject_update"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_update"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await commonObjectService.UpdateCommonObjectAsync(commonObject);
+        Func<Task> action = async () => await commonObjectService.UpdateCommonObjectAsync(updatedCommonObject: commonObject);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
         commonObjectBrokerMock.Verify(
-            x => x.GetAppId(It.IsAny<DataCommonObject>()),
-            Times.AtMostOnce()
+expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()),
+times: Times.AtMostOnce()
         );
+
         commonObjectBrokerMock.VerifyNoOtherCalls();
+
         authorizationBrokerMock.Verify(
-            x => x.Authorize((int?)7, "CommonObject_update"),
-            Times.Once
+expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_update"),
+times: Times.Once
         );
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

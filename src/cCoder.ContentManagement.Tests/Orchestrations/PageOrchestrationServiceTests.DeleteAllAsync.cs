@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,37 +26,23 @@ public partial class PageOrchestrationServiceTests
     {
         // Given
         Page[] entities = [CreateRandomPage()];
-        pageProcessingServiceMock.Setup(x => x.GetPage(entities[0].Id)).Returns(entities[0]);
-        pageEventProcessingServiceMock.Setup(x => x.RaisePageDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
-        pageProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
+
+        pageProcessingServiceMock.Setup(expression: x => x.GetPage(pageId: entities[0].Id))
+            .Returns(value: entities[0]);
+
+        pageEventProcessingServiceMock.Setup(expression: x => x.RaisePageDeleteEventAsync(entity: entities[0]))
+            .Returns(value: ValueTask.CompletedTask);
+
+        pageProcessingServiceMock.Setup(expression: x => x.DeleteAsync(pageId: entities[0].Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllPageAsync(entities);
+        await orchestrationService.DeleteAllPageAsync(deletedPage: entities);
 
         // Then
-        pageProcessingServiceMock.Verify(x => x.GetPage(entities[0].Id), Times.Once);
-        pageEventProcessingServiceMock.Verify(x => x.RaisePageDeleteEventAsync(entities[0]), Times.Once);
-        pageProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
+        pageProcessingServiceMock.Verify(expression: x => x.GetPage(pageId: entities[0].Id), times: Times.Once);
+        pageEventProcessingServiceMock.Verify(expression: x => x.RaisePageDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        pageProcessingServiceMock.Verify(expression: x => x.DeleteAsync(pageId: entities[0].Id), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

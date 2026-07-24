@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -49,25 +53,20 @@ public partial class PageRenderOrchestrationServiceTests
             Roles = []
         };
 
-        User user = TestUsers.WithPrivilege("app_admin", 1);
+        User user = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
         RenderResult expected = new() { StatusCode = 200 };
         Mock<IPageRenderProcessingService> processingServiceMock = new();
-        PageRenderOrchestrationService orchestrationService = new(new Config(), processingServiceMock.Object);
+        PageRenderOrchestrationService orchestrationService = new(config: new Config(), pageRenderProcessingService: processingServiceMock.Object);
 
         processingServiceMock
-            .Setup(x => x.RenderPageUserConfigRenderResult(page, user, It.IsAny<Config>(), "Default", string.Empty, true))
-            .Returns(expected);
+            .Setup(expression: x => x.RenderPageUserConfigRenderResult(page: page, user: user, config: It.IsAny<Config>(), theme: "Default", culture: string.Empty, edit: true))
+            .Returns(value: expected);
 
-        RenderResult actual = orchestrationService.RenderPageUserRenderResult(page, user, "Default", string.Empty, true);
+        RenderResult actual = orchestrationService.RenderPageUserRenderResult(page: page, user: user, theme: "Default", culture: string.Empty, edit: true);
 
-        actual.Should().BeSameAs(expected);
+        actual.Should()
+            .BeSameAs(expected: expected);
+
         processingServiceMock.VerifyAll();
     }
 }
-
-
-
-
-
-
-

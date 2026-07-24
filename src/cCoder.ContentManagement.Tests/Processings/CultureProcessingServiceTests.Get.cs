@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,31 +28,20 @@ public partial class CultureProcessingServiceTests
         // Given
         Culture entity = CreateRandomCulture();
         var id = entity.Id;
-        cultureServiceMock.Setup(x => x.GetCulture(id)).Returns(entity);
+
+        cultureServiceMock.Setup(expression: x => x.GetCulture(cultureId: id))
+            .Returns(value: entity);
 
         // When
-        Culture result = cultureProcessingService.GetCulture(id);
+        Culture result = cultureProcessingService.GetCulture(cultureId: id);
 
         // Then
-        result.Should().BeSameAs(entity);
-        cultureServiceMock.Verify(x => x.GetCulture(id), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        cultureServiceMock.Verify(expression: x => x.GetCulture(cultureId: id), times: Times.Once);
         cultureServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

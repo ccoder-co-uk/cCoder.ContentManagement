@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,37 +28,21 @@ public partial class ComponentOrchestrationServiceTests
         // Given
         int id = 1;
         Component entity = CreateRandomComponent();
-        componentProcessingServiceMock.Setup(x => x.GetComponent(id)).Returns(entity);
+
+        componentProcessingServiceMock.Setup(expression: x => x.GetComponent(componentId: id))
+            .Returns(value: entity);
 
         // When
-        Component result = orchestrationService.GetComponent(id);
+        Component result = orchestrationService.GetComponent(componentId: id);
 
         // Then
-        result.Should().BeEquivalentTo(entity);
-        componentProcessingServiceMock.Verify(x => x.GetComponent(id), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        componentProcessingServiceMock.Verify(expression: x => x.GetComponent(componentId: id), times: Times.Once);
         componentProcessingServiceMock.VerifyNoOtherCalls();
         componentEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

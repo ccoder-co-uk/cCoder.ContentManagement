@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -34,53 +38,40 @@ public partial class AppProcessingServiceTests
 
     public AppProcessingServiceTests()
     {
-        roleBrokerMock.Setup(x => x.GetAllRoles(true)).Returns(Array.Empty<Role>().AsQueryable());
-        userRoleBrokerMock.Setup(x => x.GetAllUserRoles(true)).Returns(Array.Empty<UserRole>().AsQueryable());
+        roleBrokerMock.Setup(expression: x => x.GetAllRoles(ignoreFilters: true))
+            .Returns(value: Array.Empty<Role>()
+            .AsQueryable());
+
+        userRoleBrokerMock.Setup(expression: x => x.GetAllUserRoles(ignoreFilters: true))
+            .Returns(value: Array.Empty<UserRole>()
+            .AsQueryable());
 
         appProcessingService = new AppProcessingService(
-            appServiceMock.Object,
-            cultureServiceMock.Object,
-            privilegeBrokerMock.Object,
-            authorizationBrokerMock.Object,
-            roleBrokerMock.Object,
-            userRoleBrokerMock.Object
+service: appServiceMock.Object,
+cultureService: cultureServiceMock.Object,
+privilegeBroker: privilegeBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object,
+roleBroker: roleBrokerMock.Object,
+userRoleBroker: userRoleBrokerMock.Object
         );
     }
 
     private static App CreateRandomApp() =>
         Builder<App>
             .CreateNew()
-            .With(x => x.Id = Random.Shared.Next(1, 10000))
-            .With(x => x.DefaultCultureId = string.Empty)
-            .With(x => x.Name = $"App-{Guid.NewGuid():N}")
-            .With(x => x.Domain = $"{Guid.NewGuid():N}.local")
-            .With(x => x.DefaultTheme = "Default")
-            .With(x => x.ConfigJson = "{}")
-            .With(x => x.Cultures = [])
-            .With(x => x.Pages = [])
-            .With(x => x.Components = [])
-            .With(x => x.Scripts = [])
-            .With(x => x.Roles = [])
-            .With(x => x.Templates = [])
-            .With(x => x.Resources = [])
-            .With(x => x.Layouts = [])
-            .Build();
+        .With(func: x => x.Id = Random.Shared.Next(minValue: 1, maxValue: 10000))
+        .With(func: x => x.DefaultCultureId = string.Empty)
+        .With(func: x => x.Name = $"App-{Guid.NewGuid():N}")
+        .With(func: x => x.Domain = $"{Guid.NewGuid():N}.local")
+        .With(func: x => x.DefaultTheme = "Default")
+        .With(func: x => x.ConfigJson = "{}")
+        .With(func: x => x.Cultures = [])
+        .With(func: x => x.Pages = [])
+        .With(func: x => x.Components = [])
+        .With(func: x => x.Scripts = [])
+        .With(func: x => x.Roles = [])
+        .With(func: x => x.Templates = [])
+        .With(func: x => x.Resources = [])
+        .With(func: x => x.Layouts = [])
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

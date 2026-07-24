@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.Packaging;
 using Moq;
 using Xunit;
@@ -12,14 +16,16 @@ public partial class PackageProcessingServiceTests
         // Given
         Package package = CreateRandomPackage();
         package.Items = null;
-        packageServiceMock.Setup(service => service.UpdatePackageAsync(package)).ReturnsAsync(package);
+
+        packageServiceMock.Setup(expression: service => service.UpdatePackageAsync(updatedPackage: package))
+            .ReturnsAsync(value: package);
 
         // When
-        Package result = await packageProcessingService.UpdatePackageAsync(package);
+        Package result = await packageProcessingService.UpdatePackageAsync(updatedPackage: package);
 
         // Then
-        Assert.Same(package, result);
-        packageServiceMock.Verify(service => service.UpdatePackageAsync(package), Times.Once);
+        Assert.Same(expected: package, actual: result);
+        packageServiceMock.Verify(expression: service => service.UpdatePackageAsync(updatedPackage: package), times: Times.Once);
         packageItemServiceMock.VerifyNoOtherCalls();
     }
 
@@ -32,26 +38,31 @@ public partial class PackageProcessingServiceTests
         PackageItem existingItem = CreateRandomPackageItem();
         existingItem.PackageId = package.Id;
 
-        packageServiceMock.Setup(service => service.UpdatePackageAsync(package)).ReturnsAsync(package);
+        packageServiceMock.Setup(expression: service => service.UpdatePackageAsync(updatedPackage: package))
+            .ReturnsAsync(value: package);
+
         packageItemServiceMock
-            .Setup(service => service.GetAllPackageItem(false))
-            .Returns(new[] { existingItem }.AsQueryable());
+            .Setup(expression: service => service.GetAllPackageItem(ignoreFilters: false))
+            .Returns(value: new[] { existingItem }.AsQueryable());
+
         packageItemServiceMock
-            .Setup(service => service.DeleteAllPackageItemAsync(
-                It.Is<IEnumerable<PackageItem>>(items => items.Single() == existingItem)))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: service => service.DeleteAllPackageItemAsync(
+deletedPackageItem: It.Is<IEnumerable<PackageItem>>(match: items => items.Single() == existingItem)))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Package result = await packageProcessingService.UpdatePackageAsync(package);
+        Package result = await packageProcessingService.UpdatePackageAsync(updatedPackage: package);
 
         // Then
-        Assert.Same(package, result);
-        packageServiceMock.Verify(service => service.UpdatePackageAsync(package), Times.Once);
-        packageItemServiceMock.Verify(service => service.GetAllPackageItem(false), Times.Once);
+        Assert.Same(expected: package, actual: result);
+        packageServiceMock.Verify(expression: service => service.UpdatePackageAsync(updatedPackage: package), times: Times.Once);
+        packageItemServiceMock.Verify(expression: service => service.GetAllPackageItem(ignoreFilters: false), times: Times.Once);
+
         packageItemServiceMock.Verify(
-            service => service.DeleteAllPackageItemAsync(
-                It.Is<IEnumerable<PackageItem>>(items => items.Single() == existingItem)),
-            Times.Once);
+expression: service => service.DeleteAllPackageItemAsync(
+deletedPackageItem: It.Is<IEnumerable<PackageItem>>(match: items => items.Single() == existingItem)),
+times: Times.Once);
+
         packageItemServiceMock.VerifyNoOtherCalls();
     }
 }

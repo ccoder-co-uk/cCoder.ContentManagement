@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,47 +30,25 @@ public partial class PageOrchestrationServiceTests
 
     public PageOrchestrationServiceTests()
     {
-        pageProcessingServiceMock = new Mock<IPageProcessingService>(MockBehavior.Strict);
-        pageEventProcessingServiceMock = new Mock<IPageEventProcessingService>(MockBehavior.Strict);
-        layoutProcessingServiceMock = new Mock<ILayoutProcessingService>(MockBehavior.Strict);
+        pageProcessingServiceMock = new Mock<IPageProcessingService>(behavior: MockBehavior.Strict);
+        pageEventProcessingServiceMock = new Mock<IPageEventProcessingService>(behavior: MockBehavior.Strict);
+        layoutProcessingServiceMock = new Mock<ILayoutProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new PageOrchestrationService(
-            pageProcessingServiceMock.Object,
-            pageEventProcessingServiceMock.Object,
-            layoutProcessingServiceMock.Object
+processingService: pageProcessingServiceMock.Object,
+eventService: pageEventProcessingServiceMock.Object,
+layoutProcessingService: layoutProcessingServiceMock.Object
         );
     }
 
-    private static Page CreateRandomPage() => Builder<Page>.CreateNew().Build();
+    private static Page CreateRandomPage() =>
+        Builder<Page>.CreateNew()
+        .Build();
 
     private static Layout CreateLayoutFor(Page page) =>
         Builder<Layout>
             .CreateNew()
-            .With(layout => layout.AppId = page.AppId)
-            .With(layout => layout.Name = page.Layout)
-            .Build();
+        .With(func: layout => layout.AppId = page.AppId)
+        .With(func: layout => layout.Name = page.Layout)
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

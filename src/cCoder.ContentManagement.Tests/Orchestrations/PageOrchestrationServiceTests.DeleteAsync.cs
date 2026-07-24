@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,40 +27,24 @@ public partial class PageOrchestrationServiceTests
         // Given
         int id = 1;
         Page entity = CreateRandomPage();
-        pageProcessingServiceMock.Setup(x => x.GetPage(id)).Returns(entity);
-        pageProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        pageProcessingServiceMock.Setup(expression: x => x.GetPage(pageId: id))
+            .Returns(value: entity);
+
+        pageProcessingServiceMock.Setup(expression: x => x.DeleteAsync(pageId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         pageEventProcessingServiceMock
-            .Setup(x => x.RaisePageDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(pageId: id);
 
         // Then
-        pageProcessingServiceMock.Verify(x => x.GetPage(id), Times.Once);
-        pageProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        pageEventProcessingServiceMock.Verify(x => x.RaisePageDeleteEventAsync(entity), Times.Once);
+        pageProcessingServiceMock.Verify(expression: x => x.GetPage(pageId: id), times: Times.Once);
+        pageProcessingServiceMock.Verify(expression: x => x.DeleteAsync(pageId: id), times: Times.Once);
+        pageEventProcessingServiceMock.Verify(expression: x => x.RaisePageDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

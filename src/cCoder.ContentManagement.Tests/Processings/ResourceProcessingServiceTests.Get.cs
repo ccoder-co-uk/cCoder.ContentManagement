@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,30 +27,20 @@ public partial class ResourceProcessingServiceTests
     {
         // Given
         Resource resource = CreateRandomResource();
-        resourceServiceMock.Setup(x => x.GetResource(resource.Id)).Returns(resource);
+
+        resourceServiceMock.Setup(expression: x => x.GetResource(resourceId: resource.Id))
+            .Returns(value: resource);
 
         // When
-        Resource result = resourceProcessingService.GetResource(resource.Id);
+        Resource result = resourceProcessingService.GetResource(resourceId: resource.Id);
 
         // Then
-        result.Should().BeSameAs(resource);
-        resourceServiceMock.Verify(x => x.GetResource(resource.Id), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: resource);
+
+        resourceServiceMock.Verify(expression: x => x.GetResource(resourceId: resource.Id), times: Times.Once);
         resourceServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

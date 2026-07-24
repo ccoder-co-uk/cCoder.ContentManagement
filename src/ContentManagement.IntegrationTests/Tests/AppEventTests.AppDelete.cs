@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
@@ -16,27 +20,33 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedAppCultureAsync(appId);
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedAppCultureAsync(appId: appId);
 
-            await PostEventAsync("app_delete", new App { Id = appId });
+            await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
             await WaitForAsync(
-                () => HasNoAppCulture(appId),
-                "app_delete should delete the app culture child row");
+condition: () => HasNoAppCulture(appId: appId),
+because: "app_delete should delete the app culture child row");
 
             using IServiceScope assertScope = Services.CreateScope();
+
             using CoreDataContext assertCore = assertScope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
                 .CreateCoreContext();
 
-            assertCore.Set<App>().IgnoreQueryFilters()
-                .Any(app => app.Id == appId)
-                .Should().BeTrue();
-            HasNoAppCulture(appId).Should().BeTrue();
+            assertCore.Set<App>()
+                .IgnoreQueryFilters()
+                .Any(predicate: app => app.Id == appId)
+                .Should()
+                .BeTrue();
+
+            HasNoAppCulture(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -47,20 +57,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedComponentAsync(appId);
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedComponentAsync(appId: appId);
 
-            await PostEventAsync("app_delete", new App { Id = appId });
+            await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
             await WaitForAsync(
-                () => HasNoComponent(appId),
-                "app_delete should delete the component child row");
+condition: () => HasNoComponent(appId: appId),
+because: "app_delete should delete the component child row");
 
-            HasNoComponent(appId).Should().BeTrue();
+            HasNoComponent(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -71,20 +83,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedLayoutAsync(appId);
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedLayoutAsync(appId: appId);
 
-            await PostEventAsync("app_delete", new App { Id = appId });
+            await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
             await WaitForAsync(
-                () => HasNoLayout(appId),
-                "app_delete should delete the layout child row");
+condition: () => HasNoLayout(appId: appId),
+because: "app_delete should delete the layout child row");
 
-            HasNoLayout(appId).Should().BeTrue();
+            HasNoLayout(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -95,20 +109,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedPageAsync(appId);
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedPageAsync(appId: appId);
 
-            await PostEventAsync("app_delete", new App { Id = appId });
+            await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
             await WaitForAsync(
-                () => HasNoPage(appId),
-                "app_delete should delete the page child row");
+condition: () => HasNoPage(appId: appId),
+because: "app_delete should delete the page child row");
 
-            HasNoPage(appId).Should().BeTrue();
+            HasNoPage(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -119,20 +135,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedResourceAsync(appId);
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedResourceAsync(appId: appId);
 
-            await PostEventAsync("app_delete", new App { Id = appId });
+            await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
             await WaitForAsync(
-                () => HasNoResource(appId),
-                "app_delete should delete the resource child row");
+condition: () => HasNoResource(appId: appId),
+because: "app_delete should delete the resource child row");
 
-            HasNoResource(appId).Should().BeTrue();
+            HasNoResource(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -143,20 +161,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedScriptAsync(appId);
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedScriptAsync(appId: appId);
 
-            await PostEventAsync("app_delete", new App { Id = appId });
+            await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
             await WaitForAsync(
-                () => HasNoScript(appId),
-                "app_delete should delete the script child row");
+condition: () => HasNoScript(appId: appId),
+because: "app_delete should delete the script child row");
 
-            HasNoScript(appId).Should().BeTrue();
+            HasNoScript(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -167,20 +187,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedTemplateAsync(appId);
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedTemplateAsync(appId: appId);
 
-            await PostEventAsync("app_delete", new App { Id = appId });
+            await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
             await WaitForAsync(
-                () => HasNoTemplate(appId),
-                "app_delete should delete the template child row");
+condition: () => HasNoTemplate(appId: appId),
+because: "app_delete should delete the template child row");
 
-            HasNoTemplate(appId).Should().BeTrue();
+            HasNoTemplate(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,49 +33,29 @@ public partial class PageServiceTests
 
     public PageServiceTests()
     {
-        pageBrokerMock = new Mock<IPageBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
-        pageService = new PageService(pageBrokerMock.Object, authorizationBrokerMock.Object);
+        pageBrokerMock = new Mock<IPageBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+        pageService = new PageService(pageBroker: pageBrokerMock.Object, authorizationBroker: authorizationBrokerMock.Object);
     }
 
     private static Page CreateRandomPage(int id = 42)
     {
         Page page = Builder<Page>
             .CreateNew()
-            .With(x => x.Id = id)
-            .With(x => x.AppId = 7)
-            .With(x => x.Order = 1)
-            .With(x => x.ShowOnMenus = true)
-            .With(x => x.Name = $"Page-{Guid.NewGuid():N}")
-            .With(x => x.LastUpdated = DateTimeOffset.UtcNow)
-            .With(x => x.LastUpdatedBy = "tester")
-            .With(x => x.CreatedOn = DateTimeOffset.UtcNow)
-            .With(x => x.CreatedBy = "tester")
-            .With(x => x.Path = $"/page-{Guid.NewGuid():N}")
-            .With(x => x.ResourceKey = $"resource-{Guid.NewGuid():N}")
-            .With(x => x.Layout = "Default")
+            .With(func: x => x.Id = id)
+            .With(func: x => x.AppId = 7)
+            .With(func: x => x.Order = 1)
+            .With(func: x => x.ShowOnMenus = true)
+            .With(func: x => x.Name = $"Page-{Guid.NewGuid():N}")
+            .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow)
+            .With(func: x => x.LastUpdatedBy = "tester")
+            .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow)
+            .With(func: x => x.CreatedBy = "tester")
+            .With(func: x => x.Path = $"/page-{Guid.NewGuid():N}")
+            .With(func: x => x.ResourceKey = $"resource-{Guid.NewGuid():N}")
+            .With(func: x => x.Layout = "Default")
             .Build();
 
         return page;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

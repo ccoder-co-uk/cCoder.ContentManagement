@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,28 +16,27 @@ public sealed partial class CultureControllerTests
     {
         // Given
         SeededCultureContext seededContext = await SeedDatabase();
-        string updatedName = Unique("PatchedCulture");
+        string updatedName = Unique(prefix: "PatchedCulture");
         Culture expectedCulture = new() { Name = updatedName };
 
         // When
-        await PatchCultureAsync(seededContext.CultureId, new
+
+        await PatchCultureAsync(id: seededContext.CultureId, payload: new
         {
             name = updatedName,
         });
 
-        Culture actualCulture = await GetCultureAsync(seededContext.CultureId);
+        Culture actualCulture = await GetCultureAsync(id: seededContext.CultureId);
 
         // Then
-        actualCulture.Should().NotBeNull();
-        actualCulture!.Name.Should().Be(expectedCulture.Name);
 
-        await DeleteCultureAsync(seededContext.CultureId);
-        await Teardown(seededContext.CultureId);
+        actualCulture.Should()
+            .NotBeNull();
+
+        actualCulture!.Name.Should()
+            .Be(expected: expectedCulture.Name);
+
+        await DeleteCultureAsync(id: seededContext.CultureId);
+        await Teardown(cultureIds: seededContext.CultureId);
     }
 }
-
-
-
-
-
-

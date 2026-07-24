@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,39 +29,21 @@ public partial class SubmissionProcessingServiceTests
 
     public SubmissionProcessingServiceTests()
     {
-        submissionProcessingService = new SubmissionProcessingService(submissionServiceMock.Object);
+        submissionProcessingService = new SubmissionProcessingService(service: submissionServiceMock.Object);
     }
 
     private static Submission CreateRandomSubmission() =>
         Builder<Submission>
             .CreateNew()
-            .With(x => x.Id = Guid.NewGuid())
-            .With(x => x.AppId = 1)
-            .With(x => x.CreatedBy = "test-user")
-            .With(x => x.LastUpdatedBy = "test-user")
-            .With(x => x.CreatedOn = DateTimeOffset.UtcNow)
-            .With(x => x.LastUpdatedOn = DateTimeOffset.UtcNow)
-            .With(x => x.SourceComponent = $"Component-{Guid.NewGuid():N}")
-            .With(x => x.State = "New")
-            .With(x => x.DataJson = "{}")
-            .With(x => x.App = null)
-            .Build();
+        .With(func: x => x.Id = Guid.NewGuid())
+        .With(func: x => x.AppId = 1)
+        .With(func: x => x.CreatedBy = "test-user")
+        .With(func: x => x.LastUpdatedBy = "test-user")
+        .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow)
+        .With(func: x => x.LastUpdatedOn = DateTimeOffset.UtcNow)
+        .With(func: x => x.SourceComponent = $"Component-{Guid.NewGuid():N}")
+        .With(func: x => x.State = "New")
+        .With(func: x => x.DataJson = "{}")
+        .With(func: x => x.App = null)
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

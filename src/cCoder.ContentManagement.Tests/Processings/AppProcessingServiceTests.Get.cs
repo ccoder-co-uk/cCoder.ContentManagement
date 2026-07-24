@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,31 +28,20 @@ public partial class AppProcessingServiceTests
         // Given
         App entity = CreateRandomApp();
         var id = entity.Id;
-        appServiceMock.Setup(x => x.GetApp(id)).Returns(entity);
+
+        appServiceMock.Setup(expression: x => x.GetApp(appId: id))
+            .Returns(value: entity);
 
         // When
-        App result = appProcessingService.GetApp(id);
+        App result = appProcessingService.GetApp(appId: id);
 
         // Then
-        result.Should().BeSameAs(entity);
-        appServiceMock.Verify(x => x.GetApp(id), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        appServiceMock.Verify(expression: x => x.GetApp(appId: id), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

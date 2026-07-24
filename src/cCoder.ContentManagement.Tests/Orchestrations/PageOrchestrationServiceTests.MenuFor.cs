@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -21,29 +25,17 @@ public partial class PageOrchestrationServiceTests
     [Fact]
     public void ShouldReturnProcessingResultWhenMenuFor()
     {
-        pageProcessingServiceMock.Setup(x => x.MenuFor(1, "en-GB")).Returns("menu");
+        pageProcessingServiceMock.Setup(expression: x => x.MenuFor(pageId: 1, culture: "en-GB"))
+            .Returns(value: "menu");
 
-        string result = orchestrationService.MenuFor(1, "en-GB");
+        string result = orchestrationService.MenuFor(pageId: 1, culture: "en-GB");
 
-        result.Should().Be("menu");
-        pageProcessingServiceMock.Verify(x => x.MenuFor(1, "en-GB"), Times.Once);
+        result.Should()
+            .Be(expected: "menu");
+
+        pageProcessingServiceMock.Verify(expression: x => x.MenuFor(pageId: 1, culture: "en-GB"), times: Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

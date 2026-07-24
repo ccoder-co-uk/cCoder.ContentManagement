@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -31,41 +35,57 @@ public partial class AppCultureServiceTests
 
         CmsDataModels.AppCulture submitted = null;
 
-        authorizationBrokerMock.Setup(x =>
-            x.Authorize((int?)appCulture.AppId, "AppCulture_create")
+        authorizationBrokerMock.Setup(expression: x =>
+            x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create")
         );
 
         appCultureBrokerMock
-            .Setup(x =>
+            .Setup(expression: x =>
                 x.AddAppCultureAsync(
-                    It.Is<CmsDataModels.AppCulture>(candidate => !ReferenceEquals(candidate, appCulture))
+newAppCulture: It.Is<CmsDataModels.AppCulture>(match: candidate => !ReferenceEquals(objA: candidate, objB: appCulture))
                 )
             )
-            .Callback<CmsDataModels.AppCulture>(candidate => submitted = candidate)
-            .ReturnsAsync((CmsDataModels.AppCulture value) => value);
+            .Callback<CmsDataModels.AppCulture>(action: candidate => submitted = candidate)
+            .ReturnsAsync(valueFunction: (CmsDataModels.AppCulture value) => value);
 
         // When
-        AppCulture result = await appCultureService.AddAppCultureAsync(appCulture);
+        AppCulture result = await appCultureService.AddAppCultureAsync(newAppCulture: appCulture);
 
         // Then
-        result.Should().BeSameAs(appCulture);
-        submitted.Should().NotBeNull();
-        submitted.Should().NotBeSameAs(appCulture);
-        result.Should().NotBeSameAs(submitted);
-        submitted.Should().BeEquivalentTo(appCulture);
-        result.Should().BeEquivalentTo(appCulture);
+
+        result.Should()
+            .BeSameAs(expected: appCulture);
+
+        submitted.Should()
+            .NotBeNull();
+
+        submitted.Should()
+            .NotBeSameAs(unexpected: appCulture);
+
+        result.Should()
+            .NotBeSameAs(unexpected: submitted);
+
+        submitted.Should()
+            .BeEquivalentTo(expectation: appCulture);
+
+        result.Should()
+            .BeEquivalentTo(expectation: appCulture);
+
         appCultureBrokerMock.Verify(
-            x =>
+expression: x =>
                 x.AddAppCultureAsync(
-                    It.Is<CmsDataModels.AppCulture>(candidate => !ReferenceEquals(candidate, appCulture))
+newAppCulture: It.Is<CmsDataModels.AppCulture>(match: candidate => !ReferenceEquals(objA: candidate, objB: appCulture))
                 ),
-            Times.Once
+times: Times.Once
         );
+
         appCultureBrokerMock.VerifyNoOtherCalls();
+
         authorizationBrokerMock.Verify(
-            x => x.Authorize((int?)appCulture.AppId, "AppCulture_create"),
-            Times.Once
+expression: x => x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create"),
+times: Times.Once
         );
+
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -77,37 +97,26 @@ public partial class AppCultureServiceTests
 
 
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)appCulture.AppId, "AppCulture_create"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await appCultureService.AddAppCultureAsync(appCulture);
+        Func<Task> action = async () => await appCultureService.AddAppCultureAsync(newAppCulture: appCulture);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
         appCultureBrokerMock.VerifyNoOtherCalls();
+
         authorizationBrokerMock.Verify(
-            x => x.Authorize((int?)appCulture.AppId, "AppCulture_create"),
-            Times.Once
+expression: x => x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create"),
+times: Times.Once
         );
+
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

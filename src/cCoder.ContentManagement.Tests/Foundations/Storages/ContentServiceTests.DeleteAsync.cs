@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,32 +33,38 @@ public partial class ContentServiceTests
         // Given
         Content content = CreateRandomContent(id: 9);
 
-        contentBrokerMock.Setup(x => x.GetAllContents(false)).Returns(new[] { content }.AsQueryable());
+        contentBrokerMock.Setup(expression: x => x.GetAllContents(ignoreFilters: false))
+            .Returns(value: new[] { content }.AsQueryable());
 
-        pageBrokerMock.Setup(x => x.GetAllPages(true)).Returns(new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "Content_delete"));
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
+
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"));
+
         contentBrokerMock
             .Setup(
-                x =>
+expression: x =>
                     x.DeleteContentAsync(
-                        It.Is<CmsDataModels.Content>(item => item.Id == content.Id)
+deletedContent: It.Is<CmsDataModels.Content>(match: item => item.Id == content.Id)
                     )
             )
-            .ReturnsAsync(1);
+            .ReturnsAsync(value: 1);
 
         // When
-        await contentService.DeleteAsync(9);
+        await contentService.DeleteAsync(contentId: 9);
 
         // Then
-        contentBrokerMock.Verify(x => x.GetAllContents(false), Times.Once);
+        contentBrokerMock.Verify(expression: x => x.GetAllContents(ignoreFilters: false), times: Times.Once);
+
         contentBrokerMock.Verify(
-            x => x.DeleteContentAsync(It.Is<CmsDataModels.Content>(item => item.Id == content.Id)),
-            Times.Once
+expression: x => x.DeleteContentAsync(deletedContent: It.Is<CmsDataModels.Content>(match: item => item.Id == content.Id)),
+times: Times.Once
         );
+
         contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(x => x.GetAllPages(true), Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Content_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -64,39 +74,31 @@ public partial class ContentServiceTests
         // Given
         Content content = CreateRandomContent(id: 9);
 
-        contentBrokerMock.Setup(x => x.GetAllContents(false)).Returns(new[] { content }.AsQueryable());
+        contentBrokerMock.Setup(expression: x => x.GetAllContents(ignoreFilters: false))
+            .Returns(value: new[] { content }.AsQueryable());
 
-        pageBrokerMock.Setup(x => x.GetAllPages(true)).Returns(new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "Content_delete"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await contentService.DeleteAsync(9);
+        Func<Task> action = async () => await contentService.DeleteAsync(contentId: 9);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        contentBrokerMock.Verify(x => x.GetAllContents(false), Times.Once);
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        contentBrokerMock.Verify(expression: x => x.GetAllContents(ignoreFilters: false), times: Times.Once);
         contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(x => x.GetAllPages(true), Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Content_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

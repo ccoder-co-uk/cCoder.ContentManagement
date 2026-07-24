@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,39 +27,24 @@ public partial class ContentOrchestrationServiceTests
     {
         // Given
         Content entity = CreateRandomContent();
-        contentProcessingServiceMock.Setup(x => x.AddContentAsync(entity)).ReturnsAsync(entity);
+
+        contentProcessingServiceMock.Setup(expression: x => x.AddContentAsync(newContent: entity))
+            .ReturnsAsync(value: entity);
 
         contentEventProcessingServiceMock
-            .Setup(x => x.RaiseContentAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseContentAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Content result = await orchestrationService.AddContentAsync(entity);
+        Content result = await orchestrationService.AddContentAsync(newContent: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        contentProcessingServiceMock.Verify(x => x.AddContentAsync(entity), Times.Once);
-        contentEventProcessingServiceMock.Verify(x => x.RaiseContentAddEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        contentProcessingServiceMock.Verify(expression: x => x.AddContentAsync(newContent: entity), times: Times.Once);
+        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentAddEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

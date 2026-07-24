@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,46 +33,63 @@ public partial class CommonObjectProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
-        User actor = TestUsers.WithPrivilege("commonobject_create");
+        User actor = TestUsers.WithPrivilege(privilege: "commonobject_create");
+
         CommonObject commonObject = CreateRandomCommonObject(
-            "Core/Other"
+type: "Core/Other"
         );
+
         commonObject.Id = 99;
         commonObject.Version = 9;
 
         commonObjectCacheMock
-            .SetupGet(x => x.LatestSet)
-            .Returns(Array.Empty<DataCommonObject>());
+            .SetupGet(expression: x => x.LatestSet)
+            .Returns(value: Array.Empty<DataCommonObject>());
 
         currentUser = actor;
-        commonObjectServiceMock.Setup(x => x.AddCommonObjectAsync(commonObject)).ReturnsAsync(commonObject);
+
+        commonObjectServiceMock.Setup(expression: x => x.AddCommonObjectAsync(newCommonObject: commonObject))
+            .ReturnsAsync(value: commonObject);
 
         // When
+
         cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
-            await commonObjectProcessingService.ImportCommonObjectResultAsync(new[] { commonObject })
+            await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { commonObject })
         ).ToArray();
 
         // Then
-        results.Should().ContainSingle();
-        results[0].Success.Should().BeTrue();
-        commonObject.Id.Should().Be(0);
-        commonObject.Version.Should().Be(1);
-        commonObjectServiceMock.Verify(x => x.AddCommonObjectAsync(commonObject), Times.Once);
+
+        results.Should()
+            .ContainSingle();
+
+        results[0].Success.Should()
+            .BeTrue();
+
+        commonObject.Id.Should()
+            .Be(expected: 0);
+
+        commonObject.Version.Should()
+            .Be(expected: 1);
+
+        commonObjectServiceMock.Verify(expression: x => x.AddCommonObjectAsync(newCommonObject: commonObject), times: Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
-        commonObjectCacheMock.VerifyGet(x => x.LatestSet, Times.Once);
+        commonObjectCacheMock.VerifyGet(expression: x => x.LatestSet, times: Times.Once);
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
@@ -80,26 +101,29 @@ public partial class CommonObjectProcessingServiceTests
         // Then
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
-        User actor = TestUsers.WithPrivileges(["commonobject_create", "commonobject_update"]);
-        CommonObject dbObject = CreateRandomCommonObject("Core/Other");
+        User actor = TestUsers.WithPrivileges(privileges: ["commonobject_create", "commonobject_update"]);
+        CommonObject dbObject = CreateRandomCommonObject(type: "Core/Other");
         dbObject.Version = 4;
-        dbObject.CreatedOn = DateTimeOffset.UtcNow.AddHours(-2);
-        dbObject.LastUpdated = DateTimeOffset.UtcNow.AddHours(-2);
+        dbObject.CreatedOn = DateTimeOffset.UtcNow.AddHours(hours: -2);
+        dbObject.LastUpdated = DateTimeOffset.UtcNow.AddHours(hours: -2);
 
-        CommonObject incoming = CreateRandomCommonObject("Core/Other");
+        CommonObject incoming = CreateRandomCommonObject(type: "Core/Other");
         incoming.Name = dbObject.Name;
         incoming.Key = dbObject.Key;
         incoming.Culture = dbObject.Culture;
@@ -107,7 +131,8 @@ public partial class CommonObjectProcessingServiceTests
         incoming.CreatedOn = DateTimeOffset.UtcNow;
         incoming.LastUpdated = DateTimeOffset.UtcNow;
 
-        commonObjectCacheMock.SetupGet(x => x.LatestSet).Returns(new[] { new DataCommonObject
+        commonObjectCacheMock.SetupGet(expression: x => x.LatestSet)
+            .Returns(value: new[] { new DataCommonObject
         {
             Id = dbObject.Id,
             Name = dbObject.Name,
@@ -122,24 +147,39 @@ public partial class CommonObjectProcessingServiceTests
             Json = dbObject.Json,
             Culture = dbObject.Culture,
         } });
+
         currentUser = actor;
-        commonObjectServiceMock.Setup(x => x.GetAllCommonObject()).Returns(new[] { dbObject }.AsQueryable());
-        commonObjectServiceMock.Setup(x => x.AddCommonObjectAsync(incoming)).ReturnsAsync(incoming);
+
+        commonObjectServiceMock.Setup(expression: x => x.GetAllCommonObject())
+            .Returns(value: new[] { dbObject }.AsQueryable());
+
+        commonObjectServiceMock.Setup(expression: x => x.AddCommonObjectAsync(newCommonObject: incoming))
+            .ReturnsAsync(value: incoming);
 
         // When
+
         cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
-            await commonObjectProcessingService.ImportCommonObjectResultAsync(new[] { incoming })
+            await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { incoming })
         ).ToArray();
 
         // Then
-        results.Should().ContainSingle();
-        results[0].Success.Should().BeTrue();
-        incoming.Id.Should().Be(0);
-        incoming.Version.Should().Be(5);
-        commonObjectServiceMock.Verify(x => x.GetAllCommonObject(), Times.Exactly(2));
-        commonObjectServiceMock.Verify(x => x.AddCommonObjectAsync(incoming), Times.Once);
+
+        results.Should()
+            .ContainSingle();
+
+        results[0].Success.Should()
+            .BeTrue();
+
+        incoming.Id.Should()
+            .Be(expected: 0);
+
+        incoming.Version.Should()
+            .Be(expected: 5);
+
+        commonObjectServiceMock.Verify(expression: x => x.GetAllCommonObject(), times: Times.Exactly(callCount: 2));
+        commonObjectServiceMock.Verify(expression: x => x.AddCommonObjectAsync(newCommonObject: incoming), times: Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
-        commonObjectCacheMock.VerifyGet(x => x.LatestSet, Times.Once);
+        commonObjectCacheMock.VerifyGet(expression: x => x.LatestSet, times: Times.Once);
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
@@ -148,21 +188,24 @@ public partial class CommonObjectProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
-        CommonObject dbObject = CreateRandomCommonObject("Core/Other");
-        CommonObject incoming = CreateRandomCommonObject("Core/Other");
+        CommonObject dbObject = CreateRandomCommonObject(type: "Core/Other");
+        CommonObject incoming = CreateRandomCommonObject(type: "Core/Other");
         incoming.Name = dbObject.Name;
         incoming.Key = dbObject.Key;
         incoming.Culture = dbObject.Culture;
@@ -170,7 +213,8 @@ public partial class CommonObjectProcessingServiceTests
         incoming.CreatedOn = dbObject.CreatedOn;
         incoming.LastUpdated = dbObject.LastUpdated;
 
-        commonObjectCacheMock.SetupGet(x => x.LatestSet).Returns(new[] { new DataCommonObject
+        commonObjectCacheMock.SetupGet(expression: x => x.LatestSet)
+            .Returns(value: new[] { new DataCommonObject
         {
             Id = dbObject.Id,
             Name = dbObject.Name,
@@ -187,36 +231,19 @@ public partial class CommonObjectProcessingServiceTests
         } });
 
         // When
+
         cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
-            await commonObjectProcessingService.ImportCommonObjectResultAsync(new[] { incoming })
+            await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { incoming })
         ).ToArray();
 
         // Then
-        results.Should().BeEmpty();
+
+        results.Should()
+            .BeEmpty();
+
         commonObjectServiceMock.VerifyNoOtherCalls();
-        commonObjectCacheMock.VerifyGet(x => x.LatestSet, Times.Once);
+        commonObjectCacheMock.VerifyGet(expression: x => x.LatestSet, times: Times.Once);
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

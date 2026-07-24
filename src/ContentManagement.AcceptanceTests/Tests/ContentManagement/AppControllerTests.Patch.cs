@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -15,22 +19,22 @@ public sealed partial class AppControllerTests
         App expectedApp = new() { Id = seededApp.AppId, DefaultTheme = "Patched" };
 
         // When
-        await PatchAppAsync(seededApp.Domain, seededApp.AppId, new { defaultTheme = "Patched" });
-        App actualApp = await GetAppAsync(seededApp.Domain, seededApp.AppId);
+        await PatchAppAsync(host: seededApp.Domain, id: seededApp.AppId, payload: new { defaultTheme = "Patched" });
+        App actualApp = await GetAppAsync(host: seededApp.Domain, id: seededApp.AppId);
 
         // Then
-        actualApp.Should().NotBeNull();
-        actualApp!.Id.Should().Be(expectedApp.Id);
-        actualApp.DefaultTheme.Should().Be(expectedApp.DefaultTheme);
 
-        await DeleteAppAsync(seededApp.Domain, seededApp.AppId);
+        actualApp.Should()
+            .NotBeNull();
 
-        await Teardown(seededApp);
+        actualApp!.Id.Should()
+            .Be(expected: expectedApp.Id);
+
+        actualApp.DefaultTheme.Should()
+            .Be(expected: expectedApp.DefaultTheme);
+
+        await DeleteAppAsync(host: seededApp.Domain, id: seededApp.AppId);
+
+        await Teardown(seededApp: seededApp);
     }
 }
-
-
-
-
-
-

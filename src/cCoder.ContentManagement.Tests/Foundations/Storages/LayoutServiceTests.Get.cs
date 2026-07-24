@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,34 +28,20 @@ public partial class LayoutServiceTests
         // Given
         Layout layout = CreateRandomLayout(id: 7);
 
-        layoutBrokerMock.Setup(x => x.GetAllLayouts(false)).Returns(new[] { layout }.AsQueryable());
+        layoutBrokerMock.Setup(expression: x => x.GetAllLayouts(ignoreFilters: false))
+            .Returns(value: new[] { layout }.AsQueryable());
 
         // When
-        Layout result = layoutService.GetLayout(7);
+        Layout result = layoutService.GetLayout(layoutId: 7);
 
         // Then
-        result.Should().BeEquivalentTo(layout);
-        layoutBrokerMock.Verify(x => x.GetAllLayouts(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: layout);
+
+        layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(ignoreFilters: false), times: Times.Once);
         layoutBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

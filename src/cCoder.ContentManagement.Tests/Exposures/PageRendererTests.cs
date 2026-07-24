@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -20,12 +24,12 @@ namespace cCoder.ContentManagement.Tests.CMS.Exposures;
 
 public partial class PageRendererTests
 {
-    private readonly Mock<IPageRenderCoordinationService> pageRenderCoordinationServiceMock = new(MockBehavior.Strict);
+    private readonly Mock<IPageRenderCoordinationService> pageRenderCoordinationServiceMock = new(behavior: MockBehavior.Strict);
     private readonly PageRenderer pageRenderer;
 
     public PageRendererTests()
     {
-        pageRenderer = new PageRenderer(pageRenderCoordinationServiceMock.Object);
+        pageRenderer = new PageRenderer(pageRenderCoordinationService: pageRenderCoordinationServiceMock.Object);
     }
 
     private static App CreateApp() =>
@@ -55,7 +59,3 @@ public partial class PageRendererTests
             Edit = false
         };
 }
-
-
-
-

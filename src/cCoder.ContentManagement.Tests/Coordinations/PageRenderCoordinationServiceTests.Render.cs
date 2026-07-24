@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,6 +31,7 @@ public partial class PageRenderCoordinationServiceTests
     public void ShouldRenderPageUsingResolvedDefaults()
     {
         App app = CreateApp();
+
         PageRenderRequest request = new()
         {
             Host = app.Domain,
@@ -36,12 +41,19 @@ public partial class PageRenderCoordinationServiceTests
             Edit = true
         };
 
-        RenderResult renderResult = CreateRenderResult("Rendered Body");
+        RenderResult renderResult = CreateRenderResult(bodyHtml: "Rendered Body");
 
-        appOrchestrationServiceMock.Setup(x => x.GetByDomainApp(app.Domain, true)).Returns(app);
-        appOrchestrationServiceMock.Setup(x => x.GetAllApp(false)).Returns(new[] { app }.AsQueryable());
-        layoutOrchestrationServiceMock.Setup(x => x.GetAllLayout(false)).Returns(app.Layouts.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[]
+        appOrchestrationServiceMock.Setup(expression: x => x.GetByDomainApp(domain: app.Domain, ignoreFilters: true))
+            .Returns(value: app);
+
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+            .Returns(value: new[] { app }.AsQueryable());
+
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+            .Returns(value: app.Layouts.AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+            .Returns(value: new[]
         {
             new Page
             {
@@ -55,7 +67,9 @@ public partial class PageRenderCoordinationServiceTests
                 Roles = []
             }
         }.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[]
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: new[]
         {
             new Page
             {
@@ -71,26 +85,37 @@ public partial class PageRenderCoordinationServiceTests
         }.AsQueryable());
 
         pageRenderOrchestrationServiceMock
-            .Setup(x => x.RenderPageUserRenderResult(It.IsAny<Page>(), It.IsAny<User>(), app.DefaultTheme, app.DefaultCultureId, false))
-            .Returns(renderResult);
+            .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: app.DefaultTheme, culture: app.DefaultCultureId, edit: false))
+            .Returns(value: renderResult);
 
-        PageRenderResponse response = coordinationService.Render(request);
+        PageRenderResponse response = coordinationService.Render(request: request);
 
-        response.App.Id.Should().Be(app.Id);
-        response.Page.Should().BeSameAs(renderResult);
-        response.Theme.Should().Be(app.DefaultTheme);
-        response.Culture.Should().Be(app.DefaultCultureId);
-        response.Edit.Should().BeTrue();
-        componentOrchestrationServiceMock.Verify(x => x.GetAllComponent(false), Times.AtLeastOnce);
-        scriptOrchestrationServiceMock.Verify(x => x.GetAllScript(false), Times.AtLeastOnce);
-        resourceOrchestrationServiceMock.Verify(x => x.GetAllResource(false), Times.AtLeastOnce);
-        pageOrchestrationServiceMock.Verify(x => x.GetAllPage(true), Times.AtLeastOnce);
+        response.App.Id.Should()
+            .Be(expected: app.Id);
+
+        response.Page.Should()
+            .BeSameAs(expected: renderResult);
+
+        response.Theme.Should()
+            .Be(expected: app.DefaultTheme);
+
+        response.Culture.Should()
+            .Be(expected: app.DefaultCultureId);
+
+        response.Edit.Should()
+            .BeTrue();
+
+        componentOrchestrationServiceMock.Verify(expression: x => x.GetAllComponent(ignoreFilters: false), times: Times.AtLeastOnce);
+        scriptOrchestrationServiceMock.Verify(expression: x => x.GetAllScript(ignoreFilters: false), times: Times.AtLeastOnce);
+        resourceOrchestrationServiceMock.Verify(expression: x => x.GetAllResource(ignoreFilters: false), times: Times.AtLeastOnce);
+        pageOrchestrationServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.AtLeastOnce);
     }
 
     [Fact]
     public void ShouldFallbackToErrorRenderWhenPrimaryRenderThrows()
     {
         App app = CreateApp();
+
         PageRenderRequest request = new()
         {
             Host = app.Domain,
@@ -98,10 +123,17 @@ public partial class PageRenderCoordinationServiceTests
             RequestUrl = "https://demo.local/Summary"
         };
 
-        appOrchestrationServiceMock.Setup(x => x.GetByDomainApp(app.Domain, true)).Returns(app);
-        appOrchestrationServiceMock.Setup(x => x.GetAllApp(false)).Returns(new[] { app }.AsQueryable());
-        layoutOrchestrationServiceMock.Setup(x => x.GetAllLayout(false)).Returns(app.Layouts.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[]
+        appOrchestrationServiceMock.Setup(expression: x => x.GetByDomainApp(domain: app.Domain, ignoreFilters: true))
+            .Returns(value: app);
+
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+            .Returns(value: new[] { app }.AsQueryable());
+
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+            .Returns(value: app.Layouts.AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+            .Returns(value: new[]
         {
             new Page
             {
@@ -126,7 +158,9 @@ public partial class PageRenderCoordinationServiceTests
                 Roles = []
             }
         }.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[]
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: new[]
         {
             new Page
             {
@@ -153,14 +187,17 @@ public partial class PageRenderCoordinationServiceTests
         }.AsQueryable());
 
         pageRenderOrchestrationServiceMock
-            .SetupSequence(x => x.RenderPageUserRenderResult(It.IsAny<Page>(), It.IsAny<User>(), app.DefaultTheme, app.DefaultCultureId, It.IsAny<bool>()))
-            .Throws(new InvalidOperationException("Boom"))
-            .Returns(CreateRenderResult("[problem[message]]|[problem[detail]]|[problem[url]]"));
+            .SetupSequence(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: app.DefaultTheme, culture: app.DefaultCultureId, edit: It.IsAny<bool>()))
+            .Throws(exception: new InvalidOperationException(message: "Boom"))
+            .Returns(value: CreateRenderResult(bodyHtml: "[problem[message]]|[problem[detail]]|[problem[url]]"));
 
-        PageRenderResponse response = coordinationService.Render(request);
+        PageRenderResponse response = coordinationService.Render(request: request);
 
-        response.Page.BodyHtml.Should().Contain("Boom");
-        response.Page.BodyHtml.Should().Contain("https://demo.local/Summary");
+        response.Page.BodyHtml.Should()
+            .Contain(expected: "Boom");
+
+        response.Page.BodyHtml.Should()
+            .Contain(expected: "https://demo.local/Summary");
     }
 
     [Fact]
@@ -168,9 +205,11 @@ public partial class PageRenderCoordinationServiceTests
     {
         PageRenderRequest request = null!;
 
-        Action act = () => coordinationService.Render(request);
+        Action act = () => coordinationService.Render(request: request);
 
-        act.Should().Throw<ValidationException>().WithMessage("request is required.");
+        act.Should()
+            .Throw<ValidationException>()
+            .WithMessage(expectedWildcardPattern: "request is required.");
     }
 
     [Fact]
@@ -182,31 +221,45 @@ public partial class PageRenderCoordinationServiceTests
             Exception = null
         };
 
-        Action act = () => coordinationService.RenderError(request);
+        Action act = () => coordinationService.RenderError(request: request);
 
-        act.Should().Throw<ValidationException>().WithMessage("Exception is required.");
+        act.Should()
+            .Throw<ValidationException>()
+            .WithMessage(expectedWildcardPattern: "Exception is required.");
     }
 
     [Fact]
     public void ShouldReturnNotFoundRenderResultWhenPageDoesNotExist()
     {
         App app = CreateApp();
-        currentUser = TestUsers.WithPrivilege("app_admin", app.Id);
+        currentUser = TestUsers.WithPrivilege(privilege: "app_admin", appId: app.Id);
 
-        appOrchestrationServiceMock.Setup(x => x.GetAllApp(false)).Returns(new[] { app }.AsQueryable());
-        layoutOrchestrationServiceMock.Setup(x => x.GetAllLayout(false)).Returns(app.Layouts.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(true)).Returns(Array.Empty<Page>().AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(false)).Returns(Array.Empty<Page>().AsQueryable());
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+            .Returns(value: new[] { app }.AsQueryable());
+
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+            .Returns(value: app.Layouts.AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+            .Returns(value: Array.Empty<Page>()
+            .AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: Array.Empty<Page>()
+            .AsQueryable());
+
         pageRenderOrchestrationServiceMock
-            .Setup(x => x.RenderPageUserRenderResult(It.IsAny<Page>(), It.IsAny<User>(), "Default", string.Empty, false))
-            .Returns(CreateRenderResult());
+            .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: "Default", culture: string.Empty, edit: false))
+            .Returns(value: CreateRenderResult());
 
-        RenderResult result = coordinationService.RenderRenderResult(app.Id, "missing", "Default", string.Empty);
+        RenderResult result = coordinationService.RenderRenderResult(appId: app.Id, path: "missing", theme: "Default", culture: string.Empty);
 
-        result.StatusCode.Should().Be(404);
+        result.StatusCode.Should()
+            .Be(expected: 404);
+
         pageRenderOrchestrationServiceMock.Verify(
-            x => x.RenderPageUserRenderResult(It.Is<Page>(page => page.Path == "missing"), It.IsAny<User>(), "Default", string.Empty, false),
-            Times.Once);
+expression: x => x.RenderPageUserRenderResult(page: It.Is<Page>(match: page => page.Path == "missing"), user: It.IsAny<User>(), theme: "Default", culture: string.Empty, edit: false),
+times: Times.Once);
     }
 
     [Fact]
@@ -214,7 +267,9 @@ public partial class PageRenderCoordinationServiceTests
     {
         App app = CreateApp();
         currentUser = TestUsers.WithoutPrivileges();
-        authorizationBrokerMock.Setup(x => x.IsAdminOfApp(app.Id)).Returns(false);
+
+        authorizationBrokerMock.Setup(expression: x => x.IsAdminOfApp(appId: app.Id))
+            .Returns(value: false);
 
         Role pageRole = new()
         {
@@ -236,31 +291,39 @@ public partial class PageRenderCoordinationServiceTests
             Roles = [new PageRole { RoleId = pageRole.Id, Role = pageRole }]
         };
 
-        appOrchestrationServiceMock.Setup(x => x.GetAllApp(false)).Returns(new[] { app }.AsQueryable());
-        layoutOrchestrationServiceMock.Setup(x => x.GetAllLayout(false)).Returns(app.Layouts.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { protectedPage }.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { protectedPage }.AsQueryable());
-        pageRenderOrchestrationServiceMock
-            .Setup(x => x.RenderPageUserRenderResult(It.IsAny<Page>(), It.IsAny<User>(), "Default", string.Empty, false))
-            .Returns(CreateRenderResult());
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+            .Returns(value: new[] { app }.AsQueryable());
 
-        coordinationService.RenderRenderResult(app.Id, string.Empty, "Default", string.Empty);
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+            .Returns(value: app.Layouts.AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+            .Returns(value: new[] { protectedPage }.AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: new[] { protectedPage }.AsQueryable());
+
+        pageRenderOrchestrationServiceMock
+            .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: "Default", culture: string.Empty, edit: false))
+            .Returns(value: CreateRenderResult());
+
+        coordinationService.RenderRenderResult(appId: app.Id, path: string.Empty, theme: "Default", culture: string.Empty);
 
         pageRenderOrchestrationServiceMock.Verify(
-            x => x.RenderPageUserRenderResult(
-                It.Is<Page>(page => page.Contents.Any(content => content.Html == "[component[login]]")),
-                It.IsAny<User>(),
-                "Default",
-                string.Empty,
-                false),
-            Times.Once);
+expression: x => x.RenderPageUserRenderResult(
+page: It.Is<Page>(match: page => page.Contents.Any(predicate: content => content.Html == "[component[login]]")),
+user: It.IsAny<User>(),
+theme: "Default",
+culture: string.Empty,
+edit: false),
+times: Times.Once);
     }
 
     [Fact]
     public void ShouldHydratePageCollectionsBeforeRendering()
     {
         App app = CreateApp();
-        currentUser = TestUsers.WithPrivilege("app_admin", app.Id);
+        currentUser = TestUsers.WithPrivilege(privilege: "app_admin", appId: app.Id);
 
         Page page = new()
         {
@@ -302,30 +365,44 @@ public partial class PageRenderCoordinationServiceTests
             }
         ];
 
-        appOrchestrationServiceMock.Setup(x => x.GetAllApp(false)).Returns(new[] { app }.AsQueryable());
-        layoutOrchestrationServiceMock.Setup(x => x.GetAllLayout(false)).Returns(app.Layouts.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { page }.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { page }.AsQueryable());
-        pageInfoOrchestrationServiceMock.Setup(x => x.GetAllPageInfo(true)).Returns(pageInfos.AsQueryable());
-        contentOrchestrationServiceMock.Setup(x => x.GetAllContent(true)).Returns(contents.AsQueryable());
-        pageRoleOrchestrationServiceMock.Setup(x => x.GetAllPageRole(true)).Returns(roles.AsQueryable());
-        pageRenderOrchestrationServiceMock
-            .Setup(x => x.RenderPageUserRenderResult(It.IsAny<Page>(), It.IsAny<User>(), "Default", string.Empty, false))
-            .Returns(CreateRenderResult());
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+            .Returns(value: new[] { app }.AsQueryable());
 
-        coordinationService.RenderRenderResult(app.Id, "Admin", "Default", string.Empty);
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+            .Returns(value: app.Layouts.AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+            .Returns(value: new[] { page }.AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: new[] { page }.AsQueryable());
+
+        pageInfoOrchestrationServiceMock.Setup(expression: x => x.GetAllPageInfo(ignoreFilters: true))
+            .Returns(value: pageInfos.AsQueryable());
+
+        contentOrchestrationServiceMock.Setup(expression: x => x.GetAllContent(ignoreFilters: true))
+            .Returns(value: contents.AsQueryable());
+
+        pageRoleOrchestrationServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
+            .Returns(value: roles.AsQueryable());
+
+        pageRenderOrchestrationServiceMock
+            .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: "Default", culture: string.Empty, edit: false))
+            .Returns(value: CreateRenderResult());
+
+        coordinationService.RenderRenderResult(appId: app.Id, path: "Admin", theme: "Default", culture: string.Empty);
 
         pageRenderOrchestrationServiceMock.Verify(
-            x => x.RenderPageUserRenderResult(
-                It.Is<Page>(renderPage =>
-                    renderPage.PageInfo.SequenceEqual(pageInfos)
-                    && renderPage.Contents.SequenceEqual(contents)
-                    && renderPage.Roles.SequenceEqual(roles)),
-                It.IsAny<User>(),
-                "Default",
-                string.Empty,
-                false),
-            Times.Once);
+expression: x => x.RenderPageUserRenderResult(
+page: It.Is<Page>(match: renderPage =>
+                    renderPage.PageInfo.SequenceEqual(second: pageInfos)
+                    && renderPage.Contents.SequenceEqual(second: contents)
+                    && renderPage.Roles.SequenceEqual(second: roles)),
+user: It.IsAny<User>(),
+theme: "Default",
+culture: string.Empty,
+edit: false),
+times: Times.Once);
     }
 
     [Fact]
@@ -378,39 +455,49 @@ public partial class PageRenderCoordinationServiceTests
             }
         ];
 
-        appOrchestrationServiceMock.Setup(x => x.GetAllApp(false)).Returns(new[] { app }.AsQueryable());
-        layoutOrchestrationServiceMock.Setup(x => x.GetAllLayout(false)).Returns(app.Layouts.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(true)).Returns(new[] { page }.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { page }.AsQueryable());
-        pageRoleOrchestrationServiceMock.Setup(x => x.GetAllPageRole(true)).Returns(roles.AsQueryable());
-        pageRenderOrchestrationServiceMock
-            .Setup(x => x.RenderPageUserRenderResult(It.IsAny<Page>(), It.IsAny<User>(), "Default", string.Empty, false))
-            .Returns(CreateRenderResult("Public body"));
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+            .Returns(value: new[] { app }.AsQueryable());
 
-        coordinationService.RenderRenderResult(app.Id, string.Empty, "Default", string.Empty);
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+            .Returns(value: app.Layouts.AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+            .Returns(value: new[] { page }.AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: new[] { page }.AsQueryable());
+
+        pageRoleOrchestrationServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
+            .Returns(value: roles.AsQueryable());
+
+        pageRenderOrchestrationServiceMock
+            .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: "Default", culture: string.Empty, edit: false))
+            .Returns(value: CreateRenderResult(bodyHtml: "Public body"));
+
+        coordinationService.RenderRenderResult(appId: app.Id, path: string.Empty, theme: "Default", culture: string.Empty);
 
         pageRenderOrchestrationServiceMock.Verify(
-            x => x.RenderPageUserRenderResult(
-                It.Is<Page>(renderPage =>
-                    renderPage.Contents.Any(content => content.Html == "Public body")
-                    && renderPage.Roles.Any(role =>
+expression: x => x.RenderPageUserRenderResult(
+page: It.Is<Page>(match: renderPage =>
+                    renderPage.Contents.Any(predicate: content => content.Html == "Public body")
+                    && renderPage.Roles.Any(predicate: role =>
                         role.Role != null
                         && role.Role.Privileges != null
-                        && role.Role.Privileges.Contains("page_read"))),
-                It.IsAny<User>(),
-                "Default",
-                string.Empty,
-                false),
-            Times.Once);
+                        && role.Role.Privileges.Contains(item: "page_read"))),
+user: It.IsAny<User>(),
+theme: "Default",
+culture: string.Empty,
+edit: false),
+times: Times.Once);
 
         pageRenderOrchestrationServiceMock.Verify(
-            x => x.RenderPageUserRenderResult(
-                It.Is<Page>(renderPage => renderPage.Contents.Any(content => content.Html == "[component[login]]")),
-                It.IsAny<User>(),
-                "Default",
-                string.Empty,
-                false),
-            Times.Never);
+expression: x => x.RenderPageUserRenderResult(
+page: It.Is<Page>(match: renderPage => renderPage.Contents.Any(predicate: content => content.Html == "[component[login]]")),
+user: It.IsAny<User>(),
+theme: "Default",
+culture: string.Empty,
+edit: false),
+times: Times.Never);
     }
 
     [Fact]
@@ -418,7 +505,9 @@ public partial class PageRenderCoordinationServiceTests
     {
         App app = CreateApp();
         currentUser = TestUsers.WithoutPrivileges();
-        authorizationBrokerMock.Setup(x => x.IsAdminOfApp(app.Id)).Returns(false);
+
+        authorizationBrokerMock.Setup(expression: x => x.IsAdminOfApp(appId: app.Id))
+            .Returns(value: false);
 
         Role pageRole = new()
         {
@@ -438,52 +527,60 @@ public partial class PageRenderCoordinationServiceTests
             Roles = [new PageRole { RoleId = pageRole.Id, Role = pageRole }]
         };
 
-        appOrchestrationServiceMock.Setup(x => x.GetAllApp(false)).Returns(new[] { app }.AsQueryable());
-        layoutOrchestrationServiceMock.Setup(x => x.GetAllLayout(false)).Returns(app.Layouts.AsQueryable());
-        pageOrchestrationServiceMock.SetupSequence(x => x.GetAllPage(true))
-            .Returns(Array.Empty<Page>().AsQueryable())
-            .Returns(new[] { protectedPage }.AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(false)).Returns(new[] { protectedPage }.AsQueryable());
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+            .Returns(value: new[] { app }.AsQueryable());
+
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+            .Returns(value: app.Layouts.AsQueryable());
+
+        pageOrchestrationServiceMock.SetupSequence(expression: x => x.GetAllPage(ignoreFilters: true))
+            .Returns(value: Array.Empty<Page>()
+            .AsQueryable())
+            .Returns(value: new[] { protectedPage }.AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: new[] { protectedPage }.AsQueryable());
+
         pageRenderOrchestrationServiceMock
-            .Setup(x => x.RenderPageUserRenderResult(It.IsAny<Page>(), It.IsAny<User>(), "Default", string.Empty, false))
-            .Returns(CreateRenderResult());
+            .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: "Default", culture: string.Empty, edit: false))
+            .Returns(value: CreateRenderResult());
 
-        coordinationService.RenderRenderResult(app.Id, "missing", "Default", string.Empty);
-        coordinationService.RenderRenderResult(app.Id, "Admin", "Default", string.Empty);
-
-        pageRenderOrchestrationServiceMock.Verify(
-            x => x.RenderPageUserRenderResult(
-                It.Is<Page>(renderPage => renderPage.Path == "missing"
-                    && renderPage.Contents.Any(content => content.Name == "body" && content.Html == "[component[NotFound]]")),
-                It.IsAny<User>(),
-                "Default",
-                string.Empty,
-                false),
-            Times.Once);
+        coordinationService.RenderRenderResult(appId: app.Id, path: "missing", theme: "Default", culture: string.Empty);
+        coordinationService.RenderRenderResult(appId: app.Id, path: "Admin", theme: "Default", culture: string.Empty);
 
         pageRenderOrchestrationServiceMock.Verify(
-            x => x.RenderPageUserRenderResult(
-                It.Is<Page>(renderPage =>
+expression: x => x.RenderPageUserRenderResult(
+page: It.Is<Page>(match: renderPage => renderPage.Path == "missing"
+                    && renderPage.Contents.Any(predicate: content => content.Name == "body" && content.Html == "[component[NotFound]]")),
+user: It.IsAny<User>(),
+theme: "Default",
+culture: string.Empty,
+edit: false),
+times: Times.Once);
+
+        pageRenderOrchestrationServiceMock.Verify(
+expression: x => x.RenderPageUserRenderResult(
+page: It.Is<Page>(match: renderPage =>
                     renderPage.Path == "Admin"
-                    && renderPage.Contents.Any(content => content.Name == "body" && content.Html == "[component[login]]")),
-                It.IsAny<User>(),
-                "Default",
-                string.Empty,
-                false),
-            Times.Once);
+                    && renderPage.Contents.Any(predicate: content => content.Name == "body" && content.Html == "[component[login]]")),
+user: It.IsAny<User>(),
+theme: "Default",
+culture: string.Empty,
+edit: false),
+times: Times.Once);
     }
 
     [Fact]
     public void ShouldThrowSecurityExceptionWhenAppIsUnknown()
     {
-        appOrchestrationServiceMock.Setup(x => x.GetAllApp(false)).Returns(Array.Empty<App>().AsQueryable());
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+            .Returns(value: Array.Empty<App>()
+            .AsQueryable());
 
-        Action act = () => coordinationService.RenderRenderResult(1, string.Empty, "Default", string.Empty);
+        Action act = () => coordinationService.RenderRenderResult(appId: 1, path: string.Empty, theme: "Default", culture: string.Empty);
 
-        act.Should().Throw<SecurityException>().WithMessage("Unknown Domain!");
+        act.Should()
+            .Throw<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Unknown Domain!");
     }
 }
-
-
-
-

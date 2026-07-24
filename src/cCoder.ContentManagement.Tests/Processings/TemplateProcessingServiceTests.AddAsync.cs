@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,14 +30,16 @@ public partial class TemplateProcessingServiceTests
     {
         // Given
         Template template = CreateRandomTemplate();
-        templateServiceMock.Setup(x => x.AddTemplateAsync(template)).ReturnsAsync(template);
+
+        templateServiceMock.Setup(expression: x => x.AddTemplateAsync(newTemplate: template))
+            .ReturnsAsync(value: template);
 
         // When
-        Template result = await templateProcessingService.AddTemplateAsync(template);
+        Template result = await templateProcessingService.AddTemplateAsync(newTemplate: template);
 
         // Then
-        Assert.Same(template, result);
-        templateServiceMock.Verify(x => x.AddTemplateAsync(template), Times.Once);
+        Assert.Same(expected: template, actual: result);
+        templateServiceMock.Verify(expression: x => x.AddTemplateAsync(newTemplate: template), times: Times.Once);
     }
 
     [Fact]
@@ -43,29 +49,16 @@ public partial class TemplateProcessingServiceTests
         Template template = CreateRandomTemplate();
 
         templateServiceMock
-            .Setup(x => x.AddTemplateAsync(template))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.AddTemplateAsync(newTemplate: template))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await templateProcessingService.AddTemplateAsync(template)
+
+        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+            await templateProcessingService.AddTemplateAsync(newTemplate: template)
         );
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

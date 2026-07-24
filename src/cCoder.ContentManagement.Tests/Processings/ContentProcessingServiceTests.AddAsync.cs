@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,14 +30,16 @@ public partial class ContentProcessingServiceTests
     {
         // Given
         Content content = CreateRandomContent();
-        contentServiceMock.Setup(x => x.AddContentAsync(content)).ReturnsAsync(content);
+
+        contentServiceMock.Setup(expression: x => x.AddContentAsync(newContent: content))
+            .ReturnsAsync(value: content);
 
         // When
-        Content result = await contentProcessingService.AddContentAsync(content);
+        Content result = await contentProcessingService.AddContentAsync(newContent: content);
 
         // Then
-        Assert.Same(content, result);
-        contentServiceMock.Verify(x => x.AddContentAsync(content), Times.Once);
+        Assert.Same(expected: content, actual: result);
+        contentServiceMock.Verify(expression: x => x.AddContentAsync(newContent: content), times: Times.Once);
     }
 
     [Fact]
@@ -43,29 +49,16 @@ public partial class ContentProcessingServiceTests
         Content content = CreateRandomContent();
 
         contentServiceMock
-            .Setup(x => x.AddContentAsync(content))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.AddContentAsync(newContent: content))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await contentProcessingService.AddContentAsync(content)
+
+        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+            await contentProcessingService.AddContentAsync(newContent: content)
         );
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

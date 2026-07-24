@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,24 +16,29 @@ public sealed partial class TemplateControllerTests
     {
         // Given
         Template createdTemplate = await CreateTemplateAsync(
-            new
-            {
-                appId = 1,
-                name = Unique("Template"),
-                description = "Acceptance template",
-                resourceKey = "Default",
-                rawString = "<html><body><h1>[model[title]]</h1></body></html>",
-            });
+payload: new
+{
+    appId = 1,
+    name = Unique(prefix: "Template"),
+    description = "Acceptance template",
+    resourceKey = "Default",
+    rawString = "<html><body><h1>[model[title]]</h1></body></html>",
+});
+
         Template expectedTemplate = new() { Id = createdTemplate.Id };
 
         // When
-        Template actualTemplate = await GetTemplateAsync(createdTemplate.Id);
+        Template actualTemplate = await GetTemplateAsync(id: createdTemplate.Id);
 
         // Then
-        actualTemplate.Should().NotBeNull();
-        actualTemplate!.Id.Should().Be(expectedTemplate.Id);
 
-        await DeleteTemplateAsync(createdTemplate.Id);
+        actualTemplate.Should()
+            .NotBeNull();
+
+        actualTemplate!.Id.Should()
+            .Be(expected: expectedTemplate.Id);
+
+        await DeleteTemplateAsync(id: createdTemplate.Id);
     }
 
     [Fact]
@@ -41,12 +50,8 @@ public sealed partial class TemplateControllerTests
         int actualCount = await GetTemplateCountAsync();
 
         // Then
-        actualCount.Should().BeGreaterThanOrEqualTo(0);
+
+        actualCount.Should()
+            .BeGreaterThanOrEqualTo(expected: 0);
     }
 }
-
-
-
-
-
-

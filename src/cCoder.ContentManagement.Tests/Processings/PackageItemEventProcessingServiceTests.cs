@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,28 +29,11 @@ public partial class PackageItemEventProcessingServiceTests
 
     public PackageItemEventProcessingServiceTests()
     {
-        packageItemEventServiceMock = new Mock<IPackageItemEventService>(MockBehavior.Strict);
-        service = new PackageItemEventProcessingService(packageItemEventServiceMock.Object);
+        packageItemEventServiceMock = new Mock<IPackageItemEventService>(behavior: MockBehavior.Strict);
+        service = new PackageItemEventProcessingService(eventService: packageItemEventServiceMock.Object);
     }
 
     private static PackageItem CreateRandomPackageItem() =>
-        Builder<PackageItem>.CreateNew().Build();
+        Builder<PackageItem>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

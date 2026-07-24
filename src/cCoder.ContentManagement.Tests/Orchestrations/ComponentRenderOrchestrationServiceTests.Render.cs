@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -32,27 +36,28 @@ public partial class ComponentRenderOrchestrationServiceTests
             IsActive = true,
             Roles = []
         };
+
         string expectedHtml = "<section>component</section>";
 
         componentRenderProcessingServiceMock
-            .Setup(x => x.RenderUser(1, "Hero", user, "en-GB", "Default"))
-            .Returns(expectedHtml);
+            .Setup(expression: x => x.RenderUser(appId: 1, name: "Hero", user: user, culture: "en-GB", theme: "Default"))
+            .Returns(value: expectedHtml);
 
-        string result = renderOrchestrationService.RenderUser(1, "Hero", user, "en-GB", "Default");
+        string result = renderOrchestrationService.RenderUser(appId: 1, name: "Hero", user: user, culture: "en-GB", theme: "Default");
 
-        result.Should().Be(expectedHtml);
+        result.Should()
+            .Be(expected: expectedHtml);
+
         componentRenderProcessingServiceMock.VerifyAll();
     }
 
     [Fact]
     public void ShouldThrowValidationExceptionWhenUserIsNull()
     {
-        Action act = () => renderOrchestrationService.RenderUser(1, "Hero", null!, "en-GB", "Default");
+        Action act = () => renderOrchestrationService.RenderUser(appId: 1, name: "Hero", user: null!, culture: "en-GB", theme: "Default");
 
-        act.Should().Throw<ValidationException>().WithMessage("user is required.");
+        act.Should()
+            .Throw<ValidationException>()
+            .WithMessage(expectedWildcardPattern: "user is required.");
     }
 }
-
-
-
-

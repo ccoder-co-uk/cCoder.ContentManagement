@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,29 +31,35 @@ public partial class CommonObjectProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         CommonObject commonObject = CreateRandomCommonObject();
-        currentUser = TestUsers.WithPrivilege("commonobject_create");
-        commonObjectServiceMock.Setup(x => x.AddCommonObjectAsync(commonObject)).ReturnsAsync(commonObject);
+        currentUser = TestUsers.WithPrivilege(privilege: "commonobject_create");
+
+        commonObjectServiceMock.Setup(expression: x => x.AddCommonObjectAsync(newCommonObject: commonObject))
+            .ReturnsAsync(value: commonObject);
+
         CommonObject result =
             // When
-            await commonObjectProcessingService.AddCommonObjectAsync(commonObject);
+            await commonObjectProcessingService.AddCommonObjectAsync(newCommonObject: commonObject);
 
         // Then
-        Assert.Same(commonObject, result);
-        commonObjectServiceMock.Verify(x => x.AddCommonObjectAsync(commonObject), Times.Once);
+        Assert.Same(expected: commonObject, actual: result);
+        commonObjectServiceMock.Verify(expression: x => x.AddCommonObjectAsync(newCommonObject: commonObject), times: Times.Once);
     }
 
     [Fact]
@@ -57,50 +67,36 @@ public partial class CommonObjectProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         CommonObject commonObject = CreateRandomCommonObject();
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await commonObjectProcessingService.AddCommonObjectAsync(commonObject)
+
+        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+            await commonObjectProcessingService.AddCommonObjectAsync(newCommonObject: commonObject)
         );
 
         // Then
+
         commonObjectServiceMock.Verify(
-            x => x.AddCommonObjectAsync(It.IsAny<CommonObject>()),
-            Times.Never
+expression: x => x.AddCommonObjectAsync(newCommonObject: It.IsAny<CommonObject>()),
+times: Times.Never
         );
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

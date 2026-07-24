@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -18,12 +22,12 @@ public class ContentManagementMigrationAggregationServiceTests
         Component[] importedComponents = null;
 
         componentOrchestrationServiceMock
-            .Setup(service => service.ImportComponentsAsync(It.IsAny<int>(), It.IsAny<Component[]>()))
-            .Callback<int, Component[]>((_, items) => importedComponents = items)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: service => service.ImportComponentsAsync(appId: It.IsAny<int>(), items: It.IsAny<Component[]>()))
+            .Callback<int, Component[]>(action: (_, items) => importedComponents = items)
+            .Returns(value: ValueTask.CompletedTask);
 
         ContentManagementMigrationAggregationService service = CreateService(
-            componentOrchestrationService: componentOrchestrationServiceMock.Object);
+componentOrchestrationService: componentOrchestrationServiceMock.Object);
 
         Package package = new()
         {
@@ -49,11 +53,16 @@ public class ContentManagementMigrationAggregationServiceTests
             ]
         };
 
-        await service.ImportPackageAsync(1, package);
+        await service.ImportPackageAsync(appId: 1, package: package);
 
-        importedComponents.Should().NotBeNull();
-        importedComponents.Should().ContainSingle();
-        importedComponents![0].Name.Should().Be("DetailedNav");
+        importedComponents.Should()
+            .NotBeNull();
+
+        importedComponents.Should()
+            .ContainSingle();
+
+        importedComponents![0].Name.Should()
+            .Be(expected: "DetailedNav");
     }
 
     [Fact]
@@ -63,9 +72,9 @@ public class ContentManagementMigrationAggregationServiceTests
         cCoder.Data.Models.CMS.Page[] importedPages = null;
 
         pageOrchestrationServiceMock
-            .Setup(service => service.ImportPagesAsync(It.IsAny<int>(), It.IsAny<cCoder.Data.Models.CMS.Page[]>()))
-            .Callback<int, cCoder.Data.Models.CMS.Page[]>((_, items) => importedPages = items)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: service => service.ImportPagesAsync(appId: It.IsAny<int>(), items: It.IsAny<cCoder.Data.Models.CMS.Page[]>()))
+            .Callback<int, cCoder.Data.Models.CMS.Page[]>(action: (_, items) => importedPages = items)
+            .Returns(value: ValueTask.CompletedTask);
 
         ContentManagementMigrationAggregationService service = CreateService(
             pageOrchestrationService: pageOrchestrationServiceMock.Object);
@@ -99,13 +108,23 @@ public class ContentManagementMigrationAggregationServiceTests
             ]
         };
 
-        await service.ImportPackageAsync(1, package);
+        await service.ImportPackageAsync(appId: 1, package: package);
 
-        importedPages.Should().NotBeNull();
-        importedPages.Should().ContainSingle();
-        importedPages![0].Name.Should().Be("Home");
-        importedPages[0].PageInfo.Should().ContainSingle();
-        importedPages[0].PageInfo.First().Title.Should().Be("Home");
+        importedPages.Should()
+            .NotBeNull();
+
+        importedPages.Should()
+            .ContainSingle();
+
+        importedPages![0].Name.Should()
+            .Be(expected: "Home");
+
+        importedPages[0].PageInfo.Should()
+            .ContainSingle();
+
+        importedPages[0].PageInfo.First()
+            .Title.Should()
+            .Be(expected: "Home");
     }
 
     private static ContentManagementMigrationAggregationService CreateService(
@@ -118,12 +137,12 @@ public class ContentManagementMigrationAggregationServiceTests
         IScriptOrchestrationService scriptOrchestrationService = null)
         =>
         new(
-            new JsonBroker(),
-            componentOrchestrationService ?? Mock.Of<IComponentOrchestrationService>(),
-            layoutOrchestrationService ?? Mock.Of<ILayoutOrchestrationService>(),
-            pageOrchestrationService ?? Mock.Of<IPageOrchestrationService>(),
-            pageRoleOrchestrationService ?? Mock.Of<IPageRoleOrchestrationService>(),
-            resourceOrchestrationService ?? Mock.Of<IResourceOrchestrationService>(),
-            templateOrchestrationService ?? Mock.Of<ITemplateOrchestrationService>(),
-            scriptOrchestrationService ?? Mock.Of<IScriptOrchestrationService>());
+jsonBroker: new JsonBroker(),
+componentOrchestrationService: componentOrchestrationService ?? Mock.Of<IComponentOrchestrationService>(),
+layoutOrchestrationService: layoutOrchestrationService ?? Mock.Of<ILayoutOrchestrationService>(),
+pageOrchestrationService: pageOrchestrationService ?? Mock.Of<IPageOrchestrationService>(),
+pageRoleOrchestrationService: pageRoleOrchestrationService ?? Mock.Of<IPageRoleOrchestrationService>(),
+resourceOrchestrationService: resourceOrchestrationService ?? Mock.Of<IResourceOrchestrationService>(),
+templateOrchestrationService: templateOrchestrationService ?? Mock.Of<ITemplateOrchestrationService>(),
+scriptOrchestrationService: scriptOrchestrationService ?? Mock.Of<IScriptOrchestrationService>());
 }

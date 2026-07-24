@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,45 +16,45 @@ public sealed partial class ComponentControllerTests
     {
         // Given
         Component createdComponent = await CreateComponentAsync(
-            new
-            {
-                appId = 1,
-                name = Unique("Component"),
-                description = "Acceptance component",
-                resourceKey = "Default",
-                content = "<div>Hello component</div>",
-                script = "console.log('component');",
-                key = "Acceptance",
-            });
+payload: new
+{
+    appId = 1,
+    name = Unique(prefix: "Component"),
+    description = "Acceptance component",
+    resourceKey = "Default",
+    content = "<div>Hello component</div>",
+    script = "console.log('component');",
+    key = "Acceptance",
+});
+
         Component actualComponent;
 
         // When
-        await UpdateComponentAsync(
-            createdComponent.Id,
-            new
-            {
-                id = createdComponent.Id,
-                appId = 1,
-                name = Unique("UpdatedComponent"),
-                description = "Updated component",
-                resourceKey = "Default",
-                content = "<div>Hello updated component</div>",
-                script = "console.log('updated component');",
-                key = "Acceptance",
-            });
 
-        actualComponent = await GetComponentAsync(createdComponent.Id);
+        await UpdateComponentAsync(
+id: createdComponent.Id,
+payload: new
+{
+    id = createdComponent.Id,
+    appId = 1,
+    name = Unique(prefix: "UpdatedComponent"),
+    description = "Updated component",
+    resourceKey = "Default",
+    content = "<div>Hello updated component</div>",
+    script = "console.log('updated component');",
+    key = "Acceptance",
+});
+
+        actualComponent = await GetComponentAsync(id: createdComponent.Id);
 
         // Then
-        actualComponent.Should().NotBeNull();
-        actualComponent!.Description.Should().Be("Updated component");
 
-        await DeleteComponentAsync(createdComponent.Id);
+        actualComponent.Should()
+            .NotBeNull();
+
+        actualComponent!.Description.Should()
+            .Be(expected: "Updated component");
+
+        await DeleteComponentAsync(id: createdComponent.Id);
     }
 }
-
-
-
-
-
-

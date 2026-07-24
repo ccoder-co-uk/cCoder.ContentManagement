@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -16,7 +20,9 @@ public sealed partial class SubmissionControllerTests
         int actualCount = await GetSubmissionCountAsync();
 
         // Then
-        actualCount.Should().BeGreaterThanOrEqualTo(0);
+
+        actualCount.Should()
+            .BeGreaterThanOrEqualTo(expected: 0);
     }
 
     [Fact]
@@ -28,11 +34,8 @@ public sealed partial class SubmissionControllerTests
         IReadOnlyList<Submission> actualSubmissions = await GetSubmissionsAsync();
 
         // Then
-        actualSubmissions.Should().NotBeNull();
+
+        actualSubmissions.Should()
+            .NotBeNull();
     }
 }
-
-
-
-
-

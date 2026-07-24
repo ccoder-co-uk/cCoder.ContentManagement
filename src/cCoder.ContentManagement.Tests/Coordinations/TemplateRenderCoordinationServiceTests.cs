@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -31,19 +35,20 @@ public class TemplateRenderCoordinationServiceTests
 
     public TemplateRenderCoordinationServiceTests()
     {
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(new DataUser
-        {
-            Id = "test-user",
-            DefaultCultureId = "en-GB",
-            DisplayName = "Test User",
-            Email = "test@example.com",
-            IsActive = true,
-            Roles = []
-        });
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(value: new DataUser
+            {
+                Id = "test-user",
+                DefaultCultureId = "en-GB",
+                DisplayName = "Test User",
+                Email = "test@example.com",
+                IsActive = true,
+                Roles = []
+            });
 
         coordinationService = new TemplateRenderCoordinationService(
-            authorizationBrokerMock.Object,
-            orchestrationServiceMock.Object);
+authorizationBroker: authorizationBrokerMock.Object,
+templateRenderOrchestrationService: orchestrationServiceMock.Object);
     }
 
     [Fact]
@@ -52,24 +57,24 @@ public class TemplateRenderCoordinationServiceTests
         object model = new { Name = "Ward" };
 
         orchestrationServiceMock
-            .Setup(x => x.RenderUser(1, "Welcome", "en-GB", model, It.Is<User>(user => user.Id == "test-user")))
-            .Returns("<main>welcome</main>");
+            .Setup(expression: x => x.RenderUser(appId: 1, name: "Welcome", culture: "en-GB", model: model, user: It.Is<User>(match: user => user.Id == "test-user")))
+            .Returns(value: "<main>welcome</main>");
 
-        string result = coordinationService.Render(1, "Welcome", null, model);
+        string result = coordinationService.Render(appId: 1, name: "Welcome", culture: null, model: model);
 
-        result.Should().Be("<main>welcome</main>");
+        result.Should()
+            .Be(expected: "<main>welcome</main>");
+
         orchestrationServiceMock.VerifyAll();
     }
 
     [Fact]
     public void ShouldThrowValidationExceptionWhenModelIsMissing()
     {
-        Action act = () => coordinationService.Render(1, "Welcome", "en-GB", null);
+        Action act = () => coordinationService.Render(appId: 1, name: "Welcome", culture: "en-GB", model: null);
 
-        act.Should().Throw<ValidationException>().WithMessage("model is required.");
+        act.Should()
+            .Throw<ValidationException>()
+            .WithMessage(expectedWildcardPattern: "model is required.");
     }
 }
-
-
-
-

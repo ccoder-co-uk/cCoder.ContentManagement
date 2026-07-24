@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,30 +27,16 @@ public partial class TemplateProcessingServiceTests
         // Given
         Template entity = CreateRandomTemplate();
         var id = entity.Id;
-        templateServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        templateServiceMock.Setup(expression: x => x.DeleteAsync(templateId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await templateProcessingService.DeleteAsync(id);
+        await templateProcessingService.DeleteAsync(templateId: id);
 
         // Then
-        templateServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
+        templateServiceMock.Verify(expression: x => x.DeleteAsync(templateId: id), times: Times.Once);
         templateServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

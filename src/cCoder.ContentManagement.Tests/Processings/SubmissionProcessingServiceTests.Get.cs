@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,31 +28,20 @@ public partial class SubmissionProcessingServiceTests
         // Given
         Submission entity = CreateRandomSubmission();
         var id = entity.Id;
-        submissionServiceMock.Setup(x => x.GetSubmission(id)).Returns(entity);
+
+        submissionServiceMock.Setup(expression: x => x.GetSubmission(submissionId: id))
+            .Returns(value: entity);
 
         // When
-        Submission result = submissionProcessingService.GetSubmission(id);
+        Submission result = submissionProcessingService.GetSubmission(submissionId: id);
 
         // Then
-        result.Should().BeSameAs(entity);
-        submissionServiceMock.Verify(x => x.GetSubmission(id), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        submissionServiceMock.Verify(expression: x => x.GetSubmission(submissionId: id), times: Times.Once);
         submissionServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

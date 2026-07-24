@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,11 +31,12 @@ public partial class PackageItemServiceTests
 
     public PackageItemServiceTests()
     {
-        packageItemBrokerMock = new Mock<IPackageItemBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        packageItemBrokerMock = new Mock<IPackageItemBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         packageItemService = new PackageItemService(
-            packageItemBrokerMock.Object,
-            authorizationBrokerMock.Object
+packageItemBroker: packageItemBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -39,34 +44,12 @@ public partial class PackageItemServiceTests
     {
         PackageItem packageItem = Builder<PackageItem>
             .CreateNew()
-            .With(x => x.Id = id == Guid.Empty ? Guid.NewGuid() : id)
-            .With(x => x.PackageId = packageId == Guid.Empty ? Guid.NewGuid() : packageId)
-            .With(x => x.Type = $"Type-{Guid.NewGuid():N}")
-            .With(x => x.Data = "{}")
+            .With(func: x => x.Id = id == Guid.Empty ? Guid.NewGuid() : id)
+            .With(func: x => x.PackageId = packageId == Guid.Empty ? Guid.NewGuid() : packageId)
+            .With(func: x => x.Type = $"Type-{Guid.NewGuid():N}")
+            .With(func: x => x.Data = "{}")
             .Build();
 
         return packageItem;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

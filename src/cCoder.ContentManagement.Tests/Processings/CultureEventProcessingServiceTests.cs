@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,30 +28,11 @@ public partial class CultureEventProcessingServiceTests
 
     public CultureEventProcessingServiceTests()
     {
-        cultureEventServiceMock = new Mock<ICultureEventService>(MockBehavior.Strict);
-        service = new CultureEventProcessingService(cultureEventServiceMock.Object);
+        cultureEventServiceMock = new Mock<ICultureEventService>(behavior: MockBehavior.Strict);
+        service = new CultureEventProcessingService(eventService: cultureEventServiceMock.Object);
     }
 
     private static Culture CreateRandomCulture() =>
-        Builder<Culture>.CreateNew().Build();
+        Builder<Culture>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

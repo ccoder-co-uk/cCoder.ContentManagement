@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,45 +32,56 @@ public partial class PackageItemServiceTests
 
         cCoder.Data.Models.Packaging.PackageItem submitted = null;
 
-        packageItemBrokerMock.Setup(x => x.GetAppId(It.IsAny<cCoder.Data.Models.Packaging.PackageItem>())).Returns((int?)7);
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "PackageItem_create"));
+        packageItemBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()))
+            .Returns(value: (int?)7);
+
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_create"));
 
         packageItemBrokerMock
-            .Setup(x =>
+            .Setup(expression: x =>
                 x.AddPackageItemAsync(
-                    It.Is<cCoder.Data.Models.Packaging.PackageItem>(candidate => !ReferenceEquals(candidate, packageItem))
+newPackageItem: It.Is<cCoder.Data.Models.Packaging.PackageItem>(match: candidate => !ReferenceEquals(objA: candidate, objB: packageItem))
                 )
             )
-            .Callback<cCoder.Data.Models.Packaging.PackageItem>(candidate => submitted = candidate)
-            .ReturnsAsync((cCoder.Data.Models.Packaging.PackageItem value) => value);
+            .Callback<cCoder.Data.Models.Packaging.PackageItem>(action: candidate => submitted = candidate)
+            .ReturnsAsync(valueFunction: (cCoder.Data.Models.Packaging.PackageItem value) => value);
 
         // When
-        PackageItem result = await packageItemService.AddPackageItemAsync(packageItem);
+        PackageItem result = await packageItemService.AddPackageItemAsync(newPackageItem: packageItem);
 
         // Then
-        result.Should().BeSameAs(packageItem);
-        submitted.Should().NotBeNull();
-        submitted.Should().NotBeSameAs(packageItem);
-        result.Should().NotBeSameAs(submitted);
+
+        result.Should()
+            .BeSameAs(expected: packageItem);
+
+        submitted.Should()
+            .NotBeNull();
+
+        submitted.Should()
+            .NotBeSameAs(unexpected: packageItem);
+
+        result.Should()
+            .NotBeSameAs(unexpected: submitted);
 
         submitted
             .Should()
-            .BeEquivalentTo(packageItem, options => options.Excluding(candidate => candidate.Id));
+            .BeEquivalentTo(expectation: packageItem, config: options => options.Excluding(expression: candidate => candidate.Id));
 
         result
             .Should()
-            .BeEquivalentTo(packageItem, options => options.Excluding(candidate => candidate.Id));
+            .BeEquivalentTo(expectation: packageItem, config: options => options.Excluding(expression: candidate => candidate.Id));
 
         packageItemBrokerMock.Verify(
-            x =>
+expression: x =>
                 x.AddPackageItemAsync(
-                    It.Is<cCoder.Data.Models.Packaging.PackageItem>(candidate => !ReferenceEquals(candidate, packageItem))
+newPackageItem: It.Is<cCoder.Data.Models.Packaging.PackageItem>(match: candidate => !ReferenceEquals(objA: candidate, objB: packageItem))
                 ),
-            Times.Once
+times: Times.Once
         );
-        packageItemBrokerMock.Verify(x => x.GetAppId(It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), Times.AtMostOnce());
+
+        packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
         packageItemBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "PackageItem_create"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_create"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -76,36 +91,26 @@ public partial class PackageItemServiceTests
         // Given
         PackageItem packageItem = CreateRandomPackageItem();
 
-        packageItemBrokerMock.Setup(x => x.GetAppId(It.IsAny<cCoder.Data.Models.Packaging.PackageItem>())).Returns((int?)7);
+        packageItemBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()))
+            .Returns(value: (int?)7);
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "PackageItem_create"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_create"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await packageItemService.AddPackageItemAsync(packageItem);
+        Func<Task> action = async () => await packageItemService.AddPackageItemAsync(newPackageItem: packageItem);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        packageItemBrokerMock.Verify(x => x.GetAppId(It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), Times.AtMostOnce());
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
         packageItemBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "PackageItem_create"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_create"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,59 +32,72 @@ public partial class PackageServiceTests
 
         cCoder.Data.Models.Packaging.Package submitted = null;
 
-        authorizationBrokerMock.Setup(x => x.Authorize(null, "Package_create"));
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_create"));
 
         packageBrokerMock
-            .Setup(x =>
-                x.AddPackageAsync(It.Is<cCoder.Data.Models.Packaging.Package>(candidate => !ReferenceEquals(candidate, package)))
+            .Setup(expression: x =>
+                x.AddPackageAsync(newPackage: It.Is<cCoder.Data.Models.Packaging.Package>(match: candidate => !ReferenceEquals(objA: candidate, objB: package)))
             )
-            .Callback<cCoder.Data.Models.Packaging.Package>(candidate => submitted = candidate)
-            .ReturnsAsync((cCoder.Data.Models.Packaging.Package value) => value);
+            .Callback<cCoder.Data.Models.Packaging.Package>(action: candidate => submitted = candidate)
+            .ReturnsAsync(valueFunction: (cCoder.Data.Models.Packaging.Package value) => value);
 
         // When
-        Package result = await packageService.AddPackageAsync(package);
+        Package result = await packageService.AddPackageAsync(newPackage: package);
 
         // Then
-        result.Should().BeSameAs(package);
-        submitted.Should().NotBeNull();
-        submitted.Should().NotBeSameAs(package);
-        result.Should().NotBeSameAs(submitted);
+
+        result.Should()
+            .BeSameAs(expected: package);
+
+        submitted.Should()
+            .NotBeNull();
+
+        submitted.Should()
+            .NotBeSameAs(unexpected: package);
+
+        result.Should()
+            .NotBeSameAs(unexpected: submitted);
 
         submitted
             .Should()
             .BeEquivalentTo(
-                new
-                {
-                    package.Id,
-                    package.Name,
-                    package.Description,
-                    package.Category,
-                    package.SourceApi
-                });
-        submitted.Items.Should().BeNull();
+expectation: new
+{
+    package.Id,
+    package.Name,
+    package.Description,
+    package.Category,
+    package.SourceApi
+});
+
+        submitted.Items.Should()
+            .BeNull();
 
         result
             .Should()
             .BeEquivalentTo(
-                new
-                {
-                    package.Id,
-                    package.Name,
-                    package.Description,
-                    package.Category,
-                    package.SourceApi
-                });
-        result.Items.Should().BeEquivalentTo(package.Items);
+expectation: new
+{
+    package.Id,
+    package.Name,
+    package.Description,
+    package.Category,
+    package.SourceApi
+});
+
+        result.Items.Should()
+            .BeEquivalentTo(expectation: package.Items);
 
         packageBrokerMock.Verify(
-            x =>
+expression: x =>
                 x.AddPackageAsync(
-                    It.Is<cCoder.Data.Models.Packaging.Package>(candidate => !ReferenceEquals(candidate, package))
+newPackage: It.Is<cCoder.Data.Models.Packaging.Package>(match: candidate => !ReferenceEquals(objA: candidate, objB: package))
                 ),
-            Times.Once
+times: Times.Once
         );
+
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize(null, "Package_create"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_create"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -91,33 +108,21 @@ public partial class PackageServiceTests
         Package package = CreateRandomPackage();
 
         authorizationBrokerMock
-            .Setup(x => x.Authorize(null, "Package_create"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: null, privilege: "Package_create"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await packageService.AddPackageAsync(package);
+        Func<Task> action = async () => await packageService.AddPackageAsync(newPackage: package);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize(null, "Package_create"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_create"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

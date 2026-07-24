@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,27 +33,49 @@ public partial class PageRenderProcessingServiceTests
     {
         PageRenderProcessingService sut = CreateSut();
         RenderApp app = CreateApp();
-        RenderPage page = app.Pages.First(foundPage => foundPage.Id == 10);
+        RenderPage page = app.Pages.First(predicate: foundPage => foundPage.Id == 10);
         RenderUser user = CreateUser();
 
-        metadataReaderBroker.Set("site-description", "en-GB", "Meta Description");
+        metadataReaderBroker.Set(name: "site-description", culture: "en-GB", value: "Meta Description");
 
-        RenderResult result = await RenderTestWorkflowServer.RunAsync(workflowBaseUrl =>
-            sut.RenderPageUserConfigRenderResult(page, user, CreateConfig(workflowBaseUrl), "Default", "en-GB"));
+        RenderResult result = await RenderTestWorkflowServer.RunAsync(action: workflowBaseUrl =>
+            sut.RenderPageUserConfigRenderResult(page: page, user: user, config: CreateConfig(workflowBaseUrl: workflowBaseUrl), theme: "Default", culture: "en-GB"));
 
-        result.HeaderHtml.Should().Contain("<title>Home</title>");
-        result.HeaderHtml.Should().Contain("Meta Description");
-        result.HeaderHtml.Should().Contain("bootstrap-script");
-        result.BodyHtml.Should().Contain("Body Content");
-        result.BodyHtml.Should().Contain("Hero Component");
-        result.BodyHtml.Should().Contain("<script type='text/javascript'>hero-component-script</script>");
-        result.BodyHtml.Should().Contain("Hello|Hi|Greeting Description");
-        result.BodyHtml.Should().Contain("Blue|App|");
-        result.BodyHtml.Should().Contain("executed");
-        result.BodyHtml.Should().Contain("href='/Summary'");
-        result.BodyHtml.Should().Contain("dropdown-menu");
+        result.HeaderHtml.Should()
+            .Contain(expected: "<title>Home</title>");
 
-        metadataReaderBroker.Requests.Should().ContainSingle(request =>
+        result.HeaderHtml.Should()
+            .Contain(expected: "Meta Description");
+
+        result.HeaderHtml.Should()
+            .Contain(expected: "bootstrap-script");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "Body Content");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "Hero Component");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "<script type='text/javascript'>hero-component-script</script>");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "Hello|Hi|Greeting Description");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "Blue|App|");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "executed");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "href='/Summary'");
+
+        result.BodyHtml.Should()
+            .Contain(expected: "dropdown-menu");
+
+        metadataReaderBroker.Requests.Should()
+            .ContainSingle(predicate: request =>
             request.Name == "site-description" && request.Culture == "en-GB");
     }
 
@@ -58,15 +84,9 @@ public partial class PageRenderProcessingServiceTests
     {
         PageRenderProcessingService sut = CreateSut();
 
-        Action act = () => sut.RenderPageUserConfigRenderResult(null!, CreateUser(), CreateConfig("http://127.0.0.1/"), "Default", "en-GB");
+        Action act = () => sut.RenderPageUserConfigRenderResult(page: null!, user: CreateUser(), config: CreateConfig(workflowBaseUrl: "http://127.0.0.1/"), theme: "Default", culture: "en-GB");
 
-        act.Should().Throw<ValidationException>();
+        act.Should()
+            .Throw<ValidationException>();
     }
 }
-
-
-
-
-
-
-

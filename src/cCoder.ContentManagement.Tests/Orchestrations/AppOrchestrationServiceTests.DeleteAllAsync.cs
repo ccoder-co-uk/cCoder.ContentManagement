@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,36 +26,17 @@ public partial class AppOrchestrationServiceTests
     {
         // Given
         App[] entities = [CreateRandomApp()];
-        appProcessingServiceMock.Setup(x => x.DeleteAllAppAsync(entities)).Returns(ValueTask.CompletedTask);
+
+        appProcessingServiceMock.Setup(expression: x => x.DeleteAllAppAsync(deletedApp: entities))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllAppAsync(entities);
+        await orchestrationService.DeleteAllAppAsync(deletedApp: entities);
 
         // Then
-        appProcessingServiceMock.Verify(x => x.DeleteAllAppAsync(entities), Times.Once);
+        appProcessingServiceMock.Verify(expression: x => x.DeleteAllAppAsync(deletedApp: entities), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

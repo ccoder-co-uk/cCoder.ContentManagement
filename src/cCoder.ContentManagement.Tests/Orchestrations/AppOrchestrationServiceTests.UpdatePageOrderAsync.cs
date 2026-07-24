@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,36 +26,16 @@ public partial class AppOrchestrationServiceTests
     {
         const int key = 1;
         App app = CreateRandomApp();
+
         appProcessingServiceMock
-            .Setup(x => x.UpdatePageOrderAppAsync(key, app))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.UpdatePageOrderAppAsync(key: key, updatedApp: app))
+            .Returns(value: ValueTask.CompletedTask);
 
-        await orchestrationService.UpdatePageOrderAppAsync(key, app);
+        await orchestrationService.UpdatePageOrderAppAsync(key: key, updatedApp: app);
 
-        appProcessingServiceMock.Verify(x => x.UpdatePageOrderAppAsync(key, app), Times.Once);
+        appProcessingServiceMock.Verify(expression: x => x.UpdatePageOrderAppAsync(key: key, updatedApp: app), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

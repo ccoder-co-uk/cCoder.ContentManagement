@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,38 +30,28 @@ public partial class AppOrchestrationServiceTests
         App app = CreateRandomApp();
         app.Id = id;
         app.Roles = [new Role { Id = Guid.NewGuid(), AppId = id, Users = [] }];
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize(id, "app_delete"));
-        appProcessingServiceMock.Setup(x => x.GetAllApp(true)).Returns(new[] { app }.AsQueryable());
+            .Setup(expression: x => x.Authorize(appId: id, privilege: "app_delete"));
+
+        appProcessingServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: true))
+            .Returns(value: new[] { app }.AsQueryable());
+
         appEventProcessingServiceMock
-            .Setup(x => x.RaiseAppDeleteEventAsync(app))
-            .Returns(ValueTask.CompletedTask);
-        appProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseAppDeleteEventAsync(app: app))
+            .Returns(value: ValueTask.CompletedTask);
+
+        appProcessingServiceMock.Setup(expression: x => x.DeleteAsync(appId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(appId: id);
 
         // Then
-        authorizationBrokerMock.Verify(x => x.Authorize(id, "app_delete"), Times.Once);
-        appProcessingServiceMock.Verify(x => x.GetAllApp(true), Times.Once);
-        appEventProcessingServiceMock.Verify(x => x.RaiseAppDeleteEventAsync(app), Times.Once);
-        appProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: id, privilege: "app_delete"), times: Times.Once);
+        appProcessingServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
+        appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppDeleteEventAsync(app: app), times: Times.Once);
+        appProcessingServiceMock.Verify(expression: x => x.DeleteAsync(appId: id), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

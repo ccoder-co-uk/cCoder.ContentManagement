@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -14,30 +18,30 @@ public sealed partial class SubmissionControllerTests
         Submission expectedSubmission = new() { SourceComponent = "Acceptance" };
 
         // When
+
         Submission createdSubmission = await CreateSubmissionAsync(
-            new
-            {
-                appId = 1,
-                createdBy = "Guest",
-                lastUpdatedBy = "Guest",
-                createdOn = DateTimeOffset.UtcNow,
-                lastUpdatedOn = DateTimeOffset.UtcNow,
-                sourceComponent = "Acceptance",
-                state = "New",
-                dataJson = "{\"name\":\"Acceptance\"}",
-            });
-        Submission actualSubmission = await GetSubmissionAsync(createdSubmission.Id);
+payload: new
+{
+    appId = 1,
+    createdBy = "Guest",
+    lastUpdatedBy = "Guest",
+    createdOn = DateTimeOffset.UtcNow,
+    lastUpdatedOn = DateTimeOffset.UtcNow,
+    sourceComponent = "Acceptance",
+    state = "New",
+    dataJson = "{\"name\":\"Acceptance\"}",
+});
+
+        Submission actualSubmission = await GetSubmissionAsync(id: createdSubmission.Id);
 
         // Then
-        actualSubmission.Should().NotBeNull();
-        actualSubmission!.SourceComponent.Should().Be(expectedSubmission.SourceComponent);
 
-        await DeleteSubmissionAsync(createdSubmission.Id);
+        actualSubmission.Should()
+            .NotBeNull();
+
+        actualSubmission!.SourceComponent.Should()
+            .Be(expected: expectedSubmission.SourceComponent);
+
+        await DeleteSubmissionAsync(id: createdSubmission.Id);
     }
 }
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,38 +28,18 @@ public partial class CommonObjectOrchestrationServiceTests
     {
         CommonObject[] items = [CreateRandomCommonObject()];
         cCoder.ContentManagement.Models.Result<CommonObject>[] expectedResults = [];
-        commonObjectProcessingServiceMock.Setup(x => x.ImportCommonObjectResultAsync(items)).ReturnsAsync(expectedResults);
 
-        IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>> result = await orchestrationService.ImportCommonObjectResultAsync(items);
+        commonObjectProcessingServiceMock.Setup(expression: x => x.ImportCommonObjectResultAsync(items: items))
+            .ReturnsAsync(value: expectedResults);
 
-        result.Should().BeSameAs(expectedResults);
-        commonObjectProcessingServiceMock.Verify(x => x.ImportCommonObjectResultAsync(items), Times.Once);
+        IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>> result = await orchestrationService.ImportCommonObjectResultAsync(items: items);
+
+        result.Should()
+            .BeSameAs(expected: expectedResults);
+
+        commonObjectProcessingServiceMock.Verify(expression: x => x.ImportCommonObjectResultAsync(items: items), times: Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

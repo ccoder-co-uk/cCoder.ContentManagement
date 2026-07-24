@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -30,111 +34,119 @@ public partial class ResourceServiceTests
         // Given
 
         authorizationBrokerMock
-            .Setup(x => x.GetCurrentUser())
-            .Returns(new SecurityDataModels.User { Id = "test-user" });
+            .Setup(expression: x => x.GetCurrentUser())
+            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Resource resource = CreateRandomResource(id: 0, appId: 7);
         CmsDataModels.Resource submitted = null;
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "Resource_create"));
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_create"));
 
         resourceBrokerMock
-            .Setup(x =>
+            .Setup(expression: x =>
                 x.AddResourceAsync(
-                    It.Is<CmsDataModels.Resource>(candidate => !ReferenceEquals(candidate, resource))
+newResource: It.Is<CmsDataModels.Resource>(match: candidate => !ReferenceEquals(objA: candidate, objB: resource))
                 )
             )
-            .Callback<CmsDataModels.Resource>(candidate => submitted = candidate)
-            .ReturnsAsync((CmsDataModels.Resource value) => value);
+            .Callback<CmsDataModels.Resource>(action: candidate => submitted = candidate)
+            .ReturnsAsync(valueFunction: (CmsDataModels.Resource value) => value);
 
         // When
-        Resource result = await resourceService.AddResourceAsync(resource);
+        Resource result = await resourceService.AddResourceAsync(resource: resource);
 
         // Then
-        result.Should().BeSameAs(resource);
-        submitted.Should().NotBeNull();
-        submitted.Should().NotBeSameAs(resource);
-        result.Should().NotBeSameAs(submitted);
+
+        result.Should()
+            .BeSameAs(expected: resource);
+
+        submitted.Should()
+            .NotBeNull();
+
+        submitted.Should()
+            .NotBeSameAs(unexpected: resource);
+
+        result.Should()
+            .NotBeSameAs(unexpected: submitted);
 
         submitted
             .Should()
             .BeEquivalentTo(
-                resource,
-                options =>
+expectation: resource,
+config: options =>
                     options
                         .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("CreatedOn")
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "CreatedOn")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("CreatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "CreatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdated")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdated")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdatedOn")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdatedOn")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("UpdatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "UpdatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("Created")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "Created")
                         )
-                        .Excluding(candidate => candidate.Id)
+            .Excluding(expression: candidate => candidate.Id)
             );
 
         result
             .Should()
             .BeEquivalentTo(
-                resource,
-                options =>
+expectation: resource,
+config: options =>
                     options
                         .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("CreatedOn")
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "CreatedOn")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("CreatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "CreatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdated")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdated")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("LastUpdatedOn")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "LastUpdatedOn")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("UpdatedBy")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "UpdatedBy")
                         )
-                        .Excluding(
-                            (FluentAssertions.Equivalency.IMemberInfo info) =>
-                                info.Path.EndsWith("Created")
+            .Excluding(
+predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
+                                info.Path.EndsWith(value: "Created")
                         )
-                        .Excluding(candidate => candidate.Id)
+            .Excluding(expression: candidate => candidate.Id)
             );
 
         resourceBrokerMock.Verify(
-            x =>
+expression: x =>
                 x.AddResourceAsync(
-                    It.Is<CmsDataModels.Resource>(candidate => !ReferenceEquals(candidate, resource))
+newResource: It.Is<CmsDataModels.Resource>(match: candidate => !ReferenceEquals(objA: candidate, objB: resource))
                 ),
-            Times.Once
+times: Times.Once
         );
     }
 
@@ -144,37 +156,22 @@ public partial class ResourceServiceTests
         // Given
 
         authorizationBrokerMock
-            .Setup(x => x.GetCurrentUser())
-            .Returns(new SecurityDataModels.User { Id = "test-user" });
+            .Setup(expression: x => x.GetCurrentUser())
+            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Resource resource = CreateRandomResource(id: 0, appId: 7);
 
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "Resource_create"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_create"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await resourceService.AddResourceAsync(resource)
+
+        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+            await resourceService.AddResourceAsync(resource: resource)
         );
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

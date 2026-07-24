@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,37 +26,23 @@ public partial class ContentOrchestrationServiceTests
     {
         // Given
         Content[] entities = [CreateRandomContent()];
-        contentProcessingServiceMock.Setup(x => x.GetContent(entities[0].Id)).Returns(entities[0]);
-        contentEventProcessingServiceMock.Setup(x => x.RaiseContentDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
-        contentProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
+
+        contentProcessingServiceMock.Setup(expression: x => x.GetContent(contentId: entities[0].Id))
+            .Returns(value: entities[0]);
+
+        contentEventProcessingServiceMock.Setup(expression: x => x.RaiseContentDeleteEventAsync(entity: entities[0]))
+            .Returns(value: ValueTask.CompletedTask);
+
+        contentProcessingServiceMock.Setup(expression: x => x.DeleteAsync(contentId: entities[0].Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllContentAsync(entities);
+        await orchestrationService.DeleteAllContentAsync(deletedContent: entities);
 
         // Then
-        contentProcessingServiceMock.Verify(x => x.GetContent(entities[0].Id), Times.Once);
-        contentEventProcessingServiceMock.Verify(x => x.RaiseContentDeleteEventAsync(entities[0]), Times.Once);
-        contentProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
+        contentProcessingServiceMock.Verify(expression: x => x.GetContent(contentId: entities[0].Id), times: Times.Once);
+        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        contentProcessingServiceMock.Verify(expression: x => x.DeleteAsync(contentId: entities[0].Id), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

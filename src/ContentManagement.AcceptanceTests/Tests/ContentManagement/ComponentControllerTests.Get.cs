@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,26 +16,32 @@ public sealed partial class ComponentControllerTests
     {
         // Given
         Component expectedComponent = await CreateComponentAsync(
-            new
-            {
-                appId = 1,
-                name = Unique("Component"),
-                description = "Acceptance component",
-                resourceKey = "Default",
-                content = "<div>Hello component</div>",
-                script = "console.log('component');",
-                key = "Acceptance",
-            });
+payload: new
+{
+    appId = 1,
+    name = Unique(prefix: "Component"),
+    description = "Acceptance component",
+    resourceKey = "Default",
+    content = "<div>Hello component</div>",
+    script = "console.log('component');",
+    key = "Acceptance",
+});
 
         // When
-        Component actualComponent = await GetComponentAsync(expectedComponent.Id);
+        Component actualComponent = await GetComponentAsync(id: expectedComponent.Id);
 
         // Then
-        actualComponent.Should().NotBeNull();
-        actualComponent!.Id.Should().Be(expectedComponent.Id);
-        actualComponent.Name.Should().Be(expectedComponent.Name);
 
-        await DeleteComponentAsync(expectedComponent.Id);
+        actualComponent.Should()
+            .NotBeNull();
+
+        actualComponent!.Id.Should()
+            .Be(expected: expectedComponent.Id);
+
+        actualComponent.Name.Should()
+            .Be(expected: expectedComponent.Name);
+
+        await DeleteComponentAsync(id: expectedComponent.Id);
     }
 
     [Fact]
@@ -43,12 +53,8 @@ public sealed partial class ComponentControllerTests
         int actualCount = await GetComponentCountAsync();
 
         // Then
-        actualCount.Should().BeGreaterThanOrEqualTo(0);
+
+        actualCount.Should()
+            .BeGreaterThanOrEqualTo(expected: 0);
     }
 }
-
-
-
-
-
-

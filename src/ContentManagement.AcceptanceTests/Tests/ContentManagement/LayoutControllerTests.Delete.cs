@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,27 +16,26 @@ public sealed partial class LayoutControllerTests
     {
         // Given
         Layout createdLayout = await CreateLayoutAsync(
-            new
-            {
-                appId = 1,
-                name = Unique("Layout"),
-                description = "Acceptance layout",
-                headerHtml = "<title>Acceptance</title>",
-                html = "<main>Acceptance layout body</main>",
-                script = "console.log('layout');",
-            });
+payload: new
+{
+    appId = 1,
+    name = Unique(prefix: "Layout"),
+    description = "Acceptance layout",
+    headerHtml = "<title>Acceptance</title>",
+    html = "<main>Acceptance layout body</main>",
+    script = "console.log('layout');",
+});
 
         // When
-        int actualStatusCode = await DeleteLayoutAsync(createdLayout.Id);
-        int actualReadStatusCode = await GetLayoutStatusCodeAsync(createdLayout.Id);
+        int actualStatusCode = await DeleteLayoutAsync(id: createdLayout.Id);
+        int actualReadStatusCode = await GetLayoutStatusCodeAsync(id: createdLayout.Id);
 
         // Then
-        actualStatusCode.Should().Be(200);
-        actualReadStatusCode.Should().Be(404);
+
+        actualStatusCode.Should()
+            .Be(expected: 200);
+
+        actualReadStatusCode.Should()
+            .Be(expected: 404);
     }
 }
-
-
-
-
-

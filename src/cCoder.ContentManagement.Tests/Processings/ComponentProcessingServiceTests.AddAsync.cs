@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,14 +30,16 @@ public partial class ComponentProcessingServiceTests
     {
         // Given
         Component component = CreateRandomComponent();
-        componentServiceMock.Setup(x => x.AddComponentAsync(component)).ReturnsAsync(component);
+
+        componentServiceMock.Setup(expression: x => x.AddComponentAsync(newComponent: component))
+            .ReturnsAsync(value: component);
 
         // When
-        Component result = await componentProcessingService.AddComponentAsync(component);
+        Component result = await componentProcessingService.AddComponentAsync(newComponent: component);
 
         // Then
-        Assert.Same(component, result);
-        componentServiceMock.Verify(x => x.AddComponentAsync(component), Times.Once);
+        Assert.Same(expected: component, actual: result);
+        componentServiceMock.Verify(expression: x => x.AddComponentAsync(newComponent: component), times: Times.Once);
     }
 
     [Fact]
@@ -43,29 +49,16 @@ public partial class ComponentProcessingServiceTests
         Component component = CreateRandomComponent();
 
         componentServiceMock
-            .Setup(x => x.AddComponentAsync(component))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.AddComponentAsync(newComponent: component))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await componentProcessingService.AddComponentAsync(component)
+
+        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+            await componentProcessingService.AddComponentAsync(newComponent: component)
         );
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

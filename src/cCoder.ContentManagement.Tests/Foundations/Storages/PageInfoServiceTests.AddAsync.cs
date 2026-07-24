@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -32,46 +36,57 @@ public partial class PageInfoServiceTests
 
         DataPageInfo submitted = null;
 
-        pageBrokerMock.Setup(x => x.GetAllPages(true)).Returns(new[] { new CmsDataModels.Page { Id = pageInfo.PageId, AppId = 7 } }.AsQueryable());
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "PageInfo_create"));
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { new CmsDataModels.Page { Id = pageInfo.PageId, AppId = 7 } }.AsQueryable());
+
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_create"));
 
         pageInfoBrokerMock
-            .Setup(x =>
+            .Setup(expression: x =>
                 x.AddPageInfoAsync(
-                    It.IsAny<DataPageInfo>()
+newPageInfo: It.IsAny<DataPageInfo>()
                 )
             )
-            .Callback<DataPageInfo>(candidate => submitted = candidate)
-            .ReturnsAsync((DataPageInfo value) => value);
+            .Callback<DataPageInfo>(action: candidate => submitted = candidate)
+            .ReturnsAsync(valueFunction: (DataPageInfo value) => value);
 
         // When
-        PageInfo result = await pageInfoService.AddPageInfoAsync(pageInfo);
+        PageInfo result = await pageInfoService.AddPageInfoAsync(newPageInfo: pageInfo);
 
         // Then
-        result.Should().BeSameAs(pageInfo);
-        submitted.Should().NotBeNull();
-        submitted.Should().NotBeSameAs(pageInfo);
-        result.Should().NotBeSameAs(submitted);
+
+        result.Should()
+            .BeSameAs(expected: pageInfo);
+
+        submitted.Should()
+            .NotBeNull();
+
+        submitted.Should()
+            .NotBeSameAs(unexpected: pageInfo);
+
+        result.Should()
+            .NotBeSameAs(unexpected: submitted);
 
         submitted
             .Should()
-            .BeEquivalentTo(pageInfo, options => options.Excluding(candidate => candidate.Id));
+            .BeEquivalentTo(expectation: pageInfo, config: options => options.Excluding(expression: candidate => candidate.Id));
 
         result
             .Should()
-            .BeEquivalentTo(pageInfo, options => options.Excluding(candidate => candidate.Id));
+            .BeEquivalentTo(expectation: pageInfo, config: options => options.Excluding(expression: candidate => candidate.Id));
 
         pageInfoBrokerMock.Verify(
-            x =>
+expression: x =>
                 x.AddPageInfoAsync(
-                    It.Is<DataPageInfo>(candidate => candidate.Id == pageInfo.Id)
+newPageInfo: It.Is<DataPageInfo>(match: candidate => candidate.Id == pageInfo.Id)
                 ),
-            Times.Once
+times: Times.Once
         );
+
         pageInfoBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(x => x.GetAllPages(true), Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "PageInfo_create"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_create"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -81,38 +96,27 @@ public partial class PageInfoServiceTests
         // Given
         PageInfo pageInfo = CreateRandomPageInfo(id: 0);
 
-        pageBrokerMock.Setup(x => x.GetAllPages(true)).Returns(new[] { new CmsDataModels.Page { Id = pageInfo.PageId, AppId = 7 } }.AsQueryable());
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { new CmsDataModels.Page { Id = pageInfo.PageId, AppId = 7 } }.AsQueryable());
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "PageInfo_create"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_create"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await pageInfoService.AddPageInfoAsync(pageInfo);
+        Func<Task> action = async () => await pageInfoService.AddPageInfoAsync(newPageInfo: pageInfo);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
         pageInfoBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(x => x.GetAllPages(true), Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "PageInfo_create"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_create"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

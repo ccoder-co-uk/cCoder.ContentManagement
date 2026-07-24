@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,35 +28,24 @@ public partial class AppServiceTests
     {
         // Given
         App[] expectedApps = [CreateRandomApp(id: 1)];
-        IQueryable<CmsDataModels.App> apps = expectedApps.Select(app => app).AsQueryable();
 
-        appBrokerMock.Setup(x => x.GetAllApps(false)).Returns(apps);
+        IQueryable<CmsDataModels.App> apps = expectedApps.Select(selector: app => app)
+            .AsQueryable();
+
+        appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: false))
+            .Returns(value: apps);
 
         // When
         IQueryable<App> result = appService.GetAllApp();
 
         // Then
-        result.Should().BeEquivalentTo(expectedApps);
-        appBrokerMock.Verify(x => x.GetAllApps(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: expectedApps);
+
+        appBrokerMock.Verify(expression: x => x.GetAllApps(ignoreFilters: false), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

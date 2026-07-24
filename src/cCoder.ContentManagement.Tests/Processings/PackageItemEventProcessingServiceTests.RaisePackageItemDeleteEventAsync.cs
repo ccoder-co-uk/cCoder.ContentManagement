@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,30 +27,17 @@ public partial class PackageItemEventProcessingServiceTests
     {
         // Given
         PackageItem entity = CreateRandomPackageItem();
+
         packageItemEventServiceMock
-            .Setup(x => x.RaisePackageItemDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePackageItemDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePackageItemDeleteEventAsync(entity);
+        await service.RaisePackageItemDeleteEventAsync(entity: entity);
 
         // Then
-        packageItemEventServiceMock.Verify(x => x.RaisePackageItemDeleteEventAsync(entity), Times.Once);
+        packageItemEventServiceMock.Verify(expression: x => x.RaisePackageItemDeleteEventAsync(entity: entity), times: Times.Once);
         packageItemEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement;
 using cCoder.Data;
 using cCoder.Security.Data.EF;
@@ -26,21 +30,22 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
     {
         AcceptanceSettings settings = new()
         {
-            CoreConnectionString = AddDatabaseSuffix("CCODER_ACCEPTANCE_CORE_CONNECTION_STRING"),
-            SsoConnectionString = AddDatabaseSuffix("CCODER_ACCEPTANCE_SSO_CONNECTION_STRING"),
+            CoreConnectionString = AddDatabaseSuffix(variableName: "CCODER_ACCEPTANCE_CORE_CONNECTION_STRING"),
+            SsoConnectionString = AddDatabaseSuffix(variableName: "CCODER_ACCEPTANCE_SSO_CONNECTION_STRING"),
             DecryptionKey = "000000000000000000000000000000000000000000000000",
         };
 
-        databaseServices = CreateDatabaseServices(settings);
-        databaseManager = new AcceptanceDatabaseManager(databaseServices);
+        databaseServices = CreateDatabaseServices(settings: settings);
+        databaseManager = new AcceptanceDatabaseManager(services: databaseServices);
         await databaseManager.ResetDatabasesAsync();
-        await SeedAsync(databaseServices);
+        await SeedAsync(services: databaseServices);
 
-        Factory = new WebAcceptanceFactory(settings);
-        Client = Factory.CreateClient(new WebApplicationFactoryClientOptions
+        Factory = new WebAcceptanceFactory(settings: settings);
+
+        Client = Factory.CreateClient(options: new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false,
-            BaseAddress = new Uri("https://localhost"),
+            BaseAddress = new Uri(uriString: "https://localhost"),
         });
     }
 
@@ -49,21 +54,28 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
         Client?.Dispose();
 
         if (Factory is not null)
+        {
             await Factory.DisposeAsync();
+        }
 
         if (databaseManager is not null)
+        {
             await databaseManager.DropDatabasesAsync();
+        }
 
         if (databaseServices is not null)
+        {
             await databaseServices.DisposeAsync();
+        }
     }
 
     private static Task SeedAsync(IServiceProvider services) =>
-        new AcceptanceApplicationSeeder(services).SeedAsync();
+        new AcceptanceApplicationSeeder(services: services).SeedAsync();
 
     private static ServiceProvider CreateDatabaseServices(AcceptanceSettings settings)
     {
         ServiceCollection services = new();
+
         cCoder.Data.Config dataConfig = new()
         {
             ConnectionStrings = new Dictionary<string, string>
@@ -80,17 +92,20 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
         };
 
         services.AddLogging();
-        services.AddSingleton(dataConfig);
+        services.AddSingleton(implementationInstance: dataConfig);
+
         services.AddSingleton(
-            new cCoder.ContentManagement.Models.Config
-            {
-                ConnectionStrings = new Dictionary<string, string>(dataConfig.ConnectionStrings),
-                Settings = new Dictionary<string, string>(dataConfig.Settings),
-                Services = new Dictionary<string, string>(dataConfig.Services),
-            });
+implementationInstance: new cCoder.ContentManagement.Models.Config
+{
+    ConnectionStrings = new Dictionary<string, string>(dictionary: dataConfig.ConnectionStrings),
+    Settings = new Dictionary<string, string>(dictionary: dataConfig.Settings),
+    Services = new Dictionary<string, string>(dictionary: dataConfig.Services),
+});
+
         services.AddSingleton<ISecurityDbContextFactory>(
-            _ => new MSSQLSecurityDbContextFactory(settings.SsoConnectionString));
-        services.AddCoreData(settings.CoreConnectionString);
+implementationFactory: _ => new MSSQLSecurityDbContextFactory(connectionString: settings.SsoConnectionString));
+
+        services.AddCoreData(connectionString: settings.CoreConnectionString);
         services.AddContentManagementHostedServices();
 
         return services.BuildServiceProvider(validateScopes: false);
@@ -99,26 +114,32 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
     private static string AddDatabaseSuffix(string variableName)
     {
         string connectionString =
-            Environment.GetEnvironmentVariable(variableName)
-            ?? Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.User)
-            ?? Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.Machine)
-            ?? ReadConfiguredConnectionString(variableName);
+            Environment.GetEnvironmentVariable(variable: variableName)
+            ?? Environment.GetEnvironmentVariable(variable: variableName, target: EnvironmentVariableTarget.User)
+            ?? Environment.GetEnvironmentVariable(variable: variableName, target: EnvironmentVariableTarget.Machine)
+            ?? ReadConfiguredConnectionString(variableName: variableName);
 
-        if (string.IsNullOrWhiteSpace(connectionString))
+        if (string.IsNullOrWhiteSpace(value: connectionString))
+        {
             return string.Empty;
+        }
 
-        SqlConnectionStringBuilder builder = new(connectionString)
+        SqlConnectionStringBuilder builder = new(connectionString: connectionString)
         {
             Encrypt = true,
             TrustServerCertificate = true,
         };
+
         string databaseName = builder.InitialCatalog ?? string.Empty;
 
-        if (string.IsNullOrWhiteSpace(databaseName))
+        if (string.IsNullOrWhiteSpace(value: databaseName))
+        {
             return connectionString;
+        }
 
-        string suffix = typeof(WebAcceptanceFixture).Assembly.GetName().Name!
-            .Replace(".AcceptanceTests", string.Empty, StringComparison.Ordinal)
+        string suffix = typeof(WebAcceptanceFixture).Assembly.GetName()
+            .Name!
+            .Replace(oldValue: ".AcceptanceTests", newValue: string.Empty, comparisonType: StringComparison.Ordinal)
             .ToLowerInvariant();
 
         builder.InitialCatalog = $"{databaseName}-{suffix}";
@@ -127,16 +148,16 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
 
     private static string ReadConfiguredConnectionString(string variableName)
     {
-        string connectionName = variableName.Contains("CORE", StringComparison.OrdinalIgnoreCase)
+        string connectionName = variableName.Contains(value: "CORE", comparisonType: StringComparison.OrdinalIgnoreCase)
             ? "Core"
             : "SSO";
 
         IConfigurationRoot configuration = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.testing.json", optional: true)
+            .SetBasePath(basePath: AppContext.BaseDirectory)
+            .AddJsonFile(path: "appsettings.testing.json", optional: true)
             .Build();
 
-        return configuration.GetConnectionString(connectionName) ?? string.Empty;
+        return configuration.GetConnectionString(name: connectionName) ?? string.Empty;
     }
 }
 
@@ -145,5 +166,3 @@ public sealed class WebAcceptanceCollection : ICollectionFixture<WebAcceptanceFi
 {
     public const string Name = "Web acceptance";
 }
-
-

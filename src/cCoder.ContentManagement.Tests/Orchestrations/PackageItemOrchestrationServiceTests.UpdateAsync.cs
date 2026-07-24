@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,37 +27,23 @@ public partial class PackageItemOrchestrationServiceTests
     public async Task ShouldCallProcessingThenRaiseUpdateEventAsyncWhenUpdateAsync()
     {
         PackageItem entity = CreateRandomPackageItem();
-        packageItemProcessingServiceMock.Setup(x => x.UpdatePackageItemAsync(entity)).ReturnsAsync(entity);
+
+        packageItemProcessingServiceMock.Setup(expression: x => x.UpdatePackageItemAsync(updatedPackageItem: entity))
+            .ReturnsAsync(value: entity);
+
         packageItemEventProcessingServiceMock
-            .Setup(x => x.RaisePackageItemUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePackageItemUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
-        PackageItem result = await orchestrationService.UpdatePackageItemAsync(entity);
+        PackageItem result = await orchestrationService.UpdatePackageItemAsync(updatedPackageItem: entity);
 
-        result.Should().BeSameAs(entity);
-        packageItemProcessingServiceMock.Verify(x => x.UpdatePackageItemAsync(entity), Times.Once);
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        packageItemProcessingServiceMock.Verify(expression: x => x.UpdatePackageItemAsync(updatedPackageItem: entity), times: Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
-        packageItemEventProcessingServiceMock.Verify(x => x.RaisePackageItemUpdateEventAsync(entity), Times.Once);
+        packageItemEventProcessingServiceMock.Verify(expression: x => x.RaisePackageItemUpdateEventAsync(entity: entity), times: Times.Once);
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

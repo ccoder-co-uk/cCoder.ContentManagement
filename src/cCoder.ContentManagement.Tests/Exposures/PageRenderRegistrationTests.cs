@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,12 +29,17 @@ public class PageRenderRegistrationTests
 
         services.AddContentManagementHostedServices();
 
-        ServiceDescriptor pageRendererDescriptor = services.Single(descriptor =>
+        ServiceDescriptor pageRendererDescriptor = services.Single(predicate: descriptor =>
             descriptor.ServiceType == typeof(IPageRenderer));
 
-        pageRendererDescriptor.Lifetime.Should().Be(ServiceLifetime.Transient);
-        pageRendererDescriptor.ImplementationType.Should().NotBeNull();
-        pageRendererDescriptor.ImplementationType!.FullName.Should().Be("cCoder.ContentManagement.Exposures.PageRenderer");
+        pageRendererDescriptor.Lifetime.Should()
+            .Be(expected: ServiceLifetime.Transient);
+
+        pageRendererDescriptor.ImplementationType.Should()
+            .NotBeNull();
+
+        pageRendererDescriptor.ImplementationType!.FullName.Should()
+            .Be(expected: "cCoder.ContentManagement.Exposures.PageRenderer");
 
         Type coordinationServiceType = pageRendererDescriptor.ImplementationType
             .GetConstructors()
@@ -39,9 +48,8 @@ public class PageRenderRegistrationTests
             .Single()
             .ParameterType;
 
-        coordinationServiceType.FullName.Should().Be(
-            "cCoder.ContentManagement.Services.Coordinations.IPageRenderCoordinationService");
+        coordinationServiceType.FullName.Should()
+            .Be(
+expected: "cCoder.ContentManagement.Services.Coordinations.IPageRenderCoordinationService");
     }
 }
-
-

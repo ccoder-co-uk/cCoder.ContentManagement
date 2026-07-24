@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,36 +28,24 @@ public partial class PackageOrchestrationServiceTests
     {
         // Given
         IQueryable<Package> entities = new[] { CreateRandomPackage() }.AsQueryable();
-        packageProcessingServiceMock.Setup(x => x.GetAllPackage(true)).Returns(entities);
+
+        packageProcessingServiceMock.Setup(expression: x => x.GetAllPackage(ignoreFilters: true))
+            .Returns(value: entities);
 
         // When
-        var result = orchestrationService.GetAllPackage(true).ToArray();
+
+        var result = orchestrationService.GetAllPackage(ignoreFilters: true)
+            .ToArray();
 
         // Then
-        result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        packageProcessingServiceMock.Verify(x => x.GetAllPackage(true), Times.Once);
+
+        result.Select(selector: item => item.Id)
+            .Should()
+            .Equal(expected: entities.Select(selector: item => item.Id));
+
+        packageProcessingServiceMock.Verify(expression: x => x.GetAllPackage(ignoreFilters: true), times: Times.Once);
         packageProcessingServiceMock.VerifyNoOtherCalls();
         packageEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

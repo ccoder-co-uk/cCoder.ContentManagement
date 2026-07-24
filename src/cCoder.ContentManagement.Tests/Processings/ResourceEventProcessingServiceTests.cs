@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,30 +28,11 @@ public partial class ResourceEventProcessingServiceTests
 
     public ResourceEventProcessingServiceTests()
     {
-        resourceEventServiceMock = new Mock<IResourceEventService>(MockBehavior.Strict);
-        service = new ResourceEventProcessingService(resourceEventServiceMock.Object);
+        resourceEventServiceMock = new Mock<IResourceEventService>(behavior: MockBehavior.Strict);
+        service = new ResourceEventProcessingService(eventService: resourceEventServiceMock.Object);
     }
 
     private static Resource CreateRandomResource() =>
-        Builder<Resource>.CreateNew().Build();
+        Builder<Resource>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

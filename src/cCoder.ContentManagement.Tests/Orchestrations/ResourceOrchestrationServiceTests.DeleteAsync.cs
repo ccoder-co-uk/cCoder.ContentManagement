@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,40 +27,24 @@ public partial class ResourceOrchestrationServiceTests
         // Given
         int id = 1;
         Resource entity = CreateRandomResource();
-        resourceProcessingServiceMock.Setup(x => x.GetResource(id)).Returns(entity);
-        resourceProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        resourceProcessingServiceMock.Setup(expression: x => x.GetResource(resourceId: id))
+            .Returns(value: entity);
+
+        resourceProcessingServiceMock.Setup(expression: x => x.DeleteAsync(resourceId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         resourceEventProcessingServiceMock
-            .Setup(x => x.RaiseResourceDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseResourceDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(resourceId: id);
 
         // Then
-        resourceProcessingServiceMock.Verify(x => x.GetResource(id), Times.Once);
-        resourceProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        resourceEventProcessingServiceMock.Verify(x => x.RaiseResourceDeleteEventAsync(entity), Times.Once);
+        resourceProcessingServiceMock.Verify(expression: x => x.GetResource(resourceId: id), times: Times.Once);
+        resourceProcessingServiceMock.Verify(expression: x => x.DeleteAsync(resourceId: id), times: Times.Once);
+        resourceEventProcessingServiceMock.Verify(expression: x => x.RaiseResourceDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

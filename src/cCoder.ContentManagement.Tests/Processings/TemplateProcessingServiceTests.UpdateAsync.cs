@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,31 +27,20 @@ public partial class TemplateProcessingServiceTests
     {
         // Given
         Template entity = CreateRandomTemplate();
-        templateServiceMock.Setup(x => x.UpdateTemplateAsync(entity)).ReturnsAsync(entity);
+
+        templateServiceMock.Setup(expression: x => x.UpdateTemplateAsync(updatedTemplate: entity))
+            .ReturnsAsync(value: entity);
 
         // When
-        Template result = await templateProcessingService.UpdateTemplateAsync(entity);
+        Template result = await templateProcessingService.UpdateTemplateAsync(updatedTemplate: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        templateServiceMock.Verify(x => x.UpdateTemplateAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        templateServiceMock.Verify(expression: x => x.UpdateTemplateAsync(updatedTemplate: entity), times: Times.Once);
         templateServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

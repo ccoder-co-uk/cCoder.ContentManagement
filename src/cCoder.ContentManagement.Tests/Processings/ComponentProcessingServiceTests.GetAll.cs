@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,31 +27,20 @@ public partial class ComponentProcessingServiceTests
     {
         // Given
         IQueryable<Component> entities = new[] { CreateRandomComponent() }.AsQueryable();
-        componentServiceMock.Setup(x => x.GetAllComponent()).Returns(entities);
+
+        componentServiceMock.Setup(expression: x => x.GetAllComponent())
+            .Returns(value: entities);
 
         // When
         IQueryable<Component> result = componentProcessingService.GetAllComponent();
 
         // Then
-        result.Should().BeSameAs(entities);
-        componentServiceMock.Verify(x => x.GetAllComponent(), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entities);
+
+        componentServiceMock.Verify(expression: x => x.GetAllComponent(), times: Times.Once);
         componentServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

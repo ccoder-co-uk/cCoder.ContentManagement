@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,39 +30,33 @@ public partial class CommonObjectEventServiceTests
         EventMessage<CommonObject> actualMessage = null;
 
         commonObjectEventBrokerMock
-            .Setup(x => x.RaiseCommonObjectUpdateEventAsync(It.IsAny<EventMessage<CommonObject>>()))
-            .Callback<EventMessage<CommonObject>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseCommonObjectUpdateEventAsync(message: It.IsAny<EventMessage<CommonObject>>()))
+            .Callback<EventMessage<CommonObject>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCommonObjectUpdateEventAsync(entity);
+        await service.RaiseCommonObjectUpdateEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeSameAs(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeSameAs(expected: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         commonObjectEventBrokerMock.Verify(
-            x => x.RaiseCommonObjectUpdateEventAsync(It.IsAny<EventMessage<CommonObject>>()),
-            Times.Once
+expression: x => x.RaiseCommonObjectUpdateEventAsync(message: It.IsAny<EventMessage<CommonObject>>()),
+times: Times.Once
         );
+
         commonObjectEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

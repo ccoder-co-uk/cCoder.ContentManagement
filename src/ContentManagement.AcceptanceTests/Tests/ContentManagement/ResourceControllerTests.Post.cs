@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -11,33 +15,35 @@ public sealed partial class ResourceControllerTests
     public async Task Post_CreatesResource()
     {
         // Given
-        string name = Unique("resource").ToLowerInvariant();
+        string name = Unique(prefix: "resource")
+            .ToLowerInvariant();
+
         Resource expectedResource = new() { Name = name };
 
         // When
+
         Resource createdResource = await CreateResourceAsync(
-            new
-            {
-                appId = 1,
-                name,
-                description = "Acceptance resource",
-                key = Unique("Key"),
-                culture = "",
-                displayName = "Acceptance Resource",
-                shortDisplayName = "Acceptance Resource",
-            });
-        Resource actualResource = await GetResourceAsync(createdResource.Id);
+payload: new
+{
+    appId = 1,
+    name,
+    description = "Acceptance resource",
+    key = Unique(prefix: "Key"),
+    culture = "",
+    displayName = "Acceptance Resource",
+    shortDisplayName = "Acceptance Resource",
+});
+
+        Resource actualResource = await GetResourceAsync(id: createdResource.Id);
 
         // Then
-        actualResource.Should().NotBeNull();
-        actualResource!.Name.Should().Be(expectedResource.Name);
 
-        await DeleteResourceAsync(createdResource.Id);
+        actualResource.Should()
+            .NotBeNull();
+
+        actualResource!.Name.Should()
+            .Be(expected: expectedResource.Name);
+
+        await DeleteResourceAsync(id: createdResource.Id);
     }
 }
-
-
-
-
-
-

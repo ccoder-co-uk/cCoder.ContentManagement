@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -30,34 +34,40 @@ public partial class PackageItemServiceTests
         Guid packageItemId = Guid.NewGuid();
         PackageItem packageItem = CreateRandomPackageItem(id: packageItemId);
 
-        packageItemBrokerMock.Setup(x => x.GetAllPackageItems(false)).Returns(new[] { packageItem }.AsQueryable());
+        packageItemBrokerMock.Setup(expression: x => x.GetAllPackageItems(ignoreFilters: false))
+            .Returns(value: new[] { packageItem }.AsQueryable());
 
-        packageItemBrokerMock.Setup(x => x.GetAppId(It.IsAny<cCoder.Data.Models.Packaging.PackageItem>())).Returns((int?)7);
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "PackageItem_delete"));
+        packageItemBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()))
+            .Returns(value: (int?)7);
+
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_delete"));
+
         packageItemBrokerMock
             .Setup(
-                x =>
+expression: x =>
                     x.DeletePackageItemAsync(
-                        It.Is<cCoder.Data.Models.Packaging.PackageItem>(item => item.Id == packageItem.Id)
+deletedPackageItem: It.Is<cCoder.Data.Models.Packaging.PackageItem>(match: item => item.Id == packageItem.Id)
                     )
             )
-            .ReturnsAsync(1);
+            .ReturnsAsync(value: 1);
 
         // When
-        await packageItemService.DeleteAsync(packageItemId);
+        await packageItemService.DeleteAsync(packageItemId: packageItemId);
 
         // Then
-        packageItemBrokerMock.Verify(x => x.GetAllPackageItems(false), Times.Once);
+        packageItemBrokerMock.Verify(expression: x => x.GetAllPackageItems(ignoreFilters: false), times: Times.Once);
+
         packageItemBrokerMock.Verify(
-            x =>
+expression: x =>
                 x.DeletePackageItemAsync(
-                    It.Is<cCoder.Data.Models.Packaging.PackageItem>(item => item.Id == packageItem.Id)
+deletedPackageItem: It.Is<cCoder.Data.Models.Packaging.PackageItem>(match: item => item.Id == packageItem.Id)
                 ),
-            Times.Once
+times: Times.Once
         );
-        packageItemBrokerMock.Verify(x => x.GetAppId(It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), Times.AtMostOnce());
+
+        packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
         packageItemBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "PackageItem_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -68,40 +78,30 @@ public partial class PackageItemServiceTests
         Guid packageItemId = Guid.NewGuid();
         PackageItem packageItem = CreateRandomPackageItem(id: packageItemId);
 
-        packageItemBrokerMock.Setup(x => x.GetAllPackageItems(false)).Returns(new[] { packageItem }.AsQueryable());
+        packageItemBrokerMock.Setup(expression: x => x.GetAllPackageItems(ignoreFilters: false))
+            .Returns(value: new[] { packageItem }.AsQueryable());
 
-        packageItemBrokerMock.Setup(x => x.GetAppId(It.IsAny<cCoder.Data.Models.Packaging.PackageItem>())).Returns((int?)7);
+        packageItemBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()))
+            .Returns(value: (int?)7);
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "PackageItem_delete"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_delete"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await packageItemService.DeleteAsync(packageItemId);
+        Func<Task> action = async () => await packageItemService.DeleteAsync(packageItemId: packageItemId);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        packageItemBrokerMock.Verify(x => x.GetAllPackageItems(false), Times.Once);
-        packageItemBrokerMock.Verify(x => x.GetAppId(It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), Times.AtMostOnce());
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        packageItemBrokerMock.Verify(expression: x => x.GetAllPackageItems(ignoreFilters: false), times: Times.Once);
+        packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
         packageItemBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "PackageItem_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

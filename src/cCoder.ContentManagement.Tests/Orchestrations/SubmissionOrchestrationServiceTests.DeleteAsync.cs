@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,40 +27,24 @@ public partial class SubmissionOrchestrationServiceTests
         // Given
         Guid id = Guid.NewGuid();
         Submission entity = CreateRandomSubmission();
-        submissionProcessingServiceMock.Setup(x => x.GetSubmission(id)).Returns(entity);
-        submissionProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        submissionProcessingServiceMock.Setup(expression: x => x.GetSubmission(submissionId: id))
+            .Returns(value: entity);
+
+        submissionProcessingServiceMock.Setup(expression: x => x.DeleteAsync(submissionId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         submissionEventProcessingServiceMock
-            .Setup(x => x.RaiseSubmissionDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseSubmissionDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(submissionId: id);
 
         // Then
-        submissionProcessingServiceMock.Verify(x => x.GetSubmission(id), Times.Once);
-        submissionProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        submissionEventProcessingServiceMock.Verify(x => x.RaiseSubmissionDeleteEventAsync(entity), Times.Once);
+        submissionProcessingServiceMock.Verify(expression: x => x.GetSubmission(submissionId: id), times: Times.Once);
+        submissionProcessingServiceMock.Verify(expression: x => x.DeleteAsync(submissionId: id), times: Times.Once);
+        submissionEventProcessingServiceMock.Verify(expression: x => x.RaiseSubmissionDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

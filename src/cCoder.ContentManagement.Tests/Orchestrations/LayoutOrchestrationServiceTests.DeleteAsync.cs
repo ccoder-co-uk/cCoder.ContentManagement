@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,40 +27,24 @@ public partial class LayoutOrchestrationServiceTests
         // Given
         int id = 1;
         Layout entity = CreateRandomLayout();
-        layoutProcessingServiceMock.Setup(x => x.GetLayout(id)).Returns(entity);
-        layoutProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        layoutProcessingServiceMock.Setup(expression: x => x.GetLayout(layoutId: id))
+            .Returns(value: entity);
+
+        layoutProcessingServiceMock.Setup(expression: x => x.DeleteAsync(layoutId: id))
+            .Returns(value: ValueTask.CompletedTask);
 
         layoutEventProcessingServiceMock
-            .Setup(x => x.RaiseLayoutDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(layoutId: id);
 
         // Then
-        layoutProcessingServiceMock.Verify(x => x.GetLayout(id), Times.Once);
-        layoutProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
-        layoutEventProcessingServiceMock.Verify(x => x.RaiseLayoutDeleteEventAsync(entity), Times.Once);
+        layoutProcessingServiceMock.Verify(expression: x => x.GetLayout(layoutId: id), times: Times.Once);
+        layoutProcessingServiceMock.Verify(expression: x => x.DeleteAsync(layoutId: id), times: Times.Once);
+        layoutEventProcessingServiceMock.Verify(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,37 +28,21 @@ public partial class LayoutOrchestrationServiceTests
         // Given
         int id = 1;
         Layout entity = CreateRandomLayout();
-        layoutProcessingServiceMock.Setup(x => x.GetLayout(id)).Returns(entity);
+
+        layoutProcessingServiceMock.Setup(expression: x => x.GetLayout(layoutId: id))
+            .Returns(value: entity);
 
         // When
-        Layout result = orchestrationService.GetLayout(id);
+        Layout result = orchestrationService.GetLayout(layoutId: id);
 
         // Then
-        result.Should().BeEquivalentTo(entity);
-        layoutProcessingServiceMock.Verify(x => x.GetLayout(id), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        layoutProcessingServiceMock.Verify(expression: x => x.GetLayout(layoutId: id), times: Times.Once);
         layoutProcessingServiceMock.VerifyNoOtherCalls();
         layoutEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

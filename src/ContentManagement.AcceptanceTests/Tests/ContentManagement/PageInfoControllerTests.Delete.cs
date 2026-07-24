@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
 
@@ -14,18 +18,17 @@ public sealed partial class PageInfoControllerTests
         int actualReadStatusCode;
 
         // When
-        int actualStatusCode = await DeletePageInfoAsync(seededContext.PageInfoId);
-        actualReadStatusCode = await GetPageInfoStatusCodeAsync(seededContext.PageInfoId);
+        int actualStatusCode = await DeletePageInfoAsync(id: seededContext.PageInfoId);
+        actualReadStatusCode = await GetPageInfoStatusCodeAsync(id: seededContext.PageInfoId);
 
         // Then
-        actualStatusCode.Should().Be(200);
-        actualReadStatusCode.Should().Be(404);
 
-        await Teardown(seededContext);
+        actualStatusCode.Should()
+            .Be(expected: 200);
+
+        actualReadStatusCode.Should()
+            .Be(expected: 404);
+
+        await Teardown(seededContext: seededContext);
     }
 }
-
-
-
-
-

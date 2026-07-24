@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,35 +29,16 @@ public partial class SubmissionOrchestrationServiceTests
 
     public SubmissionOrchestrationServiceTests()
     {
-        submissionProcessingServiceMock = new Mock<ISubmissionProcessingService>(MockBehavior.Strict);
-        submissionEventProcessingServiceMock = new Mock<ISubmissionEventProcessingService>(MockBehavior.Strict);
+        submissionProcessingServiceMock = new Mock<ISubmissionProcessingService>(behavior: MockBehavior.Strict);
+        submissionEventProcessingServiceMock = new Mock<ISubmissionEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new SubmissionOrchestrationService(
-            submissionProcessingServiceMock.Object,
-            submissionEventProcessingServiceMock.Object
+processingService: submissionProcessingServiceMock.Object,
+eventService: submissionEventProcessingServiceMock.Object
         );
     }
 
-    private static Submission CreateRandomSubmission() => Builder<Submission>.CreateNew().Build();
+    private static Submission CreateRandomSubmission() =>
+        Builder<Submission>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

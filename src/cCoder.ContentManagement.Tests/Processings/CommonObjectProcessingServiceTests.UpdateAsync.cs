@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,16 +27,21 @@ public partial class CommonObjectProcessingServiceTests
     public async Task ShouldCreateNewVersionAndAddItWhenUserHasPrivilegesForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
+
         User actor = TestUsers.WithPrivileges(
-            new[] { "commonobject_create", "commonobject_update" }
+privileges: new[] { "commonobject_create", "commonobject_update" }
         );
+
         CommonObject commonObject = CreateRandomCommonObject(
-            "Core/Other"
+type: "Core/Other"
         );
+
         CommonObject existingVersion = CreateRandomCommonObject(
-            "Core/Other"
+type: "Core/Other"
         );
+
         existingVersion.Name = commonObject.Name;
         existingVersion.Type = commonObject.Type;
         existingVersion.Culture = commonObject.Culture;
@@ -42,56 +51,46 @@ public partial class CommonObjectProcessingServiceTests
         currentUser = actor;
 
         commonObjectServiceMock
-            .Setup(x => x.GetAllCommonObject())
-            .Returns(new[] { existingVersion }.AsQueryable());
+            .Setup(expression: x => x.GetAllCommonObject())
+            .Returns(value: new[] { existingVersion }.AsQueryable());
 
         commonObjectServiceMock
-            .Setup(x => x.AddCommonObjectAsync(It.IsAny<CommonObject>()))
-            .ReturnsAsync((CommonObject item) => item);
+            .Setup(expression: x => x.AddCommonObjectAsync(newCommonObject: It.IsAny<CommonObject>()))
+            .ReturnsAsync(valueFunction: (CommonObject item) => item);
 
         // When
+
         CommonObject result =
-            await commonObjectProcessingService.UpdateCommonObjectAsync(commonObject);
+            await commonObjectProcessingService.UpdateCommonObjectAsync(updatedCommonObject: commonObject);
 
         // Then
-        result.Id.Should().Be(0);
-        result.Version.Should().Be(3);
-        result.CreatedBy.Should().Be(actor.Id);
-        result.LastUpdatedBy.Should().Be(actor.Id);
-        commonObjectServiceMock.Verify(x => x.GetAllCommonObject(), Times.Exactly(2));
+
+        result.Id.Should()
+            .Be(expected: 0);
+
+        result.Version.Should()
+            .Be(expected: 3);
+
+        result.CreatedBy.Should()
+            .Be(expected: actor.Id);
+
+        result.LastUpdatedBy.Should()
+            .Be(expected: actor.Id);
+
+        commonObjectServiceMock.Verify(expression: x => x.GetAllCommonObject(), times: Times.Exactly(callCount: 2));
+
         commonObjectServiceMock.Verify(
-            x =>
+expression: x =>
                 x.AddCommonObjectAsync(
-                    It.Is<CommonObject>(item =>
+newCommonObject: It.Is<CommonObject>(match: item =>
                         item.Id == 0 && item.Version == 3
                     )
                 ),
-            Times.Once
+times: Times.Once
         );
+
         commonObjectServiceMock.VerifyNoOtherCalls();
         commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

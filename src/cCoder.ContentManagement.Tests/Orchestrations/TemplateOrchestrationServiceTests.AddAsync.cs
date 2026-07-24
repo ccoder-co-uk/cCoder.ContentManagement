@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,39 +27,24 @@ public partial class TemplateOrchestrationServiceTests
     {
         // Given
         Template entity = CreateRandomTemplate();
-        templateProcessingServiceMock.Setup(x => x.AddTemplateAsync(entity)).ReturnsAsync(entity);
+
+        templateProcessingServiceMock.Setup(expression: x => x.AddTemplateAsync(newTemplate: entity))
+            .ReturnsAsync(value: entity);
 
         templateEventProcessingServiceMock
-            .Setup(x => x.RaiseTemplateAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseTemplateAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Template result = await orchestrationService.AddTemplateAsync(entity);
+        Template result = await orchestrationService.AddTemplateAsync(newTemplate: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        templateProcessingServiceMock.Verify(x => x.AddTemplateAsync(entity), Times.Once);
-        templateEventProcessingServiceMock.Verify(x => x.RaiseTemplateAddEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        templateProcessingServiceMock.Verify(expression: x => x.AddTemplateAsync(newTemplate: entity), times: Times.Once);
+        templateEventProcessingServiceMock.Verify(expression: x => x.RaiseTemplateAddEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

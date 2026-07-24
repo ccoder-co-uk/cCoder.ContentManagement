@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -11,46 +15,49 @@ public sealed partial class TemplateControllerTests
     public async Task Render_ReturnsRenderedTemplateContent()
     {
         // Given
-        string templateName = Unique("Template");
+        string templateName = Unique(prefix: "Template");
+
         Template createdTemplate = await CreateTemplateAsync(
-            new
-            {
-                appId = 1,
-                name = templateName,
-                description = "Acceptance template",
-                resourceKey = "Default",
-                rawString = "<html><body><h1>[model[title]]</h1></body></html>",
-            });
+payload: new
+{
+    appId = 1,
+    name = templateName,
+    description = "Acceptance template",
+    resourceKey = "Default",
+    rawString = "<html><body><h1>[model[title]]</h1></body></html>",
+});
 
         await UpdateTemplateAsync(
-            createdTemplate.Id,
-            new
-            {
-                id = createdTemplate.Id,
-                appId = 1,
-                name = templateName,
-                description = "Updated acceptance template",
-                resourceKey = "Default",
-                rawString = "<html><body><h1>[model[title]]</h1><p>[model[body]]</p></body></html>",
-            });
+id: createdTemplate.Id,
+payload: new
+{
+    id = createdTemplate.Id,
+    appId = 1,
+    name = templateName,
+    description = "Updated acceptance template",
+    resourceKey = "Default",
+    rawString = "<html><body><h1>[model[title]]</h1><p>[model[body]]</p></body></html>",
+});
 
         // When
-        string actualRender = await RenderTemplateAsync(templateName, """{"title":"Acceptance","body":"Rendered"}""");
+        string actualRender = await RenderTemplateAsync(name: templateName, modelJson: """{"title":"Acceptance","body":"Rendered"}""");
 
         // Then
-        actualRender.Should().Contain("Acceptance");
-        actualRender.Should().Contain("Rendered");
 
-        (int actualPdfStatusCode, string actualPdfMediaType) = await ConvertHtmlToPdfAsync("acceptance", "<html><body><p>pdf</p></body></html>");
-        actualPdfStatusCode.Should().Be(200);
-        actualPdfMediaType.Should().Be("application/pdf");
+        actualRender.Should()
+            .Contain(expected: "Acceptance");
 
-        await DeleteTemplateAsync(createdTemplate.Id);
+        actualRender.Should()
+            .Contain(expected: "Rendered");
+
+        (int actualPdfStatusCode, string actualPdfMediaType) = await ConvertHtmlToPdfAsync(name: "acceptance", html: "<html><body><p>pdf</p></body></html>");
+
+        actualPdfStatusCode.Should()
+            .Be(expected: 200);
+
+        actualPdfMediaType.Should()
+            .Be(expected: "application/pdf");
+
+        await DeleteTemplateAsync(id: createdTemplate.Id);
     }
 }
-
-
-
-
-
-

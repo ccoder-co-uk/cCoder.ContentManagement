@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,38 +27,24 @@ public partial class PackageItemOrchestrationServiceTests
     {
         Guid id = Guid.NewGuid();
         PackageItem entity = CreateRandomPackageItem();
-        packageItemProcessingServiceMock.Setup(x => x.GetPackageItem(id)).Returns(entity);
-        packageItemProcessingServiceMock.Setup(x => x.DeleteAsync(id)).Returns(ValueTask.CompletedTask);
+
+        packageItemProcessingServiceMock.Setup(expression: x => x.GetPackageItem(packageItemId: id))
+            .Returns(value: entity);
+
+        packageItemProcessingServiceMock.Setup(expression: x => x.DeleteAsync(packageItemId: id))
+            .Returns(value: ValueTask.CompletedTask);
+
         packageItemEventProcessingServiceMock
-            .Setup(x => x.RaisePackageItemDeleteEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePackageItemDeleteEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
-        await orchestrationService.DeleteAsync(id);
+        await orchestrationService.DeleteAsync(packageItemId: id);
 
-        packageItemProcessingServiceMock.Verify(x => x.GetPackageItem(id), Times.Once);
-        packageItemProcessingServiceMock.Verify(x => x.DeleteAsync(id), Times.Once);
+        packageItemProcessingServiceMock.Verify(expression: x => x.GetPackageItem(packageItemId: id), times: Times.Once);
+        packageItemProcessingServiceMock.Verify(expression: x => x.DeleteAsync(packageItemId: id), times: Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
-        packageItemEventProcessingServiceMock.Verify(x => x.RaisePackageItemDeleteEventAsync(entity), Times.Once);
+        packageItemEventProcessingServiceMock.Verify(expression: x => x.RaisePackageItemDeleteEventAsync(entity: entity), times: Times.Once);
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,24 +31,29 @@ public partial class CultureServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForDeleteAsync()
     {
         // Given
-        Culture culture = CreateRandomCulture("en-GB");
+        Culture culture = CreateRandomCulture(id: "en-GB");
 
-        cultureBrokerMock.Setup(x => x.GetAllCultures(false)).Returns(new[] { culture }.AsQueryable());
+        cultureBrokerMock.Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Returns(value: new[] { culture }.AsQueryable());
 
-        appCultureBrokerMock.Setup(x => x.GetAllAppCultures(true)).Returns(new[] { new CmsDataModels.AppCulture { AppId = 7, CultureId = culture.Id } }.AsQueryable());
-        authorizationBrokerMock.Setup(x => x.Authorize((int?)7, "Culture_delete"));
-        cultureBrokerMock.Setup(x => x.DeleteCultureAsync(culture)).ReturnsAsync(1);
+        appCultureBrokerMock.Setup(expression: x => x.GetAllAppCultures(ignoreFilters: true))
+            .Returns(value: new[] { new CmsDataModels.AppCulture { AppId = 7, CultureId = culture.Id } }.AsQueryable());
+
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_delete"));
+
+        cultureBrokerMock.Setup(expression: x => x.DeleteCultureAsync(deletedCulture: culture))
+            .ReturnsAsync(value: 1);
 
         // When
-        await cultureService.DeleteAsync("en-GB");
+        await cultureService.DeleteAsync(cultureId: "en-GB");
 
         // Then
-        cultureBrokerMock.Verify(x => x.GetAllCultures(false), Times.Once);
-        cultureBrokerMock.Verify(x => x.DeleteCultureAsync(culture), Times.Once);
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
+        cultureBrokerMock.Verify(expression: x => x.DeleteCultureAsync(deletedCulture: culture), times: Times.Once);
         cultureBrokerMock.VerifyNoOtherCalls();
-        appCultureBrokerMock.Verify(x => x.GetAllAppCultures(true), Times.Once);
+        appCultureBrokerMock.Verify(expression: x => x.GetAllAppCultures(ignoreFilters: true), times: Times.Once);
         appCultureBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Culture_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -52,41 +61,33 @@ public partial class CultureServiceTests
     public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
     {
         // Given
-        Culture culture = CreateRandomCulture("en-GB");
+        Culture culture = CreateRandomCulture(id: "en-GB");
 
-        cultureBrokerMock.Setup(x => x.GetAllCultures(false)).Returns(new[] { culture }.AsQueryable());
+        cultureBrokerMock.Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Returns(value: new[] { culture }.AsQueryable());
 
-        appCultureBrokerMock.Setup(x => x.GetAllAppCultures(true)).Returns(new[] { new CmsDataModels.AppCulture { AppId = 7, CultureId = culture.Id } }.AsQueryable());
+        appCultureBrokerMock.Setup(expression: x => x.GetAllAppCultures(ignoreFilters: true))
+            .Returns(value: new[] { new CmsDataModels.AppCulture { AppId = 7, CultureId = culture.Id } }.AsQueryable());
+
         authorizationBrokerMock
-            .Setup(x => x.Authorize((int?)7, "Culture_delete"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_delete"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await cultureService.DeleteAsync("en-GB");
+        Func<Task> action = async () => await cultureService.DeleteAsync(cultureId: "en-GB");
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        cultureBrokerMock.Verify(x => x.GetAllCultures(false), Times.Once);
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
         cultureBrokerMock.VerifyNoOtherCalls();
-        appCultureBrokerMock.Verify(x => x.GetAllAppCultures(true), Times.Once);
+        appCultureBrokerMock.Verify(expression: x => x.GetAllAppCultures(ignoreFilters: true), times: Times.Once);
         appCultureBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize((int?)7, "Culture_delete"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_delete"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

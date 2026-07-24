@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,6 +27,7 @@ public partial class PageRendererTests
     {
         // Given
         var app = CreateApp();
+
         PageRenderRequest request = new()
         {
             Host = app.Domain,
@@ -35,23 +40,28 @@ public partial class PageRendererTests
         PageRenderResponse expectedResponse = new()
         {
             App = app,
-            Page = CreateRenderResult("Rendered Body"),
+            Page = CreateRenderResult(bodyHtml: "Rendered Body"),
             Theme = app.DefaultTheme,
             Culture = app.DefaultCultureId,
             Edit = true
         };
 
         pageRenderCoordinationServiceMock
-            .Setup(x => x.Render(request))
-            .Returns(expectedResponse);
+            .Setup(expression: x => x.Render(request: request))
+            .Returns(value: expectedResponse);
 
         // When
-        PageRenderResponse response = pageRenderer.Render(request);
+        PageRenderResponse response = pageRenderer.Render(request: request);
 
         // Then
-        response.Should().BeSameAs(expectedResponse);
-        response.Edit.Should().BeTrue();
-        pageRenderCoordinationServiceMock.Verify(x => x.Render(request), Times.Once);
+
+        response.Should()
+            .BeSameAs(expected: expectedResponse);
+
+        response.Edit.Should()
+            .BeTrue();
+
+        pageRenderCoordinationServiceMock.Verify(expression: x => x.Render(request: request), times: Times.Once);
     }
 
     [Fact]
@@ -59,6 +69,7 @@ public partial class PageRendererTests
     {
         // Given
         var app = CreateApp();
+
         PageRenderRequest request = new()
         {
             Host = app.Domain,
@@ -69,22 +80,25 @@ public partial class PageRendererTests
         PageRenderResponse expectedResponse = new()
         {
             App = app,
-            Page = CreateRenderResult("Boom|trace|https://demo.local/Summary"),
+            Page = CreateRenderResult(bodyHtml: "Boom|trace|https://demo.local/Summary"),
             Theme = app.DefaultTheme,
             Culture = app.DefaultCultureId,
             Edit = false
         };
 
         pageRenderCoordinationServiceMock
-            .Setup(x => x.Render(request))
-            .Returns(expectedResponse);
+            .Setup(expression: x => x.Render(request: request))
+            .Returns(value: expectedResponse);
 
         // When
-        PageRenderResponse response = pageRenderer.Render(request);
+        PageRenderResponse response = pageRenderer.Render(request: request);
 
         // Then
-        response.Should().BeSameAs(expectedResponse);
-        pageRenderCoordinationServiceMock.Verify(x => x.Render(request), Times.Once);
+
+        response.Should()
+            .BeSameAs(expected: expectedResponse);
+
+        pageRenderCoordinationServiceMock.Verify(expression: x => x.Render(request: request), times: Times.Once);
     }
 
     [Fact]
@@ -94,15 +108,11 @@ public partial class PageRendererTests
         PageRenderRequest request = null!;
 
         // When
-        Action act = () => pageRenderer.Render(request);
+        Action act = () => pageRenderer.Render(request: request);
 
         // Then
-        act.Should().Throw<MockException>();
+
+        act.Should()
+            .Throw<MockException>();
     }
 }
-
-
-
-
-
-

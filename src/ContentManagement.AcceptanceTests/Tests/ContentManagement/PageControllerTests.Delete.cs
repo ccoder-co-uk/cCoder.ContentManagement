@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -12,22 +16,21 @@ public sealed partial class PageControllerTests
     {
         // Given
         SeededPageContext seededContext = await SeedDatabase("page_create", "page_delete");
-        Page createdPage = await CreatePageAsync(CreateValidPagePayload(seededContext, Unique("Page")));
+        Page createdPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "Page")));
         int actualReadStatusCode;
 
         // When
-        int actualStatusCode = await DeletePageAsync(createdPage.Id);
-        actualReadStatusCode = await GetPageStatusCodeAsync(createdPage.Id);
+        int actualStatusCode = await DeletePageAsync(id: createdPage.Id);
+        actualReadStatusCode = await GetPageStatusCodeAsync(id: createdPage.Id);
 
         // Then
-        actualStatusCode.Should().Be(200);
-        actualReadStatusCode.Should().Be(404);
 
-        await Teardown(seededContext);
+        actualStatusCode.Should()
+            .Be(expected: 200);
+
+        actualReadStatusCode.Should()
+            .Be(expected: 404);
+
+        await Teardown(seededContext: seededContext);
     }
 }
-
-
-
-
-

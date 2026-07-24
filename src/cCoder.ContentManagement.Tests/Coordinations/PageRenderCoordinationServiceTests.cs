@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -36,31 +40,62 @@ public partial class PageRenderCoordinationServiceTests
 
     public PageRenderCoordinationServiceTests()
     {
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
-        layoutOrchestrationServiceMock.Setup(x => x.GetAllLayout(false)).Returns(Array.Empty<Layout>().AsQueryable());
-        templateOrchestrationServiceMock.Setup(x => x.GetAllTemplate(false)).Returns(Array.Empty<Template>().AsQueryable());
-        resourceOrchestrationServiceMock.Setup(x => x.GetAllResource(false)).Returns(Array.Empty<Resource>().AsQueryable());
-        componentOrchestrationServiceMock.Setup(x => x.GetAllComponent(false)).Returns(Array.Empty<Component>().AsQueryable());
-        scriptOrchestrationServiceMock.Setup(x => x.GetAllScript(false)).Returns(Array.Empty<Script>().AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(false)).Returns(Array.Empty<Page>().AsQueryable());
-        pageOrchestrationServiceMock.Setup(x => x.GetAllPage(true)).Returns(Array.Empty<Page>().AsQueryable());
-        contentOrchestrationServiceMock.Setup(x => x.GetAllContent(true)).Returns(Array.Empty<Content>().AsQueryable());
-        pageInfoOrchestrationServiceMock.Setup(x => x.GetAllPageInfo(true)).Returns(Array.Empty<PageInfo>().AsQueryable());
-        pageRoleOrchestrationServiceMock.Setup(x => x.GetAllPageRole(true)).Returns(Array.Empty<PageRole>().AsQueryable());
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
+
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+            .Returns(value: Array.Empty<Layout>()
+            .AsQueryable());
+
+        templateOrchestrationServiceMock.Setup(expression: x => x.GetAllTemplate(ignoreFilters: false))
+            .Returns(value: Array.Empty<Template>()
+            .AsQueryable());
+
+        resourceOrchestrationServiceMock.Setup(expression: x => x.GetAllResource(ignoreFilters: false))
+            .Returns(value: Array.Empty<Resource>()
+            .AsQueryable());
+
+        componentOrchestrationServiceMock.Setup(expression: x => x.GetAllComponent(ignoreFilters: false))
+            .Returns(value: Array.Empty<Component>()
+            .AsQueryable());
+
+        scriptOrchestrationServiceMock.Setup(expression: x => x.GetAllScript(ignoreFilters: false))
+            .Returns(value: Array.Empty<Script>()
+            .AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+            .Returns(value: Array.Empty<Page>()
+            .AsQueryable());
+
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+            .Returns(value: Array.Empty<Page>()
+            .AsQueryable());
+
+        contentOrchestrationServiceMock.Setup(expression: x => x.GetAllContent(ignoreFilters: true))
+            .Returns(value: Array.Empty<Content>()
+            .AsQueryable());
+
+        pageInfoOrchestrationServiceMock.Setup(expression: x => x.GetAllPageInfo(ignoreFilters: true))
+            .Returns(value: Array.Empty<PageInfo>()
+            .AsQueryable());
+
+        pageRoleOrchestrationServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
+            .Returns(value: Array.Empty<PageRole>()
+            .AsQueryable());
 
         coordinationService = new PageRenderCoordinationService(
-            authorizationBrokerMock.Object,
-            appOrchestrationServiceMock.Object,
-            layoutOrchestrationServiceMock.Object,
-            templateOrchestrationServiceMock.Object,
-            resourceOrchestrationServiceMock.Object,
-            componentOrchestrationServiceMock.Object,
-            scriptOrchestrationServiceMock.Object,
-            pageOrchestrationServiceMock.Object,
-            contentOrchestrationServiceMock.Object,
-            pageInfoOrchestrationServiceMock.Object,
-            pageRoleOrchestrationServiceMock.Object,
-            pageRenderOrchestrationServiceMock.Object);
+authorizationBroker: authorizationBrokerMock.Object,
+appOrchestrationService: appOrchestrationServiceMock.Object,
+layoutOrchestrationService: layoutOrchestrationServiceMock.Object,
+templateOrchestrationService: templateOrchestrationServiceMock.Object,
+resourceOrchestrationService: resourceOrchestrationServiceMock.Object,
+componentOrchestrationService: componentOrchestrationServiceMock.Object,
+scriptOrchestrationService: scriptOrchestrationServiceMock.Object,
+pageOrchestrationService: pageOrchestrationServiceMock.Object,
+contentOrchestrationService: contentOrchestrationServiceMock.Object,
+pageInfoOrchestrationService: pageInfoOrchestrationServiceMock.Object,
+pageRoleOrchestrationService: pageRoleOrchestrationServiceMock.Object,
+pageRenderOrchestrationService: pageRenderOrchestrationServiceMock.Object);
     }
 
     private static App CreateApp() =>
@@ -102,10 +137,3 @@ public partial class PageRenderCoordinationServiceTests
             StatusCode = 200
         };
 }
-
-
-
-
-
-
-

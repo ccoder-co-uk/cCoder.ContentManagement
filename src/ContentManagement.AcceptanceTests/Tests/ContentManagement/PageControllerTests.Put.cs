@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using System.Net;
 using System.Net.Http.Json;
 using cCoder.Data.Models.CMS;
@@ -14,13 +18,14 @@ public sealed partial class PageControllerTests
     {
         // Given
         SeededPageContext seededContext = await SeedDatabase("page_create", "page_update", "page_delete");
-        Page createdPage = await CreatePageAsync(CreateValidPagePayload(seededContext, Unique("Page")));
-        string updatedName = Unique("UpdatedPage");
+        Page createdPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "Page")));
+        string updatedName = Unique(prefix: "UpdatedPage");
         Page updateResponse;
         Page actualPage;
 
         // When
-        updateResponse = await UpdatePageAsync(createdPage.Id, new
+
+        updateResponse = await UpdatePageAsync(id: createdPage.Id, payload: new
         {
             id = createdPage.Id,
             appId = seededContext.AppId,
@@ -50,15 +55,23 @@ public sealed partial class PageControllerTests
             },
         });
 
-        actualPage = await GetPageAsync(createdPage.Id);
+        actualPage = await GetPageAsync(id: createdPage.Id);
 
         // Then
-        updateResponse.Name.Should().Be(updatedName);
-        actualPage.Should().NotBeNull();
-        actualPage!.Name.Should().Be(updatedName);
-        actualPage.Order.Should().Be(2);
 
-        await Teardown(seededContext);
+        updateResponse.Name.Should()
+            .Be(expected: updatedName);
+
+        actualPage.Should()
+            .NotBeNull();
+
+        actualPage!.Name.Should()
+            .Be(expected: updatedName);
+
+        actualPage.Order.Should()
+            .Be(expected: 2);
+
+        await Teardown(seededContext: seededContext);
     }
 
     [Fact]
@@ -66,12 +79,13 @@ public sealed partial class PageControllerTests
     {
         // Given
         SeededPageContext seededContext = await SeedDatabase("page_create", "page_update", "page_delete");
-        Page createdPage = await CreatePageAsync(CreateValidPagePayload(seededContext, Unique("Page")));
-        string updatedName = Unique("UpdatedPage");
-        string missingLayout = Unique("MissingLayout");
+        Page createdPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "Page")));
+        string updatedName = Unique(prefix: "UpdatedPage");
+        string missingLayout = Unique(prefix: "MissingLayout");
 
         // When
-        using HttpResponseMessage response = await Client.PutAsJsonAsync($"{BaseUrl}({createdPage.Id})", new
+
+        using HttpResponseMessage response = await Client.PutAsJsonAsync(requestUri: $"{BaseUrl}({createdPage.Id})", value: new
         {
             id = createdPage.Id,
             appId = seededContext.AppId,
@@ -100,18 +114,17 @@ public sealed partial class PageControllerTests
                 },
             },
         });
+
         string content = await response.Content.ReadAsStringAsync();
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError, content);
-        content.Should().Contain($"Layout '{missingLayout}' does not exist for app {seededContext.AppId}.");
 
-        await Teardown(seededContext);
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.InternalServerError, because: content);
+
+        content.Should()
+            .Contain(expected: $"Layout '{missingLayout}' does not exist for app {seededContext.AppId}.");
+
+        await Teardown(seededContext: seededContext);
     }
 }
-
-
-
-
-
-

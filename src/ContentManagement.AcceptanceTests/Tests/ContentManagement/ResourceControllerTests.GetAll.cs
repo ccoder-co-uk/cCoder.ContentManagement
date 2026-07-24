@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -11,38 +15,41 @@ public sealed partial class ResourceControllerTests
     public async Task GetAll_ReturnsCreatedResource()
     {
         // Given
-        string resourceName = Unique("resource").ToLowerInvariant();
-        string resourceKey = Unique("Key");
+        string resourceName = Unique(prefix: "resource")
+            .ToLowerInvariant();
+
+        string resourceKey = Unique(prefix: "Key");
+
         Resource createdResource = await CreateResourceAsync(
-            new
-            {
-                appId = 1,
-                name = resourceName,
-                description = "Acceptance resource",
-                key = resourceKey,
-                culture = "",
-                displayName = "Acceptance Resource",
-                shortDisplayName = "Acceptance Resource",
-            });
+payload: new
+{
+    appId = 1,
+    name = resourceName,
+    description = "Acceptance resource",
+    key = resourceKey,
+    culture = "",
+    displayName = "Acceptance Resource",
+    shortDisplayName = "Acceptance Resource",
+});
 
         // When
-        IReadOnlyList<Resource> actualResources = await GetAllResourcesAsync(resourceKey);
+        IReadOnlyList<Resource> actualResources = await GetAllResourcesAsync(resourceKey: resourceKey);
 
         // Then
-        actualResources.Any(item => item.Id == createdResource.Id).Should().BeTrue();
 
-        await PatchResourceAsync(createdResource.Id, new { description = "Patched resource" });
-        Resource actualResource = await GetResourceAsync(createdResource.Id);
+        actualResources.Any(predicate: item => item.Id == createdResource.Id)
+            .Should()
+            .BeTrue();
 
-        actualResource.Should().NotBeNull();
-        actualResource!.Description.Should().Be("Patched resource");
+        await PatchResourceAsync(id: createdResource.Id, payload: new { description = "Patched resource" });
+        Resource actualResource = await GetResourceAsync(id: createdResource.Id);
 
-        await DeleteResourceAsync(createdResource.Id);
+        actualResource.Should()
+            .NotBeNull();
+
+        actualResource!.Description.Should()
+            .Be(expected: "Patched resource");
+
+        await DeleteResourceAsync(id: createdResource.Id);
     }
 }
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
 
@@ -11,18 +15,17 @@ public sealed partial class PageControllerTests
     {
         // Given
         SeededPageContext seededContext = await SeedDatabase("page_create", "page_delete");
-        string title = Unique("MenuPage");
-        int id = (await CreatePageAsync(CreateValidPagePayload(seededContext, title))).Id;
+        string title = Unique(prefix: "MenuPage");
+        int id = (await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: title))).Id;
 
         // When
-        MenuResponse actualMenu = await GetMenuAsync(id);
+        MenuResponse actualMenu = await GetMenuAsync(id: id);
 
         // Then
-        actualMenu.Success.Should().BeTrue();
 
-        await Teardown(seededContext);
+        actualMenu.Success.Should()
+            .BeTrue();
+
+        await Teardown(seededContext: seededContext);
     }
 }
-
-
-

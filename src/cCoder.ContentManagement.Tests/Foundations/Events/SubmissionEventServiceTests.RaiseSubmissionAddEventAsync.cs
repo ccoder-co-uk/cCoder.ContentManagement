@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,40 +32,33 @@ public partial class SubmissionEventServiceTests
         EventMessage<CmsDataModels.Submission> actualMessage = null;
 
         submissionEventBrokerMock
-            .Setup(x => x.RaiseSubmissionAddEventAsync(It.IsAny<EventMessage<CmsDataModels.Submission>>()))
-            .Callback<EventMessage<CmsDataModels.Submission>>(message => actualMessage = message)
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseSubmissionAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Submission>>()))
+            .Callback<EventMessage<CmsDataModels.Submission>>(action: message => actualMessage = message)
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseSubmissionAddEventAsync(entity);
+        await service.RaiseSubmissionAddEventAsync(entity: entity);
 
         // Then
-        actualMessage.Should().NotBeNull();
-        actualMessage!.Data.Should().BeEquivalentTo(entity);
-        actualMessage.AuthInfo.Should().NotBeNull();
-        actualMessage.AuthInfo.SSOUserId.Should().Be(CurrentUserId);
+
+        actualMessage.Should()
+            .NotBeNull();
+
+        actualMessage!.Data.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        actualMessage.AuthInfo.Should()
+            .NotBeNull();
+
+        actualMessage.AuthInfo.SSOUserId.Should()
+            .Be(expected: CurrentUserId);
+
         submissionEventBrokerMock.Verify(
-            x => x.RaiseSubmissionAddEventAsync(It.IsAny<EventMessage<CmsDataModels.Submission>>()),
-            Times.Once
+expression: x => x.RaiseSubmissionAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Submission>>()),
+times: Times.Once
         );
+
         submissionEventBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

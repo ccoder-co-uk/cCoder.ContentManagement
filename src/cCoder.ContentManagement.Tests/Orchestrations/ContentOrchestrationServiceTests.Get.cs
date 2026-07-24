@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,37 +28,21 @@ public partial class ContentOrchestrationServiceTests
         // Given
         int id = 1;
         Content entity = CreateRandomContent();
-        contentProcessingServiceMock.Setup(x => x.GetContent(id)).Returns(entity);
+
+        contentProcessingServiceMock.Setup(expression: x => x.GetContent(contentId: id))
+            .Returns(value: entity);
 
         // When
-        Content result = orchestrationService.GetContent(id);
+        Content result = orchestrationService.GetContent(contentId: id);
 
         // Then
-        result.Should().BeEquivalentTo(entity);
-        contentProcessingServiceMock.Verify(x => x.GetContent(id), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: entity);
+
+        contentProcessingServiceMock.Verify(expression: x => x.GetContent(contentId: id), times: Times.Once);
         contentProcessingServiceMock.VerifyNoOtherCalls();
         contentEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

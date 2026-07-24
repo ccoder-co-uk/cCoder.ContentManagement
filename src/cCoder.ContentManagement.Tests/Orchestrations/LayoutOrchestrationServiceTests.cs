@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,35 +29,16 @@ public partial class LayoutOrchestrationServiceTests
 
     public LayoutOrchestrationServiceTests()
     {
-        layoutProcessingServiceMock = new Mock<ILayoutProcessingService>(MockBehavior.Strict);
-        layoutEventProcessingServiceMock = new Mock<ILayoutEventProcessingService>(MockBehavior.Strict);
+        layoutProcessingServiceMock = new Mock<ILayoutProcessingService>(behavior: MockBehavior.Strict);
+        layoutEventProcessingServiceMock = new Mock<ILayoutEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new LayoutOrchestrationService(
-            layoutProcessingServiceMock.Object,
-            layoutEventProcessingServiceMock.Object
+processingService: layoutProcessingServiceMock.Object,
+eventService: layoutEventProcessingServiceMock.Object
         );
     }
 
-    private static Layout CreateRandomLayout() => Builder<Layout>.CreateNew().Build();
+    private static Layout CreateRandomLayout() =>
+        Builder<Layout>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

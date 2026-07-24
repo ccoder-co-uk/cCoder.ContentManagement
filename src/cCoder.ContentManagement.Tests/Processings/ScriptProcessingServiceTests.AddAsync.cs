@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,14 +30,16 @@ public partial class ScriptProcessingServiceTests
     {
         // Given
         Script script = CreateRandomScript();
-        scriptServiceMock.Setup(x => x.AddScriptAsync(script)).ReturnsAsync(script);
+
+        scriptServiceMock.Setup(expression: x => x.AddScriptAsync(newScript: script))
+            .ReturnsAsync(value: script);
 
         // When
-        Script result = await scriptProcessingService.AddScriptAsync(script);
+        Script result = await scriptProcessingService.AddScriptAsync(newScript: script);
 
         // Then
-        Assert.Same(script, result);
-        scriptServiceMock.Verify(x => x.AddScriptAsync(script), Times.Once);
+        Assert.Same(expected: script, actual: result);
+        scriptServiceMock.Verify(expression: x => x.AddScriptAsync(newScript: script), times: Times.Once);
     }
 
     [Fact]
@@ -43,29 +49,16 @@ public partial class ScriptProcessingServiceTests
         Script script = CreateRandomScript();
 
         scriptServiceMock
-            .Setup(x => x.AddScriptAsync(script))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.AddScriptAsync(newScript: script))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await scriptProcessingService.AddScriptAsync(script)
+
+        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+            await scriptProcessingService.AddScriptAsync(newScript: script)
         );
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

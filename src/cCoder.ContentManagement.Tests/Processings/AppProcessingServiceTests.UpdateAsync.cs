@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,20 +31,23 @@ public partial class AppProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
-        User admin = TestUsers.WithPrivilege("app_admin", 1);
+        User admin = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
         App dbApp = CreateRandomApp();
         dbApp.Id = 1;
         dbApp.Cultures = null!;
@@ -49,16 +56,23 @@ public partial class AppProcessingServiceTests
         app.Cultures = null!;
 
         currentUser = admin;
-        appServiceMock.Setup(x => x.GetApp(dbApp.Id, true)).Returns(dbApp);
-        appServiceMock.Setup(x => x.UpdateAppAsync(dbApp)).ReturnsAsync(dbApp);
+
+        appServiceMock.Setup(expression: x => x.GetApp(appId: dbApp.Id, ignoreFilters: true))
+            .Returns(value: dbApp);
+
+        appServiceMock.Setup(expression: x => x.UpdateAppAsync(updatedApp: dbApp))
+            .ReturnsAsync(value: dbApp);
 
         // When
-        App result = await appProcessingService.UpdateAppAsync(app);
+        App result = await appProcessingService.UpdateAppAsync(app: app);
 
         // Then
-        result.Should().BeSameAs(dbApp);
-        appServiceMock.Verify(x => x.GetApp(dbApp.Id, true), Times.Once);
-        appServiceMock.Verify(x => x.UpdateAppAsync(dbApp), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: dbApp);
+
+        appServiceMock.Verify(expression: x => x.GetApp(appId: dbApp.Id, ignoreFilters: true), times: Times.Once);
+        appServiceMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: dbApp), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 
@@ -67,53 +81,47 @@ public partial class AppProcessingServiceTests
     {
         // Given
         authorizationBrokerMock
-            .Setup(x => x.Authorize(It.IsAny<int?>(), It.IsAny<string>()))
-            .Callback((int? appId, string privilege) =>
+            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
+            .Callback(action: (int? appId, string privilege) =>
             {
-                if (!(currentUser?.Can(appId, privilege) ?? false))
-                    throw new SecurityException("Access Denied!");
+                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
+                {
+                    throw new SecurityException(message: "Access Denied!");
+                }
             });
 
         authorizationBrokerMock
-            .Setup(x => x.IsAdminOfApp(It.IsAny<int>()))
-            .Returns((int appId) => currentUser?.IsAdminOfApp(appId) ?? false);
+            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser()).Returns(() => currentUser);
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithoutPrivileges();
         App app = CreateRandomApp();
         app.Id = 1;
 
         currentUser = actor;
-        appServiceMock.Setup(x => x.GetApp(app.Id, true)).Returns(app);
+
+        appServiceMock.Setup(expression: x => x.GetApp(appId: app.Id, ignoreFilters: true))
+            .Returns(value: app);
+
         appServiceMock
-            .Setup(x => x.UpdateAppAsync(It.IsAny<App>()))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<App>()))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> act = async () => await appProcessingService.UpdateAppAsync(app);
+        Func<Task> act = async () => await appProcessingService.UpdateAppAsync(app: app);
 
         // Then
-        await act.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
-        appServiceMock.Verify(x => x.GetApp(app.Id, true), Times.Once);
-        appServiceMock.Verify(x => x.UpdateAppAsync(It.IsAny<App>()), Times.Once);
+
+        await act.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
+        appServiceMock.Verify(expression: x => x.GetApp(appId: app.Id, ignoreFilters: true), times: Times.Once);
+        appServiceMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<App>()), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

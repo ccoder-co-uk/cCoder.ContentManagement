@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,37 +27,20 @@ public partial class AppOrchestrationServiceTests
     {
         const int appId = 1;
         IQueryable<User> users = new[] { new User { Id = "user-id" } }.AsQueryable();
-        appProcessingServiceMock.Setup(x => x.GetAppUsers(appId)).Returns(users);
 
-        var result = orchestrationService.GetAppUsers(appId).ToArray();
+        appProcessingServiceMock.Setup(expression: x => x.GetAppUsers(appId: appId))
+            .Returns(value: users);
 
-        result.Select(item => item.Id).Should().Equal(users.Select(item => item.Id));
-        appProcessingServiceMock.Verify(x => x.GetAppUsers(appId), Times.Once);
+        var result = orchestrationService.GetAppUsers(appId: appId)
+            .ToArray();
+
+        result.Select(selector: item => item.Id)
+            .Should()
+            .Equal(expected: users.Select(selector: item => item.Id));
+
+        appProcessingServiceMock.Verify(expression: x => x.GetAppUsers(appId: appId), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

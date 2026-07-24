@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,32 +26,17 @@ public partial class AppCultureEventProcessingServiceTests
     {
         // Given
         AppCulture entity = CreateRandomAppCulture();
+
         appCultureEventServiceMock
-            .Setup(x => x.RaiseAppCultureAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseAppCultureAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseAppCultureAddEventAsync(entity);
+        await service.RaiseAppCultureAddEventAsync(entity: entity);
 
         // Then
-        appCultureEventServiceMock.Verify(x => x.RaiseAppCultureAddEventAsync(entity), Times.Once);
+        appCultureEventServiceMock.Verify(expression: x => x.RaiseAppCultureAddEventAsync(entity: entity), times: Times.Once);
         appCultureEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

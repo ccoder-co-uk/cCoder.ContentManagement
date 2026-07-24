@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,11 +33,12 @@ public partial class SubmissionServiceTests
 
     public SubmissionServiceTests()
     {
-        submissionBrokerMock = new Mock<ISubmissionBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        submissionBrokerMock = new Mock<ISubmissionBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         submissionService = new SubmissionService(
-            submissionBrokerMock.Object,
-            authorizationBrokerMock.Object
+submissionBroker: submissionBrokerMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -41,37 +46,17 @@ public partial class SubmissionServiceTests
     {
         Submission submission = Builder<Submission>
             .CreateNew()
-            .With(x => x.Id = id)
-            .With(x => x.AppId = 7)
-            .With(x => x.CreatedBy = "tester")
-            .With(x => x.LastUpdatedBy = "tester")
-            .With(x => x.CreatedOn = DateTimeOffset.UtcNow)
-            .With(x => x.LastUpdatedOn = DateTimeOffset.UtcNow)
-            .With(x => x.SourceComponent = $"component-{Guid.NewGuid():N}")
-            .With(x => x.State = "New")
-            .With(x => x.DataJson = "{}")
+            .With(func: x => x.Id = id)
+            .With(func: x => x.AppId = 7)
+            .With(func: x => x.CreatedBy = "tester")
+            .With(func: x => x.LastUpdatedBy = "tester")
+            .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow)
+            .With(func: x => x.LastUpdatedOn = DateTimeOffset.UtcNow)
+            .With(func: x => x.SourceComponent = $"component-{Guid.NewGuid():N}")
+            .With(func: x => x.State = "New")
+            .With(func: x => x.DataJson = "{}")
             .Build();
 
         return submission;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

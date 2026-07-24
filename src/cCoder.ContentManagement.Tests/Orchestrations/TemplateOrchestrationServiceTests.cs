@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,38 +29,16 @@ public partial class TemplateOrchestrationServiceTests
 
     public TemplateOrchestrationServiceTests()
     {
-        templateProcessingServiceMock = new Mock<ITemplateProcessingService>(MockBehavior.Strict);
-        templateEventProcessingServiceMock = new Mock<ITemplateEventProcessingService>(MockBehavior.Strict);
+        templateProcessingServiceMock = new Mock<ITemplateProcessingService>(behavior: MockBehavior.Strict);
+        templateEventProcessingServiceMock = new Mock<ITemplateEventProcessingService>(behavior: MockBehavior.Strict);
+
         orchestrationService = new TemplateOrchestrationService(
-            templateProcessingServiceMock.Object,
-            templateEventProcessingServiceMock.Object
+processingService: templateProcessingServiceMock.Object,
+eventService: templateEventProcessingServiceMock.Object
         );
     }
 
-    private static Template CreateRandomTemplate() => Builder<Template>.CreateNew().Build();
+    private static Template CreateRandomTemplate() =>
+        Builder<Template>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

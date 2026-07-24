@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,8 +32,8 @@ public partial class PageProcessingServiceTests
     public PageProcessingServiceTests()
     {
         pageProcessingService = new PageProcessingService(
-            pageServiceMock.Object,
-            authorizationBrokerMock.Object
+service: pageServiceMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -37,28 +41,28 @@ public partial class PageProcessingServiceTests
     {
         Page page = Builder<Page>
             .CreateNew()
-            .With(x => x.Id = Random.Shared.Next(1, 10000))
-            .With(x => x.AppId = 1)
-            .With(x => x.Name = $"Page-{Guid.NewGuid():N}")
-            .With(x => x.Path = string.Empty)
-            .With(x => x.ParentId = null)
-            .With(x => x.App = null)
-            .With(x => x.Parent = null)
-            .With(x => x.Pages = [])
-            .With(x => x.Contents = [])
-            .With(x => x.Roles = [])
+            .With(func: x => x.Id = Random.Shared.Next(minValue: 1, maxValue: 10000))
+            .With(func: x => x.AppId = 1)
+            .With(func: x => x.Name = $"Page-{Guid.NewGuid():N}")
+            .With(func: x => x.Path = string.Empty)
+            .With(func: x => x.ParentId = null)
+            .With(func: x => x.App = null)
+            .With(func: x => x.Parent = null)
+            .With(func: x => x.Pages = [])
+            .With(func: x => x.Contents = [])
+            .With(func: x => x.Roles = [])
             .Build();
 
         page.PageInfo =
         [
             Builder<PageInfo>
                 .CreateNew()
-                .With(x => x.Id = Random.Shared.Next(1, 10000))
-                .With(x => x.PageId = page.Id)
-                .With(x => x.CultureId = string.Empty)
-                .With(x => x.Title = $"Title-{Guid.NewGuid():N}")
-                                .With(x => x.Culture = null)
-                .Build(),
+            .With(func: x => x.Id = Random.Shared.Next(minValue: 1, maxValue: 10000))
+            .With(func: x => x.PageId = page.Id)
+            .With(func: x => x.CultureId = string.Empty)
+            .With(func: x => x.Title = $"Title-{Guid.NewGuid():N}")
+            .With(func: x => x.Culture = null)
+            .Build(),
         ];
 
         page.Roles =
@@ -68,8 +72,10 @@ public partial class PageProcessingServiceTests
                 [
                     new PageRole
                     {
-                        RoleId = user.Roles.First().RoleId,
-                        Role = user.Roles.First().Role,
+                        RoleId = user.Roles.First()
+            .RoleId,
+                        Role = user.Roles.First()
+            .Role,
                         Page = null!,
                     },
                 ];
@@ -77,27 +83,3 @@ public partial class PageProcessingServiceTests
         return page;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

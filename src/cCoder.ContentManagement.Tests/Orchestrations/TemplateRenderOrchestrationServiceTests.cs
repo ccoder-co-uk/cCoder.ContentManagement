@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,20 +28,13 @@ public partial class TemplateRenderOrchestrationServiceTests
 
     public TemplateRenderOrchestrationServiceTests()
     {
-        templateRenderProcessingServiceMock = new Mock<ITemplateRenderProcessingService>(MockBehavior.Strict);
-        loggerMock = new Mock<ILogger<TemplateRenderOrchestrationService>>(MockBehavior.Loose);
+        templateRenderProcessingServiceMock = new Mock<ITemplateRenderProcessingService>(behavior: MockBehavior.Strict);
+        loggerMock = new Mock<ILogger<TemplateRenderOrchestrationService>>(behavior: MockBehavior.Loose);
 
         renderOrchestrationService = new TemplateRenderOrchestrationService(
-            templateRenderProcessingServiceMock.Object,
-            new Config(),
-            loggerMock.Object
+templateRenderProcessingService: templateRenderProcessingServiceMock.Object,
+config: new Config(),
+log: loggerMock.Object
         );
     }
 }
-
-
-
-
-
-
-

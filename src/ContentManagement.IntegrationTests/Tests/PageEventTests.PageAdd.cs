@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
 
@@ -12,19 +16,21 @@ public sealed partial class PageEventTests
 
         try
         {
-            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId);
+            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
 
-            await PostEventAsync("page_add", CreatePageWithPageInfo(page, "Landing"));
+            await PostEventAsync(eventName: "page_add", data: CreatePageWithPageInfo(page: page, title: "Landing"));
 
             await WaitForAsync(
-                () => HasPageInfo(page.Id, "Landing"),
-                "page_add should create the page info child row");
+condition: () => HasPageInfo(pageId: page.Id, title: "Landing"),
+because: "page_add should create the page info child row");
 
-            HasPageInfo(page.Id, "Landing").Should().BeTrue();
+            HasPageInfo(pageId: page.Id, title: "Landing")
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -35,19 +41,21 @@ public sealed partial class PageEventTests
 
         try
         {
-            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId);
+            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
 
-            await PostEventAsync("page_add", CreatePageWithContent(page, "<p>Landing body</p>"));
+            await PostEventAsync(eventName: "page_add", data: CreatePageWithContent(page: page, html: "<p>Landing body</p>"));
 
             await WaitForAsync(
-                () => HasContent(page.Id, "<p>Landing body</p>"),
-                "page_add should create the content child row");
+condition: () => HasContent(pageId: page.Id, html: "<p>Landing body</p>"),
+because: "page_add should create the content child row");
 
-            HasContent(page.Id, "<p>Landing body</p>").Should().BeTrue();
+            HasContent(pageId: page.Id, html: "<p>Landing body</p>")
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -58,20 +66,22 @@ public sealed partial class PageEventTests
 
         try
         {
-            Guid roleId = await SeedRoleAsync(appId);
-            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId);
+            Guid roleId = await SeedRoleAsync(appId: appId);
+            cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
 
-            await PostEventAsync("page_add", CreatePageWithPageRole(page, roleId));
+            await PostEventAsync(eventName: "page_add", data: CreatePageWithPageRole(page: page, roleId: roleId));
 
             await WaitForAsync(
-                () => HasPageRole(page.Id, roleId),
-                "page_add should create the page role child row");
+condition: () => HasPageRole(pageId: page.Id, roleId: roleId),
+because: "page_add should create the page role child row");
 
-            HasPageRole(page.Id, roleId).Should().BeTrue();
+            HasPageRole(pageId: page.Id, roleId: roleId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 }

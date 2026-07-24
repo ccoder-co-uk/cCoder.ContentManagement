@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,34 +26,17 @@ public partial class PageRoleEventProcessingServiceTests
     {
         // Given
         PageRole entity = CreateRandomPageRole();
+
         pageRoleEventServiceMock
-            .Setup(x => x.RaisePageRoleAddEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaisePageRoleAddEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageRoleAddEventAsync(entity);
+        await service.RaisePageRoleAddEventAsync(entity: entity);
 
         // Then
-        pageRoleEventServiceMock.Verify(x => x.RaisePageRoleAddEventAsync(entity), Times.Once);
+        pageRoleEventServiceMock.Verify(expression: x => x.RaisePageRoleAddEventAsync(entity: entity), times: Times.Once);
         pageRoleEventServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

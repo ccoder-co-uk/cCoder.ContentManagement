@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using FluentAssertions;
 using Xunit;
 
@@ -12,20 +16,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedCultureAsync("en-GB", "English (UK)");
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedCultureAsync(cultureId: "en-GB", name: "English (UK)");
 
-            await PostEventAsync("app_add", CreateAppWithAppCulture(appId));
+            await PostEventAsync(eventName: "app_add", data: CreateAppWithAppCulture(appId: appId));
 
             await WaitForAsync(
-                () => HasAppCulture(appId),
-                "app_add should create the app culture child row");
+condition: () => HasAppCulture(appId: appId),
+because: "app_add should create the app culture child row");
 
-            HasAppCulture(appId).Should().BeTrue();
+            HasAppCulture(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -36,20 +42,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedCultureAsync("en-GB", "English (UK)");
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedCultureAsync(cultureId: "en-GB", name: "English (UK)");
 
-            await PostEventAsync("app_add", CreateAppWithComponent(appId));
+            await PostEventAsync(eventName: "app_add", data: CreateAppWithComponent(appId: appId));
 
             await WaitForAsync(
-                () => HasComponent(appId),
-                "app_add should create the component child row");
+condition: () => HasComponent(appId: appId),
+because: "app_add should create the component child row");
 
-            HasComponent(appId).Should().BeTrue();
+            HasComponent(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -60,20 +68,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedCultureAsync("en-GB", "English (UK)");
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedCultureAsync(cultureId: "en-GB", name: "English (UK)");
 
-            await PostEventAsync("app_add", CreateAppWithLayout(appId));
+            await PostEventAsync(eventName: "app_add", data: CreateAppWithLayout(appId: appId));
 
             await WaitForAsync(
-                () => HasLayout(appId),
-                "app_add should create the layout child row");
+condition: () => HasLayout(appId: appId),
+because: "app_add should create the layout child row");
 
-            HasLayout(appId).Should().BeTrue();
+            HasLayout(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -84,20 +94,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedCultureAsync("en-GB", "English (UK)");
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedCultureAsync(cultureId: "en-GB", name: "English (UK)");
 
-            await PostEventAsync("app_add", CreateAppWithPage(appId));
+            await PostEventAsync(eventName: "app_add", data: CreateAppWithPage(appId: appId));
 
             await WaitForAsync(
-                () => HasPage(appId),
-                "app_add should create the page child row");
+condition: () => HasPage(appId: appId),
+because: "app_add should create the page child row");
 
-            HasPage(appId).Should().BeTrue();
+            HasPage(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -108,20 +120,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedCultureAsync("en-GB", "English (UK)");
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedCultureAsync(cultureId: "en-GB", name: "English (UK)");
 
-            await PostEventAsync("app_add", CreateAppWithResource(appId));
+            await PostEventAsync(eventName: "app_add", data: CreateAppWithResource(appId: appId));
 
             await WaitForAsync(
-                () => HasResource(appId),
-                "app_add should create the resource child row");
+condition: () => HasResource(appId: appId),
+because: "app_add should create the resource child row");
 
-            HasResource(appId).Should().BeTrue();
+            HasResource(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -132,20 +146,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedCultureAsync("en-GB", "English (UK)");
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedCultureAsync(cultureId: "en-GB", name: "English (UK)");
 
-            await PostEventAsync("app_add", CreateAppWithScript(appId));
+            await PostEventAsync(eventName: "app_add", data: CreateAppWithScript(appId: appId));
 
             await WaitForAsync(
-                () => HasScript(appId),
-                "app_add should create the script child row");
+condition: () => HasScript(appId: appId),
+because: "app_add should create the script child row");
 
-            HasScript(appId).Should().BeTrue();
+            HasScript(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 
@@ -156,20 +172,22 @@ public sealed partial class AppEventTests
 
         try
         {
-            await SeedAppAdministratorAsync(appId);
-            await SeedCultureAsync("en-GB", "English (UK)");
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedCultureAsync(cultureId: "en-GB", name: "English (UK)");
 
-            await PostEventAsync("app_add", CreateAppWithTemplate(appId));
+            await PostEventAsync(eventName: "app_add", data: CreateAppWithTemplate(appId: appId));
 
             await WaitForAsync(
-                () => HasTemplate(appId),
-                "app_add should create the template child row");
+condition: () => HasTemplate(appId: appId),
+because: "app_add should create the template child row");
 
-            HasTemplate(appId).Should().BeTrue();
+            HasTemplate(appId: appId)
+                .Should()
+                .BeTrue();
         }
         finally
         {
-            await TeardownAppAsync(appId);
+            await TeardownAppAsync(appId: appId);
         }
     }
 }

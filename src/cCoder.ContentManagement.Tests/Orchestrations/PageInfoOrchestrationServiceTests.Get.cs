@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,38 +28,21 @@ public partial class PageInfoOrchestrationServiceTests
         // Given
         int id = 1;
         PageInfo entity = CreateRandomPageInfo();
-        pageInfoProcessingServiceMock.Setup(x => x.GetPageInfo(id)).Returns(entity);
+
+        pageInfoProcessingServiceMock.Setup(expression: x => x.GetPageInfo(pageInfoId: id))
+            .Returns(value: entity);
 
         // When
-        PageInfo result = orchestrationService.GetPageInfo(id);
+        PageInfo result = orchestrationService.GetPageInfo(pageInfoId: id);
 
         // Then
-        result.Should().BeSameAs(entity);
-        pageInfoProcessingServiceMock.Verify(x => x.GetPageInfo(id), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        pageInfoProcessingServiceMock.Verify(expression: x => x.GetPageInfo(pageInfoId: id), times: Times.Once);
         pageInfoProcessingServiceMock.VerifyNoOtherCalls();
         pageInfoEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

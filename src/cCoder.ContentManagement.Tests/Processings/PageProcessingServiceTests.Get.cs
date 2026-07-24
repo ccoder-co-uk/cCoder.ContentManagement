@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -21,22 +25,16 @@ public partial class PageProcessingServiceTests
     public void ShouldDelegateToFoundationServiceWhenGet()
     {
         Page page = CreateRandomPage();
-        pageServiceMock.Setup(x => x.GetPage(page.Id)).Returns(page);
 
-        Page result = pageProcessingService.GetPage(page.Id);
+        pageServiceMock.Setup(expression: x => x.GetPage(pageId: page.Id))
+            .Returns(value: page);
 
-        result.Should().BeSameAs(page);
-        pageServiceMock.Verify(x => x.GetPage(page.Id), Times.Once);
+        Page result = pageProcessingService.GetPage(pageId: page.Id);
+
+        result.Should()
+            .BeSameAs(expected: page);
+
+        pageServiceMock.Verify(expression: x => x.GetPage(pageId: page.Id), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }
-
-
-
-
-
-
-
-
-
-

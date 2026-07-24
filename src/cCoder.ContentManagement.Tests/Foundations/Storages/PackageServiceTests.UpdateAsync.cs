@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -28,42 +32,59 @@ public partial class PackageServiceTests
 
         cCoder.Data.Models.Packaging.Package submitted = null;
 
-        authorizationBrokerMock.Setup(x => x.Authorize(null, "Package_update"));
+        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_update"));
 
         packageBrokerMock
-            .Setup(x => x.UpdatePackageAsync(It.IsAny<cCoder.Data.Models.Packaging.Package>()))
-            .Callback<cCoder.Data.Models.Packaging.Package>(candidate => submitted = candidate)
-            .ReturnsAsync((cCoder.Data.Models.Packaging.Package value) => value);
+            .Setup(expression: x => x.UpdatePackageAsync(updatedPackage: It.IsAny<cCoder.Data.Models.Packaging.Package>()))
+            .Callback<cCoder.Data.Models.Packaging.Package>(action: candidate => submitted = candidate)
+            .ReturnsAsync(valueFunction: (cCoder.Data.Models.Packaging.Package value) => value);
 
         // When
-        Package result = await packageService.UpdatePackageAsync(package);
+        Package result = await packageService.UpdatePackageAsync(updatedPackage: package);
 
         // Then
-        result.Should().BeSameAs(package);
-        submitted.Should().NotBeNull();
-        submitted.Should().NotBeSameAs(package);
-        result.Should().NotBeSameAs(submitted);
-        submitted.Should().BeEquivalentTo(new
-        {
-            package.Id,
-            package.Name,
-            package.Description,
-            package.Category,
-            package.SourceApi
-        });
-        submitted.Items.Should().BeNull();
-        result.Should().BeEquivalentTo(new
-        {
-            package.Id,
-            package.Name,
-            package.Description,
-            package.Category,
-            package.SourceApi
-        });
-        result.Items.Should().BeEquivalentTo(package.Items);
-        packageBrokerMock.Verify(x => x.UpdatePackageAsync(It.IsAny<cCoder.Data.Models.Packaging.Package>()), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: package);
+
+        submitted.Should()
+            .NotBeNull();
+
+        submitted.Should()
+            .NotBeSameAs(unexpected: package);
+
+        result.Should()
+            .NotBeSameAs(unexpected: submitted);
+
+        submitted.Should()
+            .BeEquivalentTo(expectation: new
+            {
+                package.Id,
+                package.Name,
+                package.Description,
+                package.Category,
+                package.SourceApi
+            });
+
+        submitted.Items.Should()
+            .BeNull();
+
+        result.Should()
+            .BeEquivalentTo(expectation: new
+            {
+                package.Id,
+                package.Name,
+                package.Description,
+                package.Category,
+                package.SourceApi
+            });
+
+        result.Items.Should()
+            .BeEquivalentTo(expectation: package.Items);
+
+        packageBrokerMock.Verify(expression: x => x.UpdatePackageAsync(updatedPackage: It.IsAny<cCoder.Data.Models.Packaging.Package>()), times: Times.Once);
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize(null, "Package_update"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_update"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -74,33 +95,21 @@ public partial class PackageServiceTests
         Package package = CreateRandomPackage();
 
         authorizationBrokerMock
-            .Setup(x => x.Authorize(null, "Package_update"))
-            .Throws(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.Authorize(appId: null, privilege: "Package_update"))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await packageService.UpdatePackageAsync(package);
+        Func<Task> action = async () => await packageService.UpdatePackageAsync(updatedPackage: package);
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>().WithMessage("Access Denied!");
+
+        await action.Should()
+            .ThrowAsync<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(x => x.Authorize(null, "Package_update"), Times.Once);
+        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_update"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

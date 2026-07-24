@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,14 +28,16 @@ public partial class PackageItemProcessingServiceTests
     {
         // Given
         PackageItem packageItem = CreateRandomPackageItem();
-        packageItemServiceMock.Setup(x => x.AddPackageItemAsync(packageItem)).ReturnsAsync(packageItem);
+
+        packageItemServiceMock.Setup(expression: x => x.AddPackageItemAsync(newPackageItem: packageItem))
+            .ReturnsAsync(value: packageItem);
 
         // When
-        PackageItem result = await packageItemProcessingService.AddPackageItemAsync(packageItem);
+        PackageItem result = await packageItemProcessingService.AddPackageItemAsync(newPackageItem: packageItem);
 
         // Then
-        Assert.Same(packageItem, result);
-        packageItemServiceMock.Verify(x => x.AddPackageItemAsync(packageItem), Times.Once);
+        Assert.Same(expected: packageItem, actual: result);
+        packageItemServiceMock.Verify(expression: x => x.AddPackageItemAsync(newPackageItem: packageItem), times: Times.Once);
     }
 
     [Fact]
@@ -41,30 +47,16 @@ public partial class PackageItemProcessingServiceTests
         PackageItem packageItem = CreateRandomPackageItem();
 
         packageItemServiceMock
-            .Setup(x => x.AddPackageItemAsync(packageItem))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.AddPackageItemAsync(newPackageItem: packageItem))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await packageItemProcessingService.AddPackageItemAsync(packageItem)
+
+        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+            await packageItemProcessingService.AddPackageItemAsync(newPackageItem: packageItem)
         );
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

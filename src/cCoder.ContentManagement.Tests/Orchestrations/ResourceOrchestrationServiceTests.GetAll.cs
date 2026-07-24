@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,37 +27,24 @@ public partial class ResourceOrchestrationServiceTests
     {
         // Given
         IQueryable<Resource> entities = new[] { CreateRandomResource() }.AsQueryable();
-        resourceProcessingServiceMock.Setup(x => x.GetAllResource(true)).Returns(entities);
+
+        resourceProcessingServiceMock.Setup(expression: x => x.GetAllResource(ignoreFilters: true))
+            .Returns(value: entities);
 
         // When
-        var result = orchestrationService.GetAllResource(true).ToArray();
+
+        var result = orchestrationService.GetAllResource(ignoreFilters: true)
+            .ToArray();
 
         // Then
-        result.Select(item => item.Id).Should().Equal(entities.Select(item => item.Id));
-        resourceProcessingServiceMock.Verify(x => x.GetAllResource(true), Times.Once);
+
+        result.Select(selector: item => item.Id)
+            .Should()
+            .Equal(expected: entities.Select(selector: item => item.Id));
+
+        resourceProcessingServiceMock.Verify(expression: x => x.GetAllResource(ignoreFilters: true), times: Times.Once);
         resourceProcessingServiceMock.VerifyNoOtherCalls();
         resourceEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,34 +27,38 @@ public partial class PageRendererTests
     {
         // Given
         var app = CreateApp();
+
         PageRenderRequest request = new()
         {
             Host = app.Domain,
             Theme = "Custom",
             Culture = "fr-FR",
             RequestUrl = "https://demo.local/Summary",
-            Exception = new InvalidOperationException("Problem happened"),
+            Exception = new InvalidOperationException(message: "Problem happened"),
         };
 
         PageRenderResponse expectedResponse = new()
         {
             App = app,
-            Page = CreateRenderResult("Problem happened|trace|https://demo.local/Summary"),
+            Page = CreateRenderResult(bodyHtml: "Problem happened|trace|https://demo.local/Summary"),
             Theme = "Custom",
             Culture = "fr-FR",
             Edit = false
         };
 
         pageRenderCoordinationServiceMock
-            .Setup(x => x.RenderError(request))
-            .Returns(expectedResponse);
+            .Setup(expression: x => x.RenderError(request: request))
+            .Returns(value: expectedResponse);
 
         // When
-        PageRenderResponse response = pageRenderer.RenderError(request);
+        PageRenderResponse response = pageRenderer.RenderError(request: request);
 
         // Then
-        response.Should().BeSameAs(expectedResponse);
-        pageRenderCoordinationServiceMock.Verify(x => x.RenderError(request), Times.Once);
+
+        response.Should()
+            .BeSameAs(expected: expectedResponse);
+
+        pageRenderCoordinationServiceMock.Verify(expression: x => x.RenderError(request: request), times: Times.Once);
     }
 
     [Fact]
@@ -64,15 +72,11 @@ public partial class PageRendererTests
         };
 
         // When
-        Action act = () => pageRenderer.RenderError(request);
+        Action act = () => pageRenderer.RenderError(request: request);
 
         // Then
-        act.Should().Throw<MockException>();
+
+        act.Should()
+            .Throw<MockException>();
     }
 }
-
-
-
-
-
-

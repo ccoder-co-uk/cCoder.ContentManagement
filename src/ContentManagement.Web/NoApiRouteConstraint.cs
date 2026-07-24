@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 namespace ContentManagement.Web;
 
 public sealed class NoApiRouteConstraint : IRouteConstraint
@@ -9,5 +13,6 @@ public sealed class NoApiRouteConstraint : IRouteConstraint
         RouteValueDictionary values,
         RouteDirection routeDirection) =>
         httpContext.Request.Path.HasValue
-        && !httpContext.Request.Path.Value.ToLowerInvariant().Contains("/api/");
+        && !httpContext.Request.Path.Value.ToLowerInvariant()
+        .Contains(value: "/api/");
 }

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,37 +26,23 @@ public partial class TemplateOrchestrationServiceTests
     {
         // Given
         Template[] entities = [CreateRandomTemplate()];
-        templateProcessingServiceMock.Setup(x => x.GetTemplate(entities[0].Id)).Returns(entities[0]);
-        templateEventProcessingServiceMock.Setup(x => x.RaiseTemplateDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
-        templateProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
+
+        templateProcessingServiceMock.Setup(expression: x => x.GetTemplate(templateId: entities[0].Id))
+            .Returns(value: entities[0]);
+
+        templateEventProcessingServiceMock.Setup(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entities[0]))
+            .Returns(value: ValueTask.CompletedTask);
+
+        templateProcessingServiceMock.Setup(expression: x => x.DeleteAsync(templateId: entities[0].Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllTemplateAsync(entities);
+        await orchestrationService.DeleteAllTemplateAsync(deletedTemplate: entities);
 
         // Then
-        templateProcessingServiceMock.Verify(x => x.GetTemplate(entities[0].Id), Times.Once);
-        templateEventProcessingServiceMock.Verify(x => x.RaiseTemplateDeleteEventAsync(entities[0]), Times.Once);
-        templateProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
+        templateProcessingServiceMock.Verify(expression: x => x.GetTemplate(templateId: entities[0].Id), times: Times.Once);
+        templateEventProcessingServiceMock.Verify(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        templateProcessingServiceMock.Verify(expression: x => x.DeleteAsync(templateId: entities[0].Id), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

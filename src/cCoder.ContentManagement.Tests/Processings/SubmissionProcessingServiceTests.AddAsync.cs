@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,14 +30,16 @@ public partial class SubmissionProcessingServiceTests
     {
         // Given
         Submission submission = CreateRandomSubmission();
-        submissionServiceMock.Setup(x => x.AddSubmissionAsync(submission)).ReturnsAsync(submission);
+
+        submissionServiceMock.Setup(expression: x => x.AddSubmissionAsync(newSubmission: submission))
+            .ReturnsAsync(value: submission);
 
         // When
-        Submission result = await submissionProcessingService.AddSubmissionAsync(submission);
+        Submission result = await submissionProcessingService.AddSubmissionAsync(newSubmission: submission);
 
         // Then
-        Assert.Same(submission, result);
-        submissionServiceMock.Verify(x => x.AddSubmissionAsync(submission), Times.Once);
+        Assert.Same(expected: submission, actual: result);
+        submissionServiceMock.Verify(expression: x => x.AddSubmissionAsync(newSubmission: submission), times: Times.Once);
     }
 
     [Fact]
@@ -43,29 +49,16 @@ public partial class SubmissionProcessingServiceTests
         Submission submission = CreateRandomSubmission();
 
         submissionServiceMock
-            .Setup(x => x.AddSubmissionAsync(submission))
-            .ThrowsAsync(new SecurityException("Access Denied!"));
+            .Setup(expression: x => x.AddSubmissionAsync(newSubmission: submission))
+            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        await Assert.ThrowsAsync<SecurityException>(async () =>
-            await submissionProcessingService.AddSubmissionAsync(submission)
+
+        await Assert.ThrowsAsync<SecurityException>(testCode: async () =>
+            await submissionProcessingService.AddSubmissionAsync(newSubmission: submission)
         );
 
         // Then
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

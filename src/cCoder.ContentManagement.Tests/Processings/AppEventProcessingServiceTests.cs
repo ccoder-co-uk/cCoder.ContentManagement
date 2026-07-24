@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,30 +28,11 @@ public partial class AppEventProcessingServiceTests
 
     public AppEventProcessingServiceTests()
     {
-        appEventServiceMock = new Mock<IAppEventService>(MockBehavior.Strict);
-        service = new AppEventProcessingService(appEventServiceMock.Object);
+        appEventServiceMock = new Mock<IAppEventService>(behavior: MockBehavior.Strict);
+        service = new AppEventProcessingService(eventService: appEventServiceMock.Object);
     }
 
     private static App CreateRandomApp() =>
-        Builder<App>.CreateNew().Build();
+        Builder<App>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,37 +26,23 @@ public partial class ComponentOrchestrationServiceTests
     {
         // Given
         Component[] entities = [CreateRandomComponent()];
-        componentProcessingServiceMock.Setup(x => x.GetComponent(entities[0].Id)).Returns(entities[0]);
-        componentEventProcessingServiceMock.Setup(x => x.RaiseComponentDeleteEventAsync(entities[0])).Returns(ValueTask.CompletedTask);
-        componentProcessingServiceMock.Setup(x => x.DeleteAsync(entities[0].Id)).Returns(ValueTask.CompletedTask);
+
+        componentProcessingServiceMock.Setup(expression: x => x.GetComponent(componentId: entities[0].Id))
+            .Returns(value: entities[0]);
+
+        componentEventProcessingServiceMock.Setup(expression: x => x.RaiseComponentDeleteEventAsync(entity: entities[0]))
+            .Returns(value: ValueTask.CompletedTask);
+
+        componentProcessingServiceMock.Setup(expression: x => x.DeleteAsync(componentId: entities[0].Id))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await orchestrationService.DeleteAllComponentAsync(entities);
+        await orchestrationService.DeleteAllComponentAsync(deletedComponent: entities);
 
         // Then
-        componentProcessingServiceMock.Verify(x => x.GetComponent(entities[0].Id), Times.Once);
-        componentEventProcessingServiceMock.Verify(x => x.RaiseComponentDeleteEventAsync(entities[0]), Times.Once);
-        componentProcessingServiceMock.Verify(x => x.DeleteAsync(entities[0].Id), Times.Once);
+        componentProcessingServiceMock.Verify(expression: x => x.GetComponent(componentId: entities[0].Id), times: Times.Once);
+        componentEventProcessingServiceMock.Verify(expression: x => x.RaiseComponentDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        componentProcessingServiceMock.Verify(expression: x => x.DeleteAsync(componentId: entities[0].Id), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

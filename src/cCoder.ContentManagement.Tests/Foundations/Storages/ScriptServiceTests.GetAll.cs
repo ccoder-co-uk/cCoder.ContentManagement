@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,37 +28,25 @@ public partial class ScriptServiceTests
     {
         // Given
         Script[] expectedItems = [CreateRandomScript()];
+
         IQueryable<CmsDataModels.Script> scripts = expectedItems
-            .Select(item => item)
+            .Select(selector: item => item)
             .AsQueryable();
 
-        scriptBrokerMock.Setup(x => x.GetAllScripts(false)).Returns(scripts);
+        scriptBrokerMock.Setup(expression: x => x.GetAllScripts(ignoreFilters: false))
+            .Returns(value: scripts);
 
         // When
         IQueryable<Script> result = scriptService.GetAllScript();
 
         // Then
-        result.Should().BeEquivalentTo(expectedItems);
-        scriptBrokerMock.Verify(x => x.GetAllScripts(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: expectedItems);
+
+        scriptBrokerMock.Verify(expression: x => x.GetAllScripts(ignoreFilters: false), times: Times.Once);
         scriptBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,46 +33,26 @@ public partial class ScriptServiceTests
 
     public ScriptServiceTests()
     {
-        scriptBrokerMock = new Mock<IScriptBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
-        scriptService = new ScriptService(scriptBrokerMock.Object, authorizationBrokerMock.Object);
+        scriptBrokerMock = new Mock<IScriptBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+        scriptService = new ScriptService(scriptBroker: scriptBrokerMock.Object, authorizationBroker: authorizationBrokerMock.Object);
     }
 
     private static Script CreateRandomScript(int id = 42, int appId = 7)
     {
         Script script = Builder<Script>
             .CreateNew()
-            .With(x => x.Id = id)
-            .With(x => x.AppId = appId)
-            .With(x => x.Key = $"key-{Guid.NewGuid():N}")
-            .With(x => x.Content = "console.log('script');")
-            .With(x => x.Name = $"Script-{Guid.NewGuid():N}")
-            .With(x => x.CreatedBy = "tester")
-            .With(x => x.LastUpdatedBy = "tester")
-            .With(x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(-5))
-            .With(x => x.LastUpdated = DateTimeOffset.UtcNow)
+            .With(func: x => x.Id = id)
+            .With(func: x => x.AppId = appId)
+            .With(func: x => x.Key = $"key-{Guid.NewGuid():N}")
+            .With(func: x => x.Content = "console.log('script');")
+            .With(func: x => x.Name = $"Script-{Guid.NewGuid():N}")
+            .With(func: x => x.CreatedBy = "tester")
+            .With(func: x => x.LastUpdatedBy = "tester")
+            .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
+            .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow)
             .Build();
 
         return script;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

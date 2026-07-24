@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
@@ -11,40 +15,43 @@ public sealed partial class ComponentControllerTests
     public async Task Render_ReturnsRenderedComponentMarkup()
     {
         // Given
-        string componentName = Unique("Component");
+        string componentName = Unique(prefix: "Component");
+
         Component createdComponent = await CreateComponentAsync(
-            new
-            {
-                appId = 1,
-                name = componentName,
-                description = "Acceptance component",
-                resourceKey = "Default",
-                content = "<div>Hello component</div>",
-                script = "console.log('component');",
-                key = "Acceptance",
-            });
+payload: new
+{
+    appId = 1,
+    name = componentName,
+    description = "Acceptance component",
+    resourceKey = "Default",
+    content = "<div>Hello component</div>",
+    script = "console.log('component');",
+    key = "Acceptance",
+});
+
         string actualRenderContent;
         Component actualComponent;
 
         // When
-        actualRenderContent = await RenderComponentAsync(1, componentName);
+        actualRenderContent = await RenderComponentAsync(appId: 1, name: componentName);
 
         // Then
-        actualRenderContent.Should().Contain(componentName);
-        actualRenderContent.Should().Contain("Hello component");
 
-        await PatchComponentAsync(createdComponent.Id, new { description = "Patched component" });
-        actualComponent = await GetComponentAsync(createdComponent.Id);
+        actualRenderContent.Should()
+            .Contain(expected: componentName);
 
-        actualComponent.Should().NotBeNull();
-        actualComponent!.Description.Should().Be("Patched component");
+        actualRenderContent.Should()
+            .Contain(expected: "Hello component");
 
-        await DeleteComponentAsync(createdComponent.Id);
+        await PatchComponentAsync(id: createdComponent.Id, payload: new { description = "Patched component" });
+        actualComponent = await GetComponentAsync(id: createdComponent.Id);
+
+        actualComponent.Should()
+            .NotBeNull();
+
+        actualComponent!.Description.Should()
+            .Be(expected: "Patched component");
+
+        await DeleteComponentAsync(id: createdComponent.Id);
     }
 }
-
-
-
-
-
-

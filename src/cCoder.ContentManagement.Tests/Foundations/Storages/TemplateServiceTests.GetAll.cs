@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,37 +28,25 @@ public partial class TemplateServiceTests
     {
         // Given
         Template[] expectedItems = [CreateRandomTemplate(id: 1)];
+
         IQueryable<CmsDataModels.Template> templates = expectedItems
-            .Select(item => item)
+            .Select(selector: item => item)
             .AsQueryable();
 
-        templateBrokerMock.Setup(x => x.GetAllTemplates(false)).Returns(templates);
+        templateBrokerMock.Setup(expression: x => x.GetAllTemplates(ignoreFilters: false))
+            .Returns(value: templates);
 
         // When
         IQueryable<Template> result = templateService.GetAllTemplate();
 
         // Then
-        result.Should().BeEquivalentTo(expectedItems);
-        templateBrokerMock.Verify(x => x.GetAllTemplates(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: expectedItems);
+
+        templateBrokerMock.Verify(expression: x => x.GetAllTemplates(ignoreFilters: false), times: Times.Once);
         templateBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

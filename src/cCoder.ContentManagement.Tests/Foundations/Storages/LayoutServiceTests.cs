@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -29,47 +33,27 @@ public partial class LayoutServiceTests
 
     public LayoutServiceTests()
     {
-        layoutBrokerMock = new Mock<ILayoutBroker>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
-        layoutService = new LayoutService(layoutBrokerMock.Object, authorizationBrokerMock.Object);
+        layoutBrokerMock = new Mock<ILayoutBroker>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+        layoutService = new LayoutService(layoutBroker: layoutBrokerMock.Object, authorizationBroker: authorizationBrokerMock.Object);
     }
 
     private static Layout CreateRandomLayout(int id = 42, int appId = 7)
     {
         Layout layout = Builder<Layout>
             .CreateNew()
-            .With(x => x.Id = id)
-            .With(x => x.AppId = appId)
-            .With(x => x.HeaderHtml = "<header>Header</header>")
-            .With(x => x.Html = "<main>Layout</main>")
-            .With(x => x.Script = "console.log('layout');")
-            .With(x => x.Name = $"Layout-{Guid.NewGuid():N}")
-            .With(x => x.CreatedBy = "tester")
-            .With(x => x.LastUpdatedBy = "tester")
-            .With(x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(-5))
-            .With(x => x.LastUpdated = DateTimeOffset.UtcNow)
+            .With(func: x => x.Id = id)
+            .With(func: x => x.AppId = appId)
+            .With(func: x => x.HeaderHtml = "<header>Header</header>")
+            .With(func: x => x.Html = "<main>Layout</main>")
+            .With(func: x => x.Script = "console.log('layout');")
+            .With(func: x => x.Name = $"Layout-{Guid.NewGuid():N}")
+            .With(func: x => x.CreatedBy = "tester")
+            .With(func: x => x.LastUpdatedBy = "tester")
+            .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
+            .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow)
             .Build();
 
         return layout;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

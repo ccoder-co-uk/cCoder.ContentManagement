@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -22,35 +26,20 @@ public partial class PageOrchestrationServiceTests
     public void ShouldReturnProcessingResultsWhenGetChildren()
     {
         Page[] expected = [CreateRandomPage()];
-        pageProcessingServiceMock.Setup(x => x.GetChildrenPage(1)).Returns(expected);
 
-        var result = orchestrationService.GetChildrenPage(1).ToArray();
+        pageProcessingServiceMock.Setup(expression: x => x.GetChildrenPage(pageId: 1))
+            .Returns(value: expected);
 
-        result.Select(item => item.Id).Should().Equal(expected.Select(item => item.Id));
-        pageProcessingServiceMock.Verify(x => x.GetChildrenPage(1), Times.Once);
+        var result = orchestrationService.GetChildrenPage(pageId: 1)
+            .ToArray();
+
+        result.Select(selector: item => item.Id)
+            .Should()
+            .Equal(expected: expected.Select(selector: item => item.Id));
+
+        pageProcessingServiceMock.Verify(expression: x => x.GetChildrenPage(pageId: 1), times: Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

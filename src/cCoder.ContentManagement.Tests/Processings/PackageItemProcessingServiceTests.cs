@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,34 +30,14 @@ public partial class PackageItemProcessingServiceTests
 
     public PackageItemProcessingServiceTests()
     {
-        packageItemProcessingService = new PackageItemProcessingService(packageItemServiceMock.Object);
+        packageItemProcessingService = new PackageItemProcessingService(service: packageItemServiceMock.Object);
     }
 
     private static PackageItem CreateRandomPackageItem() =>
         Builder<PackageItem>
             .CreateNew()
-            .With(x => x.Type = $"Type-{Guid.NewGuid():N}")
-            .With(x => x.Data = $"Data-{Guid.NewGuid():N}")
-            .With(x => x.Package = null)
-            .Build();
+        .With(func: x => x.Type = $"Type-{Guid.NewGuid():N}")
+        .With(func: x => x.Data = $"Data-{Guid.NewGuid():N}")
+        .With(func: x => x.Package = null)
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

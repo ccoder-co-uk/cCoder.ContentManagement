@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -27,42 +31,18 @@ public partial class AppOrchestrationServiceTests
 
     public AppOrchestrationServiceTests()
     {
-        appProcessingServiceMock = new Mock<IAppProcessingService>(MockBehavior.Strict);
-        appEventProcessingServiceMock = new Mock<IAppEventProcessingService>(MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(MockBehavior.Strict);
+        appProcessingServiceMock = new Mock<IAppProcessingService>(behavior: MockBehavior.Strict);
+        appEventProcessingServiceMock = new Mock<IAppEventProcessingService>(behavior: MockBehavior.Strict);
+        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+
         orchestrationService = new AppOrchestrationService(
-            appProcessingServiceMock.Object,
-            appEventProcessingServiceMock.Object,
-            authorizationBrokerMock.Object
+processingService: appProcessingServiceMock.Object,
+eventService: appEventProcessingServiceMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
-    private static App CreateRandomApp() => Builder<App>.CreateNew().Build();
+    private static App CreateRandomApp() =>
+        Builder<App>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

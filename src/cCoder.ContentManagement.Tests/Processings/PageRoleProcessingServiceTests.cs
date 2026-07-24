@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -33,11 +37,11 @@ public partial class PageRoleProcessingServiceTests
     public PageRoleProcessingServiceTests()
     {
         pageRoleProcessingService = new PageRoleProcessingService(
-            pageRoleServiceMock.Object,
-            pageRoleBrokerMock.Object,
-            roleBrokerMock.Object,
-            pageServiceMock.Object,
-            authorizationBrokerMock.Object
+service: pageRoleServiceMock.Object,
+pageRoleBroker: pageRoleBrokerMock.Object,
+roleBroker: roleBrokerMock.Object,
+pageService: pageServiceMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -51,32 +55,3 @@ public partial class PageRoleProcessingServiceTests
             Privs = role.Privs,
         };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

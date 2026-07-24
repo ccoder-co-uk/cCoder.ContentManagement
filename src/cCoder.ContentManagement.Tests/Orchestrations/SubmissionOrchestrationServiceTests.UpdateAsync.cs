@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -23,39 +27,24 @@ public partial class SubmissionOrchestrationServiceTests
     {
         // Given
         Submission entity = CreateRandomSubmission();
-        submissionProcessingServiceMock.Setup(x => x.UpdateSubmissionAsync(entity)).ReturnsAsync(entity);
+
+        submissionProcessingServiceMock.Setup(expression: x => x.UpdateSubmissionAsync(updatedSubmission: entity))
+            .ReturnsAsync(value: entity);
 
         submissionEventProcessingServiceMock
-            .Setup(x => x.RaiseSubmissionUpdateEventAsync(entity))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Submission result = await orchestrationService.UpdateSubmissionAsync(entity);
+        Submission result = await orchestrationService.UpdateSubmissionAsync(updatedSubmission: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
-        submissionProcessingServiceMock.Verify(x => x.UpdateSubmissionAsync(entity), Times.Once);
-        submissionEventProcessingServiceMock.Verify(x => x.RaiseSubmissionUpdateEventAsync(entity), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        submissionProcessingServiceMock.Verify(expression: x => x.UpdateSubmissionAsync(updatedSubmission: entity), times: Times.Once);
+        submissionEventProcessingServiceMock.Verify(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity), times: Times.Once);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,29 +28,11 @@ public partial class CommonObjectEventProcessingServiceTests
 
     public CommonObjectEventProcessingServiceTests()
     {
-        commonObjectEventServiceMock = new Mock<ICommonObjectEventService>(MockBehavior.Strict);
-        service = new CommonObjectEventProcessingService(commonObjectEventServiceMock.Object);
+        commonObjectEventServiceMock = new Mock<ICommonObjectEventService>(behavior: MockBehavior.Strict);
+        service = new CommonObjectEventProcessingService(eventService: commonObjectEventServiceMock.Object);
     }
 
     private static CommonObject CreateRandomCommonObject() =>
-        Builder<CommonObject>.CreateNew().Build();
+        Builder<CommonObject>.CreateNew()
+        .Build();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

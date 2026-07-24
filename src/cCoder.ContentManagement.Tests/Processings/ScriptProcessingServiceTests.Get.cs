@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,31 +28,20 @@ public partial class ScriptProcessingServiceTests
         // Given
         Script entity = CreateRandomScript();
         var id = entity.Id;
-        scriptServiceMock.Setup(x => x.GetScript(id)).Returns(entity);
+
+        scriptServiceMock.Setup(expression: x => x.GetScript(scriptId: id))
+            .Returns(value: entity);
 
         // When
-        Script result = scriptProcessingService.GetScript(id);
+        Script result = scriptProcessingService.GetScript(scriptId: id);
 
         // Then
-        result.Should().BeSameAs(entity);
-        scriptServiceMock.Verify(x => x.GetScript(id), Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        scriptServiceMock.Verify(expression: x => x.GetScript(scriptId: id), times: Times.Once);
         scriptServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

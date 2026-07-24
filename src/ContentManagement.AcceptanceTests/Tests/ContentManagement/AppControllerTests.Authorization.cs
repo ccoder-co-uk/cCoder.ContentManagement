@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Brokers;
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
@@ -15,38 +19,49 @@ public sealed partial class AppControllerTests
     [Fact]
     public async Task Post_CreatesBootstrapAdministratorRoleForCreatedApp()
     {
-        SeededApp seededApp = await SeedDatabase("app_create");
+        SeededApp seededApp = await SeedDatabase(privileges: "app_create");
+
         App createdApp = await CreateAppAsync(
-            new
-            {
-                name = Unique("AuthApp"),
-                domain = $"{Unique("auth")}.local",
-                defaultTheme = "Default",
-                defaultCultureId = string.Empty,
-                tenantId = Unique("tenant"),
-                configJson = "{}",
-            });
+payload: new
+{
+    name = Unique(prefix: "AuthApp"),
+    domain = $"{Unique(prefix: "auth")}.local",
+    defaultTheme = "Default",
+    defaultCultureId = string.Empty,
+    tenantId = Unique(prefix: "tenant"),
+    configJson = "{}",
+});
 
         using IServiceScope scope = fixture.Factory.Services.CreateScope();
+
         using var core = scope.ServiceProvider
             .GetRequiredService<cCoder.Data.ICoreContextFactory>()
             .CreateCoreContext();
+
         IAuthorizationBroker authorizationBroker = scope.ServiceProvider.GetRequiredService<IAuthorizationBroker>();
 
-        Role[] roles = [.. core.Set<Role>().IgnoreQueryFilters().Where(role => role.AppId == createdApp.Id)];
-        UserRole[] userRoles = [.. core.Set<UserRole>().IgnoreQueryFilters()
-            .Where(userRole => roles.Select(role => role.Id).Contains(userRole.RoleId))];
+        Role[] roles = [.. core.Set<Role>()
+            .IgnoreQueryFilters()
+            .Where(predicate: role => role.AppId == createdApp.Id)];
 
-        roles.Should().Contain(role =>
-            string.Equals(role.Name, "Administrators", StringComparison.OrdinalIgnoreCase)
-            && role.Privileges.Contains("app_admin", StringComparer.OrdinalIgnoreCase));
-        userRoles.Should().Contain(userRole => userRole.UserId == "Guest");
-        authorizationBroker.IsAdminOfApp(createdApp.Id).Should().BeTrue();
+        UserRole[] userRoles = [.. core.Set<UserRole>()
+            .IgnoreQueryFilters()
+            .Where(predicate: userRole => roles.Select(selector: role => role.Id)
+            .Contains(value: userRole.RoleId))];
 
-        await DeleteAppAsync(createdApp.Domain, createdApp.Id);
-        await Teardown(seededApp);
+        roles.Should()
+            .Contain(predicate: role =>
+            string.Equals(a: role.Name, b: "Administrators", comparisonType: StringComparison.OrdinalIgnoreCase)
+            && role.Privileges.Contains(value: "app_admin", comparer: StringComparer.OrdinalIgnoreCase));
+
+        userRoles.Should()
+            .Contain(predicate: userRole => userRole.UserId == "Guest");
+
+        authorizationBroker.IsAdminOfApp(appId: createdApp.Id)
+            .Should()
+            .BeTrue();
+
+        await DeleteAppAsync(host: createdApp.Domain, id: createdApp.Id);
+        await Teardown(seededApp: seededApp);
     }
 }
-
-
-

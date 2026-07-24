@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -21,29 +25,14 @@ public partial class PageOrchestrationServiceTests
     public async Task ShouldDelegateToProcessingServiceWhenRecomputeAllForAppAsync()
     {
         pageProcessingServiceMock
-            .Setup(x => x.RecomputeAllForAppAsync(1))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: x => x.RecomputeAllForAppAsync(appId: 1))
+            .Returns(value: ValueTask.CompletedTask);
 
-        await orchestrationService.RecomputeAllForAppAsync(1);
+        await orchestrationService.RecomputeAllForAppAsync(appId: 1);
 
-        pageProcessingServiceMock.Verify(x => x.RecomputeAllForAppAsync(1), Times.Once);
+        pageProcessingServiceMock.Verify(expression: x => x.RecomputeAllForAppAsync(appId: 1), times: Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

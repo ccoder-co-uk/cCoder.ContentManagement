@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -24,36 +28,24 @@ public partial class PageServiceTests
     {
         // Given
         Page[] expectedItems = [CreateRandomPage(id: 1)];
-        IQueryable<CmsDataModels.Page> pages = expectedItems.Select(item => item).AsQueryable();
 
-        pageBrokerMock.Setup(x => x.GetAllPages(false)).Returns(pages);
+        IQueryable<CmsDataModels.Page> pages = expectedItems.Select(selector: item => item)
+            .AsQueryable();
+
+        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: false))
+            .Returns(value: pages);
 
         // When
         IQueryable<Page> result = pageService.GetAllPage();
 
         // Then
-        result.Should().BeEquivalentTo(expectedItems);
-        pageBrokerMock.Verify(x => x.GetAllPages(false), Times.Once);
+
+        result.Should()
+            .BeEquivalentTo(expectation: expectedItems);
+
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: false), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

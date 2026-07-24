@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -26,13 +30,16 @@ public partial class CommonObjectProcessingServiceTests
 
         // When
         CommonObject expected = CreateRandomCommonObject(
-            "Core/Resource"
+type: "Core/Resource"
         );
+
         CommonObject other = CreateRandomCommonObject(
-            "Core/Component"
+type: "Core/Component"
         );
-        commonObjectCacheMock.SetupGet(x => x.LatestSet).Returns(
-            [
+
+        commonObjectCacheMock.SetupGet(expression: x => x.LatestSet)
+            .Returns(
+value: [
                 new DataCommonObject
                 {
                     Id = expected.Id,
@@ -67,28 +74,14 @@ public partial class CommonObjectProcessingServiceTests
         );
 
         CommonObject[] results = commonObjectProcessingService
-            .LatestCommonObject("Core/Resource")
+            .LatestCommonObject(type: "Core/Resource")
             .ToArray();
 
         // Then
-        Assert.Single(results);
-        results[0].Should().BeEquivalentTo(expected);
+        Assert.Single(collection: results);
+
+        results[0].Should()
+            .BeEquivalentTo(expectation: expected);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

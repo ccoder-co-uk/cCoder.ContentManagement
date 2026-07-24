@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.Data.Models.CMS;
@@ -13,25 +17,29 @@ public partial class EventHandlerServiceTests
     public void ShouldRegisterPassThroughAppPageAndPackageHandlers()
     {
         // Given
-        SetupAppCoordinationEventRegistrations("app_add");
-        SetupAppCoordinationEventRegistrations("app_update");
-        SetupAppCoordinationEventRegistrations("app_delete");
+        SetupAppCoordinationEventRegistrations(eventName: "app_add");
+        SetupAppCoordinationEventRegistrations(eventName: "app_update");
+        SetupAppCoordinationEventRegistrations(eventName: "app_delete");
+
         eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<Page, IPageCoordinationService>(
-                "page_add",
-                It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
+            .Setup(expression: x => x.ListenToEvent<Page, IPageCoordinationService>(
+eventName: "page_add",
+handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
+
         eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<Page, IPageCoordinationService>(
-                "page_update",
-                It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
+            .Setup(expression: x => x.ListenToEvent<Page, IPageCoordinationService>(
+eventName: "page_update",
+handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
+
         eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<Page, IPageCoordinationService>(
-                "page_delete",
-                It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
+            .Setup(expression: x => x.ListenToEvent<Page, IPageCoordinationService>(
+eventName: "page_delete",
+handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
+
         eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<(int appId, Package package), IContentManagementMigrationAggregationService>(
-                "package_import",
-                It.IsAny<Func<IContentManagementMigrationAggregationService, (int appId, Package package), ValueTask>>()));
+            .Setup(expression: x => x.ListenToEvent<(int appId, Package package), IContentManagementMigrationAggregationService>(
+eventName: "package_import",
+handler: It.IsAny<Func<IContentManagementMigrationAggregationService, (int appId, Package package), ValueTask>>()));
 
         // When
         service.ListenToAllEvents();
@@ -43,13 +51,14 @@ public partial class EventHandlerServiceTests
     private void SetupAppCoordinationEventRegistrations(string eventName)
     {
         eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<App, IAppSupportingResourcesCoordinationService>(
-                eventName,
-                It.IsAny<Func<IAppSupportingResourcesCoordinationService, App, ValueTask>>()));
+            .Setup(expression: x => x.ListenToEvent<App, IAppSupportingResourcesCoordinationService>(
+eventName: eventName,
+handler: It.IsAny<Func<IAppSupportingResourcesCoordinationService, App, ValueTask>>()));
+
         eventHubBrokerMock
-            .Setup(x => x.ListenToEvent<App, IAppRenderableCoordinationService>(
-                eventName,
-                It.IsAny<Func<IAppRenderableCoordinationService, App, ValueTask>>()));
+            .Setup(expression: x => x.ListenToEvent<App, IAppRenderableCoordinationService>(
+eventName: eventName,
+handler: It.IsAny<Func<IAppRenderableCoordinationService, App, ValueTask>>()));
     }
 
 }

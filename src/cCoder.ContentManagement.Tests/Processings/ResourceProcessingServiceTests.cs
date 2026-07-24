@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -25,12 +29,12 @@ public partial class ResourceProcessingServiceTests
 
     public ResourceProcessingServiceTests()
     {
-        authorizationBrokerMock.Setup(x => x.GetCurrentUser())
-            .Returns(() => TestUsers.WithoutPrivileges());
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+            .Returns(valueFunction: () => TestUsers.WithoutPrivileges());
 
         resourceProcessingService = new ResourceProcessingService(
-            resourceServiceMock.Object,
-            authorizationBrokerMock.Object
+service: resourceServiceMock.Object,
+authorizationBroker: authorizationBrokerMock.Object
         );
     }
 
@@ -52,23 +56,3 @@ public partial class ResourceProcessingServiceTests
             Description = "Description",
         };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
