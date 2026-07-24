@@ -11,9 +11,8 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class TemplateRenderOrchestrationService(
     ITemplateRenderProcessingService templateRenderProcessingService,
-    IAuthorizationProcessingService authorizationProcessingService,
-    Config config,
-    ILogger<TemplateRenderOrchestrationService> log) : ITemplateRenderOrchestrationService
+    IAuthorizationProcessingService authorizationProcessingService)
+        : ITemplateRenderOrchestrationService
 {
     public string Render(int appId, string name, string culture, dynamic model) =>
         TryCatch<string>(operation: () =>
@@ -57,14 +56,12 @@ internal sealed partial class TemplateRenderOrchestrationService(
         string culture,
         dynamic model,
         User user) =>
-        templateRenderProcessingService.RenderUserConfig(
+        templateRenderProcessingService.RenderUser(
             appId: appId,
             name: name,
             model: model,
             user: user,
-            culture: culture,
-            config: config,
-            log: log);
+            culture: culture);
 
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");

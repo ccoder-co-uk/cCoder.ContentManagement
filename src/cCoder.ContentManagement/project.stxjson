@@ -10518,7 +10518,7 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "RenderPageUserConfigRenderResult",
+          "Name": "RenderPageUserRenderResult",
           "Inputs": [
             {
               "Name": "page",
@@ -10527,10 +10527,6 @@
             {
               "Name": "user",
               "Type": "User"
-            },
-            {
-              "Name": "config",
-              "Type": "cCoder.ContentManagement.Models.Config"
             },
             {
               "Name": "theme",
@@ -11109,7 +11105,7 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "RenderTemplateRenderParamsConfig",
+          "Name": "RenderTemplateRenderParams",
           "Inputs": [
             {
               "Name": "template",
@@ -11122,20 +11118,12 @@
             {
               "Name": "renderParams",
               "Type": "cCoder.ContentManagement.Models.RenderParams"
-            },
-            {
-              "Name": "config",
-              "Type": "cCoder.ContentManagement.Models.Config"
-            },
-            {
-              "Name": "log",
-              "Type": "ILogger"
             }
           ],
           "ReturnType": "System.String"
         },
         {
-          "Name": "RenderUserConfig",
+          "Name": "RenderUser",
           "Inputs": [
             {
               "Name": "appId",
@@ -11156,14 +11144,6 @@
             {
               "Name": "culture",
               "Type": "System.String"
-            },
-            {
-              "Name": "config",
-              "Type": "cCoder.ContentManagement.Models.Config"
-            },
-            {
-              "Name": "log",
-              "Type": "ILogger"
             }
           ],
           "ReturnType": "System.String"
@@ -11917,10 +11897,6 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.PageRenderOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Models.Config"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Orchestrations.PageRenderOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
     },
     {
@@ -11966,10 +11942,6 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.TemplateProcessingService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Models.Config"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService",
@@ -12161,6 +12133,10 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
+      "ToType": "cCoder.ContentManagement.Models.Config"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
       "ToType": "cCoder.ContentManagement.Rendering.Services.Orchestrations.PageRenderExecutionOrchestrationService"
     },
     {
@@ -12226,6 +12202,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.JsonBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
+      "ToType": "cCoder.ContentManagement.Models.Config"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
@@ -12314,11 +12294,11 @@
       "LineNumber": 16
     },
     {
-      "Code": "STXO001",
-      "Description": "An orchestration must have two or three foundation or processing dependencies and must not mix them.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.PageRenderOrchestrationService",
-      "LineNumber": 13
+      "LineNumber": 122
     },
     {
       "Code": "STX0007",
@@ -12328,11 +12308,11 @@
       "LineNumber": 12
     },
     {
-      "Code": "STXO001",
-      "Description": "An orchestration must have two or three foundation or processing dependencies and must not mix them.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService",
-      "LineNumber": 12
+      "LineNumber": 89
     },
     {
       "Code": "STXP001",
@@ -12349,11 +12329,11 @@
       "LineNumber": 25
     },
     {
-      "Code": "STX0007",
-      "Description": "A service public API must use one model contract or primitive types.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
-      "LineNumber": 15
+      "LineNumber": 13
     },
     {
       "Code": "STXP001",
@@ -12361,6 +12341,13 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
       "LineNumber": 15
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",
+      "LineNumber": 300
     },
     {
       "Code": "STX0007",
@@ -12377,11 +12364,11 @@
       "LineNumber": 16
     },
     {
-      "Code": "STX0007",
-      "Description": "A service public API must use one model contract or primitive types.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
-      "LineNumber": 24
+      "LineNumber": 16
     },
     {
       "Code": "STXP001",
@@ -12389,6 +12376,13 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
       "LineNumber": 24
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
+      "LineNumber": 875
     }
   ]
 }

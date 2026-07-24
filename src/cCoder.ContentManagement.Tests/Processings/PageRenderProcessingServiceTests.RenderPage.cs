@@ -32,7 +32,6 @@ public partial class PageRenderProcessingServiceTests
     public async Task ShouldRenderDeclaredSupportedTagTypesForPageRoot()
     {
         // Given
-        PageRenderProcessingService sut = CreateSut();
         RenderApp app = CreateApp();
         RenderPage page = app.Pages.First(predicate: foundPage => foundPage.Id == 10);
         RenderUser user = CreateUser();
@@ -41,7 +40,16 @@ public partial class PageRenderProcessingServiceTests
 
         // When
         RenderResult result = await RenderTestWorkflowServer.RunRenderResultAsync(action: workflowBaseUrl =>
-            sut.RenderPageUserConfigRenderResult(page: page, user: user, config: CreateConfig(workflowBaseUrl: workflowBaseUrl), theme: "Default", culture: "en-GB"));
+        {
+            PageRenderProcessingService sut = CreateSut(
+                config: CreateConfig(workflowBaseUrl: workflowBaseUrl));
+
+            return sut.RenderPageUserRenderResult(
+                page: page,
+                user: user,
+                theme: "Default",
+                culture: "en-GB");
+        });
 
         // Then
         result.HeaderHtml.Should()
@@ -86,10 +94,17 @@ public partial class PageRenderProcessingServiceTests
     public void ShouldThrowValidationExceptionWhenPageIsNull()
     {
         // Given
-        PageRenderProcessingService sut = CreateSut();
+        Config config = CreateConfig(
+            workflowBaseUrl: "http://127.0.0.1/");
+
+        PageRenderProcessingService sut = CreateSut(config: config);
 
         // When
-        Action act = () => sut.RenderPageUserConfigRenderResult(page: null!, user: CreateUser(), config: CreateConfig(workflowBaseUrl: "http://127.0.0.1/"), theme: "Default", culture: "en-GB");
+        Action act = () => sut.RenderPageUserRenderResult(
+            page: null!,
+            user: CreateUser(),
+            theme: "Default",
+            culture: "en-GB");
 
         // Then
         act.Should()

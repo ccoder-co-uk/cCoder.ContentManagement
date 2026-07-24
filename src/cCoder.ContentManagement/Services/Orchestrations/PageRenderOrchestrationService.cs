@@ -11,7 +11,6 @@ using cCoder.Data.Models.Security;
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class PageRenderOrchestrationService(
-    Config config,
     IPageRenderProcessingService pageRenderProcessingService,
     IAuthorizationProcessingService authorizationProcessingService)
         : IPageRenderOrchestrationService
@@ -97,10 +96,9 @@ internal partial class PageRenderOrchestrationService(
         string theme,
         string culture,
         bool edit) =>
-        pageRenderProcessingService.RenderPageUserConfigRenderResult(
+        pageRenderProcessingService.RenderPageUserRenderResult(
             page: page,
             user: user,
-            config: config,
             theme: theme,
             culture: culture,
             edit: edit);

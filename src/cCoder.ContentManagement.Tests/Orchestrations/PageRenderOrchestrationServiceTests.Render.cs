@@ -60,12 +60,11 @@ public partial class PageRenderOrchestrationServiceTests
         Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock = new();
 
         PageRenderOrchestrationService orchestrationService = new(
-            config: new Config(),
             pageRenderProcessingService: processingServiceMock.Object,
             authorizationProcessingService: authorizationProcessingServiceMock.Object);
 
         processingServiceMock
-            .Setup(expression: x => x.RenderPageUserConfigRenderResult(page: page, user: user, config: It.IsAny<Config>(), theme: "Default", culture: string.Empty, edit: true))
+            .Setup(expression: x => x.RenderPageUserRenderResult(page: page, user: user, theme: "Default", culture: string.Empty, edit: true))
             .Returns(value: expected);
 
         // When

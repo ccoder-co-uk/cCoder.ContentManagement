@@ -10,7 +10,10 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface ITemplateRenderProcessingService
 {
-    string RenderUserConfig(int appId, string name, object model, User user, string culture, Config config, ILogger log = null);
+    string RenderUser(int appId, string name, object model, User user, string culture);
 
-    string RenderTemplateRenderParamsConfig(Template template, object model, RenderParams renderParams, Config config, ILogger log = null);
+    string RenderTemplateRenderParams(
+        Template template,
+        object model,
+        RenderParams renderParams);
 }

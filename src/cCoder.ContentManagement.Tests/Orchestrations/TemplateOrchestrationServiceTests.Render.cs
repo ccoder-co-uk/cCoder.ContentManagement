@@ -39,14 +39,12 @@ public partial class TemplateRenderOrchestrationServiceTests
 
         templateRenderProcessingServiceMock
             .Setup(expression: x =>
-                x.RenderUserConfig(
+                x.RenderUser(
 appId: 1,
 name: "template",
 model: model,
 user: It.IsAny<User>(),
-culture: "en-GB",
-config: It.IsAny<cCoder.ContentManagement.Models.Config>(),
-log: loggerMock.Object
+                    culture: "en-GB"
                 )
             )
             .Returns(value: "rendered");

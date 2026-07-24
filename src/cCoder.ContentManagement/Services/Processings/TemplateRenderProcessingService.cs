@@ -29,14 +29,22 @@ internal partial class TemplateRenderProcessingService(
     IComponentService componentService = null,
     IResourceService resourceService = null,
     IScriptService scriptService = null,
-    ITemplateService templateService = null) : ITemplateRenderProcessingService
+    ITemplateService templateService = null,
+    Config config = null,
+    ILogger<TemplateRenderProcessingService> log = null)
+        : ITemplateRenderProcessingService
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
 
-    public string RenderUserConfig(int appId, string name, object model, User user, string culture, Config config, ILogger log = null) =>
+    public string RenderUser(
+        int appId,
+        string name,
+        object model,
+        User user,
+        string culture) =>
         TryCatch<string>(operation: () =>
     {
-        ValidateRenderUserConfig(inputs: [appId, name, model, user, culture, config, log]);
+        ValidateRenderUser(inputs: [appId, name, model, user, culture]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateTemplateName(name: name, parameterName: "name");
         ValidateModel(model: model, parameterName: "model");
@@ -86,10 +94,13 @@ internal partial class TemplateRenderProcessingService(
 
     });
 
-    public string RenderTemplateRenderParamsConfig(Template template, object model, RenderParams renderParams, Config config, ILogger log = null) =>
+    public string RenderTemplateRenderParams(
+        Template template,
+        object model,
+        RenderParams renderParams) =>
         TryCatch<string>(operation: () =>
     {
-        ValidateRenderTemplateRenderParamsConfig(inputs: [template, model, renderParams, config, log]);
+        ValidateRenderTemplateRenderParams(inputs: [template, model, renderParams]);
         ValidateTemplate(template: template, parameterName: "template");
         ValidateModel(model: model, parameterName: "model");
         ValidateRenderParamsArgument(renderParams: renderParams, parameterName: "renderParams");

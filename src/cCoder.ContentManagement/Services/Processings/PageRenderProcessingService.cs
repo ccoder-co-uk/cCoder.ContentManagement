@@ -13,12 +13,18 @@ using cCoder.Data.Models.Security;
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class PageRenderProcessingService(
-    IPageRenderExecutionOrchestrationService executionOrchestrationService) : IPageRenderProcessingService
+    IPageRenderExecutionOrchestrationService executionOrchestrationService,
+    Config config) : IPageRenderProcessingService
 {
-    public RenderResult RenderPageUserConfigRenderResult(Page page, User user, Config config, string theme, string culture, bool edit = false) =>
+    public RenderResult RenderPageUserRenderResult(
+        Page page,
+        User user,
+        string theme,
+        string culture,
+        bool edit = false) =>
         TryCatch<RenderResult>(operation: () =>
     {
-        ValidateRenderPageUserConfigRenderResult(inputs: [page, user, config, theme, culture, edit]);
+        ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit]);
         ValidatePage(page: page, parameterName: "page");
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");

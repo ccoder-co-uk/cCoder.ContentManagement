@@ -32,7 +32,6 @@ public partial class TemplateRenderProcessingServiceTests
     public async Task ShouldRenderDeclaredSupportedTagTypesForTemplateRoot()
     {
         // Given
-        TemplateRenderProcessingService sut = CreateSut();
         (RenderApp app, RenderUser user, RenderTemplate template) = CreateTemplateRenderContext();
         RenderTemplateParams renderParams = new(app: app, user: user, culture: "en-GB");
 
@@ -45,7 +44,15 @@ public partial class TemplateRenderProcessingServiceTests
 
         // When
         string result = await RenderTestWorkflowServer.RunStringAsync(action: workflowBaseUrl =>
-            sut.RenderTemplateRenderParamsConfig(template: template, model: new { Name = "Taylor" }, renderParams: renderParams, config: CreateConfig(workflowBaseUrl: workflowBaseUrl)));
+        {
+            TemplateRenderProcessingService sut = CreateSut(
+                config: CreateConfig(workflowBaseUrl: workflowBaseUrl));
+
+            return sut.RenderTemplateRenderParams(
+                template: template,
+                model: new { Name = "Taylor" },
+                renderParams: renderParams);
+        });
 
         // Then
         result.Should()
@@ -74,11 +81,20 @@ public partial class TemplateRenderProcessingServiceTests
     public void ShouldThrowValidationExceptionWhenTemplateIsNull()
     {
         // Given
-        TemplateRenderProcessingService sut = CreateSut();
+        Config config = CreateConfig(
+            workflowBaseUrl: "http://127.0.0.1/");
+
+        TemplateRenderProcessingService sut = CreateSut(config: config);
         (RenderApp app, RenderUser user, _) = CreateTemplateRenderContext();
 
         // When
-        Action act = () => sut.RenderTemplateRenderParamsConfig(template: null!, model: new { Name = "Taylor" }, renderParams: new RenderTemplateParams(app: app, user: user, culture: "en-GB"), config: CreateConfig(workflowBaseUrl: "http://127.0.0.1/"));
+        Action act = () => sut.RenderTemplateRenderParams(
+            template: null!,
+            model: new { Name = "Taylor" },
+            renderParams: new RenderTemplateParams(
+                app: app,
+                user: user,
+                culture: "en-GB"));
 
         // Then
         act.Should()

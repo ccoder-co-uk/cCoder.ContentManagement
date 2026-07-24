@@ -32,8 +32,12 @@ public partial class TemplateRenderProcessingServiceTests
     private readonly Mock<IMetadataCache> metadataCacheMock = new();
     private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
 
-    private TemplateRenderProcessingService CreateSut() =>
-        new(metadataCache: metadataCacheMock.Object, objectCache: commonObjectCacheMock.Object, jsonBroker: new JsonBroker());
+    private TemplateRenderProcessingService CreateSut(RenderConfig config) =>
+        new(
+            metadataCache: metadataCacheMock.Object,
+            objectCache: commonObjectCacheMock.Object,
+            jsonBroker: new JsonBroker(),
+            config: config);
 
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()

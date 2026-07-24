@@ -44,7 +44,7 @@ public partial class PageRenderProcessingServiceTests
     private readonly TestScriptReaderBroker scriptReaderBroker = new();
     private readonly Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new();
 
-    private PageRenderProcessingService CreateSut() =>
+    private PageRenderProcessingService CreateSut(RenderConfig config) =>
         new(
 executionOrchestrationService: new PageRenderExecutionOrchestrationService(
 metadataCacheService: new MetadataCacheService(broker: metadataReaderBroker),
@@ -53,7 +53,8 @@ markupRenderService: new MarkupRenderService(
 componentReaderBroker: componentReaderBroker,
 scriptReaderBroker: scriptReaderBroker,
 jsonBroker: new JsonBroker(),
-renderFileContentBroker: renderFileContentBrokerMock.Object)));
+renderFileContentBroker: renderFileContentBrokerMock.Object)),
+config: config);
 
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()
