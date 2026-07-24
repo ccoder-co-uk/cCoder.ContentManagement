@@ -15,19 +15,12 @@ internal sealed class RenderFileContentBroker(ICoreContextFactory coreContextFac
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        DmsFile file = coreDataContext
-            .Set<DmsFile>()
+        return coreDataContext.Set<DmsFile>()
             .AsNoTracking()
-            .FirstOrDefault(predicate: foundFile => foundFile.Folder.AppId == appId && foundFile.Path == path);
-
-        if (file == null)
-        {
-            return Array.Empty<byte>();
-        }
-
-        return coreDataContext.Set<FileContent>()
-            .AsNoTracking()
-            .Where(predicate: foundContent => foundContent.FileId == file.Id)
+            .Where(predicate: foundFile => foundFile.Folder.AppId == appId && foundFile.Path == path)
+            .SelectMany(
+                selector: foundFile => coreDataContext.Set<FileContent>()
+                    .Where(predicate: foundContent => foundContent.FileId == foundFile.Id))
             .OrderByDescending(keySelector: foundContent => foundContent.Version)
             .Select(selector: foundContent => foundContent.RawData)
             .FirstOrDefault() ?? Array.Empty<byte>();

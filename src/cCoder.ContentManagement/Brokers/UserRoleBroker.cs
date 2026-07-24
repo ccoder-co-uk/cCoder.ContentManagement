@@ -13,19 +13,10 @@ internal class UserRoleBroker(ICoreContextFactory coreContextFactory) : IUserRol
     public IQueryable<UserRole> GetAllUserRoles(bool ignoreFilters)
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        IQueryable<UserRole> result;
 
-        if (!ignoreFilters)
-        {
-            IQueryable<UserRole> userRoles = coreDataContext.UserRoles;
-            result = userRoles;
-        }
-        else
-        {
-            result = coreDataContext.UserRoles.IgnoreQueryFilters();
-        }
-
-        return result;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.UserRoles,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<UserRole> AddUserRoleAsync(UserRole newUserRole)
@@ -45,11 +36,6 @@ internal class UserRoleBroker(ICoreContextFactory coreContextFactory) : IUserRol
 
     public async ValueTask DeleteAllUserRolesAsync(IEnumerable<UserRole> deletedUserRole)
     {
-        if (deletedUserRole == null || !deletedUserRole.Any())
-        {
-            return;
-        }
-
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
         coreDataContext.UserRoles.RemoveRange(entities: deletedUserRole);
         await coreDataContext.SaveChangesAsync();

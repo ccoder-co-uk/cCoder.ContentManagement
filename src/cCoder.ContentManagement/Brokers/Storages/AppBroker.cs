@@ -57,17 +57,11 @@ internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBr
             .Select(selector: group => group.First())
                 ?? []];
 
-        if (userRolesToDelete.Length > 0)
-        {
-            coreDataContext.UserRoles.RemoveRange(entities: userRolesToDelete);
-        }
+        coreDataContext.UserRoles.RemoveRange(entities: userRolesToDelete);
 
         Role[] rolesToDelete = [.. deletedApp.Roles ?? []];
 
-        if (rolesToDelete.Length > 0)
-        {
-            coreDataContext.Roles.RemoveRange(entities: rolesToDelete);
-        }
+        coreDataContext.Roles.RemoveRange(entities: rolesToDelete);
 
         coreDataContext.Apps.Remove(entity: deletedApp);
         await coreDataContext.SaveChangesAsync();

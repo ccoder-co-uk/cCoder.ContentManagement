@@ -2041,6 +2041,18 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Dependencies.AuthorizationDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.CommonObjectQueryDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Dependencies.QueryFilterDependency",
       "StandardElementType": "Dependency",
       "Properties": [],
@@ -11859,95 +11871,18 @@
   ],
   "AnalysisItems": [
     {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
+      "Code": "STXFORMAT008",
+      "Description": "Wrapped statements must be separated from adjacent method statements by an empty line.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.AuthorizationBroker",
-      "LineNumber": 23
+      "LineNumber": 40
     },
     {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.AuthorizationBroker",
-      "LineNumber": 51
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.AuthorizationBroker",
-      "LineNumber": 60
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.AuthorizationBroker",
-      "LineNumber": 83
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.RoleBroker",
-      "LineNumber": 18
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.RoleBroker",
-      "LineNumber": 59
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.AppBroker",
-      "LineNumber": 60
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.AppBroker",
-      "LineNumber": 67
-    },
-    {
-      "Code": "STXB003",
-      "Description": "A broker must not contain loops.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker",
-      "LineNumber": 28
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker",
-      "LineNumber": 39
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Brokers.Storages.RenderFileContentBroker",
-      "LineNumber": 23
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.UserRoleBroker",
-      "LineNumber": 18
-    },
-    {
-      "Code": "STXB002",
-      "Description": "A broker must not contain branching logic.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Brokers.UserRoleBroker",
-      "LineNumber": 48
+      "LineNumber": 28
     },
     {
       "Code": "STXE001",

@@ -22,30 +22,10 @@ internal sealed class CommonObjectBroker(ICoreContextFactory coreContextFactory)
     public CommonObject[] GetLatestCommonObjectsPaged(int pageSize = 500)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        int num = 0;
-        List<CommonObject> list = new List<CommonObject>();
 
-        while (true)
-        {
-            CommonObject[] array = coreDataContext.CommonObjects
-                .AsNoTracking()
-                .GroupBy(keySelector: commonObject => new { commonObject.Name, commonObject.Culture, commonObject.Key, commonObject.Type })
-                .Select(selector: group => group.OrderByDescending(keySelector: version => version.Version)
-                .First())
-                .Skip(count: num)
-                .Take(count: pageSize)
-                .ToArray();
-
-            if (array.Length == 0)
-            {
-                break;
-            }
-
-            list.AddRange(collection: array);
-            num += pageSize;
-        }
-
-        return list.ToArray();
+        return Dependencies.CommonObjectQueryDependency.GetLatestCommonObjectsPaged(
+            coreDataContext: coreDataContext,
+            pageSize: pageSize);
     }
 
     public async ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject)

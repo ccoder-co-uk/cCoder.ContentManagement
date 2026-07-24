@@ -13,19 +13,10 @@ internal class RoleBroker(ICoreContextFactory coreContextFactory) : IRoleBroker
     public IQueryable<Role> GetAllRoles(bool ignoreFilters)
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        IQueryable<Role> result;
 
-        if (!ignoreFilters)
-        {
-            IQueryable<Role> roles = coreDataContext.Roles;
-            result = roles;
-        }
-        else
-        {
-            result = coreDataContext.Roles.IgnoreQueryFilters();
-        }
-
-        return result;
+        return Dependencies.QueryFilterDependency.Apply(
+            query: coreDataContext.Roles,
+            ignoreFilters: ignoreFilters);
     }
 
     public async ValueTask<Role> AddRoleAsync(Role newRole)
@@ -56,11 +47,6 @@ internal class RoleBroker(ICoreContextFactory coreContextFactory) : IRoleBroker
 
     public async ValueTask DeleteAllRolesAsync(IEnumerable<Role> deletedRole)
     {
-        if (deletedRole == null || !deletedRole.Any())
-        {
-            return;
-        }
-
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
         coreDataContext.Roles.RemoveRange(entities: deletedRole);
         await coreDataContext.SaveChangesAsync();
