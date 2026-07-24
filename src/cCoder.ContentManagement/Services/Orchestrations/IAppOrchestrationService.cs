@@ -28,8 +28,6 @@ public interface IAppOrchestrationService
 
     ValueTask DeleteAllAppAsync(IEnumerable<App> deletedApp);
 
-    IQueryable<User> GetAppUsers(int appId);
-
     ValueTask UpdatePageOrderAppAsync(int key, App updatedApp);
 
     App ResolveCurrentApp();

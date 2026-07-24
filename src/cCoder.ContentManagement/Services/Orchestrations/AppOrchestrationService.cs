@@ -117,15 +117,6 @@ internal partial class AppOrchestrationService(
         return processingService.DeleteAllAppAsync(deletedApp: ValidateApps(apps: deletedApp, parameterName: "items"));
     }, isValueTask: true);
 
-    public IQueryable<User> GetAppUsers(int appId) =>
-        TryCatch<IQueryable<User>>(operation: () =>
-    {
-        ValidateAppUsersOnGet(inputs: [appId]);
-        ValidateId(appId: appId, parameterName: "appId");
-        return processingService.GetAppUsers(appId: appId);
-
-    });
-
     public ValueTask UpdatePageOrderAppAsync(int key, App updatedApp) =>
         TryCatch(operation: () =>
     {

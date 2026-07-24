@@ -25,16 +25,15 @@ public partial class ControllerGetAllTests
     public void AppGetAll_ShouldReturnServiceQueryableUntouched()
     {
         // Given
-        Mock<IAppOrchestrationService> serviceMock = new();
+        Mock<IAppManager> managerMock = new();
         IQueryable<App> expectedApps = new[] { new App { Id = 1, Name = "App" } }.AsQueryable();
 
-        serviceMock.Setup(expression: service => service.GetAllApp(ignoreFilters: false))
+        managerMock.Setup(expression: manager => manager.GetAll(ignoreFilters: false))
             .Returns(value: expectedApps);
 
         // When
         AppController controller = new(
-            service: serviceMock.Object,
-            log: Mock.Of<ILogger<AppController>>());
+            manager: managerMock.Object);
 
         // Then
         OkObjectResult result = controller.GetAll(queryOptions: null!)

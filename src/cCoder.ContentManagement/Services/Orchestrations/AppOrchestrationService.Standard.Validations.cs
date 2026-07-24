@@ -35,9 +35,6 @@ internal partial class AppOrchestrationService
     private static void ValidateAllAppOnDelete(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
-    private static void ValidateAppUsersOnGet(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
-
     private static void ValidatePageOrderAppOnUpdate(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

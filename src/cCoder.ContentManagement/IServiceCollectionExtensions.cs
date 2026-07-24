@@ -83,6 +83,16 @@ public static partial class IServiceCollectionExtensions
             implementationFactory: (serviceProvider, _) =>
                 serviceProvider.GetRequiredService<IComponentOrchestrationService>());
 
+        services.AddKeyedTransient<IAppOrchestrationService>(
+            serviceKey: "App",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IAppOrchestrationService>());
+
+        services.AddKeyedTransient<IAppUserProcessingService>(
+            serviceKey: "AppUser",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IAppUserProcessingService>());
+
         services.AddKeyedTransient<IComponentRenderOrchestrationService>(
             serviceKey: "ComponentRender",
             implementationFactory: (serviceProvider, _) =>
@@ -337,6 +347,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppCultureProcessingService, AppCultureProcessingService>();
         services.AddTransient<IAppEventProcessingService, AppEventProcessingService>();
         services.AddTransient<IAppProcessingService, AppProcessingService>();
+        services.AddTransient<IAppUserProcessingService, AppUserProcessingService>();
         services.AddTransient<ICommonObjectEventProcessingService, CommonObjectEventProcessingService>();
         services.AddTransient<ICommonObjectProcessingService, CommonObjectProcessingService>();
         services.AddTransient<IComponentEventProcessingService, ComponentEventProcessingService>();

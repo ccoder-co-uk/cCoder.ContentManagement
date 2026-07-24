@@ -286,23 +286,6 @@ internal partial class AppProcessingService(
 
     }, isValueTask: true);
 
-    public IQueryable<User> GetAppUsers(int appId) =>
-        TryCatch<IQueryable<User>>(operation: () =>
-    {
-        ValidateAppUsersOnGet(inputs: [appId]);
-        ValidateId(appId: appId, parameterName: "appId");
-        App app = ExecuteGetApp(appId: appId);
-
-        if (app != null)
-        {
-            return app.Roles.SelectMany(selector: (Role role) => role.Users.Select(selector: (UserRole userRole) => userRole.User))
-                .AsQueryable();
-        }
-
-        throw new SecurityException(message: "Access Denied!");
-
-    });
-
     public App ResolveCurrentApp() =>
         TryCatch<App>(operation: () =>
     {
