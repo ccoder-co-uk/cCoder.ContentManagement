@@ -98,4 +98,3 @@ public class OperationContainer
     public MetadataContainer ReturnType { get; set; }
     public IDictionary<string, string> Parameters { get; set; }
 }
-
