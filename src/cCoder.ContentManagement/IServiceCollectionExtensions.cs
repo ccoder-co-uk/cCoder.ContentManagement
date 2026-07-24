@@ -135,6 +135,7 @@ public static partial class IServiceCollectionExtensions
     private static void AddCoordinations(this IServiceCollection services)
     {
         services.AddTransient<IAppRenderableCoordinationService, AppRenderableCoordinationService>();
+        services.AddTransient<IAppPageComponentCoordinationService, AppPageComponentCoordinationService>();
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
         services.AddTransient<IComponentRenderCoordinationService, ComponentRenderCoordinationService>();
         services.AddTransient<IPageCoordinationService, PageCoordinationService>();

@@ -5307,6 +5307,43 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Coordinations.AppPageComponentCoordinationService",
+      "StandardElementType": "CoordinationService",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "HandleAppAddAsync",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "App"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask"
+        },
+        {
+          "Name": "HandleAppDeleteAsync",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "App"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask"
+        },
+        {
+          "Name": "HandleAppUpdateAsync",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "App"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask"
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Coordinations.AppRenderableCoordinationService",
       "StandardElementType": "CoordinationService",
       "Properties": [],
@@ -11159,16 +11196,16 @@
       "ToType": "cCoder.ContentManagement.Services.Processings.PackageExportProcessingService"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.AppRenderableCoordinationService",
+      "FromType": "cCoder.ContentManagement.Services.Coordinations.AppPageComponentCoordinationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Coordinations.AppPageComponentCoordinationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Coordinations.AppRenderableCoordinationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.AppRenderableCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Coordinations.AppRenderableCoordinationService",
@@ -12001,18 +12038,32 @@
       "LineNumber": 16
     },
     {
-      "Code": "STXC001",
-      "Description": "The service must have two or three OrchestrationService dependencies.",
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Coordinations.AppRenderableCoordinationService",
-      "LineNumber": 12
+      "Type": "cCoder.ContentManagement.Services.Coordinations.AppPageComponentCoordinationService",
+      "LineNumber": 19
     },
     {
       "Code": "STXFORMAT001",
       "Description": "Source files must not contain newline characters after the final code token.",
       "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Coordinations.AppSupportingResourcesCoordinationService",
-      "LineNumber": 221
+      "Type": "cCoder.ContentManagement.Services.Coordinations.AppPageComponentCoordinationService",
+      "LineNumber": 52
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Coordinations.AppPageComponentCoordinationService",
+      "LineNumber": 156
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Coordinations.AppRenderableCoordinationService",
+      "LineNumber": 129
     },
     {
       "Code": "STXC001",
@@ -12048,6 +12099,13 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Coordinations.TemplateRenderCoordinationService",
       "LineNumber": 11
+    },
+    {
+      "Code": "STXFORMAT001",
+      "Description": "Source files must not contain newline characters after the final code token.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Services.Foundations.Events.EventHandlerService",
+      "LineNumber": 76
     },
     {
       "Code": "STXO001",

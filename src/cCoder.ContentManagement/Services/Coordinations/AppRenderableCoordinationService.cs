@@ -10,8 +10,6 @@ using cCoder.Data.Models.CMS;
 namespace cCoder.ContentManagement.Services.Coordinations;
 
 internal partial class AppRenderableCoordinationService(
-    IPageOrchestrationService pageOrchestrationService,
-    IComponentOrchestrationService componentOrchestrationService,
     ITemplateOrchestrationService templateOrchestrationService,
     ILayoutOrchestrationService layoutOrchestrationService) : IAppRenderableCoordinationService
 {
@@ -30,16 +28,6 @@ internal partial class AppRenderableCoordinationService(
         if (app.Layouts != null)
         {
             await layoutOrchestrationService.AddOrUpdateLayoutResult(newLayout: app.Layouts);
-        }
-
-        if (app.Components != null)
-        {
-            await AddOrUpdateComponentsAsync(newApp: app);
-        }
-
-        if (app.Pages != null)
-        {
-            await pageOrchestrationService.AddOrUpdatePageResult(newPage: app.Pages);
         }
 
     }, isValueTask: true);
@@ -63,18 +51,6 @@ internal partial class AppRenderableCoordinationService(
             await layoutOrchestrationService.AddOrUpdateLayoutResult(newLayout: app.Layouts);
         }
 
-        if (app.Components != null)
-        {
-            await DeleteMissingComponentsAsync(deletedApp: app);
-            await AddOrUpdateComponentsAsync(newApp: app);
-        }
-
-        if (app.Pages != null)
-        {
-            await DeleteMissingPagesAsync(deletedApp: app);
-            await pageOrchestrationService.AddOrUpdatePageResult(newPage: app.Pages);
-        }
-
     }, isValueTask: true);
 
     public ValueTask HandleAppDeleteAsync(App app) =>
@@ -82,8 +58,6 @@ internal partial class AppRenderableCoordinationService(
     {
         ValidateHandleAppDeleteAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
-        await pageOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
-        await componentOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
         await templateOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
         await layoutOrchestrationService.DeleteByAppIdAsync(appId: app.Id);
 
@@ -91,70 +65,20 @@ internal partial class AppRenderableCoordinationService(
 
     private static void StampChildrenWithApp(App app)
     {
-        if (app.Pages != null)
-        {
-            foreach (Page item in app.Pages)
-            {
-                item.AppId = app.Id;
-            }
-        }
-
-        if (app.Components != null)
-        {
-            foreach (Component item2 in app.Components)
-            {
-                item2.AppId = app.Id;
-            }
-        }
-
         if (app.Templates != null)
         {
-            foreach (Template item3 in app.Templates)
+            foreach (Template template in app.Templates)
             {
-                item3.AppId = app.Id;
+                template.AppId = app.Id;
             }
         }
 
         if (app.Layouts != null)
         {
-            foreach (Layout item4 in app.Layouts)
+            foreach (Layout layout in app.Layouts)
             {
-                item4.AppId = app.Id;
+                layout.AppId = app.Id;
             }
-        }
-    }
-
-    private async ValueTask DeleteMissingPagesAsync(App deletedApp)
-    {
-        int[] incomingPageIds = deletedApp.Pages
-            .Where(predicate: page => page.Id > 0)
-            .Select(selector: page => page.Id)
-            .ToArray();
-
-        Page[] pagesToDelete = pageOrchestrationService.GetAllPage(ignoreFilters: true)
-            .Where(predicate: page => page.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingPageIds).Contains(value: page.Id))
-            .ToArray();
-
-        if (pagesToDelete.Length > 0)
-        {
-            await pageOrchestrationService.DeleteAllPageAsync(deletedPage: pagesToDelete);
-        }
-    }
-
-    private async ValueTask DeleteMissingComponentsAsync(App deletedApp)
-    {
-        int[] incomingComponentIds = deletedApp.Components
-            .Where(predicate: component => component.Id > 0)
-            .Select(selector: component => component.Id)
-            .ToArray();
-
-        Component[] componentsToDelete = componentOrchestrationService.GetAllComponent(ignoreFilters: true)
-            .Where(predicate: component => component.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingComponentIds).Contains(value: component.Id))
-            .ToArray();
-
-        if (componentsToDelete.Length > 0)
-        {
-            await componentOrchestrationService.DeleteAllComponentAsync(deletedComponent: componentsToDelete);
         }
     }
 
@@ -189,26 +113,6 @@ internal partial class AppRenderableCoordinationService(
         if (layoutsToDelete.Length > 0)
         {
             await layoutOrchestrationService.DeleteAllLayoutAsync(deletedLayout: layoutsToDelete);
-        }
-    }
-
-    private async ValueTask AddOrUpdateComponentsAsync(App newApp)
-    {
-        HashSet<int> existingComponentIds = componentOrchestrationService.GetAllComponent(ignoreFilters: true)
-            .Where(predicate: component => component.AppId == newApp.Id)
-            .Select(selector: component => component.Id)
-            .ToHashSet();
-
-        foreach (Component component in newApp.Components)
-        {
-            if (existingComponentIds.Contains(item: component.Id))
-            {
-                await componentOrchestrationService.UpdateComponentAsync(updatedComponent: component);
-            }
-            else
-            {
-                await componentOrchestrationService.AddComponentAsync(newComponent: component);
-            }
         }
     }
 

@@ -44,18 +44,21 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
     {
         eventHubBroker.ListenToEvent(eventName: "app_add", handler: (IAppSupportingResourcesCoordinationService service, App app) => service.HandleAppAddAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_add", handler: (IAppRenderableCoordinationService service, App app) => service.HandleAppAddAsync(app: app));
+        eventHubBroker.ListenToEvent(eventName: "app_add", handler: (IAppPageComponentCoordinationService service, App app) => service.HandleAppAddAsync(app: app));
     }
 
     private void ListenToAppUpdateEvents()
     {
         eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IAppSupportingResourcesCoordinationService service, App app) => service.HandleAppUpdateAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IAppRenderableCoordinationService service, App app) => service.HandleAppUpdateAsync(app: app));
+        eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IAppPageComponentCoordinationService service, App app) => service.HandleAppUpdateAsync(app: app));
     }
 
     private void ListenToAppDeleteEvents()
     {
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppSupportingResourcesCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppRenderableCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
+        eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppPageComponentCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
     }
 
     private void ListenToPageAddEvents() =>

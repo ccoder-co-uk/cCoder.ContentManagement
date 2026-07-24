@@ -59,6 +59,11 @@ handler: It.IsAny<Func<IAppSupportingResourcesCoordinationService, App, ValueTas
             .Setup(expression: x => x.ListenToEvent<App, IAppRenderableCoordinationService>(
 eventName: eventName,
 handler: It.IsAny<Func<IAppRenderableCoordinationService, App, ValueTask>>()));
+
+        eventHubBrokerMock
+            .Setup(expression: x => x.ListenToEvent<App, IAppPageComponentCoordinationService>(
+eventName: eventName,
+handler: It.IsAny<Func<IAppPageComponentCoordinationService, App, ValueTask>>()));
     }
 
 }

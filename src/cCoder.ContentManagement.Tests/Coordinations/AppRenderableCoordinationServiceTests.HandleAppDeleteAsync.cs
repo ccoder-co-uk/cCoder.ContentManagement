@@ -17,14 +17,17 @@ public partial class AppRenderableCoordinationServiceTests
     private readonly Mock<ITemplateOrchestrationService> templateOrchestrationServiceMock = new(behavior: MockBehavior.Strict);
     private readonly Mock<ILayoutOrchestrationService> layoutOrchestrationServiceMock = new(behavior: MockBehavior.Strict);
     private readonly AppRenderableCoordinationService coordinationService;
+    private readonly AppPageComponentCoordinationService pageComponentCoordinationService;
 
     public AppRenderableCoordinationServiceTests()
     {
         coordinationService = new AppRenderableCoordinationService(
-pageOrchestrationService: pageOrchestrationServiceMock.Object,
-componentOrchestrationService: componentOrchestrationServiceMock.Object,
 templateOrchestrationService: templateOrchestrationServiceMock.Object,
 layoutOrchestrationService: layoutOrchestrationServiceMock.Object);
+
+        pageComponentCoordinationService = new AppPageComponentCoordinationService(
+            pageOrchestrationService: pageOrchestrationServiceMock.Object,
+            componentOrchestrationService: componentOrchestrationServiceMock.Object);
     }
 
     [Fact]
@@ -57,6 +60,7 @@ newPage: It.Is<IEnumerable<Page>>(match: items => items.Single() == page && page
 
         // When
         await coordinationService.HandleAppAddAsync(app: app);
+        await pageComponentCoordinationService.HandleAppAddAsync(app: app);
 
         // Then
         layoutOrchestrationServiceMock.Verify(
@@ -113,6 +117,7 @@ newPage: It.Is<IEnumerable<Page>>(match: items => items.Single() == page && page
 
         // When
         await coordinationService.HandleAppUpdateAsync(app: app);
+        await pageComponentCoordinationService.HandleAppUpdateAsync(app: app);
 
         // Then
         layoutOrchestrationServiceMock.Verify(expression: service => service.GetAllLayout(ignoreFilters: true), times: Times.Once);
@@ -157,6 +162,7 @@ times: Times.Once);
 
         // When
         await coordinationService.HandleAppDeleteAsync(app: app);
+        await pageComponentCoordinationService.HandleAppDeleteAsync(app: app);
 
         // Then
         pageOrchestrationServiceMock.Verify(expression: service => service.DeleteByAppIdAsync(appId: app.Id), times: Times.Once);
@@ -184,6 +190,7 @@ times: Times.Once);
 
         // When
         await coordinationService.HandleAppUpdateAsync(app: app);
+        await pageComponentCoordinationService.HandleAppUpdateAsync(app: app);
 
         // Then
         pageOrchestrationServiceMock.VerifyNoOtherCalls();
@@ -260,6 +267,7 @@ deletedLayout: It.Is<IEnumerable<Layout>>(match: items => items.Single() == exis
 
         // When
         await coordinationService.HandleAppUpdateAsync(app: app);
+        await pageComponentCoordinationService.HandleAppUpdateAsync(app: app);
 
         // Then
         pageOrchestrationServiceMock.Verify(expression: service => service.GetAllPage(ignoreFilters: true), times: Times.Once);
