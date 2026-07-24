@@ -38,7 +38,6 @@ public partial class PackageProcessingServiceTests
         // Then
         Assert.Same(expected: package, actual: result);
         packageServiceMock.Verify(expression: x => x.AddPackageAsync(newPackage: package), times: Times.Once);
-        packageItemServiceMock.VerifyNoOtherCalls();
     }
 
 }

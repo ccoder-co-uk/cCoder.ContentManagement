@@ -9936,34 +9936,6 @@
           "ReturnType": "System.Threading.Tasks.ValueTask"
         },
         {
-          "Name": "ExportPackage",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "packageName",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "Package"
-        },
-        {
-          "Name": "ExportPackages",
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "packageNames",
-              "Type": "System.String[]"
-            }
-          ],
-          "ReturnType": "Package[]"
-        },
-        {
           "Name": "GetAllPackage",
           "Inputs": [
             {
@@ -11672,6 +11644,10 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.PackageItemProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.PackageProcessingService"
     },
     {
@@ -11896,15 +11872,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PackageProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.PackageProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.PackageService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.PackageProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Processings.PackageItemProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageEventProcessingService",
@@ -12191,20 +12159,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
       "LineNumber": 25
-    },
-    {
-      "Code": "STX0004",
-      "Description": "A service must not depend on another service at the same layer.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PackageProcessingService",
-      "LineNumber": 14
-    },
-    {
-      "Code": "STXP001",
-      "Description": "A processing service may use only one foundation service and no higher-level service.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Services.Processings.PackageProcessingService",
-      "LineNumber": 14
     },
     {
       "Code": "STX0007",

@@ -9,10 +9,6 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface IPackageProcessingService
 {
-    Package ExportPackage(int appId, string packageName);
-
-    Package[] ExportPackages(int appId, string[] packageNames);
-
     Package GetPackage(Guid packageId);
 
     IQueryable<Package> GetAllPackage(bool ignoreFilters = false);

@@ -14,6 +14,7 @@ internal partial class PackageOrchestrationService(
     IContentManagementMigrationAggregationService contentManagementMigrationAggregationService,
     IPackageExportProcessingService packageExportProcessingService,
     IPackageProcessingService processingService,
+    IPackageItemProcessingService packageItemProcessingService,
     IPackageEventProcessingService eventService) : IPackageOrchestrationService
 {
     public Package[] ExportPagackages(int appId, string[] packageNames) =>
@@ -70,6 +71,7 @@ internal partial class PackageOrchestrationService(
         ValidatePackage(package: updatedPackage, parameterName: "entity");
 
         Package result = await processingService.UpdatePackageAsync(updatedPackage: updatedPackage);
+        await SynchronizePackageItemsAsync(updatedPackage: updatedPackage, packageId: result.Id);
         await eventService.RaisePackageUpdateEventAsync(entity: result);
         return result;
 
@@ -88,10 +90,32 @@ internal partial class PackageOrchestrationService(
     }, isValueTask: true);
 
     public ValueTask<IEnumerable<Result<Package>>> AddOrUpdatePackageResult(IEnumerable<Package> newPackage) =>
-        TryCatch<IEnumerable<Result<Package>>>(operation: () =>
+        TryCatch<IEnumerable<Result<Package>>>(operation: async () =>
     {
         ValidateOrUpdatePackageResultOnAdd(inputs: [newPackage]);
-        return processingService.AddOrUpdatePackageResult(newPackage: ValidatePackages(packages: newPackage, parameterName: "items"));
+
+        Package[] packages = ValidatePackages(packages: newPackage, parameterName: "items")
+            .ToArray();
+
+        bool[] existingPackages = packages
+            .Select(selector: package => package.Id != Guid.Empty)
+            .ToArray();
+
+        Result<Package>[] results = (
+            await processingService.AddOrUpdatePackageResult(newPackage: packages))
+            .ToArray();
+
+        for (int index = 0; index < packages.Length && index < results.Length; index++)
+        {
+            if (existingPackages[index] && results[index].Success)
+            {
+                await SynchronizePackageItemsAsync(
+                    updatedPackage: packages[index],
+                    packageId: results[index].Item.Id);
+            }
+        }
+
+        return results;
     }, isValueTask: true);
 
     public ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage) =>
@@ -149,5 +173,34 @@ internal partial class PackageOrchestrationService(
         }
 
         return packageNames;
+    }
+
+    private async ValueTask SynchronizePackageItemsAsync(
+        Package updatedPackage,
+        Guid packageId)
+    {
+        if (updatedPackage.Items == null)
+        {
+            return;
+        }
+
+        PackageItem[] deletedPackageItems = packageItemProcessingService
+            .GetAllPackageItem()
+            .Where(predicate: packageItem => packageItem.PackageId == packageId)
+            .ToArray();
+
+        await packageItemProcessingService.DeleteAllPackageItemAsync(
+            deletedPackageItem: deletedPackageItems);
+
+        foreach (PackageItem packageItem in updatedPackage.Items)
+        {
+            packageItem.PackageId = packageId;
+        }
+
+        if (updatedPackage.Items.Any())
+        {
+            await packageItemProcessingService.AddOrUpdatePackageItemResult(
+                newPackageItem: updatedPackage.Items);
+        }
     }
 }

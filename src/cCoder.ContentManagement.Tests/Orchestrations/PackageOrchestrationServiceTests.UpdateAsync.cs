@@ -48,4 +48,53 @@ public partial class PackageOrchestrationServiceTests
         packageEventProcessingServiceMock.Verify(expression: x => x.RaisePackageUpdateEventAsync(entity: entity), times: Times.Once);
     }
 
+    [Fact]
+    public async Task ShouldReplacePackageItemsWhenUpdateAsync()
+    {
+        // Given
+        Package entity = CreateRandomPackage();
+        entity.Items = [];
+
+        PackageItem existingPackageItem = new()
+        {
+            Id = Guid.NewGuid(),
+            PackageId = entity.Id
+        };
+
+        packageProcessingServiceMock
+            .Setup(expression: service => service.UpdatePackageAsync(updatedPackage: entity))
+            .ReturnsAsync(value: entity);
+
+        packageItemProcessingServiceMock
+            .Setup(expression: service => service.GetAllPackageItem(ignoreFilters: false))
+            .Returns(value: new[] { existingPackageItem }.AsQueryable());
+
+        packageItemProcessingServiceMock
+            .Setup(expression: service => service.DeleteAllPackageItemAsync(
+                deletedPackageItem: It.Is<IEnumerable<PackageItem>>(match: items =>
+                    items.Single() == existingPackageItem)))
+            .Returns(value: ValueTask.CompletedTask);
+
+        packageEventProcessingServiceMock
+            .Setup(expression: service => service.RaisePackageUpdateEventAsync(entity: entity))
+            .Returns(value: ValueTask.CompletedTask);
+
+        // When
+        Package result = await orchestrationService.UpdatePackageAsync(updatedPackage: entity);
+
+        // Then
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        packageItemProcessingServiceMock.Verify(
+            expression: service => service.GetAllPackageItem(ignoreFilters: false),
+            times: Times.Once);
+
+        packageItemProcessingServiceMock.Verify(
+            expression: service => service.DeleteAllPackageItemAsync(
+                deletedPackageItem: It.Is<IEnumerable<PackageItem>>(match: items =>
+                    items.Single() == existingPackageItem)),
+            times: Times.Once);
+    }
+
 }

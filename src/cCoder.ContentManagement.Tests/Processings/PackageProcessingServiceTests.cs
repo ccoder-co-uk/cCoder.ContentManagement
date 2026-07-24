@@ -13,7 +13,6 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
@@ -28,17 +27,12 @@ public partial class PackageProcessingServiceTests
 {
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPackageService> packageServiceMock = new();
-    private readonly Mock<IPackageItemProcessingService> packageItemServiceMock = new();
-    private readonly Mock<IPackageExportService> packageExportServiceMock = new();
     private readonly PackageProcessingService packageProcessingService;
 
     public PackageProcessingServiceTests()
     {
         packageProcessingService = new PackageProcessingService(
-service: packageServiceMock.Object,
-packageItemService: packageItemServiceMock.Object,
-packageExportService: packageExportServiceMock.Object
-        );
+            service: packageServiceMock.Object);
     }
 
     private static Package CreateRandomPackage() =>

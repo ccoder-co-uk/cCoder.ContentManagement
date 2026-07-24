@@ -28,6 +28,7 @@ public partial class PackageOrchestrationServiceTests
     private readonly Mock<IContentManagementMigrationAggregationService> contentManagementMigrationAggregationServiceMock;
     private readonly Mock<IPackageExportProcessingService> packageExportProcessingServiceMock;
     private readonly Mock<IPackageProcessingService> packageProcessingServiceMock;
+    private readonly Mock<IPackageItemProcessingService> packageItemProcessingServiceMock;
     private readonly Mock<IPackageEventProcessingService> packageEventProcessingServiceMock;
     private readonly PackageOrchestrationService orchestrationService;
 
@@ -36,12 +37,14 @@ public partial class PackageOrchestrationServiceTests
         contentManagementMigrationAggregationServiceMock = new Mock<IContentManagementMigrationAggregationService>(behavior: MockBehavior.Strict);
         packageExportProcessingServiceMock = new Mock<IPackageExportProcessingService>(behavior: MockBehavior.Strict);
         packageProcessingServiceMock = new Mock<IPackageProcessingService>(behavior: MockBehavior.Strict);
+        packageItemProcessingServiceMock = new Mock<IPackageItemProcessingService>(behavior: MockBehavior.Strict);
         packageEventProcessingServiceMock = new Mock<IPackageEventProcessingService>(behavior: MockBehavior.Strict);
 
         orchestrationService = new PackageOrchestrationService(
 contentManagementMigrationAggregationService: contentManagementMigrationAggregationServiceMock.Object,
 packageExportProcessingService: packageExportProcessingServiceMock.Object,
 processingService: packageProcessingServiceMock.Object,
+packageItemProcessingService: packageItemProcessingServiceMock.Object,
 eventService: packageEventProcessingServiceMock.Object
         );
     }
