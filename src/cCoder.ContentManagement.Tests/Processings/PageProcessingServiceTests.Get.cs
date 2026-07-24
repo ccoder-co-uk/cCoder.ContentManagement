@@ -24,13 +24,16 @@ public partial class PageProcessingServiceTests
     [Fact]
     public void ShouldDelegateToFoundationServiceWhenGet()
     {
+        // Given
         Page page = CreateRandomPage();
 
         pageServiceMock.Setup(expression: x => x.GetPage(pageId: page.Id))
             .Returns(value: page);
 
+        // When
         Page result = pageProcessingService.GetPage(pageId: page.Id);
 
+        // Then
         result.Should()
             .BeSameAs(expected: page);
 

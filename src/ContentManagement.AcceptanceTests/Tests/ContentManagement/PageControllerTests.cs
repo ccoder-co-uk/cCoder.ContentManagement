@@ -14,7 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Web.AcceptanceTests.Infrastructure;
 using Xunit;
 
-
 using Microsoft.EntityFrameworkCore;
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
@@ -440,6 +439,7 @@ requestUri: $"{BaseUrl}/Render()?appId={appId}&path={Uri.EscapeDataString(string
             await core.DeleteAllAsync(contents: contents);
         }
     }
+
     private async Task<int> GetPageStatusCodeAsync(int id)
     {
         using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}({id})");

@@ -9,7 +9,6 @@ using FluentAssertions;
 using System.Text.Json.Nodes;
 using Xunit;
 
-
 using Web.AcceptanceTests.Infrastructure;
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
@@ -19,12 +18,10 @@ public sealed partial class PageControllerTests
     public async Task GetCount_ReturnsNonNegativeCount()
     {
         // Given
-
         // When
         int actualCount = await GetPageCountAsync();
 
         // Then
-
         actualCount.Should()
             .BeGreaterThanOrEqualTo(expected: 0);
     }
@@ -33,12 +30,10 @@ public sealed partial class PageControllerTests
     public async Task Get_ReturnsListOfPages()
     {
         // Given
-
         // When
         IReadOnlyList<Page> actualPages = await GetPagesAsync(top: 1);
 
         // Then
-
         actualPages.Should()
             .NotBeNull();
     }
@@ -50,6 +45,7 @@ public sealed partial class PageControllerTests
         SeededPageContext seededContext = await SeedDatabase(
             includeAppAdmin: true,
             privileges: ["page_create", "page_delete"]);
+
         string title = Unique(prefix: "Page");
         Page expectedPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: title));
         Page actualPage;
@@ -58,7 +54,6 @@ public sealed partial class PageControllerTests
         actualPage = await GetPageAsync(id: expectedPage.Id);
 
         // Then
-
         actualPage.Should()
             .NotBeNull();
 
@@ -75,6 +70,7 @@ public sealed partial class PageControllerTests
     [Fact]
     public async Task Get_WithoutReadPrivilege_ReturnsNotFound()
     {
+        // Given
         SeededPageContext seededContext = await SeedDatabase(includeAppAdmin: false);
 
         using IServiceScope scope = fixture.Factory.Services.CreateScope();
@@ -104,8 +100,10 @@ public sealed partial class PageControllerTests
             Keywords = "hidden,page",
         });
 
+        // When
         Page actualPage = await GetPageAsync(id: hiddenPage.Id);
 
+        // Then
         actualPage.Should()
             .BeNull();
 
@@ -115,9 +113,11 @@ public sealed partial class PageControllerTests
     [Fact]
     public async Task Get_WithRecursivePageExpansion_ReturnsPageInfoForNestedNavigationPages()
     {
+        // Given
         SeededPageContext seededContext = await SeedDatabase(
             includeAppAdmin: true,
             privileges: ["page_create", "page_delete"]);
+
         string rootTitle = Unique(prefix: "Admin");
         string childTitle = Unique(prefix: "AppManagement");
         string grandChildTitle = Unique(prefix: "Settings");
@@ -129,8 +129,10 @@ public sealed partial class PageControllerTests
         JsonObject payload = await GetPageQueryPayloadAsync(
 queryString: $"?$filter=AppId eq {seededContext.AppId} and ParentId eq null&$orderby=Order asc&$expand=PageInfo,Pages($orderby=Order asc;$expand=PageInfo,Pages($orderby=Order asc;$expand=PageInfo))");
 
+        // When
         JsonArray rootPages = payload["value"]!.AsArray();
 
+        // Then
         JsonObject adminPage = rootPages.Should()
             .ContainSingle()
             .Subject!.AsObject();

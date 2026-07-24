@@ -10,7 +10,6 @@ using FluentAssertions;
 using Web.AcceptanceTests.Infrastructure;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 [Collection(WebAcceptanceCollection.Name)]
@@ -131,6 +130,7 @@ requestUri: $"{BaseUrl}/Render()?appId={appId}&name={Uri.EscapeDataString(string
 
         return content;
     }
+
     private async Task<int> GetComponentStatusCodeAsync(int id)
     {
         using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}({id})");

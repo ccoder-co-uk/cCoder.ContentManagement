@@ -21,7 +21,6 @@ using cCoder.ContentManagement.Dependencies.Caching;
 using Moq;
 using cCoder.Data.Exposures;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Exposures.Caching;
 
 public partial class MetadataCacheTests
@@ -32,6 +31,7 @@ public partial class MetadataCacheTests
     public MetadataCacheTests()
     {
         metadataTypeCacheMock = new Mock<IMetadataTypeCache>(behavior: MockBehavior.Strict);
+
         commonObjectCacheMock =
             new Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker>(
                 behavior: MockBehavior.Strict);

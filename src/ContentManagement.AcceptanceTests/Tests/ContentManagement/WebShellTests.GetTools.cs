@@ -12,11 +12,14 @@ public sealed partial class WebShellTests
     [Fact]
     public async Task Get_GivenToolsPage_ShouldReturnManualTestingShell()
     {
+        // Given
         string content = await GetOkContentAsync(path: "/tools/index.html");
         string apiScript = await GetOkContentAsync(path: "/tools/api.js");
         string gridScript = await GetOkContentAsync(path: "/tools/grids.js");
+        // When
         string styles = await GetOkContentAsync(path: "/tools/styles.css");
 
+        // Then
         content.Should()
             .Contain(expected: "Content Management");
 

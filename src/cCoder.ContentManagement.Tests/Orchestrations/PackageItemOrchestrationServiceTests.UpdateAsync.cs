@@ -17,8 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class PackageItemOrchestrationServiceTests
@@ -26,6 +24,7 @@ public partial class PackageItemOrchestrationServiceTests
     [Fact]
     public async Task ShouldCallProcessingThenRaiseUpdateEventAsyncWhenUpdateAsync()
     {
+        // Given
         PackageItem entity = CreateRandomPackageItem();
 
         packageItemProcessingServiceMock.Setup(expression: x => x.UpdatePackageItemAsync(updatedPackageItem: entity))
@@ -35,8 +34,10 @@ public partial class PackageItemOrchestrationServiceTests
             .Setup(expression: x => x.RaisePackageItemUpdateEventAsync(entity: entity))
             .Returns(value: ValueTask.CompletedTask);
 
+        // When
         PackageItem result = await orchestrationService.UpdatePackageItemAsync(updatedPackageItem: entity);
 
+        // Then
         result.Should()
             .BeSameAs(expected: entity);
 

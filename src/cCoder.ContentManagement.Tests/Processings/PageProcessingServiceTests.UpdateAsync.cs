@@ -15,12 +15,9 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
-
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
@@ -29,9 +26,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public async Task ShouldUpdatePageWhenUserCanUpdatePageForUpdateAsync()
     {
-        // When
 
-        // Then
         // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
@@ -101,7 +96,6 @@ public partial class PageProcessingServiceTests
         Page result = await pageProcessingService.UpdatePageAsync(updatedPage: page);
 
         // Then
-
         result.Should()
             .BeSameAs(expected: dbPage);
 
@@ -149,7 +143,6 @@ public partial class PageProcessingServiceTests
         Func<Task> act = async () => await pageProcessingService.UpdatePageAsync(updatedPage: page);
 
         // Then
-
         await act.Should()
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
@@ -162,9 +155,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenNewParentCannotBeResolvedForUpdateAsync()
     {
-        // When
 
-        // Then
         // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
@@ -237,7 +228,6 @@ public partial class PageProcessingServiceTests
         Func<Task> act = async () => await pageProcessingService.UpdatePageAsync(updatedPage: page);
 
         // Then
-
         await act.Should()
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");

@@ -18,7 +18,6 @@ using Moq;
 using System.Security;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class AppServiceTests
@@ -36,7 +35,6 @@ public partial class AppServiceTests
         App result = appService.GetApp(appId: 5);
 
         // Then
-
         result.Should()
             .BeEquivalentTo(expectation: app);
 
@@ -48,13 +46,16 @@ public partial class AppServiceTests
     [Fact]
     public void ShouldReturnAppWhenGetIgnoringFilters()
     {
+        // Given
         App app = CreateRandomApp(id: 7);
 
         appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: true))
             .Returns(value: new[] { app }.AsQueryable());
 
+        // When
         App result = appService.GetApp(appId: 7, ignoreFilters: true);
 
+        // Then
         result.Should()
             .BeEquivalentTo(expectation: app);
 
@@ -66,6 +67,7 @@ public partial class AppServiceTests
     [Fact]
     public void ShouldThrowSecurityExceptionWhenAppExistsOnlyInIgnoredQuery()
     {
+        // Given
         App app = CreateRandomApp(id: 9);
 
         appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: false))
@@ -75,8 +77,10 @@ public partial class AppServiceTests
         appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: true))
             .Returns(value: new[] { app }.AsQueryable());
 
+        // When
         Action act = () => appService.GetApp(appId: 9);
 
+        // Then
         act.Should()
             .Throw<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");

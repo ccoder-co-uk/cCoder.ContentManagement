@@ -11,7 +11,7 @@ using Xunit;
 
 namespace cCoder.Core.Services.Tests.CMS.Coordinations;
 
-public class AppSupportingResourcesCoordinationServiceTests
+public partial class AppSupportingResourcesCoordinationServiceTests
 {
     private readonly Mock<IAppCultureBroker> appCultureBrokerMock = new(behavior: MockBehavior.Strict);
     private readonly Mock<IScriptBroker> scriptBrokerMock = new(behavior: MockBehavior.Strict);

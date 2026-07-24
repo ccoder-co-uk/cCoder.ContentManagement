@@ -16,8 +16,6 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using Moq;
 using Xunit;
 
-
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class PackageItemOrchestrationServiceTests
@@ -25,6 +23,7 @@ public partial class PackageItemOrchestrationServiceTests
     [Fact]
     public async Task ShouldGetThenDeleteThenRaiseDeleteEventAsyncWhenDeleteAsync()
     {
+        // Given
         Guid id = Guid.NewGuid();
         PackageItem entity = CreateRandomPackageItem();
 
@@ -38,8 +37,10 @@ public partial class PackageItemOrchestrationServiceTests
             .Setup(expression: x => x.RaisePackageItemDeleteEventAsync(entity: entity))
             .Returns(value: ValueTask.CompletedTask);
 
+        // When
         await orchestrationService.DeleteAsync(packageItemId: id);
 
+        // Then
         packageItemProcessingServiceMock.Verify(expression: x => x.GetPackageItem(packageItemId: id), times: Times.Once);
         packageItemProcessingServiceMock.Verify(expression: x => x.DeleteAsync(packageItemId: id), times: Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();

@@ -13,7 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Web.AcceptanceTests.Infrastructure;
 using Xunit;
 
-
 using Microsoft.EntityFrameworkCore;
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
@@ -240,6 +239,7 @@ public sealed partial class PageInfoControllerTests(WebAcceptanceFixture fixture
 
         return JsonSerializer.Deserialize<ODataEnvelope<PageInfo>>(json: content, options: JsonOptions)!.Value;
     }
+
     private async Task<int> GetPageInfoStatusCodeAsync(int id)
     {
         using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}({id})");

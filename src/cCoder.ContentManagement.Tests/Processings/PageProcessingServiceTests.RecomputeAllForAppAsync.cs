@@ -15,12 +15,9 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
-
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
@@ -29,7 +26,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public async Task ShouldRecomputePathsAndSaveWhenUserIsAppAdminForRecomputeAllForAppAsync()
     {
-        // Then
+
         // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
@@ -78,7 +75,6 @@ public partial class PageProcessingServiceTests
         await pageProcessingService.RecomputeAllForAppAsync(appId: 1);
 
         // Then
-
         page.Path.Should()
             .Be(expected: string.Empty);
 
@@ -116,7 +112,6 @@ public partial class PageProcessingServiceTests
         Func<Task> act = async () => await pageProcessingService.RecomputeAllForAppAsync(appId: 1);
 
         // Then
-
         await act.Should()
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");

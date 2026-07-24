@@ -19,7 +19,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Foundations;
 
 public partial class RenderFileContentServiceTests
@@ -27,8 +26,11 @@ public partial class RenderFileContentServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionOnGetLatestTextContentWhenAppIdIsInvalid()
     {
+        // Given
+        // When
         Action action = () => renderFileContentService.GetLatestTextContent(appId: 0, path: "/path/file.txt");
 
+        // Then
         action.Should()
             .Throw<ValidationException>()
             .WithMessage(expectedWildcardPattern: "appId must be greater than 0.");
@@ -39,8 +41,11 @@ public partial class RenderFileContentServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionOnGetLatestTextContentWhenPathIsInvalid()
     {
+        // Given
+        // When
         Action action = () => renderFileContentService.GetLatestTextContent(appId: 1, path: " ");
 
+        // Then
         action.Should()
             .Throw<ValidationException>()
             .WithMessage(expectedWildcardPattern: "path is required.");
@@ -51,12 +56,15 @@ public partial class RenderFileContentServiceTests
     [Fact]
     public void ShouldReturnEmptyStringOnGetLatestTextContentWhenRawDataIsMissing()
     {
+        // Given
         renderFileContentBrokerMock
             .Setup(expression: broker => broker.GetLatestRawData(appId: 1, path: "/assets/file.txt"))
             .Returns(value: []);
 
+        // When
         string result = renderFileContentService.GetLatestTextContent(appId: 1, path: "/assets/file.txt");
 
+        // Then
         result.Should()
             .BeEmpty();
 
@@ -67,6 +75,7 @@ public partial class RenderFileContentServiceTests
     [Fact]
     public void ShouldReturnDecodedTextOnGetLatestTextContent()
     {
+        // Given
         string expected = "rendered file content";
         byte[] rawData = Encoding.UTF8.GetBytes(s: expected);
 
@@ -74,8 +83,10 @@ public partial class RenderFileContentServiceTests
             .Setup(expression: broker => broker.GetLatestRawData(appId: 7, path: "/assets/content.txt"))
             .Returns(value: rawData);
 
+        // When
         string result = renderFileContentService.GetLatestTextContent(appId: 7, path: "/assets/content.txt");
 
+        // Then
         result.Should()
             .Be(expected: expected);
 

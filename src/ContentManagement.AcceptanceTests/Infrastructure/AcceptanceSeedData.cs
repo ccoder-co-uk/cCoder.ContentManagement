@@ -5,9 +5,9 @@
 using System.Text.Json;
 using cCoder.Data;
 using cCoder.Data.Models;
+using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using Newtonsoft.Json;
-
 
 namespace Web.AcceptanceTests.Infrastructure;
 
@@ -23,7 +23,35 @@ value: value.GetRawText(),
 settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
     }
 
-    public static T[] LoadPackageItems<T>(string packageName, string itemType)
+    public static Layout[] LoadLayoutPackageItems(string packageName, string itemType) =>
+        LoadPackageItems(packageName: packageName, itemType: itemType, itemTypeContract: typeof(Layout))
+        .Cast<Layout>()
+        .ToArray();
+
+    public static Template[] LoadTemplatePackageItems(string packageName, string itemType) =>
+        LoadPackageItems(packageName: packageName, itemType: itemType, itemTypeContract: typeof(Template))
+        .Cast<Template>()
+        .ToArray();
+
+    public static Resource[] LoadResourcePackageItems(string packageName, string itemType) =>
+        LoadPackageItems(packageName: packageName, itemType: itemType, itemTypeContract: typeof(Resource))
+        .Cast<Resource>()
+        .ToArray();
+
+    public static Component[] LoadComponentPackageItems(string packageName, string itemType) =>
+        LoadPackageItems(packageName: packageName, itemType: itemType, itemTypeContract: typeof(Component))
+        .Cast<Component>()
+        .ToArray();
+
+    public static Script[] LoadScriptPackageItems(string packageName, string itemType) =>
+        LoadPackageItems(packageName: packageName, itemType: itemType, itemTypeContract: typeof(Script))
+        .Cast<Script>()
+        .ToArray();
+
+    private static object[] LoadPackageItems(
+        string packageName,
+        string itemType,
+        Type itemTypeContract)
     {
         Package package = LoadExportPackages()
             .First(predicate: found =>
@@ -32,7 +60,8 @@ settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
 
         return package.Items
             .Where(predicate: item => string.Equals(a: item.Type, b: itemType, comparisonType: StringComparison.OrdinalIgnoreCase))
-            .SelectMany(selector: item => UnpackItems<T>(data: item.Data))
+            .SelectMany(selector: item =>
+                UnpackItems(data: item.Data, itemTypeContract: itemTypeContract))
             .ToArray();
     }
 
@@ -61,18 +90,25 @@ value: value.GetRawText(),
 settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
     }
 
-    private static IEnumerable<T> UnpackItems<T>(string data)
+    private static IEnumerable<object> UnpackItems(string data, Type itemTypeContract)
     {
         string trimmed = data.TrimStart();
 
-        return trimmed.StartsWith(value: "[", comparisonType: StringComparison.Ordinal)
-            ? JsonConvert.DeserializeObject<T[]>(
-value: trimmed,
-settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings())
-            : [
-                JsonConvert.DeserializeObject<T>(
-value: trimmed,
-settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings())
-            ];
+        if (trimmed.StartsWith(value: "[", comparisonType: StringComparison.Ordinal))
+        {
+            Array items = (Array)JsonConvert.DeserializeObject(
+                value: trimmed,
+                type: itemTypeContract.MakeArrayType(),
+                settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
+
+            return items.Cast<object>();
+        }
+
+        object item = JsonConvert.DeserializeObject(
+            value: trimmed,
+            type: itemTypeContract,
+            settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
+
+        return [item];
     }
 }

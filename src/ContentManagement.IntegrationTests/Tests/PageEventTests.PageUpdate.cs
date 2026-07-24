@@ -12,6 +12,7 @@ public sealed partial class PageEventTests
     [Fact]
     public async Task Post_GivenPageUpdateEvent_ShouldUpdatePageInfo()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -19,8 +20,10 @@ public sealed partial class PageEventTests
             cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
             await SeedPageInfoAsync(page: page);
 
+            // When
             await PostEventAsync(eventName: "page_update", data: CreatePageWithPageInfo(page: page, title: "Updated landing"));
 
+            // Then
             await WaitForAsync(
 condition: () => HasPageInfo(pageId: page.Id, title: "Updated landing"),
 because: "page_update should update the page info child row");
@@ -38,6 +41,7 @@ because: "page_update should update the page info child row");
     [Fact]
     public async Task Post_GivenPageUpdateEvent_ShouldUpdateContent()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -45,8 +49,10 @@ because: "page_update should update the page info child row");
             cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
             await SeedContentAsync(page: page);
 
+            // When
             await PostEventAsync(eventName: "page_update", data: CreatePageWithContent(page: page, html: "<p>Updated landing body</p>"));
 
+            // Then
             await WaitForAsync(
 condition: () => HasContent(pageId: page.Id, html: "<p>Updated landing body</p>"),
 because: "page_update should update the content child row");
@@ -64,6 +70,7 @@ because: "page_update should update the content child row");
     [Fact]
     public async Task Post_GivenPageUpdateEvent_ShouldUpdatePageRole()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -73,8 +80,10 @@ because: "page_update should update the content child row");
             cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
             await SeedPageRoleAsync(page: page, roleId: originalRoleId);
 
+            // When
             await PostEventAsync(eventName: "page_update", data: CreatePageWithPageRole(page: page, roleId: updatedRoleId));
 
+            // Then
             await WaitForAsync(
 condition: () => HasPageRole(pageId: page.Id, roleId: updatedRoleId) && !HasPageRole(pageId: page.Id, roleId: originalRoleId),
 because: "page_update should update the page role child row");

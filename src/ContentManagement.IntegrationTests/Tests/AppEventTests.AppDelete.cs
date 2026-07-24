@@ -16,6 +16,7 @@ public sealed partial class AppEventTests
     [Fact]
     public async Task Post_GivenAppDeleteEvent_ShouldDeleteAppCulture()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -23,8 +24,10 @@ public sealed partial class AppEventTests
             await SeedAppAdministratorAsync(appId: appId);
             await SeedAppCultureAsync(appId: appId);
 
+            // When
             await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
+            // Then
             await WaitForAsync(
 condition: () => HasNoAppCulture(appId: appId),
 because: "app_delete should delete the app culture child row");
@@ -53,6 +56,7 @@ because: "app_delete should delete the app culture child row");
     [Fact]
     public async Task Post_GivenAppDeleteEvent_ShouldDeleteComponent()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -60,8 +64,10 @@ because: "app_delete should delete the app culture child row");
             await SeedAppAdministratorAsync(appId: appId);
             await SeedComponentAsync(appId: appId);
 
+            // When
             await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
+            // Then
             await WaitForAsync(
 condition: () => HasNoComponent(appId: appId),
 because: "app_delete should delete the component child row");
@@ -79,6 +85,7 @@ because: "app_delete should delete the component child row");
     [Fact]
     public async Task Post_GivenAppDeleteEvent_ShouldDeleteLayout()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -86,8 +93,10 @@ because: "app_delete should delete the component child row");
             await SeedAppAdministratorAsync(appId: appId);
             await SeedLayoutAsync(appId: appId);
 
+            // When
             await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
+            // Then
             await WaitForAsync(
 condition: () => HasNoLayout(appId: appId),
 because: "app_delete should delete the layout child row");
@@ -105,6 +114,7 @@ because: "app_delete should delete the layout child row");
     [Fact]
     public async Task Post_GivenAppDeleteEvent_ShouldDeletePage()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -112,8 +122,10 @@ because: "app_delete should delete the layout child row");
             await SeedAppAdministratorAsync(appId: appId);
             await SeedPageAsync(appId: appId);
 
+            // When
             await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
+            // Then
             await WaitForAsync(
 condition: () => HasNoPage(appId: appId),
 because: "app_delete should delete the page child row");
@@ -131,6 +143,7 @@ because: "app_delete should delete the page child row");
     [Fact]
     public async Task Post_GivenAppDeleteEvent_ShouldDeleteResource()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -138,8 +151,10 @@ because: "app_delete should delete the page child row");
             await SeedAppAdministratorAsync(appId: appId);
             await SeedResourceAsync(appId: appId);
 
+            // When
             await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
+            // Then
             await WaitForAsync(
 condition: () => HasNoResource(appId: appId),
 because: "app_delete should delete the resource child row");
@@ -157,6 +172,7 @@ because: "app_delete should delete the resource child row");
     [Fact]
     public async Task Post_GivenAppDeleteEvent_ShouldDeleteScript()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -164,8 +180,10 @@ because: "app_delete should delete the resource child row");
             await SeedAppAdministratorAsync(appId: appId);
             await SeedScriptAsync(appId: appId);
 
+            // When
             await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
+            // Then
             await WaitForAsync(
 condition: () => HasNoScript(appId: appId),
 because: "app_delete should delete the script child row");
@@ -183,6 +201,7 @@ because: "app_delete should delete the script child row");
     [Fact]
     public async Task Post_GivenAppDeleteEvent_ShouldDeleteTemplate()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -190,8 +209,10 @@ because: "app_delete should delete the script child row");
             await SeedAppAdministratorAsync(appId: appId);
             await SeedTemplateAsync(appId: appId);
 
+            // When
             await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
 
+            // Then
             await WaitForAsync(
 condition: () => HasNoTemplate(appId: appId),
 because: "app_delete should delete the template child row");

@@ -22,7 +22,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Exposures.Caching;
 
 public partial class MetadataCacheTests
@@ -30,6 +29,7 @@ public partial class MetadataCacheTests
     [Fact]
     public void ShouldSerializeAllKnownTypeSetsOnGetAll()
     {
+        // Given
         MetadataContainerSet core = new()
         {
             Name = "Core",
@@ -42,10 +42,12 @@ public partial class MetadataCacheTests
             Types = [new ExtendedMetadataContainer(type: typeof(int)) { Category = "Workflow" }],
         };
 
-        MetadataCacheDependency subject = CreateSubject(core, workflow);
+        MetadataCacheDependency subject = CreateSubject(typeSets: [core, workflow]);
 
+        // When
         string result = subject.GetAll(culture: "en-GB");
 
+        // Then
         result.Should()
             .Contain(expected: "\"Name\":\"Core\"");
 
@@ -66,6 +68,7 @@ times: Times.Once
     [Fact]
     public void ShouldRebuildUsingLatestSharedMetadataTypeSets()
     {
+        // Given
         MetadataContainerSet initial = new()
         {
             Name = "Core",
@@ -95,8 +98,10 @@ times: Times.Once
 
         currentTypeSetPayloads = [JsonSerializer.Serialize(value: updated)];
         subject.Rebuild();
+        // When
         string result = subject.GetAll(culture: "en-GB");
 
+        // Then
         result.Should()
             .Contain(expected: "\"Name\":\"Workflow\"");
 
@@ -116,6 +121,7 @@ times: Times.Exactly(callCount: 2)
     [Fact]
     public void ShouldMergeTypeSetsWithTheSameNameOnGetAll()
     {
+        // Given
         MetadataContainerSet contentManagement = new()
         {
             Name = "Core",
@@ -130,10 +136,12 @@ times: Times.Exactly(callCount: 2)
             Types = [new ExtendedMetadataContainer(type: typeof(Role)) { Category = "Core" }],
         };
 
-        MetadataCacheDependency subject = CreateSubject(contentManagement, appSecurity);
+        MetadataCacheDependency subject = CreateSubject(typeSets: [contentManagement, appSecurity]);
 
+        // When
         string result = subject.GetAll(culture: "en-GB");
 
+        // Then
         result.Should()
             .Contain(expected: "\"Name\":\"Core\"");
 

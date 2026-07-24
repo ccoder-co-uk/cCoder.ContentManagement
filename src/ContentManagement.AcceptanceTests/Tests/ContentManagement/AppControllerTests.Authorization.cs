@@ -10,7 +10,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-
 using Microsoft.EntityFrameworkCore;
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
@@ -19,6 +18,7 @@ public sealed partial class AppControllerTests
     [Fact]
     public async Task Post_CreatesBootstrapAdministratorRoleForCreatedApp()
     {
+        // Given
         SeededApp seededApp = await SeedDatabase(privileges: "app_create");
 
         App createdApp = await CreateAppAsync(
@@ -44,11 +44,13 @@ payload: new
             .IgnoreQueryFilters()
             .Where(predicate: role => role.AppId == createdApp.Id)];
 
+        // When
         UserRole[] userRoles = [.. core.Set<UserRole>()
             .IgnoreQueryFilters()
             .Where(predicate: userRole => roles.Select(selector: role => role.Id)
             .Contains(value: userRole.RoleId))];
 
+        // Then
         roles.Should()
             .Contain(predicate: role =>
             string.Equals(a: role.Name, b: "Administrators", comparisonType: StringComparison.OrdinalIgnoreCase)

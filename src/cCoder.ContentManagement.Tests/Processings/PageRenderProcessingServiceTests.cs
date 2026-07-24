@@ -38,7 +38,8 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class PageRenderProcessingServiceTests
 {
     private readonly TestMetadataReaderBroker metadataReaderBroker = new();
-    private readonly TestCommonObjectReaderBroker commonObjectReaderBroker = new();
+    private readonly Mock<ICommonObjectReaderBroker> commonObjectReaderBrokerMock =
+        CreateCommonObjectReaderBrokerMock();
     private readonly TestComponentReaderBroker componentReaderBroker = new();
     private readonly TestScriptReaderBroker scriptReaderBroker = new();
     private readonly Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new();
@@ -47,7 +48,7 @@ public partial class PageRenderProcessingServiceTests
         new(
 executionOrchestrationService: new PageRenderExecutionOrchestrationService(
 metadataCacheService: new MetadataCacheService(broker: metadataReaderBroker),
-commonObjectCacheService: new CommonObjectCacheService(broker: commonObjectReaderBroker),
+commonObjectCacheService: new CommonObjectCacheService(broker: commonObjectReaderBrokerMock.Object),
 markupRenderService: new MarkupRenderService(
 componentReaderBroker: componentReaderBroker,
 scriptReaderBroker: scriptReaderBroker,
@@ -155,7 +156,9 @@ renderFileContentBroker: renderFileContentBrokerMock.Object)));
                 Name = "Default",
                 HeaderHtml = "<title>[page[title]]</title><meta>[meta[site-description]]</meta><script>[script[Bootstrap]]</script>",
                 Html = string.Join(
-separator: "",
+                separator: "",
+                value:
+                [
                     "<nav>[nav[0]]</nav>",
                     "<nav class='expanded'>[navExpanded[0]]</nav>",
                     "<main>[content[Body]]</main>",
@@ -163,7 +166,7 @@ separator: "",
                     "<section>[resource_displayname[Greeting]]|[resource_shortdisplayname[Greeting]]|[resource_description[Greeting]]</section>",
                     "<section>[theme[Color]]|[app[name]]|[page[path]]</section>",
                     "<section>[execute]return 'ignored';[/execute]</section>"
-                ),
+                ]),
                 Script = string.Empty,
             },
         ];
@@ -256,38 +259,32 @@ separator: "",
             $"{name}|{culture}";
     }
 
-    private sealed class TestCommonObjectReaderBroker : ICommonObjectReaderBroker
+    private static Mock<ICommonObjectReaderBroker> CreateCommonObjectReaderBrokerMock()
     {
-        public T[] GetAll<T>() =>
-            [];
-
-        public T Get<T>(string key) =>
-            default;
-
-        public void Set(string key, object item)
-        {
-        }
-
-        public IEnumerable<CommonObject> GetLatestSet() =>
-            [];
-
-        public IReadOnlyDictionary<string, PageRenderResource> ResourcesByLookup { get; init; } =
+        IReadOnlyDictionary<string, PageRenderResource> resourcesByLookup =
             new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
 
-        public IReadOnlyDictionary<string, PageRenderComponent> ComponentsByName { get; init; } =
+        IReadOnlyDictionary<string, PageRenderComponent> componentsByName =
             new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
 
-        public IReadOnlyDictionary<string, PageRenderScript> ScriptsByName { get; init; } =
+        IReadOnlyDictionary<string, PageRenderScript> scriptsByName =
             new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
 
-        public IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup() =>
-            ResourcesByLookup;
+        Mock<ICommonObjectReaderBroker> brokerMock = new();
 
-        public IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName() =>
-            ComponentsByName;
+        brokerMock
+            .Setup(expression: broker => broker.GetResourcesByLookup())
+            .Returns(value: resourcesByLookup);
 
-        public IReadOnlyDictionary<string, PageRenderScript> GetScriptsByName() =>
-            ScriptsByName;
+        brokerMock
+            .Setup(expression: broker => broker.GetComponentsByName())
+            .Returns(value: componentsByName);
+
+        brokerMock
+            .Setup(expression: broker => broker.GetScriptsByName())
+            .Returns(value: scriptsByName);
+
+        return brokerMock;
     }
 
     private sealed class TestComponentReaderBroker : IComponentReaderBroker

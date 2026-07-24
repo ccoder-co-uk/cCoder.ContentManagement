@@ -6,7 +6,6 @@ using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 public sealed partial class AppControllerTests
@@ -15,7 +14,7 @@ public sealed partial class AppControllerTests
     public async Task Patch_UpdatesApp()
     {
         // Given
-        SeededApp seededApp = await SeedDatabase("app_update", "app_read", "app_delete");
+        SeededApp seededApp = await SeedDatabase(privileges: ["app_update", "app_read", "app_delete"]);
         App expectedApp = new() { Id = seededApp.AppId, DefaultTheme = "Patched" };
 
         // When
@@ -23,7 +22,6 @@ public sealed partial class AppControllerTests
         App actualApp = await GetAppAsync(host: seededApp.Domain, id: seededApp.AppId);
 
         // Then
-
         actualApp.Should()
             .NotBeNull();
 

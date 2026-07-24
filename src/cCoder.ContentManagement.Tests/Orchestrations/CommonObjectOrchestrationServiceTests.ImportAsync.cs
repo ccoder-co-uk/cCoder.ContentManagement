@@ -17,8 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class CommonObjectOrchestrationServiceTests
@@ -26,14 +24,17 @@ public partial class CommonObjectOrchestrationServiceTests
     [Fact]
     public async Task ShouldReturnProcessingResultsWhenImportAsync()
     {
+        // Given
         CommonObject[] items = [CreateRandomCommonObject()];
         cCoder.ContentManagement.Models.Result<CommonObject>[] expectedResults = [];
 
         commonObjectProcessingServiceMock.Setup(expression: x => x.ImportCommonObjectResultAsync(items: items))
             .ReturnsAsync(value: expectedResults);
 
+        // When
         IEnumerable<cCoder.ContentManagement.Models.Result<CommonObject>> result = await orchestrationService.ImportCommonObjectResultAsync(items: items);
 
+        // Then
         result.Should()
             .BeSameAs(expected: expectedResults);
 

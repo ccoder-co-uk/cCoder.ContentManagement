@@ -6,7 +6,6 @@ using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 public sealed partial class PageControllerTests
@@ -15,7 +14,7 @@ public sealed partial class PageControllerTests
     public async Task RootFor_ReturnsRootPage()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_delete");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_delete"]);
         string rootName = Unique(prefix: "RootPage");
 
         int rootId = (await CreatePageAsync(
@@ -32,7 +31,6 @@ payload: CreateValidPagePayload(seededContext: seededContext, name: childName, o
         Page actualRootPage = await GetRootPageAsync(id: childId);
 
         // Then
-
         actualRootPage.Should()
             .NotBeNull();
 

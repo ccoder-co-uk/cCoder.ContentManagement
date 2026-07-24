@@ -16,7 +16,6 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class AppOrchestrationServiceTests
@@ -24,6 +23,7 @@ public partial class AppOrchestrationServiceTests
     [Fact]
     public async Task ShouldDelegateToProcessingServiceWhenUpdatePageOrderAsync()
     {
+        // Given
         const int key = 1;
         App app = CreateRandomApp();
 
@@ -31,8 +31,10 @@ public partial class AppOrchestrationServiceTests
             .Setup(expression: x => x.UpdatePageOrderAppAsync(key: key, updatedApp: app))
             .Returns(value: ValueTask.CompletedTask);
 
+        // When
         await orchestrationService.UpdatePageOrderAppAsync(key: key, updatedApp: app);
 
+        // Then
         appProcessingServiceMock.Verify(expression: x => x.UpdatePageOrderAppAsync(key: key, updatedApp: app), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();

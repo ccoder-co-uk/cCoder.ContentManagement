@@ -6,7 +6,6 @@ using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 public sealed partial class PageControllerTests
@@ -15,14 +14,13 @@ public sealed partial class PageControllerTests
     public async Task Patch_UpdatesPage()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_update", "page_delete");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_update", "page_delete"]);
         Page createdPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "Page")));
         string updatedName = Unique(prefix: "PatchedPage");
         Page updateResponse;
         Page actualPage;
 
         // When
-
         updateResponse = await PatchPageAsync(id: createdPage.Id, payload: new
         {
             name = updatedName,
@@ -32,7 +30,6 @@ public sealed partial class PageControllerTests
         actualPage = await GetPageAsync(id: createdPage.Id);
 
         // Then
-
         updateResponse.Name.Should()
             .Be(expected: updatedName);
 

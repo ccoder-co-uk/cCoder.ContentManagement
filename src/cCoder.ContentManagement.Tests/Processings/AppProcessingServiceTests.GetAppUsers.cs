@@ -15,12 +15,9 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
-
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
@@ -29,7 +26,7 @@ public partial class AppProcessingServiceTests
     [Fact]
     public void ShouldReturnRoleUsersWhenAppExistsForGetAppUsers()
     {
-        // Then
+
         // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
@@ -77,12 +74,10 @@ public partial class AppProcessingServiceTests
             .Returns(value: app);
 
         // When
-
         User[] result = appProcessingService.GetAppUsers(appId: app.Id)
             .ToArray();
 
         // Then
-
         result.Should()
             .ContainSingle();
 
@@ -118,12 +113,10 @@ public partial class AppProcessingServiceTests
             .Returns(value: (App)null!);
 
         // When
-
         Action act = () => appProcessingService.GetAppUsers(appId: 1)
             .ToArray();
 
         // Then
-
         act.Should()
             .Throw<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");

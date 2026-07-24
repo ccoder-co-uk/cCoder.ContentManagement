@@ -15,8 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -28,6 +26,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public async Task ShouldDelegateToFoundationServiceWhenAddAsync()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -73,8 +72,10 @@ public partial class PageProcessingServiceTests
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
+        // When
         Page result = await pageProcessingService.AddPageAsync(newPage: page);
 
+        // Then
         result.Should()
             .BeSameAs(expected: addedPage);
 
@@ -100,6 +101,7 @@ times: Times.Once
     [Fact]
     public async Task ShouldUseParentPathWhenAddAsync()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -158,8 +160,10 @@ times: Times.Once
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { parent }.AsQueryable());
 
+        // When
         Page result = await pageProcessingService.AddPageAsync(newPage: page);
 
+        // Then
         result.Should()
             .BeSameAs(expected: addedPage);
 
@@ -177,6 +181,7 @@ times: Times.Once
     [Fact]
     public async Task ShouldThrowValidationExceptionWhenComputedPathAlreadyExistsForSameAppOnAddAsync()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -215,8 +220,10 @@ times: Times.Once
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { existingPage }.AsQueryable());
 
+        // When
         Func<Task> act = async () => await pageProcessingService.AddPageAsync(newPage: page);
 
+        // Then
         await act.Should()
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
             .WithMessage(expectedWildcardPattern: "A page already exists for app 1 with path 'About'.");
@@ -228,6 +235,7 @@ times: Times.Once
     [Fact]
     public async Task ShouldAllowComputedPathWhenItOnlyExistsForAnotherAppOnAddAsync()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -278,8 +286,10 @@ times: Times.Once
         pageServiceMock.Setup(expression: x => x.AddPageAsync(newPage: It.IsAny<Page>()))
             .ReturnsAsync(value: addedPage);
 
+        // When
         Page result = await pageProcessingService.AddPageAsync(newPage: page);
 
+        // Then
         result.Should()
             .BeSameAs(expected: addedPage);
 
@@ -295,6 +305,7 @@ times: Times.Once);
     [Fact]
     public async Task ShouldThrowValidationExceptionWhenComputedPathExistsOnPageUserCannotSeeForSameAppOnAddAsync()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -358,8 +369,10 @@ times: Times.Once);
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { parent, hiddenDuplicate }.AsQueryable());
 
+        // When
         Func<Task> act = async () => await pageProcessingService.AddPageAsync(newPage: page);
 
+        // Then
         await act.Should()
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
             .WithMessage(expectedWildcardPattern: "A page already exists for app 1 with path 'parent/Child'.");

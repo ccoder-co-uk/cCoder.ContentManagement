@@ -6,7 +6,6 @@ using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 public sealed partial class PageControllerTests
@@ -15,7 +14,7 @@ public sealed partial class PageControllerTests
     public async Task Delete_RemovesPage()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_delete");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_delete"]);
         Page createdPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "Page")));
         int actualReadStatusCode;
 
@@ -24,7 +23,6 @@ public sealed partial class PageControllerTests
         actualReadStatusCode = await GetPageStatusCodeAsync(id: createdPage.Id);
 
         // Then
-
         actualStatusCode.Should()
             .Be(expected: 200);
 

@@ -15,8 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -28,6 +26,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public async Task ShouldDelegateToFoundationServiceWhenUserCanDeletePageForDeleteAsync()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -55,8 +54,10 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.DeleteAsync(pageId: page.Id))
             .Returns(value: ValueTask.CompletedTask);
 
+        // When
         await pageProcessingService.DeleteAsync(pageId: page.Id);
 
+        // Then
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.DeleteAsync(pageId: page.Id), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
@@ -65,6 +66,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -88,8 +90,10 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
             .Returns(value: new[] { page }.AsQueryable());
 
+        // When
         Func<Task> act = async () => await pageProcessingService.DeleteAsync(pageId: page.Id);
 
+        // Then
         await act.Should()
             .ThrowAsync<SecurityException>();
 

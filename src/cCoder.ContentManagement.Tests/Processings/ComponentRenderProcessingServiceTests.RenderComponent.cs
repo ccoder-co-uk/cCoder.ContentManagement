@@ -30,6 +30,7 @@ public partial class ComponentRenderProcessingServiceTests
     [Fact]
     public async Task ShouldRenderDeclaredSupportedTagTypesForComponentRoot()
     {
+        // Given
         (RenderApp app, RenderUser user, RenderComponent component, RenderComponentParams renderParams) =
             CreateComponentRenderContext();
 
@@ -43,10 +44,12 @@ public partial class ComponentRenderProcessingServiceTests
         renderFileContentServiceMock.Setup(expression: x => x.GetLatestTextContent(appId: app.Id, path: "snippets/info"))
             .Returns(value: "snippet-text");
 
-        string result = await RenderTestWorkflowServer.RunAsync(
+        // When
+        string result = await RenderTestWorkflowServer.RunStringAsync(
 action: workflowBaseUrl => CreateSut(workflowBaseUrl: workflowBaseUrl)
             .RenderComponentComponentRenderParams(component: component, renderParams: renderParams));
 
+        // Then
         result.Should()
             .Contain(expected: "snippet-text");
 
@@ -78,11 +81,14 @@ action: workflowBaseUrl => CreateSut(workflowBaseUrl: workflowBaseUrl)
     [Fact]
     public void ShouldThrowValidationExceptionWhenComponentIsNull()
     {
+        // Given
         (_, _, _, RenderComponentParams renderParams) = CreateComponentRenderContext();
 
+        // When
         Action act = () => CreateSut(workflowBaseUrl: "http://127.0.0.1/")
             .RenderComponentComponentRenderParams(component: null!, renderParams: renderParams);
 
+        // Then
         act.Should()
             .Throw<ValidationException>();
     }

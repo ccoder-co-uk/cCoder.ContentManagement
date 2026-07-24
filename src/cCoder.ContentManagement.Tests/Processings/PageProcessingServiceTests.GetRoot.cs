@@ -15,8 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -28,6 +26,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public void ShouldWalkToTopParentWhenGetRoot()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -57,8 +56,10 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.GetPage(pageId: child.Id))
             .Returns(value: child);
 
+        // When
         Page result = pageProcessingService.GetRootPage(pageId: child.Id);
 
+        // Then
         result.Id.Should()
             .Be(expected: root.Id);
 
@@ -70,6 +71,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public void ShouldReturnSamePageWhenPageIsAlreadyRootForGetRoot()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -94,8 +96,10 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.GetPage(pageId: root.Id))
             .Returns(value: root);
 
+        // When
         Page result = pageProcessingService.GetRootPage(pageId: root.Id);
 
+        // Then
         result.Should()
             .BeSameAs(expected: root);
 

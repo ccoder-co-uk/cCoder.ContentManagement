@@ -15,8 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.ComponentModel.DataAnnotations;
 
-
-
 using FluentAssertions;
 using Xunit;
 
@@ -27,6 +25,7 @@ public partial class ComponentRenderOrchestrationServiceTests
     [Fact]
     public void ShouldRenderComponentThroughProcessingService()
     {
+        // Given
         User user = new()
         {
             Id = "test-user",
@@ -43,8 +42,10 @@ public partial class ComponentRenderOrchestrationServiceTests
             .Setup(expression: x => x.RenderUser(appId: 1, name: "Hero", user: user, culture: "en-GB", theme: "Default"))
             .Returns(value: expectedHtml);
 
+        // When
         string result = renderOrchestrationService.RenderUser(appId: 1, name: "Hero", user: user, culture: "en-GB", theme: "Default");
 
+        // Then
         result.Should()
             .Be(expected: expectedHtml);
 
@@ -54,8 +55,11 @@ public partial class ComponentRenderOrchestrationServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionWhenUserIsNull()
     {
+        // Given
+        // When
         Action act = () => renderOrchestrationService.RenderUser(appId: 1, name: "Hero", user: null!, culture: "en-GB", theme: "Default");
 
+        // Then
         act.Should()
             .Throw<ValidationException>()
             .WithMessage(expectedWildcardPattern: "user is required.");

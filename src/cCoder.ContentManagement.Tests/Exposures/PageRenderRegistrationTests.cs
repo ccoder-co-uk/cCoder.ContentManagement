@@ -20,18 +20,21 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Exposures;
 
-public class PageRenderRegistrationTests
+public partial class PageRenderRegistrationTests
 {
     [Fact]
     public void ShouldRegisterPageRendererAgainstNewRenderingCoordinationStack()
     {
+        // Given
         ServiceCollection services = [];
 
         services.AddContentManagementHostedServices();
 
+        // When
         ServiceDescriptor pageRendererDescriptor = services.Single(predicate: descriptor =>
             descriptor.ServiceType == typeof(IPageRenderer));
 
+        // Then
         pageRendererDescriptor.Lifetime.Should()
             .Be(expected: ServiceLifetime.Transient);
 

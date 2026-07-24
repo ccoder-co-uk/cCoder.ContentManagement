@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ContentMetadataCache = cCoder.ContentManagement.Exposures.Caching.IMetadataCache;
 
-
 namespace Web.AcceptanceTests.Infrastructure;
 
 internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
@@ -194,7 +193,7 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
         }
 
         Layout[] layouts = AcceptanceSeedData
-            .LoadPackageItems<Layout>(packageName: "Layouts", itemType: "Core/Layout")
+            .LoadLayoutPackageItems(packageName: "Layouts", itemType: "Core/Layout")
             .Select(selector: layout => new Layout
             {
                 AppId = AppId,
@@ -225,7 +224,7 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
         }
 
         Template[] templates = AcceptanceSeedData
-            .LoadPackageItems<Template>(packageName: "Templates", itemType: "Core/Template")
+            .LoadTemplatePackageItems(packageName: "Templates", itemType: "Core/Template")
             .Select(selector: template => new Template
             {
                 AppId = AppId,
@@ -255,7 +254,7 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
         }
 
         Resource[] resources = AcceptanceSeedData
-            .LoadPackageItems<Resource>(packageName: "Resources", itemType: "Core/Resource")
+            .LoadResourcePackageItems(packageName: "Resources", itemType: "Core/Resource")
             .Select(selector: resource => new Resource
             {
                 AppId = AppId,
@@ -287,7 +286,7 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
         }
 
         Component[] components = AcceptanceSeedData
-            .LoadPackageItems<Component>(packageName: "Components", itemType: "Core/Component")
+            .LoadComponentPackageItems(packageName: "Components", itemType: "Core/Component")
             .Select(selector: component => new Component
             {
                 AppId = AppId,
@@ -319,7 +318,7 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
         }
 
         Script[] scripts = AcceptanceSeedData
-            .LoadPackageItems<Script>(packageName: "Scripts", itemType: "Core/Script")
+            .LoadScriptPackageItems(packageName: "Scripts", itemType: "Core/Script")
             .Select(selector: script => new Script
             {
                 AppId = AppId,

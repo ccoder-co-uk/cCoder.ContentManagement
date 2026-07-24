@@ -15,13 +15,10 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
 using SecurityDataModels = cCoder.Data.Models.Security;
-
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
@@ -97,7 +94,6 @@ value: new[]
         App result = await appProcessingService.AddAppAsync(newApp: inputApp);
 
         // Then
-
         result.Id.Should()
             .Be(expected: 1);
 
@@ -179,7 +175,6 @@ times: Times.Once
         Func<Task> act = async () => await appProcessingService.AddAppAsync(newApp: app);
 
         // Then
-
         await act.Should()
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
@@ -194,6 +189,7 @@ times: Times.Once
     [Fact]
     public async Task ShouldGrantAppCreateWithoutAssigningGuestToAdminRolesWhenCreatingFirstApp()
     {
+        // Given
         authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => null);
 
@@ -224,12 +220,14 @@ value: new[]
                     new SecurityDataModels.Privilege { Id = "app_admin", Operation = "Admin", Type = "App" }
                 }.AsQueryable());
 
+        // When
         App result = await appProcessingService.AddAppAsync(newApp: CreateRandomApp());
 
         Role administrators = result.Roles.Single(predicate: role => role.Name == "Administrators");
         Role users = result.Roles.Single(predicate: role => role.Name == "Users");
         Role guests = result.Roles.Single(predicate: role => role.Name == "Guests");
 
+        // Then
         administrators.Privileges.Should()
             .Contain(expected: "app_create");
 
@@ -246,6 +244,7 @@ value: new[]
     [Fact]
     public async Task ShouldReturnAddedAppWithoutRoleBackReferencesForAddAsync()
     {
+        // Given
         authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => TestUsers.WithPrivilege(privilege: "app_create"));
 
@@ -276,8 +275,10 @@ value: new[]
                     new SecurityDataModels.Privilege { Id = "app_admin", Operation = "Admin", Type = "App" }
                 }.AsQueryable());
 
+        // When
         App result = await appProcessingService.AddAppAsync(newApp: CreateRandomApp());
 
+        // Then
         result.Roles.Should()
             .NotBeEmpty();
 

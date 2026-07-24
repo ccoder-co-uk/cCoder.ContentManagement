@@ -8,7 +8,6 @@ using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 public sealed partial class PageControllerTests
@@ -17,14 +16,13 @@ public sealed partial class PageControllerTests
     public async Task Put_UpdatesPage()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_update", "page_delete");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_update", "page_delete"]);
         Page createdPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "Page")));
         string updatedName = Unique(prefix: "UpdatedPage");
         Page updateResponse;
         Page actualPage;
 
         // When
-
         updateResponse = await UpdatePageAsync(id: createdPage.Id, payload: new
         {
             id = createdPage.Id,
@@ -58,7 +56,6 @@ public sealed partial class PageControllerTests
         actualPage = await GetPageAsync(id: createdPage.Id);
 
         // Then
-
         updateResponse.Name.Should()
             .Be(expected: updatedName);
 
@@ -78,13 +75,12 @@ public sealed partial class PageControllerTests
     public async Task Put_WhenLayoutDoesNotExistForApp_ShouldReturnLayoutError()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_update", "page_delete");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_update", "page_delete"]);
         Page createdPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "Page")));
         string updatedName = Unique(prefix: "UpdatedPage");
         string missingLayout = Unique(prefix: "MissingLayout");
 
         // When
-
         using HttpResponseMessage response = await Client.PutAsJsonAsync(requestUri: $"{BaseUrl}({createdPage.Id})", value: new
         {
             id = createdPage.Id,
@@ -118,7 +114,6 @@ public sealed partial class PageControllerTests
         string content = await response.Content.ReadAsStringAsync();
 
         // Then
-
         response.StatusCode.Should()
             .Be(expected: HttpStatusCode.InternalServerError, because: content);
 

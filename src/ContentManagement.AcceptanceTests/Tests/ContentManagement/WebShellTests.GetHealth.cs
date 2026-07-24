@@ -12,8 +12,11 @@ public sealed partial class WebShellTests
     [Fact]
     public async Task Get_GivenHealthEndpoint_ShouldReturnOk()
     {
+        // Given
+        // When
         string content = await GetOkContentAsync(path: "/Health");
 
+        // Then
         content.Should()
             .Be(expected: "OK");
     }

@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Web.AcceptanceTests.Infrastructure;
 using Xunit;
 
-
 using Microsoft.EntityFrameworkCore;
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
@@ -218,6 +217,7 @@ public sealed partial class CommonObjectControllerTests(WebAcceptanceFixture fix
 
         return JsonSerializer.Deserialize<ODataEnvelope<CommonObject>>(json: content, options: JsonOptions)!.Value;
     }
+
     private async Task<int> GetCommonObjectStatusCodeAsync(int id)
     {
         using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}({id})");

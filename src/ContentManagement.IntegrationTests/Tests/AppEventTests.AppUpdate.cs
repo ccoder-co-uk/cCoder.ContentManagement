@@ -16,6 +16,7 @@ public sealed partial class AppEventTests
     [Fact]
     public async Task Post_GivenAppUpdateEvent_ShouldUpdateAppCulture()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -24,8 +25,10 @@ public sealed partial class AppEventTests
             await SeedAppCultureAsync(appId: appId);
             await SeedCultureAsync(cultureId: "fr-FR", name: "French");
 
+            // When
             await PostEventAsync(eventName: "app_update", data: CreateAppWithAppCulture(appId: appId, cultureId: "fr-FR"));
 
+            // Then
             await WaitForAsync(
 condition: () =>
                 {

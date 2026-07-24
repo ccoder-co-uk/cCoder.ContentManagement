@@ -10,7 +10,6 @@ using FluentAssertions;
 using Web.AcceptanceTests.Infrastructure;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 [Collection(WebAcceptanceCollection.Name)]
@@ -115,6 +114,7 @@ public sealed partial class SubmissionControllerTests(WebAcceptanceFixture fixtu
 
         return JsonSerializer.Deserialize<ODataEnvelope<Submission>>(json: content, options: JsonOptions)!.Value;
     }
+
     private async Task<int> GetSubmissionStatusCodeAsync(Guid id)
     {
         using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}({id})");

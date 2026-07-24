@@ -17,8 +17,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Security;
 using cCoder.ContentManagement.Exposures;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -30,6 +28,7 @@ public partial class PageRenderCoordinationServiceTests
     [Fact]
     public void ShouldRenderPageUsingResolvedDefaults()
     {
+        // Given
         App app = CreateApp();
 
         PageRenderRequest request = new()
@@ -88,9 +87,11 @@ public partial class PageRenderCoordinationServiceTests
             .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: app.DefaultTheme, culture: app.DefaultCultureId, edit: false))
             .Returns(value: renderResult);
 
+        // When
         PageRenderResponse response =
             coordinationService.RenderPageRenderRequestPageRenderResponse(request: request);
 
+        // Then
         response.App.Id.Should()
             .Be(expected: app.Id);
 
@@ -115,6 +116,7 @@ public partial class PageRenderCoordinationServiceTests
     [Fact]
     public void ShouldFallbackToErrorRenderWhenPrimaryRenderThrows()
     {
+        // Given
         App app = CreateApp();
 
         PageRenderRequest request = new()
@@ -192,9 +194,11 @@ public partial class PageRenderCoordinationServiceTests
             .Throws(exception: new InvalidOperationException(message: "Boom"))
             .Returns(value: CreateRenderResult(bodyHtml: "[problem[message]]|[problem[detail]]|[problem[url]]"));
 
+        // When
         PageRenderResponse response =
             coordinationService.RenderPageRenderRequestPageRenderResponse(request: request);
 
+        // Then
         response.Page.BodyHtml.Should()
             .Contain(expected: "Boom");
 
@@ -205,11 +209,14 @@ public partial class PageRenderCoordinationServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionWhenRequestIsNull()
     {
+        // Given
         PageRenderRequest request = null!;
 
+        // When
         Action act = () =>
             coordinationService.RenderPageRenderRequestPageRenderResponse(request: request);
 
+        // Then
         act.Should()
             .Throw<ValidationException>()
             .WithMessage(expectedWildcardPattern: "request is required.");
@@ -218,15 +225,18 @@ public partial class PageRenderCoordinationServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionWhenExceptionIsMissingForRenderError()
     {
+        // Given
         PageRenderRequest request = new()
         {
             Host = "demo.local",
             Exception = null
         };
 
+        // When
         Action act = () =>
             coordinationService.RenderErrorPageRenderRequestPageRenderResponse(request: request);
 
+        // Then
         act.Should()
             .Throw<ValidationException>()
             .WithMessage(expectedWildcardPattern: "Exception is required.");
@@ -235,6 +245,7 @@ public partial class PageRenderCoordinationServiceTests
     [Fact]
     public void ShouldReturnNotFoundRenderResultWhenPageDoesNotExist()
     {
+        // Given
         App app = CreateApp();
         currentUser = TestUsers.WithPrivilege(privilege: "app_admin", appId: app.Id);
 
@@ -256,8 +267,10 @@ public partial class PageRenderCoordinationServiceTests
             .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: "Default", culture: string.Empty, edit: false))
             .Returns(value: CreateRenderResult());
 
+        // When
         RenderResult result = coordinationService.RenderRenderResult(appId: app.Id, path: "missing", theme: "Default", culture: string.Empty);
 
+        // Then
         result.StatusCode.Should()
             .Be(expected: 404);
 
@@ -269,6 +282,7 @@ times: Times.Once);
     [Fact]
     public void ShouldRenderLoginContentWhenUserCannotReadPage()
     {
+        // Given
         App app = CreateApp();
         currentUser = TestUsers.WithoutPrivileges();
 
@@ -311,8 +325,10 @@ times: Times.Once);
             .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: "Default", culture: string.Empty, edit: false))
             .Returns(value: CreateRenderResult());
 
+        // When
         coordinationService.RenderRenderResult(appId: app.Id, path: string.Empty, theme: "Default", culture: string.Empty);
 
+        // Then
         pageRenderOrchestrationServiceMock.Verify(
 expression: x => x.RenderPageUserRenderResult(
 page: It.Is<Page>(match: page => page.Contents.Any(predicate: content => content.Html == "[component[login]]")),
@@ -326,6 +342,7 @@ times: Times.Once);
     [Fact]
     public void ShouldHydratePageCollectionsBeforeRendering()
     {
+        // Given
         App app = CreateApp();
         currentUser = TestUsers.WithPrivilege(privilege: "app_admin", appId: app.Id);
 
@@ -394,8 +411,10 @@ times: Times.Once);
             .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: "Default", culture: string.Empty, edit: false))
             .Returns(value: CreateRenderResult());
 
+        // When
         coordinationService.RenderRenderResult(appId: app.Id, path: "Admin", theme: "Default", culture: string.Empty);
 
+        // Then
         pageRenderOrchestrationServiceMock.Verify(
 expression: x => x.RenderPageUserRenderResult(
 page: It.Is<Page>(match: renderPage =>
@@ -412,6 +431,7 @@ times: Times.Once);
     [Fact]
     public void ShouldRenderPublicPageWhenHydratedPageRolesContainPrivileges()
     {
+        // Given
         App app = CreateApp();
 
         Role guestRole = new()
@@ -478,8 +498,10 @@ times: Times.Once);
             .Setup(expression: x => x.RenderPageUserRenderResult(page: It.IsAny<Page>(), user: It.IsAny<User>(), theme: "Default", culture: string.Empty, edit: false))
             .Returns(value: CreateRenderResult(bodyHtml: "Public body"));
 
+        // When
         coordinationService.RenderRenderResult(appId: app.Id, path: string.Empty, theme: "Default", culture: string.Empty);
 
+        // Then
         pageRenderOrchestrationServiceMock.Verify(
 expression: x => x.RenderPageUserRenderResult(
 page: It.Is<Page>(match: renderPage =>
@@ -507,6 +529,7 @@ times: Times.Never);
     [Fact]
     public void ShouldUseBodySlotForMissingPageAndGatedPageFallbacks()
     {
+        // Given
         App app = CreateApp();
         currentUser = TestUsers.WithoutPrivileges();
 
@@ -550,8 +573,10 @@ times: Times.Never);
             .Returns(value: CreateRenderResult());
 
         coordinationService.RenderRenderResult(appId: app.Id, path: "missing", theme: "Default", culture: string.Empty);
+        // When
         coordinationService.RenderRenderResult(appId: app.Id, path: "Admin", theme: "Default", culture: string.Empty);
 
+        // Then
         pageRenderOrchestrationServiceMock.Verify(
 expression: x => x.RenderPageUserRenderResult(
 page: It.Is<Page>(match: renderPage => renderPage.Path == "missing"
@@ -577,12 +602,15 @@ times: Times.Once);
     [Fact]
     public void ShouldThrowSecurityExceptionWhenAppIsUnknown()
     {
+        // Given
         appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
             .Returns(value: Array.Empty<App>()
             .AsQueryable());
 
+        // When
         Action act = () => coordinationService.RenderRenderResult(appId: 1, path: string.Empty, theme: "Default", culture: string.Empty);
 
+        // Then
         act.Should()
             .Throw<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Unknown Domain!");

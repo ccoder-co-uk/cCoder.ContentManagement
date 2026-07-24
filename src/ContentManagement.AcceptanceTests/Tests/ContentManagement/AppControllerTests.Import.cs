@@ -16,7 +16,9 @@ public sealed partial class AppControllerTests
     [Fact]
     public async Task ImportPackage_CreatesResourcesForApp()
     {
-        SeededApp app = await SeedDatabase("app_admin", "package_create", "resource_create", "resource_update");
+        // Given
+        // When
+        SeededApp app = await SeedDatabase(privileges: ["app_admin", "package_create", "resource_create", "resource_update"]);
 
         try
         {
@@ -28,6 +30,7 @@ public sealed partial class AppControllerTests
             int statusCode = await ImportPackageAsync(appId: app.AppId, package: package);
             AppCmsChildren afterImport = await GetAppCmsChildrenAsync(appId: app.AppId);
 
+            // Then
             statusCode.Should()
                 .Be(expected: (int)HttpStatusCode.OK);
 

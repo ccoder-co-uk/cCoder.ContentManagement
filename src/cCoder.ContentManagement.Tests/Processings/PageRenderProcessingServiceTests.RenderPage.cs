@@ -31,6 +31,7 @@ public partial class PageRenderProcessingServiceTests
     [Fact]
     public async Task ShouldRenderDeclaredSupportedTagTypesForPageRoot()
     {
+        // Given
         PageRenderProcessingService sut = CreateSut();
         RenderApp app = CreateApp();
         RenderPage page = app.Pages.First(predicate: foundPage => foundPage.Id == 10);
@@ -38,9 +39,11 @@ public partial class PageRenderProcessingServiceTests
 
         metadataReaderBroker.Set(name: "site-description", culture: "en-GB", value: "Meta Description");
 
-        RenderResult result = await RenderTestWorkflowServer.RunAsync(action: workflowBaseUrl =>
+        // When
+        RenderResult result = await RenderTestWorkflowServer.RunRenderResultAsync(action: workflowBaseUrl =>
             sut.RenderPageUserConfigRenderResult(page: page, user: user, config: CreateConfig(workflowBaseUrl: workflowBaseUrl), theme: "Default", culture: "en-GB"));
 
+        // Then
         result.HeaderHtml.Should()
             .Contain(expected: "<title>Home</title>");
 
@@ -82,10 +85,13 @@ public partial class PageRenderProcessingServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionWhenPageIsNull()
     {
+        // Given
         PageRenderProcessingService sut = CreateSut();
 
+        // When
         Action act = () => sut.RenderPageUserConfigRenderResult(page: null!, user: CreateUser(), config: CreateConfig(workflowBaseUrl: "http://127.0.0.1/"), theme: "Default", culture: "en-GB");
 
+        // Then
         act.Should()
             .Throw<ValidationException>();
     }

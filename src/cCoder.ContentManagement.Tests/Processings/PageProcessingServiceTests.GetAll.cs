@@ -24,14 +24,17 @@ public partial class PageProcessingServiceTests
     [Fact]
     public void ShouldDelegateToFoundationServiceWhenGetAll()
     {
+        // Given
         Page[] pages = [CreateRandomPage()];
         IQueryable<Page> queryablePages = pages.AsQueryable();
 
         pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: queryablePages);
 
+        // When
         IQueryable<Page> result = pageProcessingService.GetAllPage();
 
+        // Then
         result.Should()
             .BeSameAs(expected: queryablePages);
 

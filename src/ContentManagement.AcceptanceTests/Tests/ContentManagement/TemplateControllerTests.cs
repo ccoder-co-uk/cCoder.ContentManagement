@@ -11,7 +11,6 @@ using FluentAssertions;
 using Web.AcceptanceTests.Infrastructure;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 [Collection(WebAcceptanceCollection.Name)]
@@ -133,6 +132,7 @@ content: new StringContent(content: html, encoding: Encoding.UTF8, mediaType: "t
 
         return ((int)response.StatusCode, response.Content.Headers.ContentType?.MediaType);
     }
+
     private async Task<int> GetTemplateStatusCodeAsync(int id)
     {
         using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}({id})");

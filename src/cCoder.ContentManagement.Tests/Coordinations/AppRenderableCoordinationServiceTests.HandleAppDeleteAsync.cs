@@ -10,7 +10,7 @@ using Xunit;
 
 namespace cCoder.Core.Services.Tests.CMS.Coordinations;
 
-public class AppRenderableCoordinationServiceTests
+public partial class AppRenderableCoordinationServiceTests
 {
     private readonly Mock<IPageOrchestrationService> pageOrchestrationServiceMock = new(behavior: MockBehavior.Strict);
     private readonly Mock<IComponentOrchestrationService> componentOrchestrationServiceMock = new(behavior: MockBehavior.Strict);
@@ -59,7 +59,6 @@ newPage: It.Is<IEnumerable<Page>>(match: items => items.Single() == page && page
         await coordinationService.HandleAppAddAsync(app: app);
 
         // Then
-
         layoutOrchestrationServiceMock.Verify(
 expression: service => service.AddOrUpdateLayoutResult(newLayout: It.Is<IEnumerable<Layout>>(match: items => items.Single() == layout)),
 times: Times.Once);

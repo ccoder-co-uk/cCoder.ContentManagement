@@ -12,14 +12,17 @@ public sealed partial class PageEventTests
     [Fact]
     public async Task Post_GivenPageAddEvent_ShouldCreatePageInfo()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
         {
             cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
 
+            // When
             await PostEventAsync(eventName: "page_add", data: CreatePageWithPageInfo(page: page, title: "Landing"));
 
+            // Then
             await WaitForAsync(
 condition: () => HasPageInfo(pageId: page.Id, title: "Landing"),
 because: "page_add should create the page info child row");
@@ -37,14 +40,17 @@ because: "page_add should create the page info child row");
     [Fact]
     public async Task Post_GivenPageAddEvent_ShouldCreateContent()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
         {
             cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
 
+            // When
             await PostEventAsync(eventName: "page_add", data: CreatePageWithContent(page: page, html: "<p>Landing body</p>"));
 
+            // Then
             await WaitForAsync(
 condition: () => HasContent(pageId: page.Id, html: "<p>Landing body</p>"),
 because: "page_add should create the content child row");
@@ -62,6 +68,7 @@ because: "page_add should create the content child row");
     [Fact]
     public async Task Post_GivenPageAddEvent_ShouldCreatePageRole()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -69,8 +76,10 @@ because: "page_add should create the content child row");
             Guid roleId = await SeedRoleAsync(appId: appId);
             cCoder.Data.Models.CMS.Page page = await SeedPageAsync(appId: appId);
 
+            // When
             await PostEventAsync(eventName: "page_add", data: CreatePageWithPageRole(page: page, roleId: roleId));
 
+            // Then
             await WaitForAsync(
 condition: () => HasPageRole(pageId: page.Id, roleId: roleId),
 because: "page_add should create the page role child row");

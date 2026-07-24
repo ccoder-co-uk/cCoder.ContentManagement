@@ -10,7 +10,6 @@ using FluentAssertions;
 using Web.AcceptanceTests.Infrastructure;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 [Collection(WebAcceptanceCollection.Name)]
@@ -23,6 +22,7 @@ public sealed partial class ResourceControllerTests(WebAcceptanceFixture fixture
 
     private static string Unique(string prefix) =>
         $"{prefix}-{Guid.NewGuid():N}";
+
     private async Task<Resource> CreateResourceAsync(object payload)
     {
         using HttpResponseMessage response = await Client.PostAsJsonAsync(requestUri: BaseUrl, value: payload);
@@ -123,6 +123,7 @@ requestUri: $"{BaseUrl}{filter}"
 
         return JsonSerializer.Deserialize<ODataEnvelope<Resource>>(json: content, options: JsonOptions)!.Value;
     }
+
     private async Task<int> GetResourceStatusCodeAsync(int id)
     {
         using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}({id})");

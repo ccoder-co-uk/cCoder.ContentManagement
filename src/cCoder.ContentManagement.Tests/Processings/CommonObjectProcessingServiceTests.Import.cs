@@ -15,14 +15,11 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
 
 using DataCommonObject = cCoder.Data.Models.CommonObject;
-
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
@@ -68,13 +65,11 @@ type: "Core/Other"
             .ReturnsAsync(value: commonObject);
 
         // When
-
         cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
             await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { commonObject })
         ).ToArray();
 
         // Then
-
         results.Should()
             .ContainSingle();
 
@@ -96,9 +91,7 @@ type: "Core/Other"
     [Fact]
     public async Task ShouldPromoteVersionAndUpdateWhenItemIsNewerThanExistingForImport()
     {
-        // When
 
-        // Then
         // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
@@ -157,13 +150,11 @@ type: "Core/Other"
             .ReturnsAsync(value: incoming);
 
         // When
-
         cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
             await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { incoming })
         ).ToArray();
 
         // Then
-
         results.Should()
             .ContainSingle();
 
@@ -231,13 +222,11 @@ type: "Core/Other"
         } });
 
         // When
-
         cCoder.ContentManagement.Models.Result<CommonObject>[] results = (
             await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { incoming })
         ).ToArray();
 
         // Then
-
         results.Should()
             .BeEmpty();
 

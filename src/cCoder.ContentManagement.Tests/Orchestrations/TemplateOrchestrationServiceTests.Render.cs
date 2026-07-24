@@ -17,7 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class TemplateRenderOrchestrationServiceTests
@@ -25,6 +24,7 @@ public partial class TemplateRenderOrchestrationServiceTests
     [Fact]
     public void ShouldReturnRenderServiceResult()
     {
+        // Given
         object model = new();
 
         User user = new()
@@ -51,8 +51,10 @@ log: loggerMock.Object
             )
             .Returns(value: "rendered");
 
+        // When
         string result = renderOrchestrationService.RenderUser(appId: 1, name: "template", culture: "en-GB", model: model, user: user);
 
+        // Then
         result.Should()
             .Be(expected: "rendered");
 

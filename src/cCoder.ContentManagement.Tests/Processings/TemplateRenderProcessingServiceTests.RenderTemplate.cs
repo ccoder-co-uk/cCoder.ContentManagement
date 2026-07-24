@@ -31,6 +31,7 @@ public partial class TemplateRenderProcessingServiceTests
     [Fact]
     public async Task ShouldRenderDeclaredSupportedTagTypesForTemplateRoot()
     {
+        // Given
         TemplateRenderProcessingService sut = CreateSut();
         (RenderApp app, RenderUser user, RenderTemplate template) = CreateTemplateRenderContext();
         RenderTemplateParams renderParams = new(app: app, user: user, culture: "en-GB");
@@ -42,9 +43,11 @@ public partial class TemplateRenderProcessingServiceTests
             .Setup(expression: x => x.Get<RenderScript>(key: "script|bootstrap"))
             .Returns(value: new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
 
-        string result = await RenderTestWorkflowServer.RunAsync(action: workflowBaseUrl =>
+        // When
+        string result = await RenderTestWorkflowServer.RunStringAsync(action: workflowBaseUrl =>
             sut.RenderTemplateRenderParamsConfig(template: template, model: new { Name = "Taylor" }, renderParams: renderParams, config: CreateConfig(workflowBaseUrl: workflowBaseUrl)));
 
+        // Then
         result.Should()
             .Contain(expected: "App|Blue|Taylor|bootstrap-script|");
 
@@ -70,11 +73,14 @@ public partial class TemplateRenderProcessingServiceTests
     [Fact]
     public void ShouldThrowValidationExceptionWhenTemplateIsNull()
     {
+        // Given
         TemplateRenderProcessingService sut = CreateSut();
         (RenderApp app, RenderUser user, _) = CreateTemplateRenderContext();
 
+        // When
         Action act = () => sut.RenderTemplateRenderParamsConfig(template: null!, model: new { Name = "Taylor" }, renderParams: new RenderTemplateParams(app: app, user: user, culture: "en-GB"), config: CreateConfig(workflowBaseUrl: "http://127.0.0.1/"));
 
+        // Then
         act.Should()
             .Throw<ValidationException>();
     }

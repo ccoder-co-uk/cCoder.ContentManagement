@@ -12074,20 +12074,6 @@
       "LineNumber": 22
     },
     {
-      "Code": "STXFORMAT008",
-      "Description": "Wrapped statements must be separated from adjacent method statements by an empty line.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 188
-    },
-    {
-      "Code": "STXFORMAT001",
-      "Description": "Source files must not contain newline characters after the final code token.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
-      "LineNumber": 803
-    },
-    {
       "Code": "STX0007",
       "Description": "A service public API must use one model contract or primitive types.",
       "Severity": "Warning",

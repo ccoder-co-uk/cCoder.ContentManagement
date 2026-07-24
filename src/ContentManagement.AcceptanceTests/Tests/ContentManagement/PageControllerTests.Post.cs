@@ -8,7 +8,6 @@ using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 public sealed partial class PageControllerTests
@@ -17,7 +16,7 @@ public sealed partial class PageControllerTests
     public async Task Post_CreatesPage()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_delete");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_delete"]);
         string name = Unique(prefix: "Page");
         Page expectedPage;
         Page actualPage;
@@ -28,7 +27,6 @@ public sealed partial class PageControllerTests
         actualPage = await GetPageAsync(id: expectedPage.Id);
 
         // Then
-
         actualPage.Should()
             .NotBeNull();
 
@@ -43,12 +41,11 @@ public sealed partial class PageControllerTests
     public async Task Post_WhenComputedPathAlreadyExistsForSameApp_ShouldReturnDuplicatePathError()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_delete");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_delete"]);
         string name = Unique(prefix: "Page");
         Page existingPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: name));
 
         // When
-
         using HttpResponseMessage response = await Client.PostAsJsonAsync(
 requestUri: BaseUrl,
 value: CreateValidPagePayload(seededContext: seededContext, name: name));
@@ -56,7 +53,6 @@ value: CreateValidPagePayload(seededContext: seededContext, name: name));
         string content = await response.Content.ReadAsStringAsync();
 
         // Then
-
         response.StatusCode.Should()
             .Be(expected: HttpStatusCode.InternalServerError, because: content);
 
@@ -79,7 +75,6 @@ value: CreateValidPagePayload(seededContext: seededContext, name: name));
         string missingLayout = Unique(prefix: "MissingLayout");
 
         // When
-
         using HttpResponseMessage response = await Client.PostAsJsonAsync(
 requestUri: BaseUrl,
 value: new
@@ -114,7 +109,6 @@ value: new
         string content = await response.Content.ReadAsStringAsync();
 
         // Then
-
         response.StatusCode.Should()
             .Be(expected: HttpStatusCode.InternalServerError, because: content);
 

@@ -17,8 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class CommonObjectOrchestrationServiceTests
@@ -26,14 +24,17 @@ public partial class CommonObjectOrchestrationServiceTests
     [Fact]
     public void ShouldReturnProcessingResultsWhenLatest()
     {
+        // Given
         const string type = "TestType";
         CommonObject[] items = [CreateRandomCommonObject()];
 
         commonObjectProcessingServiceMock.Setup(expression: x => x.LatestCommonObject(type: type))
             .Returns(value: items);
 
+        // When
         IEnumerable<CommonObject> result = orchestrationService.LatestCommonObject(type: type);
 
+        // Then
         result.Should()
             .BeSameAs(expected: items);
 

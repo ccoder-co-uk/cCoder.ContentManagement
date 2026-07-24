@@ -6,7 +6,6 @@ using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 public sealed partial class PageControllerTests
@@ -15,12 +14,11 @@ public sealed partial class PageControllerTests
     public async Task Put_UpdatesGivenDefaultCulturePageInfo()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_update");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_update"]);
         Page createdPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "Page")));
         string updatedTitle = Unique(prefix: "UpdatedTitle");
 
         // When
-
         _ = await UpdatePageAsync(id: createdPage.Id, payload: new
         {
             id = createdPage.Id,
@@ -45,7 +43,6 @@ public sealed partial class PageControllerTests
         PageInfo[] actualPageInfos = GetPageInfos(pageId: createdPage.Id);
 
         // Then
-
         actualPageInfos.Should()
             .ContainSingle();
 
@@ -68,17 +65,19 @@ public sealed partial class PageControllerTests
     public async Task Put_RecomputesChildPathsWhenParentNameChanges()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_update");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_update"]);
         Page parentPage = await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "ParentPage")));
 
         Page childPage = await CreatePageAsync(
-payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefix: "ChildPage"), order: parentPage.Id)
+payload: CreateValidPagePayload(
+    seededContext: seededContext,
+    name: Unique(prefix: "ChildPage"),
+    parentId: parentPage.Id)
         );
 
         string updatedParentName = Unique(prefix: "RenamedParent");
 
         // When
-
         _ = await UpdatePageAsync(id: parentPage.Id, payload: new
         {
             id = parentPage.Id,
@@ -104,7 +103,6 @@ payload: CreateValidPagePayload(seededContext: seededContext, name: Unique(prefi
         Page actualChild = await GetPageAsync(id: childPage.Id);
 
         // Then
-
         actualParent.Should()
             .NotBeNull();
 

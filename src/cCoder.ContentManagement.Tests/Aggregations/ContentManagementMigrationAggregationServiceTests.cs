@@ -13,11 +13,12 @@ using Component = cCoder.Data.Models.CMS.Component;
 
 namespace cCoder.ContentManagement.Tests.Aggregations;
 
-public class ContentManagementMigrationAggregationServiceTests
+public partial class ContentManagementMigrationAggregationServiceTests
 {
     [Fact]
     public async Task ImportPackageAsync_ShouldIgnoreComputedAuditFields_WhenImportingComponents()
     {
+        // Given
         Mock<IComponentOrchestrationService> componentOrchestrationServiceMock = new();
         Component[] importedComponents = null;
 
@@ -53,8 +54,10 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
             ]
         };
 
+        // When
         await service.ImportPackageAsync(appId: 1, package: package);
 
+        // Then
         importedComponents.Should()
             .NotBeNull();
 
@@ -68,6 +71,7 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
     [Fact]
     public async Task ImportPackageAsync_ShouldIgnoreComputedAuditFields_WhenImportingPageArrays()
     {
+        // Given
         Mock<IPageOrchestrationService> pageOrchestrationServiceMock = new();
         cCoder.Data.Models.CMS.Page[] importedPages = null;
 
@@ -108,8 +112,10 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
             ]
         };
 
+        // When
         await service.ImportPackageAsync(appId: 1, package: package);
 
+        // Then
         importedPages.Should()
             .NotBeNull();
 

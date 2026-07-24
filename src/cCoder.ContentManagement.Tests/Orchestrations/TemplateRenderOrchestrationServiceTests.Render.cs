@@ -15,8 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.ComponentModel.DataAnnotations;
 
-
-
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -29,6 +27,7 @@ public partial class TemplateRenderOrchestrationServiceTests
     [Fact]
     public void ShouldRenderTemplateThroughProcessingService()
     {
+        // Given
         User user = new()
         {
             Id = "test-user",
@@ -53,8 +52,10 @@ config: It.IsAny<Config>(),
 log: It.IsAny<ILogger>()))
             .Returns(value: expectedHtml);
 
+        // When
         string result = renderOrchestrationService.RenderUser(appId: 1, name: "Welcome", culture: "en-GB", model: model, user: user);
 
+        // Then
         result.Should()
             .Be(expected: expectedHtml);
 
@@ -64,8 +65,11 @@ log: It.IsAny<ILogger>()))
     [Fact]
     public void ShouldThrowValidationExceptionWhenUserIsNull()
     {
+        // Given
+        // When
         Action act = () => renderOrchestrationService.RenderUser(appId: 1, name: "Welcome", culture: "en-GB", model: new { }, user: null!);
 
+        // Then
         act.Should()
             .Throw<ValidationException>()
             .WithMessage(expectedWildcardPattern: "user is required.");

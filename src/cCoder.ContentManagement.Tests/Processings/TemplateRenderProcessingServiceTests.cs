@@ -107,16 +107,18 @@ public partial class TemplateRenderProcessingServiceTests
             Name = "Welcome",
             ResourceKey = "Default",
             RawString = string.Join(
-separator: "",
-                "[app[name]]|",
-                "[theme[Color]]|",
-                "[model[Name]]|",
-                "[script[Bootstrap]]|",
-                "[component[Hero]]|",
-                "[meta[site-description]]|",
-                "[resource_displayname[Greeting]]|",
-                "[execute]return 'ignored';[/execute]"
-            ),
+                separator: "",
+                value:
+                [
+                    "[app[name]]|",
+                    "[theme[Color]]|",
+                    "[model[Name]]|",
+                    "[script[Bootstrap]]|",
+                    "[component[Hero]]|",
+                    "[meta[site-description]]|",
+                    "[resource_displayname[Greeting]]|",
+                    "[execute]return 'ignored';[/execute]"
+                ]),
         };
 
         return (app, user, template);

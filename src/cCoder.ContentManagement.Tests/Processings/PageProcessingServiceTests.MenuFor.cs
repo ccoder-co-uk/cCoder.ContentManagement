@@ -15,8 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -28,6 +26,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public void ShouldRenderChildMenuItemsWhenMenuFor()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -66,8 +65,10 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
             .Returns(value: new[] { child }.AsQueryable());
 
+        // When
         string result = pageProcessingService.MenuFor(pageId: 10, culture: string.Empty);
 
+        // Then
         result.Should()
             .Contain(expected: "<ul class='submenu'>");
 
@@ -84,6 +85,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public void ShouldRenderEmptySubmenuWhenNoVisibleChildrenExistForMenuFor()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -105,8 +107,10 @@ public partial class PageProcessingServiceTests
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
+        // When
         string result = pageProcessingService.MenuFor(pageId: 10, culture: string.Empty);
 
+        // Then
         result.Should()
             .Be(expected: "<ul class='submenu'></ul>");
 

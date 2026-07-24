@@ -18,7 +18,6 @@ using cCoder.ContentManagement.Api.OData;
 using FluentAssertions;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Foundations;
 
 public partial class ContentManagementMetadataTypeServiceTests
@@ -26,20 +25,26 @@ public partial class ContentManagementMetadataTypeServiceTests
     [Fact]
     public void ShouldReturnKnownMetadataSetsOnGetKnownMetadata()
     {
+        // Given
+        // When
         MetadataContainerSet[] result = service.GetKnownMetadata()
             .ToArray();
 
+        // Then
         result.Select(selector: set => set.Name)
             .Should()
-            .Equal("ContentManagement", "System");
+            .Equal(elements: ["ContentManagement", "System"]);
     }
 
     [Fact]
     public void ShouldReturnExpectedContentManagementTypesOnGetKnownMetadata()
     {
+        // Given
+        // When
         MetadataContainerSet result = service.GetKnownMetadata()
             .Single(predicate: set => set.Name == "ContentManagement");
 
+        // Then
         result.UriBase.Should()
             .Be(expected: "ContentManagement");
 

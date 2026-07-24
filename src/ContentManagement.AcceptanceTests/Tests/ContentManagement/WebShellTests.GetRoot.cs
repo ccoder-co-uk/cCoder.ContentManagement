@@ -13,8 +13,11 @@ public sealed partial class WebShellTests
     [Fact]
     public async Task Get_GivenRoot_ShouldRedirectToManualTestingShell()
     {
+        // Given
+        // When
         using HttpResponseMessage response = await Client.GetAsync(requestUri: "/");
 
+        // Then
         response.StatusCode.Should()
             .Be(expected: HttpStatusCode.Redirect);
 

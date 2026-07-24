@@ -69,20 +69,23 @@ public sealed partial class PageEventTests(ContentManagementIntegrationFixture f
             Name = Unique(prefix: "Editors"),
             Description = "Integration role",
             Privs = string.Join(
-separator: ',',
-                "app_admin",
-                "content_create",
-                "content_update",
-                "content_delete",
-                "page_create",
-                "page_update",
-                "page_delete",
-                "pageinfo_create",
-                "pageinfo_update",
-                "pageinfo_delete",
-                "pagerole_create",
-                "pagerole_update",
-                "pagerole_delete"),
+                separator: ',',
+                value:
+                [
+                    "app_admin",
+                    "content_create",
+                    "content_update",
+                    "content_delete",
+                    "page_create",
+                    "page_update",
+                    "page_delete",
+                    "pageinfo_create",
+                    "pageinfo_update",
+                    "pageinfo_delete",
+                    "pagerole_create",
+                    "pagerole_update",
+                    "pagerole_delete"
+                ]),
         };
 
         await core.Set<Role>()

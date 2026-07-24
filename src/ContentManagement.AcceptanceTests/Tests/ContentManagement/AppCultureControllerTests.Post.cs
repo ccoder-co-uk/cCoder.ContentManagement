@@ -6,7 +6,6 @@ using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 public sealed partial class AppCultureControllerTests
@@ -15,11 +14,10 @@ public sealed partial class AppCultureControllerTests
     public async Task Post_CreatesAppCulture()
     {
         // Given
-        SeededAppCultureContext seededContext = await SeedDatabase(includeAppCulture: false, "appculture_create", "appculture_delete");
+        SeededAppCultureContext seededContext = await SeedDatabase(includeAppCulture: false, privileges: ["appculture_create", "appculture_delete"]);
         AppCulture actualAppCulture;
 
         // When
-
         await CreateAppCultureAsync(payload: new
         {
             appId = seededContext.AppId,
@@ -29,7 +27,6 @@ public sealed partial class AppCultureControllerTests
         actualAppCulture = await FindAppCultureAsync(appId: seededContext.AppId, cultureId: seededContext.CultureId);
 
         // Then
-
         actualAppCulture.Should()
             .NotBeNull();
 

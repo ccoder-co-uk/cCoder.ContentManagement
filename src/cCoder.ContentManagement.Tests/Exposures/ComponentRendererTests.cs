@@ -21,11 +21,12 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Exposures;
 
-public class ComponentRendererTests
+public partial class ComponentRendererTests
 {
     [Fact]
     public void ShouldRenderThroughCoordinationService()
     {
+        // Given
         Mock<IComponentRenderCoordinationService> coordinationServiceMock = new(behavior: MockBehavior.Strict);
         ComponentRenderer renderer = new(renderCoordinationService: coordinationServiceMock.Object);
 
@@ -33,8 +34,10 @@ public class ComponentRendererTests
             .Setup(expression: x => x.Render(appId: 1, name: "Hero", culture: "en-GB", theme: "Default"))
             .Returns(value: "<section>hero</section>");
 
+        // When
         string result = renderer.Render(appId: 1, name: "Hero", culture: "en-GB", theme: "Default");
 
+        // Then
         result.Should()
             .Be(expected: "<section>hero</section>");
 

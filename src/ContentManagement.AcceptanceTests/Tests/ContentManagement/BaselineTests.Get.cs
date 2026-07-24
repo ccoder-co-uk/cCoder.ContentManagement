@@ -13,8 +13,11 @@ public sealed partial class BaselineTests
     [Fact]
     public async Task Get_GivenBaselineEndpoint_ShouldReturnPackagesArray()
     {
+        // Given
+        // When
         JsonElement baseline = await GetBaselineAsync();
 
+        // Then
         baseline.ValueKind.Should()
             .Be(expected: JsonValueKind.Array);
     }

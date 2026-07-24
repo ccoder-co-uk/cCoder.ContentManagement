@@ -21,11 +21,12 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Exposures;
 
-public class TemplateRendererTests
+public partial class TemplateRendererTests
 {
     [Fact]
     public void ShouldRenderThroughCoordinationService()
     {
+        // Given
         Mock<ITemplateRenderCoordinationService> coordinationServiceMock = new(behavior: MockBehavior.Strict);
         TemplateRenderer renderer = new(renderCoordinationService: coordinationServiceMock.Object);
         object model = new { Name = "Ward" };
@@ -34,8 +35,10 @@ public class TemplateRendererTests
             .Setup(expression: x => x.Render(appId: 1, name: "Welcome", culture: "en-GB", model: model))
             .Returns(value: "<main>welcome</main>");
 
+        // When
         string result = renderer.Render(appId: 1, name: "Welcome", culture: "en-GB", model: model);
 
+        // Then
         result.Should()
             .Be(expected: "<main>welcome</main>");
 

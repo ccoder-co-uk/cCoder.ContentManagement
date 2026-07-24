@@ -17,7 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class AppOrchestrationServiceTests
@@ -25,15 +24,18 @@ public partial class AppOrchestrationServiceTests
     [Fact]
     public void ShouldReturnProcessingResultsWhenGetAppUsers()
     {
+        // Given
         const int appId = 1;
         IQueryable<User> users = new[] { new User { Id = "user-id" } }.AsQueryable();
 
         appProcessingServiceMock.Setup(expression: x => x.GetAppUsers(appId: appId))
             .Returns(value: users);
 
+        // When
         var result = orchestrationService.GetAppUsers(appId: appId)
             .ToArray();
 
+        // Then
         result.Select(selector: item => item.Id)
             .Should()
             .Equal(expected: users.Select(selector: item => item.Id));

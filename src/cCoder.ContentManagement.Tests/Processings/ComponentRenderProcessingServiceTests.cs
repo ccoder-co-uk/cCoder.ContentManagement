@@ -110,15 +110,17 @@ renderFileContentService: renderFileContentServiceMock.Object);
             Name = "Hero",
             ResourceKey = "Default",
             Content = string.Join(
-separator: "",
-                "[dms[snippets/info]]|",
-                "[script[Bootstrap]]|",
-                "[component[Child]]|",
-                "[meta[site-description]]|",
-                "[resource_displayname[Greeting]]|",
-                "[theme[Color]]|",
-                "[execute]return 'ignored';[/execute]"
-            ),
+                separator: "",
+                value:
+                [
+                    "[dms[snippets/info]]|",
+                    "[script[Bootstrap]]|",
+                    "[component[Child]]|",
+                    "[meta[site-description]]|",
+                    "[resource_displayname[Greeting]]|",
+                    "[theme[Color]]|",
+                    "[execute]return 'ignored';[/execute]"
+                ]),
             Script = string.Empty,
         };
 

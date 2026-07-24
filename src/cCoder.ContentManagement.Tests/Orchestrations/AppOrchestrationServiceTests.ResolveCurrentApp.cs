@@ -17,7 +17,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class AppOrchestrationServiceTests
@@ -25,13 +24,16 @@ public partial class AppOrchestrationServiceTests
     [Fact]
     public void ShouldReturnProcessingResultWhenResolveCurrentApp()
     {
+        // Given
         App app = CreateRandomApp();
 
         appProcessingServiceMock.Setup(expression: x => x.ResolveCurrentApp())
             .Returns(value: app);
 
+        // When
         App result = orchestrationService.ResolveCurrentApp();
 
+        // Then
         result.Should()
             .BeEquivalentTo(expectation: app, config: options => options.Excluding(expression: entity => entity.Config));
 

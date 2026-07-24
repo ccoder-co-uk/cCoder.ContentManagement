@@ -27,6 +27,7 @@ public partial class PageRenderOrchestrationServiceTests
     [Fact]
     public void ShouldDelegatePreparedPageToRenderProcessingService()
     {
+        // Given
         Page page = new()
         {
             Id = 10,
@@ -62,8 +63,10 @@ public partial class PageRenderOrchestrationServiceTests
             .Setup(expression: x => x.RenderPageUserConfigRenderResult(page: page, user: user, config: It.IsAny<Config>(), theme: "Default", culture: string.Empty, edit: true))
             .Returns(value: expected);
 
+        // When
         RenderResult actual = orchestrationService.RenderPageUserRenderResult(page: page, user: user, theme: "Default", culture: string.Empty, edit: true);
 
+        // Then
         actual.Should()
             .BeSameAs(expected: expected);
 

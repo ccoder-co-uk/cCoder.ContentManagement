@@ -21,7 +21,23 @@ namespace cCoder.ContentManagement.Tests.Processings;
 
 internal static class RenderTestWorkflowServer
 {
-    internal static async Task<T> RunAsync<T>(Func<string, T> action, string responseBody = "executed")
+    internal static async Task<string> RunStringAsync(
+        Func<string, string> action,
+        string responseBody = "executed") =>
+        (string)await RunAsync(
+            action: workflowBaseUrl => action(arg: workflowBaseUrl),
+            responseBody: responseBody);
+
+    internal static async Task<RenderResult> RunRenderResultAsync(
+        Func<string, RenderResult> action,
+        string responseBody = "executed") =>
+        (RenderResult)await RunAsync(
+            action: workflowBaseUrl => action(arg: workflowBaseUrl),
+            responseBody: responseBody);
+
+    private static async Task<object> RunAsync(
+        Func<string, object> action,
+        string responseBody)
     {
         using TcpListener listener = new(localaddr: IPAddress.Loopback, port: 0);
         listener.Start();
@@ -69,7 +85,7 @@ internal static class RenderTestWorkflowServer
             await stream.FlushAsync();
         });
 
-        T result = action(arg: $"http://127.0.0.1:{port}/");
+        object result = action(arg: $"http://127.0.0.1:{port}/");
         await serverTask;
         return result;
     }

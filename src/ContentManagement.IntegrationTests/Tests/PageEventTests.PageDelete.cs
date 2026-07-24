@@ -13,6 +13,7 @@ public sealed partial class PageEventTests
     [Fact]
     public async Task Post_GivenPageDeleteEvent_ShouldDeletePageInfo()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -20,8 +21,10 @@ public sealed partial class PageEventTests
             Page page = await SeedPageAsync(appId: appId);
             await SeedPageInfoAsync(page: page);
 
+            // When
             await PostEventAsync(eventName: "page_delete", data: new Page { Id = page.Id });
 
+            // Then
             await WaitForAsync(
 condition: () => HasNoPageInfo(pageId: page.Id),
 because: "page_delete should remove the page info child row");
@@ -39,6 +42,7 @@ because: "page_delete should remove the page info child row");
     [Fact]
     public async Task Post_GivenPageDeleteEvent_ShouldDeleteContent()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -46,8 +50,10 @@ because: "page_delete should remove the page info child row");
             Page page = await SeedPageAsync(appId: appId);
             await SeedContentAsync(page: page);
 
+            // When
             await PostEventAsync(eventName: "page_delete", data: new Page { Id = page.Id });
 
+            // Then
             await WaitForAsync(
 condition: () => HasNoContent(pageId: page.Id),
 because: "page_delete should remove the content child row");
@@ -65,6 +71,7 @@ because: "page_delete should remove the content child row");
     [Fact]
     public async Task Post_GivenPageDeleteEvent_ShouldDeletePageRole()
     {
+        // Given
         int appId = await SeedAppAsync();
 
         try
@@ -73,8 +80,10 @@ because: "page_delete should remove the content child row");
             Page page = await SeedPageAsync(appId: appId);
             await SeedPageRoleAsync(page: page, roleId: roleId);
 
+            // When
             await PostEventAsync(eventName: "page_delete", data: new Page { Id = page.Id });
 
+            // Then
             await WaitForAsync(
 condition: () => HasNoPageRole(pageId: page.Id),
 because: "page_delete should remove the page role child row");

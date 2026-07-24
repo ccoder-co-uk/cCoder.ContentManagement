@@ -5,7 +5,6 @@
 using FluentAssertions;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 public sealed partial class PageControllerTests
@@ -14,7 +13,7 @@ public sealed partial class PageControllerTests
     public async Task Menu_ReturnsPageMenu()
     {
         // Given
-        SeededPageContext seededContext = await SeedDatabase("page_create", "page_delete");
+        SeededPageContext seededContext = await SeedDatabase(privileges: ["page_create", "page_delete"]);
         string title = Unique(prefix: "MenuPage");
         int id = (await CreatePageAsync(payload: CreateValidPagePayload(seededContext: seededContext, name: title))).Id;
 
@@ -22,7 +21,6 @@ public sealed partial class PageControllerTests
         MenuResponse actualMenu = await GetMenuAsync(id: id);
 
         // Then
-
         actualMenu.Success.Should()
             .BeTrue();
 

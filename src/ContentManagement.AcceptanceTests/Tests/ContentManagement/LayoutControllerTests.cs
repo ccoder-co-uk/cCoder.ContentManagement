@@ -10,7 +10,6 @@ using FluentAssertions;
 using Web.AcceptanceTests.Infrastructure;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 [Collection(WebAcceptanceCollection.Name)]
@@ -106,6 +105,7 @@ public sealed partial class LayoutControllerTests(WebAcceptanceFixture fixture)
 
         return int.Parse(s: content);
     }
+
     private async Task<int> GetLayoutStatusCodeAsync(int id)
     {
         using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}({id})");

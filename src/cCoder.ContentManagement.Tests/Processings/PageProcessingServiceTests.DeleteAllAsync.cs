@@ -23,6 +23,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public async Task ShouldDeleteEachPageWhenUserIsAppAdminForDeleteAllAsync()
     {
+        // Given
         authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
@@ -36,8 +37,10 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.DeleteAsync(pageId: page.Id))
             .Returns(value: ValueTask.CompletedTask);
 
+        // When
         await pageProcessingService.DeleteAllPageAsync(deletedPage: new[] { page });
 
+        // Then
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.DeleteAsync(pageId: page.Id), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();

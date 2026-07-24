@@ -15,8 +15,6 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Security;
 
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -28,6 +26,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public void ShouldReturnDirectChildrenWhenGetChildren()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -53,9 +52,11 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { parent, child }.AsQueryable());
 
+        // When
         Page[] result = pageProcessingService.GetChildrenPage(pageId: parent.Id)
             .ToArray();
 
+        // Then
         result.Should()
             .ContainSingle();
 
@@ -69,6 +70,7 @@ public partial class PageProcessingServiceTests
     [Fact]
     public void ShouldReturnEmptyCollectionWhenParentHasNoChildrenForGetChildren()
     {
+        // Given
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
@@ -93,9 +95,11 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { parent, other }.AsQueryable());
 
+        // When
         Page[] result = pageProcessingService.GetChildrenPage(pageId: parent.Id)
             .ToArray();
 
+        // Then
         result.Should()
             .BeEmpty();
 
