@@ -199,10 +199,14 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IScriptService, ScriptService>();
         services.AddTransient<ISubmissionService, SubmissionService>();
         services.AddTransient<ITemplateService, TemplateService>();
-        services.AddTransient<ICurrentAppResolver, CurrentAppResolver>();
+        services.AddTransient<
+            ICurrentAppProcessingService,
+            CurrentAppProcessingService>();
+
+        services.AddTransient<ICurrentAppResolver, CurrentAppManager>();
         services.AddTransient<IContentManagementMetadataTypeService, ContentManagementMetadataTypeService>();
         services.AddTransient<IRenderFileContentService, RenderFileContentService>();
-        services.AddTransient<IResourceProvider, CoreResourceProvider>();
+        services.AddTransient<IResourceProvider, CoreResourceBroker>();
         services.AddSingleton<ICommonObjectCache, CommonObjectCache>();
         services.AddSingleton<MetadataCache>();
         services.AddSingleton<IMetadataCache>(implementationFactory: serviceProvider => serviceProvider.GetRequiredService<MetadataCache>());
@@ -297,7 +301,7 @@ builder: builder);
     }
 
     public static void ConfigureContentManagementApiModel(this ODataConventionModelBuilder builder) =>
-        new ContentManagementModelBuilder(builder: builder).Configure();
+        new ContentManagementModelBroker(builder: builder).Configure();
 
     private static ContentManagementConfiguration CreateConfiguration(
         IServiceCollection services,

@@ -2,5 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-global using cCoder.ContentManagement.Models.OData;
-global using cCoder.ContentManagement.Brokers.OData;
+using cCoder.Data.Models.CMS;
+
+namespace cCoder.ContentManagement.Services.Processings;
+
+internal interface ICurrentAppProcessingService
+{
+    App ResolveCurrentApp();
+}

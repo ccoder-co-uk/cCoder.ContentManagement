@@ -28,7 +28,7 @@ public class PageInfoController : ODataController
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build()
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
         .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(PageInfo)) : new MetadataContainer(type: typeof(PageInfo), isEntity: true, hasEndpoint: true));
 
     [HttpGet]

@@ -3,20 +3,13 @@
 // ---------------------------------------------------------------
 
 using System.Text.RegularExpressions;
-using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Services;
 using cCoder.Data.Models.CMS;
 
-namespace cCoder.ContentManagement.Services;
+namespace cCoder.ContentManagement.Brokers;
 
-internal class CoreResourceProvider : IResourceProvider
+internal sealed class CoreResourceBroker : ICoreResourceBroker
 {
-    private readonly IResourceProcessingService service;
-
-    public CoreResourceProvider(IResourceProcessingService resourceService)
-    {
-        service = resourceService;
-    }
-
     public Resource GetResource(string key, string culture)
     {
         string text = key.Split(separator: '.')

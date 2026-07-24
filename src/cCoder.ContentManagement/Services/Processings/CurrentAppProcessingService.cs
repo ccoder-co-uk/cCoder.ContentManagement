@@ -5,12 +5,16 @@
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
 
-namespace cCoder.ContentManagement.Services;
+namespace cCoder.ContentManagement.Services.Processings;
 
-internal class CurrentAppResolver(IAppService service, HttpContext httpContext = null) : ICurrentAppResolver
+internal sealed partial class CurrentAppProcessingService(
+    IAppService service,
+    HttpContext httpContext = null) : ICurrentAppProcessingService
 {
-    public App ResolveCurrentApp()
+    public App ResolveCurrentApp() =>
+        TryCatch<App>(operation: () =>
     {
+        ValidateResolveCurrentApp(inputs: []);
         string text = httpContext?.Request.Path.Value ?? string.Empty;
 
         if (text.Contains(value: "/webdav", comparisonType: StringComparison.OrdinalIgnoreCase) && text.Contains(value: "Core/App(", comparisonType: StringComparison.OrdinalIgnoreCase))
@@ -33,5 +37,5 @@ internal class CurrentAppResolver(IAppService service, HttpContext httpContext =
 
         return service.GetAllApp()
             .FirstOrDefault(predicate: (App app) => app.Domain == host);
-    }
+    });
 }

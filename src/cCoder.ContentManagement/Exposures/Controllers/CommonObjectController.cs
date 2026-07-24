@@ -49,7 +49,7 @@ public class CommonObjectController(ICommonObjectOrchestrationService service) :
 
     [HttpGet]
     public IActionResult GetMetadata() =>
-        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBuilder().Build()
+        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
         .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(CommonObject)) : new MetadataContainer(type: typeof(CommonObject), isEntity: true, hasEndpoint: true));
 
     [HttpGet]

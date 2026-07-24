@@ -11,11 +11,12 @@ using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
-namespace cCoder.ContentManagement.Api.OData;
+namespace cCoder.ContentManagement.Brokers.OData;
 
-internal class ContentManagementModelBuilder : ODataModelBuilder
+internal class ContentManagementModelBroker
+    : ODataModelBroker, IContentManagementModelBroker
 {
-    public ContentManagementModelBuilder(ODataConventionModelBuilder builder = null)
+    public ContentManagementModelBroker(ODataConventionModelBuilder builder = null)
         : base(builder)
     {
     }
@@ -34,18 +35,18 @@ internal class ContentManagementModelBuilder : ODataModelBuilder
     private IEdmModel BuildEdmModel()
     {
         ConfigureModel();
-        return base.Builder.GetEdmModel();
+        return builder.GetEdmModel();
     }
 
     private void ConfigureModel()
     {
         AddCommonComplextypes();
-        base.Builder.ComplexType<RenderResult>();
+        builder.ComplexType<RenderResult>();
 
-        base.Builder.EntityType<App>()
+        builder.EntityType<App>()
             .Ignore(propertyExpression: i => i.Config);
 
-        base.Builder.EntityType<Submission>()
+        builder.EntityType<Submission>()
             .Ignore(propertyExpression: i => i.Data);
 
         AddSet<App, int>();
@@ -63,57 +64,57 @@ internal class ContentManagementModelBuilder : ODataModelBuilder
         AddSet<Culture, string>();
         AddJoinSet(key: (Expression<Func<AppCulture, object>>)((AppCulture i) => new { i.AppId, i.CultureId }));
         AddJoinSet(key: (Expression<Func<PageRole, object>>)((PageRole i) => new { i.PageId, i.RoleId }));
-        base.Builder.Namespace = "";
+        builder.Namespace = "";
 
-        base.Builder.EntityType<App>()
+        builder.EntityType<App>()
             .Function(name: "Users")
             .ReturnsCollection<User>();
 
-        base.Builder.EntityType<App>()
+        builder.EntityType<App>()
             .Action(name: "UpdatePageOrder")
             .Parameter<App>(name: "app");
 
-        base.Builder.EntityType<App>()
+        builder.EntityType<App>()
             .Function(name: "IsAdmin")
             .Returns<bool>();
 
-        base.Builder.EntityType<Page>()
+        builder.EntityType<Page>()
             .Action(name: "AddContent")
             .Parameter<Content>(name: "content");
 
-        base.Builder.EntityType<Page>()
+        builder.EntityType<Page>()
             .Function(name: "RootFor")
             .ReturnsFromEntitySet<Page>(entitySetName: "Page");
 
-        base.Builder.EntityType<Page>()
+        builder.EntityType<Page>()
             .Function(name: "Menu")
             .Returns<Result<string>>();
 
-        base.Builder.EntityType<Page>()
+        builder.EntityType<Page>()
             .Collection.Function(name: "Render")
             .Returns<RenderResult>();
 
-        base.Builder.EntityType<Resource>()
+        builder.EntityType<Resource>()
             .Collection.Function(name: "GetAll")
             .ReturnsCollectionFromEntitySet<Resource>(entitySetName: "Resource");
 
-        base.Builder.EntityType<Component>()
+        builder.EntityType<Component>()
             .Collection.Function(name: "Render")
             .Returns<string>();
 
-        base.Builder.EntityType<Template>()
+        builder.EntityType<Template>()
             .Collection.Action(name: "Render")
             .Returns<string>();
 
-        base.Builder.EntityType<Template>()
+        builder.EntityType<Template>()
             .Collection.Action(name: "HtmlToPdf")
             .Returns<FileContentResult>();
 
-        base.Builder.EntityType<CommonObject>()
+        builder.EntityType<CommonObject>()
             .Collection.Function(name: "Latest")
             .ReturnsFromEntitySet<CommonObject>(entitySetName: "CommonObject");
 
-        base.Builder.EntityType<CommonObject>()
+        builder.EntityType<CommonObject>()
             .Collection.Action(name: "Import")
             .ReturnsCollectionFromEntitySet<Result<CommonObject>>(entitySetName: "ImportCommonObjectResults");
     }

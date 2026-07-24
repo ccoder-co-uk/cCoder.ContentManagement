@@ -2,5 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-global using cCoder.ContentManagement.Models.OData;
-global using cCoder.ContentManagement.Brokers.OData;
+namespace cCoder.ContentManagement.Brokers.OData;
+
+internal interface IContentManagementModelBroker : IODataModelBroker
+{
+    void Configure();
+}

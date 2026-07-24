@@ -2,5 +2,10 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-global using cCoder.ContentManagement.Models.OData;
-global using cCoder.ContentManagement.Brokers.OData;
+using cCoder.ContentManagement.Services;
+
+namespace cCoder.ContentManagement.Brokers;
+
+internal interface ICoreResourceBroker : IResourceProvider
+{
+}
