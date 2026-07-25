@@ -112,7 +112,7 @@ internal static class AuthorizationDependency
                             a: privilege,
                             b: "app_admin",
                             comparisonType: StringComparison.OrdinalIgnoreCase))) ||
-        !coreDataContext.Roles
+        !coreDataContext.Apps
             .IgnoreQueryFilters()
             .Any();
 
