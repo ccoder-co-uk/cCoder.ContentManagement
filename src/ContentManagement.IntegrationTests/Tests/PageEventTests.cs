@@ -52,6 +52,8 @@ public sealed partial class PageEventTests(ContentManagementIntegrationFixture f
             .AddAsync(entity: app);
 
         await core.SaveChangesAsync();
+        _ = await SeedRoleAsync(appId: app.Id);
+
         return app.Id;
     }
 

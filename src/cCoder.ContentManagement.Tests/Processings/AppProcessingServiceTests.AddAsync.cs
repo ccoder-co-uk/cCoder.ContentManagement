@@ -104,7 +104,7 @@ value: new[]
             .HaveCount(expected: 1);
 
         result.Roles.Should()
-            .HaveCount(expected: 3);
+            .HaveCount(expected: 4);
 
         appServiceMock.Verify(
 expression: x =>
@@ -112,10 +112,11 @@ expression: x =>
 newApp: It.Is<App>(match: app =>
                             app.DefaultTheme == "Default"
                             && app.Cultures.Count == 1
-                            && app.Roles.Count == 3
+                            && app.Roles.Count == 4
                             && app.Roles.Any(predicate: role => role.Name == "Administrators")
                             && app.Roles.Any(predicate: role => role.Name == "Users")
                             && app.Roles.Any(predicate: role => role.Name == "Guests")
+                            && app.Roles.Any(predicate: role => role.Name == "System Admins")
                         )
                     ),
 times: Times.Once
@@ -226,6 +227,7 @@ value: new[]
         Role administrators = result.Roles.Single(predicate: role => role.Name == "Administrators");
         Role users = result.Roles.Single(predicate: role => role.Name == "Users");
         Role guests = result.Roles.Single(predicate: role => role.Name == "Guests");
+        Role systemAdmins = result.Roles.Single(predicate: role => role.Name == "System Admins");
 
         // Then
         administrators.Privileges.Should()
@@ -239,6 +241,12 @@ value: new[]
 
         guests.Users.Should()
             .ContainSingle(predicate: userRole => userRole.UserId == "Guest");
+
+        systemAdmins.Privileges.Should()
+            .Contain(expected: "app_create");
+
+        systemAdmins.Users.Should()
+            .BeEmpty();
     }
 
     [Fact]

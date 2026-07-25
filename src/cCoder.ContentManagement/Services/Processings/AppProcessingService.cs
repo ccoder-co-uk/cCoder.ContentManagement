@@ -399,6 +399,15 @@ internal partial class AppProcessingService(
         EnsureRole(roles: list, roleName: "Users", requiredPrivileges: userPrivilegeIds, userId: bootstrapUserId);
         EnsureRole(roles: list, roleName: "Guests", requiredPrivileges: userPrivilegeIds, userId: "Guest");
 
+        if (isFirstApp)
+        {
+            EnsureRole(
+                roles: list,
+                roleName: "System Admins",
+                requiredPrivileges: ["app_create"],
+                userId: bootstrapUserId);
+        }
+
         foreach (Role item in list)
         {
             item.App = null;
