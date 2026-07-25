@@ -10,6 +10,8 @@ public interface IAuthorizationBroker
 {
     User GetCurrentUser();
 
+    string GetCurrentUserId();
+
     bool IsAdminOfApp(int? appId);
 
     bool IsAdmin(int appId, string userName);

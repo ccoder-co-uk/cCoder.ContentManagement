@@ -15,6 +15,13 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
         return coreDataContext.User;
     }
 
+    public string GetCurrentUserId()
+    {
+        using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.AuthInfo?.SSOUserId;
+    }
+
     public bool IsAdminOfApp(int? appId)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
