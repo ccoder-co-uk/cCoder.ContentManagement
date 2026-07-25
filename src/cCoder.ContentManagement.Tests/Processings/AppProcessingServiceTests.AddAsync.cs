@@ -188,11 +188,14 @@ times: Times.Once
     }
 
     [Fact]
-    public async Task ShouldGrantAppCreateWithoutAssigningGuestToAdminRolesWhenCreatingFirstApp()
+    public async Task ShouldGrantAppCreateToAuthenticatedBootstrapUserWhenCreatingFirstApp()
     {
         // Given
         authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => null);
+
+        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(value: "admin");
 
         appServiceMock
             .Setup(expression: x => x.GetAllApp(ignoreFilters: true))
@@ -234,10 +237,12 @@ value: new[]
             .Contain(expected: "app_create");
 
         administrators.Users.Should()
-            .BeEmpty();
+            .ContainSingle(predicate: userRole =>
+                userRole.UserId == "admin");
 
         users.Users.Should()
-            .BeEmpty();
+            .ContainSingle(predicate: userRole =>
+                userRole.UserId == "admin");
 
         guests.Users.Should()
             .ContainSingle(predicate: userRole => userRole.UserId == "Guest");
@@ -246,7 +251,8 @@ value: new[]
             .Contain(expected: "app_create");
 
         systemAdmins.Users.Should()
-            .BeEmpty();
+            .ContainSingle(predicate: userRole =>
+                userRole.UserId == "admin");
     }
 
     [Fact]

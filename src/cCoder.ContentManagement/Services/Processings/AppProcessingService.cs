@@ -369,7 +369,9 @@ internal partial class AppProcessingService(
     private ICollection<Role> BuildRolesForApp(App app)
     {
         List<Role> list = (app.Roles ?? new List<Role>()).ToList();
-        string currentUserId = authorizationBroker.GetCurrentUser()?.Id;
+
+        string currentUserId = authorizationBroker.GetCurrentUser()?.Id
+            ?? authorizationBroker.GetCurrentUserId();
 
         bool isFirstApp = !service.GetAllApp(ignoreFilters: true)
             .Any();
