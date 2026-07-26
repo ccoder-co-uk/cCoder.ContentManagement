@@ -251,6 +251,11 @@
           "ReturnType": "User"
         },
         {
+          "Name": "GetCurrentUserId",
+          "Inputs": [],
+          "ReturnType": "System.String"
+        },
+        {
           "Name": "IsAdmin",
           "Inputs": [
             {
@@ -2890,18 +2895,6 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Exposures.BaselineManager",
-      "StandardElementType": "Exposure",
-      "Properties": [],
-      "Methods": [
-        {
-          "Name": "GetPackages",
-          "Inputs": [],
-          "ReturnType": "Package[]"
-        }
-      ]
-    },
-    {
       "Name": "cCoder.ContentManagement.Exposures.ComponentManager",
       "StandardElementType": "Exposure",
       "Properties": [],
@@ -3191,18 +3184,6 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Exposures.Controllers.BaselineController",
-      "StandardElementType": "Exposure",
-      "Properties": [],
-      "Methods": [
-        {
-          "Name": "Get",
-          "Inputs": [],
-          "ReturnType": "IActionResult"
         }
       ]
     },
@@ -4387,17 +4368,6 @@
           "ReturnType": "cCoder.ContentManagement.Models.PageRenderResponse"
         }
       ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Exposures.Setup.UIBaseline",
-      "StandardElementType": "Dependency",
-      "Properties": [
-        {
-          "Name": "Packages",
-          "Type": "Package[]"
-        }
-      ],
-      "Methods": []
     },
     {
       "Name": "cCoder.ContentManagement.Exposures.TemplateManager",
@@ -11655,10 +11625,6 @@
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.AppCultureController",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Exposures.Controllers.BaselineController",
-      "ToType": "cCoder.ContentManagement.Exposures.BaselineManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
