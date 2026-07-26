@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Security;
 using cCoder.ContentManagement.Exposures;
@@ -109,9 +110,9 @@ internal sealed partial class PageRenderAggregationService(
         ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
         RenderResult page = ExecuteRenderRenderResult(appId: defaults.App.Id, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
 
-        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[message]]", newValue: request.Exception.Message);
-        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[detail]]", newValue: request.Exception.StackTrace ?? string.Empty);
-        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[url]]", newValue: request.RequestUrl ?? string.Empty);
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[message]]", newValue: WebUtility.HtmlEncode(value: request.Exception.Message));
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[detail]]", newValue: WebUtility.HtmlEncode(value: request.Exception.StackTrace ?? string.Empty));
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[url]]", newValue: WebUtility.HtmlEncode(value: request.RequestUrl ?? string.Empty));
 
         return new PageRenderResponse
         {
@@ -391,9 +392,9 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
         ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
         RenderResult page = ExecuteRenderRenderResult(appId: defaults.App.Id, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
 
-        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[message]]", newValue: request.Exception.Message);
-        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[detail]]", newValue: request.Exception.StackTrace ?? string.Empty);
-        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[url]]", newValue: request.RequestUrl ?? string.Empty);
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[message]]", newValue: WebUtility.HtmlEncode(value: request.Exception.Message));
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[detail]]", newValue: WebUtility.HtmlEncode(value: request.Exception.StackTrace ?? string.Empty));
+        page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[url]]", newValue: WebUtility.HtmlEncode(value: request.RequestUrl ?? string.Empty));
 
         return new PageRenderResponse
         {

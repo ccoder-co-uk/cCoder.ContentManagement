@@ -320,9 +320,9 @@ values: session.App.PagesById.Values
             new(old: "[[displayname]]", @new: isGuest ? "Guest" : user.DisplayName),
             new(old: "[[loginlink]]", @new: isGuest ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>"),
             new(old: "[[date]]", @new: DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy")),
-            new(old: "[[culture]]", @new: culture),
-            new(old: "[[lang]]", @new: culture.Split(separator: '-')
-            .FirstOrDefault() ?? string.Empty),
+            new(old: "[[culture]]", @new: WebUtility.HtmlEncode(value: culture)),
+            new(old: "[[lang]]", @new: WebUtility.HtmlEncode(value: culture.Split(separator: '-')
+            .FirstOrDefault() ?? string.Empty)),
             new(old: "[app[name]]", @new: session.App?.Name ?? string.Empty),
             new(old: "[app[domain]]", @new: session.App?.Domain ?? string.Empty),
             new(old: "[app[root]]", @new: "https://" + session.App?.Domain + port + "/"),
@@ -333,9 +333,9 @@ values: session.App.PagesById.Values
             new(old: "[page[keywords]]", @new: session.Page?.Keywords ?? string.Empty),
             new(old: "[page[id]]", @new: session.Page?.Id.ToString() ?? string.Empty),
             new(old: "[page[parentid]]", @new: session.Page?.ParentId?.ToString() ?? string.Empty),
-            new(old: "[page[path]]", @new: session.Page?.Path ?? string.Empty),
-            new(old: "[page[url]]", @new: string.IsNullOrWhiteSpace(value: session.Page?.Path) ? "https://" + session.App?.Domain + "/" : "https://" + session.App?.Domain + "/" + session.Page?.Path),
-            new(old: "[theme[name]]", @new: session.Request.Theme ?? string.Empty),
+            new(old: "[page[path]]", @new: WebUtility.HtmlEncode(value: session.Page?.Path ?? string.Empty)),
+            new(old: "[page[url]]", @new: WebUtility.HtmlEncode(value: string.IsNullOrWhiteSpace(value: session.Page?.Path) ? "https://" + session.App?.Domain + "/" : "https://" + session.App?.Domain + "/" + session.Page?.Path)),
+            new(old: "[theme[name]]", @new: WebUtility.HtmlEncode(value: session.Request.Theme ?? string.Empty)),
             new(
                 old: "[[editlink]]",
                 @new: CanPageRenderUser(
