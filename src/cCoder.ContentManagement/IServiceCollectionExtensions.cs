@@ -234,7 +234,6 @@ public static partial class IServiceCollectionExtensions
     private static void AddEventHandlers(this IServiceCollection services)
     {
         services.AddTransient<IAppManager, AppManager>();
-        services.AddTransient<IBaselineManager, BaselineManager>();
         services.AddTransient<IComponentManager, ComponentManager>();
         services.AddTransient<IContentManagementPackageManager, ContentManagementPackageManager>();
         services.AddTransient<IComponentRenderer, ComponentRenderer>();
