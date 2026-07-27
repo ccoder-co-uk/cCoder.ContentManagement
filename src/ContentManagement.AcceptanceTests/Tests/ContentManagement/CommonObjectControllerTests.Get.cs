@@ -62,9 +62,9 @@ public sealed partial class CommonObjectControllerTests
     }
 
     [Theory]
-    [InlineData("Core/Resource")]
-    [InlineData("Core/Component")]
-    [InlineData("Core/Script")]
+    [InlineData("ContentManagement/Resource")]
+    [InlineData("ContentManagement/Component")]
+    [InlineData("ContentManagement/Script")]
     public async Task Latest_ReturnsSeededCacheEntries(string type)
     {
         // Given

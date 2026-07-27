@@ -38,7 +38,7 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
             [
                 new PackageItem
                 {
-                    Type = "Core/Component",
+                    Type = "ContentManagement/Component",
                     Data = """
                            {
                              "Name": "DetailedNav",
