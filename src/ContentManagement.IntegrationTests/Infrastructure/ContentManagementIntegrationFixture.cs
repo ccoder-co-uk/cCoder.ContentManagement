@@ -28,8 +28,8 @@ public sealed class ContentManagementIntegrationFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        string coreConnectionString = AddDatabaseSuffix(variableName: "CCODER_ACCEPTANCE_CORE_CONNECTION_STRING");
-        string ssoConnectionString = AddDatabaseSuffix(variableName: "CCODER_ACCEPTANCE_SSO_CONNECTION_STRING");
+        string coreConnectionString = AddDatabaseSuffix(variableName: "ConnectionStrings__Core");
+        string ssoConnectionString = AddDatabaseSuffix(variableName: "ConnectionStrings__SSO");
 
         databaseServices = CreateDatabaseServices(coreConnectionString: coreConnectionString, ssoConnectionString: ssoConnectionString);
         await ResetDatabasesAsync();
@@ -182,10 +182,10 @@ implementationFactory: _ => new MSSQLSecurityDbContextFactory(connectionString: 
         message: $"Refusing to run integration database operations against protected database '{protectedDatabaseName}'.");
         }
 
-        if (!databaseName.Contains(value: "integration", comparisonType: StringComparison.OrdinalIgnoreCase))
+        if (!databaseName.Contains(value: "-acceptance-", comparisonType: StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException(
-        message: $"Refusing to run integration database operations against non-integration database '{databaseName}'.");
+        message: $"Refusing to run integration database operations against non-acceptance database '{databaseName}'.");
         }
     }
 
@@ -241,7 +241,7 @@ END";
 
         if (!string.IsNullOrWhiteSpace(value: builder.InitialCatalog))
         {
-            builder.InitialCatalog = $"{builder.InitialCatalog}-contentmanagement-integration";
+            builder.InitialCatalog = $"{builder.InitialCatalog}-acceptance-{Guid.NewGuid():N}";
         }
 
         return builder.ConnectionString;

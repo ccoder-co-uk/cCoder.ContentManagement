@@ -30,8 +30,8 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
     {
         AcceptanceSettings settings = new()
         {
-            CoreConnectionString = AddDatabaseSuffix(variableName: "CCODER_ACCEPTANCE_CORE_CONNECTION_STRING"),
-            SsoConnectionString = AddDatabaseSuffix(variableName: "CCODER_ACCEPTANCE_SSO_CONNECTION_STRING"),
+            CoreConnectionString = AddDatabaseSuffix(variableName: "ConnectionStrings__Core"),
+            SsoConnectionString = AddDatabaseSuffix(variableName: "ConnectionStrings__SSO"),
             DecryptionKey = "000000000000000000000000000000000000000000000000",
         };
 
@@ -137,12 +137,7 @@ implementationFactory: _ => new MSSQLSecurityDbContextFactory(connectionString: 
             return connectionString;
         }
 
-        string suffix = typeof(WebAcceptanceFixture).Assembly.GetName()
-            .Name!
-            .Replace(oldValue: ".AcceptanceTests", newValue: string.Empty, comparisonType: StringComparison.Ordinal)
-            .ToLowerInvariant();
-
-        builder.InitialCatalog = $"{databaseName}-{suffix}";
+        builder.InitialCatalog = $"{databaseName}-acceptance-{Guid.NewGuid():N}";
         return builder.ConnectionString;
     }
 
