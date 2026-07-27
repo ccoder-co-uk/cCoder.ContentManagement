@@ -60,13 +60,13 @@ internal partial class ContentManagementMigrationAggregationService(
                     case "ContentManagement/Component":
                         await ImportComponentsAsync(appId: appId, item: item);
                         break;
-                    case "Core/Layout":
+                    case "ContentManagement/Layout":
                         await ImportLayoutsAsync(appId: appId, item: item);
                         break;
-                    case "Core/Page":
+                    case "ContentManagement/Page":
                         await ImportPagesAsync(appId: appId, item: item);
                         break;
-                    case "Core/PageRole":
+                    case "ContentManagement/PageRole":
                         await ImportPageRolesAsync(appId: appId, item: item);
                         break;
                     case "ContentManagement/Resource":
@@ -75,7 +75,7 @@ internal partial class ContentManagementMigrationAggregationService(
                     case "ContentManagement/Script":
                         await ImportScriptsAsync(appId: appId, item: item);
                         break;
-                    case "Core/Template":
+                    case "ContentManagement/Template":
                         await ImportTemplatesAsync(appId: appId, item: item);
                         break;
                 }
