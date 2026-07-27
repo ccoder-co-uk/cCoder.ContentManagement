@@ -28,7 +28,7 @@ internal sealed partial class PageRoleImportLookupProcessingService(
     {
         ValidatePageRoleOnResolve(inputs: [appId, path, roleName]);
         ValidateAppId(appId: appId, parameterName: "appId");
-        ValidateText(value: path, parameterName: "path");
+        ValidatePath(value: path, parameterName: "path");
         ValidateText(value: roleName, parameterName: "roleName");
 
         Role role = roleBroker.GetAllRoles(ignoreFilters: true)
@@ -58,6 +58,12 @@ internal sealed partial class PageRoleImportLookupProcessingService(
     private static void ValidateText(string value, string parameterName) =>
         ThrowIf(
             condition: string.IsNullOrWhiteSpace(value: value),
+            message: parameterName + " is required.");
+
+    private static void ValidatePath(string value, string parameterName) =>
+        ThrowIf(
+            condition: value is null
+                || (value.Length > 0 && string.IsNullOrWhiteSpace(value: value)),
             message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
