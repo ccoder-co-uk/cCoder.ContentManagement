@@ -53,6 +53,45 @@ public partial class PageRoleImportLookupProcessingServiceTests
     }
 
     [Fact]
+    public void ShouldResolveRootPageRoleWhenPathIsEmpty()
+    {
+        // Given
+        const int appId = 42;
+        const string path = "";
+        const string roleName = "Guests";
+        Page page = CreatePage(appId: appId, path: path);
+        Role role = CreateRole(appId: appId, roleName: roleName);
+
+        pageBrokerMock
+            .Setup(
+                expression: broker =>
+                    broker.GetAllPages(ignoreFilters: true))
+            .Returns(value: new[] { page }.AsQueryable());
+
+        roleBrokerMock
+            .Setup(
+                expression: broker =>
+                    broker.GetAllRoles(ignoreFilters: true))
+            .Returns(value: new[] { role }.AsQueryable());
+
+        // When
+        PageRole result = processingService.ResolvePageRole(
+            appId: appId,
+            path: path,
+            roleName: roleName);
+
+        // Then
+        result.PageId.Should()
+            .Be(expected: page.Id);
+
+        result.RoleId.Should()
+            .Be(expected: role.Id);
+
+        pageBrokerMock.VerifyAll();
+        roleBrokerMock.VerifyAll();
+    }
+
+    [Fact]
     public void ShouldThrowValidationExceptionWhenAppIdIsInvalid()
     {
         // Given
