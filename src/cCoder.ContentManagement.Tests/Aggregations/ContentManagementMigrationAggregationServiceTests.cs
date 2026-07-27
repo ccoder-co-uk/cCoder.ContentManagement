@@ -91,7 +91,7 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
             [
                 new PackageItem
                 {
-                    Type = "Core/Page",
+                    Type = "ContentManagement/Page",
                     Data = """
                            [
                              {

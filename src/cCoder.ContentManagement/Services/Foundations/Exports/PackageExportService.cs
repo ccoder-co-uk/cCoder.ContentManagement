@@ -46,7 +46,7 @@ data: roleBroker.GetAllRoles(ignoreFilters: true)
 
         return CreatePackage(
 name: "Layouts",
-itemType: "Core/Layout",
+itemType: "ContentManagement/Layout",
 data: layoutBroker.GetAllLayouts(ignoreFilters: true)
             .Where(predicate: layout => layout.AppId == appId)
             .Select(selector: layout => new
@@ -69,7 +69,7 @@ data: layoutBroker.GetAllLayouts(ignoreFilters: true)
 
         return CreatePackage(
 name: "Templates",
-itemType: "Core/Template",
+itemType: "ContentManagement/Template",
 data: templateBroker.GetAllTemplates(ignoreFilters: true)
             .Where(predicate: template => template.AppId == appId)
             .Select(selector: template => new
@@ -211,7 +211,7 @@ data: resourceBroker.GetAllResources(ignoreFilters: true)
 
         return CreatePackage(
 name: "Pages",
-itemType: "Core/Page",
+itemType: "ContentManagement/Page",
 data: pages.Select(selector: page => new
 {
     page.Path,
@@ -236,7 +236,7 @@ data: pages.Select(selector: page => new
 
         return CreatePackage(
 name: "PageRoles",
-itemType: "Core/PageRole",
+itemType: "ContentManagement/PageRole",
 data: pageBroker.GetAllPages(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
             .SelectMany(selector: page => page.Roles.Select(selector: role => new
