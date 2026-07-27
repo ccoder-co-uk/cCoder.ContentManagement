@@ -47,6 +47,10 @@ public partial class AppServiceTests
 
         CmsDataModels.App submitted = null;
 
+        appBrokerMock
+            .Setup(expression: x => x.GetAllApps(ignoreFilters: true))
+            .Returns(value: new[] { CreateRandomApp() }.AsQueryable());
+
         authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"));
 
         appBrokerMock
@@ -106,6 +110,10 @@ expression: x => x.AddAppAsync(newApp: It.IsAny<CmsDataModels.App>()),
 times: Times.Once
         );
 
+        appBrokerMock.Verify(
+            expression: x => x.GetAllApps(ignoreFilters: true),
+            times: Times.Once);
+
         appBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"), times: Times.Once);
         authorizationBrokerMock.VerifyNoOtherCalls();
@@ -116,6 +124,10 @@ times: Times.Once
     {
         // Given
         App app = CreateRandomApp(id: 0);
+
+        appBrokerMock
+            .Setup(expression: x => x.GetAllApps(ignoreFilters: true))
+            .Returns(value: new[] { CreateRandomApp() }.AsQueryable());
 
         authorizationBrokerMock
             .Setup(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"))
@@ -130,8 +142,39 @@ times: Times.Once
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
+        appBrokerMock.Verify(
+            expression: x => x.GetAllApps(ignoreFilters: true),
+            times: Times.Once);
+
         appBrokerMock.VerifyNoOtherCalls();
         authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"), times: Times.Once);
+        authorizationBrokerMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task ShouldAllowFirstAppWithoutExistingAppPrivilegeForAddAsync()
+    {
+        // Given
+        App app = CreateRandomApp(id: 0);
+
+        appBrokerMock
+            .Setup(expression: x => x.GetAllApps(ignoreFilters: true))
+            .Returns(
+                value: Array.Empty<App>()
+                    .AsQueryable());
+
+        appBrokerMock
+            .Setup(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()))
+            .ReturnsAsync(value: app);
+
+        // When
+        App result = await appService.AddAppAsync(newApp: app);
+
+        // Then
+        result.Should()
+            .BeSameAs(expected: app);
+
+        appBrokerMock.VerifyAll();
         authorizationBrokerMock.VerifyNoOtherCalls();
     }
 

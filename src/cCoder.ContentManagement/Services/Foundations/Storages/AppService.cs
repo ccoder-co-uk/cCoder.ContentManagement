@@ -58,7 +58,15 @@ internal partial class AppService(
     {
         ValidateAppOnAdd(inputs: [newApp]);
         ValidateApp(app: newApp, parameterName: "app");
-        authorizationBroker.Authorize(appId: null, privilege: "App_create");
+
+        if (appBroker.GetAllApps(ignoreFilters: true)
+            .Any())
+        {
+            authorizationBroker.Authorize(
+                appId: null,
+                privilege: "App_create");
+        }
+
         App storedApp = CreateStorageApp(newApp: newApp);
         App result = await appBroker.AddAppAsync(newApp: storedApp);
         newApp.Id = result.Id;
