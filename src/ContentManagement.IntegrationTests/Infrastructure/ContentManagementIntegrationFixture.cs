@@ -182,10 +182,10 @@ implementationFactory: _ => new MSSQLSecurityDbContextFactory(connectionString: 
         message: $"Refusing to run integration database operations against protected database '{protectedDatabaseName}'.");
         }
 
-        if (!databaseName.Contains(value: "integration", comparisonType: StringComparison.OrdinalIgnoreCase))
+        if (!databaseName.Contains(value: "-acceptance-", comparisonType: StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException(
-        message: $"Refusing to run integration database operations against non-integration database '{databaseName}'.");
+        message: $"Refusing to run integration database operations against non-acceptance database '{databaseName}'.");
         }
     }
 
