@@ -91,7 +91,7 @@ data: templateBroker.GetAllTemplates(ignoreFilters: true)
 
         return CreatePackage(
 name: "Components",
-itemType: "Core/Component",
+itemType: "ContentManagement/Component",
 data: componentBroker.GetAllComponents(ignoreFilters: true)
             .Where(predicate: component => component.AppId == appId)
             .Select(selector: component => new
@@ -115,7 +115,7 @@ data: componentBroker.GetAllComponents(ignoreFilters: true)
 
         return CreatePackage(
 name: "Scripts",
-itemType: "Core/Script",
+itemType: "ContentManagement/Script",
 data: scriptBroker.GetAllScripts(ignoreFilters: true)
             .Where(predicate: script => script.AppId == appId)
             .Select(selector: script => new
@@ -136,7 +136,7 @@ data: scriptBroker.GetAllScripts(ignoreFilters: true)
 
         return CreatePackage(
 name: "Resources",
-itemType: "Core/Resource",
+itemType: "ContentManagement/Resource",
 data: resourceBroker.GetAllResources(ignoreFilters: true)
             .Where(predicate: resource => resource.AppId == appId)
             .Select(selector: resource => new

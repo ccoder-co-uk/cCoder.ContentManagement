@@ -46,7 +46,7 @@ authorizationBroker: authorizationBrokerMock.Object
             .With(func: x => x.Id = id)
             .With(func: x => x.Version = version)
             .With(func: x => x.Key = $"key-{Guid.NewGuid():N}")
-            .With(func: x => x.Type = "Core/Resource")
+            .With(func: x => x.Type = "ContentManagement/Resource")
             .With(func: x => x.Json = "{}")
             .With(func: x => x.Culture = "en-GB")
             .With(func: x => x.Name = $"CommonObject-{Guid.NewGuid():N}")

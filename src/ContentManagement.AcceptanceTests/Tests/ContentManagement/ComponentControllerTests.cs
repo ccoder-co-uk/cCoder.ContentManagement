@@ -16,7 +16,7 @@ namespace Web.AcceptanceTests.Tests.ContentManagement;
 public sealed partial class ComponentControllerTests(WebAcceptanceFixture fixture)
 {
     private HttpClient Client { get; } = fixture.Client;
-    private string BaseUrl { get; } = "/Api/Core/Component";
+    private string BaseUrl { get; } = "/Api/ContentManagement/Component";
     private static JsonSerializerOptions JsonOptions { get; } = new() { PropertyNameCaseInsensitive = true };
 
     private static string Unique(string prefix) =>

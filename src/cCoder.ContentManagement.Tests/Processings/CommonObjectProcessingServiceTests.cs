@@ -43,7 +43,7 @@ jsonBroker: new JsonBroker()
     }
 
     private static CommonObject CreateRandomCommonObject(
-        string type = "Core/Resource"
+        string type = "ContentManagement/Resource"
     ) =>
         Builder<CommonObject>
             .CreateNew()

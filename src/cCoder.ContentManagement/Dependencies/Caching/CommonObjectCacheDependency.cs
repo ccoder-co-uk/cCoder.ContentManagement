@@ -66,15 +66,15 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
             CommonObject[] latestCommonObjectsPaged = requiredService.GetLatestCommonObjectsPaged();
 
             CommonObject[] array = latestCommonObjectsPaged
-                .Where(predicate: commonObject => commonObject.Type == "Core/Component")
+                .Where(predicate: commonObject => commonObject.Type == "ContentManagement/Component")
                 .ToArray();
 
             CommonObject[] array2 = latestCommonObjectsPaged
-                .Where(predicate: commonObject => commonObject.Type == "Core/Resource")
+                .Where(predicate: commonObject => commonObject.Type == "ContentManagement/Resource")
                 .ToArray();
 
             CommonObject[] array3 = latestCommonObjectsPaged
-                .Where(predicate: commonObject => commonObject.Type == "Core/Script")
+                .Where(predicate: commonObject => commonObject.Type == "ContentManagement/Script")
                 .ToArray();
 
             latestSet = array.Union(second: array2)

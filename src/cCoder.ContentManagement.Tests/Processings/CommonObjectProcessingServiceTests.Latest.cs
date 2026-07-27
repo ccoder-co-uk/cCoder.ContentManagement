@@ -30,11 +30,11 @@ public partial class CommonObjectProcessingServiceTests
 
         // When
         CommonObject expected = CreateRandomCommonObject(
-type: "Core/Resource"
+type: "ContentManagement/Resource"
         );
 
         CommonObject other = CreateRandomCommonObject(
-type: "Core/Component"
+type: "ContentManagement/Component"
         );
 
         commonObjectCacheMock.Setup(expression: x => x.GetLatestSet())
@@ -74,7 +74,7 @@ value: [
         );
 
         CommonObject[] results = commonObjectProcessingService
-            .LatestCommonObject(type: "Core/Resource")
+            .LatestCommonObject(type: "ContentManagement/Resource")
             .ToArray();
 
         // Then

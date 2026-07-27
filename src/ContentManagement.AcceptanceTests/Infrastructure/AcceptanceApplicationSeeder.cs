@@ -254,7 +254,7 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
         }
 
         Resource[] resources = AcceptanceSeedData
-            .LoadResourcePackageItems(packageName: "Resources", itemType: "Core/Resource")
+            .LoadResourcePackageItems(packageName: "Resources", itemType: "ContentManagement/Resource")
             .Select(selector: resource => new Resource
             {
                 AppId = AppId,
@@ -286,7 +286,7 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
         }
 
         Component[] components = AcceptanceSeedData
-            .LoadComponentPackageItems(packageName: "Components", itemType: "Core/Component")
+            .LoadComponentPackageItems(packageName: "Components", itemType: "ContentManagement/Component")
             .Select(selector: component => new Component
             {
                 AppId = AppId,
@@ -318,7 +318,7 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
         }
 
         Script[] scripts = AcceptanceSeedData
-            .LoadScriptPackageItems(packageName: "Scripts", itemType: "Core/Script")
+            .LoadScriptPackageItems(packageName: "Scripts", itemType: "ContentManagement/Script")
             .Select(selector: script => new Script
             {
                 AppId = AppId,
