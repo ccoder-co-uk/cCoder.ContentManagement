@@ -38,9 +38,9 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
         databaseServices = CreateDatabaseServices(settings: settings);
         databaseManager = new AcceptanceDatabaseManager(services: databaseServices);
         await databaseManager.ResetDatabasesAsync();
-        await SeedAsync(services: databaseServices);
 
         Factory = new WebAcceptanceFactory(settings: settings);
+        await SeedAsync(services: Factory.Services);
 
         Client = Factory.CreateClient(options: new WebApplicationFactoryClientOptions
         {

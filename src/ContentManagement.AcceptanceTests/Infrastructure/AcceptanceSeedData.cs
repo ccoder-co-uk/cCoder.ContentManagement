@@ -18,9 +18,16 @@ internal static class AcceptanceSeedData
         using JsonDocument json = AcceptanceAssetLoader.LoadJson(fileName: "App.1.Export.json");
         JsonElement value = json.RootElement.GetProperty(propertyName: "value");
 
-        return JsonConvert.DeserializeObject<Package[]>(
+        Package[] packages = JsonConvert.DeserializeObject<Package[]>(
 value: value.GetRawText(),
 settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
+
+        foreach (PackageItem item in packages.SelectMany(selector: package => package.Items))
+        {
+            item.Type = NormalizeContentManagementType(type: item.Type);
+        }
+
+        return packages;
     }
 
     public static Layout[] LoadLayoutPackageItems(string packageName, string itemType) =>
@@ -85,10 +92,28 @@ settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
                 ? json.RootElement.GetProperty(propertyName: "value")
                 : json.RootElement;
 
-        return JsonConvert.DeserializeObject<CommonObject[]>(
+        CommonObject[] commonObjects = JsonConvert.DeserializeObject<CommonObject[]>(
 value: value.GetRawText(),
 settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
+
+        foreach (CommonObject commonObject in commonObjects)
+        {
+            commonObject.Type = NormalizeContentManagementType(type: commonObject.Type);
+        }
+
+        return commonObjects;
     }
+
+    private static string NormalizeContentManagementType(string type) =>
+        type is "Core/Component"
+            or "Core/Layout"
+            or "Core/Page"
+            or "Core/PageRole"
+            or "Core/Resource"
+            or "Core/Script"
+            or "Core/Template"
+                ? $"ContentManagement/{type["Core/".Length..]}"
+                : type;
 
     private static IEnumerable<object> UnpackItems(string data, Type itemTypeContract)
     {
