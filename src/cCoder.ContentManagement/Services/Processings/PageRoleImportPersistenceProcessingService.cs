@@ -33,8 +33,9 @@ internal sealed partial class PageRoleImportPersistenceProcessingService(
             .GetAllPageRoles(ignoreFilters: true)
             .Where(
                 predicate: pageRole =>
-                    ((ReadOnlySpan<int>)pageIds)
-                        .Contains(value: pageRole.PageId))
+                    Enumerable.Contains(
+                        source: pageIds,
+                        value: pageRole.PageId))
             .ToArray();
 
         PageRole[] pageRolesToDelete = existingPageRoles
