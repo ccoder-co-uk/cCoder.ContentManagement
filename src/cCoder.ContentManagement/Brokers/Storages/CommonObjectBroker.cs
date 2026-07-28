@@ -14,7 +14,7 @@ internal sealed class CommonObjectBroker(ICoreContextFactory coreContextFactory)
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.CommonObjects,
             ignoreFilters: ignoreFilters);
     }
@@ -23,7 +23,7 @@ internal sealed class CommonObjectBroker(ICoreContextFactory coreContextFactory)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.CommonObjectQueryDependency.GetLatestCommonObjectsPaged(
+        return Extensions.Data.CommonObjectQueryExtensions.GetLatestCommonObjectsPaged(
             coreDataContext: coreDataContext,
             pageSize: pageSize);
     }

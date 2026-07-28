@@ -8,6 +8,6 @@ namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class MarkupRenderService
 {
-    private static void ValidateRenderPageRenderSessionPageRenderResult(object[] inputs) =>
+    private static void ValidateRenderPageRenderSession(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 }

@@ -8,8 +8,8 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class PageEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
-    : AuthenticatedEventBroker(eventInfrastructureDependency), IPageEventBroker
+internal sealed class PageEventBroker(IAuthenticatedEventHub eventHub)
+    : AuthenticatedEventBroker(eventHub), IPageEventBroker
 {
     public ValueTask RaisePageAddEventAsync(EventMessage<Page> message) =>
         RaiseEventAsync(name: "page_add", message: message);

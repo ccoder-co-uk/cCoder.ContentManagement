@@ -31,10 +31,11 @@ internal sealed class ContentManagementIntegrationFactory(
         {
             config.AddInMemoryCollection(
 initialData: [
-                new KeyValuePair<string, string>(key: "ConnectionStrings:Core", value: coreConnectionString),
-                new KeyValuePair<string, string>(key: "ConnectionStrings:SSO", value: ssoConnectionString),
-                new KeyValuePair<string, string>(key: "Settings:DecryptionKey", value: decryptionKey),
-                new KeyValuePair<string, string>(key: "Settings:enableExternalEventing", value: "true"),
+                new KeyValuePair<string, string>(key: "ContentManagement:ConnectionString", value: coreConnectionString),
+                new KeyValuePair<string, string>(key: "Data:ConnectionString", value: coreConnectionString),
+                new KeyValuePair<string, string>(key: "Security:ConnectionString", value: ssoConnectionString),
+                new KeyValuePair<string, string>(key: "Security:DecryptionKey", value: decryptionKey),
+                new KeyValuePair<string, string>(key: "AppSecurity:ConnectionString", value: coreConnectionString),
                 new KeyValuePair<string, string>(key: "Eventing:ProviderType", value: "Http"),
                 new KeyValuePair<string, string>(key: "Eventing:Http:MaxConcurrency", value: "1"),
             ]);
@@ -44,27 +45,17 @@ initialData: [
         {
             services.RemoveAll<ICoreContextFactory>();
             services.RemoveAll<ISecurityDbContextFactory>();
+            services.RemoveAll<cCoder.Data.Models.DataConfiguration>();
 
-            services.AddSingleton(
-implementationInstance: new Config
-{
-    ConnectionStrings = new Dictionary<string, string>
-    {
-        ["Core"] = coreConnectionString,
-        ["SSO"] = ssoConnectionString,
-    },
-    Settings = new Dictionary<string, string>
-    {
-        ["DecryptionKey"] = decryptionKey,
-        ["enableExternalEventing"] = "true",
-    },
-    Services = new Dictionary<string, string>(),
-});
+            services.AddData(
+                configuration: new cCoder.Data.Models.DataConfiguration
+                {
+                    ConnectionString = coreConnectionString,
+                });
 
             services.AddSingleton<ISecurityDbContextFactory>(
 implementationFactory: _ => new MSSQLSecurityDbContextFactory(connectionString: ssoConnectionString));
 
-            services.AddCoreData(connectionString: coreConnectionString);
         });
     }
 }

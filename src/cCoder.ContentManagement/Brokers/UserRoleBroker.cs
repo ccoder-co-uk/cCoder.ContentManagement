@@ -14,7 +14,7 @@ internal class UserRoleBroker(ICoreContextFactory coreContextFactory) : IUserRol
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.UserRoles,
             ignoreFilters: ignoreFilters);
     }

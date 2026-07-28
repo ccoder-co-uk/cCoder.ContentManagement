@@ -4,7 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace cCoder.ContentManagement.Dependencies.Results;
+namespace cCoder.ContentManagement.Models.Results;
 
 public class OperationResult
 {

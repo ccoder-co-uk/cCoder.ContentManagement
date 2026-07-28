@@ -8,8 +8,8 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class SubmissionEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
-    : AuthenticatedEventBroker(eventInfrastructureDependency), ISubmissionEventBroker
+internal sealed class SubmissionEventBroker(IAuthenticatedEventHub eventHub)
+    : AuthenticatedEventBroker(eventHub), ISubmissionEventBroker
 {
     public ValueTask RaiseSubmissionAddEventAsync(EventMessage<Submission> message) =>
         RaiseEventAsync(name: "submission_add", message: message);

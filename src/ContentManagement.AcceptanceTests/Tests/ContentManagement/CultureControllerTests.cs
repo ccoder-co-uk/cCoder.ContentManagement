@@ -19,7 +19,7 @@ namespace Web.AcceptanceTests.Tests.ContentManagement;
 public sealed partial class CultureControllerTests(WebAcceptanceFixture fixture)
 {
     private HttpClient Client { get; } = fixture.Client;
-    private string BaseUrl { get; } = "/Api/Core/Culture";
+    private string BaseUrl { get; } = "/Api/ContentManagement/Culture";
     private static JsonSerializerOptions JsonOptions { get; } = new() { PropertyNameCaseInsensitive = true };
     private sealed record ODataEnvelope<T>(List<T> Value);
 

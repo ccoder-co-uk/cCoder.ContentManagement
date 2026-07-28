@@ -41,7 +41,7 @@ because: "app_delete should delete the app culture child row");
                 .IgnoreQueryFilters()
                 .Any(predicate: app => app.Id == appId)
                 .Should()
-                .BeTrue();
+                .BeFalse();
 
             HasNoAppCulture(appId: appId)
                 .Should()

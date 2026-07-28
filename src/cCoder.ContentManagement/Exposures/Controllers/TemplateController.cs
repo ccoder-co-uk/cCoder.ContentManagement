@@ -6,6 +6,7 @@ using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using System.Text;
 using cCoder.ContentManagement.Api.OData;
+using cCoder.ContentManagement.Extensions.OData;
 using cCoder.Data.Extensions;
 using iText.Html2pdf;
 using Microsoft.AspNetCore.Authorization;

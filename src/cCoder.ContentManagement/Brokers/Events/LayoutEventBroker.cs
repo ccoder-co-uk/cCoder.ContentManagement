@@ -8,8 +8,8 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class LayoutEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
-    : AuthenticatedEventBroker(eventInfrastructureDependency), ILayoutEventBroker
+internal sealed class LayoutEventBroker(IAuthenticatedEventHub eventHub)
+    : AuthenticatedEventBroker(eventHub), ILayoutEventBroker
 {
     public ValueTask RaiseLayoutAddEventAsync(EventMessage<Layout> message) =>
         RaiseEventAsync(name: "layout_add", message: message);

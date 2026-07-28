@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Reflection;
 
-namespace cCoder.ContentManagement.Api.OData;
+namespace cCoder.ContentManagement.Extensions.OData;
 
 internal static class ODataCollectionExtensions
 {

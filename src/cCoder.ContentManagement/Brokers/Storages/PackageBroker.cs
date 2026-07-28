@@ -14,7 +14,7 @@ internal sealed class PackageBroker(ICoreContextFactory coreContextFactory) : IP
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.Packages,
             ignoreFilters: ignoreFilters);
     }

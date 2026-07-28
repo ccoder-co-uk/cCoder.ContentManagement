@@ -7,7 +7,7 @@ using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
 using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
-using Config = cCoder.ContentManagement.Models.Config;
+using Config = cCoder.ContentManagement.Models.ContentManagementConfiguration;
 using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
 using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
@@ -15,7 +15,7 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Aggregations;
-using cCoder.ContentManagement.Services;
+using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Moq;
 using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
@@ -53,7 +53,7 @@ public partial class PageRenderAggregationServiceTests
                     operation.OperationType == PageRenderOperationType.UserCanPage)))
             .Returns(valueFunction: (PageRenderOperation operation) =>
             {
-                operation.IsAuthorized = ContentManagementModelLogic.UserCan(
+                operation.IsAuthorized = ContentManagementModelExtensions.UserCan(
                     page: operation.SourcePage,
                     user: currentUser,
                     privilege: operation.Privilege);

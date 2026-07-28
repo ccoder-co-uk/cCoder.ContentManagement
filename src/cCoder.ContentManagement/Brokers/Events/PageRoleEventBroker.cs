@@ -8,8 +8,8 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class PageRoleEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
-    : AuthenticatedEventBroker(eventInfrastructureDependency), IPageRoleEventBroker
+internal sealed class PageRoleEventBroker(IAuthenticatedEventHub eventHub)
+    : AuthenticatedEventBroker(eventHub), IPageRoleEventBroker
 {
     public ValueTask RaisePageRoleAddEventAsync(EventMessage<PageRole> message) =>
         RaiseEventAsync(name: "page_role_add", message: message);

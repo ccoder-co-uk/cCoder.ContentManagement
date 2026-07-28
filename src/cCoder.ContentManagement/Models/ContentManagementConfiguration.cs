@@ -8,9 +8,12 @@ namespace cCoder.ContentManagement.Models;
 
 public class ContentManagementConfiguration
 {
-    public IDictionary<string, string> ConnectionStrings { get; set; }
-    public IDictionary<string, string> Settings { get; set; }
-    public IDictionary<string, string> Services { get; set; }
+    public string ConnectionString { get; set; }
+    public int? SslPort { get; set; }
+    public string WorkflowServiceUrl { get; set; }
+    public string CacheSource { get; set; }
+    public int? CacheSourceAppId { get; set; }
+    public int CacheExpiry { get; set; }
     public bool DebugInfo { get; set; }
     public bool LogSQL { get; set; }
     public string RootPath { get; set; }
@@ -19,9 +22,10 @@ public class ContentManagementConfiguration
 
     public ContentManagementConfiguration()
     {
-        ConnectionStrings = new Dictionary<string, string>();
-        Settings = new Dictionary<string, string>();
-        Services = new Dictionary<string, string>();
+        ConnectionString = string.Empty;
+        WorkflowServiceUrl = string.Empty;
+        CacheSource = string.Empty;
+        CacheExpiry = 30;
         RootPath = "Api/ContentManagement";
         IncludeLegacyCoreContext = true;
         EventProviders = [];

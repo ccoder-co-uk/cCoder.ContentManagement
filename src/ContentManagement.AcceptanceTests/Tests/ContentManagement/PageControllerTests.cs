@@ -21,7 +21,7 @@ namespace Web.AcceptanceTests.Tests.ContentManagement;
 public sealed partial class PageControllerTests(WebAcceptanceFixture fixture)
 {
     private HttpClient Client { get; } = fixture.Client;
-    private string BaseUrl { get; } = "/Api/Core/Page";
+    private string BaseUrl { get; } = "/Api/ContentManagement/Page";
     private static JsonSerializerOptions JsonOptions { get; } = new() { PropertyNameCaseInsensitive = true };
 
     private static string Unique(string prefix) =>

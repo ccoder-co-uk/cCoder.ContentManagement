@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
@@ -74,7 +75,7 @@ internal partial class PageRenderOrchestrationService(
         RenderAuthorization authorization = authorizationProcessingService
             .ResolveRenderAuthorization(culture: null);
 
-        return ContentManagementModelLogic.UserCan(
+        return ContentManagementModelExtensions.UserCan(
             page: page,
             user: authorization.User,
             privilege: privilege);

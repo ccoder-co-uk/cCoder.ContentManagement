@@ -8,7 +8,7 @@ using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
 using Microsoft.EntityFrameworkCore;
 using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
-using Config = cCoder.ContentManagement.Models.Config;
+using Config = cCoder.ContentManagement.Models.ContentManagementConfiguration;
 using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
 using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
@@ -41,9 +41,6 @@ public partial class AppOrchestrationServiceTests
             .Setup(expression: x => x.RaiseAppDeleteEventAsync(app: app))
             .Returns(value: ValueTask.CompletedTask);
 
-        appProcessingServiceMock.Setup(expression: x => x.DeleteAsync(appId: id))
-            .Returns(value: ValueTask.CompletedTask);
-
         // When
         await orchestrationService.DeleteAsync(appId: id);
 
@@ -51,7 +48,25 @@ public partial class AppOrchestrationServiceTests
         authorizationProcessingServiceMock.Verify(expression: x => x.Authorize(appId: id, privilege: "app_delete"), times: Times.Once);
         appProcessingServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
         appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppDeleteEventAsync(app: app), times: Times.Once);
-        appProcessingServiceMock.Verify(expression: x => x.DeleteAsync(appId: id), times: Times.Once);
+    }
+
+    [Fact]
+    public async Task ShouldDeleteAppWhenHandlingAppDeleteAsync()
+    {
+        // Given
+        App app = CreateRandomApp();
+
+        appProcessingServiceMock
+            .Setup(expression: service => service.DeleteAsync(appId: app.Id))
+            .Returns(value: ValueTask.CompletedTask);
+
+        // When
+        await orchestrationService.HandleAppDeleteAsync(app: app);
+
+        // Then
+        appProcessingServiceMock.Verify(
+            expression: service => service.DeleteAsync(appId: app.Id),
+            times: Times.Once);
     }
 
 }

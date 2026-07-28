@@ -27,8 +27,8 @@ public partial class PageRoleImportPersistenceProcessingServiceTests
         int pageId,
         Guid roleId) =>
         new()
-            {
-                PageId = pageId,
-                RoleId = roleId
-            };
+        {
+            PageId = pageId,
+            RoleId = roleId
+        };
 }

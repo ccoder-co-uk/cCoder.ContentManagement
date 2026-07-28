@@ -99,8 +99,13 @@ internal partial class AppOrchestrationService(
             await eventService.RaiseAppDeleteEventAsync(app: app);
         }
 
-        await processingService.DeleteAsync(appId: appId);
+    }, isValueTask: true);
 
+    public ValueTask HandleAppDeleteAsync(App app) =>
+        TryCatch(operation: () =>
+    {
+        ValidateApp(app: app, parameterName: "app");
+        return processingService.DeleteAsync(appId: app.Id);
     }, isValueTask: true);
 
     public ValueTask<IEnumerable<OperationResult<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp) =>

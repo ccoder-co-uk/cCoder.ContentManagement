@@ -15,7 +15,7 @@ internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBr
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.Apps,
             ignoreFilters: ignoreFilters);
     }

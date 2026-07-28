@@ -8,8 +8,8 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class TemplateEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
-    : AuthenticatedEventBroker(eventInfrastructureDependency), ITemplateEventBroker
+internal sealed class TemplateEventBroker(IAuthenticatedEventHub eventHub)
+    : AuthenticatedEventBroker(eventHub), ITemplateEventBroker
 {
     public ValueTask RaiseTemplateAddEventAsync(EventMessage<Template> message) =>
         RaiseEventAsync(name: "template_add", message: message);

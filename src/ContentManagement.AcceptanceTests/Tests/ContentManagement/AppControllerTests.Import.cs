@@ -49,7 +49,7 @@ public sealed partial class AppControllerTests
     private async Task<int> ImportPackageAsync(int appId, Package package)
     {
         using HttpResponseMessage response = await Client.PostAsJsonAsync(
-requestUri: $"/Api/Core/Package/Import?appId={appId}",
+requestUri: $"/Api/ContentManagement/Package/Import?appId={appId}",
 value: package);
 
         string content = await response.Content.ReadAsStringAsync();

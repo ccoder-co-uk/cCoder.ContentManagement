@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Extensions;
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -36,7 +37,7 @@ internal partial class PageRoleProcessingService(
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
         var (role, page) = GetRoleAndPage(entity: newPageRole);
 
-        if (role != null && page != null && ContentManagementModelLogic.UserCan(page: page, user: GetCurrentUser(), privilege: "pagerole_create"))
+        if (role != null && page != null && ContentManagementModelExtensions.UserCan(page: page, user: GetCurrentUser(), privilege: "pagerole_create"))
         {
             return (!(page.Roles ?? Array.Empty<PageRole>()).Any(predicate: (PageRole r) => r.RoleId == role.Id))
                 ? service.AddPageRoleAsync(newPageRole: newPageRole)
@@ -59,7 +60,7 @@ internal partial class PageRoleProcessingService(
         PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)
             .FirstOrDefault(predicate: pageRole => pageRole.RoleId == deletedPageRole.RoleId && pageRole.PageId == deletedPageRole.PageId);
 
-        if (dbVersion == null || page == null || !ContentManagementModelLogic.UserCan(page: page, user: GetCurrentUser(), privilege: "pagerole_delete"))
+        if (dbVersion == null || page == null || !ContentManagementModelExtensions.UserCan(page: page, user: GetCurrentUser(), privilege: "pagerole_delete"))
         {
             throw new SecurityException(message: "Access Denied!");
         }
@@ -193,7 +194,7 @@ internal partial class PageRoleProcessingService(
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
         var (role, page) = GetRoleAndPage(entity: newPageRole);
 
-        if (role != null && page != null && ContentManagementModelLogic.UserCan(page: page, user: GetCurrentUser(), privilege: "pagerole_create"))
+        if (role != null && page != null && ContentManagementModelExtensions.UserCan(page: page, user: GetCurrentUser(), privilege: "pagerole_create"))
         {
             return (!(page.Roles ?? Array.Empty<PageRole>()).Any(predicate: (PageRole r) => r.RoleId == role.Id))
                 ? service.AddPageRoleAsync(newPageRole: newPageRole)
@@ -223,7 +224,7 @@ internal partial class PageRoleProcessingService(
         PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)
             .FirstOrDefault(predicate: pageRole => pageRole.RoleId == deletedPageRole.RoleId && pageRole.PageId == deletedPageRole.PageId);
 
-        if (dbVersion == null || page == null || !ContentManagementModelLogic.UserCan(page: page, user: GetCurrentUser(), privilege: "pagerole_delete"))
+        if (dbVersion == null || page == null || !ContentManagementModelExtensions.UserCan(page: page, user: GetCurrentUser(), privilege: "pagerole_delete"))
         {
             throw new SecurityException(message: "Access Denied!");
         }

@@ -34,17 +34,17 @@ public partial class PageRoleImportOrchestrationServiceTests
         string path,
         string roleName) =>
         new()
-            {
-                Path = path,
-                Role = roleName
-            };
+        {
+            Path = path,
+            Role = roleName
+        };
 
     private static PageRole CreatePageRole(
         int pageId,
         Guid roleId) =>
         new()
-            {
-                PageId = pageId,
-                RoleId = roleId
-            };
+        {
+            PageId = pageId,
+            RoleId = roleId
+        };
 }

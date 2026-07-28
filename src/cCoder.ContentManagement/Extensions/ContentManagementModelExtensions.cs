@@ -6,9 +6,9 @@ using System.Security;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
-namespace cCoder.ContentManagement.Services;
+namespace cCoder.ContentManagement.Extensions;
 
-internal static class ContentManagementModelLogic
+internal static class ContentManagementModelExtensions
 {
     internal static bool Can(User user, int? appId, string operation)
     {

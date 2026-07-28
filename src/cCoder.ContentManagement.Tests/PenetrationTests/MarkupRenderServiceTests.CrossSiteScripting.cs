@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using System.Net;
-using cCoder.ContentManagement.Dependencies.Rendering;
+using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using FluentAssertions;
@@ -63,7 +63,7 @@ public partial class MarkupRenderServiceTests
                 Culture = attack,
                 Theme = attack
             },
-            Config = new Config(),
+            Config = new ContentManagementConfiguration(),
             App = new PageRenderApp
             {
                 Domain = "example.test",
@@ -82,7 +82,7 @@ public partial class MarkupRenderServiceTests
 
         // When
         PageRenderResult result =
-            service.RenderPageRenderSessionPageRenderResult(session: session);
+            service.RenderPageRenderSession(session: session).Result;
 
         // Then
         result.HeaderHtml.Should()

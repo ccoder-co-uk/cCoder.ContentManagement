@@ -6,9 +6,9 @@ using cCoder.Data;
 using cCoder.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace cCoder.ContentManagement.Dependencies;
+namespace cCoder.ContentManagement.Extensions.Data;
 
-internal static class CommonObjectQueryDependency
+internal static class CommonObjectQueryExtensions
 {
     internal static CommonObject[] GetLatestCommonObjectsPaged(
         CoreDataContext coreDataContext,

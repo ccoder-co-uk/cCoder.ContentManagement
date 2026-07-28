@@ -27,7 +27,7 @@ internal partial class ComponentRenderProcessingService(
     IMetadataReaderBroker metadataCache,
     ICommonObjectReaderBroker objectCache,
     IJsonBroker jsonBroker,
-    Config config,
+    ContentManagementConfiguration config,
     IComponentRenderService componentRenderService)
         : IComponentRenderProcessingService
 {
@@ -141,8 +141,11 @@ internal partial class ComponentRenderProcessingService(
         }
 
         string text2 = (string.IsNullOrEmpty(value: renderParams.Culture) ? renderParams.App.DefaultCultureId : renderParams.Culture);
-        string value;
-        string text3 = ((config != null && config.Settings.TryGetValue(key: "sslPort", value: out value)) ? (":" + value) : string.Empty);
+
+        string text3 = config?.SslPort is int sslPort
+            ? $":{sslPort}"
+            : string.Empty;
+
         int num = 10;
         List<Replacement> list = new List<Replacement>(capacity: num);
         CollectionsMarshal.SetCount(list: list, count: num);
@@ -172,9 +175,11 @@ internal partial class ComponentRenderProcessingService(
 
         if (config != null)
         {
-            if (config.Services.TryGetValue(key: "Workflow", value: out var value2))
+            if (!string.IsNullOrWhiteSpace(value: config.WorkflowServiceUrl))
             {
-                list2.Add(item: new Replacement(old: "[api[workflow]]", @new: value2));
+                list2.Add(item: new Replacement(
+                    old: "[api[workflow]]",
+                    @new: config.WorkflowServiceUrl));
             }
 
             list2.Add(item: new Replacement(old: "[api[root]]", @new: "https://" + renderParams.App?.Domain + text3 + "/Api/"));
