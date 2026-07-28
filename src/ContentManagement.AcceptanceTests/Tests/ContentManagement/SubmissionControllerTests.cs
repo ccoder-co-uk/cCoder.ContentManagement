@@ -16,7 +16,7 @@ namespace Web.AcceptanceTests.Tests.ContentManagement;
 public sealed partial class SubmissionControllerTests(WebAcceptanceFixture fixture)
 {
     private HttpClient Client { get; } = fixture.Client;
-    private string BaseUrl { get; } = "/Api/Core/Submission";
+    private string BaseUrl { get; } = "/Api/ContentManagement/Submission";
     private static JsonSerializerOptions JsonOptions { get; } = new() { PropertyNameCaseInsensitive = true };
     private sealed record ODataEnvelope<T>(List<T> Value);
 

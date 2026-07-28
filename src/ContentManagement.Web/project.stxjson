@@ -1,47 +1,6 @@
 {
   "Classes": [
     {
-      "Name": "Apps.Shared.DomainApiHosting",
-      "StandardElementType": "Dependency",
-      "Properties": [],
-      "Methods": [
-        {
-          "Name": "UseDomainApiShell",
-          "Inputs": [
-            {
-              "Name": "app",
-              "Type": "WebApplication"
-            }
-          ],
-          "ReturnType": "System.Void"
-        },
-        {
-          "Name": "UseDomainDefaultCors",
-          "Inputs": [
-            {
-              "Name": "app",
-              "Type": "WebApplication"
-            }
-          ],
-          "ReturnType": "System.Void"
-        },
-        {
-          "Name": "UseDomainExceptionHandling",
-          "Inputs": [
-            {
-              "Name": "app",
-              "Type": "WebApplication"
-            },
-            {
-              "Name": "errorHandler",
-              "Type": "RequestDelegate"
-            }
-          ],
-          "ReturnType": "System.Void"
-        }
-      ]
-    },
-    {
       "Name": "Apps.Shared.Hosting.NoOpSession",
       "StandardElementType": "Dependency",
       "Properties": [
@@ -167,35 +126,6 @@
       "Methods": []
     },
     {
-      "Name": "ContentManagement.Web.Controllers.HomeController",
-      "StandardElementType": "Exposure",
-      "Properties": [],
-      "Methods": [
-        {
-          "Name": "Get",
-          "Inputs": [
-            {
-              "Name": "path",
-              "Type": "System.String"
-            },
-            {
-              "Name": "theme",
-              "Type": "System.String"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.String"
-            },
-            {
-              "Name": "edit",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "IActionResult"
-        }
-      ]
-    },
-    {
       "Name": "ContentManagement.Web.Controllers.PackageController",
       "StandardElementType": "Exposure",
       "Properties": [],
@@ -215,6 +145,58 @@
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E"
         }
       ]
+    },
+    {
+      "Name": "ContentManagement.Web.IServiceCollectionExtensions",
+      "StandardElementType": "App",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "AddContentManagementWeb",
+          "Inputs": [
+            {
+              "Name": "services",
+              "Type": "IServiceCollection"
+            },
+            {
+              "Name": "configuration",
+              "Type": "IConfiguration"
+            },
+            {
+              "Name": "configure",
+              "Type": "System.Action\u003CContentManagement.Web.Models.ContentManagementWebConfiguration\u003E"
+            }
+          ],
+          "ReturnType": "IServiceCollection"
+        }
+      ]
+    },
+    {
+      "Name": "ContentManagement.Web.Models.ContentManagementWebConfiguration",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "AppSecurity",
+          "Type": "cCoder.AppSecurity.Models.AppSecurityConfiguration"
+        },
+        {
+          "Name": "ContentManagement",
+          "Type": "cCoder.ContentManagement.Models.ContentManagementConfiguration"
+        },
+        {
+          "Name": "Data",
+          "Type": "cCoder.Data.Models.DataConfiguration"
+        },
+        {
+          "Name": "Eventing",
+          "Type": "cCoder.Eventing.Models.EventingConfiguration"
+        },
+        {
+          "Name": "Security",
+          "Type": "cCoder.Security.Objects.SecurityConfiguration"
+        }
+      ],
+      "Methods": []
     },
     {
       "Name": "ContentManagement.Web.NoApiRouteConstraint",
@@ -268,23 +250,9 @@
     },
     {
       "Name": "ContentManagement.Web.WebApplicationExtensions",
-      "StandardElementType": "Dependency",
+      "StandardElementType": "App",
       "Properties": [],
       "Methods": [
-        {
-          "Name": "AddContentManagementApplication",
-          "Inputs": [
-            {
-              "Name": "services",
-              "Type": "IServiceCollection"
-            },
-            {
-              "Name": "builder",
-              "Type": "WebApplicationBuilder"
-            }
-          ],
-          "ReturnType": "IServiceCollection"
-        },
         {
           "Name": "UseContentManagementApplication",
           "Inputs": [
@@ -294,6 +262,40 @@
             }
           ],
           "ReturnType": "WebApplication"
+        },
+        {
+          "Name": "UseDomainApiShell",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "UseDomainDefaultCors",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "UseDomainExceptionHandling",
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "WebApplication"
+            },
+            {
+              "Name": "errorHandler",
+              "Type": "RequestDelegate"
+            }
+          ],
+          "ReturnType": "System.Void"
         }
       ]
     }

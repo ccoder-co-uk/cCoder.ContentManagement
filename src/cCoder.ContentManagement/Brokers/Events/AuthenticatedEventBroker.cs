@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies.Events;
+using cCoder.Eventing;
 using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
@@ -13,12 +13,12 @@ public interface IAuthenticatedEventBroker
 }
 
 internal abstract class AuthenticatedEventBroker(
-    IEventInfrastructureDependency eventInfrastructureDependency)
+    IAuthenticatedEventHub eventHub)
     : IAuthenticatedEventBroker
 {
     public string GetCurrentUserId() =>
-        eventInfrastructureDependency.GetCurrentUserId();
+        eventHub.CurrentUserId;
 
     protected ValueTask RaiseEventAsync<T>(string name, EventMessage<T> message) =>
-        eventInfrastructureDependency.RaiseEventAsync(name: name, message: message);
+        eventHub.RaiseEventAsync(name: name, message: message);
 }

@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies.Rendering;
+using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 
 namespace cCoder.ContentManagement.Rendering.Services.Orchestrations;
@@ -12,10 +12,10 @@ internal sealed partial class PageRenderExecutionOrchestrationService(
     ICommonObjectCacheService commonObjectCacheService,
     IMarkupRenderService markupRenderService) : IPageRenderExecutionOrchestrationService
 {
-    public PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session) =>
-        TryCatch<PageRenderResult>(operation: () =>
+    public PageRenderSession RenderPageRenderSession(PageRenderSession session) =>
+        TryCatch<PageRenderSession>(operation: () =>
     {
-        ValidateRenderPageRenderSessionPageRenderResult(inputs: [session]);
+        ValidateRenderPageRenderSession(inputs: [session]);
 
         string culture = !string.IsNullOrWhiteSpace(value: session.Request.Culture)
             ? session.Request.Culture
@@ -23,12 +23,12 @@ internal sealed partial class PageRenderExecutionOrchestrationService(
 
         session.MetadataResolver = metadataCacheService.Get(culture: culture);
 
-        PageCacheSlice pageCacheSlice = commonObjectCacheService.GetPageRenderEngineRequestPageCacheSlice(request: session.Request);
+        PageCacheSlice pageCacheSlice = commonObjectCacheService.GetPageCacheSlice();
         session.CommonResourcesByLookup = pageCacheSlice.CommonResourcesByLookup;
         session.CommonComponentsByName = pageCacheSlice.CommonComponentsByName;
         session.CommonScriptsByName = pageCacheSlice.CommonScriptsByName;
 
-        return markupRenderService.RenderPageRenderSessionPageRenderResult(session: session);
+        return markupRenderService.RenderPageRenderSession(session: session);
 
     });
 }

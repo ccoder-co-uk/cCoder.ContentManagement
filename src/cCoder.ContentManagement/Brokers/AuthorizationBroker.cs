@@ -26,7 +26,7 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.AuthorizationDependency.IsAdminOfApp(
+        return Extensions.Data.AuthorizationExtensions.IsAdminOfApp(
             coreDataContext: coreDataContext,
             appId: appId);
     }
@@ -35,7 +35,7 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.AuthorizationDependency.IsAdmin(
+        return Extensions.Data.AuthorizationExtensions.IsAdmin(
             coreDataContext: coreDataContext,
             appId: appId,
             userName: userName);
@@ -45,7 +45,7 @@ internal class AuthorizationBroker(ICoreContextFactory coreContextFactory) : IAu
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        Dependencies.AuthorizationDependency.Authorize(
+        Extensions.Data.AuthorizationExtensions.Authorize(
             coreDataContext: coreDataContext,
             appId: appId,
             privilege: privilege);

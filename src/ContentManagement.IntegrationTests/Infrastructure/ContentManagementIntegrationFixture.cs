@@ -11,7 +11,6 @@ using cCoder.Security.Objects;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -28,8 +27,11 @@ public sealed class ContentManagementIntegrationFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        string coreConnectionString = AddDatabaseSuffix(variableName: "ConnectionStrings__Core");
-        string ssoConnectionString = AddDatabaseSuffix(variableName: "ConnectionStrings__SSO");
+        IntegrationConfiguration configuration =
+            IntegrationConfiguration.Create();
+
+        string coreConnectionString = configuration.CoreConnectionString;
+        string ssoConnectionString = configuration.SsoConnectionString;
 
         databaseServices = CreateDatabaseServices(coreConnectionString: coreConnectionString, ssoConnectionString: ssoConnectionString);
         await ResetDatabasesAsync();
@@ -137,26 +139,18 @@ decryptionKey: DecryptionKey);
         ServiceCollection services = new();
         services.AddLogging();
 
+        cCoder.Data.Models.DataConfiguration dataConfiguration = new()
+        {
+            ConnectionString = coreConnectionString,
+        };
+
         services.AddSingleton(
-implementationInstance: new Config
-{
-    ConnectionStrings = new Dictionary<string, string>
-    {
-        ["Core"] = coreConnectionString,
-        ["SSO"] = ssoConnectionString,
-    },
-    Settings = new Dictionary<string, string>
-    {
-        ["DecryptionKey"] = DecryptionKey,
-        ["enableExternalEventing"] = "true",
-    },
-    Services = new Dictionary<string, string>(),
-});
+            implementationInstance: dataConfiguration);
 
         services.AddSingleton<ISecurityDbContextFactory>(
 implementationFactory: _ => new MSSQLSecurityDbContextFactory(connectionString: ssoConnectionString));
 
-        services.AddCoreData(connectionString: coreConnectionString);
+        services.AddData(configuration: dataConfiguration);
 
         return services.BuildServiceProvider(validateScopes: false);
     }
@@ -222,43 +216,6 @@ END";
 
         _ = command.Parameters.AddWithValue(parameterName: "@databaseName", value: databaseName);
         command.ExecuteNonQuery();
-    }
-
-    private static string AddDatabaseSuffix(string variableName)
-    {
-        string connectionString =
-            Environment.GetEnvironmentVariable(variable: variableName)
-            ?? Environment.GetEnvironmentVariable(variable: variableName, target: EnvironmentVariableTarget.User)
-            ?? Environment.GetEnvironmentVariable(variable: variableName, target: EnvironmentVariableTarget.Machine)
-            ?? ReadConfiguredConnectionString(variableName: variableName);
-
-        if (string.IsNullOrWhiteSpace(value: connectionString))
-        {
-            return string.Empty;
-        }
-
-        SqlConnectionStringBuilder builder = CreateConnectionStringBuilder(connectionString: connectionString);
-
-        if (!string.IsNullOrWhiteSpace(value: builder.InitialCatalog))
-        {
-            builder.InitialCatalog = $"{builder.InitialCatalog}-acceptance-{Guid.NewGuid():N}";
-        }
-
-        return builder.ConnectionString;
-    }
-
-    private static string ReadConfiguredConnectionString(string variableName)
-    {
-        string connectionName = variableName.Contains(value: "CORE", comparisonType: StringComparison.OrdinalIgnoreCase)
-            ? "Core"
-            : "SSO";
-
-        IConfigurationRoot configuration = new ConfigurationBuilder()
-            .SetBasePath(basePath: AppContext.BaseDirectory)
-            .AddJsonFile(path: "appsettings.testing.json", optional: true)
-            .Build();
-
-        return configuration.GetConnectionString(name: connectionName) ?? string.Empty;
     }
 
     private static SqlConnectionStringBuilder CreateConnectionStringBuilder(string connectionString) =>

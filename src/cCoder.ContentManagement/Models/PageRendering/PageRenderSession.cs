@@ -4,13 +4,13 @@
 
 using cCoder.ContentManagement.Models;
 
-namespace cCoder.ContentManagement.Dependencies.Rendering;
+namespace cCoder.ContentManagement.Models.PageRendering;
 
 internal sealed class PageRenderSession
 {
     public PageRenderEngineRequest Request { get; init; }
 
-    public Config Config { get; set; }
+    public ContentManagementConfiguration Config { get; set; }
 
     public PageRenderApp App { get; set; }
 
@@ -28,6 +28,8 @@ internal sealed class PageRenderSession
     public IReadOnlyDictionary<string, PageRenderResource> CommonResourcesByLookup { get; set; }
     public IReadOnlyDictionary<string, PageRenderComponent> CommonComponentsByName { get; set; }
     public IReadOnlyDictionary<string, PageRenderScript> CommonScriptsByName { get; set; }
+
+    public PageRenderResult Result { get; set; }
 
     internal PageRenderSession()
     {

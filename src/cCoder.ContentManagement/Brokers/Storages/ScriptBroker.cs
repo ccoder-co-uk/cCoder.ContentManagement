@@ -14,7 +14,7 @@ internal sealed class ScriptBroker(ICoreContextFactory coreContextFactory) : ISc
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.Scripts,
             ignoreFilters: ignoreFilters);
     }

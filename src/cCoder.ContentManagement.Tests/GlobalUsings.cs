@@ -3,4 +3,4 @@
 // ---------------------------------------------------------------
 
 global using cCoder.ContentManagement.Models;
-global using cCoder.ContentManagement.Dependencies.Results;
+global using cCoder.ContentManagement.Models.Results;

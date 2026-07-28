@@ -14,7 +14,7 @@ internal sealed class ComponentBroker(ICoreContextFactory coreContextFactory) : 
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.Components,
             ignoreFilters: ignoreFilters);
     }

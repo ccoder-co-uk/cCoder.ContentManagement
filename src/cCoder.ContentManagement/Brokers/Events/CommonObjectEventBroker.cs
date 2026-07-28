@@ -8,8 +8,8 @@ using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class CommonObjectEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
-    : AuthenticatedEventBroker(eventInfrastructureDependency), ICommonObjectEventBroker
+internal sealed class CommonObjectEventBroker(IAuthenticatedEventHub eventHub)
+    : AuthenticatedEventBroker(eventHub), ICommonObjectEventBroker
 {
     public ValueTask RaiseCommonObjectAddEventAsync(EventMessage<CommonObject> message) =>
         RaiseEventAsync(name: "common_object_add", message: message);

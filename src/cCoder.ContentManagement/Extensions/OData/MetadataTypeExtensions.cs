@@ -5,11 +5,11 @@
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using cCoder.ContentManagement.Api.OData;
+using cCoder.ContentManagement.Extensions.OData;
 
-namespace cCoder.ContentManagement.Models.OData;
+namespace cCoder.ContentManagement.Extensions.OData;
 
-internal static class MetadataTypeDependency
+internal static class MetadataTypeExtensions
 {
     private static readonly Dictionary<Type, string> TypeNames = new()
     {

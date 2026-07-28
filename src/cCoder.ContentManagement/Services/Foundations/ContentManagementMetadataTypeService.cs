@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Api.OData;
+using cCoder.ContentManagement.Extensions.OData;
 using cCoder.ContentManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using cCoder.Data.Models;

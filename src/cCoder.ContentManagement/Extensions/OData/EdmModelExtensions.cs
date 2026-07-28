@@ -5,7 +5,7 @@
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 
-namespace cCoder.ContentManagement.Api.OData;
+namespace cCoder.ContentManagement.Extensions.OData;
 
 public static class EdmModelExtensions
 {

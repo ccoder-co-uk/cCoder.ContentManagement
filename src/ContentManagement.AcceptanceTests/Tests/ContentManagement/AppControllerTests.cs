@@ -21,8 +21,8 @@ namespace Web.AcceptanceTests.Tests.ContentManagement;
 public sealed partial class AppControllerTests(WebAcceptanceFixture fixture)
 {
     private HttpClient Client { get; } = fixture.Client;
-    private string BaseUrl { get; } = "/Api/Core/App";
-    private string LayoutBaseUrl { get; } = "/Api/Core/Layout";
+    private string BaseUrl { get; } = "/Api/ContentManagement/App";
+    private string LayoutBaseUrl { get; } = "/Api/ContentManagement/Layout";
     private string ResourceBaseUrl { get; } = "/Api/ContentManagement/Resource";
     private static JsonSerializerOptions JsonOptions { get; } = new() { PropertyNameCaseInsensitive = true };
 

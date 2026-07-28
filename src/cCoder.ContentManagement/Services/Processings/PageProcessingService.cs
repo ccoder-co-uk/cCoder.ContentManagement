@@ -9,6 +9,7 @@ using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
 using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Extensions;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -44,7 +45,7 @@ internal partial class PageProcessingService(
         IEnumerable<string> enumerable = service.GetAllPage(ignoreFilters: false)
             .Where(predicate: page => page.ParentId == pageId && page.ShowOnMenus)
             .OrderBy(keySelector: page => page.Order)
-            .Select(selector: page => $"<li data-id='{page.Id}' class='item'><a href='/{page.Path}'>{ContentManagementModelLogic.Title(page: page, culture: culture)}</a></li>");
+            .Select(selector: page => $"<li data-id='{page.Id}' class='item'><a href='/{page.Path}'>{ContentManagementModelExtensions.Title(page: page, culture: culture)}</a></li>");
 
         string text = (enumerable.Any() ? string.Join(separator: "", values: enumerable) : string.Empty);
         return "<ul class='submenu'>" + text + "</ul>";
@@ -344,7 +345,7 @@ internal partial class PageProcessingService(
             .Where(predicate: existingPage => existingPage.Id == pageId)
             .FirstOrDefault();
 
-        return page != null && ContentManagementModelLogic.UserCan(page: page, user: GetCurrentUser(), privilege: privKey);
+        return page != null && ContentManagementModelExtensions.UserCan(page: page, user: GetCurrentUser(), privilege: privKey);
     }
 
     private static string BuildPath(string pageName, string parentPath)

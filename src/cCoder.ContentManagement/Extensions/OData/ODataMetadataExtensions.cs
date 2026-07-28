@@ -4,9 +4,9 @@
 
 using cCoder.Data.Models.CMS;
 
-namespace cCoder.ContentManagement.Models.OData;
+namespace cCoder.ContentManagement.Extensions.OData;
 
-internal static class ODataMetadataDependency
+internal static class ODataMetadataExtensions
 {
     internal static MetadataContainerSet Resource(
         this MetadataContainerSet metadataContainerSet,
@@ -34,7 +34,7 @@ internal static class ODataMetadataDependency
             $"{setName}|{metadataContainer.ServerTypeName.Split(separator: '.')
                 .Last()}";
 
-        Resource resource = MetadataResourceDependency.ForKeyAndCulture(
+        Resource resource = MetadataResourceExtensions.ForKeyAndCulture(
             resources: resources,
             key: cacheKey,
             culture: culture);
@@ -101,7 +101,7 @@ internal static class ODataMetadataDependency
         string culture,
         IEnumerable<Resource> resources)
     {
-        Resource resource = MetadataResourceDependency.ForKeyAndCulture(
+        Resource resource = MetadataResourceExtensions.ForKeyAndCulture(
             resources: resources,
             key: $"{keyContext}.{propertyContainer.Name}",
             culture: culture);

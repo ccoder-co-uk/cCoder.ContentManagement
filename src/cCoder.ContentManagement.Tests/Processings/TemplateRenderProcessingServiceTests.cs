@@ -7,7 +7,7 @@ using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
 using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
-using Config = cCoder.ContentManagement.Models.Config;
+using Config = cCoder.ContentManagement.Models.ContentManagementConfiguration;
 using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
 using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
@@ -21,7 +21,7 @@ using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReade
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
 using RenderApp = cCoder.Data.Models.CMS.App;
 using RenderComponent = cCoder.Data.Models.CMS.Component;
-using RenderConfig = cCoder.ContentManagement.Models.Config;
+using RenderConfig = cCoder.ContentManagement.Models.ContentManagementConfiguration;
 using RenderResource = cCoder.Data.Models.CMS.Resource;
 using RenderScript = cCoder.Data.Models.CMS.Script;
 using RenderTemplate = cCoder.Data.Models.CMS.Template;
@@ -53,8 +53,8 @@ public partial class TemplateRenderProcessingServiceTests
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()
         {
-            Settings = new Dictionary<string, string> { ["sslPort"] = "443" },
-            Services = new Dictionary<string, string> { ["Workflow"] = workflowBaseUrl },
+            SslPort = 443,
+            WorkflowServiceUrl = workflowBaseUrl,
         };
 
     private static (RenderApp app, RenderUser user, RenderTemplate template) CreateTemplateRenderContext()

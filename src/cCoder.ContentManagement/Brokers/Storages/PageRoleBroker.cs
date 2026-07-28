@@ -14,7 +14,7 @@ internal sealed class PageRoleBroker(ICoreContextFactory coreContextFactory) : I
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.PageRoles,
             ignoreFilters: ignoreFilters)
             .Include(navigationPropertyPath: pageRole => pageRole.Role);

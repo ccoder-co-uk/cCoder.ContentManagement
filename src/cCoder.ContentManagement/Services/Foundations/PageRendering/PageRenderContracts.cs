@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 
-using cCoder.ContentManagement.Dependencies.Rendering;
+using cCoder.ContentManagement.Models.PageRendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
@@ -14,10 +14,10 @@ internal interface IMetadataCacheService
 
 internal interface ICommonObjectCacheService
 {
-    PageCacheSlice GetPageRenderEngineRequestPageCacheSlice(PageRenderEngineRequest request);
+    PageCacheSlice GetPageCacheSlice();
 }
 
 internal interface IMarkupRenderService
 {
-    PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session);
+    PageRenderSession RenderPageRenderSession(PageRenderSession session);
 }

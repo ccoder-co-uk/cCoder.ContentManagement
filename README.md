@@ -32,28 +32,35 @@ This repository does not currently host a separate Hosted Services app. Content 
 ## Build
 
 ```powershell
-dotnet build src/cCoder.ContentManagement.sln -v minimal
+dotnet build src/cCoder.ContentManagement.slnx -v minimal
 ```
 
 ## Test
 
 ```powershell
-dotnet test src/cCoder.ContentManagement.sln -v minimal --no-build
+dotnet test src/cCoder.ContentManagement.slnx -v minimal --no-build
 ```
 
 The full solution test run includes unit tests, Web acceptance tests, and integration tests for the HTTP eventing chains. Relationship-focused integration tests assert each child set independently so app and page event regressions are easy to diagnose.
 
 ## Local Configuration
 
-The standalone web host reads local secrets from environment variables rather than committed config.
+The standalone web host binds each section of `appsettings.json` directly to
+its domain configuration class. Non-secret defaults remain in that file.
+Leave secret values empty and define these user-level or machine-level
+environment variables:
 
-Before running `src/ContentManagement.Web`, set:
+- `ContentManagement__ConnectionString`
+- `Data__ConnectionString`
+- `Security__ConnectionString`
+- `Security__DecryptionKey`
+- `AppSecurity__ConnectionString`
 
-- `ConnectionStrings__Core`
-- `ConnectionStrings__SSO`
-- `Settings__DecryptionKey`
-
-The committed `appsettings.json` keeps these values blank so user or machine environment variables can supply them during local development.
+Restart Visual Studio after changing the environment, select
+`ContentManagement.Web` as the startup project, and press F5. Acceptance and
+integration tests use the same Content Management and Security connection
+strings, but replace each database name with a unique
+`-acceptance-{guid}` database before performing any database operation.
 
 ## Local Run
 

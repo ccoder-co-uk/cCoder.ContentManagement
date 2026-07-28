@@ -14,7 +14,7 @@ internal sealed class SubmissionBroker(ICoreContextFactory coreContextFactory) :
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.Submissions,
             ignoreFilters: ignoreFilters);
     }

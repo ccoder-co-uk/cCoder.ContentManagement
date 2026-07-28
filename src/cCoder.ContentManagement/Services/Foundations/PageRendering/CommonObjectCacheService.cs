@@ -3,16 +3,16 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Dependencies.Rendering;
+using cCoder.ContentManagement.Models.PageRendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class CommonObjectCacheService(ICommonObjectReaderBroker broker) : ICommonObjectCacheService
 {
-    public PageCacheSlice GetPageRenderEngineRequestPageCacheSlice(PageRenderEngineRequest request) =>
+    public PageCacheSlice GetPageCacheSlice() =>
         TryCatch<PageCacheSlice>(operation: () =>
     {
-        ValidatePageRenderEngineRequestPageCacheSliceOnGet(inputs: [request]);
+        ValidatePageCacheSliceOnGet(inputs: []);
 
         return new PageCacheSlice
         {

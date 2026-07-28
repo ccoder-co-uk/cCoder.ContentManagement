@@ -14,7 +14,7 @@ internal sealed class PageBroker(ICoreContextFactory coreContextFactory) : IPage
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.Pages,
             ignoreFilters: ignoreFilters);
     }

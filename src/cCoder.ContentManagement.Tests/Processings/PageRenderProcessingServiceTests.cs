@@ -7,14 +7,14 @@ using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
 using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
-using Config = cCoder.ContentManagement.Models.Config;
+using Config = cCoder.ContentManagement.Models.ContentManagementConfiguration;
 using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
 using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Dependencies.Rendering;
+using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -26,7 +26,7 @@ using Moq;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
 using RenderApp = cCoder.Data.Models.CMS.App;
 using RenderComponent = cCoder.Data.Models.CMS.Component;
-using RenderConfig = cCoder.ContentManagement.Models.Config;
+using RenderConfig = cCoder.ContentManagement.Models.ContentManagementConfiguration;
 using RenderContent = cCoder.Data.Models.CMS.Content;
 using RenderLayout = cCoder.Data.Models.CMS.Layout;
 using RenderPage = cCoder.Data.Models.CMS.Page;
@@ -80,8 +80,8 @@ public partial class PageRenderProcessingServiceTests
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
         new()
         {
-            Settings = new Dictionary<string, string> { ["sslPort"] = "443" },
-            Services = new Dictionary<string, string> { ["Workflow"] = workflowBaseUrl },
+            SslPort = 443,
+            WorkflowServiceUrl = workflowBaseUrl,
         };
 
     private static RenderApp CreateApp()

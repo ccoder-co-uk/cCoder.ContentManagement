@@ -8,8 +8,8 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class PageInfoEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
-    : AuthenticatedEventBroker(eventInfrastructureDependency), IPageInfoEventBroker
+internal sealed class PageInfoEventBroker(IAuthenticatedEventHub eventHub)
+    : AuthenticatedEventBroker(eventHub), IPageInfoEventBroker
 {
     public ValueTask RaisePageInfoAddEventAsync(EventMessage<PageInfo> message) =>
         RaiseEventAsync(name: "page_info_add", message: message);

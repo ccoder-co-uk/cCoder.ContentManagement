@@ -1,0 +1,14 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Apps/">
+    <Project Path="ContentManagement.Web/ContentManagement.Web.csproj" />
+  </Folder>
+  <Project Path="cCoder.ContentManagement.Tests/cCoder.ContentManagement.Tests.csproj" />
+  <Project Path="cCoder.ContentManagement/cCoder.ContentManagement.csproj" />
+  <Project Path="ContentManagement.AcceptanceTests/ContentManagement.AcceptanceTests.csproj" />
+  <Project Path="ContentManagement.IntegrationTests/ContentManagement.IntegrationTests.csproj" />
+</Solution>

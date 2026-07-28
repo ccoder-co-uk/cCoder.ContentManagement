@@ -5,6 +5,7 @@
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.CMS;
 
@@ -59,6 +60,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppSupportingResourcesCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppRenderableCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppPageComponentCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
+        eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppOrchestrationService service, App app) => service.HandleAppDeleteAsync(app: app));
     }
 
     private void ListenToPageAddEvents()

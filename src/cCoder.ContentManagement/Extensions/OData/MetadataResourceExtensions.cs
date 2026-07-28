@@ -4,9 +4,9 @@
 
 using cCoder.Data.Models.CMS;
 
-namespace cCoder.ContentManagement.Models.OData;
+namespace cCoder.ContentManagement.Extensions.OData;
 
-internal static class MetadataResourceDependency
+internal static class MetadataResourceExtensions
 {
     internal static Resource ForKeyAndCulture(
         IEnumerable<Resource> resources,

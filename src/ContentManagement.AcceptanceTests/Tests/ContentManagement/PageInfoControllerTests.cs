@@ -20,7 +20,7 @@ namespace Web.AcceptanceTests.Tests.ContentManagement;
 public sealed partial class PageInfoControllerTests(WebAcceptanceFixture fixture)
 {
     private HttpClient Client { get; } = fixture.Client;
-    private string BaseUrl { get; } = "/Api/Core/PageInfo";
+    private string BaseUrl { get; } = "/Api/ContentManagement/PageInfo";
     private static JsonSerializerOptions JsonOptions { get; } = new() { PropertyNameCaseInsensitive = true };
 
     private static string Unique(string prefix) =>

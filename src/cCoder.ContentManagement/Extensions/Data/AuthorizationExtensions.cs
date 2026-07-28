@@ -9,9 +9,9 @@ using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using Microsoft.EntityFrameworkCore;
 
-namespace cCoder.ContentManagement.Dependencies;
+namespace cCoder.ContentManagement.Extensions.Data;
 
-internal static class AuthorizationDependency
+internal static class AuthorizationExtensions
 {
     internal static bool IsAdminOfApp(
         CoreDataContext coreDataContext,

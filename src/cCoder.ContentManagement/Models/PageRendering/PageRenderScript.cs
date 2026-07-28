@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-namespace cCoder.ContentManagement.Dependencies.Rendering;
+namespace cCoder.ContentManagement.Models.PageRendering;
 
 internal sealed class PageRenderScript
 {

@@ -2,7 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Api.OData;
+using cCoder.ContentManagement.Extensions.OData;
+using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -23,6 +24,7 @@ using cCoder.ContentManagement.Services.Foundations.Authorization;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.Data;
 using cCoder.ContentManagement.Services.Foundations.Serialization;
 using cCoder.ContentManagement.Services.Foundations.ServiceProviders;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
@@ -49,16 +51,50 @@ public static partial class IServiceCollectionExtensions
     public static void AddContentManagementWeb(
         this IServiceCollection services,
         Action<ContentManagementConfiguration> newContentManagementConfiguration = null,
-        ODataConventionModelBuilder builder = null) =>
-        services.AddConfiguredContentManagementWeb(newContentManagementConfiguration: (_, configuration) => newContentManagementConfiguration?.Invoke(obj: configuration), builder: builder);
+        ODataConventionModelBuilder builder = null)
+    {
+        ContentManagementConfiguration configuration = new();
+        newContentManagementConfiguration?.Invoke(obj: configuration);
+        services.AddContentManagementWeb(configuration: configuration, builder: builder);
+    }
+
+    public static void AddContentManagementWeb(
+        this IServiceCollection services,
+        ContentManagementConfiguration configuration,
+        ODataConventionModelBuilder builder = null)
+    {
+        services.RegisterConfiguration(configuration: configuration);
+        services.AddEventingTypes();
+        services.AddBrokers();
+        services.AddServiceProviderDependencies();
+        services.AddFoundations();
+        services.AddProcessings();
+        services.AddOrchestrations();
+        services.AddCoordinations();
+        services.AddEventHandlers();
+        services.AddRendering();
+        services.AddConfiguredApi(
+            newContentManagementConfiguration: configuration,
+            documentName: "ContentManagement",
+            configureModel: static modelBuilder =>
+                modelBuilder.ConfigureContentManagementApiModel(),
+            builder: builder);
+    }
 
     public static void AddContentManagementHostedServices(
         this IServiceCollection services,
-        Action<ContentManagementConfiguration> newContentManagementConfiguration = null) =>
-        services.AddConfiguredContentManagement(newContentManagementConfiguration: (_, configuration) => newContentManagementConfiguration?.Invoke(obj: configuration));
-
-    private static void AddContentManagement(this IServiceCollection services)
+        Action<ContentManagementConfiguration> newContentManagementConfiguration = null)
     {
+        ContentManagementConfiguration configuration = new();
+        newContentManagementConfiguration?.Invoke(obj: configuration);
+        services.AddContentManagementHostedServices(configuration: configuration);
+    }
+
+    public static void AddContentManagementHostedServices(
+        this IServiceCollection services,
+        ContentManagementConfiguration configuration)
+    {
+        services.RegisterConfiguration(configuration: configuration);
         services.AddEventingTypes();
         services.AddBrokers();
         services.AddServiceProviderDependencies();
@@ -154,9 +190,6 @@ public static partial class IServiceCollectionExtensions
                 serviceProvider.GetRequiredService<ITemplateRenderOrchestrationService>());
     }
 
-    private static void AddContentManagementWeb(this IServiceCollection services, ODataConventionModelBuilder builder = null) =>
-        services.AddContentManagement();
-
     private static void AddEventingTypes(this IServiceCollection services)
     {
         services.AddEventingForType<App>();
@@ -180,8 +213,8 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddBrokers(this IServiceCollection services)
     {
+        services.AddTransient<IAuthenticatedEventHub, AuthenticatedEventHubDependency>();
         services.AddTransient<IEventHubBroker, EventHubBroker>();
-        services.AddTransient<IEventInfrastructureDependency, EventInfrastructureDependency>();
         services.AddTransient<IAppCultureEventBroker, AppCultureEventBroker>();
         services.AddTransient<IAppEventBroker, AppEventBroker>();
         services.AddTransient<ICommonObjectEventBroker, CommonObjectEventBroker>();
@@ -390,44 +423,25 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateRenderProcessingService, TemplateRenderProcessingService>();
     }
 
-private static ContentManagementConfiguration AddConfiguredContentManagement(
+    private static void RegisterConfiguration(
         this IServiceCollection services,
-        Action<IServiceCollection, ContentManagementConfiguration> newContentManagementConfiguration)
+        ContentManagementConfiguration configuration)
     {
-        ContentManagementConfiguration configuration = CreateConfiguration(services: services, newContentManagementConfiguration: newContentManagementConfiguration);
-        services.AddContentManagement();
-        return configuration;
-    }
-
-    private static ContentManagementConfiguration AddConfiguredContentManagementWeb(
-        this IServiceCollection services,
-        Action<IServiceCollection, ContentManagementConfiguration> newContentManagementConfiguration,
-        ODataConventionModelBuilder builder = null)
-    {
-        ContentManagementConfiguration configuration = CreateConfiguration(services: services, newContentManagementConfiguration: newContentManagementConfiguration);
-        services.AddContentManagementWeb(builder: builder);
-
-        services.AddConfiguredApi(
-newContentManagementConfiguration: configuration,
-documentName: "ContentManagement",
-configureModel: static modelBuilder => modelBuilder.ConfigureContentManagementApiModel(),
-builder: builder);
-
-        return configuration;
-    }
-
-    public static void ConfigureContentManagementApiModel(this ODataConventionModelBuilder builder) =>
-        new ContentManagementModelBroker(builder: builder).Configure();
-
-    private static ContentManagementConfiguration CreateConfiguration(
-        IServiceCollection services,
-        Action<IServiceCollection, ContentManagementConfiguration> newContentManagementConfiguration)
-    {
-        ContentManagementConfiguration configuration = new();
-        newContentManagementConfiguration?.Invoke(arg1: services, arg2: configuration);
+        ArgumentNullException.ThrowIfNull(argument: configuration);
         services.AddSingleton(implementationInstance: configuration);
+
+        if (!string.IsNullOrWhiteSpace(configuration.ConnectionString))
+        {
+            services.AddData(
+                configuration: new cCoder.Data.Models.DataConfiguration
+                {
+                    ConnectionString = configuration.ConnectionString,
+                    DebugInfo = configuration.DebugInfo,
+                    LogSQL = configuration.LogSQL,
+                });
+        }
+
         services.AddEventProviders(eventProviders: configuration.EventProviders);
-        return configuration;
     }
 
     private static void AddConfiguredApi(
@@ -445,22 +459,26 @@ builder: builder);
             configureModel(obj: builder);
         }
 
-        AddAspNet(services: services);
+        services.AddAspNet();
 
         if (builder is null)
         {
-            AddApiDocumentation(services: services, documentName: documentName, newContentManagementConfiguration: newContentManagementConfiguration, useFullSchemaIds: useFullSchemaIds);
+            services.AddApiDocumentation(
+                documentName: documentName,
+                newContentManagementConfiguration: newContentManagementConfiguration,
+                useFullSchemaIds: useFullSchemaIds);
         }
 
-        IEdmModel routeModel = BuildRouteModel(configureModel: configureModel);
+        IEdmModel routeModel = configureModel.BuildRouteModel();
         DefaultODataBatchHandler batchHandler = new();
 
         string rootPath = string.IsNullOrWhiteSpace(value: newContentManagementConfiguration.RootPath)
             ? $"Api/{documentName}"
             : newContentManagementConfiguration.RootPath;
 
-        services.AddControllers()
-            .AddOData(setupAction: options =>
+        IMvcBuilder mvcBuilder = services.AddControllers();
+
+        mvcBuilder.AddOData(setupAction: options =>
         {
             options.RouteOptions.EnableQualifiedOperationCall = false;
             options.EnableAttributeRouting = true;
@@ -484,111 +502,37 @@ builder: builder);
     }
 
     private static void AddApiDocumentation(
-        IServiceCollection services,
+        this IServiceCollection services,
         string documentName,
         ContentManagementConfiguration newContentManagementConfiguration,
         bool useFullSchemaIds) =>
         services.AddSwaggerGen(setupAction: options =>
                                   {
                                       options.ResolveConflictingActions(resolver: apiDescriptions => apiDescriptions.First());
-                                      AddSwaggerDocuments(options: options, documentName: documentName, newContentManagementConfiguration: newContentManagementConfiguration);
+                                      options.AddSwaggerDocuments(
+                                          documentName: documentName,
+                                          newContentManagementConfiguration:
+                                              newContentManagementConfiguration);
 
                                       options.DocInclusionPredicate(
 predicate: (swaggerDocumentName, apiDescription) =>
-                                              ShouldIncludeInDocument(
-swaggerDocumentName: swaggerDocumentName,
-relativePath: apiDescription.RelativePath,
-documentName: documentName,
-configuration: newContentManagementConfiguration));
+                                              newContentManagementConfiguration
+                                                  .ShouldIncludeInDocument(
+                                                      swaggerDocumentName:
+                                                          swaggerDocumentName,
+                                                      relativePath:
+                                                          apiDescription
+                                                              .RelativePath,
+                                                      documentName:
+                                                          documentName));
 
                                       if (useFullSchemaIds)
                                       {
                                           options.CustomSchemaIds(schemaIdSelector: type => type.FullName?.Replace(oldChar: '+', newChar: '.') ?? type.Name);
                                       }
-
-                                      //options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
-                                      //{
-                                      //    Description = @"Authorization header using the Bearer scheme.",
-                                      //    Name = "Authorization",
-                                      //    In = ParameterLocation.Header,
-                                      //    Type = SecuritySchemeType.ApiKey,
-                                      //    Scheme = "bearer",
-                                      //});
                                   });
 
-    private static void AddSwaggerDocuments(
-        Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options,
-        string documentName,
-        ContentManagementConfiguration newContentManagementConfiguration)
-    {
-        options.SwaggerDoc(name: documentName, info: new OpenApiInfo
-        {
-            Title = $"{documentName} API definition",
-            Version = documentName,
-        });
-
-        if (newContentManagementConfiguration.IncludeLegacyCoreContext)
-        {
-            options.SwaggerDoc(name: "Core", info: new OpenApiInfo
-            {
-                Title = "Core API definition",
-                Version = "Core",
-            });
-
-            options.SwaggerDoc(name: "v1", info: new OpenApiInfo
-            {
-                Title = "Core API definition",
-                Version = "v1",
-            });
-        }
-    }
-
-    private static bool ShouldIncludeInDocument(
-        string swaggerDocumentName,
-        string relativePath,
-        string documentName,
-        ContentManagementConfiguration configuration)
-    {
-        if (string.IsNullOrWhiteSpace(value: relativePath))
-        {
-            return false;
-        }
-
-        if (string.Equals(a: swaggerDocumentName, b: "v1", comparisonType: StringComparison.OrdinalIgnoreCase))
-        {
-            swaggerDocumentName = "Core";
-        }
-
-        string path = NormalizePath(relativePath: relativePath);
-
-        string rootPath = string.IsNullOrWhiteSpace(value: configuration.RootPath)
-            ? $"Api/{documentName}"
-            : configuration.RootPath;
-
-        return string.Equals(a: swaggerDocumentName, b: "Core", comparisonType: StringComparison.OrdinalIgnoreCase)
-            ? configuration.IncludeLegacyCoreContext && MatchesContextRoute(path: path, rootPath: "Api/Core")
-            : MatchesContextRoute(path: path, rootPath: rootPath);
-    }
-
-    private static bool MatchesContextRoute(string path, string rootPath)
-    {
-        string normalizedPath = NormalizePath(relativePath: rootPath);
-
-        return path.Equals(value: normalizedPath, comparisonType: StringComparison.OrdinalIgnoreCase)
-            || path.StartsWith(value: $"{normalizedPath}/", comparisonType: StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static string NormalizePath(string relativePath) =>
-        relativePath.StartsWith(value: '/') ? relativePath : $"/{relativePath}";
-
-    private static IEdmModel BuildRouteModel(Action<ODataConventionModelBuilder> configureModel)
-    {
-        ODataConventionModelBuilder builder = new();
-        configureModel(obj: builder);
-        return builder.GetEdmModel();
-    }
-
-    private static void AddAspNet(IServiceCollection services)
+    private static void AddAspNet(this IServiceCollection services)
     {
         services.AddRouting();
         services.AddResponseCompression();

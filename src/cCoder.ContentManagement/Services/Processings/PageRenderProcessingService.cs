@@ -3,8 +3,9 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Dependencies.Rendering;
+using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
 using cCoder.ContentManagement.Services;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
@@ -15,7 +16,7 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class PageRenderProcessingService(
     IPageRenderService pageRenderService,
-    Config config) : IPageRenderProcessingService
+    ContentManagementConfiguration config) : IPageRenderProcessingService
 {
     public PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation operation) =>
@@ -55,14 +56,16 @@ internal sealed partial class PageRenderProcessingService(
                 culture: culture,
                 edit: edit);
 
-        PageRenderResult pageRenderResult =
+        PageRenderSession renderedSession =
             pageRenderService.Execute<
                 IPageRenderExecutionOrchestrationService,
-                PageRenderResult>(
+                PageRenderSession>(
                     name: "PageRenderExecution",
                     operation: service =>
-                        service.RenderPageRenderSessionPageRenderResult(
+                        service.RenderPageRenderSession(
                             session: session));
+
+        PageRenderResult pageRenderResult = renderedSession.Result;
 
         return new RenderResult
         {
@@ -84,7 +87,13 @@ internal sealed partial class PageRenderProcessingService(
 
     });
 
-    private static PageRenderSession BuildSession(Page page, User user, Config config, string theme, string culture, bool edit)
+    private static PageRenderSession BuildSession(
+        Page page,
+        User user,
+        ContentManagementConfiguration config,
+        string theme,
+        string culture,
+        bool edit)
     {
         App app = page.App ?? throw new InvalidOperationException(message: "page.App is required.");
         string resolvedTheme = string.IsNullOrWhiteSpace(value: theme) ? app.DefaultTheme ?? "Default" : theme;
@@ -152,9 +161,9 @@ internal sealed partial class PageRenderProcessingService(
             Name = page.Name ?? string.Empty,
             ResourceKey = page.ResourceKey ?? string.Empty,
             LayoutName = page.Layout ?? string.Empty,
-            Title = ContentManagementModelLogic.Title(page: page, culture: culture),
-            Description = ContentManagementModelLogic.Description(page: page, culture: culture),
-            Keywords = ContentManagementModelLogic.Keywords(page: page, culture: culture),
+            Title = ContentManagementModelExtensions.Title(page: page, culture: culture),
+            Description = ContentManagementModelExtensions.Description(page: page, culture: culture),
+            Keywords = ContentManagementModelExtensions.Keywords(page: page, culture: culture),
             ContentByName = includeContent
                 ? BuildContentLookup(contents: page.Contents, culture: culture)
                 : new Dictionary<string, PageRenderContent>(comparer: StringComparer.OrdinalIgnoreCase)

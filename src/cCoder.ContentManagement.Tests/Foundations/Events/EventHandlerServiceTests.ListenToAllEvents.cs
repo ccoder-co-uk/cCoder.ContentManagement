@@ -4,6 +4,7 @@
 
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using Moq;
@@ -20,6 +21,11 @@ public partial class EventHandlerServiceTests
         SetupAppCoordinationEventRegistrations(eventName: "app_add");
         SetupAppCoordinationEventRegistrations(eventName: "app_update");
         SetupAppCoordinationEventRegistrations(eventName: "app_delete");
+
+        eventHubBrokerMock
+            .Setup(expression: x => x.ListenToEvent<App, IAppOrchestrationService>(
+eventName: "app_delete",
+handler: It.IsAny<Func<IAppOrchestrationService, App, ValueTask>>()));
 
         eventHubBrokerMock
             .Setup(expression: x => x.ListenToEvent<Page, IPageCoordinationService>(

@@ -27,7 +27,7 @@ internal partial class TemplateRenderProcessingService(
     ICommonObjectReaderBroker objectCache,
     IJsonBroker jsonBroker,
     ITemplateRenderService templateRenderService,
-    Config config = null,
+    ContentManagementConfiguration config = null,
     ILogger<TemplateRenderProcessingService> log = null)
         : ITemplateRenderProcessingService
 {
@@ -159,7 +159,9 @@ internal partial class TemplateRenderProcessingService(
 
     });
 
-    private ICollection<Replacement> DefaultReplacements(RenderParams renderParams, Config config = null)
+    private ICollection<Replacement> DefaultReplacements(
+        RenderParams renderParams,
+        ContentManagementConfiguration config = null)
     {
         ValidateRenderParams(renderParams: renderParams, replacements: null);
 
@@ -169,8 +171,11 @@ internal partial class TemplateRenderProcessingService(
         }
 
         string text2 = (string.IsNullOrEmpty(value: renderParams.Culture) ? renderParams.App.DefaultCultureId : renderParams.Culture);
-        string value;
-        string text3 = ((config != null && config.Settings.TryGetValue(key: "sslPort", value: out value)) ? (":" + value) : string.Empty);
+
+        string text3 = config?.SslPort is int sslPort
+            ? $":{sslPort}"
+            : string.Empty;
+
         int num = 10;
         List<Replacement> list = new List<Replacement>(capacity: num);
         CollectionsMarshal.SetCount(list: list, count: num);
@@ -200,9 +205,11 @@ internal partial class TemplateRenderProcessingService(
 
         if (config != null)
         {
-            if (config.Services.TryGetValue(key: "Workflow", value: out var value2))
+            if (!string.IsNullOrWhiteSpace(value: config.WorkflowServiceUrl))
             {
-                list2.Add(item: new Replacement(old: "[api[workflow]]", @new: value2));
+                list2.Add(item: new Replacement(
+                    old: "[api[workflow]]",
+                    @new: config.WorkflowServiceUrl));
             }
 
             list2.Add(item: new Replacement(old: "[api[root]]", @new: "https://" + renderParams.App?.Domain + text3 + "/Api/"));
@@ -876,7 +883,12 @@ internal partial class TemplateRenderProcessingService(
         }
     }
 
-    private string ExecuteRenderTemplateRenderParamsConfig(Template template, object model, RenderParams renderParams, Config config, ILogger log = null)
+    private string ExecuteRenderTemplateRenderParamsConfig(
+        Template template,
+        object model,
+        RenderParams renderParams,
+        ContentManagementConfiguration config,
+        ILogger log = null)
     {
         ValidateTemplate(template: template, parameterName: "template");
         ValidateModel(model: model, parameterName: "model");

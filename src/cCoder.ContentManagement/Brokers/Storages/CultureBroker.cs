@@ -14,7 +14,7 @@ internal sealed class CultureBroker(ICoreContextFactory coreContextFactory) : IC
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.Cultures,
             ignoreFilters: ignoreFilters);
     }

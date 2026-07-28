@@ -30,10 +30,21 @@ internal sealed class WebAcceptanceFactory(AcceptanceSettings settings)
         {
             config.AddInMemoryCollection(
 initialData: [
-                new KeyValuePair<string, string>(key: "ConnectionStrings:Core", value: settings.CoreConnectionString),
-                new KeyValuePair<string, string>(key: "ConnectionStrings:SSO", value: settings.SsoConnectionString),
-                new KeyValuePair<string, string>(key: "Settings:DecryptionKey", value: settings.DecryptionKey),
-                new KeyValuePair<string, string>(key: "Settings:enableExternalEventing", value: "false"),
+                new KeyValuePair<string, string>(
+                    key: "ContentManagement:ConnectionString",
+                    value: settings.CoreConnectionString),
+                new KeyValuePair<string, string>(
+                    key: "Data:ConnectionString",
+                    value: settings.CoreConnectionString),
+                new KeyValuePair<string, string>(
+                    key: "Security:ConnectionString",
+                    value: settings.SsoConnectionString),
+                new KeyValuePair<string, string>(
+                    key: "Security:DecryptionKey",
+                    value: settings.DecryptionKey),
+                new KeyValuePair<string, string>(
+                    key: "AppSecurity:ConnectionString",
+                    value: settings.CoreConnectionString),
             ]);
         });
 
@@ -41,28 +52,18 @@ initialData: [
         {
             services.RemoveAll<ICoreContextFactory>();
             services.RemoveAll<ISecurityDbContextFactory>();
+            services.RemoveAll<cCoder.Data.Models.DataConfiguration>();
 
-            services.AddSingleton(
-implementationInstance: new cCoder.Data.Config
-{
-    ConnectionStrings = new Dictionary<string, string>
-    {
-        ["Core"] = settings.CoreConnectionString,
-        ["SSO"] = settings.SsoConnectionString,
-    },
-    Settings = new Dictionary<string, string>
-    {
-        ["DecryptionKey"] = settings.DecryptionKey,
-        ["enableExternalEventing"] = "false",
-    },
-    Services = new Dictionary<string, string>(),
-});
+            services.AddData(
+                configuration: new cCoder.Data.Models.DataConfiguration
+                {
+                    ConnectionString = settings.CoreConnectionString,
+                });
 
             services.AddSingleton<ISecurityDbContextFactory>(
 implementationFactory: _ => new MSSQLSecurityDbContextFactory(connectionString: settings.SsoConnectionString)
             );
 
-            services.AddCoreData(connectionString: settings.CoreConnectionString);
         });
     }
 }

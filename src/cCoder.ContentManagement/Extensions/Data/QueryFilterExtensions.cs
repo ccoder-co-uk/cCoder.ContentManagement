@@ -4,9 +4,9 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace cCoder.ContentManagement.Dependencies;
+namespace cCoder.ContentManagement.Extensions.Data;
 
-internal static class QueryFilterDependency
+internal static class QueryFilterExtensions
 {
     internal static IQueryable<T> Apply<T>(
         IQueryable<T> query,

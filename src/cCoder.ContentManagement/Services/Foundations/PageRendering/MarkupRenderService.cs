@@ -11,7 +11,7 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Dependencies.Rendering;
+using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Foundations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -43,10 +43,10 @@ internal sealed partial class MarkupRenderService(
         CultureLinkRegex = new Regex(pattern: "\\[culturelink\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]", options: regexOptions)
     };
 
-    public PageRenderResult RenderPageRenderSessionPageRenderResult(PageRenderSession session) =>
-        TryCatch<PageRenderResult>(operation: () =>
+    public PageRenderSession RenderPageRenderSession(PageRenderSession session) =>
+        TryCatch<PageRenderSession>(operation: () =>
     {
-        ValidateRenderPageRenderSessionPageRenderResult(inputs: [session]);
+        ValidateRenderPageRenderSession(inputs: [session]);
         string key = string.IsNullOrWhiteSpace(value: session.Page?.ResourceKey) ? "Default" : session.Page.ResourceKey;
         string culture = ResolveCulture(session: session);
 
@@ -55,7 +55,7 @@ internal sealed partial class MarkupRenderService(
 
         AddThemeTemplateReplacements(newPageRenderSession: session, newReplacement: replacements);
 
-        return new PageRenderResult
+        session.Result = new PageRenderResult
         {
             AppId = session.App?.Id ?? 0,
             PageId = session.Page?.Id ?? 0,
@@ -72,6 +72,8 @@ internal sealed partial class MarkupRenderService(
             BodyHtml = RenderMarkup(key: key, content: session.Layout?.BodyHtml ?? string.Empty, session: session, replacements: replacements),
             StatusCode = session.Page == null ? 404 : 200
         };
+
+        return session;
 
     });
 
@@ -304,7 +306,11 @@ values: session.App.PagesById.Values
     private IEnumerable<Replacement> BuildDefaultReplacements(PageRenderSession session)
     {
         string culture = ResolveCulture(session: session);
-        string port = session.Config != null && session.Config.Settings.TryGetValue(key: "sslPort", value: out string value) ? ":" + value : string.Empty;
+
+        string port = session.Config?.SslPort is int sslPort
+            ? $":{sslPort}"
+            : string.Empty;
+
         PageRenderUser user = session.User ?? new PageRenderUser();
         bool isGuest = string.IsNullOrWhiteSpace(value: user.Id) || string.Equals(a: user.Id, b: "Guest", comparisonType: StringComparison.OrdinalIgnoreCase);
 
@@ -354,11 +360,12 @@ values: session.App.PagesById.Values
 
     private static IEnumerable<Replacement> BuildConfiguredReplacements(PageRenderSession session)
     {
-        if (session.Config != null
-            && session.Config.Services.TryGetValue(key: "Workflow", value: out string workflowService)
-            && !string.IsNullOrWhiteSpace(value: workflowService))
+        if (!string.IsNullOrWhiteSpace(
+            value: session.Config?.WorkflowServiceUrl))
         {
-            yield return new Replacement(old: "[api[workflow]]", @new: workflowService);
+            yield return new Replacement(
+                old: "[api[workflow]]",
+                @new: session.Config.WorkflowServiceUrl);
         }
     }
 

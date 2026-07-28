@@ -14,7 +14,7 @@ internal sealed class PageInfoBroker(ICoreContextFactory coreContextFactory) : I
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Dependencies.QueryFilterDependency.Apply(
+        return Extensions.Data.QueryFilterExtensions.Apply(
             query: coreDataContext.PageInfo,
             ignoreFilters: ignoreFilters);
     }

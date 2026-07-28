@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Extensions.OData;
+
 namespace cCoder.ContentManagement.Models.OData;
 
 public class MetadataContainerSet
@@ -35,17 +37,17 @@ public class MetadataContainer
     public MetadataContainer(Type type)
     {
         IsValueType = type.IsValueType || type == typeof(string);
-        Type = MetadataTypeDependency.GetTypeName(type: type);
+        Type = MetadataTypeExtensions.GetTypeName(type: type);
         Name = type.Name;
         DisplayName = type.Name;
         Description = type.Name;
         ServerType = type.AssemblyQualifiedName;
-        ServerTypeName = MetadataTypeDependency.GetCSharpTypeName(type: type);
+        ServerTypeName = MetadataTypeExtensions.GetCSharpTypeName(type: type);
 
         Properties = type.IsValueType || type == typeof(string)
             ? []
             : type.GetProperties()
-            .Select(selector: MetadataTypeDependency.CreatePropertyContainer)
+            .Select(selector: MetadataTypeExtensions.CreatePropertyContainer)
             .ToArray();
     }
 
@@ -54,7 +56,7 @@ public class MetadataContainer
     {
         IsEntity = isEntity;
         IsJoinEntity = isEntity &&
-            MetadataTypeDependency.IsJoinType(type: type);
+            MetadataTypeExtensions.IsJoinType(type: type);
         HasEndpoint = hasEndpoint;
     }
 }

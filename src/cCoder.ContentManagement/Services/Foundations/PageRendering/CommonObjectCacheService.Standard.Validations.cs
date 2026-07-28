@@ -8,6 +8,6 @@ namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class CommonObjectCacheService
 {
-    private static void ValidatePageRenderEngineRequestPageCacheSliceOnGet(object[] inputs) =>
+    private static void ValidatePageCacheSliceOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 }

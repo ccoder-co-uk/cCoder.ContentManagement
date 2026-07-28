@@ -5,27 +5,21 @@
 using System.Security;
 using System.Web;
 using Apps.Shared;
-using cCoder.AppSecurity;
+using Apps.Shared.Hosting;
 using cCoder.ContentManagement;
+using cCoder.ContentManagement.Exposures;
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
-using cCoder.Security;
 using cCoder.Security.Data.EF.Dependencies;
 using cCoder.Security.Data.EF;
+using cCoder.Security.Objects;
 using cCoder.Security.Objects.Entities;
-using cCoder.Eventing;
-using cCoder.Eventing.Http;
-using cCoder.Eventing.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Data.SqlClient;
 using Microsoft.Net.Http.Headers;
-using ContentManagementConfig = cCoder.ContentManagement.Models.Config;
-using CoreDataConfig = cCoder.Data.Config;
-
-
 namespace ContentManagement.Web;
 
 public static class WebApplicationExtensions
@@ -33,86 +27,13 @@ public static class WebApplicationExtensions
     private static ILogger log = null!;
     private static string ssoConnection = string.Empty;
 
-    public static IServiceCollection AddContentManagementApplication(
-        this IServiceCollection services,
-        WebApplicationBuilder builder)
-    {
-        string coreConnection = builder.Configuration.GetConnectionString(name: "Core")
-            ?? throw new InvalidOperationException(message: "ConnectionStrings:Core is required.");
-
-        ssoConnection = builder.Configuration.GetConnectionString(name: "SSO")
-            ?? throw new InvalidOperationException(message: "ConnectionStrings:SSO is required.");
-
-        CoreDataConfig config = new();
-        builder.Configuration.Bind(instance: config);
-        services.AddSingleton(implementationInstance: config);
-
-        services.AddSingleton(
-implementationInstance: new ContentManagementConfig
-{
-    ConnectionStrings = new Dictionary<string, string>(dictionary: config.ConnectionStrings),
-    Settings = new Dictionary<string, string>(dictionary: config.Settings),
-    Services = new Dictionary<string, string>(dictionary: config.Services),
-    DebugInfo = config.DebugInfo,
-    LogSQL = config.LogSQL,
-});
-
-        services.AddEventing();
-
-        services.AddHttpEventingHostedServices(configure: options =>
-        {
-            options.MaxConcurrency =
-                builder.Configuration.GetValue<int?>(key: "Eventing:Http:MaxConcurrency") ?? 1;
-        });
-
-        services.AddSecurityApi(configAction: (securityServices, securityConfig) =>
-        {
-            securityConfig.AddMSSQLModelProvider(
-                services: securityServices,
-                connectionString: ssoConnection);
-
-            securityConfig.UseAESHMMACPasswordEncryption(
-services: securityServices,
-decryptionKey: builder.Configuration.GetSection(key: "Settings")["DecryptionKey"]);
-        });
-
-        cCoder.Data.IServiceCollectionExtensions.AddCoreData(
-services: services,
-connectionString: coreConnection);
-
-        services.AddAppSecurityWeb(configure: config =>
-        {
-            config.IncludeLegacyCoreContext = false;
-        });
-
-        services.AddContentManagementWeb(newContentManagementConfiguration: contentManagementConfiguration =>
-        {
-            contentManagementConfiguration.EventProviders =
-            [
-                CreateReceiveProvider<App>(
-                    eventNames: ["app_add", "app_update", "app_delete"]),
-                CreateReceiveProvider<Page>(
-                    eventNames: ["page_add", "page_update", "page_delete"]),
-                CreateReceiveProvider<(int appId, Package package)>(
-                    eventNames: ["package_import"])
-            ];
-        });
-
-        builder.Logging.ClearProviders();
-
-        builder.Logging.AddSimpleConsole(configure: options =>
-        {
-            options.TimestampFormat = "yyyy-MM-ddTHH:mm:ss ";
-            options.SingleLine = true;
-        });
-
-        return services;
-    }
-
     public static WebApplication UseContentManagementApplication(
         this WebApplication app)
     {
         log = app.Services.GetRequiredService<ILogger<Program>>();
+        ssoConnection = app.Services
+            .GetRequiredService<SecurityConfiguration>()
+            .ConnectionString;
 
         app.UseHttpsRedirection();
         app.UseSession();
@@ -137,16 +58,35 @@ connectionString: coreConnection);
         app.MapGet(pattern: "/Health", handler: () => Results.Text(content: "OK"));
         app.MapGet(pattern: "/", handler: () => Results.Redirect(url: "/tools/index.html"));
 
-        app.MapControllerRoute(
-name: "default",
-pattern: @"{*path}",
-defaults: new { controller = "Home", action = "Get" },
-constraints: new { path = new NoApiRouteConstraint() });
-
         app.StartContentManagementWeb(onRequest: LogRequest, log: log);
         app.UseDomainDefaultCors();
         app.UseDomainExceptionHandling(errorHandler: HandleUnhandledException);
         return app;
+    }
+
+    public static void UseDomainApiShell(this WebApplication app)
+    {
+        app.UseRouting();
+        app.MapControllers();
+    }
+
+    public static void UseDomainDefaultCors(this WebApplication app)
+    {
+        app.UseCors(configurePolicy: builder =>
+        {
+            builder.AllowAnyHeader();
+            builder.AllowAnyMethod();
+            builder.AllowAnyOrigin();
+        });
+    }
+
+    public static void UseDomainExceptionHandling(
+        this WebApplication app,
+        RequestDelegate errorHandler)
+    {
+        app.UseExceptionHandler(
+            configure: errorApp =>
+                errorApp.Run(handler: errorHandler));
     }
 
     private static async Task HandleUnhandledException(HttpContext context)
@@ -168,27 +108,6 @@ constraints: new { path = new NoApiRouteConstraint() });
         await context.Response.WriteAsync(
 text: "{ \"error\": \"" + exception.Message.Replace(oldValue: "\"", newValue: "\'") + "\" }");
     }
-
-    private static EventProvider<T> CreateReceiveProvider<T>(string[] eventNames) =>
-        new()
-        {
-            Events = eventNames,
-            ReceiveHandler = async (serviceProvider, eventName, message) =>
-            {
-                IEventHub eventHub = serviceProvider.GetRequiredService<IEventHub>();
-
-                await eventHub.RaiseEventAsync(
-name: eventName,
-message: new EventMessage<T>
-{
-    AuthInfo = new EventAuthInfo
-    {
-        SSOUserId = message.AuthInfo?.SSOUserId ?? "Guest",
-    },
-    Data = message.Data,
-});
-            },
-        };
 
     private static async Task LogRequest(HttpContext context, ILogger logger)
     {

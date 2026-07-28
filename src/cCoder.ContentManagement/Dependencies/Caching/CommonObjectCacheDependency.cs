@@ -25,14 +25,14 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
 
     private bool disposed;
 
-    private readonly Config config;
+    private readonly ContentManagementConfiguration config;
 
     private IEnumerable<CommonObject> latestSet;
 
     private readonly int expiryTimeInMinutes;
 
     public CommonObjectCacheDependency(
-        Config config,
+        ContentManagementConfiguration config,
         IServiceScopeFactory serviceScopeFactory,
         ILogger<CommonObjectCacheDependency> log)
     {
@@ -40,7 +40,7 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
         this.config = config;
         this.serviceScopeFactory = serviceScopeFactory;
         this.log = log;
-        expiryTimeInMinutes = (config.Settings.ContainsKey(key: "CacheExpiry") ? int.Parse(s: config.Settings["CacheExpiry"]) : 30);
+        expiryTimeInMinutes = config.CacheExpiry;
         timer.Elapsed += ScanForExpiredItems;
         timer.Interval = expiryTimeInMinutes * 60 * 1000;
         timer.Start();
@@ -50,7 +50,8 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
     {
         latestSet = Array.Empty<CommonObject>();
 
-        if (!config.Settings.ContainsKey(key: "CacheSource") || !config.Settings.ContainsKey(key: "CacheSourceAppId"))
+        if (string.IsNullOrWhiteSpace(config.CacheSource)
+            || config.CacheSourceAppId is null)
         {
             log.LogInformation(message: "Common object cache source settings are missing, loading from local data.");
         }

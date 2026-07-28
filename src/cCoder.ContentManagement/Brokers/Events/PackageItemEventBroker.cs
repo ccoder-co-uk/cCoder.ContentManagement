@@ -8,8 +8,8 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class PackageItemEventBroker(IEventInfrastructureDependency eventInfrastructureDependency)
-    : AuthenticatedEventBroker(eventInfrastructureDependency), IPackageItemEventBroker
+internal sealed class PackageItemEventBroker(IAuthenticatedEventHub eventHub)
+    : AuthenticatedEventBroker(eventHub), IPackageItemEventBroker
 {
     public ValueTask RaisePackageItemAddEventAsync(EventMessage<PackageItem> message) =>
         RaiseEventAsync(name: "package_item_add", message: message);
