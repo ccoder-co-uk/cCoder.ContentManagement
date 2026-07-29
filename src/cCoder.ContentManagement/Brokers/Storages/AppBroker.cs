@@ -60,6 +60,25 @@ internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBr
         coreDataContext.UserRoles.RemoveRange(entities: userRolesToDelete);
 
         Role[] rolesToDelete = [.. deletedApp.Roles ?? []];
+        Guid[] roleIds = [.. rolesToDelete.Select(selector: role => role.Id)];
+
+        FolderRole[] folderRolesToDelete =
+            [.. coreDataContext.FolderRoles
+                .IgnoreQueryFilters()
+                .Where(predicate: folderRole =>
+                    roleIds.Contains(value: folderRole.RoleId))];
+
+        PageRole[] pageRolesToDelete =
+            [.. coreDataContext.PageRoles
+                .IgnoreQueryFilters()
+                .Where(predicate: pageRole =>
+                    roleIds.Contains(value: pageRole.RoleId))];
+
+        coreDataContext.FolderRoles.RemoveRange(
+            entities: folderRolesToDelete);
+
+        coreDataContext.PageRoles.RemoveRange(
+            entities: pageRolesToDelete);
 
         coreDataContext.Roles.RemoveRange(entities: rolesToDelete);
 
