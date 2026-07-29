@@ -29,8 +29,19 @@ public sealed partial class AppEventTests
 
             // Then
             await WaitForAsync(
-condition: () => HasNoAppCulture(appId: appId),
-because: "app_delete should delete the app culture child row");
+                condition: () =>
+                {
+                    using IServiceScope waitScope = Services.CreateScope();
+
+                    using CoreDataContext waitCore = waitScope.ServiceProvider
+                        .GetRequiredService<ICoreContextFactory>()
+                        .CreateCoreContext();
+
+                    return !waitCore.Set<App>()
+                        .IgnoreQueryFilters()
+                        .Any(predicate: app => app.Id == appId);
+                },
+                because: "app_delete should delete the app after its culture child row");
 
             using IServiceScope assertScope = Services.CreateScope();
 
@@ -133,6 +144,53 @@ because: "app_delete should delete the page child row");
             HasNoPage(appId: appId)
                 .Should()
                 .BeTrue();
+        }
+        finally
+        {
+            await TeardownAppAsync(appId: appId);
+        }
+    }
+
+    [Fact]
+    public async Task Post_GivenAppDeleteEvent_ShouldDeletePageRoleBeforeRole()
+    {
+        // Given
+        int appId = await SeedAppAsync();
+
+        try
+        {
+            await SeedAppAdministratorAsync(appId: appId);
+            await SeedPageAsync(appId: appId);
+
+            // When
+            await PostEventAsync(eventName: "app_delete", data: new App { Id = appId });
+
+            // Then
+            await WaitForAsync(
+                condition: () =>
+                {
+                    using IServiceScope waitScope = Services.CreateScope();
+
+                    using CoreDataContext waitCore = waitScope.ServiceProvider
+                        .GetRequiredService<ICoreContextFactory>()
+                        .CreateCoreContext();
+
+                    return !waitCore.Set<App>()
+                        .IgnoreQueryFilters()
+                        .Any(predicate: app => app.Id == appId);
+                },
+                because: "app_delete should delete role associations before deleting app roles and the app");
+
+            using IServiceScope assertScope = Services.CreateScope();
+
+            using CoreDataContext assertCore = assertScope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
+                .CreateCoreContext();
+
+            assertCore.Set<App>()
+                .IgnoreQueryFilters()
+                .Any(predicate: app => app.Id == appId)
+                .Should()
+                .BeFalse();
         }
         finally
         {
