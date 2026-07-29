@@ -167,8 +167,19 @@ because: "app_delete should delete the page child row");
 
             // Then
             await WaitForAsync(
-                condition: () => HasNoPage(appId: appId),
-                because: "app_delete should delete role associations before deleting app roles");
+                condition: () =>
+                {
+                    using IServiceScope waitScope = Services.CreateScope();
+
+                    using CoreDataContext waitCore = waitScope.ServiceProvider
+                        .GetRequiredService<ICoreContextFactory>()
+                        .CreateCoreContext();
+
+                    return !waitCore.Set<App>()
+                        .IgnoreQueryFilters()
+                        .Any(predicate: app => app.Id == appId);
+                },
+                because: "app_delete should delete role associations before deleting app roles and the app");
 
             using IServiceScope assertScope = Services.CreateScope();
 
