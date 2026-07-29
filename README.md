@@ -51,7 +51,6 @@ Leave secret values empty and define these user-level or machine-level
 environment variables:
 
 - `ContentManagement__ConnectionString`
-- `Data__ConnectionString`
 - `Security__ConnectionString`
 - `Security__DecryptionKey`
 - `AppSecurity__ConnectionString`

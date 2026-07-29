@@ -598,11 +598,6 @@ value: new HttpEventMessage
             .Select(selector: page => page.Id)
         ];
 
-        await core.Set<PageRole>()
-            .IgnoreQueryFilters()
-            .Where(predicate: pageRole => pageIds.Contains(value: pageRole.PageId))
-            .ExecuteDeleteAsync();
-
         await core.Set<PageInfo>()
             .IgnoreQueryFilters()
             .Where(predicate: pageInfo => pageIds.Contains(value: pageInfo.PageId))
@@ -611,6 +606,11 @@ value: new HttpEventMessage
         await core.Set<Content>()
             .IgnoreQueryFilters()
             .Where(predicate: content => pageIds.Contains(value: content.PageId))
+            .ExecuteDeleteAsync();
+
+        await core.Set<PageRole>()
+            .IgnoreQueryFilters()
+            .Where(predicate: pageRole => pageIds.Contains(value: pageRole.PageId))
             .ExecuteDeleteAsync();
 
         await core.Set<Page>()
