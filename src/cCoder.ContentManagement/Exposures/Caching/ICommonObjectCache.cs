@@ -6,7 +6,7 @@ using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Exposures.Caching;
 
-public interface ICommonObjectCache : IDisposable
+public interface ICommonObjectCache
 {
     void Refresh();
 
