@@ -33,10 +33,10 @@ public partial class ScriptServiceTests
         // Given
         Script script = CreateRandomScript(id: 9, appId: 7);
 
-        scriptBrokerMock.Setup(expression: x => x.GetAllScripts(ignoreFilters: false))
+        scriptBrokerMock.Setup(expression: x => x.GetAllScripts())
             .Returns(value: new[] { script }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_delete"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_delete"));
 
         scriptBrokerMock.Setup(expression: x => x.DeleteScriptAsync(deletedScript: It.IsAny<CmsDataModels.Script>()))
             .ReturnsAsync(value: 1);
@@ -45,11 +45,11 @@ public partial class ScriptServiceTests
         await scriptService.DeleteAsync(scriptId: 9);
 
         // Then
-        scriptBrokerMock.Verify(expression: x => x.GetAllScripts(ignoreFilters: false), times: Times.Once);
+        scriptBrokerMock.Verify(expression: x => x.GetAllScripts(), times: Times.Once);
         scriptBrokerMock.Verify(expression: x => x.DeleteScriptAsync(deletedScript: It.Is<CmsDataModels.Script>(match: actual => actual.Id == script.Id)), times: Times.Once);
         scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -58,10 +58,10 @@ public partial class ScriptServiceTests
         // Given
         Script script = CreateRandomScript(id: 9, appId: 7);
 
-        scriptBrokerMock.Setup(expression: x => x.GetAllScripts(ignoreFilters: false))
+        scriptBrokerMock.Setup(expression: x => x.GetAllScripts())
             .Returns(value: new[] { script }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_delete"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -74,10 +74,10 @@ public partial class ScriptServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        scriptBrokerMock.Verify(expression: x => x.GetAllScripts(ignoreFilters: false), times: Times.Once);
+        scriptBrokerMock.Verify(expression: x => x.GetAllScripts(), times: Times.Once);
         scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

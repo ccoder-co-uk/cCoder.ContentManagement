@@ -27,7 +27,7 @@ public partial class PageProcessingServiceTests
     public async Task ShouldDelegateToFoundationServiceWhenUserCanDeletePageForDeleteAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -37,18 +37,18 @@ public partial class PageProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         User user = TestUsers.WithPrivilege(privilege: "page_delete", appId: 1);
         Page page = CreateRandomPage(user: user);
         currentUser = user;
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { page }.AsQueryable());
 
         pageServiceMock.Setup(expression: x => x.DeleteAsync(pageId: page.Id))
@@ -58,7 +58,7 @@ public partial class PageProcessingServiceTests
         await pageProcessingService.DeleteAsync(pageId: page.Id);
 
         // Then
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.DeleteAsync(pageId: page.Id), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
@@ -67,7 +67,7 @@ public partial class PageProcessingServiceTests
     public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -77,17 +77,17 @@ public partial class PageProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         Page page = CreateRandomPage();
         currentUser = TestUsers.WithoutPrivileges();
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { page }.AsQueryable());
 
         // When
@@ -97,7 +97,7 @@ public partial class PageProcessingServiceTests
         await act.Should()
             .ThrowAsync<SecurityException>();
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

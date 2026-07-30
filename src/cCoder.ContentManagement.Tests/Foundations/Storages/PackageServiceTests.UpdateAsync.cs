@@ -32,7 +32,7 @@ public partial class PackageServiceTests
 
         cCoder.Data.Models.Packaging.Package submitted = null;
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_update"));
 
         packageBrokerMock
             .Setup(expression: x => x.UpdatePackageAsync(updatedPackage: It.IsAny<cCoder.Data.Models.Packaging.Package>()))
@@ -84,8 +84,8 @@ public partial class PackageServiceTests
 
         packageBrokerMock.Verify(expression: x => x.UpdatePackageAsync(updatedPackage: It.IsAny<cCoder.Data.Models.Packaging.Package>()), times: Times.Once);
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_update"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_update"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public partial class PackageServiceTests
         // Given
         Package package = CreateRandomPackage();
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: null, privilege: "Package_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -108,8 +108,8 @@ public partial class PackageServiceTests
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_update"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_update"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

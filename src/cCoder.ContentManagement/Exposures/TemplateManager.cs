@@ -4,6 +4,7 @@
 
 using cCoder.ContentManagement.Services.Foundations.ServiceProviders;
 using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Brokers;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures;
@@ -12,6 +13,20 @@ internal sealed class TemplateManager(
     IServiceProviderExecutionService serviceProviderExecutionService)
         : ITemplateManager
 {
+    public ValueTask<string> ReadContentAsync(Stream source) =>
+        serviceProviderExecutionService.Execute<
+            ITemplateContentBroker,
+            ValueTask<string>>(
+                name: "TemplateContent",
+                operation: broker => broker.ReadAsync(source: source));
+
+    public byte[] ConvertHtmlToPdf(string html) =>
+        serviceProviderExecutionService.Execute<
+            ITemplateContentBroker,
+            byte[]>(
+                name: "TemplateContent",
+                operation: broker => broker.ConvertHtmlToPdf(html: html));
+
     public string Render(int appId, string name, string culture, dynamic model) =>
         serviceProviderExecutionService.Execute<
             ITemplateRenderOrchestrationService,

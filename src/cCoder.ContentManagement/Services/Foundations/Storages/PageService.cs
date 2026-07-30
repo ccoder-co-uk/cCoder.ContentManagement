@@ -7,9 +7,11 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker authorizationBroker) : IPageService
+internal partial class PageService(IPageBroker pageBroker, IAuthorizationManager authorizationManager) : IPageService
 {
     public Page GetPage(int pageId, bool ignoreFilters = false) =>
         TryCatch<Page>(operation: () =>
@@ -19,11 +21,11 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
 
         if (ignoreFilters)
         {
-            return pageBroker.GetAllPages(ignoreFilters: true)
+            return pageBroker.GetAllPagesIgnoringFilters()
                 .FirstOrDefault(predicate: page => page.Id == pageId);
         }
 
-        Page result = pageBroker.GetAllPages(ignoreFilters: false)
+        Page result = pageBroker.GetAllPages()
             .FirstOrDefault(predicate: page => page.Id == pageId);
 
         if (result != null)
@@ -31,7 +33,7 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
             return result;
         }
 
-        result = pageBroker.GetAllPages(ignoreFilters: true)
+        result = pageBroker.GetAllPagesIgnoringFilters()
             .FirstOrDefault(predicate: foundPage => foundPage.Id == pageId);
 
         if (result != null)
@@ -47,7 +49,10 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
         TryCatch<IQueryable<Page>>(operation: () =>
     {
         ValidateAllPageOnGet(inputs: [ignoreFilters]);
-        return pageBroker.GetAllPages(ignoreFilters: ignoreFilters);
+
+        return ignoreFilters
+            ? pageBroker.GetAllPagesIgnoringFilters()
+            : pageBroker.GetAllPages();
     });
 
     public ValueTask<Page> AddPageAsync(Page newPage) =>
@@ -55,10 +60,10 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
     {
         ValidatePageOnAdd(inputs: [newPage]);
         ValidatePage(page: newPage, parameterName: "page");
-        authorizationBroker.Authorize(appId: newPage.AppId, privilege: "Page_create");
+        authorizationManager.Authorize(appId: newPage.AppId, privilege: "Page_create");
         Page storagePage = CreateStoragePage(newPage: newPage);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = (storagePage.CreatedOn = DateTimeOffset.UtcNow);
@@ -88,10 +93,10 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
     {
         ValidatePageOnUpdate(inputs: [updatedPage]);
         ValidatePage(page: updatedPage, parameterName: "page");
-        authorizationBroker.Authorize(appId: updatedPage.AppId, privilege: "Page_update");
+        authorizationManager.Authorize(appId: updatedPage.AppId, privilege: "Page_update");
         Page updatePage = CreateStoragePage(newPage: updatedPage);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
@@ -136,7 +141,7 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
             return;
         }
 
-        authorizationBroker.Authorize(appId: page.AppId, privilege: "Page_delete");
+        authorizationManager.Authorize(appId: page.AppId, privilege: "Page_delete");
         await pageBroker.DeletePageAsync(deletedPage: CreateStoragePage(newPage: page));
 
     }, isValueTask: true);
@@ -172,11 +177,11 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
 
         if (ignoreFilters)
         {
-            return pageBroker.GetAllPages(ignoreFilters: true)
+            return pageBroker.GetAllPagesIgnoringFilters()
                 .FirstOrDefault(predicate: page => page.Id == pageId);
         }
 
-        Page result = pageBroker.GetAllPages(ignoreFilters: false)
+        Page result = pageBroker.GetAllPages()
             .FirstOrDefault(predicate: page => page.Id == pageId);
 
         if (result != null)
@@ -184,7 +189,7 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationBroker 
             return result;
         }
 
-        result = pageBroker.GetAllPages(ignoreFilters: true)
+        result = pageBroker.GetAllPagesIgnoringFilters()
             .FirstOrDefault(predicate: foundPage => foundPage.Id == pageId);
 
         if (result != null)

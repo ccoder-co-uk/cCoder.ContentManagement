@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IComponentBroker
 {
-    IQueryable<Component> GetAllComponents(bool ignoreFilters);
+    IQueryable<Component> GetAllComponents();
+
+    IQueryable<Component> GetAllComponentsIgnoringFilters();
 
     ValueTask<Component> AddComponentAsync(Component newComponent);
 

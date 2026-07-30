@@ -7,9 +7,11 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationBroker authorizationBroker) : IScriptService
+internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationManager authorizationManager) : IScriptService
 {
     public Script GetScript(int scriptId, bool ignoreFilters = false) =>
         TryCatch<Script>(operation: () =>
@@ -47,7 +49,10 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
         TryCatch<IQueryable<Script>>(operation: () =>
     {
         ValidateAllScriptOnGet(inputs: [ignoreFilters]);
-        return scriptBroker.GetAllScripts(ignoreFilters: ignoreFilters);
+
+        return ignoreFilters
+            ? scriptBroker.GetAllScriptsIgnoringFilters()
+            : scriptBroker.GetAllScripts();
     });
 
     public ValueTask<Script> AddScriptAsync(Script newScript) =>
@@ -55,10 +60,10 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
     {
         ValidateScriptOnAdd(inputs: [newScript]);
         ValidateScript(script: newScript, parameterName: "script");
-        authorizationBroker.Authorize(appId: newScript.AppId, privilege: "Script_create");
+        authorizationManager.Authorize(appId: newScript.AppId, privilege: "Script_create");
         Script storageScript = CreateStorageScript(newScript: newScript);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = (storageScript.CreatedOn = DateTimeOffset.UtcNow);
@@ -85,10 +90,10 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
     {
         ValidateScriptOnUpdate(inputs: [updatedScript]);
         ValidateScript(script: updatedScript, parameterName: "script");
-        authorizationBroker.Authorize(appId: updatedScript.AppId, privilege: "Script_update");
+        authorizationManager.Authorize(appId: updatedScript.AppId, privilege: "Script_update");
         Script updateScript = CreateStorageScript(newScript: updatedScript);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
@@ -130,7 +135,7 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
             return;
         }
 
-        authorizationBroker.Authorize(appId: script.AppId, privilege: "Script_delete");
+        authorizationManager.Authorize(appId: script.AppId, privilege: "Script_delete");
         await scriptBroker.DeleteScriptAsync(deletedScript: CreateStorageScript(newScript: script));
 
     }, isValueTask: true);
@@ -158,7 +163,9 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationB
     }
 
     private IQueryable<Script> ExecuteGetAllScript(bool ignoreFilters = false) =>
-        scriptBroker.GetAllScripts(ignoreFilters: ignoreFilters);
+        (ignoreFilters
+            ? scriptBroker.GetAllScriptsIgnoringFilters()
+            : scriptBroker.GetAllScripts());
 
     private Script ExecuteGetScript(int scriptId, bool ignoreFilters = false)
     {

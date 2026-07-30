@@ -23,7 +23,12 @@ internal sealed partial class ComponentRenderOrchestrationService(
         ValidateTheme(theme: theme, parameterName: "theme");
 
         RenderAuthorization authorization = authorizationProcessingService
-            .ResolveRenderAuthorization(culture: culture);
+            .ResolveRenderAuthorizationContext(
+                context: new AuthorizationContext
+                {
+                    Culture = culture
+                })
+            .RenderAuthorization;
 
         return ExecuteRenderUser(
             appId: appId,

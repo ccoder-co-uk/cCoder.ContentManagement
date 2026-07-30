@@ -10,17 +10,26 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IPrivilegeBroker
 {
-    IQueryable<Privilege> GetAllPrivileges(bool ignoreFilters);
+    IQueryable<Privilege> GetAllPrivileges();
+
+    IQueryable<Privilege> GetAllPrivilegesIgnoringFilters();
 }
 
 internal sealed class PrivilegeBroker(ICoreContextFactory coreContextFactory) : IPrivilegeBroker
 {
-    public IQueryable<Privilege> GetAllPrivileges(bool ignoreFilters)
+    public IQueryable<Privilege> GetAllPrivileges()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Set<Privilege>(),
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Set<Privilege>();
+    }
+
+    public IQueryable<Privilege> GetAllPrivilegesIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext
+            .Set<Privilege>()
+            .IgnoreQueryFilters();
     }
 }

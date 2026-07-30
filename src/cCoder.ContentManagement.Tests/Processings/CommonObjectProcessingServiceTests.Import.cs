@@ -29,7 +29,7 @@ public partial class CommonObjectProcessingServiceTests
     public async Task ShouldResetIdentityAndAddItWhenItemIsNewForImport()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -39,11 +39,11 @@ public partial class CommonObjectProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "commonobject_create");
@@ -93,7 +93,7 @@ type: "Core/Other"
     {
 
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -103,11 +103,11 @@ type: "Core/Other"
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivileges(privileges: ["commonobject_create", "commonobject_update"]);
@@ -178,7 +178,7 @@ type: "Core/Other"
     public async Task ShouldReturnNoResultsWhenItemMatchesExistingAndIsNotNewerForImport()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -188,11 +188,11 @@ type: "Core/Other"
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         CommonObject dbObject = CreateRandomCommonObject(type: "Core/Other");

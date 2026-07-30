@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Exposures;
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
@@ -38,7 +38,8 @@ payload: new
             .GetRequiredService<cCoder.Data.ICoreContextFactory>()
             .CreateCoreContext();
 
-        IAuthorizationBroker authorizationBroker = scope.ServiceProvider.GetRequiredService<IAuthorizationBroker>();
+        IAuthorizationManager authorizationManager =
+            scope.ServiceProvider.GetRequiredService<IAuthorizationManager>();
 
         Role[] roles = [.. core.Set<Role>()
             .IgnoreQueryFilters()
@@ -59,7 +60,7 @@ payload: new
         userRoles.Should()
             .Contain(predicate: userRole => userRole.UserId == "Guest");
 
-        authorizationBroker.IsAdminOfApp(appId: createdApp.Id)
+        authorizationManager.IsAdminOfApp(appId: createdApp.Id)
             .Should()
             .BeTrue();
 

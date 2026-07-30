@@ -13,6 +13,8 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using cCoder.ContentManagement.Models;
+
 namespace cCoder.Core.Services.Tests;
 
 internal static class TestUsers
@@ -70,4 +72,26 @@ internal static class TestUsers
             IsActive = true,
             Roles = [],
         };
+
+    internal static bool UserCanPage(PageAuthorization authorization)
+    {
+        Guid[] userRoles = authorization.User?.Roles?
+            .Select(selector: role => role.RoleId)
+            .ToArray() ?? [];
+
+        bool isAppAdmin = authorization.User?.Roles?.Any(predicate: role =>
+            role.Role?.AppId == authorization.Page.AppId
+            && (role.Role.Privileges?.Contains(value: "app_admin") ?? false))
+            ?? false;
+
+        return isAppAdmin
+            || (authorization.Page.Roles?
+                .Where(predicate: pageRole =>
+                    userRoles.Contains(value: pageRole.RoleId))
+                .SelectMany(selector: pageRole =>
+                    pageRole.Role?.Privileges ?? [])
+                .Contains(value:
+                    authorization.Privilege?.ToLowerInvariant()
+                    ?? string.Empty) ?? false);
+    }
 }

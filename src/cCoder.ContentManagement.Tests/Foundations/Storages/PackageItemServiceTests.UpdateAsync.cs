@@ -35,7 +35,7 @@ public partial class PackageItemServiceTests
         packageItemBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()))
             .Returns(value: (int?)7);
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"));
 
         packageItemBrokerMock
             .Setup(expression: x => x.UpdatePackageItemAsync(updatedPackageItem: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()))
@@ -72,8 +72,8 @@ times: Times.Once
 
         packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
         packageItemBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -85,7 +85,7 @@ times: Times.Once
         packageItemBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()))
             .Returns(value: (int?)7);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -100,8 +100,8 @@ times: Times.Once
 
         packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
         packageItemBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

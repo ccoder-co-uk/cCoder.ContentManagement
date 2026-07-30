@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface ITemplateBroker
 {
-    IQueryable<Template> GetAllTemplates(bool ignoreFilters);
+    IQueryable<Template> GetAllTemplates();
+
+    IQueryable<Template> GetAllTemplatesIgnoringFilters();
 
     ValueTask<Template> AddTemplateAsync(Template newTemplate);
 

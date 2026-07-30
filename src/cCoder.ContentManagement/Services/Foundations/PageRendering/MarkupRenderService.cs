@@ -23,7 +23,8 @@ internal sealed partial class MarkupRenderService(
     IComponentReaderBroker componentReaderBroker,
     IScriptReaderBroker scriptReaderBroker,
     IJsonBroker jsonBroker,
-    IRenderFileContentBroker renderFileContentBroker) : IMarkupRenderService
+    IRenderFileContentBroker renderFileContentBroker,
+    IWorkflowExecutionBroker workflowExecutionBroker) : IMarkupRenderService
 {
     private static readonly RegexOptions regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline;
 
@@ -241,30 +242,17 @@ values: session.App.PagesById.Values
                                                                                                                                                  string code = match.Groups[1].Value;
                                                                                                                                                  string json = replacements.FirstOrDefault(predicate: replacement => replacement.Old == "[model]")?.New ?? "{}";
 
-                                                                                                                                                 using HttpClient httpClient = new(handler: new HttpClientHandler
-                                                                                                                                                 {
-                                                                                                                                                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-                                                                                                                                                 })
-                                                                                                                                                 {
-                                                                                                                                                     BaseAddress = new Uri(uriString: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]")
-                                                                                                                                                     .New),
-                                                                                                                                                     Timeout = TimeSpan.FromMinutes(minutes: 10)
-                                                                                                                                                 };
-
                                                                                                                                                  string content = SerializeForOData(model: new
                                                                                                                                                  {
                                                                                                                                                      Script = code,
                                                                                                                                                      Model = jsonBroker.ParseJson(json: json)
                                                                                                                                                  });
 
-                                                                                                                                                 Task<string> task = httpClient
-                                                                                                                                                     .PostAsync(requestUri: "ExecuteScript?useDetails=true", content: new StringContent(content: content, encoding: Encoding.UTF8, mediaType: "text/plain"))
-                                                                                                                                                     .ContinueWith(continuationFunction: responseTask => responseTask.Result.Content.ReadAsStringAsync())
-                                                                                                                                                     .Unwrap();
+                                                                                                                                                 string result = workflowExecutionBroker.Execute(
+                                                                                                                                                     baseAddress: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]").New,
+                                                                                                                                                     content: content);
 
-                                                                                                                                                 task.Wait();
-
-                                                                                                                                                 return RenderMarkup(key: key, content: task.Result, session: session, replacements: replacements, allowContentTags: false);
+                                                                                                                                                 return RenderMarkup(key: key, content: result, session: session, replacements: replacements, allowContentTags: false);
                                                                                                                                              });
 
     private static string SerializeForOData(object model) =>

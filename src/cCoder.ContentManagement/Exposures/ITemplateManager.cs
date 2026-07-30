@@ -10,6 +10,10 @@ public interface ITemplateManager
 {
     string Render(int appId, string name, string culture, dynamic model);
 
+    ValueTask<string> ReadContentAsync(Stream source);
+
+    byte[] ConvertHtmlToPdf(string html);
+
     IQueryable<Template> GetAll();
 
     Template Get(int templateId);

@@ -32,7 +32,7 @@ public partial class SubmissionServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
@@ -41,7 +41,7 @@ public partial class SubmissionServiceTests
         CmsDataModels.Submission submitted = null;
 
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"));
 
         submissionBrokerMock
             .Setup(expression: x => x.UpdateSubmissionAsync(updatedSubmission: It.IsAny<CmsDataModels.Submission>()))
@@ -143,20 +143,20 @@ times: Times.Once
         );
 
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"), times: Times.Once);
     }
 
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
         Submission submission = CreateRandomSubmission(id: submissionId);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -170,7 +170,7 @@ times: Times.Once
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"), times: Times.Once);
     }
 
 }

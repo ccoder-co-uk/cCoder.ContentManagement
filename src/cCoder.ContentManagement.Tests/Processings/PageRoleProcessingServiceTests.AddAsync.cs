@@ -31,7 +31,7 @@ public partial class PageRoleProcessingServiceTests
     public async Task ShouldUseDataContextWhenUserCanCreatePageRoleForAddAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -41,11 +41,11 @@ public partial class PageRoleProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         User user = TestUsers.WithPrivilege(privilege: "pagerole_create", appId: 1);
@@ -80,10 +80,10 @@ public partial class PageRoleProcessingServiceTests
         LocalPageRole link = new() { PageId = page.Id, RoleId = roleToAdd.Id };
         currentUser = user;
 
-        roleBrokerMock.Setup(expression: x => x.GetAllRoles(ignoreFilters: true))
+        roleBrokerMock.Setup(expression: x => x.GetAllRolesIgnoringFilters())
             .Returns(value: new[] { roleToAdd }.AsQueryable());
 
-        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
             .Returns(value: new[] { page }.AsQueryable());
 
         pageRoleServiceMock.Setup(expression: x => x.AddPageRoleAsync(newPageRole: link))
@@ -101,7 +101,7 @@ public partial class PageRoleProcessingServiceTests
     public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -111,11 +111,11 @@ public partial class PageRoleProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         SecurityDataModels.Role roleToAdd = new()
@@ -136,10 +136,10 @@ public partial class PageRoleProcessingServiceTests
             Roles = [],
         };
 
-        roleBrokerMock.Setup(expression: x => x.GetAllRoles(ignoreFilters: true))
+        roleBrokerMock.Setup(expression: x => x.GetAllRolesIgnoringFilters())
             .Returns(value: new[] { roleToAdd }.AsQueryable());
 
-        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
             .Returns(value: new[] { page }.AsQueryable());
 
         // When

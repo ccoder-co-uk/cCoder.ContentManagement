@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class ScriptBroker(ICoreContextFactory coreContextFactory) : IScriptBroker
 {
-    public IQueryable<Script> GetAllScripts(bool ignoreFilters)
+    public IQueryable<Script> GetAllScripts()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Scripts,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Scripts;
+    }
+
+    public IQueryable<Script> GetAllScriptsIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Scripts.IgnoreQueryFilters();
     }
 
     public async ValueTask<Script> AddScriptAsync(Script newScript)

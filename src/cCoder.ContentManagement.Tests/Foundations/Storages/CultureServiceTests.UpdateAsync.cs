@@ -35,10 +35,10 @@ public partial class CultureServiceTests
 
         CmsDataModels.Culture submitted = null;
 
-        appCultureBrokerMock.Setup(expression: x => x.GetAllAppCultures(ignoreFilters: true))
+        appCultureBrokerMock.Setup(expression: x => x.GetAllAppCulturesIgnoringFilters())
             .Returns(value: new[] { new CmsDataModels.AppCulture { AppId = 7, CultureId = culture.Id } }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_update"));
 
         cultureBrokerMock
             .Setup(expression: x => x.UpdateCultureAsync(updatedCulture: It.IsAny<CmsDataModels.Culture>()))
@@ -70,10 +70,10 @@ public partial class CultureServiceTests
 
         cultureBrokerMock.Verify(expression: x => x.UpdateCultureAsync(updatedCulture: It.IsAny<CmsDataModels.Culture>()), times: Times.Once);
         cultureBrokerMock.VerifyNoOtherCalls();
-        appCultureBrokerMock.Verify(expression: x => x.GetAllAppCultures(ignoreFilters: true), times: Times.Once);
+        appCultureBrokerMock.Verify(expression: x => x.GetAllAppCulturesIgnoringFilters(), times: Times.Once);
         appCultureBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_update"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_update"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -82,10 +82,10 @@ public partial class CultureServiceTests
         // Given
         Culture culture = CreateRandomCulture();
 
-        appCultureBrokerMock.Setup(expression: x => x.GetAllAppCultures(ignoreFilters: true))
+        appCultureBrokerMock.Setup(expression: x => x.GetAllAppCulturesIgnoringFilters())
             .Returns(value: new[] { new CmsDataModels.AppCulture { AppId = 7, CultureId = culture.Id } }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -99,10 +99,10 @@ public partial class CultureServiceTests
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         cultureBrokerMock.VerifyNoOtherCalls();
-        appCultureBrokerMock.Verify(expression: x => x.GetAllAppCultures(ignoreFilters: true), times: Times.Once);
+        appCultureBrokerMock.Verify(expression: x => x.GetAllAppCulturesIgnoringFilters(), times: Times.Once);
         appCultureBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_update"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_update"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

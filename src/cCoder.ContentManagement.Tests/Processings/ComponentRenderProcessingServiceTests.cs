@@ -15,6 +15,8 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
@@ -61,7 +63,10 @@ public partial class ComponentRenderProcessingServiceTests
             objectCache: commonObjectCacheMock.Object,
             jsonBroker: new JsonBroker(),
             config: config,
-            componentRenderService: componentRenderService);
+            componentRenderService: componentRenderService,
+            workflowExecutionBroker: new WorkflowExecutionBroker(
+                workflowExecutionDependency:
+                    new WorkflowExecutionDependency()));
     }
 
     private static (RenderApp app, RenderUser user, RenderComponent component, RenderComponentParams renderParams) CreateComponentRenderContext()

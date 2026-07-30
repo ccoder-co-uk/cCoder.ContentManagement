@@ -9,6 +9,8 @@ using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
+using cCoder.ContentManagement.Services.Foundations;
+
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class PageRenderOrchestrationService(
@@ -20,7 +22,13 @@ internal partial class PageRenderOrchestrationService(
         TryCatch<bool>(operation: () =>
     {
         ValidateIsAdminOfApp(inputs: [appId]);
-        return authorizationProcessingService.IsAdminOfApp(appId: appId);
+
+        return authorizationProcessingService
+            .IsAdminOfAppAuthorizationContext(
+                context: new AuthorizationContext
+                {
+                    AppId = appId
+                });
     });
 
     public string ResolveCulture(string culture) =>
@@ -29,7 +37,12 @@ internal partial class PageRenderOrchestrationService(
         ValidateResolveCulture(inputs: [culture]);
 
         RenderAuthorization authorization = authorizationProcessingService
-            .ResolveRenderAuthorization(culture: culture);
+            .ResolveRenderAuthorizationContext(
+                context: new AuthorizationContext
+                {
+                    Culture = culture
+                })
+            .RenderAuthorization;
 
         return authorization.Culture;
 
@@ -73,12 +86,20 @@ internal partial class PageRenderOrchestrationService(
         ValidatePage(page: page, parameterName: "page");
 
         RenderAuthorization authorization = authorizationProcessingService
-            .ResolveRenderAuthorization(culture: null);
+            .ResolveRenderAuthorizationContext(
+                context: new AuthorizationContext())
+            .RenderAuthorization;
 
-        return ContentManagementModelExtensions.UserCan(
-            page: page,
-            user: authorization.User,
-            privilege: privilege);
+        return authorizationProcessingService.UserCanPageAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                PageAuthorization = new PageAuthorization
+                {
+                    Page = page,
+                    User = authorization.User,
+                    Privilege = privilege
+                }
+            });
 
     });
 
@@ -94,7 +115,12 @@ internal partial class PageRenderOrchestrationService(
         ValidateTheme(theme: theme, parameterName: "theme");
 
         RenderAuthorization authorization = authorizationProcessingService
-            .ResolveRenderAuthorization(culture: culture);
+            .ResolveRenderAuthorizationContext(
+                context: new AuthorizationContext
+                {
+                    Culture = culture
+                })
+            .RenderAuthorization;
 
         return ExecuteRenderPage(
             page: page,

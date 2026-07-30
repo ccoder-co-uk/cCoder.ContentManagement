@@ -28,7 +28,7 @@ public partial class CultureServiceTests
         // Given
         Culture culture = CreateRandomCulture(id: "en-GB");
 
-        cultureBrokerMock.Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+        cultureBrokerMock.Setup(expression: x => x.GetAllCultures())
             .Returns(value: new[] { culture }.AsQueryable());
 
         // When
@@ -39,10 +39,10 @@ public partial class CultureServiceTests
         result.Should()
             .BeEquivalentTo(expectation: culture);
 
-        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(), times: Times.Once);
         cultureBrokerMock.VerifyNoOtherCalls();
         appCultureBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

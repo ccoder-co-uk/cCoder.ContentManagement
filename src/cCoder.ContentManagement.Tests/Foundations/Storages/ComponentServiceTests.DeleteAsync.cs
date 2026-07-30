@@ -33,10 +33,10 @@ public partial class ComponentServiceTests
         // Given
         Component component = CreateRandomComponent(id: 9, appId: 7);
 
-        componentBrokerMock.Setup(expression: x => x.GetAllComponents(ignoreFilters: false))
+        componentBrokerMock.Setup(expression: x => x.GetAllComponents())
             .Returns(value: new[] { component }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"));
 
         componentBrokerMock.Setup(expression: x => x.DeleteComponentAsync(deletedComponent: It.IsAny<CmsDataModels.Component>()))
             .ReturnsAsync(value: 1);
@@ -45,11 +45,11 @@ public partial class ComponentServiceTests
         await componentService.DeleteAsync(componentId: 9);
 
         // Then
-        componentBrokerMock.Verify(expression: x => x.GetAllComponents(ignoreFilters: false), times: Times.Once);
+        componentBrokerMock.Verify(expression: x => x.GetAllComponents(), times: Times.Once);
         componentBrokerMock.Verify(expression: x => x.DeleteComponentAsync(deletedComponent: It.Is<CmsDataModels.Component>(match: actual => actual.Id == component.Id)), times: Times.Once);
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -58,10 +58,10 @@ public partial class ComponentServiceTests
         // Given
         Component component = CreateRandomComponent(id: 9, appId: 7);
 
-        componentBrokerMock.Setup(expression: x => x.GetAllComponents(ignoreFilters: false))
+        componentBrokerMock.Setup(expression: x => x.GetAllComponents())
             .Returns(value: new[] { component }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -74,10 +74,10 @@ public partial class ComponentServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        componentBrokerMock.Verify(expression: x => x.GetAllComponents(ignoreFilters: false), times: Times.Once);
+        componentBrokerMock.Verify(expression: x => x.GetAllComponents(), times: Times.Once);
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

@@ -32,7 +32,7 @@ public partial class ComponentServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Component component = CreateRandomComponent(id: 0, appId: 7);
@@ -40,7 +40,7 @@ public partial class ComponentServiceTests
         CmsDataModels.Component submitted = null;
 
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_create"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_create"));
 
         componentBrokerMock
             .Setup(expression: x =>
@@ -151,19 +151,19 @@ times: Times.Once
         );
 
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_create"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_create"), times: Times.Once);
     }
 
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Component component = CreateRandomComponent(id: 0, appId: 7);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_create"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -177,7 +177,7 @@ times: Times.Once
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_create"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_create"), times: Times.Once);
     }
 
 }

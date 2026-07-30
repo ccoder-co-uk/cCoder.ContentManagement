@@ -39,7 +39,7 @@ public partial class AppProcessingServiceTests
         // Then
         appServiceMock.Verify(expression: x => x.DeleteAsync(appId: app.Id), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

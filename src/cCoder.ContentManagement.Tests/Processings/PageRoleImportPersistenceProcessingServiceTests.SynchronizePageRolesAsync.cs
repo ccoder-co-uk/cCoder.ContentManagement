@@ -37,7 +37,7 @@ public partial class PageRoleImportPersistenceProcessingServiceTests
         pageRoleBrokerMock
             .Setup(
                 expression: broker =>
-                    broker.GetAllPageRoles(ignoreFilters: true))
+                    broker.GetAllPageRolesIgnoringFilters())
             .Returns(
                 value: new[]
                 {
@@ -105,7 +105,7 @@ public partial class PageRoleImportPersistenceProcessingServiceTests
         pageRoleBrokerMock
             .Setup(
                 expression: broker =>
-                    broker.GetAllPageRoles(ignoreFilters: true))
+                    broker.GetAllPageRolesIgnoringFilters())
             .Throws(exception: dependencyException);
 
         // When
@@ -137,7 +137,7 @@ public partial class PageRoleImportPersistenceProcessingServiceTests
         pageRoleBrokerMock
             .Setup(
                 expression: broker =>
-                    broker.GetAllPageRoles(ignoreFilters: true))
+                    broker.GetAllPageRolesIgnoringFilters())
             .Throws(exception: serviceException);
 
         // When

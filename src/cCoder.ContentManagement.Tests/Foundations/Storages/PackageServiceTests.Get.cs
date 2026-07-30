@@ -30,7 +30,7 @@ public partial class PackageServiceTests
         Guid packageId = Guid.NewGuid();
         Package package = CreateRandomPackage(id: packageId);
 
-        packageBrokerMock.Setup(expression: x => x.GetAllPackages(ignoreFilters: false))
+        packageBrokerMock.Setup(expression: x => x.GetAllPackages())
             .Returns(value: new[] { package }.AsQueryable());
 
         // When
@@ -41,9 +41,9 @@ public partial class PackageServiceTests
         result.Should()
             .BeEquivalentTo(expectation: package);
 
-        packageBrokerMock.Verify(expression: x => x.GetAllPackages(ignoreFilters: false), times: Times.Once);
+        packageBrokerMock.Verify(expression: x => x.GetAllPackages(), times: Times.Once);
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

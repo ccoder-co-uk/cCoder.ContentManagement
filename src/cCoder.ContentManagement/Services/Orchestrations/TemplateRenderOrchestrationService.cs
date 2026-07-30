@@ -22,7 +22,12 @@ internal sealed partial class TemplateRenderOrchestrationService(
         ValidateTemplateName(name: name, parameterName: "name");
 
         RenderAuthorization authorization = authorizationProcessingService
-            .ResolveRenderAuthorization(culture: culture);
+            .ResolveRenderAuthorizationContext(
+                context: new AuthorizationContext
+                {
+                    Culture = culture
+                })
+            .RenderAuthorization;
 
         return ExecuteRenderUser(
             appId: appId,

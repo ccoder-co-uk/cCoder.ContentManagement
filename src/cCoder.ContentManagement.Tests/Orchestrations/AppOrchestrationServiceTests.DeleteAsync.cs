@@ -16,6 +16,7 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using Moq;
 using Xunit;
+using cCoder.ContentManagement.Models;
 
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
@@ -32,7 +33,10 @@ public partial class AppOrchestrationServiceTests
         app.Roles = [new Role { Id = Guid.NewGuid(), AppId = id, Users = [] }];
 
         authorizationProcessingServiceMock
-            .Setup(expression: x => x.Authorize(appId: id, privilege: "app_delete"));
+            .Setup(expression: x => x.AuthorizeAuthorizationContext(
+                context: It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == id
+                    && context.Request.Privilege == "app_delete")));
 
         appProcessingServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: true))
             .Returns(value: new[] { app }.AsQueryable());
@@ -45,7 +49,13 @@ public partial class AppOrchestrationServiceTests
         await orchestrationService.DeleteAsync(appId: id);
 
         // Then
-        authorizationProcessingServiceMock.Verify(expression: x => x.Authorize(appId: id, privilege: "app_delete"), times: Times.Once);
+        authorizationProcessingServiceMock.Verify(
+            expression: x => x.AuthorizeAuthorizationContext(
+                context: It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == id
+                    && context.Request.Privilege == "app_delete")),
+            times: Times.Once);
+
         appProcessingServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
         appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppDeleteEventAsync(app: app), times: Times.Once);
     }

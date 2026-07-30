@@ -32,7 +32,7 @@ public partial class PackageServiceTests
 
         cCoder.Data.Models.Packaging.Package submitted = null;
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_create"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_create"));
 
         packageBrokerMock
             .Setup(expression: x =>
@@ -97,8 +97,8 @@ times: Times.Once
         );
 
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_create"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_create"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -107,7 +107,7 @@ times: Times.Once
         // Given
         Package package = CreateRandomPackage();
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: null, privilege: "Package_create"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -121,8 +121,8 @@ times: Times.Once
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_create"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_create"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

@@ -44,9 +44,13 @@ public partial class TemplateRenderOrchestrationServiceTests
         string expectedHtml = "<main>template</main>";
 
         authorizationProcessingServiceMock
-            .Setup(expression: service => service.ResolveRenderAuthorization(
-                culture: null))
-            .Returns(value: authorization);
+            .Setup(expression: service => service.ResolveRenderAuthorizationContext(
+                context: It.Is<AuthorizationContext>(
+                    match: context => context.Culture == null)))
+            .Returns(value: new AuthorizationContext
+            {
+                RenderAuthorization = authorization
+            });
 
         templateRenderProcessingServiceMock
             .Setup(

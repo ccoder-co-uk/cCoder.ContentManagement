@@ -29,7 +29,7 @@ public partial class CommonObjectProcessingServiceTests
     public async Task ShouldDelegateToFoundationServiceWhenUserHasDeletePrivilegeForDeleteAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -39,11 +39,11 @@ public partial class CommonObjectProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         currentUser = TestUsers.WithPrivilege(privilege: "commonobject_delete");
@@ -62,7 +62,7 @@ public partial class CommonObjectProcessingServiceTests
     public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -72,11 +72,11 @@ public partial class CommonObjectProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
 

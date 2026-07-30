@@ -28,7 +28,7 @@ public partial class AppProcessingServiceTests
     public async Task ShouldDefaultThemeAndReturnAddedAppWhenUserCanCreateForAddAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -38,11 +38,11 @@ public partial class AppProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "app_create");
@@ -76,11 +76,11 @@ public partial class AppProcessingServiceTests
             });
 
         cultureBrokerMock
-            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Setup(expression: x => x.GetAllCultures())
             .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
 
         privilegeBrokerMock
-            .Setup(expression: x => x.GetAllPrivileges(ignoreFilters: false))
+            .Setup(expression: x => x.GetAllPrivileges())
             .Returns(
 value: new[]
                 {
@@ -122,8 +122,8 @@ newApp: It.Is<App>(match: app =>
 times: Times.Once
         );
 
-        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
-        privilegeBrokerMock.Verify(expression: x => x.GetAllPrivileges(ignoreFilters: false), times: Times.Exactly(callCount: 2));
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(), times: Times.Once);
+        privilegeBrokerMock.Verify(expression: x => x.GetAllPrivileges(), times: Times.Exactly(callCount: 2));
         appServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
         cultureBrokerMock.VerifyNoOtherCalls();
@@ -134,7 +134,7 @@ times: Times.Once
     public async Task ShouldThrowSecurityExceptionWhenAddAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -144,11 +144,11 @@ times: Times.Once
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         App app = new() { Name = "App", Domain = "app.local" };
@@ -160,11 +160,11 @@ times: Times.Once
             .Returns(value: new[] { new App { Id = 99, Domain = "existing.local" } }.AsQueryable());
 
         cultureBrokerMock
-            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Setup(expression: x => x.GetAllCultures())
             .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
 
         privilegeBrokerMock
-            .Setup(expression: x => x.GetAllPrivileges(ignoreFilters: false))
+            .Setup(expression: x => x.GetAllPrivileges())
             .Returns(value: Array.Empty<SecurityDataModels.Privilege>()
             .AsQueryable());
 
@@ -180,8 +180,8 @@ times: Times.Once
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
-        privilegeBrokerMock.Verify(expression: x => x.GetAllPrivileges(ignoreFilters: false), times: Times.Exactly(callCount: 2));
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(), times: Times.Once);
+        privilegeBrokerMock.Verify(expression: x => x.GetAllPrivileges(), times: Times.Exactly(callCount: 2));
         appServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
         appServiceMock.Verify(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
@@ -191,10 +191,10 @@ times: Times.Once
     public async Task ShouldGrantAppCreateToAuthenticatedBootstrapUserWhenCreatingFirstApp()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => null);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUserId())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUserId())
             .Returns(value: "admin");
 
         appServiceMock
@@ -211,11 +211,11 @@ times: Times.Once
             });
 
         cultureBrokerMock
-            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Setup(expression: x => x.GetAllCultures())
             .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
 
         privilegeBrokerMock
-            .Setup(expression: x => x.GetAllPrivileges(ignoreFilters: false))
+            .Setup(expression: x => x.GetAllPrivileges())
             .Returns(
 value: new[]
                 {
@@ -259,7 +259,7 @@ value: new[]
     public async Task ShouldReturnAddedAppWithoutRoleBackReferencesForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => TestUsers.WithPrivilege(privilege: "app_create"));
 
         appServiceMock
@@ -276,11 +276,11 @@ value: new[]
             });
 
         cultureBrokerMock
-            .Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+            .Setup(expression: x => x.GetAllCultures())
             .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
 
         privilegeBrokerMock
-            .Setup(expression: x => x.GetAllPrivileges(ignoreFilters: false))
+            .Setup(expression: x => x.GetAllPrivileges())
             .Returns(
 value: new[]
                 {

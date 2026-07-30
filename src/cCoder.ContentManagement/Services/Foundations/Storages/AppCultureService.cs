@@ -6,15 +6,20 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAuthorizationBroker authorizationBroker) : IAppCultureService
+internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAuthorizationManager authorizationManager) : IAppCultureService
 {
     public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
         TryCatch<IQueryable<AppCulture>>(operation: () =>
     {
         ValidateAllAppCultureOnGet(inputs: [ignoreFilters]);
-        return appCultureBroker.GetAllAppCultures(ignoreFilters: ignoreFilters);
+
+        return ignoreFilters
+            ? appCultureBroker.GetAllAppCulturesIgnoringFilters()
+            : appCultureBroker.GetAllAppCultures();
     });
 
     public AppCulture GetAppCulture(int appId, string cultureId, bool ignoreFilters = false) =>
@@ -24,7 +29,9 @@ internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAu
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateCultureId(cultureId: cultureId, parameterName: "cultureId");
 
-        return appCultureBroker.GetAllAppCultures(ignoreFilters: ignoreFilters)
+        return (ignoreFilters
+            ? appCultureBroker.GetAllAppCulturesIgnoringFilters()
+            : appCultureBroker.GetAllAppCultures())
             .FirstOrDefault(predicate: appCulture => appCulture.AppId == appId && appCulture.CultureId == cultureId);
 
     });
@@ -34,7 +41,7 @@ internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAu
     {
         ValidateAppCultureOnAdd(inputs: [newAppCulture]);
         ValidateAppCulture(appCulture: newAppCulture, parameterName: "appCulture");
-        authorizationBroker.Authorize(appId: newAppCulture.AppId, privilege: "AppCulture_create");
+        authorizationManager.Authorize(appId: newAppCulture.AppId, privilege: "AppCulture_create");
         AppCulture result = await appCultureBroker.AddAppCultureAsync(newAppCulture: CreateStorageAppCulture(newAppCulture: newAppCulture));
         newAppCulture.AppId = result.AppId;
         newAppCulture.CultureId = result.CultureId;
@@ -47,7 +54,7 @@ internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAu
     {
         ValidateAppCultureOnDelete(inputs: [deletedAppCulture]);
         ValidateAppCulture(appCulture: deletedAppCulture, parameterName: "appCulture");
-        authorizationBroker.Authorize(appId: deletedAppCulture.AppId, privilege: "AppCulture_delete");
+        authorizationManager.Authorize(appId: deletedAppCulture.AppId, privilege: "AppCulture_delete");
         await appCultureBroker.DeleteAppCultureAsync(deletedAppCulture: CreateStorageAppCulture(newAppCulture: deletedAppCulture));
 
     }, isValueTask: true);

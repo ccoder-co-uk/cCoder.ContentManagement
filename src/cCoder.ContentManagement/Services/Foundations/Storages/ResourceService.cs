@@ -7,9 +7,11 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class ResourceService(IResourceBroker resourceBroker, IAuthorizationBroker authorizationBroker) : IResourceService
+internal partial class ResourceService(IResourceBroker resourceBroker, IAuthorizationManager authorizationManager) : IResourceService
 {
     public Resource GetResource(int resourceId, bool ignoreFilters = false) =>
         TryCatch<Resource>(operation: () =>
@@ -47,7 +49,10 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
         TryCatch<IQueryable<Resource>>(operation: () =>
     {
         ValidateAllResourceOnGet(inputs: [ignoreFilters]);
-        return resourceBroker.GetAllResources(ignoreFilters: ignoreFilters);
+
+        return ignoreFilters
+            ? resourceBroker.GetAllResourcesIgnoringFilters()
+            : resourceBroker.GetAllResources();
     });
 
     public ValueTask<Resource> AddResourceAsync(Resource newResource) =>
@@ -55,10 +60,10 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
     {
         ValidateResourceOnAdd(inputs: [newResource]);
         ValidateResource(resource: newResource, parameterName: "resource");
-        authorizationBroker.Authorize(appId: newResource.AppId, privilege: "Resource_create");
+        authorizationManager.Authorize(appId: newResource.AppId, privilege: "Resource_create");
         Resource storageResource = CreateStorageResource(newResource: newResource);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = (storageResource.CreatedOn = DateTimeOffset.UtcNow);
@@ -87,10 +92,10 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
     {
         ValidateResourceOnUpdate(inputs: [updatedResource]);
         ValidateResource(resource: updatedResource, parameterName: "resource");
-        authorizationBroker.Authorize(appId: updatedResource.AppId, privilege: "Resource_update");
+        authorizationManager.Authorize(appId: updatedResource.AppId, privilege: "Resource_update");
         Resource updateResource = CreateStorageResource(newResource: updatedResource);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
@@ -134,7 +139,7 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
             return;
         }
 
-        authorizationBroker.Authorize(appId: resource.AppId, privilege: "Resource_delete");
+        authorizationManager.Authorize(appId: resource.AppId, privilege: "Resource_delete");
         await resourceBroker.DeleteResourceAsync(deletedResource: CreateStorageResource(newResource: resource));
 
     }, isValueTask: true);
@@ -164,7 +169,9 @@ internal partial class ResourceService(IResourceBroker resourceBroker, IAuthoriz
     }
 
     private IQueryable<Resource> ExecuteGetAllResource(bool ignoreFilters = false) =>
-        resourceBroker.GetAllResources(ignoreFilters: ignoreFilters);
+        (ignoreFilters
+            ? resourceBroker.GetAllResourcesIgnoringFilters()
+            : resourceBroker.GetAllResources());
 
     private Resource ExecuteGetResource(int resourceId, bool ignoreFilters = false)
     {

@@ -33,7 +33,7 @@ public partial class PackageItemServiceTests
             .Select(selector: item => item)
             .AsQueryable();
 
-        packageItemBrokerMock.Setup(expression: x => x.GetAllPackageItems(ignoreFilters: false))
+        packageItemBrokerMock.Setup(expression: x => x.GetAllPackageItems())
             .Returns(value: packageItems);
 
         // When
@@ -44,10 +44,10 @@ public partial class PackageItemServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedItems);
 
-        packageItemBrokerMock.Verify(expression: x => x.GetAllPackageItems(ignoreFilters: false), times: Times.Once);
+        packageItemBrokerMock.Verify(expression: x => x.GetAllPackageItems(), times: Times.Once);
         packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
         packageItemBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

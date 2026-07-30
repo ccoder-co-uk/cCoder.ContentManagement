@@ -7,9 +7,11 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class ComponentService(IComponentBroker componentBroker, IAuthorizationBroker authorizationBroker) : IComponentService
+internal partial class ComponentService(IComponentBroker componentBroker, IAuthorizationManager authorizationManager) : IComponentService
 {
     public Component GetComponent(int componentId, bool ignoreFilters = false) =>
         TryCatch<Component>(operation: () =>
@@ -47,7 +49,10 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
         TryCatch<IQueryable<Component>>(operation: () =>
     {
         ValidateAllComponentOnGet(inputs: [ignoreFilters]);
-        return componentBroker.GetAllComponents(ignoreFilters: ignoreFilters);
+
+        return ignoreFilters
+            ? componentBroker.GetAllComponentsIgnoringFilters()
+            : componentBroker.GetAllComponents();
     });
 
     public ValueTask<Component> AddComponentAsync(Component newComponent) =>
@@ -55,10 +60,10 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
     {
         ValidateComponentOnAdd(inputs: [newComponent]);
         ValidateComponent(component: newComponent, parameterName: "component");
-        authorizationBroker.Authorize(appId: newComponent.AppId, privilege: "Component_create");
+        authorizationManager.Authorize(appId: newComponent.AppId, privilege: "Component_create");
         Component storageComponent = CreateStorageComponent(newComponent: newComponent);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = (storageComponent.CreatedOn = DateTimeOffset.UtcNow);
@@ -87,10 +92,10 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
     {
         ValidateComponentOnUpdate(inputs: [updatedComponent]);
         ValidateComponent(component: updatedComponent, parameterName: "component");
-        authorizationBroker.Authorize(appId: updatedComponent.AppId, privilege: "Component_update");
+        authorizationManager.Authorize(appId: updatedComponent.AppId, privilege: "Component_update");
         Component updateComponent = CreateStorageComponent(newComponent: updatedComponent);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
@@ -134,7 +139,7 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
             return;
         }
 
-        authorizationBroker.Authorize(appId: component.AppId, privilege: "Component_delete");
+        authorizationManager.Authorize(appId: component.AppId, privilege: "Component_delete");
         await componentBroker.DeleteComponentAsync(deletedComponent: CreateStorageComponent(newComponent: component));
 
     }, isValueTask: true);
@@ -164,7 +169,9 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
     }
 
     private IQueryable<Component> ExecuteGetAllComponent(bool ignoreFilters = false) =>
-        componentBroker.GetAllComponents(ignoreFilters: ignoreFilters);
+        (ignoreFilters
+            ? componentBroker.GetAllComponentsIgnoringFilters()
+            : componentBroker.GetAllComponents());
 
     private Component ExecuteGetComponent(int componentId, bool ignoreFilters = false)
     {

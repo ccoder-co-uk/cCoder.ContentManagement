@@ -8,11 +8,13 @@ using cCoder.ContentManagement.Brokers.Storages;
 using Microsoft.EntityFrameworkCore;
 using cCoder.Data.Models.CMS;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class AppService(
     IAppBroker appBroker,
-    IAuthorizationBroker authorizationBroker) : IAppService
+    IAuthorizationManager authorizationManager) : IAppService
 {
     public App GetApp(int appId, bool ignoreFilters = false) =>
         TryCatch<App>(operation: () =>
@@ -22,11 +24,11 @@ internal partial class AppService(
 
         if (ignoreFilters)
         {
-            return appBroker.GetAllApps(ignoreFilters: true)
+            return appBroker.GetAllAppsIgnoringFilters()
                 .FirstOrDefault(predicate: app => app.Id == appId);
         }
 
-        App app = appBroker.GetAllApps(ignoreFilters: false)
+        App app = appBroker.GetAllApps()
             .FirstOrDefault(predicate: foundApp => foundApp.Id == appId);
 
         if (app != null)
@@ -34,7 +36,7 @@ internal partial class AppService(
             return app;
         }
 
-        App app2 = appBroker.GetAllApps(ignoreFilters: true)
+        App app2 = appBroker.GetAllAppsIgnoringFilters()
             .FirstOrDefault(predicate: foundApp => foundApp.Id == appId);
 
         if (app2 != null)
@@ -50,7 +52,10 @@ internal partial class AppService(
         TryCatch<IQueryable<App>>(operation: () =>
     {
         ValidateAllAppOnGet(inputs: [ignoreFilters]);
-        return appBroker.GetAllApps(ignoreFilters: ignoreFilters);
+
+        return ignoreFilters
+            ? appBroker.GetAllAppsIgnoringFilters()
+            : appBroker.GetAllApps();
     });
 
     public ValueTask<App> AddAppAsync(App newApp) =>
@@ -59,10 +64,10 @@ internal partial class AppService(
         ValidateAppOnAdd(inputs: [newApp]);
         ValidateApp(app: newApp, parameterName: "app");
 
-        if (appBroker.GetAllApps(ignoreFilters: true)
+        if (appBroker.GetAllAppsIgnoringFilters()
             .Any())
         {
-            authorizationBroker.Authorize(
+            authorizationManager.Authorize(
                 appId: null,
                 privilege: "App_create");
         }
@@ -85,7 +90,7 @@ internal partial class AppService(
     {
         ValidateAppOnUpdate(inputs: [updatedApp]);
         ValidateApp(app: updatedApp, parameterName: "app");
-        authorizationBroker.Authorize(appId: updatedApp.Id, privilege: "App_update");
+        authorizationManager.Authorize(appId: updatedApp.Id, privilege: "App_update");
         App storedApp = CreateStorageApp(newApp: updatedApp);
         App result = await appBroker.UpdateAppAsync(updatedApp: storedApp);
         updatedApp.Id = result.Id;
@@ -113,7 +118,7 @@ internal partial class AppService(
 
         if (app.Roles?.Any() == true)
         {
-            authorizationBroker.Authorize(appId: app.Id, privilege: "App_delete");
+            authorizationManager.Authorize(appId: app.Id, privilege: "App_delete");
         }
 
         await appBroker.DeleteAppAggregateAsync(deletedApp: app);
@@ -121,7 +126,7 @@ internal partial class AppService(
     }, isValueTask: true);
 
     private App GetAppForDelete(int appId) =>
-        appBroker.GetAllApps(ignoreFilters: true)
+        appBroker.GetAllAppsIgnoringFilters()
         .Include(navigationPropertyPath: app => app.Roles)
         .ThenInclude(navigationPropertyPath: role => role.Users)
         .FirstOrDefault(predicate: app => app.Id == appId);

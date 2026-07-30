@@ -33,10 +33,10 @@ public partial class LayoutServiceTests
         // Given
         Layout layout = CreateRandomLayout(id: 9, appId: 7);
 
-        layoutBrokerMock.Setup(expression: x => x.GetAllLayouts(ignoreFilters: false))
+        layoutBrokerMock.Setup(expression: x => x.GetAllLayouts())
             .Returns(value: new[] { layout }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"));
 
         layoutBrokerMock.Setup(expression: x => x.DeleteLayoutAsync(deletedLayout: It.IsAny<CmsDataModels.Layout>()))
             .ReturnsAsync(value: 1);
@@ -45,11 +45,11 @@ public partial class LayoutServiceTests
         await layoutService.DeleteAsync(layoutId: 9);
 
         // Then
-        layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(ignoreFilters: false), times: Times.Once);
+        layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(), times: Times.Once);
         layoutBrokerMock.Verify(expression: x => x.DeleteLayoutAsync(deletedLayout: It.Is<CmsDataModels.Layout>(match: actual => actual.Id == layout.Id)), times: Times.Once);
         layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -58,10 +58,10 @@ public partial class LayoutServiceTests
         // Given
         Layout layout = CreateRandomLayout(id: 9, appId: 7);
 
-        layoutBrokerMock.Setup(expression: x => x.GetAllLayouts(ignoreFilters: false))
+        layoutBrokerMock.Setup(expression: x => x.GetAllLayouts())
             .Returns(value: new[] { layout }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -74,10 +74,10 @@ public partial class LayoutServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(ignoreFilters: false), times: Times.Once);
+        layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(), times: Times.Once);
         layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

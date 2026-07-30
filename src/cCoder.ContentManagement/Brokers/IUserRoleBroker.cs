@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers;
 
 public interface IUserRoleBroker
 {
-    IQueryable<UserRole> GetAllUserRoles(bool ignoreFilters);
+    IQueryable<UserRole> GetAllUserRoles();
+
+    IQueryable<UserRole> GetAllUserRolesIgnoringFilters();
 
     ValueTask<UserRole> AddUserRoleAsync(UserRole newUserRole);
 

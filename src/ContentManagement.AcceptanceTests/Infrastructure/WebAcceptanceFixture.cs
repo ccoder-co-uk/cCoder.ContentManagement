@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Web.AcceptanceTests.Models;
 using Xunit;
 
-
 namespace Web.AcceptanceTests.Infrastructure;
 
 public sealed class WebAcceptanceFixture : IAsyncLifetime
@@ -95,10 +94,4 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
 
         return services.BuildServiceProvider(validateScopes: false);
     }
-}
-
-[CollectionDefinition(Name)]
-public sealed class WebAcceptanceCollection : ICollectionFixture<WebAcceptanceFixture>
-{
-    public const string Name = "Web acceptance";
 }

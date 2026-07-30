@@ -28,7 +28,7 @@ public partial class PageServiceTests
         // Given
         Page page = CreateRandomPage(id: 5);
 
-        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: false))
+        pageBrokerMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { page }.AsQueryable());
 
         // When
@@ -39,9 +39,9 @@ public partial class PageServiceTests
         result.Should()
             .BeEquivalentTo(expectation: page);
 
-        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: false), times: Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

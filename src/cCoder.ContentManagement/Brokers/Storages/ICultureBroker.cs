@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface ICultureBroker
 {
-    IQueryable<Culture> GetAllCultures(bool ignoreFilters);
+    IQueryable<Culture> GetAllCultures();
+
+    IQueryable<Culture> GetAllCulturesIgnoringFilters();
 
     ValueTask<Culture> AddCultureAsync(Culture newCulture);
 

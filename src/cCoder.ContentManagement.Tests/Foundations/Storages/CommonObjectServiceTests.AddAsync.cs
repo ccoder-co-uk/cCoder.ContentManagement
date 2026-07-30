@@ -28,7 +28,7 @@ public partial class CommonObjectServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         CommonObject commonObject = CreateRandomCommonObject(id: 0);
@@ -38,7 +38,7 @@ public partial class CommonObjectServiceTests
         commonObjectBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()))
             .Returns(value: (int?)7);
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_create"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_create"));
 
         commonObjectBrokerMock
             .Setup(expression: x =>
@@ -155,7 +155,7 @@ times: Times.AtMostOnce()
 
         commonObjectBrokerMock.VerifyNoOtherCalls();
 
-        authorizationBrokerMock.Verify(
+        authorizationManagerMock.Verify(
 expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_create"),
 times: Times.Once
         );
@@ -165,7 +165,7 @@ times: Times.Once
     public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         CommonObject commonObject = CreateRandomCommonObject(id: 0);
@@ -173,7 +173,7 @@ times: Times.Once
         commonObjectBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()))
             .Returns(value: (int?)7);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_create"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -193,7 +193,7 @@ times: Times.AtMostOnce()
 
         commonObjectBrokerMock.VerifyNoOtherCalls();
 
-        authorizationBrokerMock.Verify(
+        authorizationManagerMock.Verify(
 expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_create"),
 times: Times.Once
         );

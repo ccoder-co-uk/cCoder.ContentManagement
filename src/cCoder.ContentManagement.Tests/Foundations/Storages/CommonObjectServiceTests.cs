@@ -19,23 +19,25 @@ using FizzWare.NBuilder;
 using Moq;
 
 using DataCommonObject = cCoder.Data.Models.CommonObject;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class CommonObjectServiceTests
 {
     private readonly Mock<ICommonObjectBroker> commonObjectBrokerMock;
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock;
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly CommonObjectService commonObjectService;
 
     public CommonObjectServiceTests()
     {
         commonObjectBrokerMock = new Mock<ICommonObjectBroker>(behavior: MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
 
         commonObjectService = new CommonObjectService(
 commonObjectBroker: commonObjectBrokerMock.Object,
-authorizationBroker: authorizationBrokerMock.Object
+authorizationManager: authorizationManagerMock.Object
         );
     }
 

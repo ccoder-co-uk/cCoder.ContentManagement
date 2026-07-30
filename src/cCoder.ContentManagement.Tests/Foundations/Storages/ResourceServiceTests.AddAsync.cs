@@ -33,13 +33,13 @@ public partial class ResourceServiceTests
     {
         // Given
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Resource resource = CreateRandomResource(id: 0, appId: 7);
         CmsDataModels.Resource submitted = null;
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_create"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_create"));
 
         resourceBrokerMock
             .Setup(expression: x =>
@@ -155,13 +155,13 @@ times: Times.Once
     {
         // Given
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Resource resource = CreateRandomResource(id: 0, appId: 7);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_create"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 

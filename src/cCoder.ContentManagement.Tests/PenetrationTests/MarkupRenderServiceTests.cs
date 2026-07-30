@@ -17,5 +17,6 @@ public partial class MarkupRenderServiceTests
             componentReaderBroker: Mock.Of<IComponentReaderBroker>(),
             scriptReaderBroker: Mock.Of<IScriptReaderBroker>(),
             jsonBroker: Mock.Of<IJsonBroker>(),
-            renderFileContentBroker: Mock.Of<IRenderFileContentBroker>());
+            renderFileContentBroker: Mock.Of<IRenderFileContentBroker>(),
+            workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>());
 }

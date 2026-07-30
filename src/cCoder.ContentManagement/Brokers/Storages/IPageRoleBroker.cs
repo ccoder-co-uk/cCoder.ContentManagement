@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IPageRoleBroker
 {
-    IQueryable<PageRole> GetAllPageRoles(bool ignoreFilters);
+    IQueryable<PageRole> GetAllPageRoles();
+
+    IQueryable<PageRole> GetAllPageRolesIgnoringFilters();
 
     ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole);
 

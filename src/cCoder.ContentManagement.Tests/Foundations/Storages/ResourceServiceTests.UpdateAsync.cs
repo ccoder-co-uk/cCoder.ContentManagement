@@ -33,13 +33,13 @@ public partial class ResourceServiceTests
     {
         // Given
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Resource resource = CreateRandomResource(id: 5, appId: 7);
         CmsDataModels.Resource submitted = null;
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_update"));
 
         resourceBrokerMock
             .Setup(expression: x => x.UpdateResourceAsync(updatedResource: It.IsAny<CmsDataModels.Resource>()))
@@ -143,13 +143,13 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
     {
         // Given
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Resource resource = CreateRandomResource(id: 5, appId: 7);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 

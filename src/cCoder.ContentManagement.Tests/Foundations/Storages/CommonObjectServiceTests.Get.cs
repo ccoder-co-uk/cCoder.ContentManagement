@@ -29,7 +29,7 @@ public partial class CommonObjectServiceTests
         CommonObject commonObject = CreateRandomCommonObject(id: 7);
 
         commonObjectBrokerMock
-            .Setup(expression: x => x.GetAllCommonObjects(ignoreFilters: false))
+            .Setup(expression: x => x.GetAllCommonObjects())
             .Returns(value: new[] { ToDataCommonObject(commonObject: commonObject) }.AsQueryable());
 
         // When
@@ -40,7 +40,7 @@ public partial class CommonObjectServiceTests
         result.Should()
             .BeEquivalentTo(expectation: commonObject);
 
-        commonObjectBrokerMock.Verify(expression: x => x.GetAllCommonObjects(ignoreFilters: false), times: Times.Once);
+        commonObjectBrokerMock.Verify(expression: x => x.GetAllCommonObjects(), times: Times.Once);
 
         commonObjectBrokerMock.Verify(
 expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()),
@@ -48,7 +48,7 @@ times: Times.AtMostOnce()
         );
 
         commonObjectBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

@@ -11,12 +11,14 @@ using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class CommonObjectProcessingService(ICommonObjectService service, ICommonObjectReaderBroker cache, IAuthorizationBroker authorizationBroker, IJsonBroker jsonBroker) : ICommonObjectProcessingService
+internal partial class CommonObjectProcessingService(ICommonObjectService service, ICommonObjectReaderBroker cache, IAuthorizationManager authorizationManager, IJsonBroker jsonBroker) : ICommonObjectProcessingService
 {
     private User GetCurrentUser() =>
-        authorizationBroker.GetCurrentUser();
+        authorizationManager.GetCurrentUser();
 
     public CommonObject GetCommonObject(int commonObjectId) =>
         TryCatch<CommonObject>(operation: () =>
@@ -105,7 +107,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     {
         ValidateCommonObjectOnAdd(inputs: [newCommonObject]);
         ValidateCommonObject(commonObject: newCommonObject, parameterName: "entity");
-        authorizationBroker.Authorize(appId: null, privilege: "commonobject_create");
+        authorizationManager.Authorize(appId: null, privilege: "commonobject_create");
         return await service.AddCommonObjectAsync(newCommonObject: newCommonObject);
 
     }, isValueTask: true);
@@ -115,8 +117,8 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     {
         ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject]);
         ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "entity");
-        authorizationBroker.Authorize(appId: null, privilege: "commonobject_create");
-        authorizationBroker.Authorize(appId: null, privilege: "commonobject_update");
+        authorizationManager.Authorize(appId: null, privilege: "commonobject_create");
+        authorizationManager.Authorize(appId: null, privilege: "commonobject_update");
 
         int newVersionCount = service.GetAllCommonObject()
             .Count(predicate: (CommonObject c) => c.Name == updatedCommonObject.Name && c.Type == updatedCommonObject.Type && c.Culture == updatedCommonObject.Culture && c.Key == updatedCommonObject.Key) + 1;
@@ -203,7 +205,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     {
         ValidateDeleteAsync(inputs: [commonObjectId]);
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
-        authorizationBroker.Authorize(appId: null, privilege: "commonobject_delete");
+        authorizationManager.Authorize(appId: null, privilege: "commonobject_delete");
         await service.DeleteAsync(commonObjectId: commonObjectId);
 
     }, isValueTask: true);
@@ -279,7 +281,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     private async ValueTask<CommonObject> ExecuteAddCommonObjectAsync(CommonObject newCommonObject)
     {
         ValidateCommonObject(commonObject: newCommonObject, parameterName: "entity");
-        authorizationBroker.Authorize(appId: null, privilege: "commonobject_create");
+        authorizationManager.Authorize(appId: null, privilege: "commonobject_create");
         return await service.AddCommonObjectAsync(newCommonObject: newCommonObject);
     }
 
@@ -318,7 +320,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     private async ValueTask ExecuteDeleteAsync(int commonObjectId)
     {
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
-        authorizationBroker.Authorize(appId: null, privilege: "commonobject_delete");
+        authorizationManager.Authorize(appId: null, privilege: "commonobject_delete");
         await service.DeleteAsync(commonObjectId: commonObjectId);
     }
 
@@ -333,8 +335,8 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     private async ValueTask<CommonObject> ExecuteUpdateCommonObjectAsync(CommonObject updatedCommonObject)
     {
         ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "entity");
-        authorizationBroker.Authorize(appId: null, privilege: "commonobject_create");
-        authorizationBroker.Authorize(appId: null, privilege: "commonobject_update");
+        authorizationManager.Authorize(appId: null, privilege: "commonobject_create");
+        authorizationManager.Authorize(appId: null, privilege: "commonobject_update");
 
         int newVersionCount = service.GetAllCommonObject()
             .Count(predicate: (CommonObject c) => c.Name == updatedCommonObject.Name && c.Type == updatedCommonObject.Type && c.Culture == updatedCommonObject.Culture && c.Key == updatedCommonObject.Key) + 1;

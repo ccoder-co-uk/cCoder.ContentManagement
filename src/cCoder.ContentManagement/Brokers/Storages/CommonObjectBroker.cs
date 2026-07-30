@@ -10,22 +10,39 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class CommonObjectBroker(ICoreContextFactory coreContextFactory) : ICommonObjectBroker
 {
-    public IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters)
+    public IQueryable<CommonObject> GetAllCommonObjects()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.CommonObjects,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.CommonObjects;
+    }
+
+    public IQueryable<CommonObject> GetAllCommonObjectsIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.CommonObjects.IgnoreQueryFilters();
     }
 
     public CommonObject[] GetLatestCommonObjectsPaged(int pageSize = 500)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.CommonObjectQueryExtensions.GetLatestCommonObjectsPaged(
-            coreDataContext: coreDataContext,
-            pageSize: pageSize);
+        return coreDataContext.CommonObjects
+            .AsNoTracking()
+            .GroupBy(keySelector: commonObject => new
+            {
+                commonObject.Name,
+                commonObject.Culture,
+                commonObject.Key,
+                commonObject.Type
+            })
+            .Select(
+                selector: group => group
+                    .OrderByDescending(
+                        keySelector: version => version.Version)
+                    .First())
+            .ToArray();
     }
 
     public async ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject)

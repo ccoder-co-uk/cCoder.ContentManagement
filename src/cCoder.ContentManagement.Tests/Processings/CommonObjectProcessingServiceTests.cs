@@ -18,9 +18,11 @@ using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
 
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
 
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
@@ -29,7 +31,7 @@ public partial class CommonObjectProcessingServiceTests
     private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<ICommonObjectService> commonObjectServiceMock = new();
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
     private readonly CommonObjectProcessingService commonObjectProcessingService;
 
     public CommonObjectProcessingServiceTests()
@@ -37,7 +39,7 @@ public partial class CommonObjectProcessingServiceTests
         commonObjectProcessingService = new CommonObjectProcessingService(
 service: commonObjectServiceMock.Object,
 cache: commonObjectCacheMock.Object,
-authorizationBroker: authorizationBrokerMock.Object,
+authorizationManager: authorizationManagerMock.Object,
 jsonBroker: new JsonBroker()
         );
     }

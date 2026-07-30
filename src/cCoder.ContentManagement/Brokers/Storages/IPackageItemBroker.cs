@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IPackageItemBroker
 {
-    IQueryable<PackageItem> GetAllPackageItems(bool ignoreFilters);
+    IQueryable<PackageItem> GetAllPackageItems();
+
+    IQueryable<PackageItem> GetAllPackageItemsIgnoringFilters();
 
     ValueTask<PackageItem> AddPackageItemAsync(PackageItem newPackageItem);
 

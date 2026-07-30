@@ -28,7 +28,7 @@ public partial class PageInfoServiceTests
         // Given
         PageInfo pageInfo = CreateRandomPageInfo(id: 7);
 
-        pageInfoBrokerMock.Setup(expression: x => x.GetAllPageInfo(ignoreFilters: false))
+        pageInfoBrokerMock.Setup(expression: x => x.GetAllPageInfo())
             .Returns(value: new[] { ToDataPageInfo(pageInfo: pageInfo) }.AsQueryable());
 
         // When
@@ -39,10 +39,10 @@ public partial class PageInfoServiceTests
         result.Should()
             .BeEquivalentTo(expectation: pageInfo);
 
-        pageInfoBrokerMock.Verify(expression: x => x.GetAllPageInfo(ignoreFilters: false), times: Times.Once);
+        pageInfoBrokerMock.Verify(expression: x => x.GetAllPageInfo(), times: Times.Once);
         pageInfoBrokerMock.VerifyNoOtherCalls();
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

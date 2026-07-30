@@ -28,7 +28,7 @@ public partial class LayoutServiceTests
         // Given
         Layout layout = CreateRandomLayout(id: 7);
 
-        layoutBrokerMock.Setup(expression: x => x.GetAllLayouts(ignoreFilters: false))
+        layoutBrokerMock.Setup(expression: x => x.GetAllLayouts())
             .Returns(value: new[] { layout }.AsQueryable());
 
         // When
@@ -39,9 +39,9 @@ public partial class LayoutServiceTests
         result.Should()
             .BeEquivalentTo(expectation: layout);
 
-        layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(ignoreFilters: false), times: Times.Once);
+        layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(), times: Times.Once);
         layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

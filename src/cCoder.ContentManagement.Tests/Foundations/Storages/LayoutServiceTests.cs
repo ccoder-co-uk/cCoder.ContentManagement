@@ -20,22 +20,24 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class LayoutServiceTests
 {
     private readonly Mock<ILayoutBroker> layoutBrokerMock;
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock;
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly LayoutService layoutService;
 
     public LayoutServiceTests()
     {
         layoutBrokerMock = new Mock<ILayoutBroker>(behavior: MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
-        layoutService = new LayoutService(layoutBroker: layoutBrokerMock.Object, authorizationBroker: authorizationBrokerMock.Object);
+        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
+        layoutService = new LayoutService(layoutBroker: layoutBrokerMock.Object, authorizationManager: authorizationManagerMock.Object);
     }
 
     private static Layout CreateRandomLayout(int id = 42, int appId = 7)

@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class ResourceBroker(ICoreContextFactory coreContextFactory) : IResourceBroker
 {
-    public IQueryable<Resource> GetAllResources(bool ignoreFilters)
+    public IQueryable<Resource> GetAllResources()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Resources,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Resources;
+    }
+
+    public IQueryable<Resource> GetAllResourcesIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Resources.IgnoreQueryFilters();
     }
 
     public async ValueTask<Resource> AddResourceAsync(Resource newResource)

@@ -44,10 +44,15 @@ public partial class AppOrchestrationServiceTests
         result.Should()
             .BeSameAs(expected: entity);
 
-        appProcessingServiceMock.Verify(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()), times: Times.Once);
-        appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppAddEventAsync(app: entity), times: Times.Once);
+        appProcessingServiceMock.Verify(
+            expression: x => x.AddAppAsync(newApp: It.IsAny<App>()),
+            times: Times.Once);
+
+        appEventProcessingServiceMock.Verify(
+            expression: x => x.RaiseAppAddEventAsync(app: entity),
+            times: Times.Once);
+
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
-
 }

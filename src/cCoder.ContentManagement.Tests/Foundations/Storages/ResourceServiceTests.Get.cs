@@ -28,7 +28,7 @@ public partial class ResourceServiceTests
         // When
         Resource resource = CreateRandomResource(id: 5, appId: 7);
 
-        resourceBrokerMock.Setup(expression: x => x.GetAllResources(ignoreFilters: false))
+        resourceBrokerMock.Setup(expression: x => x.GetAllResources())
             .Returns(value: new[] { resource }.AsQueryable());
 
         Resource result = resourceService.GetResource(resourceId: 5);

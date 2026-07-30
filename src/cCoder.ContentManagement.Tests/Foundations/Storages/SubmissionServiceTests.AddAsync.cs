@@ -32,7 +32,7 @@ public partial class SubmissionServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Submission submission = CreateRandomSubmission(id: Guid.Empty);
@@ -40,7 +40,7 @@ public partial class SubmissionServiceTests
         CmsDataModels.Submission submitted = null;
 
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_create"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_create"));
 
         submissionBrokerMock
             .Setup(expression: x =>
@@ -151,19 +151,19 @@ times: Times.Once
         );
 
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_create"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_create"), times: Times.Once);
     }
 
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Submission submission = CreateRandomSubmission(id: Guid.Empty);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_create"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -177,7 +177,7 @@ times: Times.Once
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_create"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_create"), times: Times.Once);
     }
 
 }

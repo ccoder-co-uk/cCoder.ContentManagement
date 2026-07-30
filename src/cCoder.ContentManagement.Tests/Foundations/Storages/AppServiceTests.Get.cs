@@ -28,7 +28,7 @@ public partial class AppServiceTests
         // Given
         App app = CreateRandomApp(id: 5);
 
-        appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: false))
+        appBrokerMock.Setup(expression: x => x.GetAllApps())
             .Returns(value: new[] { app }.AsQueryable());
 
         // When
@@ -38,9 +38,9 @@ public partial class AppServiceTests
         result.Should()
             .BeEquivalentTo(expectation: app);
 
-        appBrokerMock.Verify(expression: x => x.GetAllApps(ignoreFilters: false), times: Times.Once);
+        appBrokerMock.Verify(expression: x => x.GetAllApps(), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public partial class AppServiceTests
         // Given
         App app = CreateRandomApp(id: 7);
 
-        appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: true))
+        appBrokerMock.Setup(expression: x => x.GetAllAppsIgnoringFilters())
             .Returns(value: new[] { app }.AsQueryable());
 
         // When
@@ -59,9 +59,9 @@ public partial class AppServiceTests
         result.Should()
             .BeEquivalentTo(expectation: app);
 
-        appBrokerMock.Verify(expression: x => x.GetAllApps(ignoreFilters: true), times: Times.Once);
+        appBrokerMock.Verify(expression: x => x.GetAllAppsIgnoringFilters(), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -70,11 +70,11 @@ public partial class AppServiceTests
         // Given
         App app = CreateRandomApp(id: 9);
 
-        appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: false))
+        appBrokerMock.Setup(expression: x => x.GetAllApps())
             .Returns(value: Array.Empty<cCoder.Data.Models.CMS.App>()
             .AsQueryable());
 
-        appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: true))
+        appBrokerMock.Setup(expression: x => x.GetAllAppsIgnoringFilters())
             .Returns(value: new[] { app }.AsQueryable());
 
         // When
@@ -85,10 +85,10 @@ public partial class AppServiceTests
             .Throw<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        appBrokerMock.Verify(expression: x => x.GetAllApps(ignoreFilters: false), times: Times.Once);
-        appBrokerMock.Verify(expression: x => x.GetAllApps(ignoreFilters: true), times: Times.Once);
+        appBrokerMock.Verify(expression: x => x.GetAllApps(), times: Times.Once);
+        appBrokerMock.Verify(expression: x => x.GetAllAppsIgnoringFilters(), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

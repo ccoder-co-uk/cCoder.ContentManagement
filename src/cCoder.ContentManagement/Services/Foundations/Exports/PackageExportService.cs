@@ -10,10 +10,12 @@ using cCoder.Data.Extensions;
 using Newtonsoft.Json;
 using cCoder.Data.Models.Packaging;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Exports;
 
 internal partial class PackageExportService(
-    IAuthorizationBroker authorizationBroker,
+    IAuthorizationManager authorizationManager,
     IRoleBroker roleBroker,
     ILayoutBroker layoutBroker,
     ITemplateBroker templateBroker,
@@ -31,7 +33,7 @@ internal partial class PackageExportService(
         return CreatePackage(
 name: "Roles",
 itemType: "Core/Role",
-data: roleBroker.GetAllRoles(ignoreFilters: true)
+data: roleBroker.GetAllRolesIgnoringFilters()
             .Where(predicate: role => role.AppId == appId)
             .Select(selector: role => new { role.Name, role.Privs })
             .ToArray());
@@ -47,7 +49,7 @@ data: roleBroker.GetAllRoles(ignoreFilters: true)
         return CreatePackage(
 name: "Layouts",
 itemType: "ContentManagement/Layout",
-data: layoutBroker.GetAllLayouts(ignoreFilters: true)
+data: layoutBroker.GetAllLayoutsIgnoringFilters()
             .Where(predicate: layout => layout.AppId == appId)
             .Select(selector: layout => new
             {
@@ -70,7 +72,7 @@ data: layoutBroker.GetAllLayouts(ignoreFilters: true)
         return CreatePackage(
 name: "Templates",
 itemType: "ContentManagement/Template",
-data: templateBroker.GetAllTemplates(ignoreFilters: true)
+data: templateBroker.GetAllTemplatesIgnoringFilters()
             .Where(predicate: template => template.AppId == appId)
             .Select(selector: template => new
             {
@@ -92,7 +94,7 @@ data: templateBroker.GetAllTemplates(ignoreFilters: true)
         return CreatePackage(
 name: "Components",
 itemType: "ContentManagement/Component",
-data: componentBroker.GetAllComponents(ignoreFilters: true)
+data: componentBroker.GetAllComponentsIgnoringFilters()
             .Where(predicate: component => component.AppId == appId)
             .Select(selector: component => new
             {
@@ -116,7 +118,7 @@ data: componentBroker.GetAllComponents(ignoreFilters: true)
         return CreatePackage(
 name: "Scripts",
 itemType: "ContentManagement/Script",
-data: scriptBroker.GetAllScripts(ignoreFilters: true)
+data: scriptBroker.GetAllScriptsIgnoringFilters()
             .Where(predicate: script => script.AppId == appId)
             .Select(selector: script => new
             {
@@ -137,7 +139,7 @@ data: scriptBroker.GetAllScripts(ignoreFilters: true)
         return CreatePackage(
 name: "Resources",
 itemType: "ContentManagement/Resource",
-data: resourceBroker.GetAllResources(ignoreFilters: true)
+data: resourceBroker.GetAllResourcesIgnoringFilters()
             .Where(predicate: resource => resource.AppId == appId)
             .Select(selector: resource => new
             {
@@ -159,7 +161,7 @@ data: resourceBroker.GetAllResources(ignoreFilters: true)
         ValidateExportPagesPackage(inputs: [appId]);
         EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
 
-        List<ExportPage> pages = pageBroker.GetAllPages(ignoreFilters: true)
+        List<ExportPage> pages = pageBroker.GetAllPagesIgnoringFilters()
             .Where(predicate: page => page.AppId == appId)
             .Select(selector: page => new ExportPage
             {
@@ -237,7 +239,7 @@ data: pages.Select(selector: page => new
         return CreatePackage(
 name: "PageRoles",
 itemType: "ContentManagement/PageRole",
-data: pageBroker.GetAllPages(ignoreFilters: true)
+data: pageBroker.GetAllPagesIgnoringFilters()
             .Where(predicate: page => page.AppId == appId)
             .SelectMany(selector: page => page.Roles.Select(selector: role => new
             {
@@ -265,7 +267,7 @@ data: pageBroker.GetAllPages(ignoreFilters: true)
 
     private void EnsureAdmin(int appId)
     {
-        if (!authorizationBroker.IsAdminOfApp(appId: appId))
+        if (!authorizationManager.IsAdminOfApp(appId: appId))
         {
             throw new SecurityException(message: "Access Denied!");
         }

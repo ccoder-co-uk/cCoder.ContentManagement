@@ -20,32 +20,34 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 using SecurityDataModels = cCoder.Data.Models.Security;
 
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class ResourceServiceTests
 {
     private readonly Mock<IResourceBroker> resourceBrokerMock;
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock;
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly ResourceService resourceService;
 
     public ResourceServiceTests()
     {
         resourceBrokerMock = new Mock<IResourceBroker>(behavior: MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
         resourceBrokerMock = new();
-        authorizationBrokerMock = new(behavior: MockBehavior.Strict);
+        authorizationManagerMock = new(behavior: MockBehavior.Strict);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         resourceService = new ResourceService(
 resourceBroker: resourceBrokerMock.Object,
-authorizationBroker: authorizationBrokerMock.Object
+authorizationManager: authorizationManagerMock.Object
         );
     }
 

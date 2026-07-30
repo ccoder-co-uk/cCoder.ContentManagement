@@ -5,20 +5,25 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Foundations.Authorization;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Extensions;
 
+using cCoder.ContentManagement.Services.Foundations;
+
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PageProcessingService(
     IPageService service,
-    IAuthorizationBroker authorizationBroker) : IPageProcessingService
+    IAuthorizationManager authorizationManager) : IPageProcessingService
 {
     private User GetCurrentUser() =>
-        authorizationBroker.GetCurrentUser();
+        authorizationManager.GetCurrentUser();
 
     public Page GetPage(int pageId) =>
         TryCatch<Page>(operation: () =>
@@ -45,7 +50,8 @@ internal partial class PageProcessingService(
         IEnumerable<string> enumerable = service.GetAllPage(ignoreFilters: false)
             .Where(predicate: page => page.ParentId == pageId && page.ShowOnMenus)
             .OrderBy(keySelector: page => page.Order)
-            .Select(selector: page => $"<li data-id='{page.Id}' class='item'><a href='/{page.Path}'>{ContentManagementModelExtensions.Title(page: page, culture: culture)}</a></li>");
+            .Select(selector: page =>
+                $"<li data-id='{page.Id}' class='item'><a href='/{page.Path}'>{GetPageInfo(page: page, culture: culture).Title}</a></li>");
 
         string text = (enumerable.Any() ? string.Join(separator: "", values: enumerable) : string.Empty);
         return "<ul class='submenu'>" + text + "</ul>";
@@ -140,7 +146,7 @@ internal partial class PageProcessingService(
         ValidatePageOnAdd(inputs: [newPage]);
         ValidatePage(page: newPage, parameterName: "page");
 
-        if (!authorizationBroker.IsAdminOfApp(appId: newPage.AppId) && newPage.ParentId.HasValue)
+        if (!authorizationManager.IsAdminOfApp(appId: newPage.AppId) && newPage.ParentId.HasValue)
         {
             UserCan(privKey: "page_create", pageId: newPage.ParentId.Value);
         }
@@ -276,7 +282,7 @@ internal partial class PageProcessingService(
         ValidateRecomputeAllForAppAsync(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        if (!authorizationBroker.IsAdminOfApp(appId: appId))
+        if (!authorizationManager.IsAdminOfApp(appId: appId))
         {
             throw new SecurityException(message: "Access Denied!");
         }
@@ -345,7 +351,13 @@ internal partial class PageProcessingService(
             .Where(predicate: existingPage => existingPage.Id == pageId)
             .FirstOrDefault();
 
-        return page != null && ContentManagementModelExtensions.UserCan(page: page, user: GetCurrentUser(), privilege: privKey);
+        return page != null && authorizationManager.UserCanPageAuthorization(
+            pageAuthorization: new PageAuthorization
+            {
+                Page = page,
+                User = GetCurrentUser(),
+                Privilege = privKey
+            });
     }
 
     private static string BuildPath(string pageName, string parentPath)
@@ -397,7 +409,7 @@ internal partial class PageProcessingService(
     {
         ValidatePage(page: page, parameterName: "page");
 
-        if (!authorizationBroker.IsAdminOfApp(appId: page.AppId) && page.ParentId.HasValue)
+        if (!authorizationManager.IsAdminOfApp(appId: page.AppId) && page.ParentId.HasValue)
         {
             UserCan(privKey: "page_create", pageId: page.ParentId.Value);
         }
@@ -533,5 +545,38 @@ internal partial class PageProcessingService(
         dbVersion.Path = BuildPath(pageName: updatedPage.Name, parentPath: parent?.Path);
 
         return await service.UpdatePageAsync(updatedPage: dbVersion);
+    }
+
+    private static PageInfo GetPageInfo(Page page, string culture)
+    {
+        culture ??= string.Empty;
+
+        if (page?.PageInfo == null || !page.PageInfo.Any())
+        {
+            return new PageInfo
+            {
+                CultureId = culture,
+                Title = page?.Name ?? string.Empty,
+                Description = string.Empty,
+                Keywords = string.Empty
+            };
+        }
+
+        IOrderedEnumerable<PageInfo> orderedInfo = page.PageInfo
+            .OrderByDescending(
+                keySelector: info => info.CultureId?.Length ?? 0);
+
+        return orderedInfo.FirstOrDefault(
+            predicate: info =>
+                culture == info.CultureId
+                || culture.Contains(value: info.CultureId ?? string.Empty))
+            ?? orderedInfo.FirstOrDefault()
+            ?? new PageInfo
+            {
+                CultureId = culture,
+                Title = page.Name ?? string.Empty,
+                Description = string.Empty,
+                Keywords = string.Empty
+            };
     }
 }

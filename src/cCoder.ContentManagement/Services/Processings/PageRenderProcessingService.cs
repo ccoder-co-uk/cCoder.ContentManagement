@@ -12,6 +12,8 @@ using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
+using cCoder.ContentManagement.Services.Foundations;
+
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class PageRenderProcessingService(
@@ -161,9 +163,9 @@ internal sealed partial class PageRenderProcessingService(
             Name = page.Name ?? string.Empty,
             ResourceKey = page.ResourceKey ?? string.Empty,
             LayoutName = page.Layout ?? string.Empty,
-            Title = ContentManagementModelExtensions.Title(page: page, culture: culture),
-            Description = ContentManagementModelExtensions.Description(page: page, culture: culture),
-            Keywords = ContentManagementModelExtensions.Keywords(page: page, culture: culture),
+            Title = GetPageInfo(page: page, culture: culture).Title,
+            Description = GetPageInfo(page: page, culture: culture).Description,
+            Keywords = GetPageInfo(page: page, culture: culture).Keywords,
             ContentByName = includeContent
                 ? BuildContentLookup(contents: page.Contents, culture: culture)
                 : new Dictionary<string, PageRenderContent>(comparer: StringComparer.OrdinalIgnoreCase)
@@ -337,5 +339,38 @@ comparer: StringComparer.OrdinalIgnoreCase);
         {
             throw new ValidationException(message: message);
         }
+    }
+
+    private static PageInfo GetPageInfo(Page page, string culture)
+    {
+        culture ??= string.Empty;
+
+        if (page?.PageInfo == null || !page.PageInfo.Any())
+        {
+            return new PageInfo
+            {
+                CultureId = culture,
+                Title = page?.Name ?? string.Empty,
+                Description = string.Empty,
+                Keywords = string.Empty
+            };
+        }
+
+        IOrderedEnumerable<PageInfo> orderedInfo = page.PageInfo
+            .OrderByDescending(
+                keySelector: info => info.CultureId?.Length ?? 0);
+
+        return orderedInfo.FirstOrDefault(
+            predicate: info =>
+                culture == info.CultureId
+                || culture.Contains(value: info.CultureId ?? string.Empty))
+            ?? orderedInfo.FirstOrDefault()
+            ?? new PageInfo
+            {
+                CultureId = culture,
+                Title = page.Name ?? string.Empty,
+                Description = string.Empty,
+                Keywords = string.Empty
+            };
     }
 }

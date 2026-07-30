@@ -33,7 +33,7 @@ public partial class ScriptServiceTests
             .Select(selector: item => item)
             .AsQueryable();
 
-        scriptBrokerMock.Setup(expression: x => x.GetAllScripts(ignoreFilters: false))
+        scriptBrokerMock.Setup(expression: x => x.GetAllScripts())
             .Returns(value: scripts);
 
         // When
@@ -44,9 +44,9 @@ public partial class ScriptServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedItems);
 
-        scriptBrokerMock.Verify(expression: x => x.GetAllScripts(ignoreFilters: false), times: Times.Once);
+        scriptBrokerMock.Verify(expression: x => x.GetAllScripts(), times: Times.Once);
         scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

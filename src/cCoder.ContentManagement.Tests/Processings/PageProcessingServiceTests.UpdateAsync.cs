@@ -28,7 +28,7 @@ public partial class PageProcessingServiceTests
     {
 
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -38,11 +38,11 @@ public partial class PageProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
@@ -86,7 +86,7 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { dbPage }.AsQueryable());
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { dbPage }.AsQueryable());
 
         pageServiceMock.Setup(expression: x => x.UpdatePageAsync(updatedPage: It.IsAny<Page>()))
@@ -99,7 +99,7 @@ public partial class PageProcessingServiceTests
         result.Should()
             .BeSameAs(expected: dbPage);
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
 
         pageServiceMock.Verify(expression: x => x.UpdatePageAsync(updatedPage: It.Is<Page>(match: updated =>
@@ -114,7 +114,7 @@ public partial class PageProcessingServiceTests
     public async Task ShouldThrowSecurityExceptionWhenUserCannotUpdatePageForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -124,11 +124,11 @@ public partial class PageProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         Page page = CreateRandomPage();
@@ -136,7 +136,7 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { page }.AsQueryable());
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { page }.AsQueryable());
 
         // When
@@ -147,7 +147,7 @@ public partial class PageProcessingServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
@@ -157,7 +157,7 @@ public partial class PageProcessingServiceTests
     {
 
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -167,11 +167,11 @@ public partial class PageProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
@@ -221,7 +221,7 @@ public partial class PageProcessingServiceTests
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { dbPage }.AsQueryable());
 
         // When
@@ -232,7 +232,7 @@ public partial class PageProcessingServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Exactly(callCount: 2));
         pageServiceMock.VerifyNoOtherCalls();
     }

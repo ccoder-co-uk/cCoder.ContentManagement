@@ -31,13 +31,13 @@ internal sealed partial class PageRoleImportLookupProcessingService(
         ValidatePath(value: path, parameterName: "path");
         ValidateText(value: roleName, parameterName: "roleName");
 
-        Role role = roleBroker.GetAllRoles(ignoreFilters: true)
+        Role role = roleBroker.GetAllRolesIgnoringFilters()
             .FirstOrDefault(
                 predicate: existing =>
                     existing.AppId == appId
                     && existing.Name == roleName);
 
-        Page page = pageBroker.GetAllPages(ignoreFilters: true)
+        Page page = pageBroker.GetAllPagesIgnoringFilters()
             .FirstOrDefault(
                 predicate: existing =>
                     existing.AppId == appId

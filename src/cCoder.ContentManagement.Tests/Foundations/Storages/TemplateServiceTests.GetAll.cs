@@ -33,7 +33,7 @@ public partial class TemplateServiceTests
             .Select(selector: item => item)
             .AsQueryable();
 
-        templateBrokerMock.Setup(expression: x => x.GetAllTemplates(ignoreFilters: false))
+        templateBrokerMock.Setup(expression: x => x.GetAllTemplates())
             .Returns(value: templates);
 
         // When
@@ -44,9 +44,9 @@ public partial class TemplateServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedItems);
 
-        templateBrokerMock.Verify(expression: x => x.GetAllTemplates(ignoreFilters: false), times: Times.Once);
+        templateBrokerMock.Verify(expression: x => x.GetAllTemplates(), times: Times.Once);
         templateBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

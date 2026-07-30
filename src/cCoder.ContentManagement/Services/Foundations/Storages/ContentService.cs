@@ -7,12 +7,14 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class ContentService(
     IContentBroker contentBroker,
     IPageBroker pageBroker,
-    IAuthorizationBroker authorizationBroker) : IContentService
+    IAuthorizationManager authorizationManager) : IContentService
 {
     public Content GetContent(int contentId, bool ignoreFilters = false) =>
         TryCatch<Content>(operation: () =>
@@ -50,7 +52,10 @@ internal partial class ContentService(
         TryCatch<IQueryable<Content>>(operation: () =>
     {
         ValidateAllContentOnGet(inputs: [ignoreFilters]);
-        return contentBroker.GetAllContents(ignoreFilters: ignoreFilters);
+
+        return ignoreFilters
+            ? contentBroker.GetAllContentsIgnoringFilters()
+            : contentBroker.GetAllContents();
     });
 
     public ValueTask<Content> AddContentAsync(Content newContent) =>
@@ -58,7 +63,7 @@ internal partial class ContentService(
     {
         ValidateContentOnAdd(inputs: [newContent]);
         ValidateContent(content: newContent, parameterName: "content");
-        authorizationBroker.Authorize(appId: GetAppId(pageId: newContent.PageId), privilege: "Content_create");
+        authorizationManager.Authorize(appId: GetAppId(pageId: newContent.PageId), privilege: "Content_create");
         Content result = await contentBroker.AddContentAsync(newContent: CreateStorageContent(newContent: newContent));
         newContent.Id = result.Id;
         newContent.PageId = result.PageId;
@@ -74,7 +79,7 @@ internal partial class ContentService(
     {
         ValidateContentOnUpdate(inputs: [updatedContent]);
         ValidateContent(content: updatedContent, parameterName: "content");
-        authorizationBroker.Authorize(appId: GetAppId(pageId: updatedContent.PageId), privilege: "Content_update");
+        authorizationManager.Authorize(appId: GetAppId(pageId: updatedContent.PageId), privilege: "Content_update");
         Content result = await contentBroker.UpdateContentAsync(updatedContent: CreateStorageContent(newContent: updatedContent));
         updatedContent.Id = result.Id;
         updatedContent.PageId = result.PageId;
@@ -106,7 +111,7 @@ internal partial class ContentService(
             return;
         }
 
-        authorizationBroker.Authorize(appId: GetAppId(pageId: content.PageId), privilege: "Content_delete");
+        authorizationManager.Authorize(appId: GetAppId(pageId: content.PageId), privilege: "Content_delete");
         await contentBroker.DeleteContentAsync(deletedContent: CreateStorageContent(newContent: content));
 
     }, isValueTask: true);
@@ -129,13 +134,15 @@ internal partial class ContentService(
     }
 
     private int? GetAppId(int pageId) =>
-        pageBroker.GetAllPages(ignoreFilters: true)
+        pageBroker.GetAllPagesIgnoringFilters()
         .Where(predicate: page => page.Id == pageId)
         .Select(selector: page => (int?)page.AppId)
         .FirstOrDefault();
 
     private IQueryable<Content> ExecuteGetAllContent(bool ignoreFilters = false) =>
-        contentBroker.GetAllContents(ignoreFilters: ignoreFilters);
+        (ignoreFilters
+            ? contentBroker.GetAllContentsIgnoringFilters()
+            : contentBroker.GetAllContents());
 
     private Content ExecuteGetContent(int contentId, bool ignoreFilters = false)
     {

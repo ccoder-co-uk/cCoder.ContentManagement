@@ -34,7 +34,7 @@ public partial class AppProcessingServiceTests
             privilege: "app_update",
             appId: 1);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -44,11 +44,11 @@ public partial class AppProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         App incomingApp = CreateRandomApp();
@@ -77,7 +77,7 @@ public partial class AppProcessingServiceTests
         };
 
         pageBrokerMock
-            .Setup(expression: broker => broker.GetAllPages(ignoreFilters: true))
+            .Setup(expression: broker => broker.GetAllPagesIgnoringFilters())
             .Returns(value: new[] { existingPage }.AsQueryable());
 
         pageBrokerMock
@@ -89,7 +89,7 @@ public partial class AppProcessingServiceTests
 
         // Then
         pageBrokerMock.Verify(
-            expression: broker => broker.GetAllPages(ignoreFilters: true),
+            expression: broker => broker.GetAllPagesIgnoringFilters(),
             times: Times.Once);
 
         pageBrokerMock.Verify(
@@ -107,7 +107,7 @@ public partial class AppProcessingServiceTests
             privilege: "app_update",
             appId: 1);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -117,11 +117,11 @@ public partial class AppProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         App incomingApp = CreateRandomApp();
@@ -129,7 +129,7 @@ public partial class AppProcessingServiceTests
         incomingApp.Pages = [];
 
         pageBrokerMock
-            .Setup(expression: broker => broker.GetAllPages(ignoreFilters: true))
+            .Setup(expression: broker => broker.GetAllPagesIgnoringFilters())
             .Throws(exception: new TaskCanceledException(message: "App not found"));
 
         // When
@@ -144,7 +144,7 @@ public partial class AppProcessingServiceTests
             .WithMessage(expectedWildcardPattern: "App not found");
 
         pageBrokerMock.Verify(
-            expression: broker => broker.GetAllPages(ignoreFilters: true),
+            expression: broker => broker.GetAllPagesIgnoringFilters(),
             times: Times.Once);
 
         appServiceMock.VerifyNoOtherCalls();

@@ -16,25 +16,27 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class ResourceProcessingServiceTests
 {
     private readonly Mock<IResourceService> resourceServiceMock = new();
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
     private readonly ResourceProcessingService resourceProcessingService;
 
     public ResourceProcessingServiceTests()
     {
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => TestUsers.WithoutPrivileges());
 
         resourceProcessingService = new ResourceProcessingService(
 service: resourceServiceMock.Object,
-authorizationBroker: authorizationBrokerMock.Object
+authorizationManager: authorizationManagerMock.Object
         );
     }
 

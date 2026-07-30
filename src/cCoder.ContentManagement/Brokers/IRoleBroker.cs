@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers;
 
 public interface IRoleBroker
 {
-    IQueryable<Role> GetAllRoles(bool ignoreFilters);
+    IQueryable<Role> GetAllRoles();
+
+    IQueryable<Role> GetAllRolesIgnoringFilters();
 
     ValueTask<Role> AddRoleAsync(Role newRole);
 

@@ -32,7 +32,7 @@ public partial class PageServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Page page = CreateRandomPage(id: 5);
@@ -40,7 +40,7 @@ public partial class PageServiceTests
         CmsDataModels.Page submitted = null;
 
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_update"));
 
         pageBrokerMock
             .Setup(expression: x => x.UpdatePageAsync(updatedPage: It.IsAny<CmsDataModels.Page>()))
@@ -138,19 +138,19 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
 
         pageBrokerMock.Verify(expression: x => x.UpdatePageAsync(updatedPage: It.IsAny<CmsDataModels.Page>()), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_update"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_update"), times: Times.Once);
     }
 
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Page page = CreateRandomPage(id: 5);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -164,7 +164,7 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_update"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_update"), times: Times.Once);
     }
 
 }

@@ -27,7 +27,7 @@ public partial class PageProcessingServiceTests
     public async Task ShouldDelegateToFoundationServiceWhenAddAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -37,11 +37,11 @@ public partial class PageProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
@@ -102,7 +102,7 @@ times: Times.Once
     public async Task ShouldUseParentPathWhenAddAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -112,11 +112,11 @@ times: Times.Once
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
@@ -154,7 +154,7 @@ times: Times.Once
         pageServiceMock.Setup(expression: x => x.AddPageAsync(newPage: It.IsAny<Page>()))
             .ReturnsAsync(value: addedPage);
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { parent }.AsQueryable());
 
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
@@ -167,7 +167,7 @@ times: Times.Once
         result.Should()
             .BeSameAs(expected: addedPage);
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
 
         pageServiceMock.Verify(
@@ -182,7 +182,7 @@ times: Times.Once
     public async Task ShouldThrowValidationExceptionWhenComputedPathAlreadyExistsForSameAppOnAddAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -192,11 +192,11 @@ times: Times.Once
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         currentUser = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
@@ -236,7 +236,7 @@ times: Times.Once
     public async Task ShouldAllowComputedPathWhenItOnlyExistsForAnotherAppOnAddAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -246,11 +246,11 @@ times: Times.Once
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         currentUser = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
@@ -306,7 +306,7 @@ times: Times.Once);
     public async Task ShouldThrowValidationExceptionWhenComputedPathExistsOnPageUserCannotSeeForSameAppOnAddAsync()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -316,11 +316,11 @@ times: Times.Once);
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         currentUser = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
@@ -363,7 +363,7 @@ times: Times.Once);
             Roles = [],
         };
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { parent }.AsQueryable());
 
         pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
@@ -377,7 +377,7 @@ times: Times.Once);
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
             .WithMessage(expectedWildcardPattern: "A page already exists for app 1 with path 'parent/Child'.");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Exactly(callCount: 2));
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Exactly(callCount: 2));
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }

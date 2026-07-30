@@ -66,7 +66,7 @@ public partial class PackageOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         packageItemProcessingServiceMock
-            .Setup(expression: service => service.GetAllPackageItem(ignoreFilters: false))
+            .Setup(expression: service => service.GetAllPackageItem())
             .Returns(value: new[] { existingPackageItem }.AsQueryable());
 
         packageItemProcessingServiceMock
@@ -87,7 +87,7 @@ public partial class PackageOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         packageItemProcessingServiceMock.Verify(
-            expression: service => service.GetAllPackageItem(ignoreFilters: false),
+            expression: service => service.GetAllPackageItem(),
             times: Times.Once);
 
         packageItemProcessingServiceMock.Verify(

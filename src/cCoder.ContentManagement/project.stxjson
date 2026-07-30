@@ -12,18 +12,14 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "Authorize",
+          "Name": "GetAppWithRoles",
           "Inputs": [
             {
               "Name": "appId",
-              "Type": "System.Int32?"
-            },
-            {
-              "Name": "privilege",
-              "Type": "System.String"
+              "Type": "System.Int32"
             }
           ],
-          "ReturnType": "System.Void"
+          "ReturnType": "App"
         },
         {
           "Name": "GetCurrentUser",
@@ -36,27 +32,28 @@
           "ReturnType": "System.String"
         },
         {
-          "Name": "IsAdmin",
+          "Name": "GetRolesForUser",
           "Inputs": [
             {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "userName",
+              "Name": "userId",
               "Type": "System.String"
             }
           ],
-          "ReturnType": "System.Boolean"
+          "ReturnType": "Role[]"
         },
         {
-          "Name": "IsAdminOfApp",
+          "Name": "GetUserWithRoles",
           "Inputs": [
             {
-              "Name": "appId",
-              "Type": "System.Int32?"
+              "Name": "userId",
+              "Type": "System.String"
             }
           ],
+          "ReturnType": "User"
+        },
+        {
+          "Name": "HasApps",
+          "Inputs": [],
           "ReturnType": "System.Boolean"
         }
       ]
@@ -800,12 +797,12 @@
         },
         {
           "Name": "GetAllRoles",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CRole\u003E"
+        },
+        {
+          "Name": "GetAllRolesIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CRole\u003E"
         },
         {
@@ -884,12 +881,12 @@
         },
         {
           "Name": "GetAllApps",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CApp\u003E"
+        },
+        {
+          "Name": "GetAllAppsIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CApp\u003E"
         },
         {
@@ -941,12 +938,12 @@
         },
         {
           "Name": "GetAllAppCultures",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CAppCulture\u003E"
+        },
+        {
+          "Name": "GetAllAppCulturesIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CAppCulture\u003E"
         }
       ]
@@ -988,12 +985,12 @@
         },
         {
           "Name": "GetAllCommonObjects",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CCommonObject\u003E"
+        },
+        {
+          "Name": "GetAllCommonObjectsIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CCommonObject\u003E"
         },
         {
@@ -1065,12 +1062,12 @@
         },
         {
           "Name": "GetAllComponents",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CComponent\u003E"
+        },
+        {
+          "Name": "GetAllComponentsIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CComponent\u003E"
         },
         {
@@ -1122,12 +1119,12 @@
         },
         {
           "Name": "GetAllContents",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CContent\u003E"
+        },
+        {
+          "Name": "GetAllContentsIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CContent\u003E"
         },
         {
@@ -1179,12 +1176,12 @@
         },
         {
           "Name": "GetAllCultures",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CCulture\u003E"
+        },
+        {
+          "Name": "GetAllCulturesIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CCulture\u003E"
         },
         {
@@ -1236,12 +1233,12 @@
         },
         {
           "Name": "GetAllLayouts",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CLayout\u003E"
+        },
+        {
+          "Name": "GetAllLayoutsIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CLayout\u003E"
         },
         {
@@ -1293,12 +1290,12 @@
         },
         {
           "Name": "GetAllPackages",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CPackage\u003E"
+        },
+        {
+          "Name": "GetAllPackagesIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CPackage\u003E"
         },
         {
@@ -1350,12 +1347,12 @@
         },
         {
           "Name": "GetAllPackageItems",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CPackageItem\u003E"
+        },
+        {
+          "Name": "GetAllPackageItemsIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CPackageItem\u003E"
         },
         {
@@ -1417,12 +1414,12 @@
         },
         {
           "Name": "GetAllPages",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CPage\u003E"
+        },
+        {
+          "Name": "GetAllPagesIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CPage\u003E"
         },
         {
@@ -1474,12 +1471,12 @@
         },
         {
           "Name": "GetAllPageInfo",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CPageInfo\u003E"
+        },
+        {
+          "Name": "GetAllPageInfoIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CPageInfo\u003E"
         },
         {
@@ -1531,12 +1528,12 @@
         },
         {
           "Name": "GetAllPageRoles",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CPageRole\u003E"
+        },
+        {
+          "Name": "GetAllPageRolesIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CPageRole\u003E"
         }
       ]
@@ -1548,12 +1545,12 @@
       "Methods": [
         {
           "Name": "GetAllPrivileges",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CPrivilege\u003E"
+        },
+        {
+          "Name": "GetAllPrivilegesIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CPrivilege\u003E"
         }
       ]
@@ -1616,12 +1613,12 @@
         },
         {
           "Name": "GetAllResources",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CResource\u003E"
+        },
+        {
+          "Name": "GetAllResourcesIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CResource\u003E"
         },
         {
@@ -1673,12 +1670,12 @@
         },
         {
           "Name": "GetAllScripts",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CScript\u003E"
+        },
+        {
+          "Name": "GetAllScriptsIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CScript\u003E"
         },
         {
@@ -1730,12 +1727,12 @@
         },
         {
           "Name": "GetAllSubmissions",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CSubmission\u003E"
+        },
+        {
+          "Name": "GetAllSubmissionsIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CSubmission\u003E"
         },
         {
@@ -1787,12 +1784,12 @@
         },
         {
           "Name": "GetAllTemplates",
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CTemplate\u003E"
+        },
+        {
+          "Name": "GetAllTemplatesIgnoringFilters",
+          "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CTemplate\u003E"
         },
         {
@@ -1804,6 +1801,33 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CTemplate\u003E"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Brokers.TemplateContentBroker",
+      "StandardElementType": "Broker",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "ConvertHtmlToPdf",
+          "Inputs": [
+            {
+              "Name": "html",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Byte[]"
+        },
+        {
+          "Name": "ReadAsync",
+          "Inputs": [
+            {
+              "Name": "source",
+              "Type": "System.IO.Stream"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.String\u003E"
         }
       ]
     },
@@ -1844,13 +1868,34 @@
         },
         {
           "Name": "GetAllUserRoles",
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CUserRole\u003E"
+        },
+        {
+          "Name": "GetAllUserRolesIgnoringFilters",
+          "Inputs": [],
+          "ReturnType": "System.Linq.IQueryable\u003CUserRole\u003E"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Brokers.WorkflowExecutionBroker",
+      "StandardElementType": "Broker",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Execute",
           "Inputs": [
             {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
+              "Name": "baseAddress",
+              "Type": "System.String"
+            },
+            {
+              "Name": "content",
+              "Type": "System.String"
             }
           ],
-          "ReturnType": "System.Linq.IQueryable\u003CUserRole\u003E"
+          "ReturnType": "System.String"
         }
       ]
     },
@@ -2029,6 +2074,183 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Dependencies.OData.CompositePropertyInfo",
+      "StandardElementType": "Dependency",
+      "Properties": [
+        {
+          "Name": "Attributes",
+          "Type": "System.Reflection.PropertyAttributes"
+        },
+        {
+          "Name": "CanRead",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "CanWrite",
+          "Type": "System.Boolean"
+        },
+        {
+          "Name": "DeclaringType",
+          "Type": "System.Type"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        },
+        {
+          "Name": "PropertyType",
+          "Type": "System.Type"
+        },
+        {
+          "Name": "ReflectedType",
+          "Type": "System.Type"
+        }
+      ],
+      "Methods": [
+        {
+          "Name": "GetAccessors",
+          "Inputs": [
+            {
+              "Name": "nonPublic",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "System.Reflection.MethodInfo[]"
+        },
+        {
+          "Name": "GetCustomAttributes",
+          "Inputs": [
+            {
+              "Name": "inherit",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "System.Object[]"
+        },
+        {
+          "Name": "GetCustomAttributes",
+          "Inputs": [
+            {
+              "Name": "attributeType",
+              "Type": "System.Type"
+            },
+            {
+              "Name": "inherit",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "System.Object[]"
+        },
+        {
+          "Name": "GetGetMethod",
+          "Inputs": [
+            {
+              "Name": "nonPublic",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "System.Reflection.MethodInfo"
+        },
+        {
+          "Name": "GetIndexParameters",
+          "Inputs": [],
+          "ReturnType": "System.Reflection.ParameterInfo[]"
+        },
+        {
+          "Name": "GetSetMethod",
+          "Inputs": [
+            {
+              "Name": "nonPublic",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "System.Reflection.MethodInfo"
+        },
+        {
+          "Name": "GetValue",
+          "Inputs": [
+            {
+              "Name": "obj",
+              "Type": "System.Object"
+            },
+            {
+              "Name": "invokeAttr",
+              "Type": "System.Reflection.BindingFlags"
+            },
+            {
+              "Name": "binder",
+              "Type": "System.Reflection.Binder"
+            },
+            {
+              "Name": "index",
+              "Type": "System.Object[]"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.Globalization.CultureInfo"
+            }
+          ],
+          "ReturnType": "System.Object"
+        },
+        {
+          "Name": "IsDefined",
+          "Inputs": [
+            {
+              "Name": "attributeType",
+              "Type": "System.Type"
+            },
+            {
+              "Name": "inherit",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        },
+        {
+          "Name": "SetValue",
+          "Inputs": [
+            {
+              "Name": "obj",
+              "Type": "System.Object"
+            },
+            {
+              "Name": "value",
+              "Type": "System.Object"
+            },
+            {
+              "Name": "invokeAttr",
+              "Type": "System.Reflection.BindingFlags"
+            },
+            {
+              "Name": "binder",
+              "Type": "System.Reflection.Binder"
+            },
+            {
+              "Name": "index",
+              "Type": "System.Object[]"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.Globalization.CultureInfo"
+            }
+          ],
+          "ReturnType": "System.Void"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.TemplateContentDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.WorkflowExecutionDependency",
+      "StandardElementType": "Dependency",
+      "Properties": [],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Exposures.AppManager",
       "StandardElementType": "Exposure",
       "Properties": [],
@@ -2138,6 +2360,71 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Exposures.AuthorizationManager",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "Authorize",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32?"
+            },
+            {
+              "Name": "privilege",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Void"
+        },
+        {
+          "Name": "GetCurrentUser",
+          "Inputs": [],
+          "ReturnType": "User"
+        },
+        {
+          "Name": "GetCurrentUserId",
+          "Inputs": [],
+          "ReturnType": "System.String"
+        },
+        {
+          "Name": "IsAdmin",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "userName",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        },
+        {
+          "Name": "IsAdminOfApp",
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        },
+        {
+          "Name": "UserCanPageAuthorization",
+          "Inputs": [
+            {
+              "Name": "pageAuthorization",
+              "Type": "cCoder.ContentManagement.Models.PageAuthorization"
+            }
+          ],
+          "ReturnType": "System.Boolean"
         }
       ]
     },
@@ -3632,6 +3919,16 @@
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CTemplate\u003E"
         },
         {
+          "Name": "ConvertHtmlToPdf",
+          "Inputs": [
+            {
+              "Name": "html",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Byte[]"
+        },
+        {
           "Name": "DeleteAsync",
           "Inputs": [
             {
@@ -3655,6 +3952,16 @@
           "Name": "GetAll",
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CTemplate\u003E"
+        },
+        {
+          "Name": "ReadContentAsync",
+          "Inputs": [
+            {
+              "Name": "source",
+              "Type": "System.IO.Stream"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.String\u003E"
         },
         {
           "Name": "Render",
@@ -3720,210 +4027,16 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Extensions.ContentManagementModelExtensions",
+      "Name": "cCoder.ContentManagement.Extensions.ContentManagementConfigurationExtensions",
       "StandardElementType": "Exposure",
       "Properties": [],
       "Methods": []
     },
     {
-      "Name": "cCoder.ContentManagement.Extensions.Data.AuthorizationExtensions",
+      "Name": "cCoder.ContentManagement.Extensions.OData.ActionExtensions",
       "StandardElementType": "Exposure",
       "Properties": [],
       "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Extensions.Data.CommonObjectQueryExtensions",
-      "StandardElementType": "Exposure",
-      "Properties": [],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Extensions.Data.QueryFilterExtensions",
-      "StandardElementType": "Exposure",
-      "Properties": [],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Extensions.OData.CompositePropertyInfo",
-      "StandardElementType": "Dependency",
-      "Properties": [
-        {
-          "Name": "Attributes",
-          "Type": "System.Reflection.PropertyAttributes"
-        },
-        {
-          "Name": "CanRead",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "CanWrite",
-          "Type": "System.Boolean"
-        },
-        {
-          "Name": "DeclaringType",
-          "Type": "System.Type"
-        },
-        {
-          "Name": "Name",
-          "Type": "System.String"
-        },
-        {
-          "Name": "PropertyType",
-          "Type": "System.Type"
-        },
-        {
-          "Name": "ReflectedType",
-          "Type": "System.Type"
-        }
-      ],
-      "Methods": [
-        {
-          "Name": "GetAccessors",
-          "Inputs": [
-            {
-              "Name": "nonPublic",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Reflection.MethodInfo[]"
-        },
-        {
-          "Name": "GetCustomAttributes",
-          "Inputs": [
-            {
-              "Name": "inherit",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Object[]"
-        },
-        {
-          "Name": "GetCustomAttributes",
-          "Inputs": [
-            {
-              "Name": "attributeType",
-              "Type": "System.Type"
-            },
-            {
-              "Name": "inherit",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Object[]"
-        },
-        {
-          "Name": "GetGetMethod",
-          "Inputs": [
-            {
-              "Name": "nonPublic",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Reflection.MethodInfo"
-        },
-        {
-          "Name": "GetIndexParameters",
-          "Inputs": [],
-          "ReturnType": "System.Reflection.ParameterInfo[]"
-        },
-        {
-          "Name": "GetSetMethod",
-          "Inputs": [
-            {
-              "Name": "nonPublic",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Reflection.MethodInfo"
-        },
-        {
-          "Name": "GetValue",
-          "Inputs": [
-            {
-              "Name": "obj",
-              "Type": "System.Object"
-            },
-            {
-              "Name": "invokeAttr",
-              "Type": "System.Reflection.BindingFlags"
-            },
-            {
-              "Name": "binder",
-              "Type": "System.Reflection.Binder"
-            },
-            {
-              "Name": "index",
-              "Type": "System.Object[]"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.Globalization.CultureInfo"
-            }
-          ],
-          "ReturnType": "System.Object"
-        },
-        {
-          "Name": "IsDefined",
-          "Inputs": [
-            {
-              "Name": "attributeType",
-              "Type": "System.Type"
-            },
-            {
-              "Name": "inherit",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Boolean"
-        },
-        {
-          "Name": "SetValue",
-          "Inputs": [
-            {
-              "Name": "obj",
-              "Type": "System.Object"
-            },
-            {
-              "Name": "value",
-              "Type": "System.Object"
-            },
-            {
-              "Name": "invokeAttr",
-              "Type": "System.Reflection.BindingFlags"
-            },
-            {
-              "Name": "binder",
-              "Type": "System.Reflection.Binder"
-            },
-            {
-              "Name": "index",
-              "Type": "System.Object[]"
-            },
-            {
-              "Name": "culture",
-              "Type": "System.Globalization.CultureInfo"
-            }
-          ],
-          "ReturnType": "System.Void"
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Extensions.OData.ContentManagementApiModelExtensions",
-      "StandardElementType": "Exposure",
-      "Properties": [],
-      "Methods": [
-        {
-          "Name": "ConfigureContentManagementApiModel",
-          "Inputs": [
-            {
-              "Name": "builder",
-              "Type": "ODataConventionModelBuilder"
-            }
-          ],
-          "ReturnType": "System.Void"
-        }
-      ]
     },
     {
       "Name": "cCoder.ContentManagement.Extensions.OData.EdmModelExtensions",
@@ -3969,43 +4082,66 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Extensions.OData.MetadataResourceExtensions",
+      "Name": "cCoder.ContentManagement.Extensions.OData.EnumerableExtensions",
       "StandardElementType": "Exposure",
       "Properties": [],
       "Methods": []
     },
     {
-      "Name": "cCoder.ContentManagement.Extensions.OData.MetadataTypeExtensions",
+      "Name": "cCoder.ContentManagement.Extensions.OData.ExtendedMetadataContainerExtensions",
       "StandardElementType": "Exposure",
       "Properties": [],
       "Methods": []
     },
     {
-      "Name": "cCoder.ContentManagement.Extensions.OData.ODataCollectionExtensions",
+      "Name": "cCoder.ContentManagement.Extensions.OData.MetadataContainerExtensions",
       "StandardElementType": "Exposure",
       "Properties": [],
       "Methods": []
     },
     {
-      "Name": "cCoder.ContentManagement.Extensions.OData.ODataMetadataExtensions",
+      "Name": "cCoder.ContentManagement.Extensions.OData.MetadataContainerSetExtensions",
       "StandardElementType": "Exposure",
       "Properties": [],
       "Methods": []
     },
     {
-      "Name": "cCoder.ContentManagement.Extensions.OData.ODataModelBuilderExtensions",
+      "Name": "cCoder.ContentManagement.Extensions.OData.ODataConventionModelBuilderExtensions",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": [
+        {
+          "Name": "ConfigureContentManagementApiModel",
+          "Inputs": [
+            {
+              "Name": "builder",
+              "Type": "ODataConventionModelBuilder"
+            }
+          ],
+          "ReturnType": "System.Void"
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Extensions.OData.PropertyContainerExtensions",
       "StandardElementType": "Exposure",
       "Properties": [],
       "Methods": []
     },
     {
-      "Name": "cCoder.ContentManagement.Extensions.OData.ODataTypeExtensions",
+      "Name": "cCoder.ContentManagement.Extensions.OData.PropertyInfoExtensions",
       "StandardElementType": "Exposure",
       "Properties": [],
       "Methods": []
     },
     {
-      "Name": "cCoder.ContentManagement.Extensions.SwaggerDocumentationExtensions",
+      "Name": "cCoder.ContentManagement.Extensions.OData.TypeExtensions",
+      "StandardElementType": "Exposure",
+      "Properties": [],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Extensions.SwaggerGenOptionsExtensions",
       "StandardElementType": "Exposure",
       "Properties": [],
       "Methods": []
@@ -4199,6 +4335,60 @@
         {
           "Name": "Total",
           "Type": "System.Int32"
+        },
+        {
+          "Name": "UserName",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.AuthorizationContext",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "AppId",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "Culture",
+          "Type": "System.String"
+        },
+        {
+          "Name": "PageAuthorization",
+          "Type": "cCoder.ContentManagement.Models.PageAuthorization"
+        },
+        {
+          "Name": "RenderAuthorization",
+          "Type": "cCoder.ContentManagement.Models.RenderAuthorization"
+        },
+        {
+          "Name": "Request",
+          "Type": "cCoder.ContentManagement.Models.AuthorizationRequest"
+        },
+        {
+          "Name": "User",
+          "Type": "User"
+        },
+        {
+          "Name": "UserId",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.AuthorizationRequest",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "AppId",
+          "Type": "System.Int32?"
+        },
+        {
+          "Name": "Privilege",
+          "Type": "System.String"
         },
         {
           "Name": "UserName",
@@ -4682,6 +4872,25 @@
         {
           "Name": "Value",
           "Type": "System.Collections.Generic.IEnumerable\u003CTCollectionType\u003E"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.PageAuthorization",
+      "StandardElementType": "Model",
+      "Properties": [
+        {
+          "Name": "Page",
+          "Type": "Page"
+        },
+        {
+          "Name": "Privilege",
+          "Type": "System.String"
+        },
+        {
+          "Name": "User",
+          "Type": "User"
         }
       ],
       "Methods": []
@@ -5983,44 +6192,51 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "Authorize",
+          "Name": "AuthorizeAuthorizationContext",
           "Inputs": [
             {
-              "Name": "appId",
-              "Type": "System.Int32?"
-            },
-            {
-              "Name": "privilege",
-              "Type": "System.String"
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
             }
           ],
           "ReturnType": "System.Void"
         },
         {
-          "Name": "GetCurrentUser",
-          "Inputs": [],
-          "ReturnType": "User"
-        },
-        {
-          "Name": "IsAdmin",
+          "Name": "IsAdminAuthorizationContext",
           "Inputs": [
             {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "userName",
-              "Type": "System.String"
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
             }
           ],
           "ReturnType": "System.Boolean"
         },
         {
-          "Name": "IsAdminOfApp",
+          "Name": "IsAdminOfAppAuthorizationContext",
           "Inputs": [
             {
-              "Name": "appId",
-              "Type": "System.Int32"
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
+            }
+          ],
+          "ReturnType": "System.Boolean"
+        },
+        {
+          "Name": "ResolveCurrentAuthorizationContext",
+          "Inputs": [
+            {
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
+            }
+          ],
+          "ReturnType": "cCoder.ContentManagement.Models.AuthorizationContext"
+        },
+        {
+          "Name": "UserCanPageAuthorizationContext",
+          "Inputs": [
+            {
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
             }
           ],
           "ReturnType": "System.Boolean"
@@ -9726,52 +9942,64 @@
       "Properties": [],
       "Methods": [
         {
-          "Name": "Authorize",
+          "Name": "AuthorizeAuthorizationContext",
           "Inputs": [
             {
-              "Name": "appId",
-              "Type": "System.Int32?"
-            },
-            {
-              "Name": "privilege",
-              "Type": "System.String"
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
             }
           ],
           "ReturnType": "System.Void"
         },
         {
-          "Name": "IsAdmin",
+          "Name": "IsAdminAuthorizationContext",
           "Inputs": [
             {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "userName",
-              "Type": "System.String"
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
             }
           ],
           "ReturnType": "System.Boolean"
         },
         {
-          "Name": "IsAdminOfApp",
+          "Name": "IsAdminOfAppAuthorizationContext",
           "Inputs": [
             {
-              "Name": "appId",
-              "Type": "System.Int32"
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
             }
           ],
           "ReturnType": "System.Boolean"
         },
         {
-          "Name": "ResolveRenderAuthorization",
+          "Name": "ResolveCurrentAuthorizationContext",
           "Inputs": [
             {
-              "Name": "culture",
-              "Type": "System.String"
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
             }
           ],
-          "ReturnType": "cCoder.ContentManagement.Models.RenderAuthorization"
+          "ReturnType": "cCoder.ContentManagement.Models.AuthorizationContext"
+        },
+        {
+          "Name": "ResolveRenderAuthorizationContext",
+          "Inputs": [
+            {
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
+            }
+          ],
+          "ReturnType": "cCoder.ContentManagement.Models.AuthorizationContext"
+        },
+        {
+          "Name": "UserCanPageAuthorizationContext",
+          "Inputs": [
+            {
+              "Name": "context",
+              "Type": "cCoder.ContentManagement.Models.AuthorizationContext"
+            }
+          ],
+          "ReturnType": "System.Boolean"
         }
       ]
     },
@@ -11600,6 +11828,14 @@
   ],
   "Links": [
     {
+      "FromType": "cCoder.ContentManagement.Brokers.TemplateContentBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.TemplateContentDependency"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Brokers.WorkflowExecutionBroker",
+      "ToType": "cCoder.ContentManagement.Dependencies.WorkflowExecutionDependency"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency",
       "ToType": "cCoder.ContentManagement.Models.ContentManagementConfiguration"
     },
@@ -11610,6 +11846,10 @@
     {
       "FromType": "cCoder.ContentManagement.Exposures.AppManager",
       "ToType": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.AuthorizationManager",
+      "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.ComponentManager",
@@ -11722,6 +11962,10 @@
     {
       "FromType": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.RenderFileContentBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
+      "ToType": "cCoder.ContentManagement.Brokers.WorkflowExecutionBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
@@ -11941,10 +12185,6 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService",
       "ToType": "cCoder.ContentManagement.Brokers.RoleBroker"
     },
     {
@@ -11972,6 +12212,10 @@
       "ToType": "cCoder.ContentManagement.Brokers.Storages.TemplateBroker"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Foundations.RenderFileContentService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.RenderFileContentBroker"
     },
@@ -11997,39 +12241,35 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.AppCultureService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.AppCultureService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.AppCultureBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.AppService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.AppCultureService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.AppService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.AppBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.AppService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.ComponentBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService",
@@ -12040,8 +12280,8 @@
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PageBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService",
@@ -12052,32 +12292,32 @@
       "ToType": "cCoder.ContentManagement.Brokers.Storages.CultureBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.LayoutBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PackageItemService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PackageItemService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PackageItemBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PackageService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PackageItemService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PackageService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PackageBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PackageService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService",
@@ -12088,8 +12328,8 @@
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PageInfoBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageRoleService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageRoleService",
@@ -12100,44 +12340,48 @@
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PageRoleBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageRoleService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PageBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.ResourceBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.ScriptBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.SubmissionService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.SubmissionService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.SubmissionBroker"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.SubmissionService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.TemplateBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService",
@@ -12333,10 +12577,6 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.RoleBroker"
     },
     {
@@ -12357,6 +12597,10 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.AppProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.AppService"
     },
     {
@@ -12373,11 +12617,11 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "ToType": "cCoder.ContentManagement.Brokers.JsonBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
-      "ToType": "cCoder.ContentManagement.Brokers.JsonBroker"
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService",
@@ -12398,6 +12642,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.JsonBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
+      "ToType": "cCoder.ContentManagement.Brokers.WorkflowExecutionBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService",
@@ -12481,7 +12729,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageProcessingService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageProcessingService",
@@ -12513,15 +12761,15 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.RoleBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PageBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService",
@@ -12533,7 +12781,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ResourceProcessingService",
-      "ToType": "cCoder.ContentManagement.Brokers.AuthorizationBroker"
+      "ToType": "cCoder.ContentManagement.Exposures.AuthorizationManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.ResourceProcessingService",
@@ -12566,6 +12814,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
       "ToType": "cCoder.ContentManagement.Brokers.JsonBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
+      "ToType": "cCoder.ContentManagement.Brokers.WorkflowExecutionBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",

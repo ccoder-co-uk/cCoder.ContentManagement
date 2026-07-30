@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface ILayoutBroker
 {
-    IQueryable<Layout> GetAllLayouts(bool ignoreFilters);
+    IQueryable<Layout> GetAllLayouts();
+
+    IQueryable<Layout> GetAllLayoutsIgnoringFilters();
 
     ValueTask<Layout> AddLayoutAsync(Layout newLayout);
 

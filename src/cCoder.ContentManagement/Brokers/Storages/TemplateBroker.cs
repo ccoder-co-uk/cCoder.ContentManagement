@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class TemplateBroker(ICoreContextFactory coreContextFactory) : ITemplateBroker
 {
-    public IQueryable<Template> GetAllTemplates(bool ignoreFilters)
+    public IQueryable<Template> GetAllTemplates()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Templates,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Templates;
+    }
+
+    public IQueryable<Template> GetAllTemplatesIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Templates.IgnoreQueryFilters();
     }
 
     public async ValueTask<Template> AddTemplateAsync(Template newTemplate)

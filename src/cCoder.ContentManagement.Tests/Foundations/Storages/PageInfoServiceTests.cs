@@ -21,7 +21,9 @@ using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
 using DataPageInfo = cCoder.Data.Models.CMS.PageInfo;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
@@ -29,19 +31,19 @@ public partial class PageInfoServiceTests
 {
     private readonly Mock<IPageInfoBroker> pageInfoBrokerMock;
     private readonly Mock<IPageBroker> pageBrokerMock;
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock;
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly PageInfoService pageInfoService;
 
     public PageInfoServiceTests()
     {
         pageInfoBrokerMock = new Mock<IPageInfoBroker>(behavior: MockBehavior.Strict);
         pageBrokerMock = new Mock<IPageBroker>(behavior: MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
 
         pageInfoService = new PageInfoService(
 pageInfoBroker: pageInfoBrokerMock.Object,
 pageBroker: pageBrokerMock.Object,
-authorizationBroker: authorizationBrokerMock.Object
+authorizationManager: authorizationManagerMock.Object
         );
     }
 

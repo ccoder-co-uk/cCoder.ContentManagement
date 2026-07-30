@@ -33,7 +33,7 @@ public partial class AppCultureServiceTests
             .Select(selector: item => item)
             .AsQueryable();
 
-        appCultureBrokerMock.Setup(expression: x => x.GetAllAppCultures(ignoreFilters: false))
+        appCultureBrokerMock.Setup(expression: x => x.GetAllAppCultures())
             .Returns(value: appCultures);
 
         // When
@@ -44,9 +44,9 @@ public partial class AppCultureServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedItems);
 
-        appCultureBrokerMock.Verify(expression: x => x.GetAllAppCultures(ignoreFilters: false), times: Times.Once);
+        appCultureBrokerMock.Verify(expression: x => x.GetAllAppCultures(), times: Times.Once);
         appCultureBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class PackageBroker(ICoreContextFactory coreContextFactory) : IPackageBroker
 {
-    public IQueryable<Package> GetAllPackages(bool ignoreFilters)
+    public IQueryable<Package> GetAllPackages()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Packages,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Packages;
+    }
+
+    public IQueryable<Package> GetAllPackagesIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Packages.IgnoreQueryFilters();
     }
 
     public async ValueTask<Package> AddPackageAsync(Package newPackage)

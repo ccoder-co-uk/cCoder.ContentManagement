@@ -42,9 +42,13 @@ public partial class ComponentRenderOrchestrationServiceTests
         string expectedHtml = "<section>component</section>";
 
         authorizationProcessingServiceMock
-            .Setup(expression: service => service.ResolveRenderAuthorization(
-                culture: null))
-            .Returns(value: authorization);
+            .Setup(expression: service => service.ResolveRenderAuthorizationContext(
+                context: It.Is<AuthorizationContext>(
+                    match: context => context.Culture == null)))
+            .Returns(value: new AuthorizationContext
+            {
+                RenderAuthorization = authorization
+            });
 
         componentRenderProcessingServiceMock
             .Setup(

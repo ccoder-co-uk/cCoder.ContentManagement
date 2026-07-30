@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IScriptBroker
 {
-    IQueryable<Script> GetAllScripts(bool ignoreFilters);
+    IQueryable<Script> GetAllScripts();
+
+    IQueryable<Script> GetAllScriptsIgnoringFilters();
 
     ValueTask<Script> AddScriptAsync(Script newScript);
 

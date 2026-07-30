@@ -37,7 +37,7 @@ public partial class PageRenderAggregationServiceTests
 
         appOrchestrationServiceMock
             .Setup(expression: service =>
-                service.GetAllApp(ignoreFilters: false))
+                service.GetAllApp())
             .Returns(value: new[] { app }.AsQueryable());
 
         SetupRenderResult(

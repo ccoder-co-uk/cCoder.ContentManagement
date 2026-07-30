@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class AppCultureBroker(ICoreContextFactory coreContextFactory) : IAppCultureBroker
 {
-    public IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters)
+    public IQueryable<AppCulture> GetAllAppCultures()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.AppCultures,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.AppCultures;
+    }
+
+    public IQueryable<AppCulture> GetAllAppCulturesIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.AppCultures.IgnoreQueryFilters();
     }
 
     public async ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture)
