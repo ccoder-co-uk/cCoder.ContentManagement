@@ -23,4 +23,6 @@ public interface ITemplateManager
     ValueTask<Template> UpdateAsync(Template updatedTemplate);
 
     ValueTask DeleteAsync(int templateId);
+
+    ValueTask ImportTemplatesAsync(int appId, Template[] items);
 }

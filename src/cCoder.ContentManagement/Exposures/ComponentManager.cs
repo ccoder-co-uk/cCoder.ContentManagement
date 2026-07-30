@@ -61,4 +61,13 @@ internal sealed class ComponentManager(
                 name: "Component",
                 operation: service => service.DeleteAsync(
                     componentId: componentId));
+
+    public ValueTask ImportComponentsAsync(int appId, Component[] items) =>
+        serviceProviderExecutionService.Execute<
+            IComponentOrchestrationService,
+            ValueTask>(
+                name: "Component",
+                operation: service => service.ImportComponentsAsync(
+                    appId: appId,
+                    items: items));
 }
