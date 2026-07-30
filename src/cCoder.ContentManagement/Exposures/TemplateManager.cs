@@ -76,4 +76,13 @@ internal sealed class TemplateManager(
                 name: "Template",
                 operation: service => service.DeleteAsync(
                     templateId: templateId));
+
+    public ValueTask ImportTemplatesAsync(int appId, Template[] items) =>
+        serviceProviderExecutionService.Execute<
+            ITemplateOrchestrationService,
+            ValueTask>(
+                name: "Template",
+                operation: service => service.ImportTemplatesAsync(
+                    appId: appId,
+                    items: items));
 }

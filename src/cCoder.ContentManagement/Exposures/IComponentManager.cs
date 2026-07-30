@@ -19,4 +19,6 @@ public interface IComponentManager
     ValueTask<Component> UpdateAsync(Component updatedComponent);
 
     ValueTask DeleteAsync(int componentId);
+
+    ValueTask ImportComponentsAsync(int appId, Component[] items);
 }
