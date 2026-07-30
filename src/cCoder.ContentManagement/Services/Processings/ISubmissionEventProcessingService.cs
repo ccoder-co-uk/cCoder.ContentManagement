@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface ISubmissionEventProcessingService
+internal interface ISubmissionEventProcessingService
 {
     ValueTask RaiseSubmissionAddEventAsync(Submission entity);
 

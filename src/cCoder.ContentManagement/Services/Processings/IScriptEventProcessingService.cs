@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IScriptEventProcessingService
+internal interface IScriptEventProcessingService
 {
     ValueTask RaiseScriptAddEventAsync(Script entity);
 

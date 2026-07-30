@@ -6,7 +6,7 @@ using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface ICommonObjectEventProcessingService
+internal interface ICommonObjectEventProcessingService
 {
     ValueTask RaiseCommonObjectAddEventAsync(CommonObject entity);
 

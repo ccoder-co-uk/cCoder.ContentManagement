@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IAppCultureProcessingService
+internal interface IAppCultureProcessingService
 {
     IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false);
 

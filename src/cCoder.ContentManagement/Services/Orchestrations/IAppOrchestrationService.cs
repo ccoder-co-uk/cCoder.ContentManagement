@@ -8,7 +8,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-public interface IAppOrchestrationService
+internal interface IAppOrchestrationService
 {
     App GetApp(int appId);
 

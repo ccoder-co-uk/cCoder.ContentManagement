@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface ISubmissionProcessingService
+internal interface ISubmissionProcessingService
 {
     Submission GetSubmission(Guid submissionId);
 

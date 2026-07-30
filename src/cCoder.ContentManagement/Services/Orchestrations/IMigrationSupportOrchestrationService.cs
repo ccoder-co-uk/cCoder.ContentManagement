@@ -6,7 +6,7 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-public interface IMigrationSupportOrchestrationService
+internal interface IMigrationSupportOrchestrationService
 {
     T[] DeserializeItems<T>(string json);
 

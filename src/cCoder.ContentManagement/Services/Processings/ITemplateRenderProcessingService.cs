@@ -5,7 +5,7 @@
 using cCoder.ContentManagement.Models;
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface ITemplateRenderProcessingService
+internal interface ITemplateRenderProcessingService
 {
     string RenderTemplateRenderOperation(TemplateRenderOperation operation);
 }

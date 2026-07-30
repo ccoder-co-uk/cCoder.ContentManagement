@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-public interface IResourceEventService
+internal interface IResourceEventService
 {
     ValueTask RaiseResourceAddEventAsync(Resource entity);
 

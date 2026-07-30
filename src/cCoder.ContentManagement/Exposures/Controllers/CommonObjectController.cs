@@ -19,9 +19,9 @@ using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
-public class CommonObjectController(ICommonObjectOrchestrationService service) : ODataController()
+public class CommonObjectController(ICommonObjectManager service) : ODataController()
 {
-    private readonly ICommonObjectOrchestrationService service = service;
+    private readonly ICommonObjectManager service = service;
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]

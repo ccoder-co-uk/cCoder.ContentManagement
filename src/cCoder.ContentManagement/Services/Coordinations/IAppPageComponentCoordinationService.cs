@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
-public interface IAppPageComponentCoordinationService
+internal interface IAppPageComponentCoordinationService
 {
     ValueTask HandleAppAddAsync(App app);
 

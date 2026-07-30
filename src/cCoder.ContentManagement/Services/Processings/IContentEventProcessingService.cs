@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IContentEventProcessingService
+internal interface IContentEventProcessingService
 {
     ValueTask RaiseContentAddEventAsync(Content entity);
 

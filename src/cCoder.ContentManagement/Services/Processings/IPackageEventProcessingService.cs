@@ -6,7 +6,7 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IPackageEventProcessingService
+internal interface IPackageEventProcessingService
 {
     ValueTask RaisePackageImportEvent(int appId, Package package);
 

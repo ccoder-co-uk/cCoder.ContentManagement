@@ -5,7 +5,7 @@
 using cCoder.ContentManagement.Models;
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-public interface IPageRenderOrchestrationService
+internal interface IPageRenderOrchestrationService
 {
     bool IsAdminOfApp(int appId);
 

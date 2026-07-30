@@ -5,7 +5,7 @@
 using cCoder.ContentManagement.Models;
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IComponentRenderProcessingService
+internal interface IComponentRenderProcessingService
 {
     string RenderComponentRenderOperation(ComponentRenderOperation operation);
 }

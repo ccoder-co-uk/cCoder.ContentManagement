@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IPageInfoProcessingService
+internal interface IPageInfoProcessingService
 {
     PageInfo GetPageInfo(int pageInfoId);
 

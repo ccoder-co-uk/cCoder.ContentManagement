@@ -20,9 +20,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class ResourceController : ODataController
 {
-    private readonly IResourceOrchestrationService service;
+    private readonly IResourceManager service;
 
-    public ResourceController(IResourceOrchestrationService service, ILogger<ResourceController> log)
+    public ResourceController(IResourceManager service, ILogger<ResourceController> log)
     {
         this.service = service;
     }

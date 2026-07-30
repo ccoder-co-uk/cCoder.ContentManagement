@@ -6,7 +6,7 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Exports;
 
-public interface IPackageExportService
+internal interface IPackageExportService
 {
     Package ExportRolesPackage(int appId);
 

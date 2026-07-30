@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IPackageItemProcessingService
+internal interface IPackageItemProcessingService
 {
     PackageItem GetPackageItem(Guid packageItemId);
 

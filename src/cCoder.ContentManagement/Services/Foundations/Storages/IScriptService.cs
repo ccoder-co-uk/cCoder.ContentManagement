@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface IScriptService
+internal interface IScriptService
 {
     Script GetScript(int scriptId, bool ignoreFilters = false);
 

@@ -6,7 +6,7 @@ using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface ICommonObjectService
+internal interface ICommonObjectService
 {
     CommonObject GetCommonObject(int commonObjectId, bool ignoreFilters = false);
 

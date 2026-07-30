@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface IContentService
+internal interface IContentService
 {
     Content GetContent(int contentId, bool ignoreFilters = false);
 

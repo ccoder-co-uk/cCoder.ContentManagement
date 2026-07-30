@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface ILayoutProcessingService
+internal interface ILayoutProcessingService
 {
     Layout GetLayout(int layoutId);
 

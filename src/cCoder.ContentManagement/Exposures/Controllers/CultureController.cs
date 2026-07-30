@@ -21,9 +21,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class CultureController : ODataController
 {
-    private readonly ICultureOrchestrationService service;
+    private readonly ICultureManager service;
 
-    public CultureController(ICultureOrchestrationService service, ILogger<CultureController> log)
+    public CultureController(ICultureManager service, ILogger<CultureController> log)
     {
         this.service = service;
     }

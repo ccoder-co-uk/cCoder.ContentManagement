@@ -6,7 +6,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface IPageRoleService
+internal interface IPageRoleService
 {
     IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false);
 

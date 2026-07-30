@@ -20,9 +20,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class ScriptController : ODataController
 {
-    private readonly IScriptOrchestrationService service;
+    private readonly IScriptManager service;
 
-    public ScriptController(IScriptOrchestrationService service, ILogger<ScriptController> log)
+    public ScriptController(IScriptManager service, ILogger<ScriptController> log)
     {
         this.service = service;
     }

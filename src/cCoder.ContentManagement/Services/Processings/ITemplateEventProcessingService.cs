@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface ITemplateEventProcessingService
+internal interface ITemplateEventProcessingService
 {
     ValueTask RaiseTemplateAddEventAsync(Template entity);
 

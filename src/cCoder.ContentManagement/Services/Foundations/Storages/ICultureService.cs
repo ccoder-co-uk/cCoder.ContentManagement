@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface ICultureService
+internal interface ICultureService
 {
     Culture GetCulture(string cultureId, bool ignoreFilters = false);
 

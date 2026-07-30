@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface IPageInfoService
+internal interface IPageInfoService
 {
     PageInfo GetPageInfo(int pageInfoId, bool ignoreFilters = false);
 

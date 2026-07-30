@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IComponentProcessingService
+internal interface IComponentProcessingService
 {
     Component GetComponent(int componentId);
 

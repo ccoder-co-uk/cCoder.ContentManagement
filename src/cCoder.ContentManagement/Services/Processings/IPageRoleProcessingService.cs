@@ -7,7 +7,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IPageRoleProcessingService
+internal interface IPageRoleProcessingService
 {
     IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false);
 

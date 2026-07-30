@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-public interface IAppCultureEventService
+internal interface IAppCultureEventService
 {
     ValueTask RaiseAppCultureAddEventAsync(AppCulture entity);
 

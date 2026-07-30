@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
-public interface IPageCoordinationService
+internal interface IPageCoordinationService
 {
     ValueTask HandlePageAddAsync(Page page);
 

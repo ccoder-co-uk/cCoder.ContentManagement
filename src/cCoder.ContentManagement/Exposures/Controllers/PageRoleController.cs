@@ -15,9 +15,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class PageRoleController : ODataController
 {
-    private readonly IPageRoleOrchestrationService service;
+    private readonly IPageRoleManager service;
 
-    public PageRoleController(IPageRoleOrchestrationService service, ILogger<PageRoleController> log)
+    public PageRoleController(IPageRoleManager service, ILogger<PageRoleController> log)
     {
         this.service = service;
     }

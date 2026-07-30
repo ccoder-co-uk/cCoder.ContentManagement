@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
-public interface IAppRenderableCoordinationService
+internal interface IAppRenderableCoordinationService
 {
     ValueTask HandleAppAddAsync(App app);
 

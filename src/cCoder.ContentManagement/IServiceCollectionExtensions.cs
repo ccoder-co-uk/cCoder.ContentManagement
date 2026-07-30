@@ -373,25 +373,35 @@ public static partial class IServiceCollectionExtensions
     {
         services.AddTransient<IContentManagementMigrationAggregationService, ContentManagementMigrationAggregationService>();
         services.AddTransient<IAppCultureOrchestrationService, AppCultureOrchestrationService>();
+        services.AddTransient<IAppCultureManager, AppCultureOrchestrationService>();
         services.AddTransient<IAppOrchestrationService, AppOrchestrationService>();
         services.AddTransient<ICommonObjectOrchestrationService, CommonObjectOrchestrationService>();
+        services.AddTransient<ICommonObjectManager, CommonObjectOrchestrationService>();
         services.AddTransient<IComponentOrchestrationService, ComponentOrchestrationService>();
         services.AddTransient<IComponentRenderOrchestrationService, ComponentRenderOrchestrationService>();
         services.AddTransient<IContentOrchestrationService, ContentOrchestrationService>();
+        services.AddTransient<IContentManager, ContentOrchestrationService>();
         services.AddTransient<ICultureOrchestrationService, CultureOrchestrationService>();
+        services.AddTransient<ICultureManager, CultureOrchestrationService>();
         services.AddTransient<ILayoutOrchestrationService, LayoutOrchestrationService>();
+        services.AddTransient<ILayoutManager, LayoutOrchestrationService>();
         services.AddTransient<IMigrationSupportOrchestrationService, MigrationSupportOrchestrationService>();
         services.AddTransient<IPackageItemOrchestrationService, PackageItemOrchestrationService>();
         services.AddTransient<IPackageOrchestrationService, PackageOrchestrationService>();
         services.AddTransient<IPageInfoOrchestrationService, PageInfoOrchestrationService>();
+        services.AddTransient<IPageInfoManager, PageInfoOrchestrationService>();
         services.AddTransient<IPageOrchestrationService, PageOrchestrationService>();
         services.AddTransient<IPageRoleOrchestrationService, PageRoleOrchestrationService>();
+        services.AddTransient<IPageRoleManager, PageRoleOrchestrationService>();
         services.AddTransient<
             IPageRoleImportOrchestrationService,
             PageRoleImportOrchestrationService>();
         services.AddTransient<IResourceOrchestrationService, ResourceOrchestrationService>();
+        services.AddTransient<IResourceManager, ResourceOrchestrationService>();
         services.AddTransient<IScriptOrchestrationService, ScriptOrchestrationService>();
+        services.AddTransient<IScriptManager, ScriptOrchestrationService>();
         services.AddTransient<ISubmissionOrchestrationService, SubmissionOrchestrationService>();
+        services.AddTransient<ISubmissionManager, SubmissionOrchestrationService>();
         services.AddTransient<ITemplateOrchestrationService, TemplateOrchestrationService>();
         services.AddTransient<ITemplateRenderOrchestrationService, TemplateRenderOrchestrationService>();
     }

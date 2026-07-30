@@ -6,7 +6,7 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface IPackageItemService
+internal interface IPackageItemService
 {
     PackageItem GetPackageItem(Guid packageItemId, bool ignoreFilters = false);
 

@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface ICultureProcessingService
+internal interface ICultureProcessingService
 {
     Culture GetCulture(string cultureId);
 
