@@ -32,7 +32,7 @@ public partial class PageServiceTests
         IQueryable<CmsDataModels.Page> pages = expectedItems.Select(selector: item => item)
             .AsQueryable();
 
-        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: false))
+        pageBrokerMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: pages);
 
         // When
@@ -43,9 +43,9 @@ public partial class PageServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedItems);
 
-        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: false), times: Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

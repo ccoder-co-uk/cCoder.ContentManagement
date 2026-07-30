@@ -12,6 +12,7 @@ using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Dependencies.Caching;
 using cCoder.ContentManagement.Dependencies.Events;
+using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
@@ -65,6 +66,7 @@ public static partial class IServiceCollectionExtensions
     {
         services.RegisterConfiguration(configuration: configuration);
         services.AddEventingTypes();
+        services.AddDependencies();
         services.AddBrokers();
         services.AddServiceProviderDependencies();
         services.AddFoundations();
@@ -96,6 +98,7 @@ public static partial class IServiceCollectionExtensions
     {
         services.RegisterConfiguration(configuration: configuration);
         services.AddEventingTypes();
+        services.AddDependencies();
         services.AddBrokers();
         services.AddServiceProviderDependencies();
         services.AddFoundations();
@@ -184,6 +187,11 @@ public static partial class IServiceCollectionExtensions
             implementationFactory: (serviceProvider, _) =>
                 serviceProvider.GetRequiredService<ITemplateOrchestrationService>());
 
+        services.AddKeyedTransient<ITemplateContentBroker>(
+            serviceKey: "TemplateContent",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<ITemplateContentBroker>());
+
         services.AddKeyedTransient<ITemplateRenderOrchestrationService>(
             serviceKey: "TemplateRender",
             implementationFactory: (serviceProvider, _) =>
@@ -209,6 +217,12 @@ public static partial class IServiceCollectionExtensions
         services.AddEventingForType<Script>();
         services.AddEventingForType<Submission>();
         services.AddEventingForType<Template>();
+    }
+
+    private static void AddDependencies(this IServiceCollection services)
+    {
+        services.AddTransient<TemplateContentDependency>();
+        services.AddTransient<WorkflowExecutionDependency>();
     }
 
     private static void AddBrokers(this IServiceCollection services)
@@ -252,6 +266,12 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateBroker, TemplateBroker>();
         services.AddTransient<IAuthorizationBroker, AuthorizationBroker>();
         services.AddTransient<IJsonBroker, JsonBroker>();
+        services.AddTransient<
+            ITemplateContentBroker,
+            TemplateContentBroker>();
+        services.AddTransient<
+            IWorkflowExecutionBroker,
+            WorkflowExecutionBroker>();
         services.AddTransient<IUserRoleBroker, UserRoleBroker>();
     }
 
@@ -267,6 +287,7 @@ public static partial class IServiceCollectionExtensions
     private static void AddEventHandlers(this IServiceCollection services)
     {
         services.AddTransient<IAppManager, AppManager>();
+        services.AddTransient<IAuthorizationManager, AuthorizationManager>();
         services.AddTransient<IComponentManager, ComponentManager>();
         services.AddTransient<IContentManagementPackageManager, ContentManagementPackageManager>();
         services.AddTransient<IComponentRenderer, ComponentRenderer>();

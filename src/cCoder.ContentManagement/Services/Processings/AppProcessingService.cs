@@ -11,13 +11,15 @@ using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class AppProcessingService(
     IAppService service,
     ICultureBroker cultureBroker,
     IPrivilegeBroker privilegeBroker,
-    IAuthorizationBroker authorizationBroker,
+    IAuthorizationManager authorizationManager,
     IRoleBroker roleBroker,
     IUserRoleBroker userRoleBroker,
     IPageBroker pageBroker,
@@ -155,7 +157,7 @@ internal partial class AppProcessingService(
 
         if (storageApp.Roles != null)
         {
-            Role[] existingRoles = roleBroker.GetAllRoles(ignoreFilters: true)
+            Role[] existingRoles = roleBroker.GetAllRolesIgnoringFilters()
                 .Where(predicate: role => role.AppId == storageApp.Id)
                 .ToArray();
 
@@ -187,7 +189,7 @@ internal partial class AppProcessingService(
                     });
                 }
 
-                UserRole[] existingUserRoles = userRoleBroker.GetAllUserRoles(ignoreFilters: true)
+                UserRole[] existingUserRoles = userRoleBroker.GetAllUserRolesIgnoringFilters()
                     .Where(predicate: userRole => userRole.RoleId == role.Id)
                     .ToArray();
 
@@ -319,13 +321,13 @@ internal partial class AppProcessingService(
         ValidatePageOrderAppOnUpdate(inputs: [key, updatedApp]);
         ValidateId(appId: key, parameterName: "key");
         ValidateApp(app: updatedApp, parameterName: "app");
-        authorizationBroker.Authorize(appId: key, privilege: "App_update");
+        authorizationManager.Authorize(appId: key, privilege: "App_update");
 
         Dictionary<int, Page> incomingPagesById =
             (updatedApp.Pages ?? [])
             .ToDictionary(keySelector: page => page.Id);
 
-        Page[] existingPages = pageBroker.GetAllPages(ignoreFilters: true)
+        Page[] existingPages = pageBroker.GetAllPagesIgnoringFilters()
             .Where(predicate: page => page.AppId == key)
             .ToArray();
 
@@ -350,7 +352,7 @@ internal partial class AppProcessingService(
         string[] requestedCultureIds = enumerable.Distinct()
             .ToArray();
 
-        AppCulture[] culturesForApp = cultureBroker.GetAllCultures(ignoreFilters: false)
+        AppCulture[] culturesForApp = cultureBroker.GetAllCultures()
             .Where(predicate: culture => culture.Id == string.Empty || requestedCultureIds.Contains(value: culture.Id))
             .Select(selector: culture => new AppCulture
             {
@@ -370,8 +372,8 @@ internal partial class AppProcessingService(
     {
         List<Role> list = (app.Roles ?? new List<Role>()).ToList();
 
-        string currentUserId = authorizationBroker.GetCurrentUser()?.Id
-            ?? authorizationBroker.GetCurrentUserId();
+        string currentUserId = authorizationManager.GetCurrentUser()?.Id
+            ?? authorizationManager.GetCurrentUserId();
 
         bool isFirstApp = !service.GetAllApp(ignoreFilters: true)
             .Any();
@@ -382,13 +384,13 @@ internal partial class AppProcessingService(
             ? NormalizeBootstrapUserId(userId: currentUserId)
             : defaultUserId;
 
-        string[] administratorPrivilegeIds = privilegeBroker.GetAllPrivileges(ignoreFilters: false)
+        string[] administratorPrivilegeIds = privilegeBroker.GetAllPrivileges()
             .ToArray()
             .Where(predicate: privilege => isFirstApp || privilege.Id != "app_create")
             .Select(selector: privilege => privilege.Id)
             .ToArray();
 
-        string[] userPrivilegeIds = privilegeBroker.GetAllPrivileges(ignoreFilters: false)
+        string[] userPrivilegeIds = privilegeBroker.GetAllPrivileges()
             .ToArray()
             .Where(predicate: privilege =>
                 string.Equals(a: privilege.Operation, b: "Read", comparisonType: StringComparison.OrdinalIgnoreCase) &&
@@ -705,7 +707,7 @@ internal partial class AppProcessingService(
 
         if (updatedApp.Roles != null)
         {
-            Role[] existingRoles = roleBroker.GetAllRoles(ignoreFilters: true)
+            Role[] existingRoles = roleBroker.GetAllRolesIgnoringFilters()
                 .Where(predicate: role => role.AppId == updatedApp.Id)
                 .ToArray();
 
@@ -737,7 +739,7 @@ internal partial class AppProcessingService(
                     });
                 }
 
-                UserRole[] existingUserRoles = userRoleBroker.GetAllUserRoles(ignoreFilters: true)
+                UserRole[] existingUserRoles = userRoleBroker.GetAllUserRolesIgnoringFilters()
                     .Where(predicate: userRole => userRole.RoleId == role.Id)
                     .ToArray();
 

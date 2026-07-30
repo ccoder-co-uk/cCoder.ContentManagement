@@ -33,9 +33,16 @@ internal partial class AppOrchestrationService(
         ValidateId(appId: appId, parameterName: "appId");
         ValidateUserName(userName: userName, parameterName: "userName");
 
-        return authorizationProcessingService.IsAdmin(
-            appId: appId,
-            userName: userName);
+        return authorizationProcessingService
+            .IsAdminAuthorizationContext(
+                context: new AuthorizationContext
+                {
+                    Request = new AuthorizationRequest
+                    {
+                        AppId = appId,
+                        UserName = userName
+                    }
+                });
     });
 
     public App GetByDomainApp(string domain, bool ignoreFilters = false) =>
@@ -89,9 +96,16 @@ internal partial class AppOrchestrationService(
 
         if (app?.Roles?.Any() == true)
         {
-            authorizationProcessingService.Authorize(
-                appId: appId,
-                privilege: "app_delete");
+            authorizationProcessingService
+                .AuthorizeAuthorizationContext(
+                    context: new AuthorizationContext
+                    {
+                        Request = new AuthorizationRequest
+                        {
+                            AppId = appId,
+                            Privilege = "app_delete"
+                        }
+                    });
         }
 
         if (app != null)

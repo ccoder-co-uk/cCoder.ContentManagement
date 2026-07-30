@@ -10,13 +10,20 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class PageRoleBroker(ICoreContextFactory coreContextFactory) : IPageRoleBroker
 {
-    public IQueryable<PageRole> GetAllPageRoles(bool ignoreFilters)
+    public IQueryable<PageRole> GetAllPageRoles()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.PageRoles,
-            ignoreFilters: ignoreFilters)
+        return coreDataContext.PageRoles
+            .Include(navigationPropertyPath: pageRole => pageRole.Role);
+    }
+
+    public IQueryable<PageRole> GetAllPageRolesIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.PageRoles
+            .IgnoreQueryFilters()
             .Include(navigationPropertyPath: pageRole => pageRole.Role);
     }
 

@@ -33,7 +33,7 @@ public partial class CultureServiceTests
             .Select(selector: item => item)
             .AsQueryable();
 
-        cultureBrokerMock.Setup(expression: x => x.GetAllCultures(ignoreFilters: false))
+        cultureBrokerMock.Setup(expression: x => x.GetAllCultures())
             .Returns(value: cultures);
 
         // When
@@ -44,10 +44,10 @@ public partial class CultureServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedItems);
 
-        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: false), times: Times.Once);
+        cultureBrokerMock.Verify(expression: x => x.GetAllCultures(), times: Times.Once);
         cultureBrokerMock.VerifyNoOtherCalls();
         appCultureBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

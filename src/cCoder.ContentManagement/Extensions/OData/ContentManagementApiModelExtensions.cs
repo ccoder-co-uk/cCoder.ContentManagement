@@ -7,7 +7,7 @@ using Microsoft.OData.ModelBuilder;
 
 namespace cCoder.ContentManagement.Extensions.OData;
 
-public static class ContentManagementApiModelExtensions
+public static class ODataConventionModelBuilderExtensions
 {
     public static void ConfigureContentManagementApiModel(
         this ODataConventionModelBuilder builder) =>

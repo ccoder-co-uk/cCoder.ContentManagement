@@ -7,9 +7,11 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class TemplateService(ITemplateBroker templateBroker, IAuthorizationBroker authorizationBroker) : ITemplateService
+internal partial class TemplateService(ITemplateBroker templateBroker, IAuthorizationManager authorizationManager) : ITemplateService
 {
     public Template GetTemplate(int templateId, bool ignoreFilters = false) =>
         TryCatch<Template>(operation: () =>
@@ -47,7 +49,10 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
         TryCatch<IQueryable<Template>>(operation: () =>
     {
         ValidateAllTemplateOnGet(inputs: [ignoreFilters]);
-        return templateBroker.GetAllTemplates(ignoreFilters: ignoreFilters);
+
+        return ignoreFilters
+            ? templateBroker.GetAllTemplatesIgnoringFilters()
+            : templateBroker.GetAllTemplates();
     });
 
     public ValueTask<Template> AddTemplateAsync(Template newTemplate) =>
@@ -55,10 +60,10 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
     {
         ValidateTemplateOnAdd(inputs: [newTemplate]);
         ValidateTemplate(template: newTemplate, parameterName: "template");
-        authorizationBroker.Authorize(appId: newTemplate.AppId, privilege: "Template_create");
+        authorizationManager.Authorize(appId: newTemplate.AppId, privilege: "Template_create");
         Template storageTemplate = CreateStorageTemplate(newTemplate: newTemplate);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = (storageTemplate.CreatedOn = DateTimeOffset.UtcNow);
@@ -85,10 +90,10 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
     {
         ValidateTemplateOnUpdate(inputs: [updatedTemplate]);
         ValidateTemplate(template: updatedTemplate, parameterName: "template");
-        authorizationBroker.Authorize(appId: updatedTemplate.AppId, privilege: "Template_update");
+        authorizationManager.Authorize(appId: updatedTemplate.AppId, privilege: "Template_update");
         Template updateTemplate = CreateStorageTemplate(newTemplate: updatedTemplate);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
@@ -130,7 +135,7 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
             return;
         }
 
-        authorizationBroker.Authorize(appId: template.AppId, privilege: "Template_delete");
+        authorizationManager.Authorize(appId: template.AppId, privilege: "Template_delete");
         await templateBroker.DeleteTemplateAsync(deletedTemplate: CreateStorageTemplate(newTemplate: template));
 
     }, isValueTask: true);
@@ -158,7 +163,9 @@ internal partial class TemplateService(ITemplateBroker templateBroker, IAuthoriz
     }
 
     private IQueryable<Template> ExecuteGetAllTemplate(bool ignoreFilters = false) =>
-        templateBroker.GetAllTemplates(ignoreFilters: ignoreFilters);
+        (ignoreFilters
+            ? templateBroker.GetAllTemplatesIgnoringFilters()
+            : templateBroker.GetAllTemplates());
 
     private Template ExecuteGetTemplate(int templateId, bool ignoreFilters = false)
     {

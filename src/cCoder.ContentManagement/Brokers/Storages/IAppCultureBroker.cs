@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IAppCultureBroker
 {
-    IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters);
+    IQueryable<AppCulture> GetAllAppCultures();
+
+    IQueryable<AppCulture> GetAllAppCulturesIgnoringFilters();
 
     ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture);
 

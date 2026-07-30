@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IAppBroker
 {
-    IQueryable<App> GetAllApps(bool ignoreFilters);
+    IQueryable<App> GetAllApps();
+
+    IQueryable<App> GetAllAppsIgnoringFilters();
 
     ValueTask<App> AddAppAsync(App newApp);
 

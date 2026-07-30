@@ -33,7 +33,7 @@ public partial class ComponentServiceTests
             .Select(selector: item => item)
             .AsQueryable();
 
-        componentBrokerMock.Setup(expression: x => x.GetAllComponents(ignoreFilters: false))
+        componentBrokerMock.Setup(expression: x => x.GetAllComponents())
             .Returns(value: components);
 
         // When
@@ -44,9 +44,9 @@ public partial class ComponentServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedItems);
 
-        componentBrokerMock.Verify(expression: x => x.GetAllComponents(ignoreFilters: false), times: Times.Once);
+        componentBrokerMock.Verify(expression: x => x.GetAllComponents(), times: Times.Once);
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

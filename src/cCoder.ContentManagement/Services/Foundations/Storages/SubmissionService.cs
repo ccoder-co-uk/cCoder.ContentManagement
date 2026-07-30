@@ -7,9 +7,11 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAuthorizationBroker authorizationBroker) : ISubmissionService
+internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAuthorizationManager authorizationManager) : ISubmissionService
 {
     public Submission GetSubmission(Guid submissionId, bool ignoreFilters = false) =>
         TryCatch<Submission>(operation: () =>
@@ -47,7 +49,10 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         TryCatch<IQueryable<Submission>>(operation: () =>
     {
         ValidateAllSubmissionOnGet(inputs: [ignoreFilters]);
-        return submissionBroker.GetAllSubmissions(ignoreFilters: ignoreFilters);
+
+        return ignoreFilters
+            ? submissionBroker.GetAllSubmissionsIgnoringFilters()
+            : submissionBroker.GetAllSubmissions();
     });
 
     public ValueTask<Submission> AddSubmissionAsync(Submission newSubmission) =>
@@ -55,11 +60,11 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
     {
         ValidateSubmissionOnAdd(inputs: [newSubmission]);
         ValidateSubmission(submission: newSubmission, parameterName: "submission");
-        authorizationBroker.Authorize(appId: newSubmission.AppId, privilege: "Submission_create");
+        authorizationManager.Authorize(appId: newSubmission.AppId, privilege: "Submission_create");
         Submission storageSubmission = CreateStorageSubmission(newSubmission: newSubmission);
         storageSubmission.Id = ((newSubmission.Id == Guid.Empty) ? Guid.NewGuid() : newSubmission.Id);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = (storageSubmission.CreatedOn = DateTimeOffset.UtcNow);
@@ -85,10 +90,10 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
     {
         ValidateSubmissionOnUpdate(inputs: [updatedSubmission]);
         ValidateSubmission(submission: updatedSubmission, parameterName: "submission");
-        authorizationBroker.Authorize(appId: updatedSubmission.AppId, privilege: "Submission_update");
+        authorizationManager.Authorize(appId: updatedSubmission.AppId, privilege: "Submission_update");
         Submission updateSubmission = CreateStorageSubmission(newSubmission: updatedSubmission);
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
@@ -114,7 +119,7 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         ValidateDeleteAsync(inputs: [submissionId]);
         ValidateId(submissionId: submissionId, parameterName: "id");
         Submission submission = ExecuteGetSubmission(submissionId: submissionId);
-        authorizationBroker.Authorize(appId: submission.AppId, privilege: "Submission_delete");
+        authorizationManager.Authorize(appId: submission.AppId, privilege: "Submission_delete");
         await submissionBroker.DeleteSubmissionAsync(deletedSubmission: CreateStorageSubmission(newSubmission: submission));
 
     }, isValueTask: true);
@@ -141,7 +146,9 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
     }
 
     private IQueryable<Submission> ExecuteGetAllSubmission(bool ignoreFilters = false) =>
-        submissionBroker.GetAllSubmissions(ignoreFilters: ignoreFilters);
+        (ignoreFilters
+            ? submissionBroker.GetAllSubmissionsIgnoringFilters()
+            : submissionBroker.GetAllSubmissions());
 
     private Submission ExecuteGetSubmission(Guid submissionId, bool ignoreFilters = false)
     {

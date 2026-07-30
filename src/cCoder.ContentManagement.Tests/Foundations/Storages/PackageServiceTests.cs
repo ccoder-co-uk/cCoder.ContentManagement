@@ -17,27 +17,29 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
 
 
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class PackageServiceTests
 {
     private readonly Mock<IPackageBroker> packageBrokerMock;
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock;
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly PackageService packageService;
 
     public PackageServiceTests()
     {
         packageBrokerMock = new Mock<IPackageBroker>(behavior: MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
 
         packageService = new PackageService(
 packageBroker: packageBrokerMock.Object,
-authorizationBroker: authorizationBrokerMock.Object
+authorizationManager: authorizationManagerMock.Object
         );
     }
 

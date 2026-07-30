@@ -32,7 +32,7 @@ public partial class ScriptServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Script script = CreateRandomScript(id: 7);
@@ -40,7 +40,7 @@ public partial class ScriptServiceTests
         CmsDataModels.Script submitted = null;
 
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_create"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_create"));
 
         scriptBrokerMock
             .Setup(expression: x =>
@@ -146,19 +146,19 @@ times: Times.Once
         );
 
         scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_create"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_create"), times: Times.Once);
     }
 
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Script script = CreateRandomScript(id: 7);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_create"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -172,7 +172,7 @@ times: Times.Once
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_create"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_create"), times: Times.Once);
     }
 
 }

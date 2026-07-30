@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IResourceBroker
 {
-    IQueryable<Resource> GetAllResources(bool ignoreFilters);
+    IQueryable<Resource> GetAllResources();
+
+    IQueryable<Resource> GetAllResourcesIgnoringFilters();
 
     ValueTask<Resource> AddResourceAsync(Resource newResource);
 

@@ -20,22 +20,24 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class PageServiceTests
 {
     private readonly Mock<IPageBroker> pageBrokerMock;
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock;
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly PageService pageService;
 
     public PageServiceTests()
     {
         pageBrokerMock = new Mock<IPageBroker>(behavior: MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
-        pageService = new PageService(pageBroker: pageBrokerMock.Object, authorizationBroker: authorizationBrokerMock.Object);
+        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
+        pageService = new PageService(pageBroker: pageBrokerMock.Object, authorizationManager: authorizationManagerMock.Object);
     }
 
     private static Page CreateRandomPage(int id = 42)

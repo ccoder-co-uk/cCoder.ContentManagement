@@ -30,7 +30,7 @@ internal sealed partial class PageRoleImportPersistenceProcessingService(
             .ToArray();
 
         PageRole[] existingPageRoles = pageRoleBroker
-            .GetAllPageRoles(ignoreFilters: true)
+            .GetAllPageRolesIgnoringFilters()
             .Where(
                 predicate: pageRole =>
                     Enumerable.Contains(

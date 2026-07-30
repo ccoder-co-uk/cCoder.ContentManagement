@@ -27,6 +27,7 @@ internal partial class TemplateRenderProcessingService(
     ICommonObjectReaderBroker objectCache,
     IJsonBroker jsonBroker,
     ITemplateRenderService templateRenderService,
+    IWorkflowExecutionBroker workflowExecutionBroker,
     ContentManagementConfiguration config = null,
     ILogger<TemplateRenderProcessingService> log = null)
         : ITemplateRenderProcessingService
@@ -338,16 +339,6 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                      {
                                                                                                                                          string value = match.Groups[1].Value;
 
-                                                                                                                                         using HttpClient httpClient = new HttpClient(handler: new HttpClientHandler
-                                                                                                                                         {
-                                                                                                                                             AutomaticDecompression = (DecompressionMethods.GZip | DecompressionMethods.Deflate)
-                                                                                                                                         })
-                                                                                                                                         {
-                                                                                                                                             BaseAddress = new Uri(uriString: replacements.First(predicate: (Replacement r) => r.Old == "[api[workflow]]")
-                                                                                                                                             .New),
-                                                                                                                                             Timeout = TimeSpan.FromMinutes(minutes: 10L)
-                                                                                                                                         };
-
                                                                                                                                          string content = SerializeForOData(model: new
                                                                                                                                          {
                                                                                                                                              Script = value,
@@ -355,12 +346,11 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                              .New)
                                                                                                                                          });
 
-                                                                                                                                         Task<string> task = httpClient.PostAsync(requestUri: "ExecuteScript?useDetails=true", content: new StringContent(content: content, encoding: Encoding.UTF8, mediaType: "text/plain"))
-                                                                                                                                             .ContinueWith(continuationFunction: (Task<HttpResponseMessage> t) => t.Result.Content.ReadAsStringAsync())
-                                                                                                                                             .Unwrap();
+                                                                                                                                         string result = workflowExecutionBroker.Execute(
+                                                                                                                                             baseAddress: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]").New,
+                                                                                                                                             content: content);
 
-                                                                                                                                         task.Wait();
-                                                                                                                                         return ProcessContentString(key: key, renderParams: renderParams, content: task.Result, replacements: replacements);
+                                                                                                                                         return ProcessContentString(key: key, renderParams: renderParams, content: result, replacements: replacements);
                                                                                                                                      });
 
     private static string SerializeForOData(object model) =>

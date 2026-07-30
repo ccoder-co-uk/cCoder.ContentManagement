@@ -36,10 +36,10 @@ public partial class PageInfoServiceTests
 
         DataPageInfo submitted = null;
 
-        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
             .Returns(value: new[] { new CmsDataModels.Page { Id = pageInfo.PageId, AppId = 7 } }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_update"));
 
         pageInfoBrokerMock
             .Setup(expression: x => x.UpdatePageInfoAsync(updatedPageInfo: It.IsAny<DataPageInfo>()))
@@ -71,10 +71,10 @@ public partial class PageInfoServiceTests
 
         pageInfoBrokerMock.Verify(expression: x => x.UpdatePageInfoAsync(updatedPageInfo: It.IsAny<DataPageInfo>()), times: Times.Once);
         pageInfoBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPagesIgnoringFilters(), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_update"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_update"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -83,10 +83,10 @@ public partial class PageInfoServiceTests
         // Given
         PageInfo pageInfo = CreateRandomPageInfo();
 
-        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
             .Returns(value: new[] { new CmsDataModels.Page { Id = pageInfo.PageId, AppId = 7 } }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -100,10 +100,10 @@ public partial class PageInfoServiceTests
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         pageInfoBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPagesIgnoringFilters(), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_update"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PageInfo_update"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

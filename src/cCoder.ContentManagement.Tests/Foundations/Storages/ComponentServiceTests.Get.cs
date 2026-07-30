@@ -28,7 +28,7 @@ public partial class ComponentServiceTests
         // Given
         Component component = CreateRandomComponent(id: 7);
 
-        componentBrokerMock.Setup(expression: x => x.GetAllComponents(ignoreFilters: false))
+        componentBrokerMock.Setup(expression: x => x.GetAllComponents())
             .Returns(value: new[] { component }.AsQueryable());
 
         // When
@@ -39,9 +39,9 @@ public partial class ComponentServiceTests
         result.Should()
             .BeEquivalentTo(expectation: component);
 
-        componentBrokerMock.Verify(expression: x => x.GetAllComponents(ignoreFilters: false), times: Times.Once);
+        componentBrokerMock.Verify(expression: x => x.GetAllComponents(), times: Times.Once);
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

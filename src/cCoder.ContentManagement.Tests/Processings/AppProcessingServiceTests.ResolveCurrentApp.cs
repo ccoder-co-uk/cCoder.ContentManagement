@@ -32,7 +32,7 @@ public partial class AppProcessingServiceTests
     public void ShouldReturnAppFromFoundationServiceGetWhenWebDavPathContainsAppIdForResolveCurrentApp()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -42,11 +42,11 @@ public partial class AppProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         App app = CreateRandomApp();
@@ -58,7 +58,7 @@ public partial class AppProcessingServiceTests
 service: appServiceMock.Object,
 cultureBroker: cultureBrokerMock.Object,
 privilegeBroker: privilegeBrokerMock.Object,
-authorizationBroker: authorizationBrokerMock.Object,
+authorizationManager: authorizationManagerMock.Object,
 roleBroker: roleBrokerMock.Object,
 userRoleBroker: userRoleBrokerMock.Object,
 pageBroker: pageBrokerMock.Object,
@@ -84,7 +84,7 @@ httpContext: context
     public void ShouldReturnAppByHostWhenRequestIsNotWebDavForResolveCurrentApp()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -94,11 +94,11 @@ httpContext: context
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         App app = CreateRandomApp();
@@ -112,14 +112,14 @@ httpContext: context
 service: appServiceMock.Object,
 cultureBroker: cultureBrokerMock.Object,
 privilegeBroker: privilegeBrokerMock.Object,
-authorizationBroker: authorizationBrokerMock.Object,
+authorizationManager: authorizationManagerMock.Object,
 roleBroker: roleBrokerMock.Object,
 userRoleBroker: userRoleBrokerMock.Object,
 pageBroker: pageBrokerMock.Object,
 httpContext: context
         );
 
-        appServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+        appServiceMock.Setup(expression: x => x.GetAllApp())
             .Returns(value: new[] { app }.AsQueryable());
 
         // When
@@ -130,7 +130,7 @@ httpContext: context
         result.Should()
             .BeSameAs(expected: app);
 
-        appServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: false), times: Times.Once);
+        appServiceMock.Verify(expression: x => x.GetAllApp(), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 

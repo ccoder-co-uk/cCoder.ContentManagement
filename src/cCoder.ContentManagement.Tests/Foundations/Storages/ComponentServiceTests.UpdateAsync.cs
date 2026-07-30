@@ -32,7 +32,7 @@ public partial class ComponentServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Component component = CreateRandomComponent(id: 7, appId: 7);
@@ -40,7 +40,7 @@ public partial class ComponentServiceTests
         CmsDataModels.Component submitted = null;
 
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"));
 
         componentBrokerMock
             .Setup(expression: x => x.UpdateComponentAsync(updatedComponent: It.IsAny<CmsDataModels.Component>()))
@@ -138,19 +138,19 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
 
         componentBrokerMock.Verify(expression: x => x.UpdateComponentAsync(updatedComponent: It.IsAny<CmsDataModels.Component>()), times: Times.Once);
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"), times: Times.Once);
     }
 
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Component component = CreateRandomComponent(id: 7, appId: 7);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -164,7 +164,7 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"), times: Times.Once);
     }
 
 }

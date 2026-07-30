@@ -29,7 +29,7 @@ public partial class SubmissionServiceTests
         Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
         Submission submission = CreateRandomSubmission(id: submissionId);
 
-        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions(ignoreFilters: false))
+        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions())
             .Returns(value: new[] { submission }.AsQueryable());
 
         // When
@@ -40,9 +40,9 @@ public partial class SubmissionServiceTests
         result.Should()
             .BeEquivalentTo(expectation: submission);
 
-        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(ignoreFilters: false), times: Times.Once);
+        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(), times: Times.Once);
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

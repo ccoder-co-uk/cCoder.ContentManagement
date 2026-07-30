@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class LayoutBroker(ICoreContextFactory coreContextFactory) : ILayoutBroker
 {
-    public IQueryable<Layout> GetAllLayouts(bool ignoreFilters)
+    public IQueryable<Layout> GetAllLayouts()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Layouts,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Layouts;
+    }
+
+    public IQueryable<Layout> GetAllLayoutsIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Layouts.IgnoreQueryFilters();
     }
 
     public async ValueTask<Layout> AddLayoutAsync(Layout newLayout)

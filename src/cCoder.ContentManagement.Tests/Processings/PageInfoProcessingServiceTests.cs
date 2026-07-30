@@ -16,14 +16,16 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class PageInfoProcessingServiceTests
 {
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
     private readonly Mock<IPageInfoService> pageInfoServiceMock = new();
     private readonly PageInfoProcessingService pageInfoProcessingService;
 

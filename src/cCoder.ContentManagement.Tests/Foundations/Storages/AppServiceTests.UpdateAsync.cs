@@ -35,7 +35,7 @@ public partial class AppServiceTests
 
         CmsDataModels.App submitted = null;
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"));
 
         appBrokerMock
             .Setup(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<CmsDataModels.App>()))
@@ -91,8 +91,8 @@ public partial class AppServiceTests
 
         appBrokerMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<CmsDataModels.App>()), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public partial class AppServiceTests
         // Given
         App app = CreateRandomApp(id: 5);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -115,8 +115,8 @@ public partial class AppServiceTests
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

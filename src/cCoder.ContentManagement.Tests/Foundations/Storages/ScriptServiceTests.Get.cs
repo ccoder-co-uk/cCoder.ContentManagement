@@ -28,7 +28,7 @@ public partial class ScriptServiceTests
         // Given
         Script script = CreateRandomScript(id: 7);
 
-        scriptBrokerMock.Setup(expression: x => x.GetAllScripts(ignoreFilters: false))
+        scriptBrokerMock.Setup(expression: x => x.GetAllScripts())
             .Returns(value: new[] { script }.AsQueryable());
 
         // When
@@ -39,9 +39,9 @@ public partial class ScriptServiceTests
         result.Should()
             .BeEquivalentTo(expectation: script);
 
-        scriptBrokerMock.Verify(expression: x => x.GetAllScripts(ignoreFilters: false), times: Times.Once);
+        scriptBrokerMock.Verify(expression: x => x.GetAllScripts(), times: Times.Once);
         scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

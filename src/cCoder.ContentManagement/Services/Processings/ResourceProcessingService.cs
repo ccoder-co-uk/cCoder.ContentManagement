@@ -9,12 +9,14 @@ using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class ResourceProcessingService(IResourceService service, IAuthorizationBroker authorizationBroker) : IResourceProcessingService
+internal partial class ResourceProcessingService(IResourceService service, IAuthorizationManager authorizationManager) : IResourceProcessingService
 {
     private User GetCurrentUser() =>
-        authorizationBroker.GetCurrentUser();
+        authorizationManager.GetCurrentUser();
 
     public Resource GetResource(int resourceId) =>
         TryCatch<Resource>(operation: () =>

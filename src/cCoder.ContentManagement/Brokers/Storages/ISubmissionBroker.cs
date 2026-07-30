@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface ISubmissionBroker
 {
-    IQueryable<Submission> GetAllSubmissions(bool ignoreFilters);
+    IQueryable<Submission> GetAllSubmissions();
+
+    IQueryable<Submission> GetAllSubmissionsIgnoringFilters();
 
     ValueTask<Submission> AddSubmissionAsync(Submission newSubmission);
 

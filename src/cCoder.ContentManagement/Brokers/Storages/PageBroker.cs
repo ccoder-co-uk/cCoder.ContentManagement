@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class PageBroker(ICoreContextFactory coreContextFactory) : IPageBroker
 {
-    public IQueryable<Page> GetAllPages(bool ignoreFilters)
+    public IQueryable<Page> GetAllPages()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Pages,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Pages;
+    }
+
+    public IQueryable<Page> GetAllPagesIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Pages.IgnoreQueryFilters();
     }
 
     public async ValueTask<Page> AddPageAsync(Page newPage)

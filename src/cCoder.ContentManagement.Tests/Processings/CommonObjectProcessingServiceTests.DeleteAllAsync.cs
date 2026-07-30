@@ -26,7 +26,7 @@ public partial class CommonObjectProcessingServiceTests
     public async Task ShouldDeleteEachItemWhenUserHasDeletePrivilegeForDeleteAllAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "commonobject_delete");

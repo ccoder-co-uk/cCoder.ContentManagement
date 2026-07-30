@@ -33,7 +33,7 @@ public partial class LayoutServiceTests
             .Select(selector: item => item)
             .AsQueryable();
 
-        layoutBrokerMock.Setup(expression: x => x.GetAllLayouts(ignoreFilters: false))
+        layoutBrokerMock.Setup(expression: x => x.GetAllLayouts())
             .Returns(value: layouts);
 
         // When
@@ -44,9 +44,9 @@ public partial class LayoutServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedItems);
 
-        layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(ignoreFilters: false), times: Times.Once);
+        layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(), times: Times.Once);
         layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

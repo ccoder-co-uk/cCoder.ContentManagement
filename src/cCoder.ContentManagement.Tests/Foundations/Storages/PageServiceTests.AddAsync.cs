@@ -32,7 +32,7 @@ public partial class PageServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Page page = CreateRandomPage(id: 0);
@@ -40,7 +40,7 @@ public partial class PageServiceTests
         CmsDataModels.Page submitted = null;
 
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"));
 
         pageBrokerMock
             .Setup(expression: x => x.AddPageAsync(newPage: It.Is<CmsDataModels.Page>(match: candidate => !ReferenceEquals(objA: candidate, objB: page))))
@@ -144,14 +144,14 @@ times: Times.Once
         );
 
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"), times: Times.Once);
     }
 
     [Fact]
     public async Task ShouldPreserveShowOnMenusWhenAddingHiddenPageAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Page page = CreateRandomPage(id: 0);
@@ -159,7 +159,7 @@ times: Times.Once
 
         CmsDataModels.Page submitted = null;
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"));
 
         pageBrokerMock
             .Setup(expression: x => x.AddPageAsync(newPage: It.Is<CmsDataModels.Page>(match: candidate => !ReferenceEquals(objA: candidate, objB: page))))
@@ -185,19 +185,19 @@ expression: x => x.AddPageAsync(newPage: It.Is<CmsDataModels.Page>(match: candid
 times: Times.Once);
 
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"), times: Times.Once);
     }
 
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Page page = CreateRandomPage(id: 0);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -211,7 +211,7 @@ times: Times.Once);
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Page_create"), times: Times.Once);
     }
 
 }

@@ -32,7 +32,7 @@ public partial class ScriptServiceTests
     public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Script script = CreateRandomScript(id: 7);
@@ -40,7 +40,7 @@ public partial class ScriptServiceTests
         CmsDataModels.Script submitted = null;
 
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"));
 
         scriptBrokerMock
             .Setup(expression: x => x.UpdateScriptAsync(updatedScript: It.IsAny<CmsDataModels.Script>()))
@@ -138,19 +138,19 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
 
         scriptBrokerMock.Verify(expression: x => x.UpdateScriptAsync(updatedScript: It.IsAny<CmsDataModels.Script>()), times: Times.Once);
         scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"), times: Times.Once);
     }
 
     [Fact]
     public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
     {
         // Given
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Script script = CreateRandomScript(id: 7);
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -164,7 +164,7 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"), times: Times.Once);
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"), times: Times.Once);
     }
 
 }

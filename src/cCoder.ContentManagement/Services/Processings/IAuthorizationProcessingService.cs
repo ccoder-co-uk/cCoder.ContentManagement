@@ -8,11 +8,17 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 public interface IAuthorizationProcessingService
 {
-    void Authorize(int? appId, string privilege);
+    void AuthorizeAuthorizationContext(AuthorizationContext context);
 
-    bool IsAdmin(int appId, string userName);
+    AuthorizationContext ResolveCurrentAuthorizationContext(
+        AuthorizationContext context);
 
-    RenderAuthorization ResolveRenderAuthorization(string culture);
+    bool IsAdminAuthorizationContext(AuthorizationContext context);
 
-    bool IsAdminOfApp(int appId);
+    bool IsAdminOfAppAuthorizationContext(AuthorizationContext context);
+
+    AuthorizationContext ResolveRenderAuthorizationContext(
+        AuthorizationContext context);
+
+    bool UserCanPageAuthorizationContext(AuthorizationContext context);
 }

@@ -33,10 +33,10 @@ public partial class PageServiceTests
         // Given
         Page page = CreateRandomPage(id: 5);
 
-        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: false))
+        pageBrokerMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { page }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)page.AppId, privilege: "Page_delete"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)page.AppId, privilege: "Page_delete"));
 
         pageBrokerMock
             .Setup(expression: x => x.DeletePageAsync(deletedPage: It.Is<CmsDataModels.Page>(match: p => p.Id == page.Id)))
@@ -46,11 +46,11 @@ public partial class PageServiceTests
         await pageService.DeleteAsync(pageId: 5);
 
         // Then
-        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: false), times: Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
         pageBrokerMock.Verify(expression: x => x.DeletePageAsync(deletedPage: It.Is<CmsDataModels.Page>(match: p => p.Id == page.Id)), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)page.AppId, privilege: "Page_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)page.AppId, privilege: "Page_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -59,10 +59,10 @@ public partial class PageServiceTests
         // Given
         Page page = CreateRandomPage(id: 5);
 
-        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: false))
+        pageBrokerMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { page }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)page.AppId, privilege: "Page_delete"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -75,10 +75,10 @@ public partial class PageServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: false), times: Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)page.AppId, privilege: "Page_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)page.AppId, privilege: "Page_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

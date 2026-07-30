@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IPageInfoBroker
 {
-    IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters);
+    IQueryable<PageInfo> GetAllPageInfo();
+
+    IQueryable<PageInfo> GetAllPageInfoIgnoringFilters();
 
     ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo);
 

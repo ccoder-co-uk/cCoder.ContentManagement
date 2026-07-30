@@ -5,6 +5,7 @@
 using FluentAssertions;
 using Moq;
 using Xunit;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
@@ -19,7 +20,10 @@ public partial class AppOrchestrationServiceTests
         const bool expectedResult = true;
 
         authorizationProcessingServiceMock
-            .Setup(expression: broker => broker.IsAdmin(appId: appId, userName: userName))
+            .Setup(expression: broker => broker.IsAdminAuthorizationContext(
+                context: It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == appId
+                    && context.Request.UserName == userName)))
             .Returns(value: expectedResult);
 
         // When
@@ -32,7 +36,10 @@ public partial class AppOrchestrationServiceTests
             .Be(expected: expectedResult);
 
         authorizationProcessingServiceMock.Verify(
-            expression: broker => broker.IsAdmin(appId: appId, userName: userName),
+            expression: broker => broker.IsAdminAuthorizationContext(
+                context: It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == appId
+                    && context.Request.UserName == userName)),
             times: Times.Once);
 
         authorizationProcessingServiceMock.VerifyNoOtherCalls();

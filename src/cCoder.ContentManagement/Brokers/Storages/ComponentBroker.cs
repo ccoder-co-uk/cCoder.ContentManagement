@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class ComponentBroker(ICoreContextFactory coreContextFactory) : IComponentBroker
 {
-    public IQueryable<Component> GetAllComponents(bool ignoreFilters)
+    public IQueryable<Component> GetAllComponents()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Components,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Components;
+    }
+
+    public IQueryable<Component> GetAllComponentsIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Components.IgnoreQueryFilters();
     }
 
     public async ValueTask<Component> AddComponentAsync(Component newComponent)

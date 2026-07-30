@@ -26,13 +26,13 @@ public partial class PageRoleImportLookupProcessingServiceTests
         pageBrokerMock
             .Setup(
                 expression: broker =>
-                    broker.GetAllPages(ignoreFilters: true))
+                    broker.GetAllPagesIgnoringFilters())
             .Returns(value: new[] { page }.AsQueryable());
 
         roleBrokerMock
             .Setup(
                 expression: broker =>
-                    broker.GetAllRoles(ignoreFilters: true))
+                    broker.GetAllRolesIgnoringFilters())
             .Returns(value: new[] { role }.AsQueryable());
 
         // When
@@ -65,13 +65,13 @@ public partial class PageRoleImportLookupProcessingServiceTests
         pageBrokerMock
             .Setup(
                 expression: broker =>
-                    broker.GetAllPages(ignoreFilters: true))
+                    broker.GetAllPagesIgnoringFilters())
             .Returns(value: new[] { page }.AsQueryable());
 
         roleBrokerMock
             .Setup(
                 expression: broker =>
-                    broker.GetAllRoles(ignoreFilters: true))
+                    broker.GetAllRolesIgnoringFilters())
             .Returns(value: new[] { role }.AsQueryable());
 
         // When
@@ -122,7 +122,7 @@ public partial class PageRoleImportLookupProcessingServiceTests
         roleBrokerMock
             .Setup(
                 expression: broker =>
-                    broker.GetAllRoles(ignoreFilters: true))
+                    broker.GetAllRolesIgnoringFilters())
             .Throws(exception: dependencyException);
 
         // When
@@ -150,7 +150,7 @@ public partial class PageRoleImportLookupProcessingServiceTests
         roleBrokerMock
             .Setup(
                 expression: broker =>
-                    broker.GetAllRoles(ignoreFilters: true))
+                    broker.GetAllRolesIgnoringFilters())
             .Throws(exception: serviceException);
 
         // When

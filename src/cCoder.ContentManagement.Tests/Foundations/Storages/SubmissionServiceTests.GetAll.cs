@@ -38,7 +38,7 @@ public partial class SubmissionServiceTests
             .Select(selector: item => item)
             .AsQueryable();
 
-        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions(ignoreFilters: false))
+        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions())
             .Returns(value: submissions);
 
         // When
@@ -49,9 +49,9 @@ public partial class SubmissionServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedItems);
 
-        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(ignoreFilters: false), times: Times.Once);
+        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(), times: Times.Once);
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

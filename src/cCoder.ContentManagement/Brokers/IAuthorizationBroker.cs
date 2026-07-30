@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Brokers;
@@ -12,9 +13,11 @@ public interface IAuthorizationBroker
 
     string GetCurrentUserId();
 
-    bool IsAdminOfApp(int? appId);
+    User GetUserWithRoles(string userId);
 
-    bool IsAdmin(int appId, string userName);
+    App GetAppWithRoles(int appId);
 
-    void Authorize(int? appId, string privilege);
+    Role[] GetRolesForUser(string userId);
+
+    bool HasApps();
 }

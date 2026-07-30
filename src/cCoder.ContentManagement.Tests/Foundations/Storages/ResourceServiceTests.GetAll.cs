@@ -36,7 +36,7 @@ public partial class ResourceServiceTests
             .Select(selector: item => item)
             .AsQueryable();
 
-        resourceBrokerMock.Setup(expression: x => x.GetAllResources(ignoreFilters: false))
+        resourceBrokerMock.Setup(expression: x => x.GetAllResources())
             .Returns(value: resources);
 
         IQueryable<Resource> result = resourceService.GetAllResource();

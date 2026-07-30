@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IPageBroker
 {
-    IQueryable<Page> GetAllPages(bool ignoreFilters);
+    IQueryable<Page> GetAllPages();
+
+    IQueryable<Page> GetAllPagesIgnoringFilters();
 
     ValueTask<Page> AddPageAsync(Page newPage);
 

@@ -4,7 +4,6 @@
 
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Foundations.Authorization;
-using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -12,38 +11,73 @@ internal partial class AuthorizationProcessingService(
     IAuthorizationService authorizationService)
         : IAuthorizationProcessingService
 {
-    public void Authorize(int? appId, string privilege) =>
+    public void AuthorizeAuthorizationContext(
+        AuthorizationContext context) =>
         TryCatch(operation: () =>
     {
-        ValidateAuthorize(inputs: [appId, privilege]);
-        authorizationService.Authorize(appId: appId, privilege: privilege);
+        ValidateAuthorize(inputs: [context]);
+
+        authorizationService.AuthorizeAuthorizationContext(
+            context: context);
     });
 
-    public bool IsAdmin(int appId, string userName) =>
+    public AuthorizationContext ResolveCurrentAuthorizationContext(
+        AuthorizationContext context) =>
+        TryCatch<AuthorizationContext>(operation: () =>
+    {
+        ValidateResolveCurrentAuthorizationContext(inputs: [context]);
+
+        return authorizationService.ResolveCurrentAuthorizationContext(
+            context: context);
+    });
+
+    public bool IsAdminAuthorizationContext(
+        AuthorizationContext context) =>
         TryCatch<bool>(operation: () =>
     {
-        ValidateIsAdmin(inputs: [appId, userName]);
-        return authorizationService.IsAdmin(appId: appId, userName: userName);
+        ValidateIsAdmin(inputs: [context]);
+
+        return authorizationService.IsAdminAuthorizationContext(
+            context: context);
     });
 
-    public bool IsAdminOfApp(int appId) =>
+    public bool IsAdminOfAppAuthorizationContext(
+        AuthorizationContext context) =>
         TryCatch<bool>(operation: () =>
     {
-        ValidateIsAdminOfApp(inputs: [appId]);
-        return authorizationService.IsAdminOfApp(appId: appId);
+        ValidateIsAdminOfApp(inputs: [context]);
+
+        return authorizationService.IsAdminOfAppAuthorizationContext(
+            context: context);
     });
 
-    public RenderAuthorization ResolveRenderAuthorization(string culture) =>
-        TryCatch<RenderAuthorization>(operation: () =>
+    public AuthorizationContext ResolveRenderAuthorizationContext(
+        AuthorizationContext context) =>
+        TryCatch<AuthorizationContext>(operation: () =>
     {
-        ValidateResolveRenderAuthorization(inputs: [culture]);
-        User user = authorizationService.GetCurrentUser();
+        ValidateResolveRenderAuthorization(inputs: [context]);
 
-        return new RenderAuthorization
+        AuthorizationContext currentContext =
+            authorizationService.ResolveCurrentAuthorizationContext(
+                context: context);
+
+        currentContext.RenderAuthorization = new()
         {
-            Culture = culture ?? user.DefaultCultureId,
-            User = user
+            Culture = currentContext.Culture
+                ?? currentContext.User.DefaultCultureId,
+            User = currentContext.User
         };
 
+        return currentContext;
+    });
+
+    public bool UserCanPageAuthorizationContext(
+        AuthorizationContext context) =>
+        TryCatch<bool>(operation: () =>
+    {
+        ValidateUserCanPageAuthorization(inputs: [context]);
+
+        return authorizationService.UserCanPageAuthorizationContext(
+            context: context);
     });
 }

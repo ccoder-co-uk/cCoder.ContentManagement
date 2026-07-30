@@ -7,7 +7,7 @@ using cCoder.Data.Models.Security;
 using cCoder.Security.Data.EF;
 using cCoder.Security.Data.EF.Dependencies;
 using cCoder.Security.Data.EF.Interfaces;
-using cCoder.Security.Objects;
+using cCoder.Security.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -224,11 +224,4 @@ END";
             Encrypt = true,
             TrustServerCertificate = true,
         };
-}
-
-[CollectionDefinition(Name)]
-public sealed class ContentManagementIntegrationCollection
-    : ICollectionFixture<ContentManagementIntegrationFixture>
-{
-    public const string Name = "ContentManagement integration";
 }

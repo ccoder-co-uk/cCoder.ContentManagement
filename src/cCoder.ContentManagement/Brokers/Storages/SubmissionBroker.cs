@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class SubmissionBroker(ICoreContextFactory coreContextFactory) : ISubmissionBroker
 {
-    public IQueryable<Submission> GetAllSubmissions(bool ignoreFilters)
+    public IQueryable<Submission> GetAllSubmissions()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Submissions,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Submissions;
+    }
+
+    public IQueryable<Submission> GetAllSubmissionsIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Submissions.IgnoreQueryFilters();
     }
 
     public async ValueTask<Submission> AddSubmissionAsync(Submission newSubmission)

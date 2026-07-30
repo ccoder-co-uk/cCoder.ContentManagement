@@ -15,6 +15,8 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Brokers.ServiceProviders;
 using Moq;
 using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
@@ -47,6 +49,9 @@ public partial class TemplateRenderProcessingServiceTests
             objectCache: commonObjectCacheMock.Object,
             jsonBroker: new JsonBroker(),
             templateRenderService: templateRenderService,
+            workflowExecutionBroker: new WorkflowExecutionBroker(
+                workflowExecutionDependency:
+                    new WorkflowExecutionDependency()),
             config: config);
     }
 

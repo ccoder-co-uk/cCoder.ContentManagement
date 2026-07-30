@@ -34,10 +34,10 @@ public partial class PackageServiceTests
         Guid packageId = Guid.NewGuid();
         Package package = CreateRandomPackage(id: packageId);
 
-        packageBrokerMock.Setup(expression: x => x.GetAllPackages(ignoreFilters: false))
+        packageBrokerMock.Setup(expression: x => x.GetAllPackages())
             .Returns(value: new[] { package }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_delete"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_delete"));
 
         packageBrokerMock
             .Setup(
@@ -52,7 +52,7 @@ deletedPackage: It.Is<cCoder.Data.Models.Packaging.Package>(match: item => item.
         await packageService.DeleteAsync(packageId: packageId);
 
         // Then
-        packageBrokerMock.Verify(expression: x => x.GetAllPackages(ignoreFilters: false), times: Times.Once);
+        packageBrokerMock.Verify(expression: x => x.GetAllPackages(), times: Times.Once);
 
         packageBrokerMock.Verify(
 expression: x =>
@@ -63,8 +63,8 @@ times: Times.Once
         );
 
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -74,10 +74,10 @@ times: Times.Once
         Guid packageId = Guid.NewGuid();
         Package package = CreateRandomPackage(id: packageId);
 
-        packageBrokerMock.Setup(expression: x => x.GetAllPackages(ignoreFilters: false))
+        packageBrokerMock.Setup(expression: x => x.GetAllPackages())
             .Returns(value: new[] { package }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: null, privilege: "Package_delete"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -90,10 +90,10 @@ times: Times.Once
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        packageBrokerMock.Verify(expression: x => x.GetAllPackages(ignoreFilters: false), times: Times.Once);
+        packageBrokerMock.Verify(expression: x => x.GetAllPackages(), times: Times.Once);
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

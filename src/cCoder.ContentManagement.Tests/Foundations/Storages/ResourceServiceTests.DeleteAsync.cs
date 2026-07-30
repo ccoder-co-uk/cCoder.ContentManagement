@@ -32,16 +32,16 @@ public partial class ResourceServiceTests
     {
         // Given
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Resource resource = CreateRandomResource(id: 5, appId: 7);
 
-        resourceBrokerMock.Setup(expression: x => x.GetAllResources(ignoreFilters: false))
+        resourceBrokerMock.Setup(expression: x => x.GetAllResources())
             .Returns(value: new[] { resource }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_delete"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_delete"));
 
         resourceBrokerMock.Setup(expression: x => x.DeleteResourceAsync(deletedResource: It.IsAny<CmsDataModels.Resource>()))
             .ReturnsAsync(value: 1);
@@ -58,16 +58,16 @@ public partial class ResourceServiceTests
     {
         // Given
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.GetCurrentUser())
             .Returns(value: new SecurityDataModels.User { Id = "test-user" });
 
         Resource resource = CreateRandomResource(id: 5, appId: 7);
 
-        resourceBrokerMock.Setup(expression: x => x.GetAllResources(ignoreFilters: false))
+        resourceBrokerMock.Setup(expression: x => x.GetAllResources())
             .Returns(value: new[] { resource }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Resource_delete"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 

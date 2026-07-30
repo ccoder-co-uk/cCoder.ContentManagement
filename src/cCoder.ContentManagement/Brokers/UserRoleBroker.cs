@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers;
 
 internal class UserRoleBroker(ICoreContextFactory coreContextFactory) : IUserRoleBroker
 {
-    public IQueryable<UserRole> GetAllUserRoles(bool ignoreFilters)
+    public IQueryable<UserRole> GetAllUserRoles()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.UserRoles,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.UserRoles;
+    }
+
+    public IQueryable<UserRole> GetAllUserRolesIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.UserRoles.IgnoreQueryFilters();
     }
 
     public async ValueTask<UserRole> AddUserRoleAsync(UserRole newUserRole)

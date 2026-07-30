@@ -33,13 +33,13 @@ public partial class ContentServiceTests
         // Given
         Content content = CreateRandomContent(id: 9);
 
-        contentBrokerMock.Setup(expression: x => x.GetAllContents(ignoreFilters: false))
+        contentBrokerMock.Setup(expression: x => x.GetAllContents())
             .Returns(value: new[] { content }.AsQueryable());
 
-        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
             .Returns(value: new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"));
 
         contentBrokerMock
             .Setup(
@@ -54,7 +54,7 @@ deletedContent: It.Is<CmsDataModels.Content>(match: item => item.Id == content.I
         await contentService.DeleteAsync(contentId: 9);
 
         // Then
-        contentBrokerMock.Verify(expression: x => x.GetAllContents(ignoreFilters: false), times: Times.Once);
+        contentBrokerMock.Verify(expression: x => x.GetAllContents(), times: Times.Once);
 
         contentBrokerMock.Verify(
 expression: x => x.DeleteContentAsync(deletedContent: It.Is<CmsDataModels.Content>(match: item => item.Id == content.Id)),
@@ -62,10 +62,10 @@ times: Times.Once
         );
 
         contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPagesIgnoringFilters(), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -74,13 +74,13 @@ times: Times.Once
         // Given
         Content content = CreateRandomContent(id: 9);
 
-        contentBrokerMock.Setup(expression: x => x.GetAllContents(ignoreFilters: false))
+        contentBrokerMock.Setup(expression: x => x.GetAllContents())
             .Returns(value: new[] { content }.AsQueryable());
 
-        pageBrokerMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
+        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
             .Returns(value: new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -93,12 +93,12 @@ times: Times.Once
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        contentBrokerMock.Verify(expression: x => x.GetAllContents(ignoreFilters: false), times: Times.Once);
+        contentBrokerMock.Verify(expression: x => x.GetAllContents(), times: Times.Once);
         contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
+        pageBrokerMock.Verify(expression: x => x.GetAllPagesIgnoringFilters(), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

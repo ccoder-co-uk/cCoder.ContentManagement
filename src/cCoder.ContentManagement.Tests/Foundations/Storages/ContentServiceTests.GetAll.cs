@@ -33,7 +33,7 @@ public partial class ContentServiceTests
             .Select(selector: item => item)
             .AsQueryable();
 
-        contentBrokerMock.Setup(expression: x => x.GetAllContents(ignoreFilters: false))
+        contentBrokerMock.Setup(expression: x => x.GetAllContents())
             .Returns(value: contents);
 
         // When
@@ -44,10 +44,10 @@ public partial class ContentServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedItems);
 
-        contentBrokerMock.Verify(expression: x => x.GetAllContents(ignoreFilters: false), times: Times.Once);
+        contentBrokerMock.Verify(expression: x => x.GetAllContents(), times: Times.Once);
         contentBrokerMock.VerifyNoOtherCalls();
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface ICommonObjectBroker
 {
-    IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters);
+    IQueryable<CommonObject> GetAllCommonObjects();
+
+    IQueryable<CommonObject> GetAllCommonObjectsIgnoringFilters();
 
     CommonObject[] GetLatestCommonObjectsPaged(int pageSize = 500);
 

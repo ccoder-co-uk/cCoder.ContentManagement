@@ -20,8 +20,10 @@ using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
@@ -31,7 +33,7 @@ public partial class AppProcessingServiceTests
     private readonly Mock<IAppService> appServiceMock = new();
     private readonly Mock<ICultureBroker> cultureBrokerMock = new();
     private readonly Mock<IPrivilegeBroker> privilegeBrokerMock = new();
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
     private readonly Mock<IRoleBroker> roleBrokerMock = new();
     private readonly Mock<IUserRoleBroker> userRoleBrokerMock = new();
     private readonly Mock<IPageBroker> pageBrokerMock = new();
@@ -39,11 +41,11 @@ public partial class AppProcessingServiceTests
 
     public AppProcessingServiceTests()
     {
-        roleBrokerMock.Setup(expression: x => x.GetAllRoles(ignoreFilters: true))
+        roleBrokerMock.Setup(expression: x => x.GetAllRolesIgnoringFilters())
             .Returns(value: Array.Empty<Role>()
             .AsQueryable());
 
-        userRoleBrokerMock.Setup(expression: x => x.GetAllUserRoles(ignoreFilters: true))
+        userRoleBrokerMock.Setup(expression: x => x.GetAllUserRolesIgnoringFilters())
             .Returns(value: Array.Empty<UserRole>()
             .AsQueryable());
 
@@ -51,7 +53,7 @@ public partial class AppProcessingServiceTests
 service: appServiceMock.Object,
 cultureBroker: cultureBrokerMock.Object,
 privilegeBroker: privilegeBrokerMock.Object,
-authorizationBroker: authorizationBrokerMock.Object,
+authorizationManager: authorizationManagerMock.Object,
 roleBroker: roleBrokerMock.Object,
 userRoleBroker: userRoleBrokerMock.Object,
 pageBroker: pageBrokerMock.Object

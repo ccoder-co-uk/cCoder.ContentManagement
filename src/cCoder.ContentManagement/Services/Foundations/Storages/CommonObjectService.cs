@@ -7,9 +7,11 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroker, IAuthorizationBroker authorizationBroker) : ICommonObjectService
+internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroker, IAuthorizationManager authorizationManager) : ICommonObjectService
 {
     public CommonObject GetCommonObject(int commonObjectId, bool ignoreFilters = false) =>
         TryCatch<CommonObject>(operation: () =>
@@ -47,7 +49,10 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         TryCatch<IQueryable<CommonObject>>(operation: () =>
     {
         ValidateAllCommonObjectOnGet(inputs: [ignoreFilters]);
-        return commonObjectBroker.GetAllCommonObjects(ignoreFilters: ignoreFilters);
+
+        return ignoreFilters
+            ? commonObjectBroker.GetAllCommonObjectsIgnoringFilters()
+            : commonObjectBroker.GetAllCommonObjects();
     });
 
     public ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject) =>
@@ -56,9 +61,9 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         ValidateCommonObjectOnAdd(inputs: [newCommonObject]);
         ValidateCommonObject(commonObject: newCommonObject, parameterName: "commonObject");
         CommonObject storageCommonObject = CreateStorageCommonObject(newCommonObject: newCommonObject);
-        authorizationBroker.Authorize(appId: commonObjectBroker.GetAppId(entity: storageCommonObject), privilege: "CommonObject_create");
+        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: storageCommonObject), privilege: "CommonObject_create");
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = (storageCommonObject.CreatedOn = DateTimeOffset.UtcNow);
@@ -88,9 +93,9 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject]);
         ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "commonObject");
         CommonObject updateCommonObject = CreateStorageCommonObject(newCommonObject: updatedCommonObject);
-        authorizationBroker.Authorize(appId: commonObjectBroker.GetAppId(entity: updateCommonObject), privilege: "CommonObject_update");
+        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: updateCommonObject), privilege: "CommonObject_update");
 
-        string currentUserId = authorizationBroker.GetCurrentUser()
+        string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
@@ -120,7 +125,7 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
         CommonObject commonObject = ExecuteGetCommonObject(commonObjectId: commonObjectId);
         CommonObject dataCommonObject = CreateStorageCommonObject(newCommonObject: commonObject);
-        authorizationBroker.Authorize(appId: commonObjectBroker.GetAppId(entity: dataCommonObject), privilege: "CommonObject_delete");
+        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: dataCommonObject), privilege: "CommonObject_delete");
         await commonObjectBroker.DeleteCommonObjectAsync(deletedCommonObject: dataCommonObject);
 
     }, isValueTask: true);
@@ -150,7 +155,9 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
     }
 
     private IQueryable<CommonObject> ExecuteGetAllCommonObject(bool ignoreFilters = false) =>
-        commonObjectBroker.GetAllCommonObjects(ignoreFilters: ignoreFilters);
+        (ignoreFilters
+            ? commonObjectBroker.GetAllCommonObjectsIgnoringFilters()
+            : commonObjectBroker.GetAllCommonObjects());
 
     private CommonObject ExecuteGetCommonObject(int commonObjectId, bool ignoreFilters = false)
     {

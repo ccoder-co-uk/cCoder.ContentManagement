@@ -8,7 +8,6 @@ using System.Text;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Extensions.OData;
 using cCoder.Data.Extensions;
-using iText.Html2pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Deltas;
@@ -32,8 +31,11 @@ public class TemplateController : ODataController
     [ActionName("Render")]
     public async Task<IActionResult> GetRender(int appId, string name, string culture)
     {
-        using StreamReader reader = new StreamReader(stream: base.Request.Body);
-        dynamic m = JsonConvert.DeserializeObject(value: await reader.ReadToEndAsync());
+        string content = await manager.ReadContentAsync(
+            source: base.Request.Body);
+
+        dynamic m = JsonConvert.DeserializeObject(value: content);
+
         return Content(content: manager.Render(appId: appId, name: name, culture: culture, model: m), contentType: "text/plain", contentEncoding: Encoding.UTF8);
     }
 
@@ -42,11 +44,13 @@ public class TemplateController : ODataController
     [ActionName("HtmlToPdf")]
     public async Task<IActionResult> GetHtmlToPdf(string name)
     {
-        using StreamReader reader = new StreamReader(stream: base.Request.Body);
-        string htmlContent = await reader.ReadToEndAsync();
-        using MemoryStream pdfStream = new MemoryStream();
-        HtmlConverter.ConvertToPdf(html: htmlContent, pdfStream: (Stream)pdfStream);
-        return File(fileContents: pdfStream.ToArray(), contentType: "application/pdf", fileDownloadName: name + ".pdf");
+        string htmlContent = await manager.ReadContentAsync(
+            source: base.Request.Body);
+
+        byte[] content = manager.ConvertHtmlToPdf(
+            html: htmlContent);
+
+        return File(fileContents: content, contentType: "application/pdf", fileDownloadName: name + ".pdf");
     }
 
     [HttpGet]

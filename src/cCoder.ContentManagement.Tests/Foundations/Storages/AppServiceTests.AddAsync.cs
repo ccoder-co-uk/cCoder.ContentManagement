@@ -48,10 +48,10 @@ public partial class AppServiceTests
         CmsDataModels.App submitted = null;
 
         appBrokerMock
-            .Setup(expression: x => x.GetAllApps(ignoreFilters: true))
+            .Setup(expression: x => x.GetAllAppsIgnoringFilters())
             .Returns(value: new[] { CreateRandomApp() }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"));
 
         appBrokerMock
             .Setup(expression: x => x.AddAppAsync(newApp: It.IsAny<CmsDataModels.App>()))
@@ -111,12 +111,12 @@ times: Times.Once
         );
 
         appBrokerMock.Verify(
-            expression: x => x.GetAllApps(ignoreFilters: true),
+            expression: x => x.GetAllAppsIgnoringFilters(),
             times: Times.Once);
 
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -126,10 +126,10 @@ times: Times.Once
         App app = CreateRandomApp(id: 0);
 
         appBrokerMock
-            .Setup(expression: x => x.GetAllApps(ignoreFilters: true))
+            .Setup(expression: x => x.GetAllAppsIgnoringFilters())
             .Returns(value: new[] { CreateRandomApp() }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -143,12 +143,12 @@ times: Times.Once
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         appBrokerMock.Verify(
-            expression: x => x.GetAllApps(ignoreFilters: true),
+            expression: x => x.GetAllAppsIgnoringFilters(),
             times: Times.Once);
 
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -158,7 +158,7 @@ times: Times.Once
         App app = CreateRandomApp(id: 0);
 
         appBrokerMock
-            .Setup(expression: x => x.GetAllApps(ignoreFilters: true))
+            .Setup(expression: x => x.GetAllAppsIgnoringFilters())
             .Returns(
                 value: Array.Empty<App>()
                     .AsQueryable());
@@ -175,7 +175,7 @@ times: Times.Once
             .BeSameAs(expected: app);
 
         appBrokerMock.VerifyAll();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

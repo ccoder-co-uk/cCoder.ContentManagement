@@ -14,6 +14,8 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
@@ -58,7 +60,10 @@ public partial class PageRenderProcessingServiceTests
                     componentReaderBroker: componentReaderBroker,
                     scriptReaderBroker: scriptReaderBroker,
                     jsonBroker: new JsonBroker(),
-                    renderFileContentBroker: renderFileContentBrokerMock.Object));
+                    renderFileContentBroker: renderFileContentBrokerMock.Object,
+                    workflowExecutionBroker: new WorkflowExecutionBroker(
+                        workflowExecutionDependency:
+                            new WorkflowExecutionDependency())));
 
         Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
 

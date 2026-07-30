@@ -34,10 +34,10 @@ public partial class SubmissionServiceTests
         Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
         Submission submission = CreateRandomSubmission(id: submissionId);
 
-        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions(ignoreFilters: false))
+        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions())
             .Returns(value: new[] { submission }.AsQueryable());
 
-        authorizationBrokerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"));
 
         submissionBrokerMock.Setup(expression: x => x.DeleteSubmissionAsync(deletedSubmission: It.IsAny<CmsDataModels.Submission>()))
             .ReturnsAsync(value: 1);
@@ -46,11 +46,11 @@ public partial class SubmissionServiceTests
         await submissionService.DeleteAsync(submissionId: submissionId);
 
         // Then
-        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(ignoreFilters: false), times: Times.Once);
+        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(), times: Times.Once);
         submissionBrokerMock.Verify(expression: x => x.DeleteSubmissionAsync(deletedSubmission: It.Is<CmsDataModels.Submission>(match: actual => actual.Id == submission.Id)), times: Times.Once);
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -60,10 +60,10 @@ public partial class SubmissionServiceTests
         Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
         Submission submission = CreateRandomSubmission(id: submissionId);
 
-        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions(ignoreFilters: false))
+        submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions())
             .Returns(value: new[] { submission }.AsQueryable());
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -76,10 +76,10 @@ public partial class SubmissionServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(ignoreFilters: false), times: Times.Once);
+        submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(), times: Times.Once);
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"), times: Times.Once);
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_delete"), times: Times.Once);
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

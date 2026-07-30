@@ -2,17 +2,20 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Foundations.Authorization;
 
 public interface IAuthorizationService
 {
-    User GetCurrentUser();
+    void AuthorizeAuthorizationContext(AuthorizationContext context);
 
-    void Authorize(int? appId, string privilege);
+    AuthorizationContext ResolveCurrentAuthorizationContext(
+        AuthorizationContext context);
 
-    bool IsAdmin(int appId, string userName);
+    bool IsAdminAuthorizationContext(AuthorizationContext context);
 
-    bool IsAdminOfApp(int appId);
+    bool IsAdminOfAppAuthorizationContext(AuthorizationContext context);
+
+    bool UserCanPageAuthorizationContext(AuthorizationContext context);
 }

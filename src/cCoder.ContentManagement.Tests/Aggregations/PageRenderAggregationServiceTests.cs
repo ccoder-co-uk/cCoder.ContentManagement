@@ -15,11 +15,12 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Aggregations;
-using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Moq;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 using IPageRenderOrchestrationService = cCoder.ContentManagement.Services.Orchestrations.IPageRenderOrchestrationService;
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Aggregations;
 
@@ -53,7 +54,7 @@ public partial class PageRenderAggregationServiceTests
                     operation.OperationType == PageRenderOperationType.UserCanPage)))
             .Returns(valueFunction: (PageRenderOperation operation) =>
             {
-                operation.IsAuthorized = ContentManagementModelExtensions.UserCan(
+                operation.IsAuthorized = UserCan(
                     page: operation.SourcePage,
                     user: currentUser,
                     privilege: operation.Privilege);
@@ -61,27 +62,27 @@ public partial class PageRenderAggregationServiceTests
                 return operation;
             });
 
-        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout())
             .Returns(value: Array.Empty<Layout>()
             .AsQueryable());
 
-        templateOrchestrationServiceMock.Setup(expression: x => x.GetAllTemplate(ignoreFilters: false))
+        templateOrchestrationServiceMock.Setup(expression: x => x.GetAllTemplate())
             .Returns(value: Array.Empty<Template>()
             .AsQueryable());
 
-        resourceOrchestrationServiceMock.Setup(expression: x => x.GetAllResource(ignoreFilters: false))
+        resourceOrchestrationServiceMock.Setup(expression: x => x.GetAllResource())
             .Returns(value: Array.Empty<Resource>()
             .AsQueryable());
 
-        componentOrchestrationServiceMock.Setup(expression: x => x.GetAllComponent(ignoreFilters: false))
+        componentOrchestrationServiceMock.Setup(expression: x => x.GetAllComponent())
             .Returns(value: Array.Empty<Component>()
             .AsQueryable());
 
-        scriptOrchestrationServiceMock.Setup(expression: x => x.GetAllScript(ignoreFilters: false))
+        scriptOrchestrationServiceMock.Setup(expression: x => x.GetAllScript())
             .Returns(value: Array.Empty<Script>()
             .AsQueryable());
 
-        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
@@ -113,6 +114,26 @@ contentOrchestrationService: contentOrchestrationServiceMock.Object,
 pageInfoOrchestrationService: pageInfoOrchestrationServiceMock.Object,
 pageRoleOrchestrationService: pageRoleOrchestrationServiceMock.Object,
 pageRenderOrchestrationService: pageRenderOrchestrationServiceMock.Object);
+    }
+
+    private static bool UserCan(Page page, User user, string privilege)
+    {
+        Guid[] userRoles = user?.Roles?
+            .Select(selector: role => role.RoleId)
+            .ToArray() ?? [];
+
+        bool isAppAdmin = user?.Roles?.Any(predicate: role =>
+            role.Role?.AppId == page.AppId
+            && (role.Role.Privileges?.Contains(value: "app_admin") ?? false)) ?? false;
+
+        return isAppAdmin
+            || (page.Roles?
+                .Where(predicate: pageRole =>
+                    userRoles.Contains(value: pageRole.RoleId))
+                .SelectMany(selector: pageRole =>
+                    pageRole.Role?.Privileges ?? [])
+                .Contains(value:
+                    privilege?.ToLowerInvariant() ?? string.Empty) ?? false);
     }
 
     private static App CreateApp() =>

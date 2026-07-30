@@ -8,7 +8,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IContentBroker
 {
-    IQueryable<Content> GetAllContents(bool ignoreFilters);
+    IQueryable<Content> GetAllContents();
+
+    IQueryable<Content> GetAllContentsIgnoringFilters();
 
     ValueTask<Content> AddContentAsync(Content newContent);
 

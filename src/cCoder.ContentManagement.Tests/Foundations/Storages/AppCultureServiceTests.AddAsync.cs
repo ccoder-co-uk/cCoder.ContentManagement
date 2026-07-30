@@ -35,7 +35,7 @@ public partial class AppCultureServiceTests
 
         CmsDataModels.AppCulture submitted = null;
 
-        authorizationBrokerMock.Setup(expression: x =>
+        authorizationManagerMock.Setup(expression: x =>
             x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create")
         );
 
@@ -81,12 +81,12 @@ times: Times.Once
 
         appCultureBrokerMock.VerifyNoOtherCalls();
 
-        authorizationBrokerMock.Verify(
+        authorizationManagerMock.Verify(
 expression: x => x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create"),
 times: Times.Once
         );
 
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -96,7 +96,7 @@ times: Times.Once
         AppCulture appCulture = CreateRandomAppCulture();
 
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
@@ -111,12 +111,12 @@ times: Times.Once
 
         appCultureBrokerMock.VerifyNoOtherCalls();
 
-        authorizationBrokerMock.Verify(
+        authorizationManagerMock.Verify(
 expression: x => x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create"),
 times: Times.Once
         );
 
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

@@ -17,8 +17,9 @@ using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
-
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
+using cCoder.ContentManagement.Exposures;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
@@ -26,14 +27,30 @@ public partial class PageProcessingServiceTests
 {
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPageService> pageServiceMock = new();
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock = new();
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
     private readonly PageProcessingService pageProcessingService;
 
     public PageProcessingServiceTests()
     {
+        authorizationManagerMock
+            .Setup(expression: manager => manager.GetCurrentUser())
+            .Returns(valueFunction: () => currentUser);
+
+        authorizationManagerMock
+            .Setup(expression: manager => manager.IsAdminOfApp(
+                appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) =>
+                currentUser?.IsAdminOfApp(appId: appId) ?? false);
+
+        authorizationManagerMock
+            .Setup(expression: manager => manager.UserCanPageAuthorization(
+                pageAuthorization: It.IsAny<PageAuthorization>()))
+            .Returns(valueFunction: (PageAuthorization authorization) =>
+                TestUsers.UserCanPage(authorization: authorization));
+
         pageProcessingService = new PageProcessingService(
 service: pageServiceMock.Object,
-authorizationBroker: authorizationBrokerMock.Object
+authorizationManager: authorizationManagerMock.Object
         );
     }
 

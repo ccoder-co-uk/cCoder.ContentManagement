@@ -52,7 +52,7 @@ public partial class ControllerGetAllTests
         Mock<ICultureOrchestrationService> serviceMock = new();
         IQueryable<Culture> expectedCultures = new[] { new Culture { Id = "en-GB", Name = "English" } }.AsQueryable();
 
-        serviceMock.Setup(expression: service => service.GetAllCulture(ignoreFilters: false))
+        serviceMock.Setup(expression: service => service.GetAllCulture())
             .Returns(value: expectedCultures);
 
         // When
@@ -111,7 +111,7 @@ log: Mock.Of<ILogger<CultureController>>());
             }
         }.AsQueryable();
 
-        serviceMock.Setup(expression: service => service.GetAllSubmission(ignoreFilters: false))
+        serviceMock.Setup(expression: service => service.GetAllSubmission())
             .Returns(value: expectedSubmissions);
 
         // When

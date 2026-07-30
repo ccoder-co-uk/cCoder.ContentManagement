@@ -27,7 +27,7 @@ public partial class PageProcessingServiceTests
     public void ShouldRenderChildMenuItemsWhenMenuFor()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -37,11 +37,11 @@ public partial class PageProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
         Page child = CreateRandomPage();
@@ -62,7 +62,7 @@ public partial class PageProcessingServiceTests
             },
         ];
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { child }.AsQueryable());
 
         // When
@@ -78,7 +78,7 @@ public partial class PageProcessingServiceTests
         result.Should()
             .Contain(expected: "Docs");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
@@ -86,7 +86,7 @@ public partial class PageProcessingServiceTests
     public void ShouldRenderEmptySubmenuWhenNoVisibleChildrenExistForMenuFor()
     {
         // Given
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
             .Callback(action: (int? appId, string privilege) =>
             {
@@ -96,14 +96,14 @@ public partial class PageProcessingServiceTests
                 }
             });
 
-        authorizationBrokerMock
+        authorizationManagerMock
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationBrokerMock.Setup(expression: x => x.GetCurrentUser())
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
             .Returns(valueFunction: () => currentUser);
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
@@ -114,7 +114,7 @@ public partial class PageProcessingServiceTests
         result.Should()
             .Be(expected: "<ul class='submenu'></ul>");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: false), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

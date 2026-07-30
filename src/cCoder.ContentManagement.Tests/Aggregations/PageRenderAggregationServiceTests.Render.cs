@@ -45,10 +45,10 @@ public partial class PageRenderAggregationServiceTests
         appOrchestrationServiceMock.Setup(expression: x => x.GetByDomainApp(domain: app.Domain, ignoreFilters: true))
             .Returns(value: app);
 
-        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp())
             .Returns(value: new[] { app }.AsQueryable());
 
-        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout())
             .Returns(value: app.Layouts.AsQueryable());
 
         pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
@@ -67,7 +67,7 @@ public partial class PageRenderAggregationServiceTests
             }
         }.AsQueryable());
 
-        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[]
         {
             new Page
@@ -105,9 +105,9 @@ public partial class PageRenderAggregationServiceTests
         response.Edit.Should()
             .BeTrue();
 
-        componentOrchestrationServiceMock.Verify(expression: x => x.GetAllComponent(ignoreFilters: false), times: Times.AtLeastOnce);
-        scriptOrchestrationServiceMock.Verify(expression: x => x.GetAllScript(ignoreFilters: false), times: Times.AtLeastOnce);
-        resourceOrchestrationServiceMock.Verify(expression: x => x.GetAllResource(ignoreFilters: false), times: Times.AtLeastOnce);
+        componentOrchestrationServiceMock.Verify(expression: x => x.GetAllComponent(), times: Times.AtLeastOnce);
+        scriptOrchestrationServiceMock.Verify(expression: x => x.GetAllScript(), times: Times.AtLeastOnce);
+        resourceOrchestrationServiceMock.Verify(expression: x => x.GetAllResource(), times: Times.AtLeastOnce);
         pageOrchestrationServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.AtLeastOnce);
     }
 
@@ -127,10 +127,10 @@ public partial class PageRenderAggregationServiceTests
         appOrchestrationServiceMock.Setup(expression: x => x.GetByDomainApp(domain: app.Domain, ignoreFilters: true))
             .Returns(value: app);
 
-        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp())
             .Returns(value: new[] { app }.AsQueryable());
 
-        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout())
             .Returns(value: app.Layouts.AsQueryable());
 
         pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
@@ -160,7 +160,7 @@ public partial class PageRenderAggregationServiceTests
             }
         }.AsQueryable());
 
-        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[]
         {
             new Page
@@ -251,17 +251,17 @@ public partial class PageRenderAggregationServiceTests
         App app = CreateApp();
         currentUser = TestUsers.WithPrivilege(privilege: "app_admin", appId: app.Id);
 
-        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp())
             .Returns(value: new[] { app }.AsQueryable());
 
-        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout())
             .Returns(value: app.Layouts.AsQueryable());
 
         pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
-        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
@@ -311,16 +311,16 @@ public partial class PageRenderAggregationServiceTests
             Roles = [new PageRole { RoleId = pageRole.Id, Role = pageRole }]
         };
 
-        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp())
             .Returns(value: new[] { app }.AsQueryable());
 
-        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout())
             .Returns(value: app.Layouts.AsQueryable());
 
         pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { protectedPage }.AsQueryable());
 
-        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { protectedPage }.AsQueryable());
 
         SetupRenderResult(renderResult: CreateRenderResult());
@@ -384,16 +384,16 @@ public partial class PageRenderAggregationServiceTests
             }
         ];
 
-        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp())
             .Returns(value: new[] { app }.AsQueryable());
 
-        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout())
             .Returns(value: app.Layouts.AsQueryable());
 
         pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { page }.AsQueryable());
 
-        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { page }.AsQueryable());
 
         pageInfoOrchestrationServiceMock.Setup(expression: x => x.GetAllPageInfo(ignoreFilters: true))
@@ -472,16 +472,16 @@ public partial class PageRenderAggregationServiceTests
             }
         ];
 
-        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp())
             .Returns(value: new[] { app }.AsQueryable());
 
-        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout())
             .Returns(value: app.Layouts.AsQueryable());
 
         pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { page }.AsQueryable());
 
-        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { page }.AsQueryable());
 
         pageRoleOrchestrationServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
@@ -540,10 +540,10 @@ public partial class PageRenderAggregationServiceTests
             Roles = [new PageRole { RoleId = pageRole.Id, Role = pageRole }]
         };
 
-        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp())
             .Returns(value: new[] { app }.AsQueryable());
 
-        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
+        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout())
             .Returns(value: app.Layouts.AsQueryable());
 
         pageOrchestrationServiceMock.SetupSequence(expression: x => x.GetAllPage(ignoreFilters: true))
@@ -551,7 +551,7 @@ public partial class PageRenderAggregationServiceTests
             .AsQueryable())
             .Returns(value: new[] { protectedPage }.AsQueryable());
 
-        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: false))
+        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { protectedPage }.AsQueryable());
 
         SetupRenderResult(renderResult: CreateRenderResult());
@@ -586,7 +586,7 @@ public partial class PageRenderAggregationServiceTests
     public void ShouldThrowSecurityExceptionWhenAppIsUnknown()
     {
         // Given
-        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: false))
+        appOrchestrationServiceMock.Setup(expression: x => x.GetAllApp())
             .Returns(value: Array.Empty<App>()
             .AsQueryable());
 

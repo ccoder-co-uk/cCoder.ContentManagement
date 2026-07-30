@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class CultureBroker(ICoreContextFactory coreContextFactory) : ICultureBroker
 {
-    public IQueryable<Culture> GetAllCultures(bool ignoreFilters)
+    public IQueryable<Culture> GetAllCultures()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Cultures,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Cultures;
+    }
+
+    public IQueryable<Culture> GetAllCulturesIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Cultures.IgnoreQueryFilters();
     }
 
     public async ValueTask<Culture> AddCultureAsync(Culture newCulture)

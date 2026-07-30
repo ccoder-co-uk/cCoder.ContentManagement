@@ -20,8 +20,10 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationBroker = cCoder.ContentManagement.Brokers.IAuthorizationBroker;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
+
+using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
@@ -29,19 +31,19 @@ public partial class CultureServiceTests
 {
     private readonly Mock<ICultureBroker> cultureBrokerMock;
     private readonly Mock<IAppCultureBroker> appCultureBrokerMock;
-    private readonly Mock<IAuthorizationBroker> authorizationBrokerMock;
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly CultureService cultureService;
 
     public CultureServiceTests()
     {
         cultureBrokerMock = new Mock<ICultureBroker>(behavior: MockBehavior.Strict);
         appCultureBrokerMock = new Mock<IAppCultureBroker>(behavior: MockBehavior.Strict);
-        authorizationBrokerMock = new Mock<IAuthorizationBroker>(behavior: MockBehavior.Strict);
+        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
 
         cultureService = new CultureService(
 cultureBroker: cultureBrokerMock.Object,
 appCultureBroker: appCultureBrokerMock.Object,
-authorizationBroker: authorizationBrokerMock.Object
+authorizationManager: authorizationManagerMock.Object
         );
     }
 

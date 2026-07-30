@@ -10,13 +10,18 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class ContentBroker(ICoreContextFactory coreContextFactory) : IContentBroker
 {
-    public IQueryable<Content> GetAllContents(bool ignoreFilters)
+    public IQueryable<Content> GetAllContents()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return Extensions.Data.QueryFilterExtensions.Apply(
-            query: coreDataContext.Contents,
-            ignoreFilters: ignoreFilters);
+        return coreDataContext.Contents;
+    }
+
+    public IQueryable<Content> GetAllContentsIgnoringFilters()
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Contents.IgnoreQueryFilters();
     }
 
     public async ValueTask<Content> AddContentAsync(Content newContent)

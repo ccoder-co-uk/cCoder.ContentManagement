@@ -32,7 +32,7 @@ public partial class AppServiceTests
         IQueryable<CmsDataModels.App> apps = expectedApps.Select(selector: app => app)
             .AsQueryable();
 
-        appBrokerMock.Setup(expression: x => x.GetAllApps(ignoreFilters: false))
+        appBrokerMock.Setup(expression: x => x.GetAllApps())
             .Returns(value: apps);
 
         // When
@@ -43,9 +43,9 @@ public partial class AppServiceTests
         result.Should()
             .BeEquivalentTo(expectation: expectedApps);
 
-        appBrokerMock.Verify(expression: x => x.GetAllApps(ignoreFilters: false), times: Times.Once);
+        appBrokerMock.Verify(expression: x => x.GetAllApps(), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

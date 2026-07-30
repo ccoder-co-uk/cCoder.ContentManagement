@@ -28,7 +28,7 @@ public partial class TemplateServiceTests
         // Given
         Template template = CreateRandomTemplate(id: 5);
 
-        templateBrokerMock.Setup(expression: x => x.GetAllTemplates(ignoreFilters: false))
+        templateBrokerMock.Setup(expression: x => x.GetAllTemplates())
             .Returns(value: new[] { template }.AsQueryable());
 
         // When
@@ -39,9 +39,9 @@ public partial class TemplateServiceTests
         result.Should()
             .BeEquivalentTo(expectation: template);
 
-        templateBrokerMock.Verify(expression: x => x.GetAllTemplates(ignoreFilters: false), times: Times.Once);
+        templateBrokerMock.Verify(expression: x => x.GetAllTemplates(), times: Times.Once);
         templateBrokerMock.VerifyNoOtherCalls();
-        authorizationBrokerMock.VerifyNoOtherCalls();
+        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }
