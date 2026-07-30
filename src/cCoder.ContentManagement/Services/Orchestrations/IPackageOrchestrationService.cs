@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-public interface IPackageOrchestrationService
+internal interface IPackageOrchestrationService
 {
     Package GetPackage(Guid packageId);
 

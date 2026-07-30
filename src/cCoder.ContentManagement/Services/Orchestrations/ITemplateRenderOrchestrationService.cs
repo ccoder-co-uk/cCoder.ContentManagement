@@ -6,7 +6,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-public interface ITemplateRenderOrchestrationService
+internal interface ITemplateRenderOrchestrationService
 {
     string Render(int appId, string name, string culture, dynamic model);
 

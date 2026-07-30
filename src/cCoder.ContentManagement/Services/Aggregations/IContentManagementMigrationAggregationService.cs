@@ -6,7 +6,7 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
-public interface IContentManagementMigrationAggregationService
+internal interface IContentManagementMigrationAggregationService
 {
     Package[] ExportPackages(int appId, string[] packageNames);
 

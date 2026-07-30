@@ -1,0 +1,25 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
+
+namespace cCoder.ContentManagement.Exposures;
+
+public interface IContentManager
+{
+    Content GetContent(int contentId);
+
+    IQueryable<Content> GetAllContent(bool ignoreFilters = false);
+
+    ValueTask<Content> AddContentAsync(Content newContent);
+
+    ValueTask<Content> UpdateContentAsync(Content updatedContent);
+
+    ValueTask DeleteAsync(int contentId);
+
+    ValueTask<IEnumerable<OperationResult<Content>>> AddOrUpdateContentResult(IEnumerable<Content> newContent);
+
+    ValueTask DeleteAllContentAsync(IEnumerable<Content> deletedContent);
+}

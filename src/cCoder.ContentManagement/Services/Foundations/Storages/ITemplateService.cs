@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface ITemplateService
+internal interface ITemplateService
 {
     Template GetTemplate(int templateId, bool ignoreFilters = false);
 

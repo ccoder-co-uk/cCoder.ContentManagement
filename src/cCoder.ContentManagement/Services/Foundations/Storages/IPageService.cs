@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface IPageService
+internal interface IPageService
 {
     Page GetPage(int pageId, bool ignoreFilters = false);
 

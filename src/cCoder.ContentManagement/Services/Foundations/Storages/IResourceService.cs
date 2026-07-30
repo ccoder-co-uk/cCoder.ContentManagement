@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface IResourceService
+internal interface IResourceService
 {
     Resource GetResource(int resourceId, bool ignoreFilters = false);
 

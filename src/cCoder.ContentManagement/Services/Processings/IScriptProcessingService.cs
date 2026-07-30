@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IScriptProcessingService
+internal interface IScriptProcessingService
 {
     Script GetScript(int scriptId);
 

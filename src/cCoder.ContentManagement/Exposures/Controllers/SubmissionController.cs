@@ -21,9 +21,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class SubmissionController : ODataController
 {
-    private readonly ISubmissionOrchestrationService service;
+    private readonly ISubmissionManager service;
 
-    public SubmissionController(ISubmissionOrchestrationService service, ILogger<SubmissionController> log)
+    public SubmissionController(ISubmissionManager service, ILogger<SubmissionController> log)
     {
         this.service = service;
     }

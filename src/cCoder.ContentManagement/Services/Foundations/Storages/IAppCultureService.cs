@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface IAppCultureService
+internal interface IAppCultureService
 {
     IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false);
 

@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IPageInfoEventProcessingService
+internal interface IPageInfoEventProcessingService
 {
     ValueTask RaisePageInfoAddEventAsync(PageInfo entity);
 

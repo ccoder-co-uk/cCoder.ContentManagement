@@ -4,7 +4,7 @@
 
 namespace cCoder.ContentManagement.Services.Foundations;
 
-public interface IRenderFileContentService
+internal interface IRenderFileContentService
 {
     string GetLatestTextContent(int appId, string path);
 }

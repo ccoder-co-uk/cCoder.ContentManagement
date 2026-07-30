@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IPageProcessingService
+internal interface IPageProcessingService
 {
     Page GetPage(int pageId);
 

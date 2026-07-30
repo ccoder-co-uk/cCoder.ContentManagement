@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface IComponentService
+internal interface IComponentService
 {
     Component GetComponent(int componentId, bool ignoreFilters = false);
 

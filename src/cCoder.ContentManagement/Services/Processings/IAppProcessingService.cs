@@ -9,7 +9,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IAppProcessingService
+internal interface IAppProcessingService
 {
     App GetApp(int appId);
 

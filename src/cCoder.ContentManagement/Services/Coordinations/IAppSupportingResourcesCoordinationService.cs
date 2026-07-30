@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
-public interface IAppSupportingResourcesCoordinationService
+internal interface IAppSupportingResourcesCoordinationService
 {
     ValueTask HandleAppAddAsync(App app);
 

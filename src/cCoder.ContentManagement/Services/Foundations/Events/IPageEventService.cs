@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-public interface IPageEventService
+internal interface IPageEventService
 {
     ValueTask RaisePageAddEventAsync(Page entity);
 

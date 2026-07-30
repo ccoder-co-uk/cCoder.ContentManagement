@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface ISubmissionService
+internal interface ISubmissionService
 {
     Submission GetSubmission(Guid submissionId, bool ignoreFilters = false);
 

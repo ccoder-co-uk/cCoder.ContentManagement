@@ -4,7 +4,7 @@
 
 namespace cCoder.ContentManagement.Services.Foundations.Serialization;
 
-public interface IJsonService
+internal interface IJsonService
 {
     T Deserialize<T>(string json);
 }

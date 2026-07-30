@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface IAppService
+internal interface IAppService
 {
     App GetApp(int appId, bool ignoreFilters = false);
 

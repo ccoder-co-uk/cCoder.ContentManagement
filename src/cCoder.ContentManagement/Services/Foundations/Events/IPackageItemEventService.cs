@@ -6,7 +6,7 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-public interface IPackageItemEventService
+internal interface IPackageItemEventService
 {
     ValueTask RaisePackageItemAddEventAsync(PackageItem entity);
 

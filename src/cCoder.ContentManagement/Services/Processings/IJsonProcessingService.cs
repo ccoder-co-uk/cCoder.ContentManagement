@@ -4,7 +4,7 @@
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IJsonProcessingService
+internal interface IJsonProcessingService
 {
     T[] DeserializeItems<T>(string json);
 }

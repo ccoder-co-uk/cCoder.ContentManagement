@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface ITemplateProcessingService
+internal interface ITemplateProcessingService
 {
     Template GetTemplate(int templateId);
 

@@ -5,19 +5,8 @@
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-public interface IAppCultureOrchestrationService
-{
-    IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false);
-
-    ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture);
-
-    ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture);
-
-    ValueTask DeleteByAppIdAsync(int appId);
-
-    ValueTask<IEnumerable<OperationResult<AppCulture>>> AddOrUpdateAppCultureResult(IEnumerable<AppCulture> newAppCulture);
-
-    ValueTask DeleteAllAppCultureAsync(IEnumerable<AppCulture> deletedAppCulture);
-}
+internal interface IAppCultureOrchestrationService : IAppCultureManager { }

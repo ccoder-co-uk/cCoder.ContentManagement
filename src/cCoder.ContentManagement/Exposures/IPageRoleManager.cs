@@ -1,0 +1,21 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.Security;
+
+namespace cCoder.ContentManagement.Exposures;
+
+public interface IPageRoleManager
+{
+    IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false);
+
+    ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole);
+
+    ValueTask DeletePageRoleAsync(PageRole deletedPageRole);
+
+    ValueTask<IEnumerable<OperationResult<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole);
+
+    ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole);
+}

@@ -5,7 +5,7 @@
 using cCoder.ContentManagement.Models;
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IPageRenderProcessingService
+internal interface IPageRenderProcessingService
 {
     PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation operation);

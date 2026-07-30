@@ -6,7 +6,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
-public interface IPageRenderAggregationService
+internal interface IPageRenderAggregationService
 {
     PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation operation);

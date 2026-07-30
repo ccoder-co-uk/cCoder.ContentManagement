@@ -6,7 +6,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface IAuthorizationProcessingService
+internal interface IAuthorizationProcessingService
 {
     void AuthorizeAuthorizationContext(AuthorizationContext context);
 

@@ -6,7 +6,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-public interface IPageRoleEventService
+internal interface IPageRoleEventService
 {
     ValueTask RaisePageRoleAddEventAsync(PageRole entity);
 

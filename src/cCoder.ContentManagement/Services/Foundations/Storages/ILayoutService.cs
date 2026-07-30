@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-public interface ILayoutService
+internal interface ILayoutService
 {
     Layout GetLayout(int layoutId, bool ignoreFilters = false);
 

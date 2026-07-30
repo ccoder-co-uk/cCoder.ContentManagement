@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-public interface ICommonObjectProcessingService
+internal interface ICommonObjectProcessingService
 {
     CommonObject GetCommonObject(int commonObjectId);
 

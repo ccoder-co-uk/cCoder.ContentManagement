@@ -5,25 +5,8 @@
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
 
+using cCoder.ContentManagement.Exposures;
+
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-public interface ILayoutOrchestrationService
-{
-    Layout GetLayout(int layoutId);
-
-    IQueryable<Layout> GetAllLayout(bool ignoreFilters = false);
-
-    ValueTask<Layout> AddLayoutAsync(Layout newLayout);
-
-    ValueTask<Layout> UpdateLayoutAsync(Layout updatedLayout);
-
-    ValueTask DeleteAsync(int layoutId);
-
-    ValueTask DeleteByAppIdAsync(int appId);
-
-    ValueTask<IEnumerable<OperationResult<Layout>>> AddOrUpdateLayoutResult(IEnumerable<Layout> newLayout);
-
-    ValueTask ImportLayoutsAsync(int appId, Layout[] items);
-
-    ValueTask DeleteAllLayoutAsync(IEnumerable<Layout> deletedLayout);
-}
+internal interface ILayoutOrchestrationService : ILayoutManager { }

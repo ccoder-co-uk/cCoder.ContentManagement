@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-public interface IAppEventService
+internal interface IAppEventService
 {
     ValueTask RaiseAppAddEventAsync(App app);
 

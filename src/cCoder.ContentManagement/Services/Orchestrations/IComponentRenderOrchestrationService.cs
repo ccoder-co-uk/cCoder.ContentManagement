@@ -6,7 +6,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-public interface IComponentRenderOrchestrationService
+internal interface IComponentRenderOrchestrationService
 {
     string Render(int appId, string name, string culture, string theme);
 

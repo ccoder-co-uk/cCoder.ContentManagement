@@ -17,7 +17,7 @@ using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
-public class ContentController(IContentOrchestrationService contentOrchestrationService)
+public class ContentController(IContentManager contentOrchestrationService)
     : ODataController
 {
     [HttpGet]

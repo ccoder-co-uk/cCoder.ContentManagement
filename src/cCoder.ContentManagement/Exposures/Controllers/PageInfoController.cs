@@ -20,9 +20,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class PageInfoController : ODataController
 {
-    private readonly IPageInfoOrchestrationService service;
+    private readonly IPageInfoManager service;
 
-    public PageInfoController(IPageInfoOrchestrationService service, ILogger<PageInfoController> log)
+    public PageInfoController(IPageInfoManager service, ILogger<PageInfoController> log)
     {
         this.service = service;
     }
