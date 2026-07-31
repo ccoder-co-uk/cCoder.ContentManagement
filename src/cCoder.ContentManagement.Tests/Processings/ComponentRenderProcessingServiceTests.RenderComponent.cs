@@ -19,6 +19,7 @@ using Xunit;
 using RenderApp = cCoder.Data.Models.CMS.App;
 using RenderComponent = cCoder.Data.Models.CMS.Component;
 using RenderComponentParams = cCoder.ContentManagement.Models.ComponentRenderParams;
+using RenderResource = cCoder.Data.Models.CMS.Resource;
 using RenderScript = cCoder.Data.Models.CMS.Script;
 using RenderUser = cCoder.Data.Models.Security.User;
 using cCoder.ContentManagement.Tests.Processings;
@@ -76,6 +77,39 @@ action: workflowBaseUrl => CreateSut(workflowBaseUrl: workflowBaseUrl)
 
         result.Should()
             .Contain(expected: "executed");
+    }
+
+    [Fact]
+    public void ShouldUseCommonKeyResourceWhenComponentKeyDoesNotDefineResource()
+    {
+        // Given
+        (_, _, RenderComponent component, RenderComponentParams renderParams) =
+            CreateComponentRenderContext();
+
+        component.ResourceKey = "Workflow";
+        component.Content = "[resource_displayname[dateformat]]";
+
+        commonObjectCacheMock
+            .Setup(expression: cache =>
+                cache.Get<RenderResource>(
+                    key: "resource|common-dateformat-en"))
+            .Returns(value: new RenderResource
+            {
+                Key = "Common",
+                Culture = "en",
+                Name = "dateformat",
+                DisplayName = "dd/MM/yyyy",
+            });
+
+        // When
+        string result = CreateSut(workflowBaseUrl: "http://127.0.0.1/")
+            .RenderComponentComponentRenderParams(
+                component: component,
+                renderParams: renderParams);
+
+        // Then
+        result.Should()
+            .Contain(expected: "dd/MM/yyyy");
     }
 
     [Fact]

@@ -436,6 +436,28 @@ internal partial class TemplateRenderProcessingService(
 
     private Resource FindResourceInCache(string key, string name, string culture)
     {
+        Resource resource = FindResourceInCacheForKey(
+            key: key,
+            name: name,
+            culture: culture);
+
+        return resource
+            ?? (string.Equals(
+                a: key,
+                b: "common",
+                comparisonType: StringComparison.OrdinalIgnoreCase)
+                    ? null
+                    : FindResourceInCacheForKey(
+                        key: "common",
+                        name: name,
+                        culture: culture));
+    }
+
+    private Resource FindResourceInCacheForKey(
+        string key,
+        string name,
+        string culture)
+    {
         Resource resource = objectCache.Get<Resource>(key: $"resource|{key}-{name}-{culture}");
 
         if (resource != null)

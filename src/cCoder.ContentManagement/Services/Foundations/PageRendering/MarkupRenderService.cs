@@ -679,6 +679,31 @@ values: session.App.PagesById.Values
 
     private PageRenderResource ResolveCommonResource(PageRenderSession session, string key, string name, string culture)
     {
+        PageRenderResource resource = ResolveCommonResourceForKey(
+            session: session,
+            key: key,
+            name: name,
+            culture: culture);
+
+        return resource
+            ?? (string.Equals(
+                a: key,
+                b: "common",
+                comparisonType: StringComparison.OrdinalIgnoreCase)
+                    ? null
+                    : ResolveCommonResourceForKey(
+                        session: session,
+                        key: "common",
+                        name: name,
+                        culture: culture));
+    }
+
+    private PageRenderResource ResolveCommonResourceForKey(
+        PageRenderSession session,
+        string key,
+        string name,
+        string culture)
+    {
         PageRenderResource resource = FindIndexedResource(lookup: session.CommonResourcesByLookup, key: key, name: name, culture: culture);
 
         if (resource != null)
