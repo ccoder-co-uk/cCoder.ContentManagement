@@ -54,6 +54,11 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
         ValidateCommonObjects(commonObjects: items, parameterName: "items");
         CommonObject[] commonObjects = (items as CommonObject[]) ?? items.ToArray();
 
+        foreach (CommonObject commonObject in commonObjects)
+        {
+            NormalizeCulture(commonObject: commonObject);
+        }
+
         IEnumerable<string> types = commonObjects.Select(selector: (CommonObject i) => i.Type)
             .Distinct();
 
@@ -107,6 +112,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     {
         ValidateCommonObjectOnAdd(inputs: [newCommonObject]);
         ValidateCommonObject(commonObject: newCommonObject, parameterName: "entity");
+        NormalizeCulture(commonObject: newCommonObject);
         authorizationManager.Authorize(appId: null, privilege: "commonobject_create");
         return await service.AddCommonObjectAsync(newCommonObject: newCommonObject);
 
@@ -117,6 +123,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     {
         ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject]);
         ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "entity");
+        NormalizeCulture(commonObject: updatedCommonObject);
         authorizationManager.Authorize(appId: null, privilege: "commonobject_create");
         authorizationManager.Authorize(appId: null, privilege: "commonobject_update");
 
@@ -270,6 +277,9 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     private static void ValidateCommonObjects(IEnumerable<CommonObject> commonObjects, string parameterName) =>
         ThrowIf(condition: commonObjects == null, message: parameterName + " is required.");
 
+    private static void NormalizeCulture(CommonObject commonObject) =>
+        commonObject.Culture ??= string.Empty;
+
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
@@ -281,6 +291,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     private async ValueTask<CommonObject> ExecuteAddCommonObjectAsync(CommonObject newCommonObject)
     {
         ValidateCommonObject(commonObject: newCommonObject, parameterName: "entity");
+        NormalizeCulture(commonObject: newCommonObject);
         authorizationManager.Authorize(appId: null, privilege: "commonobject_create");
         return await service.AddCommonObjectAsync(newCommonObject: newCommonObject);
     }
@@ -335,6 +346,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     private async ValueTask<CommonObject> ExecuteUpdateCommonObjectAsync(CommonObject updatedCommonObject)
     {
         ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "entity");
+        NormalizeCulture(commonObject: updatedCommonObject);
         authorizationManager.Authorize(appId: null, privilege: "commonobject_create");
         authorizationManager.Authorize(appId: null, privilege: "commonobject_update");
 

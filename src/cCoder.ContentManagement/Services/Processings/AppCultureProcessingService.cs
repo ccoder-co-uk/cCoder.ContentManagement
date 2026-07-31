@@ -22,6 +22,7 @@ internal partial class AppCultureProcessingService(IAppCultureService service) :
         TryCatch<AppCulture>(operation: async () =>
     {
         ValidateAppCultureOnAdd(inputs: [newAppCulture]);
+        NormalizeCulture(appCulture: newAppCulture);
 
         try
         {
@@ -58,6 +59,8 @@ internal partial class AppCultureProcessingService(IAppCultureService service) :
 
         foreach (AppCulture item in newAppCulture)
         {
+            NormalizeCulture(appCulture: item);
+
             try
             {
                 AppCulture existing = service.GetAppCulture(appId: item.AppId, cultureId: item.CultureId, ignoreFilters: true);
@@ -100,6 +103,8 @@ internal partial class AppCultureProcessingService(IAppCultureService service) :
 
     private async ValueTask<AppCulture> ExecuteAddAppCultureAsync(AppCulture newAppCulture)
     {
+        NormalizeCulture(appCulture: newAppCulture);
+
         try
         {
             return await service.AddAppCultureAsync(newAppCulture: newAppCulture);
@@ -110,6 +115,9 @@ internal partial class AppCultureProcessingService(IAppCultureService service) :
             throw new InvalidOperationException(message: "The app culture must reference an existing app and culture.", innerException: ex);
         }
     }
+
+    private static void NormalizeCulture(AppCulture appCulture) =>
+        appCulture.CultureId ??= string.Empty;
 
     private async ValueTask ExecuteDeleteAppCultureAsync(AppCulture deletedAppCulture)
     {

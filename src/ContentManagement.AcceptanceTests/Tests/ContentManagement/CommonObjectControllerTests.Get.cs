@@ -3,7 +3,11 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models;
+using cCoder.Data;
+using cCoder.ContentManagement.Exposures.Caching;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 
@@ -76,5 +80,76 @@ public sealed partial class CommonObjectControllerTests
 
         actualCommonObjects.Count.Should()
             .BeGreaterThan(expected: 0);
+    }
+
+    [Fact]
+    public async Task Latest_ReturnsOnlyHighestVersionWhenCultureIsNullOrEmpty()
+    {
+        // Given
+        const string type = "ContentManagement/Component";
+        string name = Unique(prefix: "CultureNormalisation");
+        string key = Unique(prefix: "key");
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        int[] ids;
+
+        using (IServiceScope scope = fixture.Factory.Services.CreateScope())
+        {
+            using CoreDataContext core = scope.ServiceProvider
+                .GetRequiredService<ICoreContextFactory>()
+                .CreateCoreContext();
+
+            CommonObject[] commonObjects =
+            [
+                new()
+                {
+                    Name = name,
+                    Description = "Older null-culture version",
+                    LastUpdated = now,
+                    LastUpdatedBy = "Guest",
+                    CreatedOn = now,
+                    CreatedBy = "Guest",
+                    Version = 1,
+                    Key = key,
+                    Type = type,
+                    Json = $"{{\"name\":\"{name}\",\"version\":1}}",
+                    Culture = null
+                },
+                new()
+                {
+                    Name = name,
+                    Description = "Latest empty-culture version",
+                    LastUpdated = now,
+                    LastUpdatedBy = "Guest",
+                    CreatedOn = now,
+                    CreatedBy = "Guest",
+                    Version = 2,
+                    Key = key,
+                    Type = type,
+                    Json = $"{{\"name\":\"{name}\",\"version\":2}}",
+                    Culture = string.Empty
+                }
+            ];
+
+            core.CommonObjects.AddRange(entities: commonObjects);
+            await core.SaveChangesAsync();
+            ids = commonObjects.Select(selector: commonObject => commonObject.Id).ToArray();
+        }
+
+        ICommonObjectCache cache = fixture.Factory.Services.GetRequiredService<ICommonObjectCache>();
+        cache.Refresh();
+
+        // When
+        CommonObject[] actualCommonObjects = cache.GetLatestSet()
+            .Where(predicate: commonObject => commonObject.Type == type
+                && commonObject.Key == key
+                && commonObject.Name == name)
+            .ToArray();
+
+        // Then
+        actualCommonObjects.Should().ContainSingle();
+        actualCommonObjects.Single().Version.Should().Be(expected: 2);
+
+        await Teardown(ids: ids);
+        cache.Refresh();
     }
 }

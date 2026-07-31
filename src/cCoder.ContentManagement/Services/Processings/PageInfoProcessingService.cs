@@ -32,6 +32,7 @@ internal partial class PageInfoProcessingService(IPageInfoService service) : IPa
     {
         ValidatePageInfoOnAdd(inputs: [newPageInfo]);
         ValidatePageInfo(pageInfo: newPageInfo, parameterName: "entity");
+        NormalizeCulture(pageInfo: newPageInfo);
         return service.AddPageInfoAsync(newPageInfo: newPageInfo);
 
     }, isValueTask: true);
@@ -41,6 +42,7 @@ internal partial class PageInfoProcessingService(IPageInfoService service) : IPa
     {
         ValidatePageInfoOnUpdate(inputs: [updatedPageInfo]);
         ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "entity");
+        NormalizeCulture(pageInfo: updatedPageInfo);
         return service.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo);
 
     }, isValueTask: true);
@@ -111,6 +113,9 @@ internal partial class PageInfoProcessingService(IPageInfoService service) : IPa
     private static void ValidatePageInfos(IEnumerable<PageInfo> pageInfos, string parameterName) =>
         ThrowIf(condition: pageInfos == null, message: parameterName + " is required.");
 
+    private static void NormalizeCulture(PageInfo pageInfo) =>
+        pageInfo.CultureId ??= string.Empty;
+
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
@@ -122,6 +127,7 @@ internal partial class PageInfoProcessingService(IPageInfoService service) : IPa
     private ValueTask<PageInfo> ExecuteAddPageInfoAsync(PageInfo newPageInfo)
     {
         ValidatePageInfo(pageInfo: newPageInfo, parameterName: "entity");
+        NormalizeCulture(pageInfo: newPageInfo);
         return service.AddPageInfoAsync(newPageInfo: newPageInfo);
     }
 
@@ -134,6 +140,7 @@ internal partial class PageInfoProcessingService(IPageInfoService service) : IPa
     private ValueTask<PageInfo> ExecuteUpdatePageInfoAsync(PageInfo updatedPageInfo)
     {
         ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "entity");
+        NormalizeCulture(pageInfo: updatedPageInfo);
         return service.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo);
     }
 }
