@@ -688,12 +688,12 @@ values: session.App.PagesById.Values
         return resource
             ?? (string.Equals(
                 a: key,
-                b: "common",
+                b: "default",
                 comparisonType: StringComparison.OrdinalIgnoreCase)
                     ? null
                     : ResolveCommonResourceForKey(
                         session: session,
-                        key: "common",
+                        key: "default",
                         name: name,
                         culture: culture));
     }

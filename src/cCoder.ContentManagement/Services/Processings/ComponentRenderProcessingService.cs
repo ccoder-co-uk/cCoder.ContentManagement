@@ -424,11 +424,11 @@ internal partial class ComponentRenderProcessingService(
         return resource
             ?? (string.Equals(
                 a: key,
-                b: "common",
+                b: "default",
                 comparisonType: StringComparison.OrdinalIgnoreCase)
                     ? null
                     : FindResourceInCacheForKey(
-                        key: "common",
+                        key: "default",
                         name: name,
                         culture: culture));
     }

@@ -347,7 +347,9 @@ internal partial class AppProcessingService(
 
     private ICollection<AppCulture> BuildCulturesForApp(App newApp)
     {
-        IEnumerable<string> enumerable = newApp.Cultures?.Select(selector: (AppCulture culture) => culture.CultureId) ?? Array.Empty<string>();
+        IEnumerable<string> enumerable = newApp.Cultures?
+            .Select(selector: (AppCulture culture) => culture.CultureId ?? string.Empty)
+            ?? Array.Empty<string>();
 
         string[] requestedCultureIds = enumerable.Distinct()
             .ToArray();

@@ -80,7 +80,7 @@ action: workflowBaseUrl => CreateSut(workflowBaseUrl: workflowBaseUrl)
     }
 
     [Fact]
-    public void ShouldUseCommonKeyResourceWhenComponentKeyDoesNotDefineResource()
+    public void ShouldUseDefaultKeyResourceWhenComponentKeyDoesNotDefineResource()
     {
         // Given
         (_, _, RenderComponent component, RenderComponentParams renderParams) =
@@ -92,10 +92,10 @@ action: workflowBaseUrl => CreateSut(workflowBaseUrl: workflowBaseUrl)
         commonObjectCacheMock
             .Setup(expression: cache =>
                 cache.Get<RenderResource>(
-                    key: "resource|common-dateformat-en"))
+                    key: "resource|default-dateformat-en"))
             .Returns(value: new RenderResource
             {
-                Key = "Common",
+                Key = "Default",
                 Culture = "en",
                 Name = "dateformat",
                 DisplayName = "dd/MM/yyyy",

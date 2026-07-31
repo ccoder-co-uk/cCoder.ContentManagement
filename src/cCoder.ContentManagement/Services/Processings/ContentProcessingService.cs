@@ -32,6 +32,7 @@ internal partial class ContentProcessingService(IContentService service) : ICont
     {
         ValidateContentOnAdd(inputs: [newContent]);
         ValidateContent(content: newContent, parameterName: "entity");
+        NormalizeCulture(content: newContent);
         return service.AddContentAsync(newContent: newContent);
 
     }, isValueTask: true);
@@ -41,6 +42,7 @@ internal partial class ContentProcessingService(IContentService service) : ICont
     {
         ValidateContentOnUpdate(inputs: [updatedContent]);
         ValidateContent(content: updatedContent, parameterName: "entity");
+        NormalizeCulture(content: updatedContent);
         return service.UpdateContentAsync(updatedContent: updatedContent);
 
     }, isValueTask: true);
@@ -111,6 +113,9 @@ internal partial class ContentProcessingService(IContentService service) : ICont
     private static void ValidateContents(IEnumerable<Content> contents, string parameterName) =>
         ThrowIf(condition: contents == null, message: parameterName + " is required.");
 
+    private static void NormalizeCulture(Content content) =>
+        content.CultureId ??= string.Empty;
+
     private static void ThrowIf(bool condition, string message)
     {
         if (condition)
@@ -122,6 +127,7 @@ internal partial class ContentProcessingService(IContentService service) : ICont
     private ValueTask<Content> ExecuteAddContentAsync(Content newContent)
     {
         ValidateContent(content: newContent, parameterName: "entity");
+        NormalizeCulture(content: newContent);
         return service.AddContentAsync(newContent: newContent);
     }
 
@@ -134,6 +140,7 @@ internal partial class ContentProcessingService(IContentService service) : ICont
     private ValueTask<Content> ExecuteUpdateContentAsync(Content updatedContent)
     {
         ValidateContent(content: updatedContent, parameterName: "entity");
+        NormalizeCulture(content: updatedContent);
         return service.UpdateContentAsync(updatedContent: updatedContent);
     }
 }

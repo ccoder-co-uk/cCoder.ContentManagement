@@ -33,7 +33,7 @@ internal sealed class CommonObjectBroker(ICoreContextFactory coreContextFactory)
             .GroupBy(keySelector: commonObject => new
             {
                 commonObject.Name,
-                commonObject.Culture,
+                Culture = commonObject.Culture ?? string.Empty,
                 commonObject.Key,
                 commonObject.Type
             })

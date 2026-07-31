@@ -201,7 +201,7 @@ internal partial class PageProcessingService(
         storagePage.PageInfo = newPage.PageInfo.Select(selector: (PageInfo info) => new PageInfo
         {
             Id = 0,
-            CultureId = info.CultureId,
+            CultureId = info.CultureId ?? string.Empty,
             Description = info.Description,
             Keywords = info.Keywords,
             Title = info.Title
@@ -211,7 +211,7 @@ internal partial class PageProcessingService(
         storagePage.Contents = (newPage.Contents ?? new List<Content>()).Select(selector: (Content content) => new Content
         {
             Id = 0,
-            CultureId = content.CultureId,
+            CultureId = content.CultureId ?? string.Empty,
             Name = content.Name,
             Html = content.Html
         })
@@ -464,7 +464,7 @@ internal partial class PageProcessingService(
         newPage.PageInfo = page.PageInfo.Select(selector: (PageInfo info) => new PageInfo
         {
             Id = 0,
-            CultureId = info.CultureId,
+            CultureId = info.CultureId ?? string.Empty,
             Description = info.Description,
             Keywords = info.Keywords,
             Title = info.Title
@@ -474,7 +474,7 @@ internal partial class PageProcessingService(
         newPage.Contents = (page.Contents ?? new List<Content>()).Select(selector: (Content content) => new Content
         {
             Id = 0,
-            CultureId = content.CultureId,
+            CultureId = content.CultureId ?? string.Empty,
             Name = content.Name,
             Html = content.Html
         })
