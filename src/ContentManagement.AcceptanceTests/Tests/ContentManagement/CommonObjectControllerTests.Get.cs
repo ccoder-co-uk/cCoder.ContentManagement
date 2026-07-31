@@ -132,7 +132,10 @@ public sealed partial class CommonObjectControllerTests
 
             core.CommonObjects.AddRange(entities: commonObjects);
             await core.SaveChangesAsync();
-            ids = commonObjects.Select(selector: commonObject => commonObject.Id).ToArray();
+
+            ids = commonObjects
+                .Select(selector: commonObject => commonObject.Id)
+                .ToArray();
         }
 
         ICommonObjectCache cache = fixture.Factory.Services.GetRequiredService<ICommonObjectCache>();
@@ -146,8 +149,12 @@ public sealed partial class CommonObjectControllerTests
             .ToArray();
 
         // Then
-        actualCommonObjects.Should().ContainSingle();
-        actualCommonObjects.Single().Version.Should().Be(expected: 2);
+        actualCommonObjects.Should()
+            .ContainSingle();
+
+        actualCommonObjects.Single()
+            .Version.Should()
+            .Be(expected: 2);
 
         await Teardown(ids: ids);
         cache.Refresh();
