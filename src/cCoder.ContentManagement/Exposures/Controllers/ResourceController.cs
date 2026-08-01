@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
@@ -28,15 +29,49 @@ public class ResourceController : ODataController
     }
 
     [HttpGet]
-    public IActionResult GetMetadata() =>
-        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Resource)) : new MetadataContainer(type: typeof(Resource), isEntity: true, hasEndpoint: true));
+    public IActionResult GetMetadata()
+    {
+        try
+        {
+            return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Resource)) : new MetadataContainer(type: typeof(Resource), isEntity: true, hasEndpoint: true));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
-    public IActionResult GetAll(ODataQueryOptions<Resource> queryOptions) =>
-        Ok(value: service.GetAllResource());
+    public IActionResult GetAll()
+    {
+        try
+        {
+            return Ok(value: service.GetAllResource());
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [AllowAnonymous]
@@ -45,14 +80,24 @@ public class ResourceController : ODataController
     {
         try
         {
-            IQueryable<Resource> result = service.GetAllResource()
-                .Where(predicate: resource => resource.Id == key);
+            Resource result = service.GetAllResource()
+                .FirstOrDefault(predicate: resource => resource.Id == key);
 
-            return Ok(value: SingleResult.Create(queryable: result));
+            return result is null
+                ? NotFound()
+                : Ok(value: result);
         }
-        catch (SecurityException)
+        catch (ContentManagementValidationException)
         {
-            return NotFound();
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -60,45 +105,105 @@ public class ResourceController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     public async Task<IActionResult> Post([FromBody] Resource newResource)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        return Ok(value: await service.AddResourceAsync(newResource: newResource));
+            return StatusCode(statusCode: StatusCodes.Status201Created, value: await service.AddResourceAsync(newResource: newResource));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Resource updatedResource)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        return Ok(value: await service.UpdateResourceAsync(updatedResource: updatedResource));
+            return Ok(value: await service.UpdateResourceAsync(updatedResource: updatedResource));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Resource> updatedResource)
     {
-        Resource originalEntity = service.GetResource(resourceId: key);
-
-        if (originalEntity == null)
+        try
         {
-            return NotFound();
-        }
+            Resource originalEntity = service.GetResource(resourceId: key);
 
-        updatedResource.Patch(original: originalEntity);
-        return Ok(value: await service.UpdateResourceAsync(updatedResource: originalEntity));
+            if (originalEntity == null)
+            {
+                return NotFound();
+            }
+
+            updatedResource.Patch(original: originalEntity);
+            return Ok(value: await service.UpdateResourceAsync(updatedResource: originalEntity));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await service.DeleteAsync(resourceId: key);
-        return Ok();
+        try
+        {
+            await service.DeleteAsync(resourceId: key);
+            return NoContent();
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 }

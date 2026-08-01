@@ -161,7 +161,7 @@ public sealed partial class PageRoleControllerTests(WebAcceptanceFixture fixture
         string content = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should()
-            .Be(expected: HttpStatusCode.OK, because: content);
+            .Be(expected: HttpStatusCode.Created, because: content);
 
         return JsonSerializer.Deserialize<PageRole>(json: content, options: JsonOptions)!;
     }

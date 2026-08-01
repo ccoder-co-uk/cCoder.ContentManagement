@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Extensions.OData;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
@@ -23,35 +24,99 @@ public class PageRoleController : ODataController
     }
 
     [HttpGet]
-    public IActionResult GetMetadata() =>
-        Ok(value: new MetadataContainer(type: typeof(PageRole), isEntity: true, hasEndpoint: true));
+    public IActionResult GetMetadata()
+    {
+        try
+        {
+            return Ok(value: new MetadataContainer(type: typeof(PageRole), isEntity: true, hasEndpoint: true));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 3, MaxExpansionDepth = 3)]
     [ActionName("Get")]
-    public IActionResult GetAll() =>
-        Ok(value: service.GetAllPageRole());
+    public IActionResult GetAll()
+    {
+        try
+        {
+            return Ok(value: service.GetAllPageRole());
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
-    [HttpPost]
+    [HttpDelete]
     public async Task<IActionResult> Post([FromBody] PageRole newPageRole)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        return Ok(value: await service.AddPageRoleAsync(newPageRole: newPageRole));
+            return StatusCode(statusCode: StatusCodes.Status201Created, value: await service.AddPageRoleAsync(newPageRole: newPageRole));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpPost]
     public async Task<IActionResult> DeleteAll([FromBody] IEnumerable<PageRole> deletedPageRole)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        await service.DeleteAllPageRoleAsync(deletedPageRole: deletedPageRole);
-        return Ok();
+            await service.DeleteAllPageRoleAsync(deletedPageRole: deletedPageRole);
+            return NoContent();
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 }

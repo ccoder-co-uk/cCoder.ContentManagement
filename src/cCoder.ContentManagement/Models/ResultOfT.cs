@@ -6,6 +6,6 @@ using cCoder.ContentManagement.Models.Results;
 
 namespace cCoder.ContentManagement.Models;
 
-public class Result : OperationResult
+public class Result<T> : OperationResult<T>
 {
 }
