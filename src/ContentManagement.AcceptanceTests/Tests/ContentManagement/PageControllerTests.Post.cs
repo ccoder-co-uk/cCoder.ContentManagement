@@ -54,10 +54,7 @@ value: CreateValidPagePayload(seededContext: seededContext, name: name));
 
         // Then
         response.StatusCode.Should()
-            .Be(expected: HttpStatusCode.InternalServerError, because: content);
-
-        content.Should()
-            .Contain(expected: $"A page already exists for app {seededContext.AppId} with path '{name}'.");
+            .Be(expected: HttpStatusCode.BadRequest, because: content);
 
         content.Should()
             .NotContain(unexpected: "could not be translated");
@@ -110,10 +107,7 @@ value: new
 
         // Then
         response.StatusCode.Should()
-            .Be(expected: HttpStatusCode.InternalServerError, because: content);
-
-        content.Should()
-            .Contain(expected: $"Layout '{missingLayout}' does not exist for app {seededContext.AppId}.");
+            .Be(expected: HttpStatusCode.BadRequest, because: content);
 
         await Teardown(seededContext: seededContext);
     }

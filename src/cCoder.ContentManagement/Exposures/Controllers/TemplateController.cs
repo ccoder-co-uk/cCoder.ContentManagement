@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using System.Text;
@@ -31,12 +32,27 @@ public class TemplateController : ODataController
     [ActionName("Render")]
     public async Task<IActionResult> GetRender(int appId, string name, string culture)
     {
-        string content = await manager.ReadContentAsync(
-            source: base.Request.Body);
+        try
+        {
+            string content = await manager.ReadContentAsync(
+                source: base.Request.Body);
 
-        dynamic m = JsonConvert.DeserializeObject(value: content);
+            dynamic m = JsonConvert.DeserializeObject(value: content);
 
-        return Content(content: manager.Render(appId: appId, name: name, culture: culture, model: m), contentType: "text/plain", contentEncoding: Encoding.UTF8);
+            return Content(content: manager.Render(appId: appId, name: name, culture: culture, model: m), contentType: "text/plain", contentEncoding: Encoding.UTF8);
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpPost]
@@ -44,25 +60,74 @@ public class TemplateController : ODataController
     [ActionName("HtmlToPdf")]
     public async Task<IActionResult> GetHtmlToPdf(string name)
     {
-        string htmlContent = await manager.ReadContentAsync(
-            source: base.Request.Body);
+        try
+        {
+            string htmlContent = await manager.ReadContentAsync(
+                source: base.Request.Body);
 
-        byte[] content = manager.ConvertHtmlToPdf(
-            html: htmlContent);
+            byte[] content = manager.ConvertHtmlToPdf(
+                html: htmlContent);
 
-        return File(fileContents: content, contentType: "application/pdf", fileDownloadName: name + ".pdf");
+            return File(fileContents: content, contentType: "application/pdf", fileDownloadName: name + ".pdf");
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpGet]
-    public IActionResult GetMetadata() =>
-        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Template)) : new MetadataContainer(type: typeof(Template), isEntity: true, hasEndpoint: true));
+    public IActionResult GetMetadata()
+    {
+        try
+        {
+            return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Template)) : new MetadataContainer(type: typeof(Template), isEntity: true, hasEndpoint: true));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
-    public IActionResult GetAll(ODataQueryOptions<Template> queryOptions) =>
-        Ok(value: manager.GetAll());
+    public IActionResult GetAll()
+    {
+        try
+        {
+            return Ok(value: manager.GetAll());
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [AllowAnonymous]
@@ -71,14 +136,24 @@ public class TemplateController : ODataController
     {
         try
         {
-            IQueryable<Template> result = manager.GetAll()
-                .Where(predicate: template => template.Id == key);
+            Template result = manager.GetAll()
+                .FirstOrDefault(predicate: template => template.Id == key);
 
-            return Ok(value: SingleResult.Create(queryable: result));
+            return result is null
+                ? NotFound()
+                : Ok(value: result);
         }
-        catch (SecurityException)
+        catch (ContentManagementValidationException)
         {
-            return NotFound();
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -86,45 +161,105 @@ public class TemplateController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     public async Task<IActionResult> Post([FromBody] Template newTemplate)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        return Ok(value: await manager.AddAsync(newTemplate: newTemplate));
+            return StatusCode(statusCode: StatusCodes.Status201Created, value: await manager.AddAsync(newTemplate: newTemplate));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] Template updatedTemplate)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        return Ok(value: await manager.UpdateAsync(updatedTemplate: updatedTemplate));
+            return Ok(value: await manager.UpdateAsync(updatedTemplate: updatedTemplate));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Template> updatedTemplate)
     {
-        Template originalEntity = manager.Get(templateId: key);
-
-        if (originalEntity == null)
+        try
         {
-            return NotFound();
-        }
+            Template originalEntity = manager.Get(templateId: key);
 
-        updatedTemplate.Patch(original: originalEntity);
-        return Ok(value: await manager.UpdateAsync(updatedTemplate: originalEntity));
+            if (originalEntity == null)
+            {
+                return NotFound();
+            }
+
+            updatedTemplate.Patch(original: originalEntity);
+            return Ok(value: await manager.UpdateAsync(updatedTemplate: originalEntity));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await manager.DeleteAsync(templateId: key);
-        return Ok();
+        try
+        {
+            await manager.DeleteAsync(templateId: key);
+            return NoContent();
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 }

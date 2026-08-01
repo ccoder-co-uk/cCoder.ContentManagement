@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
@@ -29,15 +30,49 @@ public class CultureController : ODataController
     }
 
     [HttpGet]
-    public IActionResult GetMetadata() =>
-        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Culture)) : new MetadataContainer(type: typeof(Culture), isEntity: true, hasEndpoint: true));
+    public IActionResult GetMetadata()
+    {
+        try
+        {
+            return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Culture)) : new MetadataContainer(type: typeof(Culture), isEntity: true, hasEndpoint: true));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
-    public IActionResult GetAll(ODataQueryOptions<Culture> queryOptions) =>
-        Ok(value: service.GetAllCulture());
+    public IActionResult GetAll(ODataQueryOptions<Culture> queryOptions)
+    {
+        try
+        {
+            return Ok(value: service.GetAllCulture());
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [AllowAnonymous]
@@ -46,14 +81,24 @@ public class CultureController : ODataController
     {
         try
         {
-            IQueryable<Culture> result = service.GetAllCulture()
-                .Where(predicate: culture => culture.Id == key);
+            Culture result = service.GetAllCulture()
+                .FirstOrDefault(predicate: culture => culture.Id == key);
 
-            return Ok(value: SingleResult.Create(queryable: result));
+            return result is null
+                ? NotFound()
+                : Ok(value: result);
         }
-        catch (SecurityException)
+        catch (ContentManagementValidationException)
         {
-            return NotFound();
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -61,46 +106,106 @@ public class CultureController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     public async Task<IActionResult> Post([FromBody] Culture newCulture)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        return Ok(value: CreateResponseCulture(newCulture: await service.AddCultureAsync(newCulture: newCulture)));
+            return StatusCode(statusCode: StatusCodes.Status201Created, value: CreateResponseCulture(newCulture: await service.AddCultureAsync(newCulture: newCulture)));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     public async Task<IActionResult> Put([FromRoute] string key, [FromBody] Culture updatedCulture)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        return Ok(value: CreateResponseCulture(newCulture: await service.UpdateCultureAsync(updatedCulture: updatedCulture)));
+            return Ok(value: CreateResponseCulture(newCulture: await service.UpdateCultureAsync(updatedCulture: updatedCulture)));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] string key, Delta<Culture> updatedCulture)
     {
-        Culture originalEntity = service.GetCulture(cultureId: key);
-
-        if (originalEntity == null)
+        try
         {
-            return NotFound();
-        }
+            Culture originalEntity = service.GetCulture(cultureId: key);
 
-        updatedCulture.Patch(original: originalEntity);
-        return Ok(value: CreateResponseCulture(newCulture: await service.UpdateCultureAsync(updatedCulture: originalEntity)));
+            if (originalEntity == null)
+            {
+                return NotFound();
+            }
+
+            updatedCulture.Patch(original: originalEntity);
+            return Ok(value: CreateResponseCulture(newCulture: await service.UpdateCultureAsync(updatedCulture: originalEntity)));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] string key)
     {
-        await service.DeleteAsync(cultureId: key);
-        return Ok();
+        try
+        {
+            await service.DeleteAsync(cultureId: key);
+            return NoContent();
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     private static Culture CreateResponseCulture(Culture newCulture)

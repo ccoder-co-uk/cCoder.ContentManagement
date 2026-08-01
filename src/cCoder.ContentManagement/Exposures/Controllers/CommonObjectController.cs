@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using System.Text.Json;
@@ -26,38 +27,108 @@ public class CommonObjectController(ICommonObjectManager service) : ODataControl
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
     [ActionName("Latest")]
-    public IActionResult GetLatest(string type) =>
-        Ok(value: service.LatestCommonObject(type: type));
+    public IActionResult GetLatest(string type)
+    {
+        try
+        {
+            IEnumerable<CommonObject> result = service.LatestCommonObject(type: type);
+
+            return result is null
+                ? NotFound()
+                : Ok(value: result);
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpPost]
     [ActionName("Import")]
     public async Task<IActionResult> PostImportAsync([FromBody] JsonElement payload)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
+
+            IEnumerable<CommonObject> items = DeserializeCommonObjects(payload: payload);
+
+            if (items == null)
+            {
+                return BadRequest(message: "A common object payload is required.");
+            }
+
+            return Ok(value: await service.ImportCommonObjectResultAsync(items: items));
         }
-
-        IEnumerable<CommonObject> items = DeserializeCommonObjects(payload: payload);
-
-        if (items == null)
+        catch (ContentManagementValidationException)
         {
-            return BadRequest(message: "A common object payload is required.");
+            return BadRequest();
         }
-
-        return Ok(value: await service.ImportCommonObjectResultAsync(items: items));
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpGet]
-    public IActionResult GetMetadata() =>
-        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(CommonObject)) : new MetadataContainer(type: typeof(CommonObject), isEntity: true, hasEndpoint: true));
+    public IActionResult GetMetadata()
+    {
+        try
+        {
+            return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(CommonObject)) : new MetadataContainer(type: typeof(CommonObject), isEntity: true, hasEndpoint: true));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
-    public IActionResult GetAll(ODataQueryOptions<CommonObject> queryOptions) =>
-        Ok(value: service.GetAllCommonObject());
+    public IActionResult GetAll()
+    {
+        try
+        {
+            return Ok(value: service.GetAllCommonObject());
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [AllowAnonymous]
@@ -66,14 +137,24 @@ public class CommonObjectController(ICommonObjectManager service) : ODataControl
     {
         try
         {
-            IQueryable<CommonObject> result = service.GetAllCommonObject()
-                .Where(predicate: commonObject => commonObject.Id == key);
+            CommonObject result = service.GetAllCommonObject()
+                .FirstOrDefault(predicate: commonObject => commonObject.Id == key);
 
-            return Ok(value: SingleResult.Create(queryable: result));
+            return result is null
+                ? NotFound()
+                : Ok(value: result);
         }
-        catch (SecurityException)
+        catch (ContentManagementValidationException)
         {
-            return NotFound();
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -81,47 +162,107 @@ public class CommonObjectController(ICommonObjectManager service) : ODataControl
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     public async Task<IActionResult> Post([FromBody] CommonObject newCommonObject)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        return Ok(value: await service.AddCommonObjectAsync(newCommonObject: newCommonObject));
+            return StatusCode(statusCode: StatusCodes.Status201Created, value: await service.AddCommonObjectAsync(newCommonObject: newCommonObject));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] CommonObject updatedCommonObject)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        updatedCommonObject.Id = key;
-        return Ok(value: await service.UpdateCommonObjectAsync(updatedCommonObject: updatedCommonObject));
+            updatedCommonObject.Id = key;
+            return Ok(value: await service.UpdateCommonObjectAsync(updatedCommonObject: updatedCommonObject));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<CommonObject> updatedCommonObject)
     {
-        CommonObject originalEntity = service.GetCommonObject(commonObjectId: key);
-
-        if (originalEntity == null)
+        try
         {
-            return NotFound();
-        }
+            CommonObject originalEntity = service.GetCommonObject(commonObjectId: key);
 
-        updatedCommonObject.Patch(original: originalEntity);
-        return Ok(value: await service.UpdateCommonObjectAsync(updatedCommonObject: originalEntity));
+            if (originalEntity == null)
+            {
+                return NotFound();
+            }
+
+            updatedCommonObject.Patch(original: originalEntity);
+            return Ok(value: await service.UpdateCommonObjectAsync(updatedCommonObject: originalEntity));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await service.DeleteAsync(commonObjectId: key);
-        return Ok();
+        try
+        {
+            await service.DeleteAsync(commonObjectId: key);
+            return NoContent();
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     private static IEnumerable<CommonObject> DeserializeCommonObjects(JsonElement payload)

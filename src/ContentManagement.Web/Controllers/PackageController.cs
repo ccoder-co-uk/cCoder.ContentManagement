@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Exposures;
+using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.Data.Models.Packaging;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,15 +18,30 @@ public sealed class PackageController(
     [HttpPost("Import")]
     public async Task<IActionResult> PostImportAsync([FromQuery] int appId, [FromBody] Package newPackage)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return BadRequest(modelState: ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(modelState: ModelState);
+            }
+
+            await contentManagementPackageManager.ImportPackageAsync(
+                appId: appId,
+                package: newPackage);
+
+            return Ok();
         }
-
-        await contentManagementPackageManager.ImportPackageAsync(
-            appId: appId,
-            package: newPackage);
-
-        return Ok();
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 }

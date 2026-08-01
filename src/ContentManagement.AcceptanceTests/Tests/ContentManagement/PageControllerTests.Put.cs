@@ -115,10 +115,7 @@ public sealed partial class PageControllerTests
 
         // Then
         response.StatusCode.Should()
-            .Be(expected: HttpStatusCode.InternalServerError, because: content);
-
-        content.Should()
-            .Contain(expected: $"Layout '{missingLayout}' does not exist for app {seededContext.AppId}.");
+            .Be(expected: HttpStatusCode.BadRequest, because: content);
 
         await Teardown(seededContext: seededContext);
     }

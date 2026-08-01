@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
@@ -28,15 +29,49 @@ public class PageInfoController : ODataController
     }
 
     [HttpGet]
-    public IActionResult GetMetadata() =>
-        Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-        .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(PageInfo)) : new MetadataContainer(type: typeof(PageInfo), isEntity: true, hasEndpoint: true));
+    public IActionResult GetMetadata()
+    {
+        try
+        {
+            return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
+            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(PageInfo)) : new MetadataContainer(type: typeof(PageInfo), isEntity: true, hasEndpoint: true));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
-    public IActionResult GetAll(ODataQueryOptions<PageInfo> queryOptions) =>
-        Ok(value: service.GetAllPageInfo());
+    public IActionResult GetAll()
+    {
+        try
+        {
+            return Ok(value: service.GetAllPageInfo());
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet]
     [AllowAnonymous]
@@ -45,14 +80,24 @@ public class PageInfoController : ODataController
     {
         try
         {
-            IQueryable<PageInfo> result = service.GetAllPageInfo()
-                .Where(predicate: pageInfo => pageInfo.Id == key);
+            PageInfo result = service.GetAllPageInfo()
+                .FirstOrDefault(predicate: pageInfo => pageInfo.Id == key);
 
-            return Ok(value: SingleResult.Create(queryable: result));
+            return result is null
+                ? NotFound()
+                : Ok(value: result);
         }
-        catch (SecurityException)
+        catch (ContentManagementValidationException)
         {
-            return NotFound();
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -60,45 +105,105 @@ public class PageInfoController : ODataController
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     public async Task<IActionResult> Post([FromBody] PageInfo newPageInfo)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        return Ok(value: await service.AddPageInfoAsync(newPageInfo: newPageInfo));
+            return StatusCode(statusCode: StatusCodes.Status201Created, value: await service.AddPageInfoAsync(newPageInfo: newPageInfo));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     public async Task<IActionResult> Put([FromRoute] int key, [FromBody] PageInfo updatedPageInfo)
     {
-        if (!base.ModelState.IsValid)
+        try
         {
-            return new BadRequestResult(modelState: base.ModelState);
-        }
+            if (!base.ModelState.IsValid)
+            {
+                return new BadRequestResult(modelState: base.ModelState);
+            }
 
-        return Ok(value: await service.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo));
+            return Ok(value: await service.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
     [ActionName("Patch")]
     public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<PageInfo> updatedPageInfo)
     {
-        PageInfo originalEntity = service.GetPageInfo(pageInfoId: key);
-
-        if (originalEntity == null)
+        try
         {
-            return NotFound();
-        }
+            PageInfo originalEntity = service.GetPageInfo(pageInfoId: key);
 
-        updatedPageInfo.Patch(original: originalEntity);
-        return Ok(value: await service.UpdatePageInfoAsync(updatedPageInfo: originalEntity));
+            if (originalEntity == null)
+            {
+                return NotFound();
+            }
+
+            updatedPageInfo.Patch(original: originalEntity);
+            return Ok(value: await service.UpdatePageInfoAsync(updatedPageInfo: originalEntity));
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
     {
-        await service.DeleteAsync(pageInfoId: key);
-        return Ok();
+        try
+        {
+            await service.DeleteAsync(pageInfoId: key);
+            return NoContent();
+        }
+        catch (ContentManagementValidationException)
+        {
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException)
+        {
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception)
+        {
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 }
