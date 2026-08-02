@@ -23,7 +23,7 @@ public sealed partial class AppControllerTests
         // Then
 
         actualStatusCode.Should()
-            .Be(expected: 204);
+            .Be(expected: 202);
 
         actualReadStatusCode.Should()
             .Be(expected: 404);
