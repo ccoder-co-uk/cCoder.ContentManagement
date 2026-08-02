@@ -113,9 +113,16 @@ public static partial class WebApplicationExtensions
 
         app.Use(middleware: async (context, next) =>
         {
-            await onRequest(arg1: context, arg2: log ?? NullLogger.Instance);
             context.Response.OnStarting(callback: () => RemovePlatformHeaders(context: context));
-            await next(context: context);
+
+            try
+            {
+                await next(context: context);
+            }
+            finally
+            {
+                await onRequest(arg1: context, arg2: log ?? NullLogger.Instance);
+            }
         });
 
         return app;

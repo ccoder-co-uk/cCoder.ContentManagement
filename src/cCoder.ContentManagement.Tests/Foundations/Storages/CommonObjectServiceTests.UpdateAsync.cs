@@ -38,7 +38,7 @@ public partial class CommonObjectServiceTests
         commonObjectBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<DataCommonObject>()))
             .Returns(value: (int?)7);
 
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_update"));
+        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "commonobject_update"));
 
         commonObjectBrokerMock
             .Setup(expression: x => x.UpdateCommonObjectAsync(updatedCommonObject: It.IsAny<DataCommonObject>()))
@@ -147,7 +147,7 @@ times: Times.AtMostOnce()
         commonObjectBrokerMock.VerifyNoOtherCalls();
 
         authorizationManagerMock.Verify(
-expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_update"),
+expression: x => x.Authorize(appId: (int?)7, privilege: "commonobject_update"),
 times: Times.Once
         );
     }
@@ -165,7 +165,7 @@ times: Times.Once
             .Returns(value: (int?)7);
 
         authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_update"))
+            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "commonobject_update"))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
@@ -185,7 +185,7 @@ times: Times.AtMostOnce()
         commonObjectBrokerMock.VerifyNoOtherCalls();
 
         authorizationManagerMock.Verify(
-expression: x => x.Authorize(appId: (int?)7, privilege: "CommonObject_update"),
+expression: x => x.Authorize(appId: (int?)7, privilege: "commonobject_update"),
 times: Times.Once
         );
     }

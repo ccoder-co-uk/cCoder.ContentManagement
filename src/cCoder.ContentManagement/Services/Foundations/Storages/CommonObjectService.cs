@@ -61,7 +61,7 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         ValidateCommonObjectOnAdd(inputs: [newCommonObject]);
         ValidateCommonObject(commonObject: newCommonObject, parameterName: "commonObject");
         CommonObject storageCommonObject = CreateStorageCommonObject(newCommonObject: newCommonObject);
-        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: storageCommonObject), privilege: "CommonObject_create");
+        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: storageCommonObject), privilege: "commonobject_create");
 
         string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
@@ -93,7 +93,7 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject]);
         ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "commonObject");
         CommonObject updateCommonObject = CreateStorageCommonObject(newCommonObject: updatedCommonObject);
-        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: updateCommonObject), privilege: "CommonObject_update");
+        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: updateCommonObject), privilege: "commonobject_update");
 
         string currentUserId = authorizationManager.GetCurrentUser()
             .Id;
@@ -125,7 +125,7 @@ internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroke
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
         CommonObject commonObject = ExecuteGetCommonObject(commonObjectId: commonObjectId);
         CommonObject dataCommonObject = CreateStorageCommonObject(newCommonObject: commonObject);
-        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: dataCommonObject), privilege: "CommonObject_delete");
+        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: dataCommonObject), privilege: "commonobject_delete");
         await commonObjectBroker.DeleteCommonObjectAsync(deletedCommonObject: dataCommonObject);
 
     }, isValueTask: true);
