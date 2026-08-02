@@ -105,9 +105,12 @@ public partial class PageRenderAggregationServiceTests
         response.Edit.Should()
             .BeTrue();
 
-        componentOrchestrationServiceMock.Verify(expression: x => x.GetAllComponent(), times: Times.AtLeastOnce);
-        scriptOrchestrationServiceMock.Verify(expression: x => x.GetAllScript(), times: Times.AtLeastOnce);
-        resourceOrchestrationServiceMock.Verify(expression: x => x.GetAllResource(), times: Times.AtLeastOnce);
+        appOrchestrationServiceMock.Verify(expression: x => x.GetAllApp(), times: Times.Once);
+        layoutOrchestrationServiceMock.Verify(expression: x => x.GetAllLayout(), times: Times.Once);
+        templateOrchestrationServiceMock.Verify(expression: x => x.GetAllTemplate(), times: Times.Once);
+        componentOrchestrationServiceMock.Verify(expression: x => x.GetAllComponent(), times: Times.Once);
+        scriptOrchestrationServiceMock.Verify(expression: x => x.GetAllScript(), times: Times.Once);
+        resourceOrchestrationServiceMock.Verify(expression: x => x.GetAllResource(), times: Times.Once);
         pageOrchestrationServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.AtLeastOnce);
     }
 

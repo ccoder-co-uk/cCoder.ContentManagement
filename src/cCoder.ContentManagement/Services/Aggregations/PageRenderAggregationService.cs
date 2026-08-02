@@ -81,7 +81,7 @@ internal sealed partial class PageRenderAggregationService(
         try
         {
             ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
-            RenderResult page = ExecuteRenderRenderResult(appId: defaults.App.Id, path: request.Path ?? string.Empty, theme: defaults.Theme, culture: defaults.Culture, edit: request.Edit);
+            RenderResult page = ExecuteRenderRenderResult(app: defaults.App, path: request.Path ?? string.Empty, theme: defaults.Theme, culture: defaults.Culture, edit: request.Edit);
 
             return new PageRenderResponse
             {
@@ -108,7 +108,7 @@ internal sealed partial class PageRenderAggregationService(
         ValidateException(exception: request.Exception, parameterName: "Exception");
 
         ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
-        RenderResult page = ExecuteRenderRenderResult(appId: defaults.App.Id, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
+        RenderResult page = ExecuteRenderRenderResult(app: defaults.App, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
 
         page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[message]]", newValue: WebUtility.HtmlEncode(value: request.Exception.Message));
         page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[detail]]", newValue: WebUtility.HtmlEncode(value: request.Exception.StackTrace ?? string.Empty));
@@ -166,7 +166,7 @@ culture: culture);
         }
 
         if (!UserCanPage(page: page, privilege: "page_read") &&
-            !pageRenderOrchestrationService.IsAdminOfApp(appId: appId))
+            !pageRenderOrchestrationService.IsAdminOfApp(appId: app.Id))
         {
             Page gatedPage = CreateGatedPage(newPage: page);
             gatedPage.App = app;
@@ -390,7 +390,7 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
         ValidateException(exception: request.Exception, parameterName: "Exception");
 
         ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
-        RenderResult page = ExecuteRenderRenderResult(appId: defaults.App.Id, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
+        RenderResult page = ExecuteRenderRenderResult(app: defaults.App, path: "Error", theme: defaults.Theme, culture: defaults.Culture);
 
         page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[message]]", newValue: WebUtility.HtmlEncode(value: request.Exception.Message));
         page.BodyHtml = page.BodyHtml.Replace(oldValue: "[problem[detail]]", newValue: WebUtility.HtmlEncode(value: request.Exception.StackTrace ?? string.Empty));
@@ -442,25 +442,18 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
             .IsAuthorized;
     }
 
-    private RenderResult ExecuteRenderRenderResult(int appId, string path, string theme, string culture, bool edit = false)
+    private RenderResult ExecuteRenderRenderResult(App app, string path, string theme, string culture, bool edit = false)
     {
-        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidateApp(app: app, parameterName: "app");
         ValidateTheme(theme: theme, parameterName: "theme");
 
         path ??= string.Empty;
         culture = pageRenderOrchestrationService.ResolveCulture(culture: culture);
 
-        App app = ResolveAppById(appId: appId);
-
-        if (app == null)
-        {
-            throw new SecurityException(message: "Unknown Domain!");
-        }
-
         string normalizedPath = path.ToLowerInvariant();
 
         Page page = pageOrchestrationService.GetAllPage(ignoreFilters: true)
-            .Where(predicate: existingPage => existingPage.AppId == appId && existingPage.Path.ToLower() == normalizedPath)
+            .Where(predicate: existingPage => existingPage.AppId == app.Id && existingPage.Path.ToLower() == normalizedPath)
             .FirstOrDefault();
 
         if (page != null)
@@ -481,7 +474,7 @@ culture: culture);
         }
 
         if (!UserCanPage(page: page, privilege: "page_read") &&
-            !pageRenderOrchestrationService.IsAdminOfApp(appId: appId))
+            !pageRenderOrchestrationService.IsAdminOfApp(appId: app.Id))
         {
             Page gatedPage = CreateGatedPage(newPage: page);
             gatedPage.App = app;
