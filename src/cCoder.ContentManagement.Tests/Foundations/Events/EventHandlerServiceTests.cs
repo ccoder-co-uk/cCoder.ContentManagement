@@ -15,7 +15,8 @@ public partial class EventHandlerServiceTests
 
     public EventHandlerServiceTests()
     {
-        eventHubBrokerMock = new Mock<IEventHubBroker>(behavior: MockBehavior.Strict);
+        eventHubBrokerMock = new Mock<IEventHubBroker>(
+            behavior: MockBehavior.Strict);
         service = new EventHandlerService(eventHubBroker: eventHubBrokerMock.Object);
     }
 }

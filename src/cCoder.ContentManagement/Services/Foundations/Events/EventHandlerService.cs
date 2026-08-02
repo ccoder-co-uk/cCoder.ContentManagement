@@ -8,6 +8,8 @@ using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.CMS;
+using cCoder.Data.Models;
+using cCoder.ContentManagement.Exposures.EventHandlers;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
@@ -21,6 +23,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         ListenToAppEvents();
         ListenToPageEvents();
         ListenToPackageEvents();
+        ListenToPageRenderCacheEvents();
 
     });
 
@@ -53,6 +56,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IAppSupportingResourcesCoordinationService service, App app) => service.HandleAppUpdateAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IAppRenderableCoordinationService service, App app) => service.HandleAppUpdateAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IAppPageComponentCoordinationService service, App app) => service.HandleAppUpdateAsync(app: app));
+        eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IPageRenderCacheEventHandlers service, App app) => service.RebuildAppAsync(app: app));
     }
 
     private void ListenToAppDeleteEvents()
@@ -60,6 +64,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppSupportingResourcesCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppRenderableCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppPageComponentCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
+        eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IPageRenderCacheEventHandlers service, App app) => service.DeleteAppAsync(deletedApp: app));
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppOrchestrationService service, App app) => service.HandleAppDeleteAsync(app: app));
     }
 
@@ -68,6 +73,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "page_add", handler: (IPageCoordinationService service, Page page) => service.HandlePageAddAsync(page: page));
 
         eventHubBroker.ListenToEvent(eventName: "page_add", handler: (IPageStructureCoordinationService service, Page page) => service.HandlePageAddAsync(page: page));
+        eventHubBroker.ListenToEvent(eventName: "page_add", handler: (IPageRenderCacheEventHandlers service, Page page) => service.RebuildPageAsync(page: page));
     }
 
     private void ListenToPageUpdateEvents()
@@ -75,6 +81,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "page_update", handler: (IPageCoordinationService service, Page page) => service.HandlePageUpdateAsync(page: page));
 
         eventHubBroker.ListenToEvent(eventName: "page_update", handler: (IPageStructureCoordinationService service, Page page) => service.HandlePageUpdateAsync(page: page));
+        eventHubBroker.ListenToEvent(eventName: "page_update", handler: (IPageRenderCacheEventHandlers service, Page page) => service.RebuildPageAsync(page: page));
     }
 
     private void ListenToPageDeleteEvents()
@@ -82,6 +89,51 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "page_delete", handler: (IPageCoordinationService service, Page page) => service.HandlePageDeleteAsync(page: page));
 
         eventHubBroker.ListenToEvent(eventName: "page_delete", handler: (IPageStructureCoordinationService service, Page page) => service.HandlePageDeleteAsync(page: page));
+        eventHubBroker.ListenToEvent(eventName: "page_delete", handler: (IPageRenderCacheEventHandlers service, Page page) => service.DeletePageAsync(deletedPage: page));
+    }
+
+    private void ListenToPageRenderCacheEvents()
+    {
+        ListenToAppOwnedRenderEvents<AppCulture>(eventNames: ["app_culture_add", "app_culture_delete"]);
+        ListenToAppOwnedRenderEvents<Layout>(eventNames: ["layout_add", "layout_update", "layout_delete"]);
+        ListenToAppOwnedRenderEvents<Template>(eventNames: ["template_add", "template_update", "template_delete"]);
+        ListenToAppOwnedRenderEvents<Component>(eventNames: ["component_add", "component_update", "component_delete"]);
+        ListenToAppOwnedRenderEvents<Resource>(eventNames: ["resource_add", "resource_update", "resource_delete"]);
+        ListenToAppOwnedRenderEvents<Script>(eventNames: ["script_add", "script_update", "script_delete"]);
+
+        foreach (string eventName in new[] { "content_add", "content_update", "content_delete" })
+        {
+            eventHubBroker.ListenToEvent(eventName: eventName, handler: (IPageRenderCacheEventHandlers service, Content content) => service.RebuildPageAsync(content: content));
+        }
+
+        foreach (string eventName in new[] { "page_info_add", "page_info_update", "page_info_delete" })
+        {
+            eventHubBroker.ListenToEvent(eventName: eventName, handler: (IPageRenderCacheEventHandlers service, PageInfo pageInfo) => service.RebuildPageAsync(pageInfo: pageInfo));
+        }
+
+        foreach (string eventName in new[] { "common_object_add", "common_object_update", "common_object_delete" })
+        {
+            eventHubBroker.ListenToEvent(eventName: eventName, handler: (IPageRenderCacheEventHandlers service, CommonObject commonObject) => service.RebuildCommonCacheConsumersAsync(commonObject: commonObject));
+        }
+    }
+
+    private void ListenToAppOwnedRenderEvents<T>(string[] eventNames)
+    {
+        foreach (string eventName in eventNames)
+        {
+            eventHubBroker.ListenToEvent<T, IPageRenderCacheEventHandlers>(
+                eventName: eventName,
+                handler: static (service, item) => item switch
+                {
+                    AppCulture appCulture => service.RebuildAppAsync(appCulture: appCulture),
+                    Layout layout => service.RebuildAppAsync(layout: layout),
+                    Template template => service.RebuildAppAsync(template: template),
+                    Component component => service.RebuildAppAsync(component: component),
+                    Resource resource => service.RebuildAppAsync(resource: resource),
+                    Script script => service.RebuildAppAsync(script: script),
+                    _ => ValueTask.CompletedTask
+                });
+        }
     }
 
     private void ListenToPackageImportEvents() =>

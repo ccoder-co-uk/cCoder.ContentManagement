@@ -4,26 +4,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
-  <PropertyGroup>
-    <LocalDataProject>..\..\..\cCoder.Data\src\cCoder.Data\cCoder.Data.csproj</LocalDataProject>
-    <LocalAppSecurityProject>..\..\..\cCoder.AppSecurity\src\cCoder.AppSecurity\cCoder.AppSecurity.csproj</LocalAppSecurityProject>
-    <LocalSecurityProject>..\..\..\cCoder.Security\src\cCoder.Security\cCoder.Security.csproj</LocalSecurityProject>
-    <LocalSecurityDataProject>..\..\..\cCoder.Security\src\cCoder.Security.Data\cCoder.Security.Data.csproj</LocalSecurityDataProject>
-    <UseLocalAppSecurity Condition="'$(UseLocalAppSecurity)' == ''">false</UseLocalAppSecurity>
-    <UseLocalAppSecurity Condition="'$(UseLocalAppSecurity)' == 'true' and !Exists('$(LocalAppSecurityProject)')">false</UseLocalAppSecurity>
-    <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
-    <UseLocalData Condition="'$(UseLocalData)' == 'true' and !Exists('$(LocalDataProject)')">false</UseLocalData>
-    <UseLocalSecurity Condition="'$(UseLocalSecurity)' == ''">false</UseLocalSecurity>
-    <UseLocalSecurity Condition="'$(UseLocalSecurity)' == 'true' and !Exists('$(LocalSecurityProject)')">false</UseLocalSecurity>
-    <UseLocalData Condition="'$(UseLocalSecurity)' == 'true' and Exists('$(LocalDataProject)')">true</UseLocalData>
-  </PropertyGroup>
-  <ItemGroup Condition="'$(UseLocalAppSecurity)' == 'true'">
-    <ProjectReference Include="$(LocalAppSecurityProject)" AdditionalProperties="UseLocalData=$(UseLocalData);UseLocalSecurity=$(UseLocalSecurity);UseLocalSecurityData=$(UseLocalSecurity)" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UseLocalSecurity)' == 'true'">
-    <ProjectReference Include="$(LocalSecurityProject)" />
-    <ProjectReference Include="$(LocalSecurityDataProject)" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
@@ -31,14 +11,14 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
-    <PackageReference Include="cCoder.AppSecurity" Version="2026.8.1.1511" Condition="'$(UseLocalAppSecurity)' != 'true'" />
-    <PackageReference Include="cCoder.Eventing" Version="2026.7.30.0042" />
-    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.7.30.0042" />
-    <PackageReference Include="cCoder.Eventing.Http" Version="2026.7.30.0042" />
-    <PackageReference Include="cCoder.Security" Version="2026.8.1.1419" Condition="'$(UseLocalSecurity)' != 'true'" />
-    <PackageReference Include="cCoder.Security.Data" Version="2026.8.1.1419" Condition="'$(UseLocalSecurity)' != 'true'" />
+    <PackageReference Include="cCoder.AppSecurity" Version="2026.8.1.1511" />
+    <PackageReference Include="cCoder.Eventing" Version="2026.8.2.1306" />
+    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.8.2.1306" />
+    <PackageReference Include="cCoder.Eventing.Http" Version="2026.8.2.1306" />
+    <PackageReference Include="cCoder.Security" Version="2026.8.2.2315" />
+    <PackageReference Include="cCoder.Security.Data" Version="2026.8.2.2315" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" AdditionalProperties="UseLocalData=$(UseLocalData);UseLocalSecurity=$(UseLocalSecurity);UseLocalSecurityData=$(UseLocalSecurity)" />
+    <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" />
   </ItemGroup>
 </Project>

@@ -558,7 +558,7 @@
     {
       "Name": "ContentManagement.Web.WebApplicationExtensions",
       "StandardElementType": "App",
-      "LineNumber": 25,
+      "LineNumber": 15,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": null,
@@ -568,7 +568,7 @@
         {
           "Id": "ContentManagement.Web.WebApplicationExtensions.UseContentManagementApplication(WebApplication)",
           "Name": "UseContentManagementApplication",
-          "LineNumber": 30,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "app",
@@ -622,7 +622,7 @@
         {
           "Id": "ContentManagement.Web.WebApplicationExtensions.UseDomainApiShell(WebApplication)",
           "Name": "UseDomainApiShell",
-          "LineNumber": 67,
+          "LineNumber": 53,
           "Inputs": [
             {
               "Name": "app",
@@ -647,7 +647,7 @@
         {
           "Id": "ContentManagement.Web.WebApplicationExtensions.UseDomainDefaultCors(WebApplication)",
           "Name": "UseDomainDefaultCors",
-          "LineNumber": 73,
+          "LineNumber": 59,
           "Inputs": [
             {
               "Name": "app",
@@ -672,7 +672,7 @@
         {
           "Id": "ContentManagement.Web.WebApplicationExtensions.UseDomainExceptionHandling(WebApplication,RequestDelegate)",
           "Name": "UseDomainExceptionHandling",
-          "LineNumber": 83,
+          "LineNumber": 69,
           "Inputs": [
             {
               "Name": "app",

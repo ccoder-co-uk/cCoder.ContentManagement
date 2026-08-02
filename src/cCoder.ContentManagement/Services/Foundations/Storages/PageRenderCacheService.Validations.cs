@@ -1,0 +1,47 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+using System.ComponentModel.DataAnnotations;
+using cCoder.Data.Models.CMS;
+
+namespace cCoder.ContentManagement.Services.Foundations.Storages;
+
+internal sealed partial class PageRenderCacheService
+{
+    private static void ValidateId(int pageRenderCacheId, string parameterName) =>
+        ThrowIf(condition: pageRenderCacheId < 1, message: parameterName + " must be greater than 0.");
+
+    private static void ValidatePageRenderCache(PageRenderCache cache, string parameterName)
+    {
+        ThrowIf(condition: cache == null, message: parameterName + " is required.");
+        ThrowIf(condition: cache.AppId < 1, message: parameterName + ".AppId must be greater than 0.");
+        ThrowIf(condition: cache.PageId < 1, message: parameterName + ".PageId must be greater than 0.");
+        ThrowIf(condition: string.IsNullOrWhiteSpace(value: cache.Theme), message: parameterName + ".Theme is required.");
+        ThrowIf(condition: cache.Value == null, message: parameterName + ".Value is required.");
+        ThrowIf(condition: cache.HeaderValue == null, message: parameterName + ".HeaderValue is required.");
+    }
+
+    private static void ValidateReplacementInputs(int[] pageIds, PageRenderCache[] replacements)
+    {
+        ThrowIf(condition: replacements == null, message: "replacements is required.");
+
+        if (pageIds != null && pageIds.Any(predicate: pageId => pageId < 1))
+        {
+            throw new ValidationException(message: "pageIds must contain values greater than 0.");
+        }
+
+        foreach (PageRenderCache replacement in replacements)
+        {
+            ValidatePageRenderCache(cache: replacement, parameterName: "replacement");
+        }
+    }
+
+    private static void ThrowIf(bool condition, string message)
+    {
+        if (condition)
+        {
+            throw new ValidationException(message: message);
+        }
+    }
+}

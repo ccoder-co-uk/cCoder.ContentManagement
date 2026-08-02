@@ -11,6 +11,7 @@ using cCoder.ContentManagement.Services;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
+using Newtonsoft.Json;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
@@ -25,7 +26,9 @@ internal sealed partial class PageRenderAggregationService(
     IContentOrchestrationService contentOrchestrationService,
     IPageInfoOrchestrationService pageInfoOrchestrationService,
     IPageRoleOrchestrationService pageRoleOrchestrationService,
-    IPageRenderOrchestrationService pageRenderOrchestrationService) : IPageRenderAggregationService
+    IPageRenderOrchestrationService pageRenderOrchestrationService,
+    IAppCultureOrchestrationService appCultureOrchestrationService,
+    IPageRenderCacheOrchestrationService pageRenderCacheOrchestrationService) : IPageRenderAggregationService
 {
     public PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation operation) =>
@@ -40,7 +43,8 @@ internal sealed partial class PageRenderAggregationService(
                 path: operation.Path,
                 theme: operation.Theme,
                 culture: operation.Culture,
-                edit: operation.Edit);
+                edit: operation.Edit,
+                rebuildCache: operation.RebuildCache);
 
             return operation;
         }
@@ -125,17 +129,25 @@ internal sealed partial class PageRenderAggregationService(
 
     });
 
-    internal RenderResult RenderRenderResult(int appId, string path, string theme, string culture, bool edit = false) =>
+    internal RenderResult RenderRenderResult(
+        int appId,
+        string path,
+        string theme,
+        string culture,
+        bool edit = false,
+        bool rebuildCache = false) =>
         TryCatch<RenderResult>(operation: () =>
     {
-        ValidateRenderRenderResult(inputs: [appId, path, theme, culture, edit]);
+        ValidateRenderRenderResult(inputs: [appId, path, theme, culture, edit, rebuildCache]);
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidateTheme(theme: theme, parameterName: "theme");
 
         path ??= string.Empty;
         culture = pageRenderOrchestrationService.ResolveCulture(culture: culture);
 
-        App app = ResolveAppById(appId: appId);
+        App app = ResolveAppById(
+            appId: appId,
+            ignoreFilters: rebuildCache);
 
         if (app == null)
         {
@@ -165,7 +177,8 @@ culture: culture);
             return renderResult;
         }
 
-        if (!UserCanPage(page: page, privilege: "page_read") &&
+        if (!rebuildCache &&
+            !UserCanPage(page: page, privilege: "page_read") &&
             !pageRenderOrchestrationService.IsAdminOfApp(appId: app.Id))
         {
             Page gatedPage = CreateGatedPage(newPage: page);
@@ -177,7 +190,14 @@ culture: culture);
                 culture: culture);
         }
 
-        return RenderPageRenderResult(
+        RenderResult cachedResult = TryGetPageRenderCache(
+            appId: app.Id,
+            pageId: page.Id,
+            culture: culture,
+            theme: theme,
+            useCache: !edit && !rebuildCache);
+
+        return cachedResult ?? RenderPageRenderResult(
 page: page,
 theme: theme,
 culture: culture,
@@ -227,15 +247,19 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
 
         if (app != null)
         {
-            PopulateRenderCollections(app: app);
+            PopulateRenderCollections(
+                app: app,
+                ignoreFilters: false);
         }
 
         return app;
     }
 
-    private App ResolveAppById(int appId)
+    private App ResolveAppById(
+        int appId,
+        bool ignoreFilters)
     {
-        App app = appOrchestrationService.GetAllApp(ignoreFilters: false)
+        App app = appOrchestrationService.GetAllApp(ignoreFilters: ignoreFilters)
             .Where(predicate: existingApp => existingApp.Id == appId)
             .Select(selector: existingApp => new App
             {
@@ -251,35 +275,39 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
 
         if (app != null)
         {
-            PopulateRenderCollections(app: app);
+            PopulateRenderCollections(
+                app: app,
+                ignoreFilters: ignoreFilters);
         }
 
         return app;
     }
 
-    private void PopulateRenderCollections(App app)
+    private void PopulateRenderCollections(
+        App app,
+        bool ignoreFilters)
     {
-        app.Layouts = layoutOrchestrationService.GetAllLayout(ignoreFilters: false)
+        app.Layouts = layoutOrchestrationService.GetAllLayout(ignoreFilters: ignoreFilters)
             .Where(predicate: layout => layout.AppId == app.Id)
             .ToArray();
 
-        app.Templates = templateOrchestrationService.GetAllTemplate(ignoreFilters: false)
+        app.Templates = templateOrchestrationService.GetAllTemplate(ignoreFilters: ignoreFilters)
             .Where(predicate: template => template.AppId == app.Id)
             .ToArray();
 
-        app.Resources = resourceOrchestrationService.GetAllResource(ignoreFilters: false)
+        app.Resources = resourceOrchestrationService.GetAllResource(ignoreFilters: ignoreFilters)
             .Where(predicate: resource => resource.AppId == app.Id)
             .ToArray();
 
-        app.Components = componentOrchestrationService.GetAllComponent(ignoreFilters: false)
+        app.Components = componentOrchestrationService.GetAllComponent(ignoreFilters: ignoreFilters)
             .Where(predicate: component => component.AppId == app.Id)
             .ToArray();
 
-        app.Scripts = scriptOrchestrationService.GetAllScript(ignoreFilters: false)
+        app.Scripts = scriptOrchestrationService.GetAllScript(ignoreFilters: ignoreFilters)
             .Where(predicate: script => script.AppId == app.Id)
             .ToArray();
 
-        app.Pages = pageOrchestrationService.GetAllPage(ignoreFilters: false)
+        app.Pages = pageOrchestrationService.GetAllPage(ignoreFilters: ignoreFilters)
             .Where(predicate: page => page.AppId == app.Id)
             .Select(selector: page => new Page
             {
@@ -442,7 +470,13 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
             .IsAuthorized;
     }
 
-    private RenderResult ExecuteRenderRenderResult(App app, string path, string theme, string culture, bool edit = false)
+    private RenderResult ExecuteRenderRenderResult(
+        App app,
+        string path,
+        string theme,
+        string culture,
+        bool edit = false,
+        bool rebuildCache = false)
     {
         ValidateApp(app: app, parameterName: "app");
         ValidateTheme(theme: theme, parameterName: "theme");
@@ -473,7 +507,8 @@ culture: culture);
             return renderResult;
         }
 
-        if (!UserCanPage(page: page, privilege: "page_read") &&
+        if (!rebuildCache &&
+            !UserCanPage(page: page, privilege: "page_read") &&
             !pageRenderOrchestrationService.IsAdminOfApp(appId: app.Id))
         {
             Page gatedPage = CreateGatedPage(newPage: page);
@@ -485,10 +520,55 @@ culture: culture);
                 culture: culture);
         }
 
-        return RenderPageRenderResult(
+        RenderResult cachedResult = TryGetPageRenderCache(
+            appId: app.Id,
+            pageId: page.Id,
+            culture: culture,
+            theme: theme,
+            useCache: !edit && !rebuildCache);
+
+        return cachedResult ?? RenderPageRenderResult(
 page: page,
 theme: theme,
 culture: culture,
 edit: edit && UserCanPage(page: page, privilege: "page_update"));
+    }
+
+    private RenderResult TryGetPageRenderCache(
+        int appId,
+        int pageId,
+        string culture,
+        string theme,
+        bool useCache)
+    {
+        if (!useCache)
+        {
+            return null;
+        }
+
+        string normalizedCulture = culture.Trim()
+            .ToLowerInvariant();
+
+        string normalizedTheme = theme.Trim()
+            .ToLowerInvariant();
+
+        PageRenderCache cached = pageRenderCacheOrchestrationService
+            .GetAllPageRenderCaches()
+            .FirstOrDefault(predicate: candidate =>
+                candidate.AppId == appId &&
+                candidate.PageId == pageId &&
+                candidate.Culture == normalizedCulture &&
+                candidate.Theme == normalizedTheme);
+
+        RenderResult result = cached == null
+            ? null
+            : JsonConvert.DeserializeObject<RenderResult>(value: cached.Value);
+
+        if (result != null)
+        {
+            result.HeaderHtml = cached.HeaderValue;
+        }
+
+        return result;
     }
 }

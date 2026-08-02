@@ -54,6 +54,7 @@ internal class ContentManagementModelBroker
         AddSet<Template, int>();
         AddSet<Page, int>();
         AddSet<PageInfo, int>();
+        AddSet<PageRenderCache, int>();
         AddSet<Content, int>();
         AddSet<Component, int>();
         AddSet<CommonObject, int>();
@@ -93,6 +94,18 @@ internal class ContentManagementModelBroker
         builder.EntityType<Page>()
             .Collection.Function(name: "Render")
             .Returns<RenderResult>();
+
+        ActionConfiguration rebuildByAppId = builder.EntityType<PageRenderCache>()
+            .Collection.Action(name: "RebuildApp");
+
+        rebuildByAppId.Parameter<int>(name: "appId");
+        rebuildByAppId.ReturnsCollectionFromEntitySet<PageRenderCache>(entitySetName: "PageRenderCache");
+
+        ActionConfiguration rebuildByPageId = builder.EntityType<PageRenderCache>()
+            .Collection.Action(name: "RebuildPage");
+
+        rebuildByPageId.Parameter<int>(name: "pageId");
+        rebuildByPageId.ReturnsCollectionFromEntitySet<PageRenderCache>(entitySetName: "PageRenderCache");
 
         builder.EntityType<Resource>()
             .Collection.Function(name: "GetAll")

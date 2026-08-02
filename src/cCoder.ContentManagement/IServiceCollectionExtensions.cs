@@ -257,6 +257,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageBroker, PageBroker>();
         services.AddTransient<IPageInfoBroker, PageInfoBroker>();
         services.AddTransient<IPageRoleBroker, PageRoleBroker>();
+        services.AddTransient<IPageRenderCacheBroker, PageRenderCacheBroker>();
         services.AddTransient<IPrivilegeBroker, PrivilegeBroker>();
         services.AddTransient<IRenderFileContentBroker, RenderFileContentBroker>();
         services.AddTransient<IResourceBroker, ResourceBroker>();
@@ -292,10 +293,12 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentManagementPackageManager, ContentManagementPackageManager>();
         services.AddTransient<IComponentRenderer, ComponentRenderer>();
         services.AddTransient<IPageManager, PageManager>();
+        services.AddTransient<IPageRenderCacheManager, PageRenderCacheManager>();
         services.AddTransient<IPageRenderer, PageRenderer>();
         services.AddTransient<ITemplateManager, TemplateManager>();
         services.AddTransient<ITemplateRenderer, TemplateRenderer>();
         services.AddTransient<IContentManagementEventHandlers, ContentManagementEventHandlers>();
+        services.AddTransient<IPageRenderCacheEventHandlers, PageRenderCacheEventHandlers>();
     }
 
     private static void AddRendering(this IServiceCollection services)
@@ -347,6 +350,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageInfoService, PageInfoService>();
         services.AddTransient<IPageRoleService, PageRoleService>();
         services.AddTransient<IPageService, PageService>();
+        services.AddTransient<IPageRenderCacheService, PageRenderCacheService>();
         services.AddTransient<IResourceService, ResourceService>();
         services.AddTransient<IScriptService, ScriptService>();
         services.AddTransient<ISubmissionService, SubmissionService>();
@@ -391,6 +395,11 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageInfoOrchestrationService, PageInfoOrchestrationService>();
         services.AddTransient<IPageInfoManager, PageInfoOrchestrationService>();
         services.AddTransient<IPageOrchestrationService, PageOrchestrationService>();
+        services.AddTransient<IPageRenderCacheOrchestrationService, PageRenderCacheOrchestrationService>();
+        services.AddKeyedTransient<IPageRenderCacheOrchestrationService>(
+            serviceKey: "PageRenderCache",
+            implementationFactory: (serviceProvider, _) =>
+                serviceProvider.GetRequiredService<IPageRenderCacheOrchestrationService>());
         services.AddTransient<IPageRoleOrchestrationService, PageRoleOrchestrationService>();
         services.AddTransient<IPageRoleManager, PageRoleOrchestrationService>();
         services.AddTransient<
@@ -435,6 +444,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageInfoEventProcessingService, PageInfoEventProcessingService>();
         services.AddTransient<IPageInfoProcessingService, PageInfoProcessingService>();
         services.AddTransient<IPageProcessingService, PageProcessingService>();
+        services.AddTransient<IPageRenderCacheProcessingService, PageRenderCacheProcessingService>();
+        services.AddTransient<IPageRenderCacheQueryProcessingService, PageRenderCacheQueryProcessingService>();
         services.AddTransient<IPageRoleEventProcessingService, PageRoleEventProcessingService>();
         services.AddTransient<IPageRoleProcessingService, PageRoleProcessingService>();
         services.AddTransient<

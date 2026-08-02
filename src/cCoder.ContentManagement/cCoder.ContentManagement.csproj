@@ -19,27 +19,13 @@
     <Authors>cCoder</Authors>
     <Copyright>2026 Paul Ward</Copyright>
   </PropertyGroup>
-  <PropertyGroup>
-    <LocalDataProject>..\..\..\cCoder.Data\src\cCoder.Data\cCoder.Data.csproj</LocalDataProject>
-    <LocalEventingProject>..\..\..\ccoder.Eventing\src\cCoder.Eventing\cCoder.Eventing.csproj</LocalEventingProject>
-    <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
-    <UseLocalData Condition="'$(UseLocalData)' == 'true' and !Exists('$(LocalDataProject)')">false</UseLocalData>
-    <UseLocalEventing Condition="'$(UseLocalEventing)' == ''">false</UseLocalEventing>
-    <UseLocalEventing Condition="'$(UseLocalEventing)' == 'true' and !Exists('$(LocalEventingProject)')">false</UseLocalEventing>
-  </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UseLocalData)' == 'true'">
-    <ProjectReference Include="$(LocalDataProject)" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UseLocalEventing)' == 'true'">
-    <ProjectReference Include="$(LocalEventingProject)" />
-  </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="cCoder.Data" Version="2026.8.1.1442" Condition="'$(UseLocalData)' != 'true'" />
-    <PackageReference Include="cCoder.Eventing" Version="2026.7.30.0042" Condition="'$(UseLocalEventing)' != 'true'" />
+    <PackageReference Include="cCoder.Data" Version="2026.8.2.2336" />
+    <PackageReference Include="cCoder.Eventing" Version="2026.8.2.1306" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.10" />

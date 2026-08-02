@@ -38,18 +38,21 @@ public partial class PageRenderAggregationServiceTests
     private readonly Mock<IPageInfoOrchestrationService> pageInfoOrchestrationServiceMock = new();
     private readonly Mock<IPageRoleOrchestrationService> pageRoleOrchestrationServiceMock = new();
     private readonly Mock<IPageRenderOrchestrationService> pageRenderOrchestrationServiceMock = new();
+    private readonly Mock<IAppCultureOrchestrationService> appCultureOrchestrationServiceMock = new();
+    private readonly Mock<IPageRenderCacheOrchestrationService> pageRenderCacheOrchestrationServiceMock = new();
     private readonly PageRenderAggregationService aggregationService;
 
     public PageRenderAggregationServiceTests()
     {
         pageRenderOrchestrationServiceMock
-            .Setup(expression: service => service.ResolveCulture(
-                culture: It.IsAny<string>()))
+            .Setup(expression: service => service
+                .ResolveCulture(culture: It.IsAny<string>()))
             .Returns(valueFunction: (string culture) =>
                 culture ?? currentUser.DefaultCultureId);
 
         pageRenderOrchestrationServiceMock
-            .Setup(expression: service => service.ProcessPageRenderOperation(
+            .Setup(expression: service => service
+                .ProcessPageRenderOperation(
                 operation: It.Is<PageRenderOperation>(match: operation =>
                     operation.OperationType == PageRenderOperationType.UserCanPage)))
             .Returns(valueFunction: (PageRenderOperation operation) =>
@@ -62,58 +65,75 @@ public partial class PageRenderAggregationServiceTests
                 return operation;
             });
 
-        layoutOrchestrationServiceMock.Setup(expression: x => x.GetAllLayout())
+        layoutOrchestrationServiceMock
+            .Setup(expression: x => x.GetAllLayout())
             .Returns(value: Array.Empty<Layout>()
-            .AsQueryable());
+                .AsQueryable());
 
-        templateOrchestrationServiceMock.Setup(expression: x => x.GetAllTemplate())
+        templateOrchestrationServiceMock
+            .Setup(expression: x => x.GetAllTemplate())
             .Returns(value: Array.Empty<Template>()
-            .AsQueryable());
+                .AsQueryable());
 
-        resourceOrchestrationServiceMock.Setup(expression: x => x.GetAllResource())
+        resourceOrchestrationServiceMock
+            .Setup(expression: x => x.GetAllResource())
             .Returns(value: Array.Empty<Resource>()
-            .AsQueryable());
+                .AsQueryable());
 
-        componentOrchestrationServiceMock.Setup(expression: x => x.GetAllComponent())
+        componentOrchestrationServiceMock
+            .Setup(expression: x => x.GetAllComponent())
             .Returns(value: Array.Empty<Component>()
-            .AsQueryable());
+                .AsQueryable());
 
-        scriptOrchestrationServiceMock.Setup(expression: x => x.GetAllScript())
+        scriptOrchestrationServiceMock
+            .Setup(expression: x => x.GetAllScript())
             .Returns(value: Array.Empty<Script>()
-            .AsQueryable());
+                .AsQueryable());
 
-        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage())
+        pageOrchestrationServiceMock
+            .Setup(expression: x => x.GetAllPage())
             .Returns(value: Array.Empty<Page>()
-            .AsQueryable());
+                .AsQueryable());
 
-        pageOrchestrationServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageOrchestrationServiceMock
+            .Setup(expression: x => x.GetAllPage(ignoreFilters: true))
             .Returns(value: Array.Empty<Page>()
-            .AsQueryable());
+                .AsQueryable());
 
-        contentOrchestrationServiceMock.Setup(expression: x => x.GetAllContent(ignoreFilters: true))
+        contentOrchestrationServiceMock
+            .Setup(expression: x => x.GetAllContent(ignoreFilters: true))
             .Returns(value: Array.Empty<Content>()
-            .AsQueryable());
+                .AsQueryable());
 
-        pageInfoOrchestrationServiceMock.Setup(expression: x => x.GetAllPageInfo(ignoreFilters: true))
+        pageInfoOrchestrationServiceMock
+            .Setup(expression: x => x.GetAllPageInfo(ignoreFilters: true))
             .Returns(value: Array.Empty<PageInfo>()
-            .AsQueryable());
+                .AsQueryable());
 
-        pageRoleOrchestrationServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
+        pageRoleOrchestrationServiceMock
+            .Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
             .Returns(value: Array.Empty<PageRole>()
-            .AsQueryable());
+                .AsQueryable());
+
+        pageRenderCacheOrchestrationServiceMock
+            .Setup(expression: service => service.GetAllPageRenderCaches())
+            .Returns(value: Array.Empty<PageRenderCache>()
+                .AsQueryable());
 
         aggregationService = new PageRenderAggregationService(
-appOrchestrationService: appOrchestrationServiceMock.Object,
-layoutOrchestrationService: layoutOrchestrationServiceMock.Object,
-templateOrchestrationService: templateOrchestrationServiceMock.Object,
-resourceOrchestrationService: resourceOrchestrationServiceMock.Object,
-componentOrchestrationService: componentOrchestrationServiceMock.Object,
-scriptOrchestrationService: scriptOrchestrationServiceMock.Object,
-pageOrchestrationService: pageOrchestrationServiceMock.Object,
-contentOrchestrationService: contentOrchestrationServiceMock.Object,
-pageInfoOrchestrationService: pageInfoOrchestrationServiceMock.Object,
-pageRoleOrchestrationService: pageRoleOrchestrationServiceMock.Object,
-pageRenderOrchestrationService: pageRenderOrchestrationServiceMock.Object);
+            appOrchestrationService: appOrchestrationServiceMock.Object,
+            layoutOrchestrationService: layoutOrchestrationServiceMock.Object,
+            templateOrchestrationService: templateOrchestrationServiceMock.Object,
+            resourceOrchestrationService: resourceOrchestrationServiceMock.Object,
+            componentOrchestrationService: componentOrchestrationServiceMock.Object,
+            scriptOrchestrationService: scriptOrchestrationServiceMock.Object,
+            pageOrchestrationService: pageOrchestrationServiceMock.Object,
+            contentOrchestrationService: contentOrchestrationServiceMock.Object,
+            pageInfoOrchestrationService: pageInfoOrchestrationServiceMock.Object,
+            pageRoleOrchestrationService: pageRoleOrchestrationServiceMock.Object,
+            pageRenderOrchestrationService: pageRenderOrchestrationServiceMock.Object,
+            appCultureOrchestrationService: appCultureOrchestrationServiceMock.Object,
+            pageRenderCacheOrchestrationService: pageRenderCacheOrchestrationServiceMock.Object);
     }
 
     private static bool UserCan(Page page, User user, string privilege)
