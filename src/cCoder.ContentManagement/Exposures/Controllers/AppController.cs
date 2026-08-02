@@ -270,7 +270,7 @@ public class AppController : ODataController
         try
         {
             await manager.DeleteAsync(appId: key);
-            return NoContent();
+            return Accepted();
         }
         catch (ContentManagementValidationException)
         {
