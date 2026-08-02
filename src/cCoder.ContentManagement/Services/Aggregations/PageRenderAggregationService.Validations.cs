@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Exposures;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
@@ -14,6 +15,9 @@ internal sealed partial class PageRenderAggregationService
 
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
+
+    private static void ValidateApp(App app, string parameterName) =>
+        ThrowIf(condition: app == null, message: parameterName + " is required.");
 
     private static void ValidateTheme(string theme, string parameterName) =>
         ThrowIf(condition: string.IsNullOrWhiteSpace(value: theme), message: parameterName + " is required.");
