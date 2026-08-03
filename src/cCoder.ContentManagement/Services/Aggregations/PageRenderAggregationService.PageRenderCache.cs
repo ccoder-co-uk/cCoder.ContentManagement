@@ -278,6 +278,8 @@ internal sealed partial class PageRenderAggregationService
                         message: "Edit-mode results cannot be cached.");
                 }
 
+                result.HeaderHtml = string.Empty;
+
                 string value = JsonConvert.SerializeObject(
                     value: result,
                     formatting: Formatting.None);
@@ -289,7 +291,7 @@ internal sealed partial class PageRenderAggregationService
                     Culture = NormalizePageRenderCacheKey(value: culture),
                     Theme = NormalizePageRenderCacheKey(value: theme),
                     Value = value,
-                    HeaderValue = result.HeaderHtml ?? string.Empty,
+                    HeaderValue = string.Empty,
                     SourceFingerprint = Convert.ToHexString(
                         inArray: SHA256.HashData(
                             source: Encoding.UTF8.GetBytes(s: value))),

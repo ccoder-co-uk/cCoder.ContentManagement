@@ -31,7 +31,9 @@ internal sealed partial class PageRenderProcessingService(
             user: operation.User,
             theme: operation.Theme,
             culture: operation.Culture,
-            edit: operation.Edit);
+            edit: operation.Edit,
+            headerOnly: operation.HeaderOnly,
+            cacheTemplate: operation.CacheTemplate);
 
         return operation;
     });
@@ -41,10 +43,12 @@ internal sealed partial class PageRenderProcessingService(
         User user,
         string theme,
         string culture,
-        bool edit = false) =>
+        bool edit = false,
+        bool headerOnly = false,
+        bool cacheTemplate = false) =>
         TryCatch<RenderResult>(operation: () =>
     {
-        ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit]);
+        ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit, headerOnly]);
         ValidatePage(page: page, parameterName: "page");
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");
@@ -56,7 +60,9 @@ internal sealed partial class PageRenderProcessingService(
                 config: config,
                 theme: theme,
                 culture: culture,
-                edit: edit);
+                edit: edit,
+                headerOnly: headerOnly,
+                cacheTemplate: cacheTemplate);
 
         PageRenderSession renderedSession =
             pageRenderService.Execute<
@@ -95,7 +101,9 @@ internal sealed partial class PageRenderProcessingService(
         ContentManagementConfiguration config,
         string theme,
         string culture,
-        bool edit)
+        bool edit,
+        bool headerOnly,
+        bool cacheTemplate)
     {
         App app = page.App ?? throw new InvalidOperationException(message: "page.App is required.");
         string resolvedTheme = string.IsNullOrWhiteSpace(value: theme) ? app.DefaultTheme ?? "Default" : theme;
@@ -112,7 +120,9 @@ internal sealed partial class PageRenderProcessingService(
                 Path = page.Path ?? string.Empty,
                 Theme = resolvedTheme,
                 Culture = resolvedCulture,
-                Edit = edit
+                Edit = edit,
+                HeaderOnly = headerOnly,
+                CacheTemplate = cacheTemplate
             },
             Config = config,
             App = MapApp(app: app, culture: resolvedCulture),
