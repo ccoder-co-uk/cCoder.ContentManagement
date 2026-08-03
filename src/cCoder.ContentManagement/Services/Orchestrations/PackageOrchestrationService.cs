@@ -101,6 +101,25 @@ internal partial class PackageOrchestrationService(
         return processingService.DeleteAllPackageAsync(deletedPackage: ValidatePackages(packages: deletedPackage, parameterName: "items"));
     }, isValueTask: true);
 
+    public ValueTask RaisePackageImportCompleteEventAsync(int appId, Package package) =>
+        TryCatch(operation: () =>
+    {
+        ValidateRaisePackageImportCompleteEventAsync(inputs: [appId, package]);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePackage(package: package, parameterName: "package");
+        return eventService.RaisePackageImportCompleteEvent(appId: appId, package: package);
+    }, isValueTask: true);
+
+    private static int ValidateAppId(int appId, string parameterName)
+    {
+        if (appId < 1)
+        {
+            throw new ValidationException(message: parameterName + " must be greater than 0.");
+        }
+
+        return appId;
+    }
+
     private static Guid ValidateId(Guid packageId, string parameterName)
     {
         if (packageId == Guid.Empty)

@@ -39,6 +39,11 @@ internal sealed partial class PageRenderAggregationService
         {
             ValidatePageRenderCacheByAppIdOnDelete(inputs: [appId]);
 
+            if (pageRenderCacheImportState.Active)
+            {
+                return ValueTask.CompletedTask;
+            }
+
             return pageRenderCacheOrchestrationService
                 .DeleteAppPageRenderCachesFromEventAsync(appId: appId);
         }, isValueTask: true);
@@ -56,6 +61,11 @@ internal sealed partial class PageRenderAggregationService
         TryCatch(operation: () =>
         {
             ValidatePageRenderCacheByPageIdOnDelete(inputs: [pageId]);
+
+            if (pageRenderCacheImportState.Active)
+            {
+                return ValueTask.CompletedTask;
+            }
 
             return pageRenderCacheOrchestrationService
                 .DeletePagePageRenderCachesFromEventAsync(pageId: pageId);
@@ -78,6 +88,11 @@ internal sealed partial class PageRenderAggregationService
         TryCatch<PageRenderOperation>(operation: async () =>
         {
             ValidateCommonObjectPageRenderOperationOnRebuild(inputs: [operation]);
+
+            if (pageRenderCacheImportState.Active && operation.RebuildCache)
+            {
+                return operation;
+            }
 
             operation.PageRenderCaches = IsCommonCacheRenderType(
                 type: operation.CommonObject.Type)
@@ -129,54 +144,59 @@ internal sealed partial class PageRenderAggregationService
         {
             ValidatePageRenderCachesByAppIdOnRebuild(inputs: [operation]);
 
+            if (pageRenderCacheImportState.Active && operation.RebuildCache)
+            {
+                return operation;
+            }
+
             return await ExecuteRebuildAppPageRenderOperationAsync(operation: operation);
         }, isValueTask: true);
 
     private async ValueTask<PageRenderOperation> ExecuteRebuildAppPageRenderOperationAsync(
         PageRenderOperation operation)
     {
-            App app = appOrchestrationService.GetAllApp(ignoreFilters: true)
-                .FirstOrDefault(predicate: app => app.Id == operation.AppId)
-                    ?? throw new KeyNotFoundException(
-                        message: $"App {operation.AppId} was not found.");
+        App app = appOrchestrationService.GetAllApp(ignoreFilters: true)
+            .FirstOrDefault(predicate: app => app.Id == operation.AppId)
+                ?? throw new KeyNotFoundException(
+                    message: $"App {operation.AppId} was not found.");
 
-            Page[] pages =
-            [
-                .. pageOrchestrationService.GetAllPage(ignoreFilters: true)
+        Page[] pages =
+        [
+            .. pageOrchestrationService.GetAllPage(ignoreFilters: true)
                     .Where(predicate: page => page.AppId == operation.AppId)
-            ];
+        ];
 
-            List<PageRenderCache> rebuilt = [];
+        List<PageRenderCache> rebuilt = [];
 
-            foreach (Page page in pages)
-            {
-                rebuilt.AddRange(
-                    collection: BuildPageRenderCaches(
-                        app: app,
-                        page: page));
-            }
+        foreach (Page page in pages)
+        {
+            rebuilt.AddRange(
+                collection: BuildPageRenderCaches(
+                    app: app,
+                    page: page));
+        }
 
-            int[] pageIds = pages.Select(selector: page => page.Id)
-                .ToArray();
+        int[] pageIds = pages.Select(selector: page => page.Id)
+            .ToArray();
 
-            if (operation.RebuildCache)
-            {
-                await pageRenderCacheOrchestrationService
-                    .ReplacePageRenderCachesFromEventAsync(
-                        appId: app.Id,
-                        pageIds: pageIds,
-                        replacements: [.. rebuilt]);
-            }
-            else
-            {
-                await pageRenderCacheOrchestrationService.ReplacePageRenderCachesAsync(
+        if (operation.RebuildCache)
+        {
+            await pageRenderCacheOrchestrationService
+                .ReplacePageRenderCachesFromEventAsync(
                     appId: app.Id,
                     pageIds: pageIds,
                     replacements: [.. rebuilt]);
-            }
+        }
+        else
+        {
+            await pageRenderCacheOrchestrationService.ReplacePageRenderCachesAsync(
+                appId: app.Id,
+                pageIds: pageIds,
+                replacements: [.. rebuilt]);
+        }
 
-            operation.PageRenderCaches = [.. rebuilt];
-            return operation;
+        operation.PageRenderCaches = [.. rebuilt];
+        return operation;
     }
 
     public ValueTask<PageRenderOperation> RebuildPagePageRenderOperationAsync(
@@ -184,6 +204,11 @@ internal sealed partial class PageRenderAggregationService
         TryCatch<PageRenderOperation>(operation: async () =>
         {
             ValidatePageRenderCachesByPageIdOnRebuild(inputs: [operation]);
+
+            if (pageRenderCacheImportState.Active && operation.RebuildCache)
+            {
+                return operation;
+            }
 
             Page page = pageOrchestrationService.GetAllPage(ignoreFilters: true)
                 .FirstOrDefault(predicate: page => page.Id == operation.PageId)

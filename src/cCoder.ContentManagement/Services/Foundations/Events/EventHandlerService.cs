@@ -41,8 +41,11 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         ListenToPageDeleteEvents();
     }
 
-    private void ListenToPackageEvents() =>
+    private void ListenToPackageEvents()
+    {
         ListenToPackageImportEvents();
+        ListenToPackageImportCompleteEvents();
+    }
 
     private void ListenToAppAddEvents()
     {
@@ -138,5 +141,8 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
 
     private void ListenToPackageImportEvents() =>
         eventHubBroker.ListenToEvent(eventName: "package_import", handler: (IContentManagementMigrationAggregationService service, (int appId, Package package) args) => service.ImportPackageAsync(appId: args.appId, package: args.package));
+
+    private void ListenToPackageImportCompleteEvents() =>
+        eventHubBroker.ListenToEvent(eventName: "package_import_complete", handler: (IPageRenderCacheEventHandlers service, (int appId, Package package) args) => service.RebuildAppAsync(appId: args.appId));
 
 }

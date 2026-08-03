@@ -158,5 +158,7 @@ pageRoleImportOrchestrationService:
     ?? Mock.Of<IPageRoleImportOrchestrationService>(),
 resourceOrchestrationService: resourceOrchestrationService ?? Mock.Of<IResourceOrchestrationService>(),
 templateOrchestrationService: templateOrchestrationService ?? Mock.Of<ITemplateOrchestrationService>(),
-scriptOrchestrationService: scriptOrchestrationService ?? Mock.Of<IScriptOrchestrationService>());
+scriptOrchestrationService: scriptOrchestrationService ?? Mock.Of<IScriptOrchestrationService>(),
+pageRenderCacheImportState: new cCoder.ContentManagement.Models.PageRenderCacheImportState(),
+packageOrchestrationService: Mock.Of<IPackageOrchestrationService>());
 }

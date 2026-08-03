@@ -19,7 +19,9 @@ internal partial class ContentManagementMigrationAggregationService(
     IPageRoleImportOrchestrationService pageRoleImportOrchestrationService,
     IResourceOrchestrationService resourceOrchestrationService,
     ITemplateOrchestrationService templateOrchestrationService,
-    IScriptOrchestrationService scriptOrchestrationService)
+    IScriptOrchestrationService scriptOrchestrationService,
+    PageRenderCacheImportState pageRenderCacheImportState,
+    IPackageOrchestrationService packageOrchestrationService)
         : IContentManagementMigrationAggregationService
 {
     private static readonly HashSet<string> ComputedImportFields = new(comparer: StringComparer.OrdinalIgnoreCase)
@@ -51,38 +53,56 @@ internal partial class ContentManagementMigrationAggregationService(
         ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackage(package: package, parameterName: "package");
 
-        if (package.Items != null)
+        pageRenderCacheImportState.Active = true;
+
+        try
         {
-            foreach (PackageItem item in package.Items)
+            if (package.Items != null)
             {
-                switch (item.Type)
+                foreach (PackageItem item in package.Items)
                 {
-                    case "ContentManagement/Component":
-                        await ImportComponentsAsync(appId: appId, item: item);
-                        break;
-                    case "ContentManagement/Layout":
-                        await ImportLayoutsAsync(appId: appId, item: item);
-                        break;
-                    case "ContentManagement/Page":
-                        await ImportPagesAsync(appId: appId, item: item);
-                        break;
-                    case "ContentManagement/PageRole":
-                        await ImportPageRolesAsync(appId: appId, item: item);
-                        break;
-                    case "ContentManagement/Resource":
-                        await ImportResourcesAsync(appId: appId, item: item);
-                        break;
-                    case "ContentManagement/Script":
-                        await ImportScriptsAsync(appId: appId, item: item);
-                        break;
-                    case "ContentManagement/Template":
-                        await ImportTemplatesAsync(appId: appId, item: item);
-                        break;
+                    await ImportPackageItemAsync(appId: appId, item: item);
                 }
             }
         }
+        finally
+        {
+            pageRenderCacheImportState.Active = false;
+        }
+
+        await packageOrchestrationService.RaisePackageImportCompleteEventAsync(
+            appId: appId,
+            package: package);
 
     }, isValueTask: true);
+
+    private async ValueTask ImportPackageItemAsync(int appId, PackageItem item)
+    {
+        switch (item.Type)
+        {
+            case "ContentManagement/Component":
+                await ImportComponentsAsync(appId: appId, item: item);
+                break;
+            case "ContentManagement/Layout":
+                await ImportLayoutsAsync(appId: appId, item: item);
+                break;
+            case "ContentManagement/Page":
+                await ImportPagesAsync(appId: appId, item: item);
+                break;
+            case "ContentManagement/PageRole":
+                await ImportPageRolesAsync(appId: appId, item: item);
+                break;
+            case "ContentManagement/Resource":
+                await ImportResourcesAsync(appId: appId, item: item);
+                break;
+            case "ContentManagement/Script":
+                await ImportScriptsAsync(appId: appId, item: item);
+                break;
+            case "ContentManagement/Template":
+                await ImportTemplatesAsync(appId: appId, item: item);
+                break;
+        }
+    }
 
     private async ValueTask ImportComponentsAsync(int appId, PackageItem item)
     {

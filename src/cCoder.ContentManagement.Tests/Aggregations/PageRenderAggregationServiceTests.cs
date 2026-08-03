@@ -133,7 +133,8 @@ public partial class PageRenderAggregationServiceTests
             pageRoleOrchestrationService: pageRoleOrchestrationServiceMock.Object,
             pageRenderOrchestrationService: pageRenderOrchestrationServiceMock.Object,
             appCultureOrchestrationService: appCultureOrchestrationServiceMock.Object,
-            pageRenderCacheOrchestrationService: pageRenderCacheOrchestrationServiceMock.Object);
+            pageRenderCacheOrchestrationService: pageRenderCacheOrchestrationServiceMock.Object,
+            pageRenderCacheImportState: new cCoder.ContentManagement.Models.PageRenderCacheImportState());
     }
 
     private static bool UserCan(Page page, User user, string privilege)
