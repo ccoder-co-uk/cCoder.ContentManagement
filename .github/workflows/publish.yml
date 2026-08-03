@@ -44,23 +44,7 @@ jobs:
         run: dotnet build src/cCoder.ContentManagement.slnx -c Release --no-restore /p:Version="${{ steps.version.outputs.value }}"
 
       - name: Test
-        run: |
-          $testProjects = @(
-            "src/cCoder.ContentManagement.Tests/cCoder.ContentManagement.Tests.csproj",
-            "src/ContentManagement.IntegrationTests/ContentManagement.IntegrationTests.csproj",
-            "src/ContentManagement.AcceptanceTests/ContentManagement.AcceptanceTests.csproj"
-          )
-
-          foreach ($project in $testProjects) {
-            $resultName = [IO.Path]::GetFileNameWithoutExtension($project)
-            dotnet test $project -c Release --no-build --no-restore `
-              --logger "trx;LogFileName=$resultName.trx" `
-              --results-directory artifacts/test-results
-
-            if ($LASTEXITCODE -ne 0) {
-              throw "Tests failed for $project."
-            }
-          }
+        run: ./.github/scripts/Run-Tests.ps1
 
       - name: Audit NuGet dependencies
         run: >
