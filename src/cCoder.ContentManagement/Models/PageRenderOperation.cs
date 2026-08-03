@@ -4,6 +4,7 @@
 
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
+using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Models;
 
@@ -17,6 +18,7 @@ public enum PageRenderOperationType
 
 public class PageRenderOperation : PageRenderResponse
 {
+    internal bool RebuildCache { get; set; }
     public PageRenderOperationType OperationType { get; set; }
 
     public string Host { get; set; }
@@ -28,6 +30,12 @@ public class PageRenderOperation : PageRenderResponse
     public Exception Exception { get; set; }
 
     public int AppId { get; set; }
+
+    public int PageId { get; set; }
+
+    public PageRenderCache[] PageRenderCaches { get; set; }
+
+    public CommonObject CommonObject { get; set; }
 
     public Page SourcePage { get; set; }
 

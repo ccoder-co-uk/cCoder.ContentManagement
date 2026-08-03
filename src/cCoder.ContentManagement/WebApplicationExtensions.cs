@@ -10,7 +10,6 @@ using cCoder.ContentManagement.Services.Foundations;
 using cCoder.Data.Exposures;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 
 namespace cCoder.ContentManagement;
@@ -21,15 +20,16 @@ public static partial class WebApplicationExtensions
 
     public static WebApplication StartContentManagementWeb(
         this WebApplication app,
-        Func<HttpContext, ILogger, Task> onRequest,
         ILogger log = null) =>
-        app.UseContentManagementExposure(onRequest: onRequest, log: log)
+        app.UseContentManagementExposure(log: log)
         .ListenToContentManagementEvents();
 
     public static WebApplication StartContentManagementHostedServices(this WebApplication app) =>
         app.ListenToContentManagementEvents();
 
-    private static WebApplication UseContentManagementExposure(this WebApplication app, Func<HttpContext, ILogger, Task> onRequest, ILogger log = null)
+    private static WebApplication UseContentManagementExposure(
+        this WebApplication app,
+        ILogger log = null)
     {
         log?.LogInformation(message: "Initialising Content Management");
         app.UseSession();
@@ -114,9 +114,6 @@ public static partial class WebApplicationExtensions
         app.Use(middleware: async (context, next) =>
         {
             context.Response.OnStarting(callback: () => RemovePlatformHeaders(context: context));
-            context.Response.OnCompleted(callback: async () =>
-                await onRequest(arg1: context, arg2: log ?? NullLogger.Instance));
-
             await next(context: context);
         });
 
