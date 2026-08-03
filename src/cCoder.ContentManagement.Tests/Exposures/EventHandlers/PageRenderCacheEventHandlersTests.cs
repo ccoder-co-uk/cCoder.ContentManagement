@@ -15,6 +15,40 @@ namespace cCoder.ContentManagement.Tests.Exposures.EventHandlers;
 public partial class PageRenderCacheEventHandlersTests
 {
     [Fact]
+    public async Task ShouldRebuildExplicitCacheMissAsync()
+    {
+        // Given
+        Mock<IPageRenderAggregationService> aggregationService = new();
+
+        PageRenderCacheMiss cacheMiss = new()
+        {
+            AppId = 23,
+            PageId = 17,
+            Culture = "en-gb",
+            Theme = "default"
+        };
+
+        aggregationService.Setup(expression: item =>
+            item.RebuildMissingPagePageRenderOperationAsync(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.AppId == cacheMiss.AppId
+                    && operation.PageId == cacheMiss.PageId
+                    && operation.Culture == cacheMiss.Culture
+                    && operation.Theme == cacheMiss.Theme
+                    && operation.RebuildCache)))
+            .ReturnsAsync(value: new PageRenderOperation());
+
+        PageRenderCacheEventHandlers handlers = new(
+            pageRenderAggregationService: aggregationService.Object);
+
+        // When
+        await handlers.RebuildMissingPageAsync(cacheMiss: cacheMiss);
+
+        // Then
+        aggregationService.VerifyAll();
+    }
+
+    [Fact]
     public async Task ShouldRebuildPageOnPageChangeAsync()
     {
         // Given

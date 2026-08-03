@@ -59,6 +59,18 @@ internal sealed class PageRenderCacheEventHandlers(
         _ = await pageRenderAggregationService.RebuildCommonObjectPageRenderOperationAsync(
             operation: new PageRenderOperation { CommonObject = commonObject, RebuildCache = true });
 
+    public async ValueTask RebuildMissingPageAsync(PageRenderCacheMiss cacheMiss) =>
+        _ = await pageRenderAggregationService
+            .RebuildMissingPagePageRenderOperationAsync(
+                operation: new PageRenderOperation
+                {
+                    AppId = cacheMiss.AppId,
+                    PageId = cacheMiss.PageId,
+                    Culture = cacheMiss.Culture,
+                    Theme = cacheMiss.Theme,
+                    RebuildCache = true
+                });
+
     private ValueTask<PageRenderOperation> ExecuteRebuildAppAsync(int appId) =>
         pageRenderAggregationService.RebuildAppPageRenderOperationAsync(
             operation: new PageRenderOperation { AppId = appId, RebuildCache = true });

@@ -12,10 +12,16 @@ internal interface IPageRenderAggregationService
     PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation operation);
 
+    ValueTask<PageRenderOperation> RenderPageRenderOperationAsync(
+        PageRenderOperation operation);
+
     ValueTask<PageRenderOperation> RebuildAppPageRenderOperationAsync(
         PageRenderOperation operation);
 
     ValueTask<PageRenderOperation> RebuildPagePageRenderOperationAsync(
+        PageRenderOperation operation);
+
+    ValueTask<PageRenderOperation> RebuildMissingPagePageRenderOperationAsync(
         PageRenderOperation operation);
 
     ValueTask DeleteAppPageRenderCacheAsync(int appId);

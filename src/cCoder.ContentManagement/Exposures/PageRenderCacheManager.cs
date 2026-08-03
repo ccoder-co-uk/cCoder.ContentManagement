@@ -22,7 +22,7 @@ internal sealed class PageRenderCacheManager(
                 name: "PageRenderCache",
                 operation: service => service.GetAllPageRenderCaches());
 
-    public PageRenderCache Get(int pageRenderCacheId) =>
+    public PageRenderCache Get(string pageRenderCacheId) =>
         serviceProviderExecutionService.Execute<
             IPageRenderCacheOrchestrationService,
             PageRenderCache>(
@@ -48,7 +48,7 @@ internal sealed class PageRenderCacheManager(
                 operation: service => service.UpdatePageRenderCacheAsync(
                     updatedPageRenderCache: updatedPageRenderCache));
 
-    public ValueTask DeleteAsync(int pageRenderCacheId) =>
+    public ValueTask DeleteAsync(string pageRenderCacheId) =>
         serviceProviderExecutionService.Execute<
             IPageRenderCacheOrchestrationService,
             ValueTask>(

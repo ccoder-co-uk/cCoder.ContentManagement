@@ -20,7 +20,7 @@ internal sealed partial class PageRenderCacheOrchestrationService(
             return queryProcessingService.GetAllPageRenderCaches();
         });
 
-    public PageRenderCache GetPageRenderCache(int pageRenderCacheId) =>
+    public PageRenderCache GetPageRenderCache(string pageRenderCacheId) =>
         TryCatch<PageRenderCache>(operation: () =>
         {
             ValidatePageRenderCacheOnGet(inputs: [pageRenderCacheId]);
@@ -49,7 +49,7 @@ internal sealed partial class PageRenderCacheOrchestrationService(
                 updatedPageRenderCache: updatedPageRenderCache);
         }, isValueTask: true);
 
-    public ValueTask DeletePageRenderCacheAsync(int pageRenderCacheId) =>
+    public ValueTask DeletePageRenderCacheAsync(string pageRenderCacheId) =>
         TryCatch(operation: () =>
         {
             ValidatePageRenderCacheOnDelete(inputs: [pageRenderCacheId]);

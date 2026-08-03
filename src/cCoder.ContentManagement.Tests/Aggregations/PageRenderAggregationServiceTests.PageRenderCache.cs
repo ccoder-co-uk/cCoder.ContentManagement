@@ -7,7 +7,6 @@ using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace cCoder.Core.Services.Tests.CMS.Aggregations;
@@ -15,40 +14,50 @@ namespace cCoder.Core.Services.Tests.CMS.Aggregations;
 public partial class PageRenderAggregationServiceTests
 {
     [Fact]
-    public void ShouldReturnCachedRenderAfterEstablishedHydrationAndAuthorization()
+    public async Task ShouldReturnCachedRenderAfterEstablishedHydrationAndAuthorizationAsync()
     {
         // Given
         App app = CreateApp();
         Page page = SetupCacheablePage(app: app);
         currentUser = TestUsers.WithPrivilege(privilege: "app_admin", appId: app.Id);
         RenderResult cachedResult = CreateRenderResult(bodyHtml: "Cached Body");
+        cachedResult.AppId = app.Id;
+        cachedResult.PageId = page.Id;
         SetupRenderResult(renderResult: cachedResult);
 
-        pageRenderCacheOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllPageRenderCaches())
-            .Returns(value: new[]
+        cachedPageRenderOrchestrationServiceMock
+            .Setup(expression: service => service
+                .RenderCachedPageRenderOperationAsync(
+                    operation: It.IsAny<CachedPageRenderOperation>()))
+            .ReturnsAsync(valueFunction: (CachedPageRenderOperation operation) =>
             {
-                new PageRenderCache
-                {
-                    AppId = app.Id,
-                    PageId = page.Id,
-                    Culture = "en-gb",
-                    Theme = "ocean",
-                    Value = JsonConvert.SerializeObject(value: cachedResult),
-                    HeaderValue = cachedResult.HeaderHtml
-                }
-            }.AsQueryable());
+                operation.RenderResult = cachedResult;
+                return operation;
+            });
 
         // When
-        RenderResult result = aggregationService.RenderRenderResult(
-            appId: app.Id,
-            path: page.Path,
-            theme: app.DefaultTheme,
-            culture: app.DefaultCultureId);
+        PageRenderOperation operation = await aggregationService
+            .RenderPageRenderOperationAsync(
+            operation: new PageRenderOperation
+            {
+                OperationType = PageRenderOperationType.RenderResult,
+                AppId = app.Id,
+                Path = page.Path,
+                Theme = app.DefaultTheme,
+                Culture = app.DefaultCultureId
+            });
 
         // Then
+        RenderResult result = operation.Page as RenderResult;
+
         result.Should()
             .BeEquivalentTo(expectation: cachedResult);
+
+        cachedPageRenderOrchestrationServiceMock.Verify(
+            expression: service => service
+                .RenderCachedPageRenderOperationAsync(
+                    operation: It.IsAny<CachedPageRenderOperation>()),
+            times: Times.Once());
 
         VerifyRenderDependencies(times: Times.Once());
     }
@@ -107,7 +116,7 @@ public partial class PageRenderAggregationServiceTests
     }
 
     [Fact]
-    public void ShouldUseExistingRendererForAuthorizedCacheMiss()
+    public void ShouldUseExistingRendererForSynchronousRender()
     {
         // Given
         App app = CreateApp();
@@ -129,7 +138,7 @@ public partial class PageRenderAggregationServiceTests
 
         pageRenderCacheOrchestrationServiceMock.Verify(
             expression: service => service.GetAllPageRenderCaches(),
-            times: Times.Once());
+            times: Times.Never());
 
         VerifyRenderDependencies(times: Times.Once());
     }
@@ -201,8 +210,8 @@ public partial class PageRenderAggregationServiceTests
 
         result.PageRenderCaches.Should()
             .OnlyContain(predicate: cache =>
-                cache.HeaderValue == rendered.HeaderHtml
-                && !string.IsNullOrWhiteSpace(value: cache.Value)
+                cache.Header == rendered.HeaderHtml
+                && !string.IsNullOrWhiteSpace(value: cache.Body)
                 && cache.SourceFingerprint != null
                 && cache.SourceFingerprint.Length == 64);
 

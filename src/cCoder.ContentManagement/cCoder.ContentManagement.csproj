@@ -24,7 +24,7 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="cCoder.Data" Version="2026.8.2.2336" />
+    <PackageReference Include="cCoder.Data" Version="2026.8.3.1455" />
     <PackageReference Include="cCoder.Eventing" Version="2026.8.2.1306" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.10" />

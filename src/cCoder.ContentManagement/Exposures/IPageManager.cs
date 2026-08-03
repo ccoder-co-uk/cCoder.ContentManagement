@@ -8,7 +8,11 @@ namespace cCoder.ContentManagement.Exposures;
 
 public interface IPageManager
 {
-    object Render(int appId, string path, string theme, string culture);
+    ValueTask<object> RenderAsync(
+        int appId,
+        string path,
+        string theme,
+        string culture);
 
     IQueryable<Page> GetAll();
 

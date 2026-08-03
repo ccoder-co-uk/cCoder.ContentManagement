@@ -13,7 +13,7 @@ internal sealed class PageManager(
     IServiceProviderExecutionService serviceProviderExecutionService)
         : IPageManager
 {
-    public object Render(
+    public async ValueTask<object> RenderAsync(
         int appId,
         string path,
         string theme,
@@ -28,14 +28,15 @@ internal sealed class PageManager(
             Culture = culture
         };
 
-        return serviceProviderExecutionService.Execute<
+        PageRenderOperation result = await serviceProviderExecutionService.Execute<
             IPageRenderAggregationService,
-            PageRenderOperation>(
+            ValueTask<PageRenderOperation>>(
                 name: "PageRender",
                 operation: service =>
-                    service.RenderPageRenderOperation(
-                        operation: operation))
-            .Page;
+                    service.RenderPageRenderOperationAsync(
+                        operation: operation));
+
+        return result.Page;
     }
 
     public IQueryable<Page> GetAll() =>

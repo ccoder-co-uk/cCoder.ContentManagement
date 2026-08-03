@@ -2,17 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
-internal interface IPageEventService
+internal interface IPageRenderCacheMissEventService
 {
-    ValueTask RaisePageAddEventAsync(Page entity);
-
-    ValueTask RaisePageUpdateEventAsync(Page entity);
-
-    ValueTask RaisePageDeleteEventAsync(Page entity);
-
+    ValueTask RaisePageRenderCacheMissEventAsync(PageRenderCacheMiss cacheMiss);
 }

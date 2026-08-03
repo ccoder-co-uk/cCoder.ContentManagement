@@ -115,11 +115,15 @@ public class PageController : ODataController
     [HttpGet]
     [AllowAnonymous]
     [ActionName("Render")]
-    public IActionResult GetRender(int appId, string path, string theme, string culture)
+    public async Task<IActionResult> GetRender(
+        int appId,
+        string path,
+        string theme,
+        string culture)
     {
         try
         {
-            object result = manager.Render(
+            object result = await manager.RenderAsync(
                 appId: appId,
                 path: path,
                 theme: theme,

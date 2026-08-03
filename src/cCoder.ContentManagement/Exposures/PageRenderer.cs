@@ -10,19 +10,19 @@ internal sealed class PageRenderer(
     IPageRenderAggregationService pageRenderAggregationService)
         : IPageRenderer
 {
-    public PageRenderResponse Render(PageRenderRequest request)
+    public async ValueTask<PageRenderResponse> RenderAsync(PageRenderRequest request)
     {
         request.OperationType = PageRenderOperationType.Render;
 
-        return pageRenderAggregationService.RenderPageRenderOperation(
+        return await pageRenderAggregationService.RenderPageRenderOperationAsync(
             operation: request);
     }
 
-    public PageRenderResponse RenderError(PageRenderRequest request)
+    public async ValueTask<PageRenderResponse> RenderErrorAsync(PageRenderRequest request)
     {
         request.OperationType = PageRenderOperationType.RenderError;
 
-        return pageRenderAggregationService.RenderPageRenderOperation(
+        return await pageRenderAggregationService.RenderPageRenderOperationAsync(
             operation: request);
     }
 }

@@ -86,13 +86,14 @@ public partial class PageRenderCacheServiceTests
     private static PageRenderCache CreatePageRenderCache() =>
         new()
         {
-            Id = 42,
+            Id = "1_2_en-gb_default",
             AppId = 1,
             PageId = 2,
             Culture = "en-gb",
             Theme = "default",
-            Value = "{\"BodyHtml\":\"cached\"}",
-            HeaderValue = "header",
+            Path = "cached",
+            Header = "header",
+            Body = "body",
             SourceFingerprint = new string(c: 'A', count: 64),
             RenderedOn = DateTimeOffset.UtcNow
         };

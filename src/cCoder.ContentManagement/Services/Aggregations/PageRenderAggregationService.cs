@@ -30,6 +30,7 @@ internal sealed partial class PageRenderAggregationService(
     IPageRenderOrchestrationService pageRenderOrchestrationService,
     IAppCultureOrchestrationService appCultureOrchestrationService,
     IPageRenderCacheOrchestrationService pageRenderCacheOrchestrationService,
+    ICachedPageRenderOrchestrationService cachedPageRenderOrchestrationService,
     PageRenderCacheImportState pageRenderCacheImportState) : IPageRenderAggregationService
 {
     public PageRenderOperation RenderPageRenderOperation(
@@ -77,6 +78,83 @@ internal sealed partial class PageRenderAggregationService(
 
         return operation;
     });
+
+    public ValueTask<PageRenderOperation> RenderPageRenderOperationAsync(
+        PageRenderOperation operation) =>
+        TryCatch<PageRenderOperation>(operation: async () =>
+    {
+        ValidateRenderPageRenderOperation(inputs: [operation]);
+
+        if (operation.OperationType == PageRenderOperationType.RenderResult)
+        {
+            operation.Page = await RenderRenderResultAsync(
+                appId: operation.AppId,
+                path: operation.Path,
+                theme: operation.Theme,
+                culture: operation.Culture,
+                edit: operation.Edit);
+
+            return operation;
+        }
+
+        PageRenderRequest request = new()
+        {
+            Host = operation.Host,
+            Path = operation.Path,
+            Theme = operation.Theme,
+            Culture = operation.Culture,
+            Edit = operation.Edit,
+            RequestUrl = operation.RequestUrl,
+            Exception = operation.Exception
+        };
+
+        PageRenderResponse response =
+            operation.OperationType == PageRenderOperationType.RenderError
+                ? RenderErrorPageRenderRequestPageRenderResponse(request: request)
+                : await RenderPageRenderRequestPageRenderResponseAsync(
+                    request: request);
+
+        operation.App = response.App;
+        operation.Page = response.Page;
+        operation.Theme = response.Theme;
+        operation.Culture = response.Culture;
+        operation.Edit = response.Edit;
+
+        return operation;
+    }, isValueTask: true);
+
+    private async ValueTask<PageRenderResponse>
+        RenderPageRenderRequestPageRenderResponseAsync(PageRenderRequest request)
+    {
+        ValidateRender(inputs: [request]);
+        ValidateRequest(request: request, parameterName: "request");
+
+        try
+        {
+            ResolvedPageRenderDefaults defaults = ResolveDefaults(request: request);
+
+            RenderResult page = await ExecuteRenderRenderResultAsync(
+                app: defaults.App,
+                path: request.Path ?? string.Empty,
+                theme: defaults.Theme,
+                culture: defaults.Culture,
+                edit: request.Edit);
+
+            return new PageRenderResponse
+            {
+                App = defaults.App,
+                Page = page,
+                Theme = defaults.Theme,
+                Culture = defaults.Culture,
+                Edit = request.Edit
+            };
+        }
+        catch (Exception exception)
+        {
+            request.Exception = exception;
+            return ExecuteRenderError(request: request);
+        }
+    }
 
     internal PageRenderResponse RenderPageRenderRequestPageRenderResponse(PageRenderRequest request) =>
         TryCatch<PageRenderResponse>(operation: () =>
@@ -198,16 +276,7 @@ culture: culture);
                 culture: culture);
         }
 
-        RenderResult cachedResult = TryGetPageRenderCache(
-            appId: app.Id,
-            pageId: page.Id,
-            page: page,
-            culture: culture,
-            theme: theme,
-            user: readAuthorization?.User,
-            useCache: !edit && !rebuildCache);
-
-        return cachedResult ?? RenderPageRenderResult(
+        return RenderPageRenderResult(
 page: page,
 theme: theme,
 culture: culture,
@@ -549,16 +618,7 @@ culture: culture);
                 culture: culture);
         }
 
-        RenderResult cachedResult = TryGetPageRenderCache(
-            appId: app.Id,
-            pageId: page.Id,
-            page: page,
-            culture: culture,
-            theme: theme,
-            user: readAuthorization?.User,
-            useCache: !edit && !rebuildCache);
-
-        return cachedResult ?? RenderPageRenderResult(
+        return RenderPageRenderResult(
 page: page,
 theme: theme,
 culture: culture,
@@ -567,144 +627,109 @@ user: readAuthorization?.User,
 cacheTemplate: rebuildCache);
     }
 
-    private RenderResult TryGetPageRenderCache(
+    private async ValueTask<RenderResult> RenderRenderResultAsync(
         int appId,
-        int pageId,
-        Page page,
-        string culture,
+        string path,
         string theme,
-        User user,
-        bool useCache)
+        string culture,
+        bool edit)
     {
-        if (!useCache)
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidateTheme(theme: theme, parameterName: "theme");
+
+        App app = ResolveAppById(appId: appId, ignoreFilters: false)
+            ?? throw new SecurityException(message: "Unknown Domain!");
+
+        return await ExecuteRenderRenderResultAsync(
+            app: app,
+            path: path,
+            theme: theme,
+            culture: culture,
+            edit: edit);
+    }
+
+    private async ValueTask<RenderResult> ExecuteRenderRenderResultAsync(
+        App app,
+        string path,
+        string theme,
+        string culture,
+        bool edit)
+    {
+        ValidateApp(app: app, parameterName: "app");
+        ValidateTheme(theme: theme, parameterName: "theme");
+
+        path ??= string.Empty;
+        culture = pageRenderOrchestrationService.ResolveCulture(culture: culture);
+
+        string normalizedPath = path.ToLowerInvariant();
+
+        Page page = pageOrchestrationService.GetAllPage(ignoreFilters: true)
+            .FirstOrDefault(predicate: existingPage =>
+                existingPage.AppId == app.Id
+                && existingPage.Path.ToLower() == normalizedPath);
+
+        if (page is null)
         {
-            return null;
+            RenderResult notFound = RenderPageRenderResult(
+                page: CreateMissingPage(
+                    newApp: app,
+                    path: path,
+                    culture: culture),
+                theme: theme,
+                culture: culture);
+
+            notFound.StatusCode = StatusCodes.Status404NotFound;
+            return notFound;
         }
 
-        string normalizedCulture = culture.Trim()
-            .ToLowerInvariant();
+        page.App = app;
+        HydratePageForRender(page: page);
 
-        string normalizedTheme = theme.Trim()
-            .ToLowerInvariant();
+        PageRenderOperation readAuthorization = ResolvePageAuthorization(
+            page: page,
+            privilege: "page_read");
 
-        PageRenderCache cached = pageRenderCacheOrchestrationService
-            .GetAllPageRenderCaches()
-            .FirstOrDefault(predicate: candidate =>
-                candidate.AppId == appId &&
-                candidate.PageId == pageId &&
-                candidate.Culture == normalizedCulture &&
-                candidate.Theme == normalizedTheme);
-
-        RenderResult result = cached == null
-            ? null
-            : JsonConvert.DeserializeObject<RenderResult>(value: cached.Value);
-
-        if (result != null)
+        if (!readAuthorization.IsAuthorized
+            && !pageRenderOrchestrationService.IsAdminOfApp(appId: app.Id))
         {
-            result.HeaderHtml = RenderPageRenderResult(
-                page: page,
-                theme: theme,
-                culture: culture,
-                headerOnly: true,
-                user: user)
-                .HeaderHtml;
+            Page gatedPage = CreateGatedPage(newPage: page);
+            gatedPage.App = app;
 
-            HydrateRuntimeValues(
-                result: result,
-                page: page,
-                user: user,
+            return RenderPageRenderResult(
+                page: gatedPage,
+                theme: theme,
                 culture: culture);
         }
 
-        return result;
-    }
-
-    private static void HydrateRuntimeValues(
-        RenderResult result,
-        Page page,
-        User user,
-        string culture)
-    {
-        bool isGuest = string.IsNullOrWhiteSpace(value: user?.Id)
-            || string.Equals(
-                a: user.Id,
-                b: "Guest",
-                comparisonType: StringComparison.OrdinalIgnoreCase);
-
-        string resolvedCulture = string.IsNullOrWhiteSpace(value: culture)
-            ? user?.DefaultCultureId ?? page.App?.DefaultCultureId ?? string.Empty
-            : culture;
-
-        string serializedUser = JsonConvert.SerializeObject(value: new
+        if (!edit)
         {
-            Id = isGuest ? "Guest" : user.Id,
-            DefaultCultureId = string.IsNullOrWhiteSpace(value: user?.DefaultCultureId)
-                ? resolvedCulture
-                : user.DefaultCultureId,
-            DisplayName = isGuest ? "Guest" : user.DisplayName,
-            Email = user?.Email ?? string.Empty
-        });
+            CachedPageRenderOperation cachedOperation =
+                await cachedPageRenderOrchestrationService
+                    .RenderCachedPageRenderOperationAsync(
+                        operation: new CachedPageRenderOperation
+                        {
+                            AppId = app.Id,
+                            PageId = page.Id,
+                            Page = page,
+                            Culture = culture,
+                            Theme = theme,
+                            User = readAuthorization.User
+                        });
 
-        string loginResourceName = isGuest ? "Login" : "Logout";
+            RenderResult cached = cachedOperation.RenderResult;
 
-        string loginLabel = ResolveRuntimeResourceLabel(
+            if (cached is not null)
+            {
+                return cached;
+            }
+        }
+
+        return RenderPageRenderResult(
             page: page,
-            name: loginResourceName,
-            culture: resolvedCulture);
-
-        string loginLink = isGuest
-            ? $"<a href='/Login'>{loginLabel}</a>"
-            : $"<a name='logout' href=''>{loginLabel}</a>";
-
-        result.BodyHtml = result.BodyHtml
-            .Replace(
-                oldValue: PageRenderRuntimeTokens.User,
-                newValue: serializedUser,
-                comparisonType: StringComparison.Ordinal)
-            .Replace(
-                oldValue: PageRenderRuntimeTokens.DisplayName,
-                newValue: isGuest ? "Guest" : user.DisplayName,
-                comparisonType: StringComparison.Ordinal)
-            .Replace(
-                oldValue: PageRenderRuntimeTokens.LoginLink,
-                newValue: loginLink,
-                comparisonType: StringComparison.Ordinal)
-            .Replace(
-                oldValue: PageRenderRuntimeTokens.Date,
-                newValue: DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy"),
-                comparisonType: StringComparison.Ordinal);
+            theme: theme,
+            culture: culture,
+            edit: edit && UserCanPage(page: page, privilege: "page_update"),
+            user: readAuthorization.User);
     }
 
-    private static string ResolveRuntimeResourceLabel(
-        Page page,
-        string name,
-        string culture)
-    {
-        string pageKey = string.IsNullOrWhiteSpace(value: page.ResourceKey)
-            ? "Default"
-            : page.ResourceKey;
-
-        Resource resource = page.App?.Resources?
-            .Where(predicate: candidate => string.Equals(
-                a: candidate.Name,
-                b: name,
-                comparisonType: StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(keySelector: candidate => string.Equals(
-                a: candidate.Culture,
-                b: culture,
-                comparisonType: StringComparison.OrdinalIgnoreCase))
-            .ThenByDescending(keySelector: candidate => string.IsNullOrEmpty(
-                value: candidate.Culture))
-            .ThenByDescending(keySelector: candidate => string.Equals(
-                a: candidate.Key,
-                b: pageKey,
-                comparisonType: StringComparison.OrdinalIgnoreCase))
-            .ThenByDescending(keySelector: candidate => string.Equals(
-                a: candidate.Key,
-                b: "Default",
-                comparisonType: StringComparison.OrdinalIgnoreCase))
-            .FirstOrDefault();
-
-        return resource?.DisplayName ?? name;
-    }
 }

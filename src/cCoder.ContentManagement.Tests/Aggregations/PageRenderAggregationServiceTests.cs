@@ -26,9 +26,14 @@ namespace cCoder.Core.Services.Tests.CMS.Aggregations;
 
 public partial class PageRenderAggregationServiceTests
 {
-    private User currentUser = TestUsers.WithoutPrivileges();
+    private User currentUser = new()
+    {
+        Id = "test-user",
+        Roles = []
+    };
     private readonly Mock<IAppOrchestrationService> appOrchestrationServiceMock = new();
-    private readonly Mock<ILayoutOrchestrationService> layoutOrchestrationServiceMock = new();
+    private readonly Mock<ILayoutOrchestrationService>
+        layoutOrchestrationServiceMock = new();
     private readonly Mock<ITemplateOrchestrationService> templateOrchestrationServiceMock = new();
     private readonly Mock<IResourceOrchestrationService> resourceOrchestrationServiceMock = new();
     private readonly Mock<IComponentOrchestrationService> componentOrchestrationServiceMock = new();
@@ -40,6 +45,7 @@ public partial class PageRenderAggregationServiceTests
     private readonly Mock<IPageRenderOrchestrationService> pageRenderOrchestrationServiceMock = new();
     private readonly Mock<IAppCultureOrchestrationService> appCultureOrchestrationServiceMock = new();
     private readonly Mock<IPageRenderCacheOrchestrationService> pageRenderCacheOrchestrationServiceMock = new();
+    private readonly Mock<ICachedPageRenderOrchestrationService> cachedPageRenderOrchestrationServiceMock = new();
     private readonly PageRenderAggregationService aggregationService;
 
     public PageRenderAggregationServiceTests()
@@ -66,32 +72,32 @@ public partial class PageRenderAggregationServiceTests
             });
 
         layoutOrchestrationServiceMock
-            .Setup(expression: x => x.GetAllLayout())
+            .Setup(expression: x => x.GetAllLayout(ignoreFilters: false))
             .Returns(value: Array.Empty<Layout>()
                 .AsQueryable());
 
         templateOrchestrationServiceMock
-            .Setup(expression: x => x.GetAllTemplate())
+            .Setup(expression: x => x.GetAllTemplate(ignoreFilters: false))
             .Returns(value: Array.Empty<Template>()
                 .AsQueryable());
 
         resourceOrchestrationServiceMock
-            .Setup(expression: x => x.GetAllResource())
+            .Setup(expression: x => x.GetAllResource(ignoreFilters: false))
             .Returns(value: Array.Empty<Resource>()
                 .AsQueryable());
 
         componentOrchestrationServiceMock
-            .Setup(expression: x => x.GetAllComponent())
+            .Setup(expression: x => x.GetAllComponent(ignoreFilters: false))
             .Returns(value: Array.Empty<Component>()
                 .AsQueryable());
 
         scriptOrchestrationServiceMock
-            .Setup(expression: x => x.GetAllScript())
+            .Setup(expression: x => x.GetAllScript(ignoreFilters: false))
             .Returns(value: Array.Empty<Script>()
                 .AsQueryable());
 
         pageOrchestrationServiceMock
-            .Setup(expression: x => x.GetAllPage())
+            .Setup(expression: x => x.GetAllPage(ignoreFilters: false))
             .Returns(value: Array.Empty<Page>()
                 .AsQueryable());
 
@@ -134,6 +140,7 @@ public partial class PageRenderAggregationServiceTests
             pageRenderOrchestrationService: pageRenderOrchestrationServiceMock.Object,
             appCultureOrchestrationService: appCultureOrchestrationServiceMock.Object,
             pageRenderCacheOrchestrationService: pageRenderCacheOrchestrationServiceMock.Object,
+            cachedPageRenderOrchestrationService: cachedPageRenderOrchestrationServiceMock.Object,
             pageRenderCacheImportState: new cCoder.ContentManagement.Models.PageRenderCacheImportState());
     }
 

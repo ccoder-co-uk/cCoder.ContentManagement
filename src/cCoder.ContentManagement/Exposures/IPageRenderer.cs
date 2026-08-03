@@ -6,7 +6,7 @@ namespace cCoder.ContentManagement.Exposures;
 
 public interface IPageRenderer
 {
-    PageRenderResponse Render(PageRenderRequest request);
+    ValueTask<PageRenderResponse> RenderAsync(PageRenderRequest request);
 
-    PageRenderResponse RenderError(PageRenderRequest request);
+    ValueTask<PageRenderResponse> RenderErrorAsync(PageRenderRequest request);
 }
