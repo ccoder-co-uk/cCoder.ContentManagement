@@ -4,6 +4,7 @@
 
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Exposures.EventHandlers;
 
@@ -23,4 +24,5 @@ internal interface IPageRenderCacheEventHandlers
     ValueTask RebuildPageAsync(Content content);
     ValueTask RebuildPageAsync(PageInfo pageInfo);
     ValueTask RebuildCommonCacheConsumersAsync(CommonObject commonObject);
+    ValueTask RebuildMissingPageAsync(PageRenderCacheMiss cacheMiss);
 }

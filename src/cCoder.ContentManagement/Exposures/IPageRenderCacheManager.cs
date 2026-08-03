@@ -11,13 +11,13 @@ public interface IPageRenderCacheManager
 {
     IQueryable<PageRenderCache> GetAll();
 
-    PageRenderCache Get(int pageRenderCacheId);
+    PageRenderCache Get(string pageRenderCacheId);
 
     ValueTask<PageRenderCache> AddAsync(PageRenderCache newPageRenderCache);
 
     ValueTask<PageRenderCache> UpdateAsync(PageRenderCache updatedPageRenderCache);
 
-    ValueTask DeleteAsync(int pageRenderCacheId);
+    ValueTask DeleteAsync(string pageRenderCacheId);
 
     ValueTask DeleteAppAsync(int appId);
 

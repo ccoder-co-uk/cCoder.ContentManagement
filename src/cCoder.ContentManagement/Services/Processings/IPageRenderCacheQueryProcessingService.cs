@@ -10,5 +10,5 @@ internal interface IPageRenderCacheQueryProcessingService
 {
     IQueryable<PageRenderCache> GetAllPageRenderCaches();
 
-    PageRenderCache GetPageRenderCache(int pageRenderCacheId);
+    PageRenderCache GetPageRenderCache(string pageRenderCacheId);
 }

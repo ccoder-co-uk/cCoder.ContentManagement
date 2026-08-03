@@ -30,7 +30,7 @@ public class PageRenderCacheController(
 
     [HttpGet]
     [EnableQuery]
-    public IActionResult Get([FromRoute] int key)
+    public IActionResult Get([FromRoute] string key)
     {
         try
         {
@@ -59,7 +59,7 @@ public class PageRenderCacheController(
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put([FromRoute] int key, [FromBody] PageRenderCache updatedPageRenderCache)
+    public async Task<IActionResult> Put([FromRoute] string key, [FromBody] PageRenderCache updatedPageRenderCache)
     {
         try
         {
@@ -74,7 +74,7 @@ public class PageRenderCacheController(
     }
 
     [AcceptVerbs("PATCH", "MERGE")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<PageRenderCache> updatedPageRenderCache)
+    public async Task<IActionResult> PutPatch([FromRoute] string key, Delta<PageRenderCache> updatedPageRenderCache)
     {
         try
         {
@@ -94,7 +94,7 @@ public class PageRenderCacheController(
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete([FromRoute] int key)
+    public async Task<IActionResult> Delete([FromRoute] string key)
     {
         try
         {

@@ -111,6 +111,11 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
 
     private void ListenToPageRenderCacheEvents()
     {
+        eventHubBroker.ListenToEvent(
+            eventName: "page_render_cache_miss",
+            handler: (IPageRenderCacheEventHandlers service, PageRenderCacheMiss cacheMiss) =>
+                service.RebuildMissingPageAsync(cacheMiss: cacheMiss));
+
         ListenToAppOwnedRenderEvents<AppCulture>(eventNames: ["app_culture_add", "app_culture_delete"]);
         ListenToAppOwnedRenderEvents<Layout>(eventNames: ["layout_add", "layout_update", "layout_delete"]);
         ListenToAppOwnedRenderEvents<Template>(eventNames: ["template_add", "template_update", "template_delete"]);

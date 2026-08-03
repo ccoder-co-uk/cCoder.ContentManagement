@@ -33,7 +33,7 @@ internal sealed partial class PageRenderCacheProcessingService(
         return service.UpdatePageRenderCacheAsync(updatedPageRenderCache: updatedPageRenderCache);
     }, isValueTask: true);
 
-    public ValueTask DeletePageRenderCacheAsync(int pageRenderCacheId) =>
+    public ValueTask DeletePageRenderCacheAsync(string pageRenderCacheId) =>
         TryCatch(operation: () =>
     {
         ValidatePageRenderCacheOnDelete(inputs: [pageRenderCacheId]);
@@ -104,14 +104,22 @@ internal sealed partial class PageRenderCacheProcessingService(
         return pageRenderCacheId;
     }
 
+    private static string ValidateId(string pageRenderCacheId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(argument: pageRenderCacheId);
+        return pageRenderCacheId;
+    }
+
     private static void ValidatePageRenderCache(PageRenderCache cache)
     {
         ArgumentNullException.ThrowIfNull(argument: cache);
+        ValidateId(pageRenderCacheId: cache.Id);
         ValidateId(pageRenderCacheId: cache.AppId);
         ValidateId(pageRenderCacheId: cache.PageId);
         ArgumentException.ThrowIfNullOrWhiteSpace(argument: cache.Theme);
-        ArgumentNullException.ThrowIfNull(argument: cache.Value);
-        ArgumentNullException.ThrowIfNull(argument: cache.HeaderValue);
+        ArgumentNullException.ThrowIfNull(argument: cache.Path);
+        ArgumentNullException.ThrowIfNull(argument: cache.Header);
+        ArgumentNullException.ThrowIfNull(argument: cache.Body);
     }
 
     private static void NormalizeKey(PageRenderCache cache)
@@ -121,5 +129,7 @@ internal sealed partial class PageRenderCacheProcessingService(
 
         cache.Theme = cache.Theme.Trim()
             .ToLowerInvariant();
+
+        cache.Id = $"{cache.AppId}_{cache.PageId}_{cache.Culture}_{cache.Theme}";
     }
 }

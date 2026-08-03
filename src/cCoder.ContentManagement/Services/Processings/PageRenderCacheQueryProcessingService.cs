@@ -19,11 +19,11 @@ internal sealed partial class PageRenderCacheQueryProcessingService(
             return pageRenderCacheService.GetAllPageRenderCaches();
         });
 
-    public PageRenderCache GetPageRenderCache(int pageRenderCacheId) =>
+    public PageRenderCache GetPageRenderCache(string pageRenderCacheId) =>
         TryCatch<PageRenderCache>(operation: () =>
         {
             ValidatePageRenderCacheOnGet(inputs: [pageRenderCacheId]);
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value: pageRenderCacheId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(argument: pageRenderCacheId);
 
             return pageRenderCacheService.GetPageRenderCache(
                 pageRenderCacheId: pageRenderCacheId);

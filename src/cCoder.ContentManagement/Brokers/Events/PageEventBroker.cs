@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 using cCoder.Eventing;
 using cCoder.Eventing.Models;
 
@@ -19,4 +20,8 @@ internal sealed class PageEventBroker(IAuthenticatedEventHub eventHub)
 
     public ValueTask RaisePageDeleteEventAsync(EventMessage<Page> message) =>
         RaiseEventAsync(name: "page_delete", message: message);
+
+    public ValueTask RaisePageRenderCacheMissEventAsync(
+        EventMessage<PageRenderCacheMiss> message) =>
+        RaiseEventAsync(name: "page_render_cache_miss", message: message);
 }

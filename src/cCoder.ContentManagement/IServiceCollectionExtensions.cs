@@ -211,6 +211,7 @@ public static partial class IServiceCollectionExtensions
         services.AddEventingForType<(int, Package)>();
         services.AddEventingForType<PackageItem>();
         services.AddEventingForType<Page>();
+        services.AddEventingForType<PageRenderCacheMiss>();
         services.AddEventingForType<PageInfo>();
         services.AddEventingForType<PageRole>();
         services.AddEventingForType<Resource>();
@@ -303,6 +304,9 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddRendering(this IServiceCollection services)
     {
+        services.AddTransient<
+            ICachedPageRenderOrchestrationService,
+            CachedPageRenderOrchestrationService>();
         services.AddTransient<IPageRenderAggregationService, PageRenderAggregationService>();
         services.AddTransient<IPageRenderOrchestrationService, PageRenderOrchestrationService>();
         services.AddTransient<IPageRenderProcessingService, PageRenderProcessingService>();
@@ -331,6 +335,9 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPackageEventService, PackageEventService>();
         services.AddTransient<IPackageItemEventService, PackageItemEventService>();
         services.AddTransient<IPageEventService, PageEventService>();
+        services.AddTransient<
+            IPageRenderCacheMissEventService,
+            PageRenderCacheMissEventService>();
         services.AddTransient<IPageInfoEventService, PageInfoEventService>();
         services.AddTransient<IPageRoleEventService, PageRoleEventService>();
         services.AddTransient<IResourceEventService, ResourceEventService>();
@@ -442,6 +449,9 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPackageItemProcessingService, PackageItemProcessingService>();
         services.AddTransient<IPackageProcessingService, PackageProcessingService>();
         services.AddTransient<IPageEventProcessingService, PageEventProcessingService>();
+        services.AddTransient<
+            IPageRenderCacheMissEventProcessingService,
+            PageRenderCacheMissEventProcessingService>();
         services.AddTransient<IPageInfoEventProcessingService, PageInfoEventProcessingService>();
         services.AddTransient<IPageInfoProcessingService, PageInfoProcessingService>();
         services.AddTransient<IPageProcessingService, PageProcessingService>();

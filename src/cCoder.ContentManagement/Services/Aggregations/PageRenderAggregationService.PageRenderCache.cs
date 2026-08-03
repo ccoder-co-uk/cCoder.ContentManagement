@@ -267,6 +267,40 @@ internal sealed partial class PageRenderAggregationService
             return operation;
         }, isValueTask: true);
 
+    public ValueTask<PageRenderOperation>
+        RebuildMissingPagePageRenderOperationAsync(
+            PageRenderOperation operation) =>
+        TryCatch<PageRenderOperation>(operation: async () =>
+        {
+            ValidateRenderPageRenderOperation(inputs: [operation]);
+
+            Page page = pageOrchestrationService.GetAllPage(ignoreFilters: true)
+                .FirstOrDefault(predicate: item => item.Id == operation.PageId);
+
+            if (page is null)
+            {
+                return operation;
+            }
+
+            App app = appOrchestrationService.GetAllApp(ignoreFilters: true)
+                .FirstOrDefault(predicate: item => item.Id == page.AppId);
+
+            if (app is null)
+            {
+                return operation;
+            }
+
+            await pageRenderCacheOrchestrationService
+                .ReplacePageRenderCachesFromEventAsync(
+                    appId: app.Id,
+                    pageIds: [page.Id],
+                    replacements: BuildPageRenderCaches(
+                        app: app,
+                        page: page));
+
+            return operation;
+        }, isValueTask: true);
+
     private PageRenderCache[] BuildPageRenderCaches(
         App app,
         Page page)
@@ -302,23 +336,38 @@ internal sealed partial class PageRenderAggregationService
                         message: "Edit-mode results cannot be cached.");
                 }
 
-                result.HeaderHtml = string.Empty;
-
-                string value = JsonConvert.SerializeObject(
+                string fingerprintSource = JsonConvert.SerializeObject(
                     value: result,
                     formatting: Formatting.None);
 
+                string normalizedCulture = NormalizePageRenderCacheKey(
+                    value: culture);
+
+                string normalizedTheme = NormalizePageRenderCacheKey(
+                    value: theme);
+
                 replacements.Add(item: new PageRenderCache
                 {
+                    Id = CreatePageRenderCacheId(
+                        appId: app.Id,
+                        pageId: page.Id,
+                        culture: normalizedCulture,
+                        theme: normalizedTheme),
                     AppId = app.Id,
                     PageId = page.Id,
-                    Culture = NormalizePageRenderCacheKey(value: culture),
-                    Theme = NormalizePageRenderCacheKey(value: theme),
-                    Value = value,
-                    HeaderValue = string.Empty,
+                    Culture = normalizedCulture,
+                    Theme = normalizedTheme,
+                    ParentId = result.ParentId,
+                    Path = result.Path,
+                    Title = result.Title,
+                    Description = result.Description,
+                    Keywords = result.Keywords,
+                    ShowOnMenus = result.ShowOnMenus,
+                    Header = result.HeaderHtml,
+                    Body = result.BodyHtml,
                     SourceFingerprint = Convert.ToHexString(
                         inArray: SHA256.HashData(
-                            source: Encoding.UTF8.GetBytes(s: value))),
+                            source: Encoding.UTF8.GetBytes(s: fingerprintSource))),
                     RenderedOn = DateTimeOffset.UtcNow
                 });
             }
@@ -378,4 +427,11 @@ internal sealed partial class PageRenderAggregationService
     private static string NormalizePageRenderCacheKey(string value) =>
         value.Trim()
             .ToLowerInvariant();
+
+    internal static string CreatePageRenderCacheId(
+        int appId,
+        int pageId,
+        string culture,
+        string theme) =>
+        $"{appId}_{pageId}_{culture}_{theme}";
 }

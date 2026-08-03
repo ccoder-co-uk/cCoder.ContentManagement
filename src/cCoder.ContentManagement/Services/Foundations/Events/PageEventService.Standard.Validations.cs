@@ -16,4 +16,5 @@ internal partial class PageEventService
 
     private static void ValidateRaisePageDeleteEventAsync(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
+
 }

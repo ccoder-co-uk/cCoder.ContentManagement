@@ -17,7 +17,7 @@ internal sealed partial class PageRenderCacheService(IPageRenderCacheBroker brok
             return broker.GetAllPageRenderCaches();
         });
 
-    public PageRenderCache GetPageRenderCache(int pageRenderCacheId) =>
+    public PageRenderCache GetPageRenderCache(string pageRenderCacheId) =>
         TryCatch<PageRenderCache>(operation: () =>
         {
             ValidatePageRenderCacheOnGet(inputs: [pageRenderCacheId]);
@@ -50,7 +50,7 @@ internal sealed partial class PageRenderCacheService(IPageRenderCacheBroker brok
                     pageRenderCache: updatedPageRenderCache));
         }, isValueTask: true);
 
-    public ValueTask DeletePageRenderCacheAsync(int pageRenderCacheId) =>
+    public ValueTask DeletePageRenderCacheAsync(string pageRenderCacheId) =>
         TryCatch(operation: async () =>
         {
             ValidatePageRenderCacheOnDelete(inputs: [pageRenderCacheId]);
@@ -92,8 +92,14 @@ internal sealed partial class PageRenderCacheService(IPageRenderCacheBroker brok
                 PageId = pageRenderCache.PageId,
                 Culture = pageRenderCache.Culture,
                 Theme = pageRenderCache.Theme,
-                Value = pageRenderCache.Value,
-                HeaderValue = pageRenderCache.HeaderValue,
+                ParentId = pageRenderCache.ParentId,
+                Path = pageRenderCache.Path,
+                Title = pageRenderCache.Title,
+                Description = pageRenderCache.Description,
+                Keywords = pageRenderCache.Keywords,
+                ShowOnMenus = pageRenderCache.ShowOnMenus,
+                Header = pageRenderCache.Header,
+                Body = pageRenderCache.Body,
                 SourceFingerprint = pageRenderCache.SourceFingerprint,
                 RenderedOn = pageRenderCache.RenderedOn
             };

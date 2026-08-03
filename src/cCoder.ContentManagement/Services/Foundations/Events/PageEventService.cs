@@ -67,4 +67,5 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker) : IPag
         await pageEventBroker.RaisePageDeleteEventAsync(message: message);
 
     }, isValueTask: true);
+
 }
