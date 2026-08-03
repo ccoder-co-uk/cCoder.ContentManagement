@@ -56,9 +56,24 @@ internal partial class PageRenderOrchestrationService(
 
         if (operation.OperationType == PageRenderOperationType.UserCanPage)
         {
-            operation.IsAuthorized = UserCanPage(
-                page: operation.SourcePage,
-                privilege: operation.Privilege);
+            RenderAuthorization authorization = authorizationProcessingService
+                .ResolveRenderAuthorizationContext(
+                    context: new AuthorizationContext())
+                .RenderAuthorization;
+
+            operation.User = authorization.User;
+
+            operation.IsAuthorized = authorizationProcessingService
+                .UserCanPageAuthorizationContext(
+                    context: new AuthorizationContext
+                    {
+                        PageAuthorization = new PageAuthorization
+                        {
+                            Page = operation.SourcePage,
+                            User = authorization.User,
+                            Privilege = operation.Privilege
+                        }
+                    });
 
             return operation;
         }
@@ -68,13 +83,17 @@ internal partial class PageRenderOrchestrationService(
                 page: operation.SourcePage,
                 theme: operation.Theme,
                 culture: operation.Culture,
-                edit: operation.Edit)
+                edit: operation.Edit,
+                headerOnly: operation.HeaderOnly,
+                cacheTemplate: operation.CacheTemplate)
             : RenderPageUserRenderResult(
                 page: operation.SourcePage,
                 user: operation.User,
                 theme: operation.Theme,
                 culture: operation.Culture,
-                edit: operation.Edit);
+                edit: operation.Edit,
+                headerOnly: operation.HeaderOnly,
+                cacheTemplate: operation.CacheTemplate);
 
         return operation;
     });
@@ -107,10 +126,12 @@ internal partial class PageRenderOrchestrationService(
         Page page,
         string theme,
         string culture,
-        bool edit = false) =>
+        bool edit = false,
+        bool headerOnly = false,
+        bool cacheTemplate = false) =>
         TryCatch<RenderResult>(operation: () =>
     {
-        ValidateRenderPageRenderResult(inputs: [page, theme, culture, edit]);
+        ValidateRenderPageRenderResult(inputs: [page, theme, culture, edit, headerOnly]);
         ValidatePage(page: page, parameterName: "page");
         ValidateTheme(theme: theme, parameterName: "theme");
 
@@ -127,14 +148,16 @@ internal partial class PageRenderOrchestrationService(
             user: authorization.User,
             theme: theme,
             culture: authorization.Culture,
-            edit: edit);
+            edit: edit,
+            headerOnly: headerOnly,
+            cacheTemplate: cacheTemplate);
 
     });
 
-    internal RenderResult RenderPageUserRenderResult(Page page, User user, string theme, string culture, bool edit = false) =>
+    internal RenderResult RenderPageUserRenderResult(Page page, User user, string theme, string culture, bool edit = false, bool headerOnly = false, bool cacheTemplate = false) =>
         TryCatch<RenderResult>(operation: () =>
     {
-        ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit]);
+        ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit, headerOnly]);
         ValidatePage(page: page, parameterName: "page");
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");
@@ -144,7 +167,9 @@ internal partial class PageRenderOrchestrationService(
             user: user,
             theme: theme,
             culture: culture,
-            edit: edit);
+            edit: edit,
+            headerOnly: headerOnly,
+            cacheTemplate: cacheTemplate);
 
     });
 
@@ -153,7 +178,9 @@ internal partial class PageRenderOrchestrationService(
         User user,
         string theme,
         string culture,
-        bool edit)
+        bool edit,
+        bool headerOnly,
+        bool cacheTemplate)
     {
         PageRenderOperation operation = new()
         {
@@ -161,7 +188,9 @@ internal partial class PageRenderOrchestrationService(
             User = user,
             Theme = theme,
             Culture = culture,
-            Edit = edit
+            Edit = edit,
+            HeaderOnly = headerOnly,
+            CacheTemplate = cacheTemplate
         };
 
         return pageRenderProcessingService

@@ -11,6 +11,7 @@ using cCoder.ContentManagement.Services;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 using Newtonsoft.Json;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
@@ -178,8 +179,14 @@ culture: culture);
             return renderResult;
         }
 
+        PageRenderOperation readAuthorization = rebuildCache
+            ? null
+            : ResolvePageAuthorization(
+                page: page,
+                privilege: "page_read");
+
         if (!rebuildCache &&
-            !UserCanPage(page: page, privilege: "page_read") &&
+            !readAuthorization.IsAuthorized &&
             !pageRenderOrchestrationService.IsAdminOfApp(appId: app.Id))
         {
             Page gatedPage = CreateGatedPage(newPage: page);
@@ -194,15 +201,19 @@ culture: culture);
         RenderResult cachedResult = TryGetPageRenderCache(
             appId: app.Id,
             pageId: page.Id,
+            page: page,
             culture: culture,
             theme: theme,
+            user: readAuthorization?.User,
             useCache: !edit && !rebuildCache);
 
         return cachedResult ?? RenderPageRenderResult(
 page: page,
 theme: theme,
 culture: culture,
-edit: edit && UserCanPage(page: page, privilege: "page_update"));
+edit: edit && UserCanPage(page: page, privilege: "page_update"),
+user: readAuthorization?.User,
+cacheTemplate: rebuildCache);
 
     });
 
@@ -439,7 +450,10 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
         Page page,
         string theme,
         string culture,
-        bool edit = false)
+        bool edit = false,
+        bool headerOnly = false,
+        User user = null,
+        bool cacheTemplate = false)
     {
         PageRenderOperation operation = new()
         {
@@ -447,7 +461,10 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
             SourcePage = page,
             Theme = theme,
             Culture = culture,
-            Edit = edit
+            Edit = edit,
+            HeaderOnly = headerOnly,
+            User = user,
+            CacheTemplate = cacheTemplate
         };
 
         return pageRenderOrchestrationService
@@ -456,7 +473,13 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
             .Page;
     }
 
-    private bool UserCanPage(Page page, string privilege)
+    private bool UserCanPage(Page page, string privilege) =>
+        ResolvePageAuthorization(page: page, privilege: privilege)
+            .IsAuthorized;
+
+    private PageRenderOperation ResolvePageAuthorization(
+        Page page,
+        string privilege)
     {
         PageRenderOperation operation = new()
         {
@@ -467,8 +490,7 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
 
         return pageRenderOrchestrationService
             .ProcessPageRenderOperation(
-                operation: operation)
-            .IsAuthorized;
+                operation: operation);
     }
 
     private RenderResult ExecuteRenderRenderResult(
@@ -508,8 +530,14 @@ culture: culture);
             return renderResult;
         }
 
+        PageRenderOperation readAuthorization = rebuildCache
+            ? null
+            : ResolvePageAuthorization(
+                page: page,
+                privilege: "page_read");
+
         if (!rebuildCache &&
-            !UserCanPage(page: page, privilege: "page_read") &&
+            !readAuthorization.IsAuthorized &&
             !pageRenderOrchestrationService.IsAdminOfApp(appId: app.Id))
         {
             Page gatedPage = CreateGatedPage(newPage: page);
@@ -524,22 +552,28 @@ culture: culture);
         RenderResult cachedResult = TryGetPageRenderCache(
             appId: app.Id,
             pageId: page.Id,
+            page: page,
             culture: culture,
             theme: theme,
+            user: readAuthorization?.User,
             useCache: !edit && !rebuildCache);
 
         return cachedResult ?? RenderPageRenderResult(
 page: page,
 theme: theme,
 culture: culture,
-edit: edit && UserCanPage(page: page, privilege: "page_update"));
+edit: edit && UserCanPage(page: page, privilege: "page_update"),
+user: readAuthorization?.User,
+cacheTemplate: rebuildCache);
     }
 
     private RenderResult TryGetPageRenderCache(
         int appId,
         int pageId,
+        Page page,
         string culture,
         string theme,
+        User user,
         bool useCache)
     {
         if (!useCache)
@@ -567,9 +601,110 @@ edit: edit && UserCanPage(page: page, privilege: "page_update"));
 
         if (result != null)
         {
-            result.HeaderHtml = cached.HeaderValue;
+            result.HeaderHtml = RenderPageRenderResult(
+                page: page,
+                theme: theme,
+                culture: culture,
+                headerOnly: true,
+                user: user)
+                .HeaderHtml;
+
+            HydrateRuntimeValues(
+                result: result,
+                page: page,
+                user: user,
+                culture: culture);
         }
 
         return result;
+    }
+
+    private static void HydrateRuntimeValues(
+        RenderResult result,
+        Page page,
+        User user,
+        string culture)
+    {
+        bool isGuest = string.IsNullOrWhiteSpace(value: user?.Id)
+            || string.Equals(
+                a: user.Id,
+                b: "Guest",
+                comparisonType: StringComparison.OrdinalIgnoreCase);
+
+        string resolvedCulture = string.IsNullOrWhiteSpace(value: culture)
+            ? user?.DefaultCultureId ?? page.App?.DefaultCultureId ?? string.Empty
+            : culture;
+
+        string serializedUser = JsonConvert.SerializeObject(value: new
+        {
+            Id = isGuest ? "Guest" : user.Id,
+            DefaultCultureId = string.IsNullOrWhiteSpace(value: user?.DefaultCultureId)
+                ? resolvedCulture
+                : user.DefaultCultureId,
+            DisplayName = isGuest ? "Guest" : user.DisplayName,
+            Email = user?.Email ?? string.Empty
+        });
+
+        string loginResourceName = isGuest ? "Login" : "Logout";
+
+        string loginLabel = ResolveRuntimeResourceLabel(
+            page: page,
+            name: loginResourceName,
+            culture: resolvedCulture);
+
+        string loginLink = isGuest
+            ? $"<a href='/Login'>{loginLabel}</a>"
+            : $"<a name='logout' href=''>{loginLabel}</a>";
+
+        result.BodyHtml = result.BodyHtml
+            .Replace(
+                oldValue: PageRenderRuntimeTokens.User,
+                newValue: serializedUser,
+                comparisonType: StringComparison.Ordinal)
+            .Replace(
+                oldValue: PageRenderRuntimeTokens.DisplayName,
+                newValue: isGuest ? "Guest" : user.DisplayName,
+                comparisonType: StringComparison.Ordinal)
+            .Replace(
+                oldValue: PageRenderRuntimeTokens.LoginLink,
+                newValue: loginLink,
+                comparisonType: StringComparison.Ordinal)
+            .Replace(
+                oldValue: PageRenderRuntimeTokens.Date,
+                newValue: DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy"),
+                comparisonType: StringComparison.Ordinal);
+    }
+
+    private static string ResolveRuntimeResourceLabel(
+        Page page,
+        string name,
+        string culture)
+    {
+        string pageKey = string.IsNullOrWhiteSpace(value: page.ResourceKey)
+            ? "Default"
+            : page.ResourceKey;
+
+        Resource resource = page.App?.Resources?
+            .Where(predicate: candidate => string.Equals(
+                a: candidate.Name,
+                b: name,
+                comparisonType: StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(keySelector: candidate => string.Equals(
+                a: candidate.Culture,
+                b: culture,
+                comparisonType: StringComparison.OrdinalIgnoreCase))
+            .ThenByDescending(keySelector: candidate => string.IsNullOrEmpty(
+                value: candidate.Culture))
+            .ThenByDescending(keySelector: candidate => string.Equals(
+                a: candidate.Key,
+                b: pageKey,
+                comparisonType: StringComparison.OrdinalIgnoreCase))
+            .ThenByDescending(keySelector: candidate => string.Equals(
+                a: candidate.Key,
+                b: "Default",
+                comparisonType: StringComparison.OrdinalIgnoreCase))
+            .FirstOrDefault();
+
+        return resource?.DisplayName ?? name;
     }
 }

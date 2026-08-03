@@ -22,6 +22,7 @@ public partial class PageRenderAggregationServiceTests
         Page page = SetupCacheablePage(app: app);
         currentUser = TestUsers.WithPrivilege(privilege: "app_admin", appId: app.Id);
         RenderResult cachedResult = CreateRenderResult(bodyHtml: "Cached Body");
+        SetupRenderResult(renderResult: cachedResult);
 
         pageRenderCacheOrchestrationServiceMock
             .Setup(expression: service => service.GetAllPageRenderCaches())

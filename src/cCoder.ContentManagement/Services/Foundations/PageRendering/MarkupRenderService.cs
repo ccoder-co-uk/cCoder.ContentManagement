@@ -70,7 +70,9 @@ internal sealed partial class MarkupRenderService(
             Description = session.Page?.Description ?? string.Empty,
             Keywords = session.Page?.Keywords ?? string.Empty,
             HeaderHtml = RenderMarkup(key: key, content: session.Layout?.HeaderHtml ?? string.Empty, session: session, replacements: replacements, allowContentTags: false),
-            BodyHtml = RenderMarkup(key: key, content: session.Layout?.BodyHtml ?? string.Empty, session: session, replacements: replacements),
+            BodyHtml = session.Request.HeaderOnly
+                ? string.Empty
+                : RenderMarkup(key: key, content: session.Layout?.BodyHtml ?? string.Empty, session: session, replacements: replacements),
             StatusCode = session.Page == null ? 404 : 200
         };
 
@@ -301,19 +303,28 @@ values: session.App.PagesById.Values
 
         PageRenderUser user = session.User ?? new PageRenderUser();
         bool isGuest = string.IsNullOrWhiteSpace(value: user.Id) || string.Equals(a: user.Id, b: "Guest", comparisonType: StringComparison.OrdinalIgnoreCase);
+        bool cacheTemplate = session.Request.CacheTemplate;
 
         List<Replacement> replacements =
         [
-            new(old: "[[user]]", @new: JsonConvert.SerializeObject(value: new
+            new(old: "[[user]]", @new: cacheTemplate
+                ? PageRenderRuntimeTokens.User
+                : JsonConvert.SerializeObject(value: new
             {
                 Id = isGuest ? "Guest" : user.Id,
                 DefaultCultureId = string.IsNullOrWhiteSpace(value: user.DefaultCultureId) ? culture : user.DefaultCultureId,
                 DisplayName = isGuest ? "Guest" : user.DisplayName,
                 Email = user.Email ?? string.Empty
             })),
-            new(old: "[[displayname]]", @new: isGuest ? "Guest" : user.DisplayName),
-            new(old: "[[loginlink]]", @new: isGuest ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>"),
-            new(old: "[[date]]", @new: DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy")),
+            new(old: "[[displayname]]", @new: cacheTemplate
+                ? PageRenderRuntimeTokens.DisplayName
+                : isGuest ? "Guest" : user.DisplayName),
+            new(old: "[[loginlink]]", @new: cacheTemplate
+                ? PageRenderRuntimeTokens.LoginLink
+                : isGuest ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>"),
+            new(old: "[[date]]", @new: cacheTemplate
+                ? PageRenderRuntimeTokens.Date
+                : DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy")),
             new(old: "[[culture]]", @new: WebUtility.HtmlEncode(value: culture)),
             new(old: "[[lang]]", @new: WebUtility.HtmlEncode(value: culture.Split(separator: '-')
             .FirstOrDefault() ?? string.Empty)),

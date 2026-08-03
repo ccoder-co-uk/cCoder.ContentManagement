@@ -12,6 +12,9 @@ internal sealed class PageRenderEngineRequest
     public string Theme { get; set; }
     public string Culture { get; set; }
     public bool Edit { get; set; }
+    public bool HeaderOnly { get; set; }
+
+    public bool CacheTemplate { get; set; }
 
     public string RequestUrl { get; set; }
     public Exception Exception { get; set; }

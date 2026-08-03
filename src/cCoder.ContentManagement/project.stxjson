@@ -21170,6 +21170,10 @@
           "Type": "System.Int32"
         },
         {
+          "Name": "CacheTemplate",
+          "Type": "System.Boolean"
+        },
+        {
           "Name": "Culture",
           "Type": "System.String"
         },
@@ -21180,6 +21184,10 @@
         {
           "Name": "Exception",
           "Type": "System.Exception"
+        },
+        {
+          "Name": "HeaderOnly",
+          "Type": "System.Boolean"
         },
         {
           "Name": "Path",
@@ -21386,6 +21394,17 @@
           "Type": "System.String"
         }
       ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.PageRendering.PageRenderRuntimeTokens",
+      "StandardElementType": "Model",
+      "LineNumber": 7,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
       "Methods": []
     },
     {
@@ -22965,7 +22984,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService",
       "StandardElementType": "AggregationService",
-      "LineNumber": 18,
+      "LineNumber": 19,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -23429,7 +23448,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService.RenderPageRenderOperation(cCoder.ContentManagement.Models.PageRenderOperation)",
           "Name": "RenderPageRenderOperation",
-          "LineNumber": 34,
+          "LineNumber": 35,
           "Inputs": [
             {
               "Name": "operation",
@@ -41370,7 +41389,22 @@
           "Implements": [
             "cCoder.ContentManagement.Services.Orchestrations.IPageRenderOrchestrationService.ProcessPageRenderOperation(cCoder.ContentManagement.Models.PageRenderOperation)"
           ],
-          "Calls": [],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService",
+              "MethodName": "ResolveRenderAuthorizationContext",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService.ResolveRenderAuthorizationContext(cCoder.ContentManagement.Models.AuthorizationContext)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService",
+              "MethodName": "UserCanPageAuthorizationContext",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService.UserCanPageAuthorizationContext(cCoder.ContentManagement.Models.AuthorizationContext)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            }
+          ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
