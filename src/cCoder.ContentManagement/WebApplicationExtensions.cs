@@ -22,10 +22,26 @@ public static partial class WebApplicationExtensions
         this WebApplication app,
         ILogger log = null) =>
         app.UseContentManagementExposure(log: log)
-        .ListenToContentManagementEvents();
+        .ListenToContentManagementEvents()
+        .StartContentManagementFinalAppDeleteEventHandler();
 
     public static WebApplication StartContentManagementHostedServices(this WebApplication app) =>
         app.ListenToContentManagementEvents();
+
+    public static WebApplication StartContentManagementFinalAppDeleteEventHandler(
+        this WebApplication app)
+    {
+        using IServiceScope serviceScope = app.Services.CreateScope();
+
+        foreach (IContentManagementEventHandlers service in serviceScope
+            .ServiceProvider
+            .GetServices<IContentManagementEventHandlers>())
+        {
+            service.ListenToFinalAppDeleteEvent();
+        }
+
+        return app;
+    }
 
     private static WebApplication UseContentManagementExposure(
         this WebApplication app,

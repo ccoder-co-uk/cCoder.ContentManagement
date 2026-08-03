@@ -61,6 +61,7 @@ handler: It.IsAny<Func<IPageRenderCacheEventHandlers, (int appId, Package packag
 
         // When
         service.ListenToAllEvents();
+        service.ListenToFinalAppDeleteEvent();
 
         // Then
         eventHubBrokerMock.VerifyAll();
