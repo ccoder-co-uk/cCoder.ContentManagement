@@ -11,4 +11,7 @@ internal class ContentManagementEventHandlers(IEventHandlerService eventHandlerS
     public void ListenToAllEvents() =>
         eventHandlerService.ListenToAllEvents();
 
+    public void ListenToFinalAppDeleteEvent() =>
+        eventHandlerService.ListenToFinalAppDeleteEvent();
+
 }

@@ -10,4 +10,8 @@ internal partial class EventHandlerService
 {
     private static void ValidateListenToAllEvents(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateListenToFinalAppDeleteEvent(
+        object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
 }

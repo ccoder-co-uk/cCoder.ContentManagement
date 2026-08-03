@@ -27,6 +27,21 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
 
     });
 
+    public void ListenToFinalAppDeleteEvent() =>
+        TryCatch(operation: () =>
+        {
+            ValidateListenToFinalAppDeleteEvent(inputs: []);
+
+            ValidateEventHubBroker(
+                broker: eventHubBroker,
+                parameterName: "eventHubBroker");
+
+            eventHubBroker.ListenToEvent(
+                eventName: "app_delete",
+                handler: (IAppOrchestrationService service, App app) =>
+                    service.HandleAppDeleteAsync(app: app));
+        });
+
     private void ListenToAppEvents()
     {
         ListenToAppAddEvents();
@@ -68,7 +83,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppRenderableCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppPageComponentCoordinationService service, App app) => service.HandleAppDeleteAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IPageRenderCacheEventHandlers service, App app) => service.DeleteAppAsync(deletedApp: app));
-        eventHubBroker.ListenToEvent(eventName: "app_delete", handler: (IAppOrchestrationService service, App app) => service.HandleAppDeleteAsync(app: app));
     }
 
     private void ListenToPageAddEvents()
