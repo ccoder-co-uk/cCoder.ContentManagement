@@ -106,11 +106,19 @@ internal sealed partial class PageRenderAggregationService
     private async ValueTask<PageRenderCache[]> ExecuteRebuildAllAppsPageRenderCacheAsync(
         bool fromEvent)
     {
-        int[] appIds =
-        [
-            .. appOrchestrationService.GetAllApp(ignoreFilters: true)
-                .Select(selector: app => app.Id)
-        ];
+        int[] appIds = fromEvent
+            ?
+            [
+                .. pageRenderCacheOrchestrationService
+                    .GetAllPageRenderCaches()
+                    .Select(selector: cache => cache.AppId)
+                    .Distinct()
+            ]
+            :
+            [
+                .. appOrchestrationService.GetAllApp(ignoreFilters: true)
+                    .Select(selector: app => app.Id)
+            ];
 
         List<PageRenderCache> rebuilt = [];
 
@@ -145,6 +153,14 @@ internal sealed partial class PageRenderAggregationService
             ValidatePageRenderCachesByAppIdOnRebuild(inputs: [operation]);
 
             if (pageRenderCacheImportState.Active && operation.RebuildCache)
+            {
+                return operation;
+            }
+
+            if (operation.RebuildCache &&
+                !pageRenderCacheOrchestrationService
+                    .GetAllPageRenderCaches()
+                    .Any(predicate: cache => cache.AppId == operation.AppId))
             {
                 return operation;
             }
@@ -206,6 +222,14 @@ internal sealed partial class PageRenderAggregationService
             ValidatePageRenderCachesByPageIdOnRebuild(inputs: [operation]);
 
             if (pageRenderCacheImportState.Active && operation.RebuildCache)
+            {
+                return operation;
+            }
+
+            if (operation.RebuildCache &&
+                !pageRenderCacheOrchestrationService
+                    .GetAllPageRenderCaches()
+                    .Any(predicate: cache => cache.PageId == operation.PageId))
             {
                 return operation;
             }
