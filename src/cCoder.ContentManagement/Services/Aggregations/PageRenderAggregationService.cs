@@ -28,7 +28,8 @@ internal sealed partial class PageRenderAggregationService(
     IPageRoleOrchestrationService pageRoleOrchestrationService,
     IPageRenderOrchestrationService pageRenderOrchestrationService,
     IAppCultureOrchestrationService appCultureOrchestrationService,
-    IPageRenderCacheOrchestrationService pageRenderCacheOrchestrationService) : IPageRenderAggregationService
+    IPageRenderCacheOrchestrationService pageRenderCacheOrchestrationService,
+    PageRenderCacheImportState pageRenderCacheImportState) : IPageRenderAggregationService
 {
     public PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation operation) =>

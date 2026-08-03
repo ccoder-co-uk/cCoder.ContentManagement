@@ -375,6 +375,7 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddOrchestrations(this IServiceCollection services)
     {
+        services.AddSingleton<PageRenderCacheImportState>();
         services.AddTransient<IContentManagementMigrationAggregationService, ContentManagementMigrationAggregationService>();
         services.AddTransient<IAppCultureOrchestrationService, AppCultureOrchestrationService>();
         services.AddTransient<IAppCultureManager, AppCultureOrchestrationService>();

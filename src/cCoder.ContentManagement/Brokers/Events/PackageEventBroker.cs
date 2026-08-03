@@ -14,6 +14,9 @@ internal sealed class PackageEventBroker(IAuthenticatedEventHub eventHub)
     public ValueTask RaisePackageImportEventAsync(EventMessage<(int, Package)> message) =>
         RaiseEventAsync(name: "package_import", message: message);
 
+    public ValueTask RaisePackageImportCompleteEventAsync(EventMessage<(int, Package)> message) =>
+        RaiseEventAsync(name: "package_import_complete", message: message);
+
     public ValueTask RaisePackageAddEventAsync(EventMessage<Package> message) =>
         RaiseEventAsync(name: "package_add", message: message);
 

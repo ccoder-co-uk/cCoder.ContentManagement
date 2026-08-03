@@ -10,6 +10,7 @@ namespace cCoder.ContentManagement.Brokers.Events;
 public interface IPackageEventBroker : IAuthenticatedEventBroker
 {
     ValueTask RaisePackageImportEventAsync(EventMessage<(int, Package)> message);
+    ValueTask RaisePackageImportCompleteEventAsync(EventMessage<(int, Package)> message);
 
     ValueTask RaisePackageAddEventAsync(EventMessage<Package> message);
 

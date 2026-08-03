@@ -54,6 +54,11 @@ handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
 eventName: "package_import",
 handler: It.IsAny<Func<IContentManagementMigrationAggregationService, (int appId, Package package), ValueTask>>()));
 
+        eventHubBrokerMock
+            .Setup(expression: x => x.ListenToEvent<(int appId, Package package), IPageRenderCacheEventHandlers>(
+eventName: "package_import_complete",
+handler: It.IsAny<Func<IPageRenderCacheEventHandlers, (int appId, Package package), ValueTask>>()));
+
         // When
         service.ListenToAllEvents();
 
