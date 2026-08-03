@@ -23261,7 +23261,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService.RebuildAppPageRenderOperationAsync(cCoder.ContentManagement.Models.PageRenderOperation)",
           "Name": "RebuildAppPageRenderOperationAsync",
-          "LineNumber": 141,
+          "LineNumber": 149,
           "Inputs": [
             {
               "Name": "operation",
@@ -23272,7 +23272,22 @@
           "Implements": [
             "cCoder.ContentManagement.Services.Aggregations.IPageRenderAggregationService.RebuildAppPageRenderOperationAsync(cCoder.ContentManagement.Models.PageRenderOperation)"
           ],
-          "Calls": [],
+          "Calls": [
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Any",
+              "MethodId": "System.Linq.Queryable.Any(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, System.Boolean\u003E\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageRenderCacheOrchestrationService",
+              "MethodName": "GetAllPageRenderCaches",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRenderCacheOrchestrationService.GetAllPageRenderCaches()",
+              "StandardElementType": "OrchestrationService",
+              "IsDependencyBoundary": false
+            }
+          ],
           "PossibleExceptionTypes": [
             "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
@@ -23357,7 +23372,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderAggregationService.RebuildPagePageRenderOperationAsync(cCoder.ContentManagement.Models.PageRenderOperation)",
           "Name": "RebuildPagePageRenderOperationAsync",
-          "LineNumber": 202,
+          "LineNumber": 218,
           "Inputs": [
             {
               "Name": "operation",
@@ -23373,6 +23388,13 @@
               "TypeName": "System.Collections.Generic.KeyNotFoundException",
               "MethodName": ".ctor",
               "MethodId": "System.Collections.Generic.KeyNotFoundException..ctor(System.String?)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Any",
+              "MethodId": "System.Linq.Queryable.Any(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, System.Boolean\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -23394,6 +23416,13 @@
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService",
               "MethodName": "GetAllPage",
               "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPage(System.Boolean)",
+              "StandardElementType": "OrchestrationService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageRenderCacheOrchestrationService",
+              "MethodName": "GetAllPageRenderCaches",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRenderCacheOrchestrationService.GetAllPageRenderCaches()",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             },
