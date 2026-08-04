@@ -1,5 +1,7 @@
 # cCoder.ContentManagement
 
+[View the latest code coverage report](https://ccoder-co-uk.github.io/cCoder.ContentManagement/)
+
 `cCoder.ContentManagement` contains the Content Management domain for the cCoder platform.
 
 ## Functionality

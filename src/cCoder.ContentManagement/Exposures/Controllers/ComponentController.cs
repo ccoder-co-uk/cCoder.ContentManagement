@@ -62,7 +62,7 @@ public class ComponentController : ODataController
         try
         {
             return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Component)) : new MetadataContainer(type: typeof(Component), isEntity: true, hasEndpoint: true));
+            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Component)) : typeof(Component).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
         }
         catch (ContentManagementValidationException)
         {

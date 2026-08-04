@@ -9,21 +9,10 @@ namespace cCoder.ContentManagement.Models;
 
 public abstract class RenderParams
 {
-    public App App { get; }
+    public App App { get; set; }
 
-    public User User { get; }
+    public User User { get; set; }
 
     public string Culture { get; set; }
 
-    protected RenderParams(App app, User user)
-        : this(app, user, "")
-    {
-    }
-
-    protected RenderParams(App app, User user, string culture)
-    {
-        App = app;
-        User = user;
-        Culture = culture;
-    }
 }

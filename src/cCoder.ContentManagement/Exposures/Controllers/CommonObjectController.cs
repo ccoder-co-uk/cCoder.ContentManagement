@@ -91,7 +91,7 @@ public class CommonObjectController(ICommonObjectManager service) : ODataControl
         try
         {
             return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(CommonObject)) : new MetadataContainer(type: typeof(CommonObject), isEntity: true, hasEndpoint: true));
+            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(CommonObject)) : typeof(CommonObject).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
         }
         catch (ContentManagementValidationException)
         {

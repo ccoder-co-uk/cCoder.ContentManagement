@@ -51,7 +51,7 @@ internal sealed partial class MarkupRenderService(
         string key = string.IsNullOrWhiteSpace(value: session.Page?.ResourceKey) ? "Default" : session.Page.ResourceKey;
         string culture = ResolveCulture(session: session);
 
-        List<Replacement> replacements = BuildDefaultReplacements(session: session)
+        List<ReplacementDependency> replacements = BuildDefaultReplacements(session: session)
             .ToList();
 
         AddThemeTemplateReplacements(newPageRenderSession: session, newReplacement: replacements);
@@ -80,7 +80,7 @@ internal sealed partial class MarkupRenderService(
 
     });
 
-    private string RenderMarkup(string key, string content, PageRenderSession session, IReadOnlyCollection<Replacement> replacements, bool allowContentTags = true)
+    private string RenderMarkup(string key, string content, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements, bool allowContentTags = true)
     {
         if (string.IsNullOrEmpty(value: content))
         {
@@ -103,7 +103,7 @@ internal sealed partial class MarkupRenderService(
         Resource(source: result, session: session, key: key, replacements: replacements);
         ExecuteAsync(key: key, source: result, session: session, replacements: replacements);
 
-        foreach (Replacement replacement in replacements)
+        foreach (ReplacementDependency replacement in replacements)
         {
             result.Replace(oldValue: replacement.Old, newValue: replacement.New);
         }
@@ -111,7 +111,7 @@ internal sealed partial class MarkupRenderService(
         return result.ToString();
     }
 
-    private void Content(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements) =>
+    private void Content(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements) =>
         RegexReplace(source: source, regex: syntax.ContentRegex, action: match =>
                                                                                                                                         {
                                                                                                                                             string name = GetName(match: match);
@@ -185,7 +185,7 @@ values: session.App.PagesById.Values
         }
     }
 
-    private void Dms(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements) =>
+    private void Dms(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements) =>
         RegexReplace(source: source, regex: syntax.DmsRegex, action: match =>
                                                                                                                                     {
                                                                                                                                         string name = GetName(match: match);
@@ -200,7 +200,7 @@ values: session.App.PagesById.Values
                                                                                                                                             : RenderMarkup(key: key, content: latestTextContent, session: session, replacements: replacements, allowContentTags: false);
                                                                                                                                     });
 
-    private void Component(string key, PageRenderSession session, IReadOnlyCollection<Replacement> replacements, StringBuilder result)
+    private void Component(string key, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements, StringBuilder result)
     {
         if (session.Request.Edit)
         {
@@ -227,7 +227,7 @@ values: session.App.PagesById.Values
         });
     }
 
-    private void Script(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements) =>
+    private void Script(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements) =>
         RegexReplace(source: source, regex: syntax.ScriptRegex, action: match =>
                                                                                                                                        {
                                                                                                                                            string name = GetName(match: match);
@@ -238,7 +238,7 @@ values: session.App.PagesById.Values
                                                                                                                                                : RenderMarkup(key: key, content: script.Content, session: session, replacements: replacements, allowContentTags: false);
                                                                                                                                        });
 
-    private void ExecuteAsync(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<Replacement> replacements) =>
+    private void ExecuteAsync(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements) =>
         RegexReplace(source: source, regex: syntax.ExecuteRegex, action: match =>
                                                                                                                                              {
                                                                                                                                                  string code = match.Groups[1].Value;
@@ -276,7 +276,7 @@ values: session.App.PagesById.Values
     private void Meta(StringBuilder source, PageRenderSession session) =>
         RegexReplace(source: source, regex: syntax.MetaRegex, action: match => session.MetadataResolver(arg: GetName(match: match)) ?? string.Empty);
 
-    private void Resource(StringBuilder source, PageRenderSession session, string key, IReadOnlyCollection<Replacement> replacements)
+    private void Resource(StringBuilder source, PageRenderSession session, string key, IReadOnlyCollection<ReplacementDependency> replacements)
     {
         if (session.Request.Edit)
         {
@@ -293,7 +293,7 @@ values: session.App.PagesById.Values
             RenderMarkup(key: key, content: ResolveResource(session: session, key: key, name: GetName(match: match))?.Description ?? GetName(match: match), session: session, replacements: replacements, allowContentTags: false));
     }
 
-    private IEnumerable<Replacement> BuildDefaultReplacements(PageRenderSession session)
+    private IEnumerable<ReplacementDependency> BuildDefaultReplacements(PageRenderSession session)
     {
         string culture = ResolveCulture(session: session);
 
@@ -305,7 +305,7 @@ values: session.App.PagesById.Values
         bool isGuest = string.IsNullOrWhiteSpace(value: user.Id) || string.Equals(a: user.Id, b: "Guest", comparisonType: StringComparison.OrdinalIgnoreCase);
         bool cacheTemplate = session.Request.CacheTemplate;
 
-        List<Replacement> replacements =
+        List<ReplacementDependency> replacements =
         [
             new(old: "[[user]]", @new: cacheTemplate
                 ? PageRenderRuntimeTokens.User
@@ -357,18 +357,18 @@ values: session.App.PagesById.Values
         return replacements;
     }
 
-    private static IEnumerable<Replacement> BuildConfiguredReplacements(PageRenderSession session)
+    private static IEnumerable<ReplacementDependency> BuildConfiguredReplacements(PageRenderSession session)
     {
         if (!string.IsNullOrWhiteSpace(
             value: session.Config?.WorkflowServiceUrl))
         {
-            yield return new Replacement(
+            yield return new ReplacementDependency(
                 old: "[api[workflow]]",
                 @new: session.Config.WorkflowServiceUrl);
         }
     }
 
-    private IEnumerable<Replacement> BuildThemeValueReplacements(PageRenderSession session)
+    private IEnumerable<ReplacementDependency> BuildThemeValueReplacements(PageRenderSession session)
     {
         if (!TryGetThemeDictionary(config: session.App?.Config, themeDictionary: out IDictionary<string, object> themeDictionary))
         {
@@ -381,7 +381,7 @@ values: session.App.PagesById.Values
             && themeDictionary.TryGetValue(key: session.Request.Theme, value: out requestedTheme)
             && requestedTheme != null)
         {
-            foreach (Replacement replacement in BuildThemeReplacements(model: requestedTheme))
+            foreach (ReplacementDependency replacement in BuildThemeReplacements(model: requestedTheme))
             {
                 yield return replacement;
             }
@@ -396,13 +396,13 @@ values: session.App.PagesById.Values
             yield break;
         }
 
-        foreach (Replacement replacement in BuildThemeReplacements(model: requestedTheme))
+        foreach (ReplacementDependency replacement in BuildThemeReplacements(model: requestedTheme))
         {
             yield return replacement;
         }
     }
 
-    private void AddThemeTemplateReplacements(PageRenderSession newPageRenderSession, ICollection<Replacement> newReplacement)
+    private void AddThemeTemplateReplacements(PageRenderSession newPageRenderSession, ICollection<ReplacementDependency> newReplacement)
     {
         if (!TryGetThemeDictionary(config: newPageRenderSession.App?.Config, themeDictionary: out IDictionary<string, object> themeDictionary))
         {
@@ -430,29 +430,29 @@ values: session.App.PagesById.Values
             ? string.Empty
             : RenderTemplate(template: themeTemplate, model: themeModel, session: newPageRenderSession, pageReplacements: newReplacement.ToList());
 
-        newReplacement.Add(item: new Replacement(old: "[theme[template]]", @new: renderedTheme));
-        newReplacement.Add(item: new Replacement(old: "[theme[base]]", @new: baseTheme));
+        newReplacement.Add(item: new ReplacementDependency(old: "[theme[template]]", @new: renderedTheme));
+        newReplacement.Add(item: new ReplacementDependency(old: "[theme[base]]", @new: baseTheme));
     }
 
-    private string RenderTemplate(PageRenderTemplate template, object model, PageRenderSession session, IReadOnlyCollection<Replacement> pageReplacements)
+    private string RenderTemplate(PageRenderTemplate template, object model, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> pageReplacements)
     {
-        List<Replacement> replacements = pageReplacements.ToList();
-        replacements.Add(item: new Replacement(old: "[model]", @new: JsonConvert.SerializeObject(value: model)));
+        List<ReplacementDependency> replacements = pageReplacements.ToList();
+        replacements.Add(item: new ReplacementDependency(old: "[model]", @new: JsonConvert.SerializeObject(value: model)));
         replacements.AddRange(collection: BuildModelReplacements(model: model));
 
         return RenderMarkup(key: template.ResourceKey, content: template.RawString, session: session, replacements: replacements, allowContentTags: false);
     }
 
-    private IEnumerable<Replacement> BuildModelReplacements(object model, string prefix = "")
+    private IEnumerable<ReplacementDependency> BuildModelReplacements(object model, string prefix = "")
     {
         if (model == null)
         {
-            return Array.Empty<Replacement>();
+            return Array.Empty<ReplacementDependency>();
         }
 
         if (model is string text)
         {
-            return [new Replacement(old: "[model[" + prefix + "]]", @new: text)];
+            return [new ReplacementDependency(old: "[model[" + prefix + "]]", @new: text)];
         }
 
         if (model is JObject jObject)
@@ -479,9 +479,9 @@ values: session.App.PagesById.Values
         return BuildObjectReplacements(model: model, prefix: prefix);
     }
 
-    private IEnumerable<Replacement> BuildCollectionReplacements(IEnumerable model, string prefix)
+    private IEnumerable<ReplacementDependency> BuildCollectionReplacements(IEnumerable model, string prefix)
     {
-        List<Replacement> replacements = [];
+        List<ReplacementDependency> replacements = [];
         int index = 0;
 
         foreach (object item in model)
@@ -491,12 +491,12 @@ values: session.App.PagesById.Values
         }
 
         string lengthBinding = string.IsNullOrEmpty(value: prefix) ? "Length" : prefix + ".Length";
-        replacements.Add(item: new Replacement(old: "[model[" + lengthBinding + "]]", @new: index.ToString()));
+        replacements.Add(item: new ReplacementDependency(old: "[model[" + lengthBinding + "]]", @new: index.ToString()));
 
         return replacements;
     }
 
-    private IEnumerable<Replacement> BuildObjectReplacements(object model, string prefix) =>
+    private IEnumerable<ReplacementDependency> BuildObjectReplacements(object model, string prefix) =>
         model.GetType()
         .GetProperties()
         .SelectMany(selector: property =>
@@ -506,32 +506,32 @@ values: session.App.PagesById.Values
 
                 if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
                 {
-                    return [new Replacement(old: "[model[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
+                    return [new ReplacementDependency(old: "[model[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
                 }
 
                 return value != null
                     ? BuildModelReplacements(model: value, prefix: bindingExpression)
-                    : Array.Empty<Replacement>();
+                    : Array.Empty<ReplacementDependency>();
             });
 
-    private IEnumerable<Replacement> BuildJObjectReplacements(JObject model, string prefix) =>
+    private IEnumerable<ReplacementDependency> BuildJObjectReplacements(JObject model, string prefix) =>
         model.Properties()
         .SelectMany(selector: property =>
         {
             string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
 
             return property.Value is JValue value
-                ? [new Replacement(old: "[model[" + bindingExpression + "]]", @new: value.ToString())]
+                ? [new ReplacementDependency(old: "[model[" + bindingExpression + "]]", @new: value.ToString())]
                 : BuildModelReplacements(model: property.Value, prefix: bindingExpression);
         });
 
-    private IEnumerable<Replacement> BuildDynamicReplacements(IDictionary<string, object> model, string prefix) =>
+    private IEnumerable<ReplacementDependency> BuildDynamicReplacements(IDictionary<string, object> model, string prefix) =>
         model.Keys.SelectMany(selector: key =>
                                                                                                                            {
                                                                                                                                string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
                                                                                                                                object value = model[key];
 
-                                                                                                                               List<Replacement> replacements = [new(old: "[model[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
+                                                                                                                               List<ReplacementDependency> replacements = [new(old: "[model[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
 
                                                                                                                                if (value != null && !value.GetType()
                                                                                                                                    .IsValueType && value is not string)
@@ -542,11 +542,11 @@ values: session.App.PagesById.Values
                                                                                                                                return replacements;
                                                                                                                            });
 
-    private IEnumerable<Replacement> BuildThemeReplacements(object model, string prefix = "")
+    private IEnumerable<ReplacementDependency> BuildThemeReplacements(object model, string prefix = "")
     {
         if (model == null)
         {
-            return Array.Empty<Replacement>();
+            return Array.Empty<ReplacementDependency>();
         }
 
         if (model is JObject jObject)
@@ -556,7 +556,7 @@ values: session.App.PagesById.Values
 
         if (model is string text)
         {
-            return [new Replacement(old: "[theme[" + prefix + "]]", @new: text)];
+            return [new ReplacementDependency(old: "[theme[" + prefix + "]]", @new: text)];
         }
 
         if (model.GetType()
@@ -573,10 +573,10 @@ values: session.App.PagesById.Values
         return BuildThemeObjectReplacements(model: model, prefix: prefix);
     }
 
-    private IEnumerable<Replacement> BuildThemeCollectionReplacements(IEnumerable model, string prefix)
+    private IEnumerable<ReplacementDependency> BuildThemeCollectionReplacements(IEnumerable model, string prefix)
     {
         string bindingExpression = prefix ?? string.Empty;
-        List<Replacement> replacements = [];
+        List<ReplacementDependency> replacements = [];
         int index = 0;
 
         foreach (object item in model)
@@ -586,12 +586,12 @@ values: session.App.PagesById.Values
         }
 
         string lengthBinding = bindingExpression.Length == 0 ? "Length" : bindingExpression + ".Length";
-        replacements.Add(item: new Replacement(old: "[theme[" + lengthBinding + "]]", @new: index.ToString()));
+        replacements.Add(item: new ReplacementDependency(old: "[theme[" + lengthBinding + "]]", @new: index.ToString()));
 
         return replacements;
     }
 
-    private IEnumerable<Replacement> BuildThemeObjectReplacements(object model, string prefix) =>
+    private IEnumerable<ReplacementDependency> BuildThemeObjectReplacements(object model, string prefix) =>
         model.GetType()
         .GetProperties()
         .SelectMany(selector: property =>
@@ -603,34 +603,34 @@ values: session.App.PagesById.Values
                 {
                     return
                     [
-                        new Replacement(old: "[theme[" + prefix + "]]", @new: model?.ToString() ?? string.Empty),
-                        new Replacement(old: "[theme[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)
+                        new ReplacementDependency(old: "[theme[" + prefix + "]]", @new: model?.ToString() ?? string.Empty),
+                        new ReplacementDependency(old: "[theme[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)
                     ];
                 }
 
                 return value != null
                     ? BuildThemeReplacements(model: value, prefix: bindingExpression)
-                    : Array.Empty<Replacement>();
+                    : Array.Empty<ReplacementDependency>();
             });
 
-    private IEnumerable<Replacement> BuildThemeJObjectReplacements(JObject model, string prefix) =>
+    private IEnumerable<ReplacementDependency> BuildThemeJObjectReplacements(JObject model, string prefix) =>
         model.Properties()
         .SelectMany(selector: property =>
         {
             string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
 
             return property.Value is JValue value
-                ? [new Replacement(old: "[theme[" + bindingExpression + "]]", @new: value.ToString())]
+                ? [new ReplacementDependency(old: "[theme[" + bindingExpression + "]]", @new: value.ToString())]
                 : BuildThemeReplacements(model: property.Value, prefix: bindingExpression);
         });
 
-    private IEnumerable<Replacement> BuildThemeDynamicReplacements(IDictionary<string, object> model, string prefix) =>
+    private IEnumerable<ReplacementDependency> BuildThemeDynamicReplacements(IDictionary<string, object> model, string prefix) =>
         model.Keys.SelectMany(selector: key =>
                                                                                                                                 {
                                                                                                                                     string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
                                                                                                                                     object value = model[key];
 
-                                                                                                                                    List<Replacement> replacements = [new(old: "[theme[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
+                                                                                                                                    List<ReplacementDependency> replacements = [new(old: "[theme[" + bindingExpression + "]]", @new: value?.ToString() ?? string.Empty)];
 
                                                                                                                                     if (value != null && !value.GetType()
                                                                                                                                         .IsValueType)

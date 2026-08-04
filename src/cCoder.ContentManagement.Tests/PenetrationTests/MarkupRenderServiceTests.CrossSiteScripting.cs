@@ -74,10 +74,23 @@ public partial class MarkupRenderServiceTests
                 ResourceKey = "Default",
                 Path = attack
             },
+            User = new PageRenderUser
+            {
+                Id = "Guest",
+                AppPrivileges = new Dictionary<int, ISet<string>>()
+            },
             Layout = new PageRenderLayout
             {
                 HeaderHtml = $"<meta content=\"{tag}\"><div data-value='{tag}'>{tag}</div><script>const value = \"{tag}\";</script>"
-            }
+            },
+            Resources = [],
+            ResourcesByLookup = new Dictionary<string, PageRenderResource>(),
+            ComponentsByName = new Dictionary<string, PageRenderComponent>(),
+            ScriptsByName = new Dictionary<string, PageRenderScript>(),
+            MetadataResolver = unusedKey => string.Empty,
+            CommonResourcesByLookup = new Dictionary<string, PageRenderResource>(),
+            CommonComponentsByName = new Dictionary<string, PageRenderComponent>(),
+            CommonScriptsByName = new Dictionary<string, PageRenderScript>()
         };
 
         // When

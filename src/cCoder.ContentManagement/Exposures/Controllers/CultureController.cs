@@ -35,7 +35,7 @@ public class CultureController : ODataController
         try
         {
             return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Culture)) : new MetadataContainer(type: typeof(Culture), isEntity: true, hasEndpoint: true));
+            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Culture)) : typeof(Culture).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
         }
         catch (ContentManagementValidationException)
         {

@@ -34,7 +34,7 @@ public class LayoutController : ODataController
         try
         {
             return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Layout)) : new MetadataContainer(type: typeof(Layout), isEntity: true, hasEndpoint: true));
+            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Layout)) : typeof(Layout).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
         }
         catch (ContentManagementValidationException)
         {

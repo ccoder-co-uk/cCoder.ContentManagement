@@ -9,8 +9,4 @@ namespace cCoder.ContentManagement.Models;
 
 public class TemplateRenderParams : RenderParams
 {
-    public TemplateRenderParams(App app, User user, string culture)
-        : base(app, user, culture)
-    {
-    }
 }

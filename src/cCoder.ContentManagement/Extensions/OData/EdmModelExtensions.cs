@@ -42,10 +42,8 @@ public static class EdmModelExtensions
 
     public static ExtendedMetadataContainer GetExtendedMetadataForType(this IEdmModel model, string context, Type type, bool hasEndpoint = true)
     {
-        ExtendedMetadataContainer result = new ExtendedMetadataContainer(type: type, isEntity: true, hasEndpoint: hasEndpoint)
-        {
-            Category = context
-        };
+        ExtendedMetadataContainer result = type.CreateExtendedMetadataContainer(isEntity: true, hasEndpoint: hasEndpoint);
+        result.Category = context;
 
         IEdmEntitySet edmEntitySet = model.EntityContainer.FindEntitySet(setName: type.Name);
 
@@ -91,7 +89,7 @@ public static class EdmModelExtensions
         }
 
         Type type = Type.GetType(typeName: definition.FullTypeName(), throwOnError: false);
-        return ((object)type == null) ? null : new MetadataContainer(type: type, isEntity: true, hasEndpoint: true);
+        return ((object)type == null) ? null : type.CreateMetadataContainer(isEntity: true, hasEndpoint: true);
     }
 
     private static IEnumerable<OperationContainer> GetBaseCrudOperations(MetadataContainer type) =>

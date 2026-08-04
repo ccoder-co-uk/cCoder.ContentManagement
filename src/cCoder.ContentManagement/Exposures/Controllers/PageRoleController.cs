@@ -28,7 +28,7 @@ public class PageRoleController : ODataController
     {
         try
         {
-            return Ok(value: new MetadataContainer(type: typeof(PageRole), isEntity: true, hasEndpoint: true));
+            return Ok(value: typeof(PageRole).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
         }
         catch (ContentManagementValidationException)
         {

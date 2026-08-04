@@ -16,15 +16,4 @@ internal sealed class PageRenderApp
 
     public IReadOnlyDictionary<string, PageRenderTemplate> TemplatesByName { get; set; }
     public IReadOnlyDictionary<int, PageRenderPage> PagesById { get; set; }
-
-    internal PageRenderApp
-()
-    {
-        this.Name = string.Empty;
-        this.Domain = string.Empty;
-        this.DefaultTheme = string.Empty;
-        this.DefaultCulture = string.Empty;
-        this.TemplatesByName = new Dictionary<string, PageRenderTemplate>(comparer: StringComparer.OrdinalIgnoreCase);
-        this.PagesById = new Dictionary<int, PageRenderPage>();
-    }
 }

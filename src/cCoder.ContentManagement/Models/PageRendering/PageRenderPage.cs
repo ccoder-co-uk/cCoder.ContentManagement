@@ -24,17 +24,4 @@ internal sealed class PageRenderPage
     public string Description { get; set; }
     public string Keywords { get; set; }
     public IReadOnlyDictionary<string, PageRenderContent> ContentByName { get; set; }
-
-    internal PageRenderPage
-()
-    {
-        this.Path = string.Empty;
-        this.Name = string.Empty;
-        this.ResourceKey = string.Empty;
-        this.LayoutName = string.Empty;
-        this.Title = string.Empty;
-        this.Description = string.Empty;
-        this.Keywords = string.Empty;
-        this.ContentByName = new Dictionary<string, PageRenderContent>(comparer: StringComparer.OrdinalIgnoreCase);
-    }
 }

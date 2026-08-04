@@ -33,7 +33,13 @@ public partial class TemplateRenderProcessingServiceTests
     {
         // Given
         (RenderApp app, RenderUser user, RenderTemplate template) = CreateTemplateRenderContext();
-        RenderTemplateParams renderParams = new(app: app, user: user, culture: "en-GB");
+
+        RenderTemplateParams renderParams = new()
+        {
+            App = app,
+            User = user,
+            Culture = "en-GB"
+        };
 
         metadataCacheMock.Setup(expression: x => x.Get(key: "site-description", culture: "en-GB"))
             .Returns(value: "Meta Description");
@@ -91,10 +97,12 @@ public partial class TemplateRenderProcessingServiceTests
         Action act = () => sut.RenderTemplateRenderParams(
             template: null!,
             model: new { Name = "Taylor" },
-            renderParams: new RenderTemplateParams(
-                app: app,
-                user: user,
-                culture: "en-GB"));
+            renderParams: new RenderTemplateParams
+            {
+                App = app,
+                User = user,
+                Culture = "en-GB"
+            });
 
         // Then
         act.Should()
