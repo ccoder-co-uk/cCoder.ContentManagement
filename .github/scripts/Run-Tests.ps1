@@ -26,7 +26,7 @@ $processes = foreach ($project in $testProjects) {
 
     if ($CollectCoverage) {
         $arguments += @(
-            "--collect", "XPlat Code Coverage",
+            "--collect", '"XPlat Code Coverage"',
             "--settings", "coverage.runsettings"
         )
     }
