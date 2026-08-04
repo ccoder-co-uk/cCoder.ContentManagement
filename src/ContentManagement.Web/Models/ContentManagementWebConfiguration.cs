@@ -22,12 +22,4 @@ public sealed class ContentManagementWebConfiguration
 
     public EventingConfiguration Eventing { get; set; }
 
-    public ContentManagementWebConfiguration()
-    {
-        ContentManagement = new ContentManagementConfiguration();
-        Data = new DataConfiguration();
-        Security = new SecurityConfiguration();
-        AppSecurity = new AppSecurityConfiguration();
-        Eventing = new EventingConfiguration();
-    }
 }

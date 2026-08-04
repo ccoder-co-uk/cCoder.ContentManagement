@@ -10,11 +10,4 @@ public sealed class ModelStateError
     public object Value { get; set; }
 
     public string[] Errors { get; set; }
-
-    public ModelStateError
-()
-    {
-        this.Key = string.Empty;
-        this.Errors = Array.Empty<string>();
-    }
 }

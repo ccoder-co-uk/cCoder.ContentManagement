@@ -28,13 +28,15 @@ using RenderResource = cCoder.Data.Models.CMS.Resource;
 using RenderScript = cCoder.Data.Models.CMS.Script;
 using RenderTemplate = cCoder.Data.Models.CMS.Template;
 using RenderUser = cCoder.Data.Models.Security.User;
+using ICommonObjectReaderBroker = cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class TemplateRenderProcessingServiceTests
 {
     private readonly Mock<IMetadataCache> metadataCacheMock = new();
-    private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
+
+    private readonly Mock<ICommonObjectReaderBroker> commonObjectCacheMock = new();
 
     private TemplateRenderProcessingService CreateSut(RenderConfig config)
     {

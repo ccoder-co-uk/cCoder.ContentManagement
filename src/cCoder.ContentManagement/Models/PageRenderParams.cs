@@ -9,14 +9,7 @@ namespace cCoder.ContentManagement.Models;
 
 public class PageRenderParams : ComponentRenderParams
 {
-    public Page Page { get; }
+    public Page Page { get; set; }
 
-    public bool Edit { get; }
-
-    public PageRenderParams(Page page, string theme, App app, User user, string culture, bool edit = false)
-        : base(theme, app, user, culture)
-    {
-        Page = page;
-        Edit = edit;
-    }
+    public bool Edit { get; set; }
 }

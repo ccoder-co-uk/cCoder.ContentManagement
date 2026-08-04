@@ -147,6 +147,12 @@ public partial class ComponentRenderProcessingServiceTests
             Script = string.Empty,
         };
 
-        return (app, user, component, new RenderComponentParams(theme: "Default", app: app, user: user, culture: "en-GB"));
+        return (app, user, component, new RenderComponentParams
+        {
+            Theme = "Default",
+            App = app,
+            User = user,
+            Culture = "en-GB"
+        });
     }
 }

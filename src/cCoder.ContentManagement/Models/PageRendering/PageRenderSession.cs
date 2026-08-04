@@ -31,15 +31,4 @@ internal sealed class PageRenderSession
 
     public PageRenderResult Result { get; set; }
 
-    internal PageRenderSession()
-    {
-        Resources = Array.Empty<PageRenderResource>();
-        ResourcesByLookup = new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
-        ComponentsByName = new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
-        ScriptsByName = new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
-        MetadataResolver = static unusedKey => string.Empty;
-        CommonResourcesByLookup = new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
-        CommonComponentsByName = new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
-        CommonScriptsByName = new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
-    }
 }

@@ -10,11 +10,4 @@ internal sealed class PageRenderContent
 
     public string Name { get; set; }
     public string Html { get; set; }
-
-    internal PageRenderContent
-()
-    {
-        this.Name = string.Empty;
-        this.Html = string.Empty;
-    }
 }

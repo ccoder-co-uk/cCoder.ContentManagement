@@ -9,11 +9,5 @@ namespace cCoder.ContentManagement.Models;
 
 public class ComponentRenderParams : RenderParams
 {
-    public string Theme { get; }
-
-    public ComponentRenderParams(string theme, App app, User user, string culture)
-        : base(app, user, culture)
-    {
-        Theme = theme ?? "Default";
-    }
+    public string Theme { get; set; }
 }

@@ -37,9 +37,4 @@ public class RenderResult
     public string BodyHtml { get; set; }
 
     public int StatusCode { get; set; }
-
-    public RenderResult()
-    {
-        StatusCode = 200;
-    }
 }

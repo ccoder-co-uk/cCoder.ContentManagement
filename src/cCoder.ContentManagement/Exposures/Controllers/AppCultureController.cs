@@ -28,7 +28,7 @@ public class AppCultureController : ODataController
     {
         try
         {
-            return Ok(value: new MetadataContainer(type: typeof(AppCulture), isEntity: true, hasEndpoint: true));
+            return Ok(value: typeof(AppCulture).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
         }
         catch (ContentManagementValidationException)
         {

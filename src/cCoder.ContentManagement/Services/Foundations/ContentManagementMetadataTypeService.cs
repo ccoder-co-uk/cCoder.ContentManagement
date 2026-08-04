@@ -67,20 +67,20 @@ internal sealed partial class ContentManagementMetadataTypeService : IContentMan
 
         metadataContainerSet.Types = new ExtendedMetadataContainer[14]
         {
-            new ExtendedMetadataContainer(type: typeof(int)),
-            new ExtendedMetadataContainer(type: typeof(string)),
-            new ExtendedMetadataContainer(type: typeof(decimal)),
-            new ExtendedMetadataContainer(type: typeof(double)),
-            new ExtendedMetadataContainer(type: typeof(float)),
-            new ExtendedMetadataContainer(type: typeof(bool)),
-            new ExtendedMetadataContainer(type: typeof(DateTime)),
-            new ExtendedMetadataContainer(type: typeof(DateTimeOffset)),
-            new ExtendedMetadataContainer(type: typeof(TimeSpan)),
-            new ExtendedMetadataContainer(type: typeof(IEnumerable<object>)),
-            new ExtendedMetadataContainer(type: typeof(ICollection<object>)),
-            new ExtendedMetadataContainer(type: typeof(IDictionary<string, object>)),
-            new ExtendedMetadataContainer(type: typeof(object)),
-            new ExtendedMetadataContainer(type: typeof(Guid))
+            typeof(int).CreateExtendedMetadataContainer(),
+            typeof(string).CreateExtendedMetadataContainer(),
+            typeof(decimal).CreateExtendedMetadataContainer(),
+            typeof(double).CreateExtendedMetadataContainer(),
+            typeof(float).CreateExtendedMetadataContainer(),
+            typeof(bool).CreateExtendedMetadataContainer(),
+            typeof(DateTime).CreateExtendedMetadataContainer(),
+            typeof(DateTimeOffset).CreateExtendedMetadataContainer(),
+            typeof(TimeSpan).CreateExtendedMetadataContainer(),
+            typeof(IEnumerable<object>).CreateExtendedMetadataContainer(),
+            typeof(ICollection<object>).CreateExtendedMetadataContainer(),
+            typeof(IDictionary<string, object>).CreateExtendedMetadataContainer(),
+            typeof(object).CreateExtendedMetadataContainer(),
+            typeof(Guid).CreateExtendedMetadataContainer()
         }.Select(selector: type =>
         {
             type.Category = "System";
@@ -107,10 +107,15 @@ internal sealed partial class ContentManagementMetadataTypeService : IContentMan
         Type type,
         string category,
         bool isEntity = false,
-        bool hasEndpoint = false) =>
-        new ExtendedMetadataContainer(type: type, isEntity: isEntity, hasEndpoint: hasEndpoint)
-        {
-            Category = category
-        };
+        bool hasEndpoint = false)
+    {
+        ExtendedMetadataContainer metadata = type.CreateExtendedMetadataContainer(
+            isEntity: isEntity,
+            hasEndpoint: hasEndpoint);
+
+        metadata.Category = category;
+
+        return metadata;
+    }
 
 }

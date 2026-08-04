@@ -33,13 +33,13 @@ public partial class MetadataCacheTests
         MetadataContainerSet core = new()
         {
             Name = "Core",
-            Types = [new ExtendedMetadataContainer(type: typeof(string)) { Category = "Core" }],
+            Types = [typeof(string).CreateExtendedMetadataContainer(category: "Core")],
         };
 
         MetadataContainerSet workflow = new()
         {
             Name = "Workflow",
-            Types = [new ExtendedMetadataContainer(type: typeof(int)) { Category = "Workflow" }],
+            Types = [typeof(int).CreateExtendedMetadataContainer(category: "Workflow")],
         };
 
         MetadataCacheDependency subject = CreateSubject(typeSets: [core, workflow]);
@@ -72,13 +72,13 @@ times: Times.Once
         MetadataContainerSet initial = new()
         {
             Name = "Core",
-            Types = [new ExtendedMetadataContainer(type: typeof(string)) { Category = "Core" }],
+            Types = [typeof(string).CreateExtendedMetadataContainer(category: "Core")],
         };
 
         MetadataContainerSet updated = new()
         {
             Name = "Workflow",
-            Types = [new ExtendedMetadataContainer(type: typeof(int)) { Category = "Workflow" }],
+            Types = [typeof(int).CreateExtendedMetadataContainer(category: "Workflow")],
         };
 
         string[] currentTypeSetPayloads = [JsonSerializer.Serialize(value: initial)];
@@ -126,14 +126,14 @@ times: Times.Exactly(callCount: 2)
         {
             Name = "Core",
             UriBase = "Core",
-            Types = [new ExtendedMetadataContainer(type: typeof(App)) { Category = "Core" }],
+            Types = [typeof(App).CreateExtendedMetadataContainer(category: "Core")],
         };
 
         MetadataContainerSet appSecurity = new()
         {
             Name = "Core",
             UriBase = "Core",
-            Types = [new ExtendedMetadataContainer(type: typeof(Role)) { Category = "Core" }],
+            Types = [typeof(Role).CreateExtendedMetadataContainer(category: "Core")],
         };
 
         MetadataCacheDependency subject = CreateSubject(typeSets: [contentManagement, appSecurity]);

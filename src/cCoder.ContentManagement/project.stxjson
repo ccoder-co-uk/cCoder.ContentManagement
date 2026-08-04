@@ -7369,6 +7369,30 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Dependencies.ReplacementDependency",
+      "StandardElementType": "Dependency",
+      "LineNumber": 7,
+      "IsPublic": true,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [
+        {
+          "Name": "New",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Old",
+          "Type": "System.String"
+        },
+        {
+          "Name": "ReplaceFunction",
+          "Type": "System.Func\u003CSystem.String, System.String\u003E"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Dependencies.TemplateContentDependency",
       "StandardElementType": "Dependency",
       "LineNumber": 9,
@@ -20777,7 +20801,7 @@
     {
       "Name": "cCoder.ContentManagement.Models.OData.MetadataContainer",
       "StandardElementType": "Model",
-      "LineNumber": 9,
+      "LineNumber": 7,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": null,
@@ -21975,30 +21999,6 @@
         {
           "Name": "UserId",
           "Type": "System.String"
-        }
-      ],
-      "Methods": []
-    },
-    {
-      "Name": "cCoder.ContentManagement.Models.Replacement",
-      "StandardElementType": "Model",
-      "LineNumber": 7,
-      "IsPublic": true,
-      "Kind": "Class",
-      "BaseType": null,
-      "Interfaces": [],
-      "Properties": [
-        {
-          "Name": "New",
-          "Type": "System.String"
-        },
-        {
-          "Name": "Old",
-          "Type": "System.String"
-        },
-        {
-          "Name": "ReplaceFunction",
-          "Type": "System.Func\u003CSystem.String, System.String\u003E"
         }
       ],
       "Methods": []

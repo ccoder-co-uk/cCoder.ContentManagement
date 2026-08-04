@@ -19,12 +19,4 @@ internal sealed class PageRenderEngineRequest
     public string RequestUrl { get; set; }
     public Exception Exception { get; set; }
 
-    internal PageRenderEngineRequest
-    ()
-    {
-        this.Path = string.Empty;
-        this.Theme = string.Empty;
-        this.Culture = string.Empty;
-        this.RequestUrl = string.Empty;
-    }
 }

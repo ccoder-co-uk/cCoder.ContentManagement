@@ -19,15 +19,4 @@ public class ContentManagementConfiguration
     public string RootPath { get; set; }
     public bool IncludeLegacyCoreContext { get; set; }
     public EventProvider[] EventProviders { get; set; }
-
-    public ContentManagementConfiguration()
-    {
-        ConnectionString = string.Empty;
-        WorkflowServiceUrl = string.Empty;
-        CacheSource = string.Empty;
-        CacheExpiry = 30;
-        RootPath = "Api/ContentManagement";
-        IncludeLegacyCoreContext = true;
-        EventProviders = [];
-    }
 }

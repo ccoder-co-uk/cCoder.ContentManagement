@@ -2,9 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-namespace cCoder.ContentManagement.Models;
+namespace cCoder.ContentManagement.Dependencies;
 
-public class Replacement
+public class ReplacementDependency
 {
     private readonly string newString;
 
@@ -14,21 +14,17 @@ public class Replacement
         newString ?? ReplaceFunction(arg: Old);
 
     public Func<string, string> ReplaceFunction { get; }
-    public Replacement(string old, string @new)
+
+    public ReplacementDependency(string old, string @new)
     {
-        this.ReplaceFunction = (string source) => source;
+        ReplaceFunction = source => source;
         Old = old;
         newString = @new;
     }
 
-    public Replacement(string old, Func<string, string> replacer)
+    public ReplacementDependency(string old, Func<string, string> replacer)
     {
-        this.ReplaceFunction = (string source) => source;
+        ReplaceFunction = replacer ?? (source => source);
         Old = old;
-
-        if (replacer != null)
-        {
-            ReplaceFunction = replacer;
-        }
     }
 }

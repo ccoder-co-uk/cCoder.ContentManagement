@@ -24,19 +24,4 @@ internal sealed class PageRenderResult
     public string HeaderHtml { get; set; }
     public string BodyHtml { get; set; }
     public int StatusCode { get; set; }
-
-    internal PageRenderResult
-()
-    {
-        this.Theme = string.Empty;
-        this.Culture = string.Empty;
-        this.Path = string.Empty;
-        this.Layout = string.Empty;
-        this.Title = string.Empty;
-        this.Description = string.Empty;
-        this.Keywords = string.Empty;
-        this.HeaderHtml = string.Empty;
-        this.BodyHtml = string.Empty;
-        this.StatusCode = 200;
-    }
 }

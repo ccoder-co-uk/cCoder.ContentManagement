@@ -127,7 +127,13 @@ internal partial class TemplateRenderProcessingService(
                 existingTemplate.Name.Equals(value: name, comparisonType: StringComparison.OrdinalIgnoreCase))
             ?? throw new InvalidOperationException(message: "Template '" + name + "' was not found.");
 
-        TemplateRenderParams templateRenderParams = new(app: app, user: user, culture: culture);
+        TemplateRenderParams templateRenderParams = new()
+        {
+            App = app,
+            User = user,
+            Culture = culture
+        };
+
         return ExecuteRenderTemplateRenderParamsConfig(template: template, model: model, renderParams: templateRenderParams, config: config, log: log);
 
     });
@@ -143,10 +149,10 @@ internal partial class TemplateRenderProcessingService(
         ValidateModel(model: model, parameterName: "model");
         ValidateRenderParamsArgument(renderParams: renderParams, parameterName: "renderParams");
 
-        List<Replacement> list = DefaultReplacements(renderParams: renderParams, config: config)
+        List<ReplacementDependency> list = DefaultReplacements(renderParams: renderParams, config: config)
             .ToList();
 
-        list.Add(item: new Replacement(old: "[model]", @new: jsonBroker.Serialize(value: model)));
+        list.Add(item: new ReplacementDependency(old: "[model]", @new: jsonBroker.Serialize(value: model)));
         list.AddRange(collection: BuildModelReplacements(model: model));
 
         if (log != null && log.IsEnabled(logLevel: LogLevel.Debug))
@@ -160,7 +166,7 @@ internal partial class TemplateRenderProcessingService(
 
     });
 
-    private ICollection<Replacement> DefaultReplacements(
+    private ICollection<ReplacementDependency> DefaultReplacements(
         RenderParams renderParams,
         ContentManagementConfiguration config = null)
     {
@@ -178,11 +184,11 @@ internal partial class TemplateRenderProcessingService(
             : string.Empty;
 
         int num = 10;
-        List<Replacement> list = new List<Replacement>(capacity: num);
+        List<ReplacementDependency> list = new List<ReplacementDependency>(capacity: num);
         CollectionsMarshal.SetCount(list: list, count: num);
-        Span<Replacement> span = CollectionsMarshal.AsSpan(list: list);
+        Span<ReplacementDependency> span = CollectionsMarshal.AsSpan(list: list);
 
-        span[0] = new Replacement(old: "[[user]]", @new: jsonBroker.Serialize(value: new
+        span[0] = new ReplacementDependency(old: "[[user]]", @new: jsonBroker.Serialize(value: new
         {
             Id = renderParams.User?.Id,
             DefaultCultureId = renderParams.User?.DefaultCultureId,
@@ -190,35 +196,35 @@ internal partial class TemplateRenderProcessingService(
             Email = renderParams.User?.Email
         }));
 
-        span[1] = new Replacement(old: "[[displayname]]", @new: renderParams.User?.DisplayName);
-        span[2] = new Replacement(old: "[[loginlink]]", @new: (renderParams.User?.Id == "Guest") ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>");
-        span[3] = new Replacement(old: "[[date]]", @new: DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy"));
-        span[4] = new Replacement(old: "[[culture]]", @new: text2);
+        span[1] = new ReplacementDependency(old: "[[displayname]]", @new: renderParams.User?.DisplayName);
+        span[2] = new ReplacementDependency(old: "[[loginlink]]", @new: (renderParams.User?.Id == "Guest") ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>");
+        span[3] = new ReplacementDependency(old: "[[date]]", @new: DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy"));
+        span[4] = new ReplacementDependency(old: "[[culture]]", @new: text2);
 
-        span[5] = new Replacement(old: "[[lang]]", @new: text2.Split(separator: '-')
+        span[5] = new ReplacementDependency(old: "[[lang]]", @new: text2.Split(separator: '-')
             .First());
 
-        span[6] = new Replacement(old: "[app[name]]", @new: renderParams.App?.Name);
-        span[7] = new Replacement(old: "[app[domain]]", @new: renderParams.App?.Domain);
-        span[8] = new Replacement(old: "[app[root]]", @new: "https://" + renderParams.App?.Domain + text3 + "/");
-        span[9] = new Replacement(old: "[app[id]]", @new: renderParams.App?.Id.ToString());
-        List<Replacement> list2 = list;
+        span[6] = new ReplacementDependency(old: "[app[name]]", @new: renderParams.App?.Name);
+        span[7] = new ReplacementDependency(old: "[app[domain]]", @new: renderParams.App?.Domain);
+        span[8] = new ReplacementDependency(old: "[app[root]]", @new: "https://" + renderParams.App?.Domain + text3 + "/");
+        span[9] = new ReplacementDependency(old: "[app[id]]", @new: renderParams.App?.Id.ToString());
+        List<ReplacementDependency> list2 = list;
 
         if (config != null)
         {
             if (!string.IsNullOrWhiteSpace(value: config.WorkflowServiceUrl))
             {
-                list2.Add(item: new Replacement(
+                list2.Add(item: new ReplacementDependency(
                     old: "[api[workflow]]",
                     @new: config.WorkflowServiceUrl));
             }
 
-            list2.Add(item: new Replacement(old: "[api[root]]", @new: "https://" + renderParams.App?.Domain + text3 + "/Api/"));
+            list2.Add(item: new ReplacementDependency(old: "[api[root]]", @new: "https://" + renderParams.App?.Domain + text3 + "/Api/"));
         }
 
         if (renderParams is TemplateRenderParams)
         {
-            list2.Add(item: new Replacement(old: "[theme[name]]", @new: "Default"));
+            list2.Add(item: new ReplacementDependency(old: "[theme[name]]", @new: "Default"));
             IDictionary<string, object> source = default(IDictionary<string, object>);
 
             if (TryGetThemeDictionary(config: renderParams.App.Config, themeDictionary: out source) && source.Any())
@@ -231,7 +237,7 @@ internal partial class TemplateRenderProcessingService(
         return list2;
     }
 
-    private string ProcessContentString(string key, RenderParams renderParams, string content, IEnumerable<Replacement> replacements)
+    private string ProcessContentString(string key, RenderParams renderParams, string content, IEnumerable<ReplacementDependency> replacements)
     {
         if (content == null)
         {
@@ -257,7 +263,7 @@ internal partial class TemplateRenderProcessingService(
         Resource(key: key, source: result, renderParams: renderParams, replacements: replacements);
         ExecuteAsync(key: key, source: result, renderParams: renderParams, replacements: replacements);
 
-        foreach (Replacement replacement in replacements)
+        foreach (ReplacementDependency replacement in replacements)
         {
             result.Replace(oldValue: replacement.Old, newValue: replacement.New);
         }
@@ -265,7 +271,7 @@ internal partial class TemplateRenderProcessingService(
         return result.ToString();
     }
 
-    private static void ValidateRenderParams(RenderParams renderParams, IEnumerable<Replacement> replacements)
+    private static void ValidateRenderParams(RenderParams renderParams, IEnumerable<ReplacementDependency> replacements)
     {
         if (renderParams == null)
         {
@@ -298,7 +304,7 @@ internal partial class TemplateRenderProcessingService(
         return (type: array[1].ToLower(), name: array2[0].ToLower(), options: array2[1].Split(separator: "|", options: StringSplitOptions.RemoveEmptyEntries));
     }
 
-    private void Script(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements) =>
+    private void Script(string key, StringBuilder source, RenderParams renderParams, IEnumerable<ReplacementDependency> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[script\\[[A-Za-z\\d_/. \\-]*\\]\\]", action: match =>
                                                                                                                                {
                                                                                                                                    string name = match.Value.Replace(oldValue: "[script[", newValue: "")
@@ -316,7 +322,7 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                    return string.Empty;
                                                                                                                                });
 
-    private void Component(string key, RenderParams renderParams, IEnumerable<Replacement> replacements, StringBuilder result) =>
+    private void Component(string key, RenderParams renderParams, IEnumerable<ReplacementDependency> replacements, StringBuilder result) =>
         RegexReplace(source: result, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "component"), action: match =>
                                                                                                                                   {
                                                                                                                                       (string _, string name, string[] options) tag = SplitMatch(match: match);
@@ -324,7 +330,7 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                       return (component == null) ? ("[[Missing Component:" + tag.name + "]]") : ProcessContentString(key: key, renderParams: renderParams, content: BuildComponentMarkup(component: component, tag: tag, replacements: replacements, renderParams: renderParams), replacements: replacements);
                                                                                                                                   });
 
-    private string BuildComponentMarkup(Component component, (string type, string name, string[] options) tag, IEnumerable<Replacement> replacements, RenderParams renderParams)
+    private string BuildComponentMarkup(Component component, (string type, string name, string[] options) tag, IEnumerable<ReplacementDependency> replacements, RenderParams renderParams)
     {
         string value = string.Join(separator: " ", values: tag.options
             .Where(predicate: option => option.StartsWith(value: "class="))
@@ -334,7 +340,7 @@ internal partial class TemplateRenderProcessingService(
         return ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: content, replacements: replacements);
     }
 
-    private void ExecuteAsync(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements) =>
+    private void ExecuteAsync(string key, StringBuilder source, RenderParams renderParams, IEnumerable<ReplacementDependency> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[execute\\](.*?)\\[/execute\\]", action: match =>
                                                                                                                                      {
                                                                                                                                          string value = match.Groups[1].Value;
@@ -342,7 +348,7 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                          string content = SerializeForOData(model: new
                                                                                                                                          {
                                                                                                                                              Script = value,
-                                                                                                                                             Model = jsonBroker.ParseJson(json: replacements.First(predicate: (Replacement r) => r.Old == "[model]")
+                                                                                                                                             Model = jsonBroker.ParseJson(json: replacements.First(predicate: (ReplacementDependency r) => r.Old == "[model]")
                                                                                                                                              .New)
                                                                                                                                          });
 
@@ -369,7 +375,7 @@ internal partial class TemplateRenderProcessingService(
             MaxDepth = 4
         });
 
-    private void Resource(string key, StringBuilder source, RenderParams renderParams, IEnumerable<Replacement> replacements)
+    private void Resource(string key, StringBuilder source, RenderParams renderParams, IEnumerable<ReplacementDependency> replacements)
     {
         List<Resource> known = new List<Resource>();
         List<string> namesInKey = new List<string>();
@@ -551,7 +557,7 @@ internal partial class TemplateRenderProcessingService(
         return themeDictionary != null;
     }
 
-    private IEnumerable<Replacement> BuildThemeReplacements<T>(T model, string prefix = "")
+    private IEnumerable<ReplacementDependency> BuildThemeReplacements<T>(T model, string prefix = "")
     {
         if ((object)model.GetType()
             .GetInterface(name: "IDynamicMetaObjectProvider") != null && !(model is JObject))
@@ -566,7 +572,7 @@ internal partial class TemplateRenderProcessingService(
 
         if (model is string)
         {
-            return new[] { new Replacement(old: "[theme[" + prefix + "]]", @new: model.ToString()) };
+            return new[] { new ReplacementDependency(old: "[theme[" + prefix + "]]", @new: model.ToString()) };
         }
 
         if (!(model is IEnumerable))
@@ -577,10 +583,10 @@ internal partial class TemplateRenderProcessingService(
         return BuildObjectThemeReplacements(model: model, prefix: prefix);
     }
 
-    private List<Replacement> BuildObjectThemeReplacements<T>(T model, string prefix)
+    private List<ReplacementDependency> BuildObjectThemeReplacements<T>(T model, string prefix)
     {
         string text = prefix ?? string.Empty;
-        List<Replacement> list = new List<Replacement>();
+        List<ReplacementDependency> list = new List<ReplacementDependency>();
         int num = 0;
 
         foreach (object item in (IEnumerable)(object)model)
@@ -591,11 +597,11 @@ internal partial class TemplateRenderProcessingService(
         }
 
         string text2 = ((text.Length == 0) ? "Length" : (text + ".Length"));
-        list.Add(item: new Replacement(old: "[theme[" + text2 + "]]", @new: num.ToString()));
+        list.Add(item: new ReplacementDependency(old: "[theme[" + text2 + "]]", @new: num.ToString()));
         return list;
     }
 
-    private IEnumerable<Replacement> BuildIEnumerableThemeReplacements<T>(T model, string prefix) =>
+    private IEnumerable<ReplacementDependency> BuildIEnumerableThemeReplacements<T>(T model, string prefix) =>
         model.GetType()
         .GetProperties()
         .SelectMany(selector: property =>
@@ -605,7 +611,7 @@ internal partial class TemplateRenderProcessingService(
 
                 if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
                 {
-                    Replacement[] array = new Replacement[2];
+                    ReplacementDependency[] array = new ReplacementDependency[2];
                     string old = "[theme[" + prefix + "]]";
                     object obj = model?.ToString();
 
@@ -614,16 +620,16 @@ internal partial class TemplateRenderProcessingService(
                         obj = string.Empty;
                     }
 
-                    array[0] = new Replacement(old: old, @new: (string)obj);
-                    array[1] = new Replacement(old: "[theme[" + text + "]]", @new: value?.ToString() ?? string.Empty);
+                    array[0] = new ReplacementDependency(old: old, @new: (string)obj);
+                    array[1] = new ReplacementDependency(old: "[theme[" + text + "]]", @new: value?.ToString() ?? string.Empty);
                     return array;
                 }
 
-                IEnumerable<Replacement> result;
+                IEnumerable<ReplacementDependency> result;
 
                 if (value == null)
                 {
-                    IEnumerable<Replacement> enumerable = Array.Empty<Replacement>();
+                    IEnumerable<ReplacementDependency> enumerable = Array.Empty<ReplacementDependency>();
                     result = enumerable;
                 }
                 else
@@ -635,7 +641,7 @@ internal partial class TemplateRenderProcessingService(
             })
         .Where(predicate: replacement => replacement.Old != null && replacement.New != null);
 
-    private IEnumerable<Replacement> BuildJObjectThemeReplacements<T>(T model, string prefix)
+    private IEnumerable<ReplacementDependency> BuildJObjectThemeReplacements<T>(T model, string prefix)
     {
         IEnumerable<KeyValuePair<string, JToken>> source = (IEnumerable<KeyValuePair<string, JToken>>)(object)model;
 
@@ -645,14 +651,14 @@ internal partial class TemplateRenderProcessingService(
 
             if (token.Value.GetType() == typeof(JValue))
             {
-                return new[] { new Replacement(old: "[theme[" + text + "]]", @new: token.Value.ToString() ?? string.Empty) };
+                return new[] { new ReplacementDependency(old: "[theme[" + text + "]]", @new: token.Value.ToString() ?? string.Empty) };
             }
 
-            IEnumerable<Replacement> result;
+            IEnumerable<ReplacementDependency> result;
 
             if (token.Value == null)
             {
-                IEnumerable<Replacement> enumerable = Array.Empty<Replacement>();
+                IEnumerable<ReplacementDependency> enumerable = Array.Empty<ReplacementDependency>();
                 result = enumerable;
             }
             else
@@ -664,7 +670,7 @@ internal partial class TemplateRenderProcessingService(
         });
     }
 
-    private IEnumerable<Replacement> BuildDynamicThemeReplacements<T>(T model, string prefix)
+    private IEnumerable<ReplacementDependency> BuildDynamicThemeReplacements<T>(T model, string prefix)
     {
         IDictionary<string, object> dynamicModel = (IDictionary<string, object>)(object)model;
 
@@ -672,10 +678,10 @@ internal partial class TemplateRenderProcessingService(
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + key) : key);
             int num = 1;
-            List<Replacement> list = new List<Replacement>(capacity: num);
+            List<ReplacementDependency> list = new List<ReplacementDependency>(capacity: num);
             CollectionsMarshal.SetCount(list: list, count: num);
-            CollectionsMarshal.AsSpan(list: list)[0] = new Replacement(old: "[theme[" + text + "]]", @new: dynamicModel[key]?.ToString() ?? string.Empty);
-            List<Replacement> list2 = list;
+            CollectionsMarshal.AsSpan(list: list)[0] = new ReplacementDependency(old: "[theme[" + text + "]]", @new: dynamicModel[key]?.ToString() ?? string.Empty);
+            List<ReplacementDependency> list2 = list;
 
             if (dynamicModel[key] != null && !dynamicModel[key].GetType()
                 .IsValueType)
@@ -687,11 +693,11 @@ internal partial class TemplateRenderProcessingService(
         });
     }
 
-    private IEnumerable<Replacement> BuildModelReplacements(object model, string prefix = "")
+    private IEnumerable<ReplacementDependency> BuildModelReplacements(object model, string prefix = "")
     {
         if (model is string)
         {
-            return new[] { new Replacement(old: "[theme[" + prefix + "]]", @new: model.ToString()) };
+            return new[] { new ReplacementDependency(old: "[theme[" + prefix + "]]", @new: model.ToString()) };
         }
 
         if (model is JObject)
@@ -713,10 +719,10 @@ internal partial class TemplateRenderProcessingService(
         return (model is IEnumerable) ? BuildModelReplacementsForCollection(model: model, prefix: prefix) : BuildModelReplacementsForObject(model: model, prefix: prefix);
     }
 
-    private IEnumerable<Replacement> BuildModelReplacementsForCollection(object model, string prefix)
+    private IEnumerable<ReplacementDependency> BuildModelReplacementsForCollection(object model, string prefix)
     {
         string text = prefix ?? string.Empty;
-        List<Replacement> list = new List<Replacement>();
+        List<ReplacementDependency> list = new List<ReplacementDependency>();
         int num = 0;
 
         foreach (object item in (IEnumerable)model)
@@ -727,11 +733,11 @@ internal partial class TemplateRenderProcessingService(
         }
 
         string text2 = ((text.Length == 0) ? "Length" : (text + ".Length"));
-        list.Add(item: new Replacement(old: "[model[" + text2 + "]]", @new: num.ToString()));
+        list.Add(item: new ReplacementDependency(old: "[model[" + text2 + "]]", @new: num.ToString()));
         return list;
     }
 
-    private IEnumerable<Replacement> BuildModelReplacementsForObject(object model, string prefix) =>
+    private IEnumerable<ReplacementDependency> BuildModelReplacementsForObject(object model, string prefix) =>
         model.GetType()
         .GetProperties()
         .SelectMany(selector: property =>
@@ -741,18 +747,18 @@ internal partial class TemplateRenderProcessingService(
 
                 if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
                 {
-                    return new Replacement[2]
+                    return new ReplacementDependency[2]
                     {
-                        new Replacement(old: "[model[" + prefix + "]]", @new: model?.ToString() ?? string.Empty),
-                        new Replacement(old: "[model[" + text + "]]", @new: value?.ToString() ?? string.Empty)
+                        new ReplacementDependency(old: "[model[" + prefix + "]]", @new: model?.ToString() ?? string.Empty),
+                        new ReplacementDependency(old: "[model[" + text + "]]", @new: value?.ToString() ?? string.Empty)
                     };
                 }
 
-                IEnumerable<Replacement> result;
+                IEnumerable<ReplacementDependency> result;
 
                 if (value == null)
                 {
-                    IEnumerable<Replacement> enumerable = Array.Empty<Replacement>();
+                    IEnumerable<ReplacementDependency> enumerable = Array.Empty<ReplacementDependency>();
                     result = enumerable;
                 }
                 else
@@ -765,7 +771,7 @@ internal partial class TemplateRenderProcessingService(
         .Where(predicate: replacement => replacement.Old != null && replacement.New != null)
         .ToList();
 
-    private IEnumerable<Replacement> BuildModelReplacementsForJObject(object model, string prefix)
+    private IEnumerable<ReplacementDependency> BuildModelReplacementsForJObject(object model, string prefix)
     {
         IEnumerable<KeyValuePair<string, JToken>> source = (IEnumerable<KeyValuePair<string, JToken>>)model;
 
@@ -775,14 +781,14 @@ internal partial class TemplateRenderProcessingService(
 
             if (token.Value.GetType() == typeof(JValue))
             {
-                return new[] { new Replacement(old: "[model[" + text + "]]", @new: token.Value.ToString() ?? string.Empty) };
+                return new[] { new ReplacementDependency(old: "[model[" + text + "]]", @new: token.Value.ToString() ?? string.Empty) };
             }
 
-            IEnumerable<Replacement> result;
+            IEnumerable<ReplacementDependency> result;
 
             if (token.Value == null)
             {
-                IEnumerable<Replacement> enumerable = Array.Empty<Replacement>();
+                IEnumerable<ReplacementDependency> enumerable = Array.Empty<ReplacementDependency>();
                 result = enumerable;
             }
             else
@@ -795,7 +801,7 @@ internal partial class TemplateRenderProcessingService(
             .ToList();
     }
 
-    private IEnumerable<Replacement> BuildModelReplacementsForDynamicObject(object model, string prefix)
+    private IEnumerable<ReplacementDependency> BuildModelReplacementsForDynamicObject(object model, string prefix)
     {
         IDictionary<string, object> dynamicModel = (IDictionary<string, object>)model;
 
@@ -803,10 +809,10 @@ internal partial class TemplateRenderProcessingService(
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + key) : key);
             int num = 1;
-            List<Replacement> list = new List<Replacement>(capacity: num);
+            List<ReplacementDependency> list = new List<ReplacementDependency>(capacity: num);
             CollectionsMarshal.SetCount(list: list, count: num);
-            CollectionsMarshal.AsSpan(list: list)[0] = new Replacement(old: "[model[" + text + "]]", @new: dynamicModel[key]?.ToString() ?? string.Empty);
-            List<Replacement> list2 = list;
+            CollectionsMarshal.AsSpan(list: list)[0] = new ReplacementDependency(old: "[model[" + text + "]]", @new: dynamicModel[key]?.ToString() ?? string.Empty);
+            List<ReplacementDependency> list2 = list;
 
             if (dynamicModel[key] != null && !dynamicModel[key].GetType()
                 .IsValueType)
@@ -906,10 +912,10 @@ internal partial class TemplateRenderProcessingService(
         ValidateModel(model: model, parameterName: "model");
         ValidateRenderParamsArgument(renderParams: renderParams, parameterName: "renderParams");
 
-        List<Replacement> list = DefaultReplacements(renderParams: renderParams, config: config)
+        List<ReplacementDependency> list = DefaultReplacements(renderParams: renderParams, config: config)
             .ToList();
 
-        list.Add(item: new Replacement(old: "[model]", @new: jsonBroker.Serialize(value: model)));
+        list.Add(item: new ReplacementDependency(old: "[model]", @new: jsonBroker.Serialize(value: model)));
         list.AddRange(collection: BuildModelReplacements(model: model));
 
         if (log != null && log.IsEnabled(logLevel: LogLevel.Debug))
