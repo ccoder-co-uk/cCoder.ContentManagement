@@ -6,6 +6,8 @@ using cCoder.ContentManagement.Extensions.OData;
 using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Events;
+using cCoder.ContentManagement.Brokers.Authorizations;
+using cCoder.ContentManagement.Brokers.HttpContexts;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Exposures;
@@ -22,6 +24,8 @@ using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Authorization;
+using cCoder.ContentManagement.Services.Foundations.Authorizations;
+using cCoder.ContentManagement.Services.Foundations.HttpContexts;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
@@ -31,6 +35,7 @@ using cCoder.ContentManagement.Services.Foundations.ServiceProviders;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
@@ -228,6 +233,8 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddBrokers(this IServiceCollection services)
     {
+        services.AddTransient<IHttpContextBroker, HttpContextBroker>();
+        services.AddTransient<IPageAuthorizationBroker, PageAuthorizationBroker>();
         services.AddTransient<IAuthenticatedEventHub, AuthenticatedEventHubDependency>();
         services.AddTransient<IEventHubBroker, EventHubBroker>();
         services.AddTransient<IAppCultureEventBroker, AppCultureEventBroker>();
@@ -322,6 +329,8 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddFoundations(this IServiceCollection services)
     {
+        services.AddTransient<IHttpContextService, HttpContextService>();
+        services.AddTransient<IPageAuthorizationService, PageAuthorizationService>();
         services.AddTransient<IEventHandlerService, EventHandlerService>();
         services.AddTransient<IJsonService, JsonService>();
         services.AddTransient<IAuthorizationService, AuthorizationService>();
@@ -382,6 +391,9 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddOrchestrations(this IServiceCollection services)
     {
+        services.AddTransient<
+            IPageContextOrchestrationService,
+            PageContextOrchestrationService>();
         services.AddSingleton<PageRenderCacheImportState>();
         services.AddTransient<IContentManagementMigrationAggregationService, ContentManagementMigrationAggregationService>();
         services.AddTransient<IAppCultureOrchestrationService, AppCultureOrchestrationService>();

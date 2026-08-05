@@ -9,5 +9,8 @@ namespace cCoder.ContentManagement.Models;
 /// </summary>
 public static class ContentSecurityPolicyNonceContract
 {
-    public const string Placeholder = "__CCODER_CSP_NONCE__";
+    public const string HttpContextItemKey =
+        "cCoder.ContentManagement.PageNonce";
+
+    public const string Placeholder = "[page[nonce]]";
 }

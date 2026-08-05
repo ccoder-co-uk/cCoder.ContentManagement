@@ -24,6 +24,19 @@ internal sealed class PageBroker(ICoreContextFactory coreContextFactory) : IPage
         return coreDataContext.Pages.IgnoreQueryFilters();
     }
 
+    public async ValueTask<Page> GetPageByIdForRenderAsync(int pageId)
+    {
+        await using CoreDataContext coreDataContext =
+            coreContextFactory.CreateCoreContext();
+
+        return await coreDataContext.Pages
+            .Include(navigationPropertyPath: page => page.PageInfo)
+            .Include(navigationPropertyPath: page => page.Contents)
+            .Include(navigationPropertyPath: page => page.Roles)
+            .SingleOrDefaultAsync(
+                predicate: page => page.Id == pageId);
+    }
+
     public async ValueTask<Page> AddPageAsync(Page newPage)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
