@@ -15,6 +15,8 @@ namespace cCoder.ContentManagement.Dependencies.Caching;
 
 internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
 {
+    private const int DefaultCacheExpiryInMinutes = 30;
+
     private readonly ILogger log;
 
     private readonly IServiceScopeFactory serviceScopeFactory;
@@ -42,7 +44,9 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
         this.config = config;
         this.serviceScopeFactory = serviceScopeFactory;
         this.log = log;
-        expiryTimeInMinutes = config.CacheExpiry;
+        expiryTimeInMinutes = config.CacheExpiry > 0
+            ? config.CacheExpiry
+            : DefaultCacheExpiryInMinutes;
         timer.Elapsed += ScanForExpiredItems;
         timer.Interval = expiryTimeInMinutes * 60 * 1000;
         timer.Start();
