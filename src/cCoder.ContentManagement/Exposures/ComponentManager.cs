@@ -12,17 +12,6 @@ internal sealed class ComponentManager(
     IServiceProviderExecutionService serviceProviderExecutionService)
         : IComponentManager
 {
-    public string Render(int appId, string name, string culture, string theme) =>
-        serviceProviderExecutionService.Execute<
-            IComponentRenderOrchestrationService,
-            string>(
-                name: "ComponentRender",
-                operation: service => service.Render(
-                    appId: appId,
-                    name: name,
-                    culture: culture,
-                    theme: theme));
-
     public IQueryable<Component> GetAll() =>
         serviceProviderExecutionService.Execute<
             IComponentOrchestrationService,

@@ -7,11 +7,11 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Models;
 
-public class PageRenderResponse
+public class PageRenderResponse : RenderResult
 {
     public App App { get; set; }
 
-    public RenderResult Page { get; set; }
+    public PageRenderResult Page { get; set; }
 
     public string Theme { get; set; }
 

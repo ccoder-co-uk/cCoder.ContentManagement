@@ -39,7 +39,7 @@ public partial class PageRenderProcessingServiceTests
         metadataReaderBroker.Set(name: "site-description", culture: "en-GB", value: "Meta Description");
 
         // When
-        RenderResult result = await RenderTestWorkflowServer.RunRenderResultAsync(action: workflowBaseUrl =>
+        PageRenderResult result = await RenderTestWorkflowServer.RunRenderResultAsync(action: workflowBaseUrl =>
         {
             PageRenderProcessingService sut = CreateSut(
                 config: CreateConfig(workflowBaseUrl: workflowBaseUrl));

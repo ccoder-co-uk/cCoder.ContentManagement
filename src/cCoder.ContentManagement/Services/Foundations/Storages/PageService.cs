@@ -13,13 +13,13 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageService(IPageBroker pageBroker, IAuthorizationManager authorizationManager) : IPageService
 {
-    public ValueTask<Page> GetPageByIdForRenderAsync(int pageId) =>
+    public ValueTask<Page> GetPageForRenderAsync(int pageId) =>
         TryCatch<Page>(operation: async () =>
     {
-        ValidatePageByIdForRenderOnGet(inputs: [pageId]);
+        ValidatePageForRenderOnGet(inputs: [pageId]);
         ValidateId(pageId: pageId, parameterName: "id");
 
-        return await pageBroker.GetPageByIdForRenderAsync(
+        return await pageBroker.GetPageForRenderAsync(
             pageId: pageId);
     }, isValueTask: true);
 

@@ -14,8 +14,12 @@ internal sealed partial class ComponentRenderOrchestrationService(
     IAuthorizationProcessingService authorizationProcessingService)
         : IComponentRenderOrchestrationService
 {
-    public string Render(int appId, string name, string culture, string theme) =>
-        TryCatch<string>(operation: () =>
+    public ComponentRenderResult RenderComponentRenderResult(
+        int appId,
+        string name,
+        string culture,
+        string theme) =>
+        TryCatch<ComponentRenderResult>(operation: () =>
     {
         ValidateRender(inputs: [appId, name, culture, theme]);
         ValidateAppId(appId: appId, parameterName: "appId");
@@ -39,8 +43,24 @@ internal sealed partial class ComponentRenderOrchestrationService(
 
     });
 
-    public string RenderUser(int appId, string name, User user, string culture, string theme) =>
-        TryCatch<string>(operation: () =>
+    internal string Render(
+        int appId,
+        string name,
+        string culture,
+        string theme) =>
+        RenderComponentRenderResult(
+            appId: appId,
+            name: name,
+            culture: culture,
+            theme: theme).Content;
+
+    internal string RenderUser(
+        int appId,
+        string name,
+        User user,
+        string culture,
+        string theme) =>
+        TryCatch<ComponentRenderResult>(operation: () =>
     {
         ValidateRenderUser(inputs: [appId, name, user, culture, theme]);
         ValidateAppId(appId: appId, parameterName: "appId");
@@ -55,9 +75,9 @@ internal sealed partial class ComponentRenderOrchestrationService(
             culture: culture,
             theme: theme);
 
-    });
+    }).Content;
 
-    private string ExecuteRenderUser(
+    private ComponentRenderResult ExecuteRenderUser(
         int appId,
         string name,
         User user,
@@ -73,8 +93,12 @@ internal sealed partial class ComponentRenderOrchestrationService(
             Theme = theme
         };
 
-        return componentRenderProcessingService.RenderComponentRenderOperation(
-            operation: operation);
+        return new ComponentRenderResult
+        {
+            Content = componentRenderProcessingService
+                .RenderComponentRenderOperation(operation: operation),
+            StatusCode = StatusCodes.Status200OK
+        };
     }
 
     private static void ValidateAppId(int appId, string parameterName) =>

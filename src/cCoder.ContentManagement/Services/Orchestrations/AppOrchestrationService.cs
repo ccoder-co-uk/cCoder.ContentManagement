@@ -17,6 +17,15 @@ internal partial class AppOrchestrationService(
     IAuthorizationProcessingService authorizationProcessingService)
         : IAppOrchestrationService
 {
+    public ValueTask<App> GetAppForRenderAsync(int appId) =>
+        TryCatch<App>(operation: async () =>
+    {
+        ValidateAppForRenderOnGet(inputs: [appId]);
+        ValidateId(appId: appId, parameterName: "id");
+
+        return await processingService.GetAppForRenderAsync(appId: appId);
+    }, isValueTask: true);
+
     public App GetApp(int appId) =>
         TryCatch<App>(operation: () =>
     {

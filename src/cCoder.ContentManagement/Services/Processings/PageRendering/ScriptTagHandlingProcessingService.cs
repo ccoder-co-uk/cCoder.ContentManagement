@@ -39,7 +39,7 @@ internal sealed partial class ScriptTagHandlingProcessingService(
     });
 
     private PageRenderScript ResolveScript(
-        PageRenderSession session,
+        RenderSession session,
         string name)
     {
         if (session.ScriptsByName.TryGetValue(

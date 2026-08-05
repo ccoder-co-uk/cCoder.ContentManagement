@@ -12,7 +12,7 @@ public interface IPageBroker
 
     IQueryable<Page> GetAllPagesIgnoringFilters();
 
-    ValueTask<Page> GetPageByIdForRenderAsync(int pageId);
+    ValueTask<Page> GetPageForRenderAsync(int pageId);
 
     ValueTask<Page> AddPageAsync(Page newPage);
 

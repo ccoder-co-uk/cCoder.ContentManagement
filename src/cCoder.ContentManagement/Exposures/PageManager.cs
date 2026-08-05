@@ -3,7 +3,6 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Services.Foundations.ServiceProviders;
-using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 
@@ -13,32 +12,6 @@ internal sealed class PageManager(
     IServiceProviderExecutionService serviceProviderExecutionService)
         : IPageManager
 {
-    public async ValueTask<object> RenderAsync(
-        int appId,
-        string path,
-        string theme,
-        string culture)
-    {
-        PageRenderOperation operation = new()
-        {
-            OperationType = PageRenderOperationType.RenderResult,
-            AppId = appId,
-            Path = path,
-            Theme = theme,
-            Culture = culture
-        };
-
-        PageRenderOperation result = await serviceProviderExecutionService.Execute<
-            IPageRenderAggregationService,
-            ValueTask<PageRenderOperation>>(
-                name: "PageRender",
-                operation: service =>
-                    service.RenderPageRenderOperationAsync(
-                        operation: operation));
-
-        return result.Page;
-    }
-
     public IQueryable<Page> GetAll() =>
         serviceProviderExecutionService.Execute<
             IPageOrchestrationService,

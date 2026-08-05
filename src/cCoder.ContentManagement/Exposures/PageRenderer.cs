@@ -2,14 +2,18 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Services.Coordinations;
+using cCoder.ContentManagement.Services.Aggregations;
 
 namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class PageRenderer(
-    IPageRenderCoordinationService pageRenderCoordinationService)
+    IRenderAggregationService renderAggregationService)
         : IPageRenderer
 {
     public ValueTask<PageRenderResponse> RenderAsync() =>
-        pageRenderCoordinationService.RenderPageRenderResponseAsync();
+        ExecuteRenderAsync();
+
+    private async ValueTask<PageRenderResponse> ExecuteRenderAsync() =>
+        (PageRenderResponse)await renderAggregationService
+            .RenderPageRenderResultAsync();
 }

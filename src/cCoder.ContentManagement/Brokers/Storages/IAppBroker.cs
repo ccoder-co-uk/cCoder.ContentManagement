@@ -12,6 +12,8 @@ public interface IAppBroker
 
     IQueryable<App> GetAllAppsIgnoringFilters();
 
+    ValueTask<App> GetAppForRenderAsync(int appId);
+
     ValueTask<App> AddAppAsync(App newApp);
 
     ValueTask<App> UpdateAppAsync(App updatedApp);

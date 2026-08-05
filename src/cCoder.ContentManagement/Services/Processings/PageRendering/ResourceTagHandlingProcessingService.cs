@@ -29,7 +29,7 @@ internal sealed partial class ResourceTagHandlingProcessingService
             operation: operation,
             parameterName: "operation");
 
-        if (operation.Session.Request.Edit)
+        if (operation.Editable)
         {
             return operation;
         }
@@ -76,7 +76,7 @@ internal sealed partial class ResourceTagHandlingProcessingService
     }
 
     private static PageRenderResource ResolveResource(
-        PageRenderSession session,
+        RenderSession session,
         string key,
         string name)
     {
@@ -165,7 +165,7 @@ internal sealed partial class ResourceTagHandlingProcessingService
                 ? resource
                 : null;
 
-    private static string ResolveCulture(PageRenderSession session) =>
+    private static string ResolveCulture(RenderSession session) =>
         !string.IsNullOrWhiteSpace(value: session.Request.Culture)
             ? session.Request.Culture
             : session.App?.DefaultCulture ?? string.Empty;

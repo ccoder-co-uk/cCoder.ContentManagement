@@ -19,6 +19,7 @@ using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Services.Foundations;
@@ -51,43 +52,55 @@ public partial class PageRenderProcessingServiceTests
 
     private PageRenderProcessingService CreateSut(RenderConfig config)
     {
-        PageRenderExecutionOrchestrationService executionOrchestrationService =
+        MetadataCacheService metadataCacheService = new(
+            broker: metadataReaderBroker);
+
+        CommonObjectCacheService commonObjectCacheService = new(
+            broker: commonObjectReaderBrokerMock.Object);
+
+        MarkupRenderService markupRenderService = new(
+            renderBroker: new RenderBroker(
+                tagHandlers:
+                [
+                    new CultureLinkTagHandlingProcessingService(),
+                    new MetadataTagHandlingProcessingService(),
+                    new NavigationTagHandlingProcessingService(),
+                    new ContentTagHandlingProcessingService(),
+                    new ComponentTagHandlingProcessingService(
+                        componentReaderBroker: componentReaderBroker),
+                    new ScriptTagHandlingProcessingService(
+                        scriptReaderBroker: scriptReaderBroker),
+                    new ReplacementTagHandlingProcessingService(),
+                    new DmsTagHandlingProcessingService(
+                        renderFileContentBroker:
+                            renderFileContentBrokerMock.Object),
+                    new ResourceTagHandlingProcessingService(),
+                    new ExecuteTagHandlingProcessingService(
+                        jsonBroker: new JsonBroker(),
+                        workflowExecutionBroker:
+                            new WorkflowExecutionBroker(
+                                workflowExecutionDependency:
+                                    new WorkflowExecutionDependency()))
+                ]));
+
+        RenderOrchestrationService executionOrchestrationService =
             new(
-                metadataCacheService: new MetadataCacheService(
-                    broker: metadataReaderBroker),
-                commonObjectCacheService: new CommonObjectCacheService(
-                    broker: commonObjectReaderBrokerMock.Object),
-                markupRenderService: new MarkupRenderService(
-                    renderBroker: new RenderBroker(
-                        tagHandlers:
-                        [
-                            new CultureLinkTagHandlingProcessingService(),
-                            new MetadataTagHandlingProcessingService(),
-                            new NavigationTagHandlingProcessingService(),
-                            new ContentTagHandlingProcessingService(),
-                            new ComponentTagHandlingProcessingService(
-                                componentReaderBroker: componentReaderBroker),
-                            new ScriptTagHandlingProcessingService(
-                                scriptReaderBroker: scriptReaderBroker),
-                            new ReplacementTagHandlingProcessingService(),
-                            new DmsTagHandlingProcessingService(
-                                renderFileContentBroker:
-                                    renderFileContentBrokerMock.Object),
-                            new ResourceTagHandlingProcessingService(),
-                            new ExecuteTagHandlingProcessingService(
-                                jsonBroker: new JsonBroker(),
-                                workflowExecutionBroker:
-                                    new WorkflowExecutionBroker(
-                                        workflowExecutionDependency:
-                                            new WorkflowExecutionDependency()))
-                        ])));
+                metadataCacheProcessingService:
+                    new MetadataCacheProcessingService(
+                        metadataCacheService: metadataCacheService),
+                commonObjectCacheProcessingService:
+                    new CommonObjectCacheProcessingService(
+                        commonObjectCacheService: commonObjectCacheService),
+                markupRenderProcessingService:
+                    new MarkupRenderProcessingService(
+                        markupRenderService: markupRenderService));
 
         Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
 
         serviceProviderBrokerMock
             .Setup(expression: broker =>
-                broker.GetRequiredService<IPageRenderExecutionOrchestrationService>(
-                    name: "PageRenderExecution"))
+                broker.GetRequiredService<IRenderOrchestrationService>(
+                    name: "Render"))
             .Returns(value: executionOrchestrationService);
 
         PageRenderService pageRenderService =

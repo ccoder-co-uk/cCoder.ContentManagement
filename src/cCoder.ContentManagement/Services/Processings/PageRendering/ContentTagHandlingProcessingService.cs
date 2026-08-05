@@ -75,7 +75,7 @@ internal sealed partial class ContentTagHandlingProcessingService
             values: options.Where(predicate: option =>
                 !option.StartsWith(value: "class=")));
 
-        string contentEditable = operation.Session.Request.Edit
+        string contentEditable = operation.Editable
             ? "contenteditable"
             : string.Empty;
 

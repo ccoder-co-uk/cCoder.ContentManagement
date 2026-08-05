@@ -16,6 +16,15 @@ internal partial class AppService(
     IAppBroker appBroker,
     IAuthorizationManager authorizationManager) : IAppService
 {
+    public ValueTask<App> GetAppForRenderAsync(int appId) =>
+        TryCatch<App>(operation: async () =>
+    {
+        ValidateAppForRenderOnGet(inputs: [appId]);
+        ValidateId(appId: appId, parameterName: "id");
+
+        return await appBroker.GetAppForRenderAsync(appId: appId);
+    }, isValueTask: true);
+
     public App GetApp(int appId, bool ignoreFilters = false) =>
         TryCatch<App>(operation: () =>
     {

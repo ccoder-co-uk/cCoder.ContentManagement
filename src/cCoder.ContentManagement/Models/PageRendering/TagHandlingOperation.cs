@@ -6,13 +6,15 @@ namespace cCoder.ContentManagement.Models.PageRendering;
 
 internal sealed class TagHandlingOperation
 {
-    public PageRenderSession Session { get; set; }
+    public RenderSession Session { get; set; }
 
     public string ResourceKey { get; set; }
 
     public string Content { get; set; }
 
     public bool AllowContentTags { get; set; }
+
+    public bool Editable { get; set; }
 
     public IReadOnlyCollection<ReplacementDependency> Replacements { get; set; }
 

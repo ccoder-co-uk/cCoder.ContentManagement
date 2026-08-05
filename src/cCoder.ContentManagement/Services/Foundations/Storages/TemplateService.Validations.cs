@@ -2,8 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Dependencies;
 using cCoder.Data.Models.CMS;
+using System.ComponentModel.DataAnnotations;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -37,4 +38,19 @@ internal partial class TemplateService
             throw new ValidationException(message: message);
         }
     }
+
+    private static void ValidateTemplateOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAllTemplateOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateTemplateOnAdd(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateTemplateOnUpdate(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateDeleteAsync(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
 }

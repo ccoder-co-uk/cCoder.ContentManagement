@@ -10,7 +10,7 @@ internal interface IPageService
 {
     Page GetPage(int pageId, bool ignoreFilters = false);
 
-    ValueTask<Page> GetPageByIdForRenderAsync(int pageId);
+    ValueTask<Page> GetPageForRenderAsync(int pageId);
 
     IQueryable<Page> GetAllPage(bool ignoreFilters = false);
 

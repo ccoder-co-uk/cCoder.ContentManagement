@@ -19,14 +19,6 @@ internal static class ContentManagementConfigurationExtensions
             return false;
         }
 
-        if (string.Equals(
-            a: swaggerDocumentName,
-            b: "v1",
-            comparisonType: StringComparison.OrdinalIgnoreCase))
-        {
-            swaggerDocumentName = "Core";
-        }
-
         string path = NormalizePath(relativePath: relativePath);
 
         string rootPath = string.IsNullOrWhiteSpace(value: configuration.RootPath)
@@ -35,11 +27,9 @@ internal static class ContentManagementConfigurationExtensions
 
         return string.Equals(
             a: swaggerDocumentName,
-            b: "Core",
+            b: documentName,
             comparisonType: StringComparison.OrdinalIgnoreCase)
-            ? configuration.IncludeLegacyCoreContext
-                && MatchesContextRoute(path: path, rootPath: "Api/Core")
-            : MatchesContextRoute(path: path, rootPath: rootPath);
+            && MatchesContextRoute(path: path, rootPath: rootPath);
     }
 
     private static bool MatchesContextRoute(string path, string rootPath)

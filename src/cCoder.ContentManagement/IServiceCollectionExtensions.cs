@@ -19,6 +19,7 @@ using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Services;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
@@ -138,25 +139,15 @@ public static partial class IServiceCollectionExtensions
             implementationFactory: (serviceProvider, _) =>
                 serviceProvider.GetRequiredService<IAppUserProcessingService>());
 
-        services.AddKeyedTransient<IComponentRenderOrchestrationService>(
-            serviceKey: "ComponentRender",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<IComponentRenderOrchestrationService>());
-
         services.AddKeyedTransient<IPageOrchestrationService>(
             serviceKey: "Page",
             implementationFactory: (serviceProvider, _) =>
                 serviceProvider.GetRequiredService<IPageOrchestrationService>());
 
-        services.AddKeyedTransient<IPageRenderAggregationService>(
-            serviceKey: "PageRender",
+        services.AddKeyedTransient<IRenderOrchestrationService>(
+            serviceKey: "Render",
             implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<IPageRenderAggregationService>());
-
-        services.AddKeyedTransient<IPageRenderExecutionOrchestrationService>(
-            serviceKey: "PageRenderExecution",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<IPageRenderExecutionOrchestrationService>());
+                serviceProvider.GetRequiredService<IRenderOrchestrationService>());
 
         services.AddKeyedTransient<IAppService>(
             serviceKey: "AppStorage",
@@ -198,10 +189,6 @@ public static partial class IServiceCollectionExtensions
             implementationFactory: (serviceProvider, _) =>
                 serviceProvider.GetRequiredService<ITemplateContentBroker>());
 
-        services.AddKeyedTransient<ITemplateRenderOrchestrationService>(
-            serviceKey: "TemplateRender",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<ITemplateRenderOrchestrationService>());
     }
 
     private static void AddEventingTypes(this IServiceCollection services)
@@ -217,7 +204,7 @@ public static partial class IServiceCollectionExtensions
         services.AddEventingForType<(int, Package)>();
         services.AddEventingForType<PackageItem>();
         services.AddEventingForType<Page>();
-        services.AddEventingForType<PageRenderCacheMiss>();
+        services.AddEventingForType<UncachedPageRenderEvent>();
         services.AddEventingForType<PageInfo>();
         services.AddEventingForType<PageRole>();
         services.AddEventingForType<Resource>();
@@ -294,9 +281,6 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddCoordinations(this IServiceCollection services)
     {
-        services.AddTransient<
-            IPageRenderCoordinationService,
-            PageRenderCoordinationService>();
         services.AddTransient<IAppRenderableCoordinationService, AppRenderableCoordinationService>();
         services.AddTransient<IAppPageComponentCoordinationService, AppPageComponentCoordinationService>();
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
@@ -319,29 +303,34 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentManagementEventHandlers, ContentManagementEventHandlers>();
         services.AddTransient<IPageRenderCacheEventHandlers, PageRenderCacheEventHandlers>();
         services.AddTransient<
-            IPageRenderCacheMissEventHandler,
-            PageRenderCacheMissEventHandler>();
+            IUncachedPageRenderEventHandler,
+            UncachedPageRenderEventHandler>();
     }
 
     private static void AddRendering(this IServiceCollection services)
     {
+        services.AddTransient<IRenderAggregationService, RenderAggregationService>();
         services.AddTransient<
             ICachedPageRenderOrchestrationService,
             CachedPageRenderOrchestrationService>();
-
+        services.AddTransient<IRenderer>(
+            implementationFactory: serviceProvider =>
+                serviceProvider.GetRequiredService<IRenderAggregationService>());
         services.AddTransient<
             IUncachedPageRenderOrchestrationService,
             UncachedPageRenderOrchestrationService>();
-        services.AddTransient<IPageRenderAggregationService, PageRenderAggregationService>();
         services.AddTransient<
-            IPageRenderCacheBuildAggregationService,
-            PageRenderCacheBuildAggregationService>();
+            IPageRenderCacheAggregationService,
+            PageRenderCacheAggregationService>();
         services.AddTransient<IPageRenderOrchestrationService, PageRenderOrchestrationService>();
         services.AddTransient<IPageRenderProcessingService, PageRenderProcessingService>();
-        services.AddTransient<IPageRenderExecutionOrchestrationService, PageRenderExecutionOrchestrationService>();
+        services.AddTransient<IRenderOrchestrationService, RenderOrchestrationService>();
         services.AddTransient<IMetadataCacheService, MetadataCacheService>();
         services.AddTransient<ICommonObjectCacheService, CommonObjectCacheService>();
         services.AddTransient<IMarkupRenderService, MarkupRenderService>();
+        services.AddTransient<IMarkupRenderProcessingService, MarkupRenderProcessingService>();
+        services.AddTransient<IMetadataCacheProcessingService, MetadataCacheProcessingService>();
+        services.AddTransient<ICommonObjectCacheProcessingService, CommonObjectCacheProcessingService>();
         services.AddScoped<IRenderBroker, RenderBroker>();
         services.AddScoped<
             ICultureLinkTagHandlingProcessingService,
@@ -437,8 +426,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPackageItemEventService, PackageItemEventService>();
         services.AddTransient<IPageEventService, PageEventService>();
         services.AddTransient<
-            IPageRenderCacheMissEventService,
-            PageRenderCacheMissEventService>();
+            IUncachedPageRenderEventService,
+            UncachedPageRenderEventService>();
         services.AddTransient<IPageInfoEventService, PageInfoEventService>();
         services.AddTransient<IPageRoleEventService, PageRoleEventService>();
         services.AddTransient<IResourceEventService, ResourceEventService>();
@@ -508,10 +497,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageInfoManager, PageInfoOrchestrationService>();
         services.AddTransient<IPageOrchestrationService, PageOrchestrationService>();
         services.AddTransient<IPageRenderCacheOrchestrationService, PageRenderCacheOrchestrationService>();
-        services.AddKeyedTransient<IPageRenderCacheOrchestrationService>(
-            serviceKey: "PageRenderCache",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<IPageRenderCacheOrchestrationService>());
         services.AddTransient<IPageRoleOrchestrationService, PageRoleOrchestrationService>();
         services.AddTransient<IPageRoleManager, PageRoleOrchestrationService>();
         services.AddTransient<
@@ -554,13 +539,16 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPackageProcessingService, PackageProcessingService>();
         services.AddTransient<IPageEventProcessingService, PageEventProcessingService>();
         services.AddTransient<
-            IPageRenderCacheMissEventProcessingService,
-            PageRenderCacheMissEventProcessingService>();
+            IUncachedPageRenderEventProcessingService,
+            UncachedPageRenderEventProcessingService>();
         services.AddTransient<IPageInfoEventProcessingService, PageInfoEventProcessingService>();
         services.AddTransient<IPageInfoProcessingService, PageInfoProcessingService>();
         services.AddTransient<IPageProcessingService, PageProcessingService>();
         services.AddTransient<IPageRenderCacheProcessingService, PageRenderCacheProcessingService>();
         services.AddTransient<IPageRenderCacheQueryProcessingService, PageRenderCacheQueryProcessingService>();
+        services.AddTransient<
+            ICachedPageRenderProcessingService,
+            CachedPageRenderProcessingService>();
         services.AddTransient<IPageRoleEventProcessingService, PageRoleEventProcessingService>();
         services.AddTransient<IPageRoleProcessingService, PageRoleProcessingService>();
         services.AddTransient<
@@ -649,12 +637,6 @@ public static partial class IServiceCollectionExtensions
                 .SetMaxTop(maxTopValue: 1000)
                 .AddRouteComponents(routePrefix: rootPath, model: routeModel, batchHandler: batchHandler);
 
-            if (builder is null
-                && newContentManagementConfiguration.IncludeLegacyCoreContext
-                && !string.Equals(a: rootPath, b: "Api/Core", comparisonType: StringComparison.OrdinalIgnoreCase))
-            {
-                options.AddRouteComponents(routePrefix: "Api/Core", model: routeModel, batchHandler: batchHandler);
-            }
         });
     }
 
@@ -667,9 +649,7 @@ public static partial class IServiceCollectionExtensions
                                   {
                                       options.ResolveConflictingActions(resolver: apiDescriptions => apiDescriptions.First());
                                       options.AddSwaggerDocuments(
-                                          documentName: documentName,
-                                          newContentManagementConfiguration:
-                                              newContentManagementConfiguration);
+                                          documentName: documentName);
 
                                       options.DocInclusionPredicate(
 predicate: (swaggerDocumentName, apiDescription) =>

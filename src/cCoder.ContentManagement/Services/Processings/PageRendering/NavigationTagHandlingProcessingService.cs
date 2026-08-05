@@ -50,7 +50,7 @@ internal sealed partial class NavigationTagHandlingProcessingService
     });
 
     private static string BuildMenu(
-        PageRenderSession session,
+        RenderSession session,
         string tagName,
         bool expand)
     {
@@ -70,7 +70,7 @@ internal sealed partial class NavigationTagHandlingProcessingService
     }
 
     private static string BuildMenuItems(
-        PageRenderSession session,
+        RenderSession session,
         PageRenderPage page,
         bool expand)
     {
@@ -94,7 +94,7 @@ internal sealed partial class NavigationTagHandlingProcessingService
     }
 
     private static string BuildMenuItem(
-        PageRenderSession session,
+        RenderSession session,
         PageRenderPage parent,
         PageRenderPage page,
         bool expand)
