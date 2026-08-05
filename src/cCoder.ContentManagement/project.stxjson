@@ -20542,6 +20542,17 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Models.ContentSecurityPolicyNonceContract",
+      "StandardElementType": "Model",
+      "LineNumber": 10,
+      "IsPublic": true,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
       "StandardElementType": "Dependency",
       "LineNumber": 7,
@@ -22826,7 +22837,7 @@
         {
           "Id": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService.RenderPageRenderSession(cCoder.ContentManagement.Models.PageRendering.PageRenderSession)",
           "Name": "RenderPageRenderSession",
-          "LineNumber": 47,
+          "LineNumber": 58,
           "Inputs": [
             {
               "Name": "session",

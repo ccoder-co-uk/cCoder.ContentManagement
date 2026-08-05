@@ -28,6 +28,17 @@ internal sealed partial class MarkupRenderService(
 {
     private static readonly RegexOptions regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline;
 
+    private static readonly Regex elementRegex = new(
+        pattern: "<(?<tag>script|style)\\b",
+        options: RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+    private static readonly Regex nonceRegex = new(
+        pattern: "\\s+nonce\\s*=\\s*(?:'[^']*'|\"[^\"]*\"|[^\\s>]+)",
+        options: RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+    private const string NonceAttribute =
+        "nonce='" + ContentSecurityPolicyNonceContract.Placeholder + "'";
+
     private static readonly PageRenderSyntax syntax = new()
     {
         ContentRegex = new Regex(pattern: "\\[content\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\](?<options>[^\\]]*)\\]", options: regexOptions),
@@ -69,10 +80,10 @@ internal sealed partial class MarkupRenderService(
             Title = session.Page?.Title ?? string.Empty,
             Description = session.Page?.Description ?? string.Empty,
             Keywords = session.Page?.Keywords ?? string.Empty,
-            HeaderHtml = RenderMarkup(key: key, content: session.Layout?.HeaderHtml ?? string.Empty, session: session, replacements: replacements, allowContentTags: false),
+            HeaderHtml = MarkContentSecurityPolicyNonce(markup: RenderMarkup(key: key, content: session.Layout?.HeaderHtml ?? string.Empty, session: session, replacements: replacements, allowContentTags: false)),
             BodyHtml = session.Request.HeaderOnly
                 ? string.Empty
-                : RenderMarkup(key: key, content: session.Layout?.BodyHtml ?? string.Empty, session: session, replacements: replacements),
+                : MarkContentSecurityPolicyNonce(markup: RenderMarkup(key: key, content: session.Layout?.BodyHtml ?? string.Empty, session: session, replacements: replacements)),
             StatusCode = session.Page == null ? 404 : 200
         };
 
@@ -347,7 +358,7 @@ values: session.App.PagesById.Values
                     user: user,
                     appId: session.App?.Id,
                     operation: "page_update")
-                        ? "<p style='cursor:pointer' onclick=\"setQueryParameter('edit', true)\">Edit</p>"
+                        ? "<a href='?edit=true'>Edit</a>"
                         : string.Empty)
         ];
 
@@ -831,5 +842,132 @@ values: session.App.PagesById.Values
         string result = regex.Replace(input: source.ToString(), evaluator: match => action(arg: match));
         source.Clear();
         source.Append(value: result);
+    }
+
+    internal static string MarkContentSecurityPolicyNonce(string markup)
+    {
+        if (string.IsNullOrEmpty(value: markup))
+        {
+            return markup ?? string.Empty;
+        }
+
+        StringBuilder result = new(capacity: markup.Length + 64);
+        int position = 0;
+
+        while (TryFindElement(
+            markup: markup,
+            startIndex: position,
+            tagName: out string tagName,
+            openingStart: out int openingStart))
+        {
+            int openingEnd = FindTagEnd(
+                markup: markup,
+                startIndex: openingStart + tagName.Length + 1);
+
+            if (openingEnd < 0)
+            {
+                break;
+            }
+
+            result.Append(
+                value: markup,
+                startIndex: position,
+                count: openingStart - position);
+
+            string openingTag = markup.Substring(
+                startIndex: openingStart,
+                length: openingEnd - openingStart + 1);
+
+            result.Append(value: MarkOpeningTag(openingTag: openingTag));
+            int contentStart = openingEnd + 1;
+
+            int closingStart = markup.IndexOf(
+                value: "</" + tagName,
+                startIndex: contentStart,
+                comparisonType: StringComparison.OrdinalIgnoreCase);
+
+            if (closingStart < 0)
+            {
+                position = contentStart;
+                continue;
+            }
+
+            result.Append(
+                value: markup,
+                startIndex: contentStart,
+                count: closingStart - contentStart);
+
+            position = closingStart;
+        }
+
+        result.Append(
+            value: markup,
+            startIndex: position,
+            count: markup.Length - position);
+
+        return result.ToString();
+    }
+
+    private static string MarkOpeningTag(string openingTag)
+    {
+        string withoutNonce = nonceRegex.Replace(
+            input: openingTag,
+            replacement: string.Empty);
+
+        int insertAt = withoutNonce.EndsWith(
+            value: "/>",
+            comparisonType: StringComparison.Ordinal)
+                ? withoutNonce.Length - 2
+                : withoutNonce.Length - 1;
+
+        return withoutNonce.Insert(
+            startIndex: insertAt,
+            value: " " + NonceAttribute);
+    }
+
+    private static bool TryFindElement(
+        string markup,
+        int startIndex,
+        out string tagName,
+        out int openingStart)
+    {
+        Match match = elementRegex.Match(
+            input: markup,
+            startat: startIndex);
+
+        tagName = match.Success
+            ? match.Groups["tag"].Value
+            : string.Empty;
+
+        openingStart = match.Success
+            ? match.Index
+            : -1;
+
+        return match.Success;
+    }
+
+    private static int FindTagEnd(string markup, int startIndex)
+    {
+        char quote = '\0';
+
+        for (int index = startIndex; index < markup.Length; index++)
+        {
+            char current = markup[index];
+
+            if (quote == '\0' && (current == '\'' || current == '"'))
+            {
+                quote = current;
+            }
+            else if (quote == current)
+            {
+                quote = '\0';
+            }
+            else if (quote == '\0' && current == '>')
+            {
+                return index;
+            }
+        }
+
+        return -1;
     }
 }

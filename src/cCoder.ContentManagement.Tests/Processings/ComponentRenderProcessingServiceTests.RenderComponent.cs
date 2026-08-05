@@ -61,7 +61,7 @@ action: workflowBaseUrl => CreateSut(workflowBaseUrl: workflowBaseUrl)
             .Contain(expected: "Child Component");
 
         result.Should()
-            .Contain(expected: "<script type='text/javascript'></script>");
+            .Contain(expected: "<script type='text/javascript' nonce='__CCODER_CSP_NONCE__'></script>");
 
         result.Should()
             .NotContain(unexpected: "defer async");
