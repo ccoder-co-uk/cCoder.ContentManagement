@@ -12,6 +12,8 @@ public interface IPageBroker
 
     IQueryable<Page> GetAllPagesIgnoringFilters();
 
+    ValueTask<Page> GetPageByIdForRenderAsync(int pageId);
+
     ValueTask<Page> AddPageAsync(Page newPage);
 
     ValueTask<Page> UpdatePageAsync(Page updatedPage);

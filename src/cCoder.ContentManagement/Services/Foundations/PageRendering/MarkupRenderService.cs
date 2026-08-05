@@ -7,24 +7,18 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Foundations;
+using cCoder.ContentManagement.Services.Processings.PageRendering;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class MarkupRenderService(
-    IComponentReaderBroker componentReaderBroker,
-    IScriptReaderBroker scriptReaderBroker,
-    IJsonBroker jsonBroker,
-    IRenderFileContentBroker renderFileContentBroker,
-    IWorkflowExecutionBroker workflowExecutionBroker) : IMarkupRenderService
+    IRenderBroker renderBroker) : IMarkupRenderService
 {
     private static readonly RegexOptions regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline;
 
@@ -100,208 +94,72 @@ internal sealed partial class MarkupRenderService(
 
         StringBuilder result = new(value: content, capacity: content.Length * 4);
 
-        if (allowContentTags)
-        {
-            Content(key: key, source: result, session: session, replacements: replacements);
-        }
+        TagHandlingOperation tagHandlingOperation = HandleTags(
+            operation: new TagHandlingOperation
+            {
+                Session = session,
+                ResourceKey = key,
+                Content = result.ToString(),
+                AllowContentTags = allowContentTags,
+                Replacements = replacements,
+                Fragments = new List<TagHandlingFragment>()
+            });
 
-        Nav(source: result, session: session);
-        Dms(key: key, source: result, session: session, replacements: replacements);
-        Script(key: key, source: result, session: session, replacements: replacements);
-        RegexReplace(source: result, regex: syntax.CultureLinkRegex, action: static unusedMatch => "?culture=");
-        Component(key: key, session: session, replacements: replacements, result: result);
-        Meta(source: result, session: session);
-        Resource(source: result, session: session, key: key, replacements: replacements);
-        ExecuteAsync(key: key, source: result, session: session, replacements: replacements);
-
-        foreach (ReplacementDependency replacement in replacements)
-        {
-            result.Replace(oldValue: replacement.Old, newValue: replacement.New);
-        }
+        result.Clear();
+        result.Append(value: tagHandlingOperation.Content);
 
         return result.ToString();
     }
 
-    private void Content(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements) =>
-        RegexReplace(source: source, regex: syntax.ContentRegex, action: match =>
-                                                                                                                                        {
-                                                                                                                                            string name = GetName(match: match);
-                                                                                                                                            string[] options = GetOptions(match: match);
-                                                                                                                                            PageRenderContent pageRenderContent = null;
-
-                                                                                                                                            if (session.Page != null && session.Page.ContentByName.TryGetValue(key: name, value: out PageRenderContent value))
-                                                                                                                                            {
-                                                                                                                                                pageRenderContent = value;
-                                                                                                                                            }
-
-                                                                                                                                            string optionalClass = string.Join(separator: " ", values: options.Where(predicate: option => option.StartsWith(value: "class="))
-                                                                                                                                                .Select(selector: option => option.Replace(oldValue: "class=", newValue: string.Empty)));
-
-                                                                                                                                            string contentEditable = session.Request.Edit ? "contenteditable" : string.Empty;
-
-                                                                                                                                            if (pageRenderContent == null)
-                                                                                                                                            {
-                                                                                                                                                return "[[Missing Content:" + name + "]]";
-                                                                                                                                            }
-
-                                                                                                                                            string html = $"<section name='{name}' class='content {optionalClass}' data-id='{pageRenderContent.Id}' {contentEditable} {string.Join(separator: " ", values: options.Where(predicate: option => !option.StartsWith(value: "class=")))}>\n                        {(session.Request.Edit ? pageRenderContent.Html : RenderMarkup(key: key, content: pageRenderContent.Html, session: session, replacements: replacements))}\n                    </section>";
-
-                                                                                                                                            return session.Request.Edit
-                                                                                                                                                ? html
-                                                                                                                                                : RenderMarkup(key: key, content: html, session: session, replacements: replacements, allowContentTags: false);
-                                                                                                                                        });
-
-    private void Nav(StringBuilder source, PageRenderSession session)
+    private TagHandlingOperation HandleTags(TagHandlingOperation operation)
     {
-        RegexReplace(source: source, regex: syntax.NavRegex, action: match => BuildMenuFor(tagName: GetName(match: match), expand: false));
-        RegexReplace(source: source, regex: syntax.NavExpandedRegex, action: match => BuildMenuFor(tagName: GetName(match: match), expand: true));
+        ITagHandlingProcessingService[] handlers =
+        [
+            .. renderBroker.GetTagHandlers()
+        ];
 
-        string BuildMenuFor(string tagName, bool expand)
+        HashSet<string> observedContent = new(
+            comparer: StringComparer.Ordinal);
+
+        for (int pass = 0; pass < 64; pass++)
         {
-            PageRenderPage page = null;
+            string contentBeforePass = operation.Content;
 
-            if (int.TryParse(s: tagName, result: out int pageId) && session.App != null)
+            if (!observedContent.Add(item: contentBeforePass))
             {
-                session.App.PagesById.TryGetValue(key: pageId, value: out page);
+                throw new InvalidOperationException(
+                    message: "Tag rendering entered a replacement cycle.");
             }
 
-            return "<div class='collapse navbar-collapse'><ul class='navbar-nav'>" + BuildMenuItemsFor(page: page, expand: expand) + "</ul></div>";
-        }
-
-        string BuildMenuItemsFor(PageRenderPage page, bool expand)
-        {
-            if (session.App == null)
+            foreach (ITagHandlingProcessingService handler in handlers)
             {
-                return string.Empty;
+                operation = handler.HandleTagHandlingOperation(
+                    operation: operation);
             }
 
-            return string.Join(
-separator: "",
-values: session.App.PagesById.Values
-                    .Where(predicate: subPage => subPage.ParentId == page?.Id && subPage.ShowOnMenus)
-                .OrderBy(keySelector: subPage => subPage.Order)
-                .Select(selector: subPage =>
-                    {
-                        string selected = subPage.ParentId.HasValue
-                            && page != null
-                            && !string.IsNullOrWhiteSpace(value: session.Page?.Path)
-                            && session.Page.Path.Contains(value: subPage.Path)
-                                ? " active"
-                                : string.Empty;
-
-                        return expand
-                            ? $"<li data-id='{subPage.Id}' class='nav-item'><a href='/{subPage.Path}' class='nav-link{selected}'>{subPage.Title}</a><ul class='submenu dropdown-menu'>{BuildMenuItemsFor(page: subPage, expand: true)}</ul></li>"
-                            : $"<li data-id='{subPage.Id}' class='nav-item'><a href='/{subPage.Path}' class='nav-link{selected}'>{subPage.Title}</a></li>";
-                    }));
-        }
-    }
-
-    private void Dms(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements) =>
-        RegexReplace(source: source, regex: syntax.DmsRegex, action: match =>
-                                                                                                                                    {
-                                                                                                                                        string name = GetName(match: match);
-                                                                                                                                        byte[] latestRawData = renderFileContentBroker.GetLatestRawData(appId: session.App?.Id ?? 0, path: name);
-
-                                                                                                                                        string latestTextContent = latestRawData?.Length > 0
-                                                                                                                                            ? Encoding.UTF8.GetString(bytes: latestRawData)
-                                                                                                                                            : string.Empty;
-
-                                                                                                                                        return string.IsNullOrEmpty(value: latestTextContent)
-                                                                                                                                            ? string.Empty
-                                                                                                                                            : RenderMarkup(key: key, content: latestTextContent, session: session, replacements: replacements, allowContentTags: false);
-                                                                                                                                    });
-
-    private void Component(string key, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements, StringBuilder result)
-    {
-        if (session.Request.Edit)
-        {
-            return;
-        }
-
-        RegexReplace(source: result, regex: syntax.ComponentRegex, action: match =>
-        {
-            string name = GetName(match: match);
-            string[] options = GetOptions(match: match);
-            PageRenderComponent component = ResolveComponent(session: session, name: name);
-
-            if (component == null)
+            foreach (TagHandlingFragment fragment in operation.Fragments)
             {
-                return "[[Missing Component:" + name + "]]";
+                TagHandlingOperation renderedFragment = HandleTags(
+                    operation: fragment.Operation);
+
+                operation.Content = operation.Content.Replace(
+                    oldValue: fragment.Token,
+                    newValue: renderedFragment.Content);
             }
 
-            string optionalClass = string.Join(separator: " ", values: options.Where(predicate: option => option.StartsWith(value: "class="))
-                .Select(selector: option => option.Replace(oldValue: "class=", newValue: string.Empty)));
+            operation.Fragments.Clear();
 
-            string content = $"<section name='{component.Name}' class='component {optionalClass}' data-id='{component.Id}' data-resource-key='{component.ResourceKey}' {string.Join(separator: " ", values: options.Where(predicate: option => !option.StartsWith(value: "class=")))}>\n                        {RenderMarkup(key: component.ResourceKey, content: component.Content, session: session, replacements: replacements, allowContentTags: false)}\n                        <script type='text/javascript'>{RenderMarkup(key: component.ResourceKey, content: component.Script, session: session, replacements: replacements, allowContentTags: false)}</script>\n                    </section>";
-
-            return RenderMarkup(key: component.ResourceKey, content: content, session: session, replacements: replacements, allowContentTags: false);
-        });
-    }
-
-    private void Script(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements) =>
-        RegexReplace(source: source, regex: syntax.ScriptRegex, action: match =>
-                                                                                                                                       {
-                                                                                                                                           string name = GetName(match: match);
-                                                                                                                                           PageRenderScript script = ResolveScript(session: session, name: name);
-
-                                                                                                                                           return script == null
-                                                                                                                                               ? string.Empty
-                                                                                                                                               : RenderMarkup(key: key, content: script.Content, session: session, replacements: replacements, allowContentTags: false);
-                                                                                                                                       });
-
-    private void ExecuteAsync(string key, StringBuilder source, PageRenderSession session, IReadOnlyCollection<ReplacementDependency> replacements) =>
-        RegexReplace(source: source, regex: syntax.ExecuteRegex, action: match =>
-                                                                                                                                             {
-                                                                                                                                                 string code = match.Groups[1].Value;
-                                                                                                                                                 string json = replacements.FirstOrDefault(predicate: replacement => replacement.Old == "[model]")?.New ?? "{}";
-
-                                                                                                                                                 string content = SerializeForOData(model: new
-                                                                                                                                                 {
-                                                                                                                                                     Script = code,
-                                                                                                                                                     Model = jsonBroker.ParseJson(json: json)
-                                                                                                                                                 });
-
-                                                                                                                                                 string result = workflowExecutionBroker.Execute(
-                                                                                                                                                     baseAddress: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]").New,
-                                                                                                                                                     content: content);
-
-                                                                                                                                                 return RenderMarkup(key: key, content: result, session: session, replacements: replacements, allowContentTags: false);
-                                                                                                                                             });
-
-    private static string SerializeForOData(object model) =>
-        JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.None,
-            Formatting = Formatting.None,
-            DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            NullValueHandling = NullValueHandling.Ignore,
-            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-            ContractResolver = new DefaultContractResolver
+            if (string.Equals(
+                a: contentBeforePass,
+                b: operation.Content,
+                comparisonType: StringComparison.Ordinal))
             {
-                IgnoreSerializableAttribute = true
-            },
-            MaxDepth = 4
-        });
-
-    private void Meta(StringBuilder source, PageRenderSession session) =>
-        RegexReplace(source: source, regex: syntax.MetaRegex, action: match => session.MetadataResolver(arg: GetName(match: match)) ?? string.Empty);
-
-    private void Resource(StringBuilder source, PageRenderSession session, string key, IReadOnlyCollection<ReplacementDependency> replacements)
-    {
-        if (session.Request.Edit)
-        {
-            return;
+                return operation;
+            }
         }
 
-        RegexReplace(source: source, regex: syntax.ResourceDisplayNameRegex, action: match =>
-            RenderMarkup(key: key, content: ResolveResource(session: session, key: key, name: GetName(match: match))?.DisplayName ?? GetName(match: match), session: session, replacements: replacements, allowContentTags: false));
-
-        RegexReplace(source: source, regex: syntax.ResourceShortDisplayNameRegex, action: match =>
-            RenderMarkup(key: key, content: ResolveResource(session: session, key: key, name: GetName(match: match))?.ShortDisplayName ?? GetName(match: match), session: session, replacements: replacements, allowContentTags: false));
-
-        RegexReplace(source: source, regex: syntax.ResourceDescriptionRegex, action: match =>
-            RenderMarkup(key: key, content: ResolveResource(session: session, key: key, name: GetName(match: match))?.Description ?? GetName(match: match), session: session, replacements: replacements, allowContentTags: false));
+        throw new InvalidOperationException(
+            message: "Tag rendering exceeded the maximum replacement passes.");
     }
 
     private IEnumerable<ReplacementDependency> BuildDefaultReplacements(PageRenderSession session)
@@ -669,141 +527,6 @@ values: session.App.PagesById.Values
         themeDictionary = value as IDictionary<string, object>;
         return themeDictionary != null;
     }
-
-    private PageRenderResource ResolveResource(PageRenderSession session, string key, string name)
-    {
-        string culture = ResolveCulture(session: session)
-            .ToLowerInvariant();
-
-        string normalizedKey = key.ToLowerInvariant();
-        string normalizedName = name.ToLowerInvariant();
-
-        PageRenderResource resource = FindIndexedResource(lookup: session.ResourcesByLookup, key: normalizedKey, name: normalizedName, culture: culture);
-
-        if (resource != null)
-        {
-            return resource;
-        }
-
-        if (culture.Contains(value: '-'))
-        {
-            resource = FindIndexedResource(lookup: session.ResourcesByLookup, key: normalizedKey, name: normalizedName, culture: culture.Split(separator: '-')[0]);
-
-            if (resource != null)
-            {
-                return resource;
-            }
-        }
-
-        resource = FindIndexedResource(lookup: session.ResourcesByLookup, key: normalizedKey, name: normalizedName, culture: string.Empty);
-        return resource ?? ResolveCommonResource(session: session, key: normalizedKey, name: normalizedName, culture: culture);
-    }
-
-    private PageRenderResource ResolveCommonResource(PageRenderSession session, string key, string name, string culture)
-    {
-        PageRenderResource resource = ResolveCommonResourceForKey(
-            session: session,
-            key: key,
-            name: name,
-            culture: culture);
-
-        return resource
-            ?? (string.Equals(
-                a: key,
-                b: "default",
-                comparisonType: StringComparison.OrdinalIgnoreCase)
-                    ? null
-                    : ResolveCommonResourceForKey(
-                        session: session,
-                        key: "default",
-                        name: name,
-                        culture: culture));
-    }
-
-    private PageRenderResource ResolveCommonResourceForKey(
-        PageRenderSession session,
-        string key,
-        string name,
-        string culture)
-    {
-        PageRenderResource resource = FindIndexedResource(lookup: session.CommonResourcesByLookup, key: key, name: name, culture: culture);
-
-        if (resource != null)
-        {
-            return resource;
-        }
-
-        if (culture.Contains(value: '-'))
-        {
-            resource = FindIndexedResource(lookup: session.CommonResourcesByLookup, key: key, name: name, culture: culture.Split(separator: '-')[0]);
-
-            if (resource != null)
-            {
-                return resource;
-            }
-        }
-
-        return FindIndexedResource(lookup: session.CommonResourcesByLookup, key: key, name: name, culture: string.Empty);
-    }
-
-    private static PageRenderResource FindIndexedResource(IReadOnlyDictionary<string, PageRenderResource> lookup, string key, string name, string culture) =>
-        lookup.TryGetValue(key: BuildResourceLookupKey(key: key, name: name, culture: culture), value: out PageRenderResource value)
-            ? value
-            : null;
-
-    private PageRenderComponent ResolveComponent(PageRenderSession session, string name)
-    {
-        if (session.ComponentsByName.TryGetValue(key: name, value: out PageRenderComponent component))
-        {
-            return component;
-        }
-
-        cCoder.Data.Models.CMS.Component dataComponent = componentReaderBroker.GetComponent(appId: session.Request.AppId, name: name);
-
-        if (dataComponent != null)
-        {
-            component = new PageRenderComponent
-            {
-                Id = dataComponent.Id,
-                Name = dataComponent.Name ?? string.Empty,
-                ResourceKey = dataComponent.ResourceKey ?? string.Empty,
-                Content = dataComponent.Content ?? string.Empty,
-                Script = dataComponent.Script ?? string.Empty
-            };
-
-            session.ComponentsByName[name] = component;
-            return component;
-        }
-
-        return session.CommonComponentsByName.TryGetValue(key: name, value: out component) ? component : null;
-    }
-
-    private PageRenderScript ResolveScript(PageRenderSession session, string name)
-    {
-        if (session.ScriptsByName.TryGetValue(key: name, value: out PageRenderScript script))
-        {
-            return script;
-        }
-
-        cCoder.Data.Models.CMS.Script dataScript = scriptReaderBroker.GetScript(appId: session.Request.AppId, name: name);
-
-        if (dataScript != null)
-        {
-            script = new PageRenderScript
-            {
-                Name = dataScript.Name ?? string.Empty,
-                Content = dataScript.Content ?? string.Empty
-            };
-
-            session.ScriptsByName[name] = script;
-            return script;
-        }
-
-        return session.CommonScriptsByName.TryGetValue(key: name, value: out script) ? script : null;
-    }
-
-    private static string BuildResourceLookupKey(string key, string name, string culture) =>
-        $"{key}|{name}|{culture}";
 
     private static bool CanPageRenderUser(
         PageRenderUser user,

@@ -30,7 +30,6 @@ internal sealed partial class PageRenderAggregationService(
     IPageRenderOrchestrationService pageRenderOrchestrationService,
     IAppCultureOrchestrationService appCultureOrchestrationService,
     IPageRenderCacheOrchestrationService pageRenderCacheOrchestrationService,
-    ICachedPageRenderOrchestrationService cachedPageRenderOrchestrationService,
     PageRenderCacheImportState pageRenderCacheImportState) : IPageRenderAggregationService
 {
     public PageRenderOperation RenderPageRenderOperation(
@@ -663,10 +662,16 @@ cacheTemplate: rebuildCache);
 
         string normalizedPath = path.ToLowerInvariant();
 
-        Page page = pageOrchestrationService.GetAllPage(ignoreFilters: true)
+        int? pageId = pageOrchestrationService.GetAllPage(ignoreFilters: true)
             .FirstOrDefault(predicate: existingPage =>
                 existingPage.AppId == app.Id
-                && existingPage.Path.ToLower() == normalizedPath);
+                && existingPage.Path.ToLower() == normalizedPath)
+            ?.Id;
+
+        Page page = pageId is null
+            ? null
+            : await pageOrchestrationService.GetPageByIdForRenderAsync(
+                pageId: pageId.Value);
 
         if (page is null)
         {
@@ -683,7 +688,6 @@ cacheTemplate: rebuildCache);
         }
 
         page.App = app;
-        HydratePageForRender(page: page);
 
         PageRenderOperation readAuthorization = ResolvePageAuthorization(
             page: page,
@@ -699,29 +703,6 @@ cacheTemplate: rebuildCache);
                 page: gatedPage,
                 theme: theme,
                 culture: culture);
-        }
-
-        if (!edit)
-        {
-            CachedPageRenderOperation cachedOperation =
-                await cachedPageRenderOrchestrationService
-                    .RenderCachedPageRenderOperationAsync(
-                        operation: new CachedPageRenderOperation
-                        {
-                            AppId = app.Id,
-                            PageId = page.Id,
-                            Page = page,
-                            Culture = culture,
-                            Theme = theme,
-                            User = readAuthorization.User
-                        });
-
-            RenderResult cached = cachedOperation.RenderResult;
-
-            if (cached is not null)
-            {
-                return cached;
-            }
         }
 
         return RenderPageRenderResult(

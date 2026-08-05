@@ -8,6 +8,10 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class PageOrchestrationService
 {
+    private static void ValidatePageByIdForRenderOnGet(
+        object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidatePageOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

@@ -21,9 +21,6 @@ internal interface IPageRenderAggregationService
     ValueTask<PageRenderOperation> RebuildPagePageRenderOperationAsync(
         PageRenderOperation operation);
 
-    ValueTask<PageRenderOperation> RebuildMissingPagePageRenderOperationAsync(
-        PageRenderOperation operation);
-
     ValueTask DeleteAppPageRenderCacheAsync(int appId);
 
     ValueTask DeleteAppPageRenderCacheFromEventAsync(int appId);

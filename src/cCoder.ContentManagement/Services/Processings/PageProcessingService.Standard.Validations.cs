@@ -8,6 +8,10 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PageProcessingService
 {
+    private static void ValidatePageByIdForRenderOnGet(
+        object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidatePageOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

@@ -68,7 +68,7 @@ public partial class PageRenderProcessingServiceTests
             .Contain(expected: "Hero Component");
 
         result.BodyHtml.Should()
-            .Contain(expected: "<script type='text/javascript' nonce='__CCODER_CSP_NONCE__'>hero-component-script</script>");
+            .Contain(expected: "<script type='text/javascript' nonce='[request[nonce]]'>hero-component-script</script>");
 
         result.BodyHtml.Should()
             .Contain(expected: "Hello|Hi|Greeting Description");

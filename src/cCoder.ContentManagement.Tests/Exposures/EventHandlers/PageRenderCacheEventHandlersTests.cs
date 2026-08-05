@@ -18,28 +18,19 @@ public partial class PageRenderCacheEventHandlersTests
     public async Task ShouldRebuildExplicitCacheMissAsync()
     {
         // Given
-        Mock<IPageRenderAggregationService> aggregationService = new();
+        Mock<IPageRenderCacheBuildAggregationService> aggregationService = new();
 
         PageRenderCacheMiss cacheMiss = new()
         {
-            AppId = 23,
-            PageId = 17,
-            Culture = "en-gb",
-            Theme = "default"
+            PageId = 17
         };
 
         aggregationService.Setup(expression: item =>
-            item.RebuildMissingPagePageRenderOperationAsync(
-                operation: It.Is<PageRenderOperation>(match: operation =>
-                    operation.AppId == cacheMiss.AppId
-                    && operation.PageId == cacheMiss.PageId
-                    && operation.Culture == cacheMiss.Culture
-                    && operation.Theme == cacheMiss.Theme
-                    && operation.RebuildCache)))
-            .ReturnsAsync(value: new PageRenderOperation());
+            item.BuildPageAsync(pageId: cacheMiss.PageId))
+            .Returns(value: ValueTask.CompletedTask);
 
-        PageRenderCacheEventHandlers handlers = new(
-            pageRenderAggregationService: aggregationService.Object);
+        PageRenderCacheMissEventHandler handlers = new(
+            pageRenderCacheBuildAggregationService: aggregationService.Object);
 
         // When
         await handlers.RebuildMissingPageAsync(cacheMiss: cacheMiss);

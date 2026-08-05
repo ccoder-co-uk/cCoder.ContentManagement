@@ -53,6 +53,6 @@ public partial class PageRenderRegistrationTests
 
         coordinationServiceType.FullName.Should()
             .Be(
-expected: "cCoder.ContentManagement.Services.Aggregations.IPageRenderAggregationService");
+                expected: "cCoder.ContentManagement.Services.Coordinations.IPageRenderCoordinationService");
     }
 }

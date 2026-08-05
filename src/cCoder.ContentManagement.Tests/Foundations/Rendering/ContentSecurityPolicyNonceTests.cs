@@ -22,9 +22,9 @@ public sealed partial class ContentSecurityPolicyNonceTests
         // Then
         result.Should()
             .Be(expected:
-            "<style nonce='__CCODER_CSP_NONCE__'>.page { color: red; }</style>" +
-            "<script src='/site.js' nonce='__CCODER_CSP_NONCE__'></script>" +
-            "<script nonce='__CCODER_CSP_NONCE__'>start();</script>");
+            "<style nonce='[request[nonce]]'>.page { color: red; }</style>" +
+            "<script src='/site.js' nonce='[request[nonce]]'></script>" +
+            "<script nonce='[request[nonce]]'>start();</script>");
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public sealed partial class ContentSecurityPolicyNonceTests
 
         // Then
         firstResult.Should()
-            .Be(expected: "<script nonce='__CCODER_CSP_NONCE__'>start();</script>");
+            .Be(expected: "<script nonce='[request[nonce]]'>start();</script>");
 
         secondResult.Should()
             .Be(expected: firstResult);
@@ -57,7 +57,7 @@ public sealed partial class ContentSecurityPolicyNonceTests
         // Then
         result.Should()
             .Be(expected:
-            "<script nonce='__CCODER_CSP_NONCE__'>const example = \"<style>not markup</style>\";</script><p>content</p>");
+            "<script nonce='[request[nonce]]'>const example = \"<style>not markup</style>\";</script><p>content</p>");
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public sealed partial class ContentSecurityPolicyNonceTests
         // Then
         result.Should()
             .Be(expected:
-            "<script data-example='a > b' nonce='__CCODER_CSP_NONCE__'>start();</script>");
+            "<script data-example='a > b' nonce='[request[nonce]]'>start();</script>");
     }
 
     [Fact]
