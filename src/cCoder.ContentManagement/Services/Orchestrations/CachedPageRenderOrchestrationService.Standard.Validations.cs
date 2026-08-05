@@ -10,6 +10,10 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class CachedPageRenderOrchestrationService
 {
+    private static void ValidateHttpPageRenderOperationOnRenderAsync(
+            object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateCachedPageRenderOperationOnRender(
         object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);

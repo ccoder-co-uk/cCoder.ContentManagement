@@ -24,6 +24,7 @@ using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Services.Processings.PageRendering;
 using Moq;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
 using RenderApp = cCoder.Data.Models.CMS.App;
@@ -57,13 +58,29 @@ public partial class PageRenderProcessingServiceTests
                 commonObjectCacheService: new CommonObjectCacheService(
                     broker: commonObjectReaderBrokerMock.Object),
                 markupRenderService: new MarkupRenderService(
-                    componentReaderBroker: componentReaderBroker,
-                    scriptReaderBroker: scriptReaderBroker,
-                    jsonBroker: new JsonBroker(),
-                    renderFileContentBroker: renderFileContentBrokerMock.Object,
-                    workflowExecutionBroker: new WorkflowExecutionBroker(
-                        workflowExecutionDependency:
-                            new WorkflowExecutionDependency())));
+                    renderBroker: new RenderBroker(
+                        tagHandlers:
+                        [
+                            new CultureLinkTagHandlingProcessingService(),
+                            new MetadataTagHandlingProcessingService(),
+                            new NavigationTagHandlingProcessingService(),
+                            new ContentTagHandlingProcessingService(),
+                            new ComponentTagHandlingProcessingService(
+                                componentReaderBroker: componentReaderBroker),
+                            new ScriptTagHandlingProcessingService(
+                                scriptReaderBroker: scriptReaderBroker),
+                            new ReplacementTagHandlingProcessingService(),
+                            new DmsTagHandlingProcessingService(
+                                renderFileContentBroker:
+                                    renderFileContentBrokerMock.Object),
+                            new ResourceTagHandlingProcessingService(),
+                            new ExecuteTagHandlingProcessingService(
+                                jsonBroker: new JsonBroker(),
+                                workflowExecutionBroker:
+                                    new WorkflowExecutionBroker(
+                                        workflowExecutionDependency:
+                                            new WorkflowExecutionDependency()))
+                        ])));
 
         Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
 

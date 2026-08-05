@@ -46,8 +46,8 @@ internal sealed partial class HttpContextService(
                     comparisonType: StringComparison.OrdinalIgnoreCase)
                 .ToLowerInvariant(),
             Path = path ?? string.Empty,
-            Culture = culture ?? string.Empty,
-            Theme = theme ?? string.Empty,
+            Culture = culture,
+            Theme = theme,
             Nonce = context.Items[
                     ContentSecurityPolicyNonceContract.HttpContextItemKey]
                 ?.ToString()

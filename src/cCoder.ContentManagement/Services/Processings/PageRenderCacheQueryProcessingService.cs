@@ -28,4 +28,53 @@ internal sealed partial class PageRenderCacheQueryProcessingService(
             return pageRenderCacheService.GetPageRenderCache(
                 pageRenderCacheId: pageRenderCacheId);
         });
+
+    public PageRenderCache GetPageRenderCache(
+        int pageId,
+        string culture,
+        string theme) =>
+        TryCatch<PageRenderCache>(operation: () =>
+        {
+            ValidatePageRenderCacheOnGet(
+                inputs: [pageId, culture, theme]);
+
+            string[] cultures = ResolveCultureFallbacks(culture: culture);
+
+            PageRenderCache[] matches =
+            [
+                .. pageRenderCacheService.GetAllPageRenderCaches()
+                .Where(predicate: cache =>
+                    cache.PageId == pageId
+                    && cultures.Contains(value: cache.Culture)
+                    && cache.Theme == theme)
+            ];
+
+            return cultures
+                .Select(selector: fallbackCulture => matches
+                    .SingleOrDefault(predicate: cache =>
+                        cache.Culture == fallbackCulture))
+                .FirstOrDefault(predicate: cache => cache is not null);
+        });
+
+    private static string[] ResolveCultureFallbacks(string culture)
+    {
+        List<string> cultures = [];
+        string current = culture ?? string.Empty;
+
+        while (!string.IsNullOrWhiteSpace(value: current))
+        {
+            cultures.Add(item: current);
+
+            int separatorIndex = current.LastIndexOf(
+                value: "-",
+                comparisonType: StringComparison.Ordinal);
+
+            current = separatorIndex < 0
+                ? string.Empty
+                : current[..separatorIndex];
+        }
+
+        cultures.Add(item: string.Empty);
+        return [.. cultures.Distinct(comparer: StringComparer.OrdinalIgnoreCase)];
+    }
 }

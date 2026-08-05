@@ -22,6 +22,16 @@ internal partial class PageProcessingService(
     IPageService service,
     IAuthorizationManager authorizationManager) : IPageProcessingService
 {
+    public ValueTask<Page> GetPageByIdForRenderAsync(int pageId) =>
+        TryCatch<Page>(operation: async () =>
+    {
+        ValidatePageByIdForRenderOnGet(inputs: [pageId]);
+        ValidateId(pageId: pageId, parameterName: "id");
+
+        return await service.GetPageByIdForRenderAsync(
+            pageId: pageId);
+    }, isValueTask: true);
+
     private User GetCurrentUser() =>
         authorizationManager.GetCurrentUser();
 

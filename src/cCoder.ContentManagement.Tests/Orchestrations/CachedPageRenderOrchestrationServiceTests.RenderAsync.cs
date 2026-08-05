@@ -3,9 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Security;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -15,32 +13,29 @@ namespace cCoder.ContentManagement.Tests.Orchestrations;
 public partial class CachedPageRenderOrchestrationServiceTests
 {
     [Fact]
-    public async Task ShouldReturnCachedPageWithoutRaisingMissEventAsync()
+    public async Task ShouldReturnCachedPageWithoutLoadingPageGraphAsync()
     {
         // Given
-        Page page = CreatePage();
-        User user = CreateUser();
         PageRenderCache cache = CreateCache();
 
         pageRenderCacheProcessingServiceMock
             .Setup(expression: processing => processing.GetPageRenderCache(
-                pageRenderCacheId: cache.Id))
+                pageId: cache.PageId,
+                culture: cache.Culture,
+                theme: cache.Theme))
             .Returns(value: cache);
 
         // When
-        CachedPageRenderOperation result = await service
-            .RenderCachedPageRenderOperationAsync(
-                operation: CreateOperation(page: page, user: user));
+        HttpPageRenderOperation result = await service
+            .RenderHttpPageRenderOperationAsync(
+                operation: CreateOperation());
 
         // Then
-        result.Should()
-            .NotBeNull();
-
-        result.RenderResult.BodyHtml
+        result.Response.Page.BodyHtml
             .Should()
-            .Contain(expected: user.DisplayName);
+            .Be(expected: cache.Body);
 
-        result.RenderResult.HeaderHtml
+        result.Response.Page.HeaderHtml
             .Should()
             .Be(expected: cache.Header);
 
@@ -52,36 +47,33 @@ public partial class CachedPageRenderOrchestrationServiceTests
     }
 
     [Fact]
-    public async Task ShouldRaiseMissAndReturnRebuiltPageAsync()
+    public async Task ShouldRaiseMissAndRequeryCacheAsync()
     {
         // Given
-        Page page = CreatePage();
-        User user = CreateUser();
         PageRenderCache cache = CreateCache();
         int queryCount = 0;
 
         pageRenderCacheProcessingServiceMock
             .Setup(expression: processing => processing.GetPageRenderCache(
-                pageRenderCacheId: cache.Id))
+                pageId: cache.PageId,
+                culture: cache.Culture,
+                theme: cache.Theme))
             .Returns(valueFunction: () => ++queryCount == 1 ? null : cache);
 
         eventProcessingServiceMock
             .Setup(expression: processing => processing
                 .RaisePageRenderCacheMissEventAsync(
                     cacheMiss: It.Is<PageRenderCacheMiss>(match: miss =>
-                        miss.AppId == cache.AppId
-                        && miss.PageId == cache.PageId
-                        && miss.Culture == "en-gb"
-                        && miss.Theme == "default")))
+                        miss.PageId == cache.PageId)))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        CachedPageRenderOperation result = await service
-            .RenderCachedPageRenderOperationAsync(
-                operation: CreateOperation(page: page, user: user));
+        HttpPageRenderOperation result = await service
+            .RenderHttpPageRenderOperationAsync(
+                operation: CreateOperation());
 
         // Then
-        result.RenderResult
+        result.Response
             .Should()
             .NotBeNull();
 
@@ -92,16 +84,16 @@ public partial class CachedPageRenderOrchestrationServiceTests
     }
 
     [Fact]
-    public async Task ShouldReturnNullWhenPageRemainsMissingAfterRebuildAsync()
+    public async Task ShouldReturnOperationWithoutResponseWhenPageRemainsMissingAsync()
     {
         // Given
-        Page page = CreatePage();
-        User user = CreateUser();
         PageRenderCache cache = CreateCache();
 
         pageRenderCacheProcessingServiceMock
             .Setup(expression: processing => processing.GetPageRenderCache(
-                pageRenderCacheId: cache.Id))
+                pageId: cache.PageId,
+                culture: cache.Culture,
+                theme: cache.Theme))
             .Returns(value: (PageRenderCache)null);
 
         eventProcessingServiceMock
@@ -111,58 +103,27 @@ public partial class CachedPageRenderOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        CachedPageRenderOperation result = await service
-            .RenderCachedPageRenderOperationAsync(
-                operation: CreateOperation(page: page, user: user));
+        HttpPageRenderOperation result = await service
+            .RenderHttpPageRenderOperationAsync(
+                operation: CreateOperation());
 
         // Then
-        result.RenderResult
+        result.Response
             .Should()
             .BeNull();
-
-        pageRenderCacheProcessingServiceMock.Verify(
-            expression: processing => processing.GetPageRenderCache(
-                pageRenderCacheId: cache.Id),
-            times: Times.Exactly(callCount: 2));
 
         eventProcessingServiceMock.VerifyAll();
     }
 
-    private static Page CreatePage() =>
+    private static HttpPageRenderOperation CreateOperation() =>
         new()
         {
-            Id = 17,
-            AppId = 3,
-            Layout = "Default",
-            ResourceKey = "Default",
-            App = new App
+            Context = new HttpPageRenderContext
             {
-                Id = 3,
-                DefaultCultureId = string.Empty,
-                Resources = []
+                PageId = 17,
+                Culture = " EN-GB ",
+                Theme = " Default "
             }
-        };
-
-    private static CachedPageRenderOperation CreateOperation(
-        Page page,
-        User user) =>
-        new()
-        {
-            AppId = 3,
-            PageId = 17,
-            Page = page,
-            Culture = "EN-gb",
-            Theme = "DEFAULT",
-            User = user
-        };
-
-    private static User CreateUser() =>
-        new()
-        {
-            Id = "paul",
-            DisplayName = "Paul Ward",
-            Email = "paul.ward@ccoder.co.uk",
-            DefaultCultureId = "en-gb"
         };
 
     private static PageRenderCache CreateCache() =>
@@ -180,7 +141,7 @@ public partial class CachedPageRenderOrchestrationServiceTests
             Keywords = "documentation",
             ShowOnMenus = true,
             Header = "<header>Documentation</header>",
-            Body = $"<main>{PageRenderRuntimeTokens.DisplayName}</main>",
+            Body = "<main>Documentation</main>",
             SourceFingerprint = "fingerprint",
             RenderedOn = DateTimeOffset.UtcNow
         };

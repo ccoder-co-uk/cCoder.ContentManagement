@@ -8,6 +8,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageService
 {
+    private static void ValidatePageByIdForRenderOnGet(
+        object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidatePageOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

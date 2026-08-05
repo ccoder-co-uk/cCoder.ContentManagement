@@ -15,6 +15,16 @@ internal partial class PageOrchestrationService(
     IPageEventProcessingService eventService,
     ILayoutProcessingService layoutProcessingService) : IPageOrchestrationService
 {
+    public ValueTask<Page> GetPageByIdForRenderAsync(int pageId) =>
+        TryCatch<Page>(operation: async () =>
+    {
+        ValidatePageByIdForRenderOnGet(inputs: [pageId]);
+        ValidateId(pageId: pageId, parameterName: "id");
+
+        return await processingService.GetPageByIdForRenderAsync(
+            pageId: pageId);
+    }, isValueTask: true);
+
     public Page GetPage(int pageId) =>
         TryCatch<Page>(operation: () =>
     {

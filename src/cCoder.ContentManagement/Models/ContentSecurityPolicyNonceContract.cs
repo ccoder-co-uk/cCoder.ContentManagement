@@ -10,7 +10,7 @@ namespace cCoder.ContentManagement.Models;
 public static class ContentSecurityPolicyNonceContract
 {
     public const string HttpContextItemKey =
-        "cCoder.ContentManagement.PageNonce";
+        "cCoder.ContentManagement.RequestNonce";
 
-    public const string Placeholder = "[page[nonce]]";
+    public const string Placeholder = "[request[nonce]]";
 }

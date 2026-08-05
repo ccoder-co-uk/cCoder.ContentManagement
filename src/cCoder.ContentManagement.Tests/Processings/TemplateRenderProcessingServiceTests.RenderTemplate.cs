@@ -68,7 +68,7 @@ public partial class TemplateRenderProcessingServiceTests
             .Contain(expected: "Hero Taylor");
 
         result.Should()
-            .Contain(expected: "<script type='text/javascript' nonce='__CCODER_CSP_NONCE__'></script>");
+            .Contain(expected: "<script type='text/javascript' nonce='[request[nonce]]'></script>");
 
         result.Should()
             .NotContain(unexpected: "defer async");

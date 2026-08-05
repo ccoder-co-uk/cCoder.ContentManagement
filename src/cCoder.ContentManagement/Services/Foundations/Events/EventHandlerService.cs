@@ -113,7 +113,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
     {
         eventHubBroker.ListenToEvent(
             eventName: "page_render_cache_miss",
-            handler: (IPageRenderCacheEventHandlers service, PageRenderCacheMiss cacheMiss) =>
+            handler: (IPageRenderCacheMissEventHandler service, PageRenderCacheMiss cacheMiss) =>
                 service.RebuildMissingPageAsync(cacheMiss: cacheMiss));
 
         ListenToAppOwnedRenderEvents<AppCulture>(eventNames: ["app_culture_add", "app_culture_delete"]);

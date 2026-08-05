@@ -45,7 +45,6 @@ public partial class PageRenderAggregationServiceTests
     private readonly Mock<IPageRenderOrchestrationService> pageRenderOrchestrationServiceMock = new();
     private readonly Mock<IAppCultureOrchestrationService> appCultureOrchestrationServiceMock = new();
     private readonly Mock<IPageRenderCacheOrchestrationService> pageRenderCacheOrchestrationServiceMock = new();
-    private readonly Mock<ICachedPageRenderOrchestrationService> cachedPageRenderOrchestrationServiceMock = new();
     private readonly PageRenderAggregationService aggregationService;
 
     public PageRenderAggregationServiceTests()
@@ -140,7 +139,6 @@ public partial class PageRenderAggregationServiceTests
             pageRenderOrchestrationService: pageRenderOrchestrationServiceMock.Object,
             appCultureOrchestrationService: appCultureOrchestrationServiceMock.Object,
             pageRenderCacheOrchestrationService: pageRenderCacheOrchestrationServiceMock.Object,
-            cachedPageRenderOrchestrationService: cachedPageRenderOrchestrationServiceMock.Object,
             pageRenderCacheImportState: new cCoder.ContentManagement.Models.PageRenderCacheImportState());
     }
 

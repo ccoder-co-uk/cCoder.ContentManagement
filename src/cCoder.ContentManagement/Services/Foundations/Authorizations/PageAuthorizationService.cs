@@ -23,28 +23,73 @@ internal sealed partial class PageAuthorizationService(
             pageRenderContext: pageRenderContext,
             parameterName: "pageRenderContext");
 
-        pageRenderContext.PageId = await pageAuthorizationBroker
-            .GetAuthorizedPageIdAsync(
+        PageAuthorizationResult authorization = await pageAuthorizationBroker
+            .GetAuthorizedPageAsync(
                 domain: pageRenderContext.Domain,
                 path: pageRenderContext.Path);
 
-        if (pageRenderContext.PageId is not null)
+        if (authorization?.PageId is not null)
         {
+            ApplyAuthorization(
+                pageRenderContext: pageRenderContext,
+                authorization: authorization);
+
+            if (pageRenderContext.Edit)
+            {
+                pageRenderContext.Edit = await pageAuthorizationBroker
+                    .CanUpdatePageAsync(
+                        appId: authorization.AppId,
+                        pageId: authorization.PageId.Value);
+            }
+
             return pageRenderContext;
         }
 
-        pageRenderContext.PageId = await pageAuthorizationBroker
-            .GetPageIdIgnoringFiltersAsync(
+        authorization = await pageAuthorizationBroker
+            .GetPageIgnoringFiltersAsync(
                 domain: pageRenderContext.Domain,
                 path: pageRenderContext.Path);
 
-        if (pageRenderContext.PageId is not null)
+        if (authorization?.PageId is not null)
         {
-            throw new PageAccessSecurityException(
-                pageRenderContext: pageRenderContext);
+            ApplyAuthorization(
+                pageRenderContext: pageRenderContext,
+                authorization: authorization);
+
+            pageRenderContext.AccessDenied = true;
+
+            return pageRenderContext;
+        }
+
+        if (authorization is not null)
+        {
+            ApplyAuthorization(
+                pageRenderContext: pageRenderContext,
+                authorization: authorization);
         }
 
         return pageRenderContext;
 
     }, isValueTask: true);
+
+    private static void ApplyAuthorization(
+        HttpPageRenderContext pageRenderContext,
+        PageAuthorizationResult authorization)
+    {
+        pageRenderContext.PageId = authorization.PageId;
+        pageRenderContext.AppId = authorization.AppId;
+        pageRenderContext.TenantId = authorization.TenantId;
+        pageRenderContext.Domain = authorization.Domain;
+        pageRenderContext.AppConfigJson = authorization.AppConfigJson;
+
+        if (string.IsNullOrWhiteSpace(value: pageRenderContext.Culture))
+        {
+            pageRenderContext.Culture = authorization.DefaultCulture;
+        }
+
+        if (string.IsNullOrWhiteSpace(value: pageRenderContext.Theme))
+        {
+            pageRenderContext.Theme = authorization.DefaultTheme;
+        }
+    }
 }

@@ -8,6 +8,6 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal interface ICachedPageRenderOrchestrationService
 {
-    ValueTask<CachedPageRenderOperation> RenderCachedPageRenderOperationAsync(
-        CachedPageRenderOperation operation);
+    ValueTask<HttpPageRenderOperation> RenderHttpPageRenderOperationAsync(
+        HttpPageRenderOperation operation);
 }

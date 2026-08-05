@@ -4,13 +4,19 @@
 
 namespace cCoder.ContentManagement.Brokers.Authorizations;
 
+using cCoder.ContentManagement.Models;
+
 internal interface IPageAuthorizationBroker
 {
-    ValueTask<int?> GetAuthorizedPageIdAsync(
+    ValueTask<PageAuthorizationResult> GetAuthorizedPageAsync(
         string domain,
         string path);
 
-    ValueTask<int?> GetPageIdIgnoringFiltersAsync(
+    ValueTask<PageAuthorizationResult> GetPageIgnoringFiltersAsync(
         string domain,
         string path);
+
+    ValueTask<bool> CanUpdatePageAsync(
+        int appId,
+        int pageId);
 }

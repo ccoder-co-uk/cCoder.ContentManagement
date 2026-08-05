@@ -267,40 +267,6 @@ internal sealed partial class PageRenderAggregationService
             return operation;
         }, isValueTask: true);
 
-    public ValueTask<PageRenderOperation>
-        RebuildMissingPagePageRenderOperationAsync(
-            PageRenderOperation operation) =>
-        TryCatch<PageRenderOperation>(operation: async () =>
-        {
-            ValidateRenderPageRenderOperation(inputs: [operation]);
-
-            Page page = pageOrchestrationService.GetAllPage(ignoreFilters: true)
-                .FirstOrDefault(predicate: item => item.Id == operation.PageId);
-
-            if (page is null)
-            {
-                return operation;
-            }
-
-            App app = appOrchestrationService.GetAllApp(ignoreFilters: true)
-                .FirstOrDefault(predicate: item => item.Id == page.AppId);
-
-            if (app is null)
-            {
-                return operation;
-            }
-
-            await pageRenderCacheOrchestrationService
-                .ReplacePageRenderCachesFromEventAsync(
-                    appId: app.Id,
-                    pageIds: [page.Id],
-                    replacements: BuildPageRenderCaches(
-                        app: app,
-                        page: page));
-
-            return operation;
-        }, isValueTask: true);
-
     private PageRenderCache[] BuildPageRenderCaches(
         App app,
         Page page)
@@ -418,10 +384,10 @@ internal sealed partial class PageRenderAggregationService
         return
         [
             .. themes
-                .Where(predicate: theme => !string.IsNullOrWhiteSpace(value: theme))
-                .Select(selector: theme => theme.Trim())
-                .Distinct(comparer: StringComparer.OrdinalIgnoreCase)
-        ];
+                  .Where(predicate: theme => !string.IsNullOrWhiteSpace(value: theme))
+                  .Select(selector: theme => theme.Trim())
+                  .Distinct(comparer: StringComparer.OrdinalIgnoreCase)
+          ];
     }
 
     private static string NormalizePageRenderCacheKey(string value) =>
