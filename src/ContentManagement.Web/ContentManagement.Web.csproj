@@ -11,7 +11,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
-    <PackageReference Include="cCoder.AppSecurity" Version="2026.8.4.0001" />
+    <PackageReference Include="cCoder.AppSecurity" Version="2026.8.5.123" />
     <PackageReference Include="cCoder.Eventing" Version="2026.8.4.2342" />
     <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.8.4.2342" />
     <PackageReference Include="cCoder.Eventing.Http" Version="2026.8.4.2342" />
