@@ -135,7 +135,7 @@ internal partial class ComponentRenderProcessingService(
         ValidateComponent(component: component, parameterName: "component");
         ValidateComponentRenderParams(renderParams: renderParams, parameterName: "renderParams");
         ICollection<ReplacementDependency> replacements = DefaultReplacements(renderParams: renderParams);
-        return $"<section name='{component.Name}' class='component' data-id='{component.Id}' data-resource-key='{component.ResourceKey}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}<script type='text/javascript'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script></section>";
+        return $"<section name='{component.Name}' class='component' data-id='{component.Id}' data-resource-key='{component.ResourceKey}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}<script type='text/javascript' nonce='{ContentSecurityPolicyNonceContract.Placeholder}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script></section>";
 
     });
 
@@ -296,7 +296,7 @@ internal partial class ComponentRenderProcessingService(
             .Where(predicate: option => option.StartsWith(value: "class="))
             .Select(selector: option => option.Replace(oldValue: "class=", newValue: "")));
 
-        string content = $"<section name='{component.Name}' class='component {value}' data-id='{component.Id}' data-resource-key='{component.ResourceKey}' {string.Join(separator: " ", values: tag.options.Where(predicate: (string option) => !option.StartsWith(value: "class=")))}>\r\n                        {ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}\r\n                        <script type='text/javascript'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script>\r\n                    </section>";
+        string content = $"<section name='{component.Name}' class='component {value}' data-id='{component.Id}' data-resource-key='{component.ResourceKey}' {string.Join(separator: " ", values: tag.options.Where(predicate: (string option) => !option.StartsWith(value: "class=")))}>\r\n                        {ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}\r\n                        <script type='text/javascript' nonce='{ContentSecurityPolicyNonceContract.Placeholder}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script>\r\n                    </section>";
         return ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: content, replacements: replacements);
     }
 
@@ -729,7 +729,7 @@ internal partial class ComponentRenderProcessingService(
         ValidateComponent(component: component, parameterName: "component");
         ValidateComponentRenderParams(renderParams: renderParams, parameterName: "renderParams");
         ICollection<ReplacementDependency> replacements = DefaultReplacements(renderParams: renderParams);
-        return $"<section name='{component.Name}' class='component' data-id='{component.Id}' data-resource-key='{component.ResourceKey}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}<script type='text/javascript'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script></section>";
+        return $"<section name='{component.Name}' class='component' data-id='{component.Id}' data-resource-key='{component.ResourceKey}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}<script type='text/javascript' nonce='{ContentSecurityPolicyNonceContract.Placeholder}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script></section>";
     }
 
     private static IEnumerable<Resource> ExecuteSectionForCultureResource(IEnumerable<Resource> potentials, string key, string culture)
