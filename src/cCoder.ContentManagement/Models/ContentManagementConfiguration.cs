@@ -17,6 +17,5 @@ public class ContentManagementConfiguration
     public bool DebugInfo { get; set; }
     public bool LogSQL { get; set; }
     public string RootPath { get; set; }
-    public bool IncludeLegacyCoreContext { get; set; }
     public EventProvider[] EventProviders { get; set; }
 }

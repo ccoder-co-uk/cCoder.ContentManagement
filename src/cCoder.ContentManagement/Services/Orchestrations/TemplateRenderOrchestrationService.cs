@@ -14,8 +14,12 @@ internal sealed partial class TemplateRenderOrchestrationService(
     IAuthorizationProcessingService authorizationProcessingService)
         : ITemplateRenderOrchestrationService
 {
-    public string Render(int appId, string name, string culture, dynamic model) =>
-        TryCatch<string>(operation: () =>
+    public TemplateRenderResult RenderTemplateRenderResult(
+        int appId,
+        string name,
+        string culture,
+        dynamic model) =>
+        TryCatch<TemplateRenderResult>(operation: () =>
     {
         ValidateRender(inputs: [appId, name, culture, model]);
         ValidateAppId(appId: appId, parameterName: "appId");
@@ -38,8 +42,24 @@ internal sealed partial class TemplateRenderOrchestrationService(
 
     });
 
-    public string RenderUser(int appId, string name, string culture, dynamic model, User user) =>
-        TryCatch<string>(operation: () =>
+    internal string Render(
+        int appId,
+        string name,
+        string culture,
+        dynamic model) =>
+        RenderTemplateRenderResult(
+            appId: appId,
+            name: name,
+            culture: culture,
+            model: model).Content;
+
+    internal string RenderUser(
+        int appId,
+        string name,
+        string culture,
+        dynamic model,
+        User user) =>
+        TryCatch<TemplateRenderResult>(operation: () =>
     {
         ValidateRenderUser(inputs: [appId, name, culture, model, user]);
         ValidateAppId(appId: appId, parameterName: "appId");
@@ -53,9 +73,9 @@ internal sealed partial class TemplateRenderOrchestrationService(
             model: model,
             user: user);
 
-    });
+    }).Content;
 
-    private string ExecuteRenderUser(
+    private TemplateRenderResult ExecuteRenderUser(
         int appId,
         string name,
         string culture,
@@ -71,8 +91,12 @@ internal sealed partial class TemplateRenderOrchestrationService(
             Culture = culture
         };
 
-        return templateRenderProcessingService.RenderTemplateRenderOperation(
-            operation: operation);
+        return new TemplateRenderResult
+        {
+            Content = templateRenderProcessingService
+                .RenderTemplateRenderOperation(operation: operation),
+            StatusCode = StatusCodes.Status200OK
+        };
     }
 
     private static void ValidateAppId(int appId, string parameterName) =>

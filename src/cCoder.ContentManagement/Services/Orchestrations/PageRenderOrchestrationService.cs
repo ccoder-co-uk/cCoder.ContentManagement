@@ -122,14 +122,14 @@ internal partial class PageRenderOrchestrationService(
 
     });
 
-    internal RenderResult RenderPageRenderResult(
+    internal PageRenderResult RenderPageRenderResult(
         Page page,
         string theme,
         string culture,
         bool edit = false,
         bool headerOnly = false,
         bool cacheTemplate = false) =>
-        TryCatch<RenderResult>(operation: () =>
+        TryCatch<PageRenderResult>(operation: () =>
     {
         ValidateRenderPageRenderResult(inputs: [page, theme, culture, edit, headerOnly]);
         ValidatePage(page: page, parameterName: "page");
@@ -154,8 +154,8 @@ internal partial class PageRenderOrchestrationService(
 
     });
 
-    internal RenderResult RenderPageUserRenderResult(Page page, User user, string theme, string culture, bool edit = false, bool headerOnly = false, bool cacheTemplate = false) =>
-        TryCatch<RenderResult>(operation: () =>
+    internal PageRenderResult RenderPageUserRenderResult(Page page, User user, string theme, string culture, bool edit = false, bool headerOnly = false, bool cacheTemplate = false) =>
+        TryCatch<PageRenderResult>(operation: () =>
     {
         ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit, headerOnly]);
         ValidatePage(page: page, parameterName: "page");
@@ -173,7 +173,7 @@ internal partial class PageRenderOrchestrationService(
 
     });
 
-    private RenderResult ExecuteRenderPage(
+    private PageRenderResult ExecuteRenderPage(
         Page page,
         User user,
         string theme,

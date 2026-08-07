@@ -5,7 +5,6 @@
 using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
-using System.Text;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Extensions.OData;
 using cCoder.Data.Extensions;
@@ -15,7 +14,6 @@ using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Newtonsoft.Json;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
@@ -26,34 +24,6 @@ public class TemplateController : ODataController
 
     public TemplateController(ITemplateManager manager) =>
         this.manager = manager;
-
-    [HttpPost]
-    [AllowAnonymous]
-    [ActionName("Render")]
-    public async Task<IActionResult> GetRender(int appId, string name, string culture)
-    {
-        try
-        {
-            string content = await manager.ReadContentAsync(
-                source: base.Request.Body);
-
-            dynamic m = JsonConvert.DeserializeObject(value: content);
-
-            return Content(content: manager.Render(appId: appId, name: name, culture: culture, model: m), contentType: "text/plain", contentEncoding: Encoding.UTF8);
-        }
-        catch (ContentManagementValidationException)
-        {
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException)
-        {
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception)
-        {
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
 
     [HttpPost]
     [AllowAnonymous]

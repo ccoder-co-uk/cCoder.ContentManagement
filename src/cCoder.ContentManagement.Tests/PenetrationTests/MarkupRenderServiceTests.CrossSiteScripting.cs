@@ -4,6 +4,7 @@
 
 using System.Net;
 using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using FluentAssertions;
@@ -54,14 +55,23 @@ public partial class MarkupRenderServiceTests
         string attack)
     {
         // Given
-        MarkupRenderService service = CreateMarkupRenderService();
+        MarkupRenderProcessingService service = CreateMarkupRenderService();
 
-        PageRenderSession session = new()
+        RenderSession session = new()
         {
-            Request = new PageRenderEngineRequest
+            Request = new RenderRequest
             {
                 Culture = attack,
                 Theme = attack
+            },
+            Target = new RenderTarget
+            {
+                Scope = RenderScope.Page,
+                ResourceKey = "Default",
+                HeaderMarkup = $"<meta content=\"{tag}\"><div data-value='{tag}'>{tag}</div><script>const value = \"{tag}\";</script>",
+                BodyMarkup = string.Empty,
+                AllowHeaderContentTags = false,
+                AllowBodyContentTags = true
             },
             Config = new ContentManagementConfiguration(),
             App = new PageRenderApp
@@ -94,17 +104,17 @@ public partial class MarkupRenderServiceTests
         };
 
         // When
-        PageRenderResult result =
-            service.RenderPageRenderSession(session: session).Result;
+        RenderOutput result =
+            service.RenderRenderSession(session: session).Output;
 
         // Then
-        result.HeaderHtml.Should()
+        result.HeaderMarkup.Should()
             .NotContain(unexpected: attack);
 
-        result.HeaderHtml.Should()
+        result.HeaderMarkup.Should()
             .Contain(expected: WebUtility.HtmlEncode(value: attack));
 
-        result.HeaderHtml.Should()
+        result.HeaderMarkup.Should()
             .NotContain(unexpected: "<script>alert");
     }
 }

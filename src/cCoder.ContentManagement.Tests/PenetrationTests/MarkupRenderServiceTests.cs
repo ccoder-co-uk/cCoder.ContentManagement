@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Services.Processings.PageRendering;
 using Moq;
 
@@ -13,8 +14,9 @@ namespace cCoder.ContentManagement.Tests.PenetrationTests;
 
 public partial class MarkupRenderServiceTests
 {
-    private static MarkupRenderService CreateMarkupRenderService() =>
+    private static MarkupRenderProcessingService CreateMarkupRenderService() =>
         new(
+            markupRenderService: new MarkupRenderService(
             renderBroker: new RenderBroker(
                 tagHandlers:
                 [
@@ -37,5 +39,5 @@ public partial class MarkupRenderServiceTests
                         jsonBroker: Mock.Of<IJsonBroker>(),
                         workflowExecutionBroker:
                             Mock.Of<IWorkflowExecutionBroker>())
-                ]));
+                ])));
 }

@@ -42,6 +42,9 @@ internal class ContentManagementModelBroker
     {
         AddCommonComplextypes();
         builder.ComplexType<RenderResult>();
+        builder.ComplexType<PageRenderResult>();
+        builder.ComplexType<TemplateRenderResult>();
+        builder.ComplexType<ComponentRenderResult>();
 
         builder.EntityType<App>()
             .Ignore(propertyExpression: i => i.Config);
@@ -93,7 +96,7 @@ internal class ContentManagementModelBroker
 
         builder.EntityType<Page>()
             .Collection.Function(name: "Render")
-            .Returns<RenderResult>();
+            .Returns<PageRenderResult>();
 
         ActionConfiguration rebuildByAppId = builder.EntityType<PageRenderCache>()
             .Collection.Action(name: "RebuildApp");

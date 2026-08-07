@@ -11,9 +11,9 @@ internal sealed class ComponentRenderer(
         : IComponentRenderer
 {
     public string Render(int appId, string name, string culture, string theme) =>
-        renderOrchestrationService.Render(
+        renderOrchestrationService.RenderComponentRenderResult(
             appId: appId,
             name: name,
             culture: culture,
-            theme: theme);
+            theme: theme).Content;
 }

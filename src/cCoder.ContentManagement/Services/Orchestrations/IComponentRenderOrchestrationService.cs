@@ -2,13 +2,15 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal interface IComponentRenderOrchestrationService
 {
-    string Render(int appId, string name, string culture, string theme);
-
-    string RenderUser(int appId, string name, User user, string culture, string theme);
+    ComponentRenderResult RenderComponentRenderResult(
+        int appId,
+        string name,
+        string culture,
+        string theme);
 }

@@ -12,7 +12,7 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 internal sealed partial class UncachedPageRenderOrchestrationService(
     IPageProcessingService pageProcessingService,
     IPageRenderProcessingService pageRenderProcessingService,
-    IAuthorizationProcessingService authorizationProcessingService)
+    IUncachedPageRenderEventProcessingService eventProcessingService)
         : IUncachedPageRenderOrchestrationService
 {
     public ValueTask<HttpPageRenderOperation>
@@ -36,13 +36,7 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
                 pageRenderContext: context);
         }
 
-        if (!context.Edit)
-        {
-            throw new PageNotFoundException(
-                pageRenderContext: context);
-        }
-
-        Page page = await pageProcessingService.GetPageByIdForRenderAsync(
+        Page page = await pageProcessingService.GetPageForRenderAsync(
             pageId: context.PageId.Value);
 
         string culture = string.IsNullOrWhiteSpace(value: context.Culture)
@@ -59,13 +53,7 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
                 {
                     OperationType = PageRenderOperationType.RenderResult,
                     SourcePage = page,
-                    User = authorizationProcessingService
-                        .ResolveRenderAuthorizationContext(
-                            context: new AuthorizationContext
-                            {
-                                Culture = culture
-                            })
-                        .RenderAuthorization.User,
+                    User = context.User,
                     Theme = theme,
                     Culture = culture,
                     Edit = context.Edit
@@ -79,6 +67,15 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
             Theme = theme,
             Edit = context.Edit
         };
+
+        if (!context.Edit)
+        {
+            await eventProcessingService.RaiseUncachedPageRenderEventAsync(
+                pageRenderEvent: new UncachedPageRenderEvent
+                {
+                    PageId = page.Id
+                });
+        }
 
         return operation;
 

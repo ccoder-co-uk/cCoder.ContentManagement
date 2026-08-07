@@ -256,19 +256,6 @@ values: privileges
         return JsonSerializer.Deserialize<MenuResponse>(json: content, options: JsonOptions)!;
     }
 
-    private async Task<string> RenderPageAsync(int appId, string path, string theme = "Default", string culture = "")
-    {
-        using HttpResponseMessage response = await Client.GetAsync(
-requestUri: $"{BaseUrl}/Render()?appId={appId}&path={Uri.EscapeDataString(stringToEscape: path)}&theme={Uri.EscapeDataString(stringToEscape: theme)}&culture={Uri.EscapeDataString(stringToEscape: culture)}");
-
-        string content = await response.Content.ReadAsStringAsync();
-
-        response.StatusCode.Should()
-            .Be(expected: HttpStatusCode.OK, because: content);
-
-        return content;
-    }
-
     private async Task Teardown(SeededPageContext seededContext)
     {
         using IServiceScope scope = fixture.Factory.Services.CreateScope();

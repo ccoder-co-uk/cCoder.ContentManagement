@@ -11,7 +11,7 @@ using Config = cCoder.ContentManagement.Models.ContentManagementConfiguration;
 using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
 using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
+using PageRenderResult = cCoder.ContentManagement.Models.PageRenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.Net;
 using System.Net.Sockets;
@@ -28,10 +28,10 @@ internal static class RenderTestWorkflowServer
             action: workflowBaseUrl => action(arg: workflowBaseUrl),
             responseBody: responseBody);
 
-    internal static async Task<RenderResult> RunRenderResultAsync(
-        Func<string, RenderResult> action,
+    internal static async Task<PageRenderResult> RunRenderResultAsync(
+        Func<string, PageRenderResult> action,
         string responseBody = "executed") =>
-        (RenderResult)await RunAsync(
+        (PageRenderResult)await RunAsync(
             action: workflowBaseUrl => action(arg: workflowBaseUrl),
             responseBody: responseBody);
 

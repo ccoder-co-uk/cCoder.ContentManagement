@@ -149,9 +149,14 @@ handler: It.IsAny<Func<IPageStructureCoordinationService, Page, ValueTask>>()));
                 handler: It.IsAny<Func<IPageRenderCacheEventHandlers, CommonObject, ValueTask>>()));
 
         eventHubBrokerMock
-            .Setup(expression: broker => broker.ListenToEvent<PageRenderCacheMiss, IPageRenderCacheMissEventHandler>(
-                eventName: "page_render_cache_miss",
-                handler: It.IsAny<Func<IPageRenderCacheMissEventHandler, PageRenderCacheMiss, ValueTask>>()));
+            .Setup(expression: broker => broker.ListenToEvent<
+                UncachedPageRenderEvent,
+                IUncachedPageRenderEventHandler>(
+                    eventName: "uncached_page_render",
+                    handler: It.IsAny<Func<
+                        IUncachedPageRenderEventHandler,
+                        UncachedPageRenderEvent,
+                        ValueTask>>()));
     }
 
 }

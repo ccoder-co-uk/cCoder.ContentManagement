@@ -11,7 +11,6 @@ namespace ContentManagement.Web.Controllers;
 
 [ApiController]
 [Route("Api/ContentManagement/Package")]
-[Route("Api/Core/Package")]
 public sealed class PackageController(
     IContentManagementPackageManager contentManagementPackageManager) : ControllerBase
 {

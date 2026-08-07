@@ -2,8 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Dependencies;
 using cCoder.Data.Models.CMS;
+using System.ComponentModel.DataAnnotations;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -40,4 +41,16 @@ internal partial class AppCultureService
             throw new ValidationException(message: message);
         }
     }
+
+    private static void ValidateAllAppCultureOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAppCultureOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAppCultureOnAdd(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAppCultureOnDelete(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
 }

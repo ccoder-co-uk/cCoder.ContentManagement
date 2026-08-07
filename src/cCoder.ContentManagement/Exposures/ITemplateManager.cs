@@ -8,8 +8,6 @@ namespace cCoder.ContentManagement.Exposures;
 
 public interface ITemplateManager
 {
-    string Render(int appId, string name, string culture, dynamic model);
-
     ValueTask<string> ReadContentAsync(Stream source);
 
     byte[] ConvertHtmlToPdf(string html);

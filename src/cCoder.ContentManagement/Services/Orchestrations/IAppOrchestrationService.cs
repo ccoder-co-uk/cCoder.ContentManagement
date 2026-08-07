@@ -12,6 +12,8 @@ internal interface IAppOrchestrationService
 {
     App GetApp(int appId);
 
+    ValueTask<App> GetAppForRenderAsync(int appId);
+
     bool IsAdminApp(int appId, string userName);
 
     App GetByDomainApp(string domain, bool ignoreFilters = false);

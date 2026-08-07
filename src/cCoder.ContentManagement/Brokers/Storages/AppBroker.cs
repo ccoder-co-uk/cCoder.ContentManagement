@@ -25,6 +25,24 @@ internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBr
         return coreDataContext.Apps.IgnoreQueryFilters();
     }
 
+    public async ValueTask<App> GetAppForRenderAsync(int appId)
+    {
+        await using CoreDataContext coreDataContext =
+            coreContextFactory.CreateCoreContext();
+
+        return await coreDataContext.Apps
+            .IgnoreQueryFilters()
+            .Include(navigationPropertyPath: app => app.Cultures)
+            .Include(navigationPropertyPath: app => app.Layouts)
+            .Include(navigationPropertyPath: app => app.Templates)
+            .Include(navigationPropertyPath: app => app.Resources)
+            .Include(navigationPropertyPath: app => app.Components)
+            .Include(navigationPropertyPath: app => app.Scripts)
+            .Include(navigationPropertyPath: app => app.Pages)
+                .ThenInclude(navigationPropertyPath: page => page.PageInfo)
+            .SingleOrDefaultAsync(predicate: app => app.Id == appId);
+    }
+
     public async ValueTask<App> AddAppAsync(App newApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();

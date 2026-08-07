@@ -2,8 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Dependencies;
 using cCoder.Data.Models.CMS;
+using System.ComponentModel.DataAnnotations;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -37,4 +38,19 @@ internal partial class LayoutService
             throw new ValidationException(message: message);
         }
     }
+
+    private static void ValidateLayoutOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAllLayoutOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateLayoutOnAdd(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateLayoutOnUpdate(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateDeleteAsync(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
 }

@@ -11,7 +11,7 @@ public class PageRenderResponse
 {
     public App App { get; set; }
 
-    public RenderResult Page { get; set; }
+    public PageRenderResult Page { get; set; }
 
     public string Theme { get; set; }
 

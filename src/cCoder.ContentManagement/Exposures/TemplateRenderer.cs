@@ -11,9 +11,9 @@ internal sealed class TemplateRenderer(
         : ITemplateRenderer
 {
     public string Render(int appId, string name, string culture, dynamic model) =>
-        renderOrchestrationService.Render(
+        renderOrchestrationService.RenderTemplateRenderResult(
             appId: appId,
             name: name,
             culture: culture,
-            model: model);
+            model: model).Content;
 }

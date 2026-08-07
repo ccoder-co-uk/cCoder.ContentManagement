@@ -19,6 +19,7 @@ public enum PageRenderOperationType
 public class PageRenderOperation : PageRenderResponse
 {
     internal bool RebuildCache { get; set; }
+    internal bool CreateCache { get; set; }
     internal bool HeaderOnly { get; set; }
     internal bool CacheTemplate { get; set; }
     public PageRenderOperationType OperationType { get; set; }

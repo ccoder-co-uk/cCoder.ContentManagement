@@ -25,6 +25,15 @@ internal partial class AppProcessingService(
     IPageBroker pageBroker,
     HttpContext httpContext = null) : IAppProcessingService
 {
+    public ValueTask<App> GetAppForRenderAsync(int appId) =>
+        TryCatch<App>(operation: async () =>
+    {
+        ValidateAppForRenderOnGet(inputs: [appId]);
+        ValidateId(appId: appId, parameterName: "id");
+
+        return await service.GetAppForRenderAsync(appId: appId);
+    }, isValueTask: true);
+
     public App GetApp(int appId) =>
         TryCatch<App>(operation: () =>
     {

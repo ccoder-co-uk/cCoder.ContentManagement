@@ -16,6 +16,6 @@ public interface IPageEventBroker : IAuthenticatedEventBroker
 
     ValueTask RaisePageDeleteEventAsync(EventMessage<Page> message);
 
-    ValueTask RaisePageRenderCacheMissEventAsync(
-        EventMessage<PageRenderCacheMiss> message);
+    ValueTask RaiseUncachedPageRenderEventAsync(
+        EventMessage<UncachedPageRenderEvent> message);
 }

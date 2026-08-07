@@ -30,7 +30,7 @@ internal sealed partial class ComponentTagHandlingProcessingService(
             operation: operation,
             parameterName: "operation");
 
-        if (operation.Session.Request.Edit)
+        if (operation.Editable)
         {
             return operation;
         }
@@ -88,6 +88,7 @@ internal sealed partial class ComponentTagHandlingProcessingService(
                 ResourceKey = component.ResourceKey,
                 Content = $"<section name='{component.Name}' class='component {optionalClass}' data-id='{component.Id}' data-resource-key='{component.ResourceKey}' {otherOptions}>\n                        {component.Content}\n                        <script type='text/javascript' nonce='{ContentSecurityPolicyNonceContract.Placeholder}'>{component.Script}</script>\n                    </section>",
                 AllowContentTags = false,
+                Editable = operation.Editable,
                 Replacements = operation.Replacements,
                 Fragments = new List<TagHandlingFragment>()
             }
@@ -97,7 +98,7 @@ internal sealed partial class ComponentTagHandlingProcessingService(
     }
 
     private PageRenderComponent ResolveComponent(
-        PageRenderSession session,
+        RenderSession session,
         string name)
     {
         if (session.ComponentsByName.TryGetValue(

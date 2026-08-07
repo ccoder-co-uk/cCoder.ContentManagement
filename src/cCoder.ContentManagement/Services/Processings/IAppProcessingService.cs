@@ -13,6 +13,8 @@ internal interface IAppProcessingService
 {
     App GetApp(int appId);
 
+    ValueTask<App> GetAppForRenderAsync(int appId);
+
     string GetDomain(int appId, bool ignoreFilters = false);
 
     App GetByDomainApp(string domain, bool ignoreFilters = false);

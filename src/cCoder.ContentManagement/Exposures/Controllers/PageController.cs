@@ -113,41 +113,6 @@ public class PageController : ODataController
     }
 
     [HttpGet]
-    [AllowAnonymous]
-    [ActionName("Render")]
-    public async Task<IActionResult> GetRender(
-        int appId,
-        string path,
-        string theme,
-        string culture)
-    {
-        try
-        {
-            object result = await manager.RenderAsync(
-                appId: appId,
-                path: path,
-                theme: theme,
-                culture: culture);
-
-            return result is null
-                ? NotFound()
-                : Ok(value: result);
-        }
-        catch (ContentManagementValidationException)
-        {
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException)
-        {
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception)
-        {
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [HttpGet]
     public IActionResult GetMetadata()
     {
         try

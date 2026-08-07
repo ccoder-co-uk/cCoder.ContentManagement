@@ -2,13 +2,17 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Dependencies;
 using cCoder.Data.Models.CMS;
+using System.ComponentModel.DataAnnotations;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class AppService
 {
+    private static void ValidateAppForRenderOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
 
@@ -40,4 +44,22 @@ internal partial class AppService
             throw new ValidationException(message: message);
         }
     }
+
+    private static void ValidateAppOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAllAppOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAppOnAdd(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAppOnUpdate(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidatePageOrderOnUpdate(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateDeleteAsync(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
 }

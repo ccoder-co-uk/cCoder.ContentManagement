@@ -16,4 +16,5 @@ internal interface IPageRenderCacheQueryProcessingService
         int pageId,
         string culture,
         string theme);
+
 }

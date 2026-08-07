@@ -2,8 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Dependencies;
 using cCoder.Data.Models.Security;
+using System.ComponentModel.DataAnnotations;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -40,4 +41,13 @@ internal partial class PageRoleService
             throw new ValidationException(message: message);
         }
     }
+
+    private static void ValidateAllPageRoleOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidatePageRoleOnAdd(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidatePageRoleOnDelete(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
 }

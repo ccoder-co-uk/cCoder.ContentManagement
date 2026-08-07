@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.Data.Models.Security;
+
 namespace cCoder.ContentManagement.Models;
 
 public sealed class HttpPageRenderContext
@@ -44,4 +46,6 @@ public sealed class HttpPageRenderContext
     public string TenantId { get; set; }
 
     public string AppConfigJson { get; set; }
+
+    public User User { get; set; }
 }

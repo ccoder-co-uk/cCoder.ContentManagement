@@ -22,13 +22,13 @@ internal partial class PageProcessingService(
     IPageService service,
     IAuthorizationManager authorizationManager) : IPageProcessingService
 {
-    public ValueTask<Page> GetPageByIdForRenderAsync(int pageId) =>
+    public ValueTask<Page> GetPageForRenderAsync(int pageId) =>
         TryCatch<Page>(operation: async () =>
     {
-        ValidatePageByIdForRenderOnGet(inputs: [pageId]);
+        ValidatePageForRenderOnGet(inputs: [pageId]);
         ValidateId(pageId: pageId, parameterName: "id");
 
-        return await service.GetPageByIdForRenderAsync(
+        return await service.GetPageForRenderAsync(
             pageId: pageId);
     }, isValueTask: true);
 

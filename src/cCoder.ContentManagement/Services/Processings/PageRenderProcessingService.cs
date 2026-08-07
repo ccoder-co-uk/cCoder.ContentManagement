@@ -38,7 +38,7 @@ internal sealed partial class PageRenderProcessingService(
         return operation;
     });
 
-    internal RenderResult RenderPageUserRenderResult(
+    internal PageRenderResult RenderPageUserRenderResult(
         Page page,
         User user,
         string theme,
@@ -46,14 +46,14 @@ internal sealed partial class PageRenderProcessingService(
         bool edit = false,
         bool headerOnly = false,
         bool cacheTemplate = false) =>
-        TryCatch<RenderResult>(operation: () =>
+        TryCatch<PageRenderResult>(operation: () =>
     {
         ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit, headerOnly]);
         ValidatePage(page: page, parameterName: "page");
         ValidateUser(user: user, parameterName: "user");
         ValidateTheme(theme: theme, parameterName: "theme");
 
-        PageRenderSession session =
+        RenderSession session =
             BuildSession(
                 page: page,
                 user: user,
@@ -64,38 +64,40 @@ internal sealed partial class PageRenderProcessingService(
                 headerOnly: headerOnly,
                 cacheTemplate: cacheTemplate);
 
-        PageRenderSession renderedSession =
+        RenderSession renderedSession =
             pageRenderService.Execute<
-                IPageRenderExecutionOrchestrationService,
-                PageRenderSession>(
-                    name: "PageRenderExecution",
+                IRenderOrchestrationService,
+                RenderSession>(
+                    name: "Render",
                     operation: service =>
-                        service.RenderPageRenderSession(
+                        service.RenderRenderSession(
                             session: session));
 
-        PageRenderResult pageRenderResult = renderedSession.Result;
-
-        return new RenderResult
+        return new PageRenderResult
         {
-            AppId = pageRenderResult.AppId,
-            PageId = pageRenderResult.PageId,
-            ParentId = pageRenderResult.ParentId,
-            Theme = pageRenderResult.Theme,
-            Culture = pageRenderResult.Culture,
-            Edit = pageRenderResult.Edit,
-            Path = pageRenderResult.Path,
-            Layout = pageRenderResult.Layout,
-            Title = pageRenderResult.Title,
-            Description = pageRenderResult.Description,
-            Keywords = pageRenderResult.Keywords,
-            HeaderHtml = pageRenderResult.HeaderHtml,
-            BodyHtml = pageRenderResult.BodyHtml,
-            StatusCode = pageRenderResult.StatusCode
+            AppId = renderedSession.App?.Id ?? 0,
+            PageId = renderedSession.Page?.Id ?? 0,
+            ParentId = renderedSession.Page?.ParentId,
+            Theme = renderedSession.Request.Theme ?? string.Empty,
+            Culture = renderedSession.Request.Culture ?? string.Empty,
+            Edit = renderedSession.Request.Edit,
+            Path = renderedSession.Page?.Path
+                ?? renderedSession.Request.Path
+                ?? string.Empty,
+            Layout = renderedSession.Layout?.Name
+                ?? renderedSession.Page?.LayoutName
+                ?? string.Empty,
+            Title = renderedSession.Page?.Title ?? string.Empty,
+            Description = renderedSession.Page?.Description ?? string.Empty,
+            Keywords = renderedSession.Page?.Keywords ?? string.Empty,
+            HeaderHtml = renderedSession.Output?.HeaderMarkup ?? string.Empty,
+            BodyHtml = renderedSession.Output?.BodyMarkup ?? string.Empty,
+            StatusCode = renderedSession.Page == null ? 404 : 200
         };
 
     });
 
-    private static PageRenderSession BuildSession(
+    private static RenderSession BuildSession(
         Page page,
         User user,
         ContentManagementConfiguration config,
@@ -112,9 +114,13 @@ internal sealed partial class PageRenderProcessingService(
             ? user.DefaultCultureId ?? app.DefaultCultureId ?? string.Empty
             : culture;
 
-        return new PageRenderSession
+        PageRenderLayout layout = ResolveLayout(
+            app: app,
+            layoutName: page.Layout);
+
+        return new RenderSession
         {
-            Request = new PageRenderEngineRequest
+            Request = new RenderRequest
             {
                 AppId = app.Id,
                 Path = page.Path ?? string.Empty,
@@ -124,11 +130,20 @@ internal sealed partial class PageRenderProcessingService(
                 HeaderOnly = headerOnly,
                 CacheTemplate = cacheTemplate
             },
+            Target = new RenderTarget
+            {
+                Scope = RenderScope.Page,
+                ResourceKey = page.ResourceKey ?? "Default",
+                HeaderMarkup = layout.HeaderHtml ?? string.Empty,
+                BodyMarkup = layout.BodyHtml ?? string.Empty,
+                AllowHeaderContentTags = false,
+                AllowBodyContentTags = true
+            },
             Config = config,
             App = MapApp(app: app, culture: resolvedCulture),
             Page = MapPage(page: page, culture: resolvedCulture, includeContent: true),
             User = MapUser(user: user),
-            Layout = ResolveLayout(app: app, layoutName: page.Layout),
+            Layout = layout,
             Resources = MapResources(resources: app.Resources),
             ResourcesByLookup = BuildResourceLookup(resources: app.Resources),
             ComponentsByName = BuildComponentLookup(components: app.Components),

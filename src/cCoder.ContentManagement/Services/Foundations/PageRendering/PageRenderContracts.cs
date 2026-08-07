@@ -19,5 +19,10 @@ internal interface ICommonObjectCacheService
 
 internal interface IMarkupRenderService
 {
-    PageRenderSession RenderPageRenderSession(PageRenderSession session);
+    string RenderRenderSessionReplacementDependencies(
+        string key,
+        string content,
+        RenderSession session,
+        IReadOnlyCollection<ReplacementDependency> replacements,
+        bool allowContentTags = true);
 }

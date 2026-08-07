@@ -26,37 +26,6 @@ public class ComponentController : ODataController
         this.manager = manager;
 
     [HttpGet]
-    [AllowAnonymous]
-    [ActionName("Render")]
-    public IActionResult GetRender(int appId, string name, string culture, string theme)
-    {
-        try
-        {
-            string result = manager.Render(
-                appId: appId,
-                name: name,
-                culture: culture,
-                theme: theme);
-
-            return result is null
-                ? NotFound()
-                : Ok(value: result);
-        }
-        catch (ContentManagementValidationException)
-        {
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException)
-        {
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception)
-        {
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [HttpGet]
     public IActionResult GetMetadata()
     {
         try

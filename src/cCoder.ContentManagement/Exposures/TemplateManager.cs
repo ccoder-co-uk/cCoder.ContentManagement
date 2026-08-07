@@ -27,17 +27,6 @@ internal sealed class TemplateManager(
                 name: "TemplateContent",
                 operation: broker => broker.ConvertHtmlToPdf(html: html));
 
-    public string Render(int appId, string name, string culture, dynamic model) =>
-        serviceProviderExecutionService.Execute<
-            ITemplateRenderOrchestrationService,
-            string>(
-                name: "TemplateRender",
-                operation: service => service.Render(
-                    appId: appId,
-                    name: name,
-                    culture: culture,
-                    model: model));
-
     public IQueryable<Template> GetAll() =>
         serviceProviderExecutionService.Execute<
             ITemplateOrchestrationService,

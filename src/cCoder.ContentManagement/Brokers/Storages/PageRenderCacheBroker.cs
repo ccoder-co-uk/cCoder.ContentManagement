@@ -2,8 +2,10 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Data;
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
+using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
@@ -42,7 +44,8 @@ internal sealed class PageRenderCacheBroker(ICoreContextFactory coreContextFacto
         using CoreDataContext context = coreContextFactory.CreateCoreContext();
 
         await using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction =
-            await context.Database.BeginTransactionAsync();
+            await context.Database.BeginTransactionAsync(
+                isolationLevel: IsolationLevel.Serializable);
 
         PageRenderCache[] existing =
         [
@@ -64,7 +67,8 @@ internal sealed class PageRenderCacheBroker(ICoreContextFactory coreContextFacto
         using CoreDataContext context = coreContextFactory.CreateCoreContext();
 
         await using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction =
-            await context.Database.BeginTransactionAsync();
+            await context.Database.BeginTransactionAsync(
+                isolationLevel: IsolationLevel.Serializable);
 
         PageRenderCache[] existing =
         [

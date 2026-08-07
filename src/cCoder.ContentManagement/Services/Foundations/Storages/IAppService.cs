@@ -10,6 +10,8 @@ internal interface IAppService
 {
     App GetApp(int appId, bool ignoreFilters = false);
 
+    ValueTask<App> GetAppForRenderAsync(int appId);
+
     IQueryable<App> GetAllApp(bool ignoreFilters = false);
 
     ValueTask<App> AddAppAsync(App newApp);

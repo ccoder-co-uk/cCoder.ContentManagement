@@ -8,8 +8,6 @@ namespace cCoder.ContentManagement.Exposures;
 
 public interface IComponentManager
 {
-    string Render(int appId, string name, string culture, string theme);
-
     IQueryable<Component> GetAll();
 
     Component Get(int componentId);

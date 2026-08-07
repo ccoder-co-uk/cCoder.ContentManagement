@@ -55,7 +55,7 @@ public partial class PageRenderOrchestrationServiceTests
         };
 
         User user = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
-        RenderResult expected = new() { StatusCode = 200 };
+        PageRenderResult expected = new() { StatusCode = 200 };
         Mock<IPageRenderProcessingService> processingServiceMock = new();
         Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock = new();
 
@@ -79,7 +79,7 @@ public partial class PageRenderOrchestrationServiceTests
             });
 
         // When
-        RenderResult actual = orchestrationService.RenderPageUserRenderResult(page: page, user: user, theme: "Default", culture: string.Empty, edit: true);
+        PageRenderResult actual = orchestrationService.RenderPageUserRenderResult(page: page, user: user, theme: "Default", culture: string.Empty, edit: true);
 
         // Then
         actual.Should()
