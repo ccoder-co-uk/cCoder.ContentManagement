@@ -28,6 +28,11 @@ internal sealed class PageRenderCacheEventHandlers(
     public async ValueTask RebuildAppAsync(int appId) =>
         _ = await ExecuteRebuildAppAsync(appId: appId);
 
+    public ValueTask InvalidateAppAsync(int appId) =>
+        pageRenderCacheAggregationService.DeleteAppAsync(
+            appId: appId,
+            fromEvent: true);
+
     public ValueTask DeleteAppAsync(App deletedApp) =>
         pageRenderCacheAggregationService.DeleteAppAsync(
             appId: deletedApp.Id,
