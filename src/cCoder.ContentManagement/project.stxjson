@@ -17087,7 +17087,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.DeleteAppAsync(App)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 31,
+          "LineNumber": 36,
           "Inputs": [
             {
               "Name": "deletedApp",
@@ -17187,6 +17187,57 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(System.Int32)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 31,
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(System.Int32)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
+              "MethodName": "DeleteAppAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.DeleteAppAsync(System.Int32,System.Boolean)",
+              "StandardElementType": "AggregationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(App)",
           "Name": "RebuildAppAsync",
           "LineNumber": 25,
@@ -17235,7 +17286,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(AppCulture)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 36,
+          "LineNumber": 41,
           "Inputs": [
             {
               "Name": "appCulture",
@@ -17281,7 +17332,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(Component)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 45,
+          "LineNumber": 50,
           "Inputs": [
             {
               "Name": "component",
@@ -17327,7 +17378,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(Layout)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 39,
+          "LineNumber": 44,
           "Inputs": [
             {
               "Name": "layout",
@@ -17373,7 +17424,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(Resource)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 48,
+          "LineNumber": 53,
           "Inputs": [
             {
               "Name": "resource",
@@ -17419,7 +17470,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(Script)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 51,
+          "LineNumber": 56,
           "Inputs": [
             {
               "Name": "script",
@@ -17511,7 +17562,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(Template)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 42,
+          "LineNumber": 47,
           "Inputs": [
             {
               "Name": "template",
@@ -17557,7 +17608,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildCommonCacheConsumersAsync(CommonObject)",
           "Name": "RebuildCommonCacheConsumersAsync",
-          "LineNumber": 64,
+          "LineNumber": 69,
           "Inputs": [
             {
               "Name": "commonObject",
@@ -17611,7 +17662,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildPageAsync(Content)",
           "Name": "RebuildPageAsync",
-          "LineNumber": 54,
+          "LineNumber": 59,
           "Inputs": [
             {
               "Name": "content",
@@ -17719,7 +17770,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildPageAsync(PageInfo)",
           "Name": "RebuildPageAsync",
-          "LineNumber": 59,
+          "LineNumber": 64,
           "Inputs": [
             {
               "Name": "pageInfo",
@@ -47649,7 +47700,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Processings.CachedPageRenderProcessingService",
       "StandardElementType": "ProcessingService",
-      "LineNumber": 11,
+      "LineNumber": 12,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -47670,7 +47721,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.CachedPageRenderProcessingService.RenderPageRenderCacheOperation(cCoder.ContentManagement.Models.PageRenderCacheOperation)",
           "Name": "RenderPageRenderCacheOperation",
-          "LineNumber": 14,
+          "LineNumber": 15,
           "Inputs": [
             {
               "Name": "operation",
@@ -64190,7 +64241,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.DeleteAppAsync(App)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 16,
+          "LineNumber": 17,
           "Inputs": [
             {
               "Name": "deletedApp",
@@ -64238,6 +64289,31 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(System.Int32)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 16,
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(App)",
           "Name": "RebuildAppAsync",
           "LineNumber": 14,
@@ -64265,7 +64341,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(AppCulture)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 17,
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "appCulture",
@@ -64290,7 +64366,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Component)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 20,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "component",
@@ -64315,7 +64391,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Layout)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 18,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "layout",
@@ -64340,7 +64416,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Resource)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 21,
+          "LineNumber": 22,
           "Inputs": [
             {
               "Name": "resource",
@@ -64365,7 +64441,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Script)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 22,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "script",
@@ -64415,7 +64491,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Template)",
           "Name": "RebuildAppAsync",
-          "LineNumber": 19,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "template",
@@ -64440,7 +64516,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildCommonCacheConsumersAsync(CommonObject)",
           "Name": "RebuildCommonCacheConsumersAsync",
-          "LineNumber": 25,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "commonObject",
@@ -64465,7 +64541,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildPageAsync(Content)",
           "Name": "RebuildPageAsync",
-          "LineNumber": 23,
+          "LineNumber": 24,
           "Inputs": [
             {
               "Name": "content",
@@ -64515,7 +64591,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildPageAsync(PageInfo)",
           "Name": "RebuildPageAsync",
-          "LineNumber": 24,
+          "LineNumber": 25,
           "Inputs": [
             {
               "Name": "pageInfo",

@@ -92,6 +92,27 @@ public partial class PageRenderCacheEventHandlersTests
     }
 
     [Fact]
+    public async Task ShouldInvalidateAppCacheAfterPackageImportAsync()
+    {
+        // Given
+        const int appId = 23;
+        Mock<IPageRenderCacheAggregationService> aggregationService = new();
+
+        aggregationService.Setup(expression: item =>
+            item.DeleteAppAsync(appId: appId, fromEvent: true))
+            .Returns(value: ValueTask.CompletedTask);
+
+        PageRenderCacheEventHandlers handlers = new(
+            pageRenderCacheAggregationService: aggregationService.Object);
+
+        // When
+        await handlers.InvalidateAppAsync(appId: appId);
+
+        // Then
+        aggregationService.VerifyAll();
+    }
+
+    [Fact]
     public async Task ShouldRebuildOwningAppOnComponentChangeAsync()
     {
         // Given

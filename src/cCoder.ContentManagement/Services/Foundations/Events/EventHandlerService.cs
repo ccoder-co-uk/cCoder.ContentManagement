@@ -163,6 +163,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "package_import", handler: (IContentManagementMigrationAggregationService service, (int appId, Package package) args) => service.ImportPackageAsync(appId: args.appId, package: args.package));
 
     private void ListenToPackageImportCompleteEvents() =>
-        eventHubBroker.ListenToEvent(eventName: "package_import_complete", handler: (IPageRenderCacheEventHandlers service, (int appId, Package package) args) => service.RebuildAppAsync(appId: args.appId));
+        eventHubBroker.ListenToEvent(eventName: "package_import_complete", handler: (IPageRenderCacheEventHandlers service, (int appId, Package package) args) => service.InvalidateAppAsync(appId: args.appId));
 
 }

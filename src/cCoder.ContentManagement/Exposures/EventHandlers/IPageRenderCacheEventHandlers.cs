@@ -13,6 +13,7 @@ internal interface IPageRenderCacheEventHandlers
     ValueTask DeletePageAsync(Page deletedPage);
     ValueTask RebuildAppAsync(App app);
     ValueTask RebuildAppAsync(int appId);
+    ValueTask InvalidateAppAsync(int appId);
     ValueTask DeleteAppAsync(App deletedApp);
     ValueTask RebuildAppAsync(AppCulture appCulture);
     ValueTask RebuildAppAsync(Layout layout);
