@@ -4,6 +4,7 @@
 
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
@@ -44,8 +45,12 @@ internal sealed partial class CachedPageRenderProcessingService
                     Title = cached.Title,
                     Description = cached.Description,
                     Keywords = cached.Keywords,
-                    HeaderHtml = cached.Header,
-                    BodyHtml = cached.Body,
+                    HeaderHtml = MarkupRenderService
+                        .MarkContentSecurityPolicyNonce(
+                            markup: cached.Header),
+                    BodyHtml = MarkupRenderService
+                        .MarkContentSecurityPolicyNonce(
+                            markup: cached.Body),
                     StatusCode = StatusCodes.Status200OK
                 },
                 Culture = context.Culture,
