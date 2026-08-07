@@ -23,8 +23,8 @@ public sealed partial class CachedPageRenderProcessingServiceTests
                 PageId = 17,
                 Path = "/Documentation",
                 Title = "Documentation",
-                Header = "<head />",
-                Body = "<main />"
+                Header = "<style>.page { color: red; }</style>",
+                Body = "<main /><script>start();</script>"
             },
             RenderOperation = new HttpPageRenderOperation
             {
@@ -50,7 +50,13 @@ public sealed partial class CachedPageRenderProcessingServiceTests
             actual: result);
 
         Assert.Equal(
-            expected: operation.Cache.Body,
+            expected:
+                "<main /><script nonce='[request[nonce]]'>start();</script>",
             actual: result.RenderOperation.Response.Page.BodyHtml);
+
+        Assert.Equal(
+            expected:
+                "<style nonce='[request[nonce]]'>.page { color: red; }</style>",
+            actual: result.RenderOperation.Response.Page.HeaderHtml);
     }
 }
