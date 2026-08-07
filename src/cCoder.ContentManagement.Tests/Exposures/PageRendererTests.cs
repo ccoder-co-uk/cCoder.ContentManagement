@@ -18,12 +18,13 @@ public sealed partial class PageRendererTests
     {
         // Given
         PageRenderResponse expected = new();
+        RenderResult renderResult = new() { PageResponse = expected };
         Mock<IRenderAggregationService> renderAggregationService = new();
 
         renderAggregationService.Setup(expression: service =>
                 service.RenderPageRenderResultAsync())
             .Returns(value: ValueTask.FromResult<RenderResult>(
-                result: expected));
+                result: renderResult));
 
         PageRenderer renderer = new(
             renderAggregationService: renderAggregationService.Object);

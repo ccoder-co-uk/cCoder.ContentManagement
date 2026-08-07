@@ -115,7 +115,6 @@ public sealed partial class PageRenderCacheAggregationServiceTests
         App app = new()
         {
             Id = appId,
-            Cultures = [],
             DefaultTheme = "Default"
         };
 
@@ -166,9 +165,8 @@ public sealed partial class PageRenderCacheAggregationServiceTests
             cacheService: cacheService);
 
         // When
-        PageRenderCache[] caches = await service.RebuildPageAsync(
-            pageId: pageId,
-            fromEvent: true);
+        PageRenderCache[] caches = await service.CachePageAsync(
+            pageId: pageId);
 
         // Then
         PageRenderCache cache = Assert.Single(collection: caches);

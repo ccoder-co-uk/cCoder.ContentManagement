@@ -54,7 +54,10 @@ internal sealed partial class RenderAggregationService(
                 oldValue: ContentSecurityPolicyNonceContract.Placeholder,
                 newValue: context.Nonce);
 
-        return operation.Response;
+        return new RenderResult
+        {
+            PageResponse = operation.Response
+        };
 
     }, isValueTask: true);
 

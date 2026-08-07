@@ -110,7 +110,7 @@ public sealed partial class TemplateControllerTests(WebAcceptanceFixture fixture
     private async Task<string> RenderTemplateAsync(string name, string modelJson)
     {
         using HttpResponseMessage response = await Client.PostAsync(
-requestUri: $"{BaseUrl}/Render?appId=1&name={Uri.EscapeDataString(stringToEscape: name)}&culture=",
+requestUri: $"{BaseUrl}/Render()?name={Uri.EscapeDataString(stringToEscape: name)}",
 content: new StringContent(content: modelJson, encoding: Encoding.UTF8, mediaType: "application/json"));
 
         string content = await response.Content.ReadAsStringAsync();

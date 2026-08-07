@@ -33,7 +33,7 @@ payload: new
         Component actualComponent;
 
         // When
-        actualRenderContent = await RenderComponentAsync(appId: 1, name: componentName);
+        actualRenderContent = await RenderComponentAsync(name: componentName);
 
         // Then
 

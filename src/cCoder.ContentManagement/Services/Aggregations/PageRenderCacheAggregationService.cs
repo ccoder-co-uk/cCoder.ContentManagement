@@ -176,6 +176,24 @@ internal sealed partial class PageRenderCacheAggregationService(
             return operation.PageRenderCaches;
         }, isValueTask: true);
 
+    public ValueTask<PageRenderCache[]> CachePageAsync(int pageId) =>
+        TryCatch<PageRenderCache[]>(operation: async () =>
+        {
+            ValidatePagePageRenderCachesOnRebuild(
+                inputs: [pageId, true]);
+
+            PageRenderOperation operation =
+                await RebuildPagePageRenderOperationAsync(
+                    operation: new PageRenderOperation
+                    {
+                        PageId = pageId,
+                        RebuildCache = true,
+                        CreateCache = true
+                    });
+
+            return operation.PageRenderCaches;
+        }, isValueTask: true);
+
     private ValueTask DeleteAppPageRenderCacheAsync(int appId) =>
         TryCatch(operation: () =>
         {
@@ -319,7 +337,16 @@ internal sealed partial class PageRenderCacheAggregationService(
                 ?? throw new KeyNotFoundException(
                     message: $"App {operation.AppId} was not found.");
 
-        int[] pageIds = [.. app.Pages.Select(selector: page => page.Id)];
+        int[] pageIds = operation.RebuildCache
+            ?
+            [
+                .. pageRenderCacheOrchestrationService
+                    .GetAllPageRenderCaches()
+                    .Where(predicate: cache => cache.AppId == app.Id)
+                    .Select(selector: cache => cache.PageId)
+                    .Distinct()
+            ]
+            : [.. app.Pages.Select(selector: page => page.Id)];
 
         List<PageRenderCache> rebuilt = [];
 
@@ -362,6 +389,18 @@ internal sealed partial class PageRenderCacheAggregationService(
 
             if (pageRenderCacheImportState.Active && operation.RebuildCache)
             {
+                return operation;
+            }
+
+            bool pageIsCached = pageRenderCacheOrchestrationService
+                .GetAllPageRenderCaches()
+                .Any(predicate: cache => cache.PageId == operation.PageId);
+
+            if (operation.RebuildCache
+                && !operation.CreateCache
+                && !pageIsCached)
+            {
+                operation.PageRenderCaches = [];
                 return operation;
             }
 
@@ -475,7 +514,7 @@ internal sealed partial class PageRenderCacheAggregationService(
     {
         string[] cultures =
         [
-            .. app.Cultures
+            .. (app.Cultures ?? [])
                 .Select(selector: appCulture => appCulture.CultureId)
                 .Where(predicate: culture => culture.Length > 0)
                 .AsEnumerable()

@@ -24,7 +24,7 @@ public sealed partial class RenderAggregationServiceTests
             Nonce = "request-nonce"
         };
 
-        PageRenderResponse response = new()
+        PageRenderResponse expectedResponse = new()
         {
             Page = new PageRenderResult
             {
@@ -47,7 +47,7 @@ public sealed partial class RenderAggregationServiceTests
                         operation => operation.Context == context)))
             .Returns(valueFunction: (HttpPageRenderOperation operation) =>
             {
-                operation.Response = response;
+                operation.Response = expectedResponse;
                 return operation;
             });
 
@@ -61,19 +61,21 @@ public sealed partial class RenderAggregationServiceTests
                 Mock.Of<IComponentRenderOrchestrationService>());
 
         // When
-        PageRenderResponse result = (PageRenderResponse)await service
+        RenderResult result = await service
             .RenderPageRenderResultAsync();
 
-        // Then
-        result
-            .Should()
-            .BeSameAs(expected: response);
+        PageRenderResponse actualResponse = result.PageResponse;
 
-        result.Page.HeaderHtml
+        // Then
+        actualResponse
+            .Should()
+            .BeSameAs(expected: expectedResponse);
+
+        actualResponse.Page.HeaderHtml
             .Should()
             .Contain(expected: "nonce='request-nonce'");
 
-        result.Page.BodyHtml
+        actualResponse.Page.BodyHtml
             .Should()
             .Contain(expected: "nonce='request-nonce'");
 
@@ -95,7 +97,7 @@ public sealed partial class RenderAggregationServiceTests
             Nonce = "request-nonce"
         };
 
-        PageRenderResponse response = new()
+        PageRenderResponse expectedResponse = new()
         {
             Page = new PageRenderResult
             {
@@ -117,7 +119,7 @@ public sealed partial class RenderAggregationServiceTests
                     operation: It.IsAny<HttpPageRenderOperation>()))
             .Returns(valueFunction: (HttpPageRenderOperation operation) =>
             {
-                operation.Response = response;
+                operation.Response = expectedResponse;
                 return ValueTask.FromResult(result: operation);
             });
 
@@ -131,13 +133,15 @@ public sealed partial class RenderAggregationServiceTests
                 Mock.Of<IComponentRenderOrchestrationService>());
 
         // When
-        PageRenderResponse result = (PageRenderResponse)await service
+        RenderResult result = await service
             .RenderPageRenderResultAsync();
 
+        PageRenderResponse actualResponse = result.PageResponse;
+
         // Then
-        result
+        actualResponse
             .Should()
-            .BeSameAs(expected: response);
+            .BeSameAs(expected: expectedResponse);
 
         cachedService.VerifyNoOtherCalls();
 

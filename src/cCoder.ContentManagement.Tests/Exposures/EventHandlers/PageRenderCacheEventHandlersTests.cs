@@ -26,9 +26,7 @@ public partial class PageRenderCacheEventHandlersTests
         };
 
         aggregationService.Setup(expression: item =>
-            item.RebuildPageAsync(
-                pageId: pageRenderEvent.PageId,
-                fromEvent: true))
+            item.CachePageAsync(pageId: pageRenderEvent.PageId))
             .ReturnsAsync(value: []);
 
         UncachedPageRenderEventHandler handlers = new(

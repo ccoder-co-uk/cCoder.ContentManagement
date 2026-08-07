@@ -13,7 +13,11 @@ internal sealed class PageRenderer(
     public ValueTask<PageRenderResponse> RenderAsync() =>
         ExecuteRenderAsync();
 
-    private async ValueTask<PageRenderResponse> ExecuteRenderAsync() =>
-        (PageRenderResponse)await renderAggregationService
+    private async ValueTask<PageRenderResponse> ExecuteRenderAsync()
+    {
+        RenderResult result = await renderAggregationService
             .RenderPageRenderResultAsync();
+
+        return result.PageResponse;
+    }
 }

@@ -8,6 +8,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Rendering.Brokers;
@@ -695,6 +696,13 @@ internal partial class TemplateRenderProcessingService(
 
     private IEnumerable<ReplacementDependency> BuildModelReplacements(object model, string prefix = "")
     {
+        if (model is JsonElement jsonElement)
+        {
+            return BuildModelReplacements(
+                model: JToken.Parse(json: jsonElement.GetRawText()),
+                prefix: prefix);
+        }
+
         if (model is string)
         {
             return new[] { new ReplacementDependency(old: "[theme[" + prefix + "]]", @new: model.ToString()) };

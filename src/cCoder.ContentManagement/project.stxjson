@@ -4942,7 +4942,7 @@
     {
       "Name": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker",
       "StandardElementType": "Broker",
-      "LineNumber": 10,
+      "LineNumber": 12,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -4963,7 +4963,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.AddPageRenderCacheAsync(PageRenderCache)",
           "Name": "AddPageRenderCacheAsync",
-          "LineNumber": 15,
+          "LineNumber": 17,
           "Inputs": [
             {
               "Name": "newPageRenderCache",
@@ -4990,7 +4990,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.DeletePageRenderCacheAsync(PageRenderCache)",
           "Name": "DeletePageRenderCacheAsync",
-          "LineNumber": 31,
+          "LineNumber": 33,
           "Inputs": [
             {
               "Name": "deletedPageRenderCache",
@@ -5017,7 +5017,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.GetAllPageRenderCaches()",
           "Name": "GetAllPageRenderCaches",
-          "LineNumber": 12,
+          "LineNumber": 14,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CPageRenderCache\u003E",
           "Implements": [
@@ -5039,7 +5039,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.ReplacePageRenderCachesByAppIdAsync(System.Int32,PageRenderCache[])",
           "Name": "ReplacePageRenderCachesByAppIdAsync",
-          "LineNumber": 38,
+          "LineNumber": 40,
           "Inputs": [
             {
               "Name": "appId",
@@ -5070,7 +5070,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.ReplacePageRenderCachesByPageIdsAsync(System.Int32,System.Int32[],PageRenderCache[])",
           "Name": "ReplacePageRenderCachesByPageIdsAsync",
-          "LineNumber": 59,
+          "LineNumber": 62,
           "Inputs": [
             {
               "Name": "appId",
@@ -5113,7 +5113,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.UpdatePageRenderCacheAsync(PageRenderCache)",
           "Name": "UpdatePageRenderCacheAsync",
-          "LineNumber": 23,
+          "LineNumber": 25,
           "Inputs": [
             {
               "Name": "updatedPageRenderCache",
@@ -21170,16 +21170,7 @@
       "LineNumber": 10,
       "IsPublic": true,
       "Kind": "Class",
-      "BaseType": {
-        "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Models.RenderResult",
-        "FullName": "cCoder.ContentManagement.Models.RenderResult",
-        "Name": "RenderResult",
-        "Namespace": "cCoder.ContentManagement.Models",
-        "AssemblyName": "cCoder.ContentManagement",
-        "Kind": "Class",
-        "IsInCurrentProject": true,
-        "StandardElementType": "Model"
-      },
+      "BaseType": null,
       "Interfaces": [],
       "Properties": [
         {
@@ -23247,7 +23238,7 @@
     {
       "Name": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderProcessingService",
       "StandardElementType": "ProcessingService",
-      "LineNumber": 17,
+      "LineNumber": 18,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -23268,7 +23259,7 @@
         {
           "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderProcessingService.RenderRenderSession(cCoder.ContentManagement.Models.PageRendering.RenderSession)",
           "Name": "RenderRenderSession",
-          "LineNumber": 20,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "session",
@@ -23604,6 +23595,52 @@
           "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.CachePageAsync(System.Int32)",
+          "Name": "CachePageAsync",
+          "LineNumber": 179,
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.CachePageAsync(System.Int32)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "System.ArgumentException",
+            "System.Collections.Generic.KeyNotFoundException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.InvalidOperationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
@@ -24137,7 +24174,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderComponentRenderResultAsync(System.String)",
           "Name": "RenderComponentRenderResultAsync",
-          "LineNumber": 79,
+          "LineNumber": 82,
           "Inputs": [
             {
               "Name": "name",
@@ -24269,7 +24306,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderTemplateRenderResultAsync(System.String,System.Object)",
           "Name": "RenderTemplateRenderResultAsync",
-          "LineNumber": 61,
+          "LineNumber": 64,
           "Inputs": [
             {
               "Name": "name",
@@ -58213,7 +58250,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
       "StandardElementType": "ProcessingService",
-      "LineNumber": 25,
+      "LineNumber": 26,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -58234,7 +58271,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService.RenderTemplateRenderOperation(cCoder.ContentManagement.Models.TemplateRenderOperation)",
           "Name": "RenderTemplateRenderOperation",
-          "LineNumber": 37,
+          "LineNumber": 38,
           "Inputs": [
             {
               "Name": "operation",
@@ -68836,9 +68873,34 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.CachePageAsync(System.Int32)",
+          "Name": "CachePageAsync",
+          "LineNumber": 31,
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.DeleteAppAsync(System.Int32,System.Boolean)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 31,
+          "LineNumber": 33,
           "Inputs": [
             {
               "Name": "appId",
@@ -68867,7 +68929,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.DeletePageAsync(System.Int32,System.Boolean)",
           "Name": "DeletePageAsync",
-          "LineNumber": 33,
+          "LineNumber": 35,
           "Inputs": [
             {
               "Name": "pageId",
@@ -68966,7 +69028,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildAllAppsAsync(System.Boolean)",
           "Name": "RebuildAllAppsAsync",
-          "LineNumber": 35,
+          "LineNumber": 37,
           "Inputs": [
             {
               "Name": "fromEvent",
@@ -69020,7 +69082,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildCommonObjectConsumersAsync(System.String,System.Boolean)",
           "Name": "RebuildCommonObjectConsumersAsync",
-          "LineNumber": 38,
+          "LineNumber": 40,
           "Inputs": [
             {
               "Name": "commonObjectType",

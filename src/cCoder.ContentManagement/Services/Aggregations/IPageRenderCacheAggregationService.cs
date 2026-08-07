@@ -28,6 +28,8 @@ internal interface IPageRenderCacheAggregationService
         int pageId,
         bool fromEvent = false);
 
+    ValueTask<PageRenderCache[]> CachePageAsync(int pageId);
+
     ValueTask DeleteAppAsync(int appId, bool fromEvent = false);
 
     ValueTask DeletePageAsync(int pageId, bool fromEvent = false);

@@ -118,10 +118,10 @@ public sealed partial class ComponentControllerTests(WebAcceptanceFixture fixtur
         return JsonSerializer.Deserialize<ODataEnvelope<Component>>(json: content, options: JsonOptions)!.Value;
     }
 
-    private async Task<string> RenderComponentAsync(int appId, string name, string culture = "", string theme = "Default")
+    private async Task<string> RenderComponentAsync(string name)
     {
         using HttpResponseMessage response = await Client.GetAsync(
-requestUri: $"{BaseUrl}/Render()?appId={appId}&name={Uri.EscapeDataString(stringToEscape: name)}&culture={Uri.EscapeDataString(stringToEscape: culture)}&theme={Uri.EscapeDataString(stringToEscape: theme)}");
+requestUri: $"{BaseUrl}/Render()?name={Uri.EscapeDataString(stringToEscape: name)}");
 
         string content = await response.Content.ReadAsStringAsync();
 

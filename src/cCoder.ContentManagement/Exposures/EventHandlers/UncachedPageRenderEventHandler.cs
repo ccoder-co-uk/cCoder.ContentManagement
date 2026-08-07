@@ -17,7 +17,6 @@ internal sealed class UncachedPageRenderEventHandler(
 
     private async ValueTask CacheRenderedPageAsync(
         UncachedPageRenderEvent pageRenderEvent) =>
-        _ = await pageRenderCacheAggregationService.RebuildPageAsync(
-            pageId: pageRenderEvent.PageId,
-            fromEvent: true);
+        _ = await pageRenderCacheAggregationService.CachePageAsync(
+            pageId: pageRenderEvent.PageId);
 }

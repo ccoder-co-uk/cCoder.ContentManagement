@@ -7,4 +7,6 @@ namespace cCoder.ContentManagement.Models;
 public class RenderResult
 {
     public int StatusCode { get; set; }
+
+    internal PageRenderResponse PageResponse { get; set; }
 }

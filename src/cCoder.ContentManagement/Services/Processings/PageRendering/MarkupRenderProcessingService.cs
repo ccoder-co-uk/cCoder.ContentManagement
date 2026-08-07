@@ -5,6 +5,7 @@
 using System.Collections;
 using System.Net;
 using System.Reflection;
+using System.Text.Json;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Foundations;
@@ -255,6 +256,13 @@ internal sealed partial class MarkupRenderProcessingService(
         if (model is string text)
         {
             return [new ReplacementDependency(old: "[model[" + prefix + "]]", @new: text)];
+        }
+
+        if (model is JsonElement jsonElement)
+        {
+            return BuildModelReplacements(
+                model: JToken.Parse(json: jsonElement.GetRawText()),
+                prefix: prefix);
         }
 
         if (model is JObject jObject)

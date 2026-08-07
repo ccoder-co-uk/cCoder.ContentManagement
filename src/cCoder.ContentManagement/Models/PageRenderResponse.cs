@@ -7,7 +7,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Models;
 
-public class PageRenderResponse : RenderResult
+public class PageRenderResponse
 {
     public App App { get; set; }
 
