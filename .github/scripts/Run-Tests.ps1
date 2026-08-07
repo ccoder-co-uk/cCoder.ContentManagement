@@ -24,7 +24,10 @@ $processes = foreach ($project in $testProjects) {
         "--results-directory", "artifacts/test-results"
     )
 
-    if ($CollectCoverage) {
+    $isAcceptanceProject =
+        $project -like "*.AcceptanceTests/*"
+
+    if ($CollectCoverage -and -not $isAcceptanceProject) {
         $arguments += @(
             "--collect", '"XPlat Code Coverage"',
             "--settings", "coverage.runsettings"
