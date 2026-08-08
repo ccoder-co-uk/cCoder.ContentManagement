@@ -24204,7 +24204,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",
       "StandardElementType": "AggregationService",
-      "LineNumber": 11,
+      "LineNumber": 14,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -24225,7 +24225,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderComponentRenderResultAsync(System.String)",
           "Name": "RenderComponentRenderResultAsync",
-          "LineNumber": 82,
+          "LineNumber": 153,
           "Inputs": [
             {
               "Name": "name",
@@ -24283,20 +24283,13 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderPageRenderResultAsync()",
           "Name": "RenderPageRenderResultAsync",
-          "LineNumber": 19,
+          "LineNumber": 22,
           "Inputs": [],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.RenderResult\u003E",
           "Implements": [
             "cCoder.ContentManagement.Services.Aggregations.IRenderAggregationService.RenderPageRenderResultAsync()"
           ],
           "Calls": [
-            {
-              "TypeName": "System.String",
-              "MethodName": "Replace",
-              "MethodId": "System.String.Replace(System.String,System.String?)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICachedPageRenderOrchestrationService",
               "MethodName": "RenderHttpPageRenderOperation",
@@ -24357,7 +24350,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderTemplateRenderResultAsync(System.String,System.Object)",
           "Name": "RenderTemplateRenderResultAsync",
-          "LineNumber": 64,
+          "LineNumber": 135,
           "Inputs": [
             {
               "Name": "name",
