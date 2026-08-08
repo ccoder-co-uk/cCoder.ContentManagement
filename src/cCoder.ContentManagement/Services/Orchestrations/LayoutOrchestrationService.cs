@@ -161,7 +161,8 @@ internal partial class LayoutOrchestrationService(
                 existing.Name.Equals(value: layout.Name, comparisonType: StringComparison.OrdinalIgnoreCase))?.Id ?? 0;
         });
 
-        await ExecuteAddOrUpdateLayoutResult(newLayout: validatedItems);
+        await processingService.AddOrUpdateLayoutResult(
+            newLayout: validatedItems);
 
     }, isValueTask: true);
 

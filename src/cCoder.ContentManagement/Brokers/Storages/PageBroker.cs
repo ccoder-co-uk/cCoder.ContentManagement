@@ -47,6 +47,7 @@ internal sealed class PageBroker(ICoreContextFactory coreContextFactory) : IPage
             .Include(navigationPropertyPath: page => page.App)
                 .ThenInclude(navigationPropertyPath: app => app.Pages)
                     .ThenInclude(navigationPropertyPath: appPage => appPage.PageInfo)
+            .AsSplitQuery()
             .SingleOrDefaultAsync(
                 predicate: page => page.Id == pageId);
     }

@@ -162,7 +162,8 @@ internal partial class ResourceOrchestrationService(
                 $"{resource.Key}_{resource.Name}_{resource.Culture}" == existing.Match)?.Id ?? 0;
         });
 
-        await ExecuteAddOrUpdateResourceResult(newResource: validatedItems);
+        await processingService.AddOrUpdateResourceResult(
+            newResource: validatedItems);
 
     }, isValueTask: true);
 
