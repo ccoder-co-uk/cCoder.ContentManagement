@@ -4586,7 +4586,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.AddPageAsync(Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 55,
+          "LineNumber": 56,
           "Inputs": [
             {
               "Name": "newPage",
@@ -4613,7 +4613,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.DeleteAllPagesAsync(System.Collections.Generic.IEnumerable\u003CPage\u003E)",
           "Name": "DeleteAllPagesAsync",
-          "LineNumber": 81,
+          "LineNumber": 82,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -4640,7 +4640,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.DeletePageAsync(Page)",
           "Name": "DeletePageAsync",
-          "LineNumber": 74,
+          "LineNumber": 75,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -4738,7 +4738,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.UpdatePageAsync(Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 63,
+          "LineNumber": 64,
           "Inputs": [
             {
               "Name": "updatedPage",
