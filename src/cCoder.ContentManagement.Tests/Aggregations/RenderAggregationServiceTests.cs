@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
+using cCoder.Data.Models.Security;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -21,15 +22,28 @@ public sealed partial class RenderAggregationServiceTests
         HttpPageRenderContext context = new()
         {
             PageId = 7,
-            Nonce = "request-nonce"
+            Nonce = "request-nonce",
+            Culture = "en-GB",
+            User = new User
+            {
+                Id = "Paul",
+                DisplayName = "Paul & Ward",
+                Email = "paul.ward@ccoder.co.uk"
+            }
         };
 
         PageRenderResponse expectedResponse = new()
         {
             Page = new PageRenderResult
             {
-                HeaderHtml = "<style nonce='[request[nonce]]'></style>",
-                BodyHtml = "<script nonce='[request[nonce]]'></script>"
+                HeaderHtml =
+                    "<style nonce='[request[nonce]]'></style>" +
+                    "{{ccoder-runtime-date}}",
+                BodyHtml =
+                    "<script nonce='[request[nonce]]'>" +
+                    "const user = {{ccoder-runtime-user}};</script>" +
+                    "{{ccoder-runtime-display-name}} " +
+                    "({{ccoder-runtime-login-link}})"
             }
         };
 
@@ -78,6 +92,19 @@ public sealed partial class RenderAggregationServiceTests
         actualResponse.Page.BodyHtml
             .Should()
             .Contain(expected: "nonce='request-nonce'");
+
+        actualResponse.Page.BodyHtml
+            .Should()
+            .Contain(expected: "Paul &amp; Ward (" +
+                "<a name='logout' href=''>Logout</a>)");
+
+        actualResponse.Page.BodyHtml
+            .Should()
+            .Contain(expected: "\"Id\":\"Paul\"");
+
+        actualResponse.Page.BodyHtml
+            .Should()
+            .NotContain(unexpected: "{{ccoder-runtime-");
 
         uncachedService.VerifyNoOtherCalls();
     }

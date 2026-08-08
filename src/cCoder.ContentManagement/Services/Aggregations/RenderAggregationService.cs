@@ -3,8 +3,11 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
+using System.Net;
+using System.Text.Json;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
@@ -44,15 +47,9 @@ internal sealed partial class RenderAggregationService(
                     operation: operation);
         }
 
-        operation.Response.Page.HeaderHtml =
-            operation.Response.Page.HeaderHtml.Replace(
-                oldValue: ContentSecurityPolicyNonceContract.Placeholder,
-                newValue: context.Nonce);
-
-        operation.Response.Page.BodyHtml =
-            operation.Response.Page.BodyHtml.Replace(
-                oldValue: ContentSecurityPolicyNonceContract.Placeholder,
-                newValue: context.Nonce);
+        HydrateRequestValues(
+            page: operation.Response.Page,
+            context: context);
 
         return new RenderResult
         {
@@ -60,6 +57,80 @@ internal sealed partial class RenderAggregationService(
         };
 
     }, isValueTask: true);
+
+    private static void HydrateRequestValues(
+        PageRenderResult page,
+        HttpPageRenderContext context)
+    {
+        bool isGuest = string.IsNullOrWhiteSpace(
+                value: context.User?.Id)
+            || string.Equals(
+                a: context.User.Id,
+                b: "Guest",
+                comparisonType: StringComparison.OrdinalIgnoreCase);
+
+        string displayName = isGuest
+            ? "Guest"
+            : context.User.DisplayName ?? context.User.Id;
+
+        string loginLink = isGuest
+            ? "<a href='/Login'>Login</a>"
+            : "<a name='logout' href=''>Logout</a>";
+
+        string serializedUser = JsonSerializer.Serialize(value: new
+        {
+            Id = isGuest ? "Guest" : context.User.Id,
+            DefaultCultureId = string.IsNullOrWhiteSpace(
+                    value: context.User?.DefaultCultureId)
+                ? context.Culture
+                : context.User.DefaultCultureId,
+            DisplayName = displayName,
+            Email = context.User?.Email ?? string.Empty
+        });
+
+        page.HeaderHtml = HydrateMarkup(
+            markup: page.HeaderHtml,
+            context: context,
+            serializedUser: serializedUser,
+            displayName: displayName,
+            loginLink: loginLink);
+
+        page.BodyHtml = HydrateMarkup(
+            markup: page.BodyHtml,
+            context: context,
+            serializedUser: serializedUser,
+            displayName: displayName,
+            loginLink: loginLink);
+    }
+
+    private static string HydrateMarkup(
+        string markup,
+        HttpPageRenderContext context,
+        string serializedUser,
+        string displayName,
+        string loginLink) =>
+        (markup ?? string.Empty)
+            .Replace(
+                oldValue: ContentSecurityPolicyNonceContract.Placeholder,
+                newValue: context.Nonce,
+                comparisonType: StringComparison.Ordinal)
+            .Replace(
+                oldValue: PageRenderRuntimeTokens.User,
+                newValue: serializedUser,
+                comparisonType: StringComparison.Ordinal)
+            .Replace(
+                oldValue: PageRenderRuntimeTokens.DisplayName,
+                newValue: WebUtility.HtmlEncode(value: displayName),
+                comparisonType: StringComparison.Ordinal)
+            .Replace(
+                oldValue: PageRenderRuntimeTokens.LoginLink,
+                newValue: loginLink,
+                comparisonType: StringComparison.Ordinal)
+            .Replace(
+                oldValue: PageRenderRuntimeTokens.Date,
+                newValue: DateTimeOffset.UtcNow.ToString(
+                    format: "dd MMM yyyy"),
+                comparisonType: StringComparison.Ordinal);
 
     public ValueTask<RenderResult> RenderTemplateRenderResultAsync(
         string name,
