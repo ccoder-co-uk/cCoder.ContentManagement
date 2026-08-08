@@ -85,8 +85,13 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
                     .Where(predicate: commonObject => commonObject.Type == "ContentManagement/Script")
                     .ToArray();
 
+                CommonObject[] styleObjects = latestCommonObjectsPaged
+                    .Where(predicate: commonObject => commonObject.Type == "ContentManagement/Style")
+                    .ToArray();
+
                 refreshedLatestSet = array.Union(second: array2)
                     .Union(second: array3)
+                    .Union(second: styleObjects)
                     .ToArray();
 
                 list.AddRange(collection: array2.AsParallel()
@@ -100,6 +105,10 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
                 list.AddRange(collection: array3.AsParallel()
                     .WithDegreeOfParallelism(degreeOfParallelism: 8)
                     .Select(selector: commonObject => jsonBroker.ParseJson<Script>(json: commonObject.Json)));
+
+                list.AddRange(collection: styleObjects.AsParallel()
+                    .WithDegreeOfParallelism(degreeOfParallelism: 8)
+                    .Select(selector: commonObject => jsonBroker.ParseJson<Style>(json: commonObject.Json)));
 
                 log.LogInformation(message: "{Now} - Processed common object cache", args: DateTimeOffset.Now);
             }
@@ -129,6 +138,9 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
                         break;
                     case Script script:
                         Set(target: refreshedData, key: "script|" + script.Name.ToLower(), item: script);
+                        break;
+                    case Style style:
+                        Set(target: refreshedData, key: "style|" + style.Name.ToLower(), item: style);
                         break;
                 }
             }

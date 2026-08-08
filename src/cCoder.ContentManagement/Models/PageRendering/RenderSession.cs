@@ -37,4 +37,6 @@ internal sealed class RenderSession
     public IReadOnlyDictionary<string, PageRenderComponent> CommonComponentsByName { get; set; }
     public IReadOnlyDictionary<string, PageRenderScript> CommonScriptsByName { get; set; }
 
+    public IReadOnlyDictionary<string, PageRenderStyle> CommonStylesByName { get; set; }
+
 }

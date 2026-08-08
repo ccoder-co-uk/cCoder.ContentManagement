@@ -6437,7 +6437,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.Dispose()",
           "Name": "Dispose",
-          "LineNumber": 164,
+          "LineNumber": 176,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -6467,7 +6467,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.Get(System.String)",
           "Name": "Get",
-          "LineNumber": 150,
+          "LineNumber": 162,
           "Inputs": [
             {
               "Name": "key",
@@ -6502,7 +6502,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 144,
+          "LineNumber": 156,
           "Inputs": [],
           "ReturnType": "T[]",
           "Implements": [
@@ -6574,7 +6574,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.GetLatestSet()",
           "Name": "GetLatestSet",
-          "LineNumber": 141,
+          "LineNumber": 153,
           "Inputs": [],
           "ReturnType": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E",
           "Implements": [
@@ -6682,6 +6682,13 @@
               "IsDependencyBoundary": true
             },
             {
+              "TypeName": "System.String",
+              "MethodName": "ToLower",
+              "MethodId": "System.String.ToLower()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
               "TypeName": "System.Threading.Volatile",
               "MethodName": "Write",
               "MethodId": "System.Threading.Volatile.Write(T,T)",
@@ -6725,7 +6732,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.Set(System.String,System.Object)",
           "Name": "Set",
-          "LineNumber": 156,
+          "LineNumber": 168,
           "Inputs": [
             {
               "Name": "key",
@@ -21348,6 +21355,10 @@
         {
           "Name": "CommonScriptsByName",
           "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Models.PageRendering.PageRenderScript\u003E"
+        },
+        {
+          "Name": "CommonStylesByName",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Models.PageRendering.PageRenderStyle\u003E"
         }
       ],
       "Methods": []
@@ -21608,6 +21619,30 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Models.PageRendering.PageRenderStyle",
+      "StandardElementType": "Model",
+      "LineNumber": 7,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [
+        {
+          "Name": "Content",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Key",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Models.PageRendering.PageRenderSyntax",
       "StandardElementType": "Model",
       "LineNumber": 9,
@@ -21815,6 +21850,10 @@
         {
           "Name": "CommonScriptsByName",
           "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Models.PageRendering.PageRenderScript\u003E"
+        },
+        {
+          "Name": "CommonStylesByName",
+          "Type": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Models.PageRendering.PageRenderStyle\u003E"
         },
         {
           "Name": "Component",
@@ -22173,6 +22212,34 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Models.Style",
+      "StandardElementType": "Model",
+      "LineNumber": 7,
+      "IsPublic": true,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [
+        {
+          "Name": "Content",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Description",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Key",
+          "Type": "System.String"
+        },
+        {
+          "Name": "Name",
+          "Type": "System.String"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Models.TemplateRenderOperation",
       "StandardElementType": "Model",
       "LineNumber": 10,
@@ -22495,6 +22562,57 @@
               "TypeName": "System.Linq.Enumerable",
               "MethodName": "GroupBy",
               "MethodId": "System.Linq.Enumerable.GroupBy(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TKey\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache",
+              "MethodName": "GetAll",
+              "MethodId": "cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache.GetAll()",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker.GetStylesByName()",
+          "Name": "GetStylesByName",
+          "LineNumber": 84,
+          "Inputs": [],
+          "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Models.PageRendering.PageRenderStyle\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker.GetStylesByName()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "First",
+              "MethodId": "System.Linq.Enumerable.First(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "GroupBy",
+              "MethodId": "System.Linq.Enumerable.GroupBy(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TKey\u003E,System.Collections.Generic.IEqualityComparer\u003CTKey\u003E?)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "ToDictionary",
+              "MethodId": "System.Linq.Enumerable.ToDictionary(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TKey\u003E,System.Func\u003CTSource, TElement\u003E,System.Collections.Generic.IEqualityComparer\u003CTKey\u003E?)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -22932,6 +23050,13 @@
               "TypeName": "cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker",
               "MethodName": "GetScriptsByName",
               "MethodId": "cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker.GetScriptsByName()",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker",
+              "MethodName": "GetStylesByName",
+              "MethodId": "cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker.GetStylesByName()",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             }
@@ -55241,6 +55366,78 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Processings.PageRendering.StyleTagHandlingProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 10,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Processings.PageRendering.IStyleTagHandlingProcessingService",
+          "FullName": "cCoder.ContentManagement.Services.Processings.PageRendering.IStyleTagHandlingProcessingService",
+          "Name": "IStyleTagHandlingProcessingService",
+          "Namespace": "cCoder.ContentManagement.Services.Processings.PageRendering",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "ProcessingService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.PageRendering.StyleTagHandlingProcessingService.HandleTagHandlingOperation(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "HandleTagHandlingOperation",
+          "LineNumber": 19,
+          "Inputs": [
+            {
+              "Name": "operation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.PageRendering.ITagHandlingProcessingService.HandleTagHandlingOperation(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "System.Text.RegularExpressions.Regex",
+              "MethodName": "Replace",
+              "MethodId": "System.Text.RegularExpressions.Regex.Replace(System.String,System.Text.RegularExpressions.MatchEvaluator)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Processings.PageRoleEventProcessingService",
       "StandardElementType": "ProcessingService",
       "LineNumber": 11,
@@ -68287,6 +68484,26 @@
           "LineNumber": 47,
           "Inputs": [],
           "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Models.PageRendering.PageRenderScript\u003E",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker.GetStylesByName()",
+          "Name": "GetStylesByName",
+          "LineNumber": 49,
+          "Inputs": [],
+          "ReturnType": "System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, cCoder.ContentManagement.Models.PageRendering.PageRenderStyle\u003E",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -82498,6 +82715,28 @@
     },
     {
       "Name": "cCoder.ContentManagement.Services.Processings.PageRendering.IScriptTagHandlingProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 7,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Processings.PageRendering.ITagHandlingProcessingService",
+          "FullName": "cCoder.ContentManagement.Services.Processings.PageRendering.ITagHandlingProcessingService",
+          "Name": "ITagHandlingProcessingService",
+          "Namespace": "cCoder.ContentManagement.Services.Processings.PageRendering",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "ProcessingService"
+        }
+      ],
+      "Properties": [],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Processings.PageRendering.IStyleTagHandlingProcessingService",
       "StandardElementType": "ProcessingService",
       "LineNumber": 7,
       "IsPublic": false,

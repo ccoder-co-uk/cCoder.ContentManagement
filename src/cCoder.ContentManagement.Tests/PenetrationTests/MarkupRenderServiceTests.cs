@@ -30,6 +30,7 @@ public partial class MarkupRenderServiceTests
                     new ScriptTagHandlingProcessingService(
                         scriptReaderBroker:
                             Mock.Of<IScriptReaderBroker>()),
+                    new StyleTagHandlingProcessingService(),
                     new ReplacementTagHandlingProcessingService(),
                     new DmsTagHandlingProcessingService(
                         renderFileContentBroker:

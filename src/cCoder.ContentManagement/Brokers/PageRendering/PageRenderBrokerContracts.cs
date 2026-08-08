@@ -45,4 +45,6 @@ internal interface ICommonObjectReaderBroker
     IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName();
 
     IReadOnlyDictionary<string, PageRenderScript> GetScriptsByName();
+
+    IReadOnlyDictionary<string, PageRenderStyle> GetStylesByName();
 }

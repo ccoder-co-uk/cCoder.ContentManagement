@@ -13,6 +13,7 @@ using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
 using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
+using Style = cCoder.ContentManagement.Models.Style;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Extensions.OData;
 using FluentAssertions;
@@ -57,6 +58,7 @@ public partial class ContentManagementMetadataTypeServiceTests
                 nameof(PageRole),
                 nameof(Resource),
                 nameof(RenderResult),
+                nameof(Style),
             ]);
 
         result.Types.Select(selector: type => type.Name)

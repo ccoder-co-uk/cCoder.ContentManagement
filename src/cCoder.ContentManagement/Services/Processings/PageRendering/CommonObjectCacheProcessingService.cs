@@ -19,6 +19,7 @@ internal sealed partial class CommonObjectCacheProcessingService(
         session.CommonResourcesByLookup = pageCacheSlice.CommonResourcesByLookup;
         session.CommonComponentsByName = pageCacheSlice.CommonComponentsByName;
         session.CommonScriptsByName = pageCacheSlice.CommonScriptsByName;
+        session.CommonStylesByName = pageCacheSlice.CommonStylesByName;
 
         return session;
     });

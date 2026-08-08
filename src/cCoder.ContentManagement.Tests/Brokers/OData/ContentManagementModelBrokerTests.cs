@@ -36,7 +36,8 @@ public sealed partial class ContentManagementModelBrokerTests
                     "RenderResult",
                     "PageRenderResult",
                     "TemplateRenderResult",
-                    "ComponentRenderResult"
+                    "ComponentRenderResult",
+                    "Style"
                 ]);
     }
 }
