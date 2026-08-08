@@ -161,7 +161,8 @@ internal partial class ScriptOrchestrationService(
                 existing.Name.Equals(value: script.Name, comparisonType: StringComparison.OrdinalIgnoreCase))?.Id ?? 0;
         });
 
-        await ExecuteAddOrUpdateScriptResult(newScript: validatedItems);
+        await processingService.AddOrUpdateScriptResult(
+            newScript: validatedItems);
 
     }, isValueTask: true);
 

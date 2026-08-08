@@ -4586,7 +4586,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.AddPageAsync(Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 54,
+          "LineNumber": 55,
           "Inputs": [
             {
               "Name": "newPage",
@@ -4613,7 +4613,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.DeleteAllPagesAsync(System.Collections.Generic.IEnumerable\u003CPage\u003E)",
           "Name": "DeleteAllPagesAsync",
-          "LineNumber": 80,
+          "LineNumber": 81,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -4640,7 +4640,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.DeletePageAsync(Page)",
           "Name": "DeletePageAsync",
-          "LineNumber": 73,
+          "LineNumber": 74,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -4738,7 +4738,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.UpdatePageAsync(Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 62,
+          "LineNumber": 63,
           "Inputs": [
             {
               "Name": "updatedPage",
@@ -37998,7 +37998,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService.DeleteAllComponentAsync(System.Collections.Generic.IEnumerable\u003CComponent\u003E)",
           "Name": "DeleteAllComponentAsync",
-          "LineNumber": 170,
+          "LineNumber": 171,
           "Inputs": [
             {
               "Name": "deletedComponent",
@@ -38347,6 +38347,13 @@
               "MethodId": "System.MemoryExtensions.Contains(System.ReadOnlySpan\u003CT\u003E,T)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService",
+              "MethodName": "AddOrUpdateComponentResult",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.AddOrUpdateComponentResult(System.Collections.Generic.IEnumerable\u003CComponent\u003E)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService",
@@ -39526,7 +39533,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService.DeleteAllLayoutAsync(System.Collections.Generic.IEnumerable\u003CLayout\u003E)",
           "Name": "DeleteAllLayoutAsync",
-          "LineNumber": 168,
+          "LineNumber": 169,
           "Inputs": [
             {
               "Name": "deletedLayout",
@@ -39875,6 +39882,13 @@
               "MethodId": "System.MemoryExtensions.Contains(System.ReadOnlySpan\u003CT\u003E,T)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService",
+              "MethodName": "AddOrUpdateLayoutResult",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.AddOrUpdateLayoutResult(System.Collections.Generic.IEnumerable\u003CLayout\u003E)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService",
@@ -42175,6 +42189,13 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
+              "MethodName": "AddOrUpdatePageResult",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.AddOrUpdatePageResult(System.Collections.Generic.IEnumerable\u003CPage\u003E)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
               "MethodName": "GetAllPage",
               "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPage(System.Boolean)",
               "StandardElementType": "ProcessingService",
@@ -43726,7 +43747,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService.DeleteAllResourceAsync(System.Collections.Generic.IEnumerable\u003CResource\u003E)",
           "Name": "DeleteAllResourceAsync",
-          "LineNumber": 169,
+          "LineNumber": 170,
           "Inputs": [
             {
               "Name": "deletedResource",
@@ -44064,6 +44085,13 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService",
+              "MethodName": "AddOrUpdateResourceResult",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.AddOrUpdateResourceResult(System.Collections.Generic.IEnumerable\u003CResource\u003E)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService",
               "MethodName": "GetAllResource",
               "MethodId": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResource(System.Boolean)",
               "StandardElementType": "ProcessingService",
@@ -44305,7 +44333,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService.DeleteAllScriptAsync(System.Collections.Generic.IEnumerable\u003CScript\u003E)",
           "Name": "DeleteAllScriptAsync",
-          "LineNumber": 168,
+          "LineNumber": 169,
           "Inputs": [
             {
               "Name": "deletedScript",
@@ -44654,6 +44682,13 @@
               "MethodId": "System.MemoryExtensions.Contains(System.ReadOnlySpan\u003CT\u003E,T)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService",
+              "MethodName": "AddOrUpdateScriptResult",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.AddOrUpdateScriptResult(System.Collections.Generic.IEnumerable\u003CScript\u003E)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService",
@@ -45310,7 +45345,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService.DeleteAllTemplateAsync(System.Collections.Generic.IEnumerable\u003CTemplate\u003E)",
           "Name": "DeleteAllTemplateAsync",
-          "LineNumber": 158,
+          "LineNumber": 159,
           "Inputs": [
             {
               "Name": "deletedTemplate",
@@ -45655,6 +45690,13 @@
               "MethodId": "System.MemoryExtensions.Contains(System.ReadOnlySpan\u003CT\u003E,T)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService",
+              "MethodName": "AddOrUpdateTemplateResult",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.AddOrUpdateTemplateResult(System.Collections.Generic.IEnumerable\u003CTemplate\u003E)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService",

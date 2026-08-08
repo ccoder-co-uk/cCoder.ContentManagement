@@ -163,7 +163,8 @@ internal partial class ComponentOrchestrationService(
                 existing.Name.Equals(value: component.Name, comparisonType: StringComparison.OrdinalIgnoreCase))?.Id ?? 0;
         });
 
-        await ExecuteAddOrUpdateComponentResult(newComponent: validatedItems);
+        await processingService.AddOrUpdateComponentResult(
+            newComponent: validatedItems);
 
     }, isValueTask: true);
 

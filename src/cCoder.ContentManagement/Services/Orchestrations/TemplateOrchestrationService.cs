@@ -151,7 +151,8 @@ internal partial class TemplateOrchestrationService(
             template.Id = dbVersions.FirstOrDefault(predicate: existing => existing.Name == template.Name)?.Id ?? 0;
         });
 
-        await ExecuteAddOrUpdateTemplateResult(newTemplate: validatedItems);
+        await processingService.AddOrUpdateTemplateResult(
+            newTemplate: validatedItems);
 
     }, isValueTask: true);
 

@@ -208,7 +208,7 @@ comparison: (left, right) => left.Path.Split(separator: '/')
                 existing.Path.Equals(value: page.Path.TrimStart(trimChar: '/'), comparisonType: StringComparison.OrdinalIgnoreCase)
                 && existing.AppId == appId)?.Id ?? 0;
 
-            await ExecuteAddOrUpdatePageResult(newPage: [page]);
+            await processingService.AddOrUpdatePageResult(newPage: [page]);
         }
 
     }, isValueTask: true);
