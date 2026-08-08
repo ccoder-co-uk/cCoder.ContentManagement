@@ -58,11 +58,57 @@ jobs:
         run: dotnet build src/cCoder.ContentManagement.slnx -c Release --no-restore /p:Version="${{ steps.version.outputs.value }}"
 
       - name: Test
+        run: ./.github/scripts/Run-Tests.ps1 -CollectCoverage
+
+      - name: Enforce services and exposures coverage
         run: |
-          if ('${{ github.event_name }}' -eq 'push' -and '${{ github.ref }}' -eq 'refs/heads/main') {
-            ./.github/scripts/Run-Tests.ps1 -CollectCoverage
-          } else {
-            ./.github/scripts/Run-Tests.ps1
+          $coverageFiles = @(
+            Get-ChildItem artifacts/test-results -Recurse -Filter coverage.cobertura.xml
+          )
+
+          if ($coverageFiles.Count -eq 0) {
+            throw 'No Cobertura coverage reports were produced.'
+          }
+
+          $lines = @{}
+
+          foreach ($coverageFile in $coverageFiles) {
+            [xml] $coverage = Get-Content -LiteralPath $coverageFile.FullName
+
+            foreach ($class in $coverage.coverage.packages.package.classes.class) {
+              $sourceFile = [string] $class.filename
+
+              if ($sourceFile -notmatch '(^|[/\\])(Services|Exposures)[/\\]') {
+                continue
+              }
+
+              foreach ($line in $class.lines.line) {
+                $key = "$sourceFile|$($line.number)"
+
+                if (-not $lines.ContainsKey($key)) {
+                  $lines[$key] = 0
+                }
+
+                if ([int] $line.hits -gt 0) {
+                  $lines[$key] = 1
+                }
+              }
+            }
+          }
+
+          if ($lines.Count -eq 0) {
+            throw 'No service or exposure source lines were found in the coverage reports.'
+          }
+
+          $coveredLines = @($lines.Values | Where-Object { $_ -eq 1 }).Count
+          $lineRate = $coveredLines / $lines.Count
+          $percentage = $lineRate.ToString('P3')
+
+          "Services and exposures line coverage: $coveredLines/$($lines.Count) ($percentage)" |
+            Write-Output
+
+          if ($lineRate -le 0.90) {
+            throw "Services and exposures line coverage must be greater than 90%; actual: $percentage."
           }
 
       - name: Audit NuGet dependencies
