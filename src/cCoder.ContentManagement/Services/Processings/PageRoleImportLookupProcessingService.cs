@@ -37,11 +37,15 @@ internal sealed partial class PageRoleImportLookupProcessingService(
                     existing.AppId == appId
                     && existing.Name == roleName);
 
+        string normalizedPath = path.Length == 0
+            ? null
+            : path;
+
         Page page = pageBroker.GetAllPagesIgnoringFilters()
             .FirstOrDefault(
                 predicate: existing =>
                     existing.AppId == appId
-                    && existing.Path == path);
+                    && existing.Path == normalizedPath);
 
         return new PageRole
         {
