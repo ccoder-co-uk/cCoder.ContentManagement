@@ -61,6 +61,9 @@ public partial class PageRenderProcessingServiceTests
         result.HeaderHtml.Should()
             .Contain(expected: "bootstrap-script");
 
+        result.HeaderHtml.Should()
+            .Contain(expected: ".common { display: block; }");
+
         result.BodyHtml.Should()
             .Contain(expected: "Body Content");
 

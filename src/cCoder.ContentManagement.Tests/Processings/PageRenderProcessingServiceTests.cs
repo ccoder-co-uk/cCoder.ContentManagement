@@ -70,6 +70,7 @@ public partial class PageRenderProcessingServiceTests
                         componentReaderBroker: componentReaderBroker),
                     new ScriptTagHandlingProcessingService(
                         scriptReaderBroker: scriptReaderBroker),
+                    new StyleTagHandlingProcessingService(),
                     new ReplacementTagHandlingProcessingService(),
                     new DmsTagHandlingProcessingService(
                         renderFileContentBroker:
@@ -211,7 +212,7 @@ public partial class PageRenderProcessingServiceTests
                 Id = 1,
                 AppId = app.Id,
                 Name = "Default",
-                HeaderHtml = "<title>[page[title]]</title><meta>[meta[site-description]]</meta><script>[script[Bootstrap]]</script>",
+                HeaderHtml = "<title>[page[title]]</title><meta>[meta[site-description]]</meta><style>[style[Common]]</style><script>[script[Bootstrap]]</script>",
                 Html = string.Join(
                 separator: "",
                 value:
@@ -327,6 +328,17 @@ public partial class PageRenderProcessingServiceTests
         IReadOnlyDictionary<string, PageRenderScript> scriptsByName =
             new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
 
+        IReadOnlyDictionary<string, PageRenderStyle> stylesByName =
+            new Dictionary<string, PageRenderStyle>(comparer: StringComparer.OrdinalIgnoreCase)
+            {
+                ["Common"] = new PageRenderStyle
+                {
+                    Name = "Common",
+                    Key = "Default",
+                    Content = ".common { display: block; }"
+                }
+            };
+
         Mock<ICommonObjectReaderBroker> brokerMock = new();
 
         brokerMock
@@ -340,6 +352,10 @@ public partial class PageRenderProcessingServiceTests
         brokerMock
             .Setup(expression: broker => broker.GetScriptsByName())
             .Returns(value: scriptsByName);
+
+        brokerMock
+            .Setup(expression: broker => broker.GetStylesByName())
+            .Returns(value: stylesByName);
 
         return brokerMock;
     }

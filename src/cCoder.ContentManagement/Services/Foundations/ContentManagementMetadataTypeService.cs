@@ -33,7 +33,7 @@ internal sealed partial class ContentManagementMetadataTypeService : IContentMan
         metadataContainerSet.Name = "ContentManagement";
         metadataContainerSet.UriBase = "ContentManagement";
 
-        metadataContainerSet.Types = new ExtendedMetadataContainer[22]
+        metadataContainerSet.Types = new ExtendedMetadataContainer[23]
         {
             Entity<App>(),
             Entity<Layout>(),
@@ -54,6 +54,7 @@ internal sealed partial class ContentManagementMetadataTypeService : IContentMan
             Complex<PageRenderResult>(),
             Complex<TemplateRenderResult>(),
             Complex<ComponentRenderResult>(),
+            Complex<Style>(),
             Complex<Result<string>>(),
             Complex<Result<CommonObject>>(),
             Complex<FileContentResult>()

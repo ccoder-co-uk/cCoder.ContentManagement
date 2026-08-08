@@ -375,6 +375,13 @@ public static partial class IServiceCollectionExtensions
                 serviceProvider.GetRequiredService<
                     IScriptTagHandlingProcessingService>());
         services.AddScoped<
+            IStyleTagHandlingProcessingService,
+            StyleTagHandlingProcessingService>();
+        services.AddScoped<ITagHandlingProcessingService>(
+            implementationFactory: serviceProvider =>
+                serviceProvider.GetRequiredService<
+                    IStyleTagHandlingProcessingService>());
+        services.AddScoped<
             IReplacementTagHandlingProcessingService,
             ReplacementTagHandlingProcessingService>();
         services.AddScoped<ITagHandlingProcessingService>(

@@ -81,6 +81,21 @@ elementSelector: group => new PageRenderScript
 },
 comparer: StringComparer.OrdinalIgnoreCase);
 
+    public IReadOnlyDictionary<string, PageRenderStyle> GetStylesByName() =>
+        commonObjectCache.GetAll<Style>()
+        .GroupBy(
+            keySelector: style => style.Name ?? string.Empty,
+            comparer: StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(
+            keySelector: group => group.Key,
+            elementSelector: group => new PageRenderStyle
+            {
+                Name = group.First().Name ?? string.Empty,
+                Key = group.First().Key ?? string.Empty,
+                Content = group.First().Content ?? string.Empty
+            },
+            comparer: StringComparer.OrdinalIgnoreCase);
+
     private static string BuildResourceLookupKey(string key, string name, string culture) =>
         $"{key}|{name}|{culture}";
 }

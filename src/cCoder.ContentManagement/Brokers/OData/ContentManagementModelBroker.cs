@@ -45,6 +45,7 @@ internal class ContentManagementModelBroker
         builder.ComplexType<PageRenderResult>();
         builder.ComplexType<TemplateRenderResult>();
         builder.ComplexType<ComponentRenderResult>();
+        builder.ComplexType<Style>();
 
         builder.EntityType<App>()
             .Ignore(propertyExpression: i => i.Config);

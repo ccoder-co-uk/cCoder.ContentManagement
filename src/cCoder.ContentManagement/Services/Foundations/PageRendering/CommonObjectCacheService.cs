@@ -18,7 +18,8 @@ internal sealed partial class CommonObjectCacheService(ICommonObjectReaderBroker
         {
             CommonResourcesByLookup = broker.GetResourcesByLookup(),
             CommonComponentsByName = broker.GetComponentsByName(),
-            CommonScriptsByName = broker.GetScriptsByName()
+            CommonScriptsByName = broker.GetScriptsByName(),
+            CommonStylesByName = broker.GetStylesByName()
         };
 
     });
