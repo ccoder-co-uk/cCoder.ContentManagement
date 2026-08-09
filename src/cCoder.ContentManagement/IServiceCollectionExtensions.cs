@@ -16,6 +16,7 @@ using cCoder.ContentManagement.Dependencies.Caching;
 using cCoder.ContentManagement.Dependencies.Events;
 using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Exposures.EventHandlers;
+using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
@@ -201,7 +202,7 @@ public static partial class IServiceCollectionExtensions
         services.AddEventingForType<Culture>();
         services.AddEventingForType<Layout>();
         services.AddEventingForType<Package>();
-        services.AddEventingForType<(int, Package)>();
+        services.AddEventingForType<PackageImportEvent>();
         services.AddEventingForType<PackageItem>();
         services.AddEventingForType<Page>();
         services.AddEventingForType<UncachedPageRenderEvent>();

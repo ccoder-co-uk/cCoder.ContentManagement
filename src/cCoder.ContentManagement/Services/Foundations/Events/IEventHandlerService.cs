@@ -7,5 +7,6 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 internal interface IEventHandlerService
 {
     void ListenToAllEvents();
+    void ListenToHostedEvents();
     void ListenToFinalAppDeleteEvent();
 }

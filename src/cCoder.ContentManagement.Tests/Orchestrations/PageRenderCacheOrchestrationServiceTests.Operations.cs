@@ -113,25 +113,31 @@ public partial class PageRenderCacheOrchestrationServiceTests
 
         if (fromEvent)
         {
-            processingServiceMock
-                .Setup(expression: service => service.ReplacePageRenderCachesFromEventAsync(
-                    appId: appId,
-                    pageIds: It.Is<int[]>(match: ids => ids.SequenceEqual(
-                        second: expectedPageIds)),
-                    replacements: It.Is<PageRenderCache[]>(
-                        match: items => items.Length == 0)))
-                .Returns(value: ValueTask.CompletedTask);
+            foreach (int pageId in expectedPageIds)
+            {
+                processingServiceMock
+                    .Setup(expression: service => service.ReplacePageRenderCachesFromEventAsync(
+                        appId: appId,
+                        pageIds: It.Is<int[]>(match: ids => ids.SequenceEqual(
+                            second: new[] { pageId })),
+                        replacements: It.Is<PageRenderCache[]>(
+                            match: items => items.Length == 0)))
+                    .Returns(value: ValueTask.CompletedTask);
+            }
         }
         else
         {
-            processingServiceMock
-                .Setup(expression: service => service.ReplacePageRenderCachesAsync(
-                    appId: appId,
-                    pageIds: It.Is<int[]>(match: ids => ids.SequenceEqual(
-                        second: expectedPageIds)),
-                    replacements: It.Is<PageRenderCache[]>(
-                        match: items => items.Length == 0)))
-                .Returns(value: ValueTask.CompletedTask);
+            foreach (int pageId in expectedPageIds)
+            {
+                processingServiceMock
+                    .Setup(expression: service => service.ReplacePageRenderCachesAsync(
+                        appId: appId,
+                        pageIds: It.Is<int[]>(match: ids => ids.SequenceEqual(
+                            second: new[] { pageId })),
+                        replacements: It.Is<PageRenderCache[]>(
+                            match: items => items.Length == 0)))
+                    .Returns(value: ValueTask.CompletedTask);
+            }
         }
 
         // When

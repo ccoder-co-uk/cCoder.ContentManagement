@@ -1269,7 +1269,7 @@
     {
       "Name": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker",
       "StandardElementType": "Broker",
-      "LineNumber": 11,
+      "LineNumber": 12,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": {
@@ -1299,7 +1299,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackageAddEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageAddEventAsync",
-          "LineNumber": 20,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "message",
@@ -1326,7 +1326,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackageDeleteEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageDeleteEventAsync",
-          "LineNumber": 26,
+          "LineNumber": 27,
           "Inputs": [
             {
               "Name": "message",
@@ -1351,18 +1351,18 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackageImportCompleteEventAsync(EventMessage\u003C(System.Int32, Package)\u003E)",
+          "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackageImportCompleteEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E)",
           "Name": "RaisePackageImportCompleteEventAsync",
-          "LineNumber": 17,
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "message",
-              "Type": "EventMessage\u003C(System.Int32, Package)\u003E"
+              "Type": "EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportCompleteEventAsync(EventMessage\u003C(System.Int32, Package)\u003E)"
+            "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportCompleteEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E)"
           ],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -1378,18 +1378,18 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackageImportEventAsync(EventMessage\u003C(System.Int32, Package)\u003E)",
+          "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackageImportEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E)",
           "Name": "RaisePackageImportEventAsync",
-          "LineNumber": 14,
+          "LineNumber": 15,
           "Inputs": [
             {
               "Name": "message",
-              "Type": "EventMessage\u003C(System.Int32, Package)\u003E"
+              "Type": "EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportEventAsync(EventMessage\u003C(System.Int32, Package)\u003E)"
+            "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E)"
           ],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -1407,7 +1407,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackageUpdateEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageUpdateEventAsync",
-          "LineNumber": 23,
+          "LineNumber": 24,
           "Inputs": [
             {
               "Name": "message",
@@ -3280,7 +3280,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.AddCommonObjectAsync(CommonObject)",
           "Name": "AddCommonObjectAsync",
-          "LineNumber": 48,
+          "LineNumber": 49,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -3307,7 +3307,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.DeleteAllCommonObjectsAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
           "Name": "DeleteAllCommonObjectsAsync",
-          "LineNumber": 74,
+          "LineNumber": 75,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -3334,7 +3334,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.DeleteCommonObjectAsync(CommonObject)",
           "Name": "DeleteCommonObjectAsync",
-          "LineNumber": 67,
+          "LineNumber": 68,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -3405,7 +3405,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.GetAppId(CommonObject)",
           "Name": "GetAppId",
-          "LineNumber": 81,
+          "LineNumber": 82,
           "Inputs": [
             {
               "Name": "entity",
@@ -3459,7 +3459,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.UpdateCommonObjectAsync(CommonObject)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 56,
+          "LineNumber": 57,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -4988,18 +4988,18 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.DeletePageRenderCacheAsync(PageRenderCache)",
+          "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.DeletePageRenderCacheAsync(System.String)",
           "Name": "DeletePageRenderCacheAsync",
           "LineNumber": 33,
           "Inputs": [
             {
-              "Name": "deletedPageRenderCache",
-              "Type": "PageRenderCache"
+              "Name": "pageRenderCacheId",
+              "Type": "System.String"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.DeletePageRenderCacheAsync(PageRenderCache)"
+            "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.DeletePageRenderCacheAsync(System.String)"
           ],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -5039,7 +5039,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.ReplacePageRenderCachesByAppIdAsync(System.Int32,PageRenderCache[])",
           "Name": "ReplacePageRenderCachesByAppIdAsync",
-          "LineNumber": 40,
+          "LineNumber": 42,
           "Inputs": [
             {
               "Name": "appId",
@@ -5070,7 +5070,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.ReplacePageRenderCachesByPageIdsAsync(System.Int32,System.Int32[],PageRenderCache[])",
           "Name": "ReplacePageRenderCachesByPageIdsAsync",
-          "LineNumber": 62,
+          "LineNumber": 64,
           "Inputs": [
             {
               "Name": "appId",
@@ -6437,7 +6437,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.Dispose()",
           "Name": "Dispose",
-          "LineNumber": 176,
+          "LineNumber": 180,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -6467,7 +6467,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.Get(System.String)",
           "Name": "Get",
-          "LineNumber": 162,
+          "LineNumber": 166,
           "Inputs": [
             {
               "Name": "key",
@@ -6502,7 +6502,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 156,
+          "LineNumber": 160,
           "Inputs": [],
           "ReturnType": "T[]",
           "Implements": [
@@ -6574,7 +6574,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.GetLatestSet()",
           "Name": "GetLatestSet",
-          "LineNumber": 153,
+          "LineNumber": 157,
           "Inputs": [],
           "ReturnType": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E",
           "Implements": [
@@ -6732,7 +6732,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.Set(System.String,System.Object)",
           "Name": "Set",
-          "LineNumber": 168,
+          "LineNumber": 172,
           "Inputs": [
             {
               "Name": "key",
@@ -17025,7 +17025,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ContentManagementEventHandlers.ListenToFinalAppDeleteEvent()",
           "Name": "ListenToFinalAppDeleteEvent",
-          "LineNumber": 14,
+          "LineNumber": 17,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -17042,6 +17042,55 @@
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ContentManagementEventHandlers.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
+          "LineNumber": 14,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToHostedEvents()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Events.IEventHandlerService",
+              "MethodName": "ListenToHostedEvents",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Events.IEventHandlerService.ListenToHostedEvents()",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ArgumentException",
+            "System.Collections.Generic.KeyNotFoundException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -19821,7 +19870,7 @@
     {
       "Name": "cCoder.ContentManagement.IServiceCollectionExtensions",
       "StandardElementType": "App",
-      "LineNumber": 57,
+      "LineNumber": 58,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": null,
@@ -19831,7 +19880,7 @@
         {
           "Id": "cCoder.ContentManagement.IServiceCollectionExtensions.AddContentManagementHostedServices(IServiceCollection,System.Action\u003CcCoder.ContentManagement.Models.ContentManagementConfiguration\u003E)",
           "Name": "AddContentManagementHostedServices",
-          "LineNumber": 93,
+          "LineNumber": 94,
           "Inputs": [
             {
               "Name": "services",
@@ -19875,7 +19924,7 @@
         {
           "Id": "cCoder.ContentManagement.IServiceCollectionExtensions.AddContentManagementHostedServices(IServiceCollection,cCoder.ContentManagement.Models.ContentManagementConfiguration)",
           "Name": "AddContentManagementHostedServices",
-          "LineNumber": 102,
+          "LineNumber": 103,
           "Inputs": [
             {
               "Name": "services",
@@ -19904,7 +19953,7 @@
         {
           "Id": "cCoder.ContentManagement.IServiceCollectionExtensions.AddContentManagementWeb(IServiceCollection,System.Action\u003CcCoder.ContentManagement.Models.ContentManagementConfiguration\u003E,ODataConventionModelBuilder)",
           "Name": "AddContentManagementWeb",
-          "LineNumber": 59,
+          "LineNumber": 60,
           "Inputs": [
             {
               "Name": "services",
@@ -19952,7 +20001,7 @@
         {
           "Id": "cCoder.ContentManagement.IServiceCollectionExtensions.AddContentManagementWeb(IServiceCollection,cCoder.ContentManagement.Models.ContentManagementConfiguration,ODataConventionModelBuilder)",
           "Name": "AddContentManagementWeb",
-          "LineNumber": 69,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "services",
@@ -20996,6 +21045,26 @@
         {
           "Name": "Value",
           "Type": "System.Collections.Generic.IEnumerable\u003CTCollectionType\u003E"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.PackageImportEvent",
+      "StandardElementType": "Model",
+      "LineNumber": 9,
+      "IsPublic": true,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [
+        {
+          "Name": "AppId",
+          "Type": "System.Int32"
+        },
+        {
+          "Name": "Package",
+          "Type": "Package"
         }
       ],
       "Methods": []
@@ -27127,7 +27196,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Foundations.Events.EventHandlerService",
       "StandardElementType": "FoundationService",
-      "LineNumber": 16,
+      "LineNumber": 17,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -27148,7 +27217,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.EventHandlerService.ListenToAllEvents()",
           "Name": "ListenToAllEvents",
-          "LineNumber": 18,
+          "LineNumber": 19,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -27190,7 +27259,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.EventHandlerService.ListenToFinalAppDeleteEvent()",
           "Name": "ListenToFinalAppDeleteEvent",
-          "LineNumber": 30,
+          "LineNumber": 44,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -27214,6 +27283,48 @@
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.EventHandlerService.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
+          "LineNumber": 31,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Foundations.Events.IEventHandlerService.ListenToHostedEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "System.ArgumentException",
+            "System.Collections.Generic.KeyNotFoundException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -27437,7 +27548,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService",
       "StandardElementType": "FoundationService",
-      "LineNumber": 13,
+      "LineNumber": 14,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -27458,7 +27569,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService.RaisePackageAddEventAsync(Package)",
           "Name": "RaisePackageAddEventAsync",
-          "LineNumber": 51,
+          "LineNumber": 60,
           "Inputs": [
             {
               "Name": "package",
@@ -27514,7 +27625,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService.RaisePackageDeleteEventAsync(Package)",
           "Name": "RaisePackageDeleteEventAsync",
-          "LineNumber": 87,
+          "LineNumber": 96,
           "Inputs": [
             {
               "Name": "package",
@@ -27570,7 +27681,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService.RaisePackageImportCompleteEventAsync(System.Int32,Package)",
           "Name": "RaisePackageImportCompleteEventAsync",
-          "LineNumber": 33,
+          "LineNumber": 38,
           "Inputs": [
             {
               "Name": "appId",
@@ -27596,7 +27707,7 @@
             {
               "TypeName": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker",
               "MethodName": "RaisePackageImportCompleteEventAsync",
-              "MethodId": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportCompleteEventAsync(EventMessage\u003C(System.Int32, Package)\u003E)",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportCompleteEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             }
@@ -27630,7 +27741,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService.RaisePackageImportEventAsync(System.Int32,Package)",
           "Name": "RaisePackageImportEventAsync",
-          "LineNumber": 15,
+          "LineNumber": 16,
           "Inputs": [
             {
               "Name": "appId",
@@ -27656,7 +27767,7 @@
             {
               "TypeName": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker",
               "MethodName": "RaisePackageImportEventAsync",
-              "MethodId": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportEventAsync(EventMessage\u003C(System.Int32, Package)\u003E)",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             }
@@ -27690,7 +27801,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService.RaisePackageUpdateEventAsync(Package)",
           "Name": "RaisePackageUpdateEventAsync",
-          "LineNumber": 69,
+          "LineNumber": 78,
           "Inputs": [
             {
               "Name": "package",
@@ -33960,23 +34071,9 @@
           ],
           "Calls": [
             {
-              "TypeName": "System.Linq.Queryable",
-              "MethodName": "FirstOrDefault",
-              "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, System.Boolean\u003E\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
               "TypeName": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker",
               "MethodName": "DeletePageRenderCacheAsync",
-              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.DeletePageRenderCacheAsync(PageRenderCache)",
-              "StandardElementType": "Broker",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker",
-              "MethodName": "GetAllPageRenderCaches",
-              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.GetAllPageRenderCaches()",
+              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.DeletePageRenderCacheAsync(System.String)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             }
@@ -34101,7 +34198,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageRenderCacheService.ReplacePageRenderCachesAsync(System.Int32,System.Int32[],PageRenderCache[])",
           "Name": "ReplacePageRenderCachesAsync",
-          "LineNumber": 68,
+          "LineNumber": 63,
           "Inputs": [
             {
               "Name": "appId",
@@ -42568,7 +42665,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageRenderCacheOrchestrationService.DeletePagePageRenderCachesAsync(System.Int32)",
           "Name": "DeletePagePageRenderCachesAsync",
-          "LineNumber": 102,
+          "LineNumber": 110,
           "Inputs": [
             {
               "Name": "pageId",
@@ -42613,7 +42710,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageRenderCacheOrchestrationService.DeletePagePageRenderCachesFromEventAsync(System.Int32)",
           "Name": "DeletePagePageRenderCachesFromEventAsync",
-          "LineNumber": 112,
+          "LineNumber": 120,
           "Inputs": [
             {
               "Name": "pageId",
@@ -42809,7 +42906,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageRenderCacheOrchestrationService.ReplacePageRenderCachesAsync(System.Int32,System.Int32[],PageRenderCache[])",
           "Name": "ReplacePageRenderCachesAsync",
-          "LineNumber": 142,
+          "LineNumber": 150,
           "Inputs": [
             {
               "Name": "appId",
@@ -42870,7 +42967,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageRenderCacheOrchestrationService.ReplacePageRenderCachesFromEventAsync(System.Int32,System.Int32[],PageRenderCache[])",
           "Name": "ReplacePageRenderCachesFromEventAsync",
-          "LineNumber": 157,
+          "LineNumber": 165,
           "Inputs": [
             {
               "Name": "appId",
@@ -58680,7 +58777,7 @@
         {
           "Id": "cCoder.ContentManagement.WebApplicationExtensions.StartContentManagementFinalAppDeleteEventHandler(WebApplication)",
           "Name": "StartContentManagementFinalAppDeleteEventHandler",
-          "LineNumber": 31,
+          "LineNumber": 33,
           "Inputs": [
             {
               "Name": "app",
@@ -59666,7 +59763,7 @@
     {
       "Name": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker",
       "StandardElementType": "Broker",
-      "LineNumber": 10,
+      "LineNumber": 11,
       "IsPublic": true,
       "Kind": "Interface",
       "BaseType": null,
@@ -59687,7 +59784,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageAddEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageAddEventAsync",
-          "LineNumber": 15,
+          "LineNumber": 16,
           "Inputs": [
             {
               "Name": "message",
@@ -59712,7 +59809,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageDeleteEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageDeleteEventAsync",
-          "LineNumber": 19,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "message",
@@ -59735,13 +59832,13 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportCompleteEventAsync(EventMessage\u003C(System.Int32, Package)\u003E)",
+          "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportCompleteEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E)",
           "Name": "RaisePackageImportCompleteEventAsync",
-          "LineNumber": 13,
+          "LineNumber": 14,
           "Inputs": [
             {
               "Name": "message",
-              "Type": "EventMessage\u003C(System.Int32, Package)\u003E"
+              "Type": "EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
@@ -59760,13 +59857,13 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportEventAsync(EventMessage\u003C(System.Int32, Package)\u003E)",
+          "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageImportEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E)",
           "Name": "RaisePackageImportEventAsync",
-          "LineNumber": 12,
+          "LineNumber": 13,
           "Inputs": [
             {
               "Name": "message",
-              "Type": "EventMessage\u003C(System.Int32, Package)\u003E"
+              "Type": "EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
@@ -59787,7 +59884,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageUpdateEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageUpdateEventAsync",
-          "LineNumber": 17,
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "message",
@@ -63210,13 +63307,13 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.DeletePageRenderCacheAsync(PageRenderCache)",
+          "Id": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.DeletePageRenderCacheAsync(System.String)",
           "Name": "DeletePageRenderCacheAsync",
           "LineNumber": 17,
           "Inputs": [
             {
-              "Name": "deletedPageRenderCache",
-              "Type": "PageRenderCache"
+              "Name": "pageRenderCacheId",
+              "Type": "System.String"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
@@ -64441,6 +64538,26 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToFinalAppDeleteEvent()",
           "Name": "ListenToFinalAppDeleteEvent",
+          "LineNumber": 11,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
           "LineNumber": 10,
           "Inputs": [],
           "ReturnType": "System.Void",
@@ -70674,6 +70791,26 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.IEventHandlerService.ListenToFinalAppDeleteEvent()",
           "Name": "ListenToFinalAppDeleteEvent",
+          "LineNumber": 11,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.IEventHandlerService.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
           "LineNumber": 10,
           "Inputs": [],
           "ReturnType": "System.Void",

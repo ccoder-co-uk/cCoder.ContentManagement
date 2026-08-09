@@ -56,13 +56,8 @@ internal sealed partial class PageRenderCacheService(IPageRenderCacheBroker brok
             ValidatePageRenderCacheOnDelete(inputs: [pageRenderCacheId]);
             ValidateId(pageRenderCacheId: pageRenderCacheId, parameterName: "id");
 
-            PageRenderCache cache = broker.GetAllPageRenderCaches()
-                .FirstOrDefault(predicate: cache => cache.Id == pageRenderCacheId);
-
-            if (cache != null)
-            {
-                await broker.DeletePageRenderCacheAsync(deletedPageRenderCache: cache);
-            }
+            await broker.DeletePageRenderCacheAsync(
+                pageRenderCacheId: pageRenderCacheId);
         }, isValueTask: true);
 
     public ValueTask ReplacePageRenderCachesAsync(int appId, int[] pageIds, PageRenderCache[] replacements) =>

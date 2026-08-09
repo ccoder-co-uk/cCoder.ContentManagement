@@ -14,7 +14,7 @@ internal interface IPageRenderCacheBroker
 
     ValueTask<PageRenderCache> UpdatePageRenderCacheAsync(PageRenderCache updatedPageRenderCache);
 
-    ValueTask DeletePageRenderCacheAsync(PageRenderCache deletedPageRenderCache);
+    ValueTask DeletePageRenderCacheAsync(string pageRenderCacheId);
 
     ValueTask ReplacePageRenderCachesByAppIdAsync(int appId, PageRenderCache[] replacements);
 

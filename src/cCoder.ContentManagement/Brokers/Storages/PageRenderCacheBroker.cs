@@ -30,11 +30,13 @@ internal sealed class PageRenderCacheBroker(ICoreContextFactory coreContextFacto
         return result;
     }
 
-    public async ValueTask DeletePageRenderCacheAsync(PageRenderCache deletedPageRenderCache)
+    public async ValueTask DeletePageRenderCacheAsync(string pageRenderCacheId)
     {
         using CoreDataContext context = coreContextFactory.CreateCoreContext();
-        context.PageRenderCaches.Remove(entity: deletedPageRenderCache);
-        await context.SaveChangesAsync();
+
+        _ = await context.PageRenderCaches
+            .Where(predicate: cache => cache.Id == pageRenderCacheId)
+            .ExecuteDeleteAsync();
     }
 
     public async ValueTask ReplacePageRenderCachesByAppIdAsync(

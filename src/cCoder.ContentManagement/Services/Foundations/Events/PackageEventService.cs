@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Brokers.Events;
+using cCoder.ContentManagement.Models;
 using cCoder.Data;
 using cCoder.Eventing.Models;
 using DataPackage = cCoder.Data.Models.Packaging.Package;
@@ -17,13 +18,17 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
     {
         ValidateRaisePackageImportEventAsync(inputs: [appId, package]);
 
-        EventMessage<(int, DataPackage)> message = new EventMessage<(int, DataPackage)>
+        EventMessage<PackageImportEvent> message = new EventMessage<PackageImportEvent>
         {
             AuthInfo = new EventAuthInfo
             {
                 SSOUserId = packageEventBroker.GetCurrentUserId()
             },
-            Data = (appId, package)
+            Data = new PackageImportEvent
+            {
+                AppId = appId,
+                Package = package
+            }
         };
 
         await packageEventBroker.RaisePackageImportEventAsync(message: message);
@@ -35,13 +40,17 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
     {
         ValidateRaisePackageImportEventAsync(inputs: [appId, package]);
 
-        EventMessage<(int, DataPackage)> message = new EventMessage<(int, DataPackage)>
+        EventMessage<PackageImportEvent> message = new EventMessage<PackageImportEvent>
         {
             AuthInfo = new EventAuthInfo
             {
                 SSOUserId = packageEventBroker.GetCurrentUserId()
             },
-            Data = (appId, package)
+            Data = new PackageImportEvent
+            {
+                AppId = appId,
+                Package = package
+            }
         };
 
         await packageEventBroker.RaisePackageImportCompleteEventAsync(message: message);

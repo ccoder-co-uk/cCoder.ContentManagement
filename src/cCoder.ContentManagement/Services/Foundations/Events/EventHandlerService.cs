@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Brokers.Events;
+using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -26,6 +27,19 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         ListenToPageRenderCacheEvents();
 
     });
+
+    public void ListenToHostedEvents() =>
+        TryCatch(operation: () =>
+        {
+            ValidateListenToAllEvents(inputs: []);
+
+            ValidateEventHubBroker(
+                broker: eventHubBroker,
+                parameterName: "eventHubBroker");
+
+            ListenToPackageImportCompleteEvents();
+            ListenToUncachedPageRenderEvents();
+        });
 
     public void ListenToFinalAppDeleteEvent() =>
         TryCatch(operation: () =>
@@ -59,7 +73,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
     private void ListenToPackageEvents()
     {
         ListenToPackageImportEvents();
-        ListenToPackageImportCompleteEvents();
     }
 
     private void ListenToAppAddEvents()
@@ -111,12 +124,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
 
     private void ListenToPageRenderCacheEvents()
     {
-        eventHubBroker.ListenToEvent(
-            eventName: "uncached_page_render",
-            handler: (IUncachedPageRenderEventHandler service,
-                UncachedPageRenderEvent pageRenderEvent) =>
-                service.CachePageAsync(pageRenderEvent: pageRenderEvent));
-
         ListenToAppOwnedRenderEvents<AppCulture>(eventNames: ["app_culture_add", "app_culture_delete"]);
         ListenToAppOwnedRenderEvents<Layout>(eventNames: ["layout_add", "layout_update", "layout_delete"]);
         ListenToAppOwnedRenderEvents<Template>(eventNames: ["template_add", "template_update", "template_delete"]);
@@ -140,6 +147,13 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         }
     }
 
+    private void ListenToUncachedPageRenderEvents() =>
+        eventHubBroker.ListenToEvent(
+            eventName: "uncached_page_render",
+            handler: (IUncachedPageRenderEventHandler service,
+                UncachedPageRenderEvent pageRenderEvent) =>
+                service.CachePageAsync(pageRenderEvent: pageRenderEvent));
+
     private void ListenToAppOwnedRenderEvents<T>(string[] eventNames)
     {
         foreach (string eventName in eventNames)
@@ -160,9 +174,9 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
     }
 
     private void ListenToPackageImportEvents() =>
-        eventHubBroker.ListenToEvent(eventName: "package_import", handler: (IContentManagementMigrationAggregationService service, (int appId, Package package) args) => service.ImportPackageAsync(appId: args.appId, package: args.package));
+        eventHubBroker.ListenToEvent(eventName: "package_import", handler: (IContentManagementMigrationAggregationService service, PackageImportEvent args) => service.ImportPackageAsync(appId: args.AppId, package: args.Package));
 
     private void ListenToPackageImportCompleteEvents() =>
-        eventHubBroker.ListenToEvent(eventName: "package_import_complete", handler: (IPageRenderCacheEventHandlers service, (int appId, Package package) args) => service.InvalidateAppAsync(appId: args.appId));
+        eventHubBroker.ListenToEvent(eventName: "package_import_complete", handler: (IPageRenderCacheEventHandlers service, PackageImportEvent args) => service.InvalidateAppAsync(appId: args.AppId));
 
 }

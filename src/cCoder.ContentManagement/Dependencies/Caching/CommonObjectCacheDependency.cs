@@ -89,6 +89,10 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
                     .Where(predicate: commonObject => commonObject.Type == "ContentManagement/Style")
                     .ToArray();
 
+                log.LogInformation(
+                    message: "Loaded {CommonObjectCount} common objects including {StyleCount} styles.",
+                    args: [latestCommonObjectsPaged.Length, styleObjects.Length]);
+
                 refreshedLatestSet = array.Union(second: array2)
                     .Union(second: array3)
                     .Union(second: styleObjects)

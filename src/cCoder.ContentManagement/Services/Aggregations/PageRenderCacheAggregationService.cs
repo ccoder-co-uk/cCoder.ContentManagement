@@ -334,8 +334,8 @@ internal sealed partial class PageRenderCacheAggregationService(
     {
         App app = await appOrchestrationService.GetAppForRenderAsync(
             appId: operation.AppId)
-                ?? throw new KeyNotFoundException(
-                    message: $"App {operation.AppId} was not found.");
+            ?? throw new KeyNotFoundException(
+                message: $"App {operation.AppId} was not found.");
 
         int[] pageIds = operation.RebuildCache
             ?
@@ -395,6 +395,18 @@ internal sealed partial class PageRenderCacheAggregationService(
             bool pageIsCached = pageRenderCacheOrchestrationService
                 .GetAllPageRenderCaches()
                 .Any(predicate: cache => cache.PageId == operation.PageId);
+
+            if (operation.CreateCache && pageIsCached)
+            {
+                operation.PageRenderCaches =
+                [
+                    .. pageRenderCacheOrchestrationService
+                        .GetAllPageRenderCaches()
+                        .Where(predicate: cache => cache.PageId == operation.PageId)
+                ];
+
+                return operation;
+            }
 
             if (operation.RebuildCache
                 && !operation.CreateCache

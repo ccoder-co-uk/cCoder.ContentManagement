@@ -78,7 +78,7 @@ internal sealed partial class PageRenderCacheOrchestrationService(
                 fromEvent: true);
         }, isValueTask: true);
 
-    private ValueTask DeleteAppPageRenderCaches(
+    private async ValueTask DeleteAppPageRenderCaches(
         int appId,
         bool fromEvent)
     {
@@ -88,15 +88,23 @@ internal sealed partial class PageRenderCacheOrchestrationService(
             .Distinct()
             .ToArray();
 
-        return fromEvent
-            ? processingService.ReplacePageRenderCachesFromEventAsync(
-                appId: appId,
-                pageIds: pageIds,
-                replacements: [])
-            : processingService.ReplacePageRenderCachesAsync(
-                appId: appId,
-                pageIds: pageIds,
-                replacements: []);
+        foreach (int pageId in pageIds)
+        {
+            if (fromEvent)
+            {
+                await processingService.ReplacePageRenderCachesFromEventAsync(
+                    appId: appId,
+                    pageIds: [pageId],
+                    replacements: []);
+            }
+            else
+            {
+                await processingService.ReplacePageRenderCachesAsync(
+                    appId: appId,
+                    pageIds: [pageId],
+                    replacements: []);
+            }
+        }
     }
 
     public ValueTask DeletePagePageRenderCachesAsync(int pageId) =>
