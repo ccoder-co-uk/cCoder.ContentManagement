@@ -26,7 +26,9 @@ public static partial class WebApplicationExtensions
         .StartContentManagementFinalAppDeleteEventHandler();
 
     public static WebApplication StartContentManagementHostedServices(this WebApplication app) =>
-        app.ListenToContentManagementEvents();
+        app.InitialiseContentManagementCaches()
+            .ListenToContentManagementEvents()
+            .ListenToContentManagementHostedEvents();
 
     public static WebApplication StartContentManagementFinalAppDeleteEventHandler(
         this WebApplication app)
@@ -124,14 +126,22 @@ public static partial class WebApplicationExtensions
         });
 
         PopulateMetadataTypeCache(app: app);
-        app.Services.GetService<ICommonObjectCache>()?.Refresh();
-        app.Services.GetService<IMetadataCache>()?.Rebuild();
+        app.InitialiseContentManagementCaches();
 
         app.Use(middleware: async (context, next) =>
         {
             context.Response.OnStarting(callback: () => RemovePlatformHeaders(context: context));
             await next(context: context);
         });
+
+        return app;
+    }
+
+    private static WebApplication InitialiseContentManagementCaches(
+        this WebApplication app)
+    {
+        app.Services.GetService<ICommonObjectCache>()?.Refresh();
+        app.Services.GetService<IMetadataCache>()?.Rebuild();
 
         return app;
     }
@@ -158,6 +168,21 @@ typeSetPayloads: app.Services.GetRequiredService<IContentManagementMetadataTypeS
         foreach (IContentManagementEventHandlers service in serviceProvider.GetServices<IContentManagementEventHandlers>())
         {
             service.ListenToAllEvents();
+        }
+
+        return app;
+    }
+
+    private static WebApplication ListenToContentManagementHostedEvents(
+        this WebApplication app)
+    {
+        using IServiceScope serviceScope = app.Services.CreateScope();
+
+        foreach (IContentManagementEventHandlers service in serviceScope
+            .ServiceProvider
+            .GetServices<IContentManagementEventHandlers>())
+        {
+            service.ListenToHostedEvents();
         }
 
         return app;

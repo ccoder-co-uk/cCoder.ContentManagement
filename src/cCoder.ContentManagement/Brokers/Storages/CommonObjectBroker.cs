@@ -29,6 +29,7 @@ internal sealed class CommonObjectBroker(ICoreContextFactory coreContextFactory)
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
         return coreDataContext.CommonObjects
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .GroupBy(keySelector: commonObject => new
             {

@@ -18,6 +18,7 @@ public sealed partial class PageRenderCacheAggregationServiceTests
     {
         // Given
         Mock<IPageRenderCacheOrchestrationService> cacheService = new();
+
         PageRenderCache cache = new() { Id = "1_2__default" };
         IQueryable<PageRenderCache> caches = new[] { cache }.AsQueryable();
 
@@ -65,6 +66,47 @@ public sealed partial class PageRenderCacheAggregationServiceTests
         Assert.Same(expected: cache, actual: actualCache);
         Assert.Same(expected: cache, actual: addedCache);
         Assert.Same(expected: cache, actual: updatedCache);
+        cacheService.VerifyAll();
+    }
+
+    [Fact]
+    public async Task ShouldCoalesceRepeatedCacheMissAfterPageWasCachedAsync()
+    {
+        // Given
+        const int pageId = 11;
+
+        PageRenderCache existingCache = new()
+        {
+            Id = "7_11__default",
+            AppId = 7,
+            PageId = pageId
+        };
+
+        Mock<IPageOrchestrationService> pageService = new();
+        Mock<IPageRenderOrchestrationService> renderService = new();
+        Mock<IPageRenderCacheOrchestrationService> cacheService = new();
+
+        cacheService.Setup(expression: service =>
+            service.GetAllPageRenderCaches())
+            .Returns(value: new[] { existingCache }
+                .AsQueryable());
+
+        PageRenderCacheAggregationService service = CreateService(
+            pageService: pageService,
+            renderService: renderService,
+            cacheService: cacheService);
+
+        // When
+        PageRenderCache[] caches = await service.CachePageAsync(
+            pageId: pageId);
+
+        // Then
+        Assert.Same(
+            expected: existingCache,
+            actual: Assert.Single(collection: caches));
+
+        pageService.VerifyNoOtherCalls();
+        renderService.VerifyNoOtherCalls();
         cacheService.VerifyAll();
     }
 
@@ -200,12 +242,13 @@ public sealed partial class PageRenderCacheAggregationServiceTests
     }
 
     private static PageRenderCacheAggregationService CreateService(
+        Mock<IAppOrchestrationService> appService = null,
         Mock<IPageOrchestrationService> pageService = null,
         Mock<IPageRenderOrchestrationService> renderService = null,
         Mock<IPageRenderCacheOrchestrationService> cacheService = null) =>
         new(
             appOrchestrationService:
-                new Mock<IAppOrchestrationService>().Object,
+                (appService ?? new Mock<IAppOrchestrationService>()).Object,
             pageOrchestrationService:
                 (pageService ?? new Mock<IPageOrchestrationService>()).Object,
             pageRenderOrchestrationService:

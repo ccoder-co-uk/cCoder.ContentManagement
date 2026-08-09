@@ -36,7 +36,7 @@ public partial class PageRenderCacheServiceTests
 
         brokerMock
             .Setup(expression: broker => broker.DeletePageRenderCacheAsync(
-                deletedPageRenderCache: stored))
+                pageRenderCacheId: stored.Id))
             .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheService service = new(broker: brokerMock.Object);
@@ -79,7 +79,7 @@ public partial class PageRenderCacheServiceTests
 
         brokerMock.Verify(
             expression: broker => broker.DeletePageRenderCacheAsync(
-                deletedPageRenderCache: stored),
+                pageRenderCacheId: stored.Id),
             times: Times.Once());
     }
 

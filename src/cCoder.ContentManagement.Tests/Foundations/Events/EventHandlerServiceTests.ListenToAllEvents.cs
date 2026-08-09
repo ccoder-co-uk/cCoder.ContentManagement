@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Exposures.EventHandlers;
+using cCoder.ContentManagement.Models;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -20,51 +21,74 @@ public partial class EventHandlerServiceTests
     public void ShouldRegisterPassThroughAppPageAndPackageHandlers()
     {
         // Given
-        SetupAppCoordinationEventRegistrations(eventName: "app_add");
-        SetupAppCoordinationEventRegistrations(eventName: "app_update");
-        SetupAppCoordinationEventRegistrations(eventName: "app_delete");
-        SetupPageRenderCacheEventRegistrations();
-
-        eventHubBrokerMock
-            .Setup(expression: x => x.ListenToEvent<App, IAppOrchestrationService>(
-eventName: "app_delete",
-handler: It.IsAny<Func<IAppOrchestrationService, App, ValueTask>>()));
-
-        eventHubBrokerMock
-            .Setup(expression: x => x.ListenToEvent<Page, IPageCoordinationService>(
-eventName: "page_add",
-handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
-
-        eventHubBrokerMock
-            .Setup(expression: x => x.ListenToEvent<Page, IPageCoordinationService>(
-eventName: "page_update",
-handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
-
-        eventHubBrokerMock
-            .Setup(expression: x => x.ListenToEvent<Page, IPageCoordinationService>(
-eventName: "page_delete",
-handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
-
-        SetupPageStructureEventRegistration(eventName: "page_add");
-        SetupPageStructureEventRegistration(eventName: "page_update");
-        SetupPageStructureEventRegistration(eventName: "page_delete");
-
-        eventHubBrokerMock
-            .Setup(expression: x => x.ListenToEvent<(int appId, Package package), IContentManagementMigrationAggregationService>(
-eventName: "package_import",
-handler: It.IsAny<Func<IContentManagementMigrationAggregationService, (int appId, Package package), ValueTask>>()));
-
-        eventHubBrokerMock
-            .Setup(expression: x => x.ListenToEvent<(int appId, Package package), IPageRenderCacheEventHandlers>(
-eventName: "package_import_complete",
-handler: It.IsAny<Func<IPageRenderCacheEventHandlers, (int appId, Package package), ValueTask>>()));
+        SetupAllEventRegistrations();
+        SetupHostedEventRegistrations();
 
         // When
         service.ListenToAllEvents();
+        service.ListenToHostedEvents();
         service.ListenToFinalAppDeleteEvent();
 
         // Then
         eventHubBrokerMock.VerifyAll();
+    }
+
+    [Fact]
+    public async Task ShouldInvalidateAppAfterPackageImportCompletesAsync()
+    {
+        // Given
+        const int appId = 23;
+
+        SetupAllEventRegistrations();
+
+        eventHubBrokerMock
+            .Setup(expression: broker => broker.ListenToEvent<
+                UncachedPageRenderEvent,
+                IUncachedPageRenderEventHandler>(
+                    eventName: "uncached_page_render",
+                    handler: It.IsAny<Func<
+                        IUncachedPageRenderEventHandler,
+                        UncachedPageRenderEvent,
+                        ValueTask>>()));
+
+        Func<IPageRenderCacheEventHandlers, PackageImportEvent, ValueTask> registeredHandler = null;
+
+        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
+                PackageImportEvent,
+                IPageRenderCacheEventHandlers>(
+                    eventName: "package_import_complete",
+                    handler: It.IsAny<Func<
+                        IPageRenderCacheEventHandlers,
+                        PackageImportEvent,
+                        ValueTask>>()))
+            .Callback<string, Func<
+                IPageRenderCacheEventHandlers,
+                PackageImportEvent,
+                ValueTask>>(action: (_, handler) => registeredHandler = handler);
+
+        Mock<IPageRenderCacheEventHandlers> handlers = new();
+
+        handlers.Setup(expression: service =>
+            service.InvalidateAppAsync(appId: appId))
+            .Returns(value: ValueTask.CompletedTask);
+
+        // When
+        service.ListenToHostedEvents();
+
+        await registeredHandler.Invoke(
+            arg1: handlers.Object,
+            arg2: new PackageImportEvent
+            {
+                AppId = appId,
+                Package = new Package()
+            });
+
+        // Then
+        handlers.VerifyAll();
+
+        handlers.Verify(
+            expression: service => service.RebuildAppAsync(appId: It.IsAny<int>()),
+            times: Times.Never());
     }
 
     private void SetupAppCoordinationEventRegistrations(string eventName)
@@ -83,6 +107,65 @@ handler: It.IsAny<Func<IAppRenderableCoordinationService, App, ValueTask>>()));
             .Setup(expression: x => x.ListenToEvent<App, IAppPageComponentCoordinationService>(
 eventName: eventName,
 handler: It.IsAny<Func<IAppPageComponentCoordinationService, App, ValueTask>>()));
+    }
+
+    private void SetupAllEventRegistrations()
+    {
+        SetupAppCoordinationEventRegistrations(eventName: "app_add");
+        SetupAppCoordinationEventRegistrations(eventName: "app_update");
+        SetupAppCoordinationEventRegistrations(eventName: "app_delete");
+        SetupPageRenderCacheEventRegistrations();
+
+        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<App, IAppOrchestrationService>(
+            eventName: "app_delete",
+            handler: It.IsAny<Func<IAppOrchestrationService, App, ValueTask>>()));
+
+        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<Page, IPageCoordinationService>(
+            eventName: "page_add",
+            handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
+
+        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<Page, IPageCoordinationService>(
+            eventName: "page_update",
+            handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
+
+        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<Page, IPageCoordinationService>(
+            eventName: "page_delete",
+            handler: It.IsAny<Func<IPageCoordinationService, Page, ValueTask>>()));
+
+        SetupPageStructureEventRegistration(eventName: "page_add");
+        SetupPageStructureEventRegistration(eventName: "page_update");
+        SetupPageStructureEventRegistration(eventName: "page_delete");
+
+        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
+            PackageImportEvent,
+            IContentManagementMigrationAggregationService>(
+                eventName: "package_import",
+                handler: It.IsAny<Func<
+                    IContentManagementMigrationAggregationService,
+                    PackageImportEvent,
+                    ValueTask>>()));
+
+    }
+
+    private void SetupHostedEventRegistrations()
+    {
+        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
+            PackageImportEvent,
+            IPageRenderCacheEventHandlers>(
+                eventName: "package_import_complete",
+                handler: It.IsAny<Func<
+                    IPageRenderCacheEventHandlers,
+                    PackageImportEvent,
+                    ValueTask>>()));
+
+        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
+            UncachedPageRenderEvent,
+            IUncachedPageRenderEventHandler>(
+                eventName: "uncached_page_render",
+                handler: It.IsAny<Func<
+                    IUncachedPageRenderEventHandler,
+                    UncachedPageRenderEvent,
+                    ValueTask>>()));
     }
 
     private void SetupPageStructureEventRegistration(string eventName) =>
@@ -148,15 +231,6 @@ handler: It.IsAny<Func<IPageStructureCoordinationService, Page, ValueTask>>()));
                 eventName: It.IsAny<string>(),
                 handler: It.IsAny<Func<IPageRenderCacheEventHandlers, CommonObject, ValueTask>>()));
 
-        eventHubBrokerMock
-            .Setup(expression: broker => broker.ListenToEvent<
-                UncachedPageRenderEvent,
-                IUncachedPageRenderEventHandler>(
-                    eventName: "uncached_page_render",
-                    handler: It.IsAny<Func<
-                        IUncachedPageRenderEventHandler,
-                        UncachedPageRenderEvent,
-                        ValueTask>>()));
     }
 
 }
