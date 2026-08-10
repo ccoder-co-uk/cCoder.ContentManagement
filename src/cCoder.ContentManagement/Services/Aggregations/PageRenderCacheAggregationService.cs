@@ -26,16 +26,6 @@ internal sealed partial class PageRenderCacheAggregationService(
             "Scripts"
         };
 
-    public ValueTask RefreshCommonCacheAndInvalidateAppAsync(int appId) =>
-        TryCatch(operation: async () =>
-        {
-            ValidateAppPageRenderCachesOnDelete(inputs: [appId, true]);
-            commonObjectCache.Refresh();
-
-            await pageRenderCacheOrchestrationService
-                .DeleteAppPageRenderCachesFromEventAsync(appId: appId);
-        }, isValueTask: true);
-
     public IQueryable<PageRenderCache> GetAllPageRenderCaches() =>
         TryCatch(operation: () =>
             pageRenderCacheOrchestrationService.GetAllPageRenderCaches());
@@ -114,6 +104,8 @@ internal sealed partial class PageRenderCacheAggregationService(
             {
                 return;
             }
+
+            commonObjectCache.Refresh();
 
             int[] appIds =
             [

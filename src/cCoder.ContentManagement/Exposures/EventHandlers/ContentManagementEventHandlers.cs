@@ -11,6 +11,9 @@ internal class ContentManagementEventHandlers(IEventHandlerService eventHandlerS
     public void ListenToAllEvents() =>
         eventHandlerService.ListenToAllEvents();
 
+    public void ListenToWebCacheEvents() =>
+        eventHandlerService.ListenToWebCacheEvents();
+
     public void ListenToHostedEvents() =>
         eventHandlerService.ListenToHostedEvents();
 

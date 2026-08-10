@@ -30,10 +30,6 @@ internal sealed class PageRenderCacheEventHandlers(
             appId: appId,
             fromEvent: true);
 
-    public ValueTask RefreshCommonCacheAndInvalidateAppAsync(int appId) =>
-        pageRenderCacheAggregationService
-            .RefreshCommonCacheAndInvalidateAppAsync(appId: appId);
-
     public ValueTask DeleteAppAsync(App deletedApp) =>
         pageRenderCacheAggregationService.DeleteAppAsync(
             appId: deletedApp.Id,

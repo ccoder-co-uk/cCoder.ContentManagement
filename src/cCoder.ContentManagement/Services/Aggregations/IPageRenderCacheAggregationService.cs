@@ -22,8 +22,6 @@ internal interface IPageRenderCacheAggregationService
 
     ValueTask DeleteAppAsync(int appId, bool fromEvent = false);
 
-    ValueTask RefreshCommonCacheAndInvalidateAppAsync(int appId);
-
     ValueTask DeletePageAsync(int pageId, bool fromEvent = false);
 
     ValueTask InvalidateCommonObjectConsumersAsync(

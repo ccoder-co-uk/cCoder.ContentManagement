@@ -97,7 +97,10 @@ public sealed partial class PageRenderCacheAggregationServiceTests
     public async Task ShouldInvalidateAllCachedAppsForCommonRenderObjectsAsync()
     {
         // Given
+        Mock<ICommonObjectCache> commonObjectCache = new();
         Mock<IPageRenderCacheOrchestrationService> cacheService = new();
+
+        commonObjectCache.Setup(expression: cache => cache.Refresh());
 
         cacheService.Setup(expression: service =>
             service.GetAllPageRenderCaches())
@@ -116,40 +119,13 @@ public sealed partial class PageRenderCacheAggregationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheAggregationService service = CreateService(
-            cacheService: cacheService);
+            cacheService: cacheService,
+            commonObjectCache: commonObjectCache);
 
         // When
         await service.InvalidateCommonObjectConsumersAsync(
             commonObjectType: "ContentManagement/Component",
             fromEvent: true);
-
-        // Then
-        cacheService.VerifyAll();
-    }
-
-    [Fact]
-    public async Task ShouldRefreshCommonCacheBeforeInvalidatingImportedAppAsync()
-    {
-        // Given
-        const int appId = 23;
-        MockSequence sequence = new();
-        Mock<ICommonObjectCache> commonObjectCache = new();
-        Mock<IPageRenderCacheOrchestrationService> cacheService = new();
-
-        commonObjectCache.InSequence(sequence: sequence)
-            .Setup(expression: cache => cache.Refresh());
-
-        cacheService.InSequence(sequence: sequence)
-            .Setup(expression: service =>
-                service.DeleteAppPageRenderCachesFromEventAsync(appId: appId))
-            .Returns(value: ValueTask.CompletedTask);
-
-        PageRenderCacheAggregationService service = CreateService(
-            cacheService: cacheService,
-            commonObjectCache: commonObjectCache);
-
-        // When
-        await service.RefreshCommonCacheAndInvalidateAppAsync(appId: appId);
 
         // Then
         commonObjectCache.VerifyAll();

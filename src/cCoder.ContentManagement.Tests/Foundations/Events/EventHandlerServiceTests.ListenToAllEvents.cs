@@ -21,10 +21,12 @@ public partial class EventHandlerServiceTests
     {
         // Given
         SetupAllEventRegistrations();
+        SetupPageRenderCacheEventRegistrations();
         SetupHostedEventRegistrations();
 
         // When
         service.ListenToAllEvents();
+        service.ListenToWebCacheEvents();
         service.ListenToHostedEvents();
         service.ListenToFinalAppDeleteEvent();
 
@@ -63,7 +65,7 @@ public partial class EventHandlerServiceTests
         Mock<IPageRenderCacheEventHandlers> handlers = new();
 
         handlers.Setup(expression: service =>
-            service.RefreshCommonCacheAndInvalidateAppAsync(appId: appId))
+            service.InvalidateAppAsync(appId: appId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -105,7 +107,6 @@ handler: It.IsAny<Func<IAppPageComponentCoordinationService, App, ValueTask>>())
         SetupAppCoordinationEventRegistrations(eventName: "app_add");
         SetupAppCoordinationEventRegistrations(eventName: "app_update");
         SetupAppCoordinationEventRegistrations(eventName: "app_delete");
-        SetupPageRenderCacheEventRegistrations();
 
         eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<App, IAppOrchestrationService>(
             eventName: "app_delete",
