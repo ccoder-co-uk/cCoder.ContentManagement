@@ -53,6 +53,10 @@ internal sealed class PageAuthorizationBroker(
                     .Where(predicate: page => page.Path == path)
                     .Select(selector: page => (int?)page.Id)
                     .SingleOrDefault(),
+                Layout = app.Pages
+                    .Where(predicate: page => page.Path == path)
+                    .Select(selector: page => page.Layout)
+                    .SingleOrDefault(),
                 AppId = app.Id,
                 TenantId = app.TenantId,
                 Domain = app.Domain,
@@ -60,8 +64,7 @@ internal sealed class PageAuthorizationBroker(
                     .Trim()
                     .ToLower(),
                 DefaultTheme = (app.DefaultTheme ?? "Default")
-                    .Trim()
-                    .ToLower(),
+                    .Trim(),
                 AppConfigJson = app.ConfigJson
             })
             .SingleOrDefaultAsync();
@@ -85,6 +88,12 @@ internal sealed class PageAuthorizationBroker(
                     .Where(predicate: page => page.Path == path)
                     .Select(selector: page => (int?)page.Id)
                     .SingleOrDefault(),
+                Layout = app.Pages
+                    .AsQueryable()
+                    .IgnoreQueryFilters()
+                    .Where(predicate: page => page.Path == path)
+                    .Select(selector: page => page.Layout)
+                    .SingleOrDefault(),
                 AppId = app.Id,
                 TenantId = app.TenantId,
                 Domain = app.Domain,
@@ -92,8 +101,7 @@ internal sealed class PageAuthorizationBroker(
                     .Trim()
                     .ToLower(),
                 DefaultTheme = (app.DefaultTheme ?? "Default")
-                    .Trim()
-                    .ToLower(),
+                    .Trim(),
                 AppConfigJson = app.ConfigJson
             })
             .SingleOrDefaultAsync();

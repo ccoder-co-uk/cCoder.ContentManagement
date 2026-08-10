@@ -29,7 +29,7 @@ internal sealed partial class CachedPageRenderProcessingService
                     TenantId = context.TenantId,
                     Domain = context.Domain,
                     DefaultCultureId = context.Culture,
-                    DefaultTheme = context.Theme,
+                    DefaultTheme = context.AppDefaultTheme,
                     ConfigJson = context.AppConfigJson
                 },
                 Page = new PageRenderResult
@@ -41,6 +41,7 @@ internal sealed partial class CachedPageRenderProcessingService
                     Edit = false,
                     Culture = context.Culture,
                     Theme = context.Theme,
+                    Layout = context.Layout,
                     Path = cached.Path,
                     Title = cached.Title,
                     Description = cached.Description,

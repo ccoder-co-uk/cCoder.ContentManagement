@@ -15,6 +15,8 @@ public sealed class HttpPageRenderContext
 
     public string Path { get; set; }
 
+    public string Layout { get; set; }
+
     public string Culture
     {
         get => culture;
@@ -30,6 +32,8 @@ public sealed class HttpPageRenderContext
             .Trim()
             .ToLowerInvariant();
     }
+
+    public string AppDefaultTheme { get; set; }
 
     public string Nonce { get; set; }
 

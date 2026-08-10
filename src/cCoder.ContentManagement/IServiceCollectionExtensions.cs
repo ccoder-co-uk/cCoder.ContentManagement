@@ -287,6 +287,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppPageComponentCoordinationService, AppPageComponentCoordinationService>();
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
         services.AddTransient<IPageCoordinationService, PageCoordinationService>();
+        services.AddTransient<IPageImportOrchestrationService, PageImportOrchestrationService>();
         services.AddTransient<IPageStructureCoordinationService, PageStructureCoordinationService>();
     }
 

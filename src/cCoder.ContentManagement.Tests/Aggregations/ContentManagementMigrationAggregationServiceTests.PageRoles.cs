@@ -27,7 +27,7 @@ public partial class ContentManagementMigrationAggregationServiceTests
             .Setup(expression: service => service.ImportPagesAsync(
                 appId: appId,
                 items: It.IsAny<Page[]>()))
-            .Returns(value: ValueTask.CompletedTask);
+            .ReturnsAsync(value: Array.Empty<Page>());
 
         packageServiceMock
             .InSequence(sequence: sequence)
@@ -94,6 +94,42 @@ public partial class ContentManagementMigrationAggregationServiceTests
 
         ContentManagementMigrationAggregationService service = CreateService(
             pageOrchestrationService: pageServiceMock.Object,
+            packageOrchestrationService: packageServiceMock.Object);
+
+        Package package = CreatePageRolePackage();
+
+        // When
+        ValueTask action() => service.ImportPackageAsync(appId: appId, package: package);
+
+        // Then
+        _ = await Assert.ThrowsAnyAsync<Exception>(testCode: async () => await action());
+        packageServiceMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task ShouldNotCompletePackageWhenPageChildImportFailsAsync()
+    {
+        // Given
+        const int appId = 7;
+        Page importedPage = new() { Id = 11, AppId = appId, Name = "Home", Path = string.Empty };
+        Mock<IPageOrchestrationService> pageServiceMock = new(behavior: MockBehavior.Strict);
+        Mock<IPageImportOrchestrationService> pageImportServiceMock = new(behavior: MockBehavior.Strict);
+        Mock<IPackageOrchestrationService> packageServiceMock = new(behavior: MockBehavior.Strict);
+
+        pageServiceMock
+            .Setup(expression: service => service.ImportPagesAsync(
+                appId: appId,
+                items: It.IsAny<Page[]>()))
+            .ReturnsAsync(value: [importedPage]);
+
+        pageImportServiceMock
+            .Setup(expression: service => service.HandlePageImportAsync(
+                page: importedPage))
+            .Throws(exception: new InvalidOperationException(message: "Page child import failed."));
+
+        ContentManagementMigrationAggregationService service = CreateService(
+            pageOrchestrationService: pageServiceMock.Object,
+            pageImportOrchestrationService: pageImportServiceMock.Object,
             packageOrchestrationService: packageServiceMock.Object);
 
         Package package = CreatePageRolePackage();

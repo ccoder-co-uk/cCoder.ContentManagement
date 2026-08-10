@@ -8,6 +8,8 @@ internal sealed class PageAuthorizationResult
 {
     public int? PageId { get; set; }
 
+    public string Layout { get; set; }
+
     public int AppId { get; set; }
 
     public string TenantId { get; set; }

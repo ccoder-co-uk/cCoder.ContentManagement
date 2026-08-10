@@ -29,6 +29,17 @@ public partial class PageCoordinationServiceTests
     {
         // Given
         Page page = CreateRandomPage();
+
+        foreach (PageInfo pageInfo in page.PageInfo)
+        {
+            pageInfo.Id = 0;
+        }
+
+        foreach (Content content in page.Contents)
+        {
+            content.Id = 0;
+        }
+
         LocalPageInfo[] localPageInfos = ToLocalPageInfos(pageInfos: page.PageInfo);
 
         LocalContent[] localContents = [.. page.Contents.Select(selector: content => new LocalContent
@@ -46,25 +57,23 @@ public partial class PageCoordinationServiceTests
             RoleId = role.RoleId,
         })];
 
-        pageInfoOrchestrationServiceMock
-            .Setup(expression: service =>
-                service.AddOrUpdatePageInfoResult(
-newPageInfo: It.Is<IEnumerable<LocalPageInfo>>(match: items =>
-                        items.Select(selector: i => i.Id)
-            .SequenceEqual(second: localPageInfos.Select(selector: i => i.Id))
-                    )
-                )
-            )
-            .ReturnsAsync(value: []);
+        foreach (LocalPageInfo pageInfo in localPageInfos)
+        {
+            pageInfoOrchestrationServiceMock
+                .Setup(expression: service => service.AddPageInfoAsync(
+                    newPageInfo: It.Is<LocalPageInfo>(match: item =>
+                        item.Id == pageInfo.Id && item.PageId == page.Id)))
+                .ReturnsAsync(value: pageInfo);
+        }
 
-        contentOrchestrationServiceMock
-            .Setup(expression: service => service.AddOrUpdateContentResult(
-newContent: It.Is<IEnumerable<LocalContent>>(match: items =>
-                    items.Select(selector: item => item.PageId)
-            .SequenceEqual(second: localContents.Select(selector: item => item.PageId))
-                )
-            ))
-            .ReturnsAsync(value: []);
+        foreach (LocalContent content in localContents)
+        {
+            contentOrchestrationServiceMock
+                .Setup(expression: service => service.AddContentAsync(
+                    newContent: It.Is<LocalContent>(match: item =>
+                        item.Id == content.Id && item.PageId == page.Id)))
+                .ReturnsAsync(value: content);
+        }
 
         pageRoleOrchestrationServiceMock
             .Setup(expression: service => service.AddOrUpdatePageRoleResult(
@@ -81,26 +90,23 @@ newPageRole: It.Is<IEnumerable<LocalPageRole>>(match: items =>
 
         // Then
 
-        pageInfoOrchestrationServiceMock.Verify(
-expression: service =>
-                service.AddOrUpdatePageInfoResult(
-newPageInfo: It.Is<IEnumerable<LocalPageInfo>>(match: items =>
-                        items.Select(selector: i => i.Id)
-            .SequenceEqual(second: localPageInfos.Select(selector: i => i.Id))
-                    )
-                ),
-times: Times.Once
-        );
+        foreach (LocalPageInfo pageInfo in localPageInfos)
+        {
+            pageInfoOrchestrationServiceMock.Verify(
+                expression: service => service.AddPageInfoAsync(
+                    newPageInfo: It.Is<LocalPageInfo>(match: item =>
+                        item.Id == pageInfo.Id && item.PageId == page.Id)),
+                times: Times.Once);
+        }
 
-        contentOrchestrationServiceMock.Verify(
-expression: service => service.AddOrUpdateContentResult(
-newContent: It.Is<IEnumerable<LocalContent>>(match: items =>
-                    items.Select(selector: item => item.PageId)
-            .SequenceEqual(second: localContents.Select(selector: item => item.PageId))
-                )
-            ),
-times: Times.Once
-        );
+        foreach (LocalContent content in localContents)
+        {
+            contentOrchestrationServiceMock.Verify(
+                expression: service => service.AddContentAsync(
+                    newContent: It.Is<LocalContent>(match: item =>
+                        item.Id == content.Id && item.PageId == page.Id)),
+                times: Times.Once);
+        }
 
         pageRoleOrchestrationServiceMock.Verify(
 expression: service => service.AddOrUpdatePageRoleResult(

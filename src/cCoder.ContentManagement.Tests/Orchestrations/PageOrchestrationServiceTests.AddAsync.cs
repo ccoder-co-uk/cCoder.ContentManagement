@@ -18,7 +18,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class PageOrchestrationServiceTests
@@ -36,7 +35,8 @@ public partial class PageOrchestrationServiceTests
             .Setup(expression: x => x.GetAllLayout(ignoreFilters: true))
             .Returns(value: new[] { CreateLayoutFor(page: entity) }.AsQueryable());
 
-        pageProcessingServiceMock.Setup(expression: x => x.AddPageAsync(newPage: entity))
+        pageProcessingServiceMock
+            .Setup(expression: x => x.AddPageAsync(newPage: entity))
             .ReturnsAsync(value: entity);
 
         pageEventProcessingServiceMock
@@ -47,7 +47,6 @@ public partial class PageOrchestrationServiceTests
         Page result = await orchestrationService.AddPageAsync(newPage: entity);
 
         // Then
-
         result.Should()
             .BeSameAs(expected: entity);
 
@@ -68,14 +67,14 @@ public partial class PageOrchestrationServiceTests
         layoutProcessingServiceMock
             .Setup(expression: x => x.GetAllLayout(ignoreFilters: true))
             .Returns(value: Array.Empty<Layout>()
-            .AsQueryable());
+                .AsQueryable());
 
         // When
         Func<Task> act = async () => await orchestrationService.AddPageAsync(newPage: entity);
 
         // Then
-
-        await act.Should()
+        await act
+            .Should()
             .ThrowAsync<ValidationException>()
             .WithMessage(expectedWildcardPattern: $"Layout '{entity.Layout}' does not exist for app {entity.AppId}.");
 
@@ -83,5 +82,4 @@ public partial class PageOrchestrationServiceTests
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }
-
 }
