@@ -16,7 +16,6 @@ internal partial class ContentManagementMigrationAggregationService(
     IComponentOrchestrationService componentOrchestrationService,
     ILayoutOrchestrationService layoutOrchestrationService,
     IPageOrchestrationService pageOrchestrationService,
-    IPageRoleImportOrchestrationService pageRoleImportOrchestrationService,
     IResourceOrchestrationService resourceOrchestrationService,
     ITemplateOrchestrationService templateOrchestrationService,
     IScriptOrchestrationService scriptOrchestrationService,
@@ -89,9 +88,6 @@ internal partial class ContentManagementMigrationAggregationService(
             case "ContentManagement/Page":
                 await ImportPagesAsync(appId: appId, item: item);
                 break;
-            case "ContentManagement/PageRole":
-                await ImportPageRolesAsync(appId: appId, item: item);
-                break;
             case "ContentManagement/Resource":
                 await ImportResourcesAsync(appId: appId, item: item);
                 break;
@@ -138,19 +134,6 @@ internal partial class ContentManagementMigrationAggregationService(
             .DeserializeItems<Page>(json: sanitizedData);
 
         await pageOrchestrationService.ImportPagesAsync(appId: appId, items: pages);
-    }
-
-    private async ValueTask ImportPageRolesAsync(int appId, PackageItem item)
-    {
-        ValidateAppId(appId: appId, parameterName: "appId");
-        ValidatePackageItem(packageItem: item, parameterName: "item");
-
-        PageRoleInfo[] pageRoles = migrationSupportOrchestrationService
-            .DeserializeItems<PageRoleInfo>(json: item.Data);
-
-        await pageRoleImportOrchestrationService.ImportPageRoleInfosAsync(
-            appId: appId,
-            pageRoleInfos: pageRoles);
     }
 
     private async ValueTask ImportResourcesAsync(int appId, PackageItem item)
