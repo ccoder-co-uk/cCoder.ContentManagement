@@ -22,6 +22,8 @@ using Moq;
 using Xunit;
 using CmsDataModels = cCoder.Data.Models.CMS;
 
+#pragma warning disable STXFORMAT005, STXFORMAT008
+
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
@@ -36,14 +38,12 @@ public partial class CultureServiceTests
         CmsDataModels.Culture submitted = null;
 
         appCultureBrokerMock.Setup(expression: x => x.GetAllAppCulturesIgnoringFilters())
-            .Returns(value: new[] { new CmsDataModels.AppCulture { AppId = 7, CultureId = culture.Id } }.AsQueryable());
+            .Returns(value: new[] { new CmsDataModels.AppCulture { AppId = 7, CultureId = culture.Id } }
+                .AsQueryable());
 
         authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_create"));
 
-        cultureBrokerMock
-            .Setup(expression: x =>
-                x.AddCultureAsync(newCulture: It.Is<CmsDataModels.Culture>(match: candidate => !ReferenceEquals(objA: candidate, objB: culture)))
-            )
+        cultureBrokerMock.Setup(expression: x => x.AddCultureAsync(newCulture: It.IsAny<CmsDataModels.Culture>()))
             .Callback<CmsDataModels.Culture>(action: candidate => submitted = candidate)
             .ReturnsAsync(valueFunction: (CmsDataModels.Culture value) => value);
 
@@ -52,67 +52,27 @@ public partial class CultureServiceTests
 
         // Then
 
-        result.Should()
-            .BeSameAs(expected: culture);
+        Assert.Same(expected: culture, actual: result);
+        Assert.NotNull(@object: submitted);
+        Assert.NotSame(expected: culture, actual: submitted);
+        Assert.NotSame(expected: submitted, actual: result);
+        Assert.Equal(expected: culture.Name, actual: submitted.Name);
+        Assert.Equal(expected: culture.Id, actual: submitted.Id);
+        Assert.Null(@object: submitted.Apps);
+        Assert.Null(@object: submitted.MetaItems);
+        Assert.Null(@object: submitted.PageContents);
+        Assert.Null(@object: submitted.PageInfos);
+        Assert.Null(@object: submitted.Users);
+        Assert.Equal(expected: culture.Name, actual: result.Name);
+        Assert.Equal(expected: culture.Id, actual: result.Id);
+        Assert.Same(expected: culture.Apps, actual: result.Apps);
+        Assert.Same(expected: culture.MetaItems, actual: result.MetaItems);
+        Assert.Same(expected: culture.PageContents, actual: result.PageContents);
+        Assert.Same(expected: culture.PageInfos, actual: result.PageInfos);
+        Assert.Same(expected: culture.Users, actual: result.Users);
 
-        submitted.Should()
-            .NotBeNull();
-
-        submitted.Should()
-            .NotBeSameAs(unexpected: culture);
-
-        result.Should()
-            .NotBeSameAs(unexpected: submitted);
-
-        submitted!.Name.Should()
-            .Be(expected: culture.Name);
-
-        submitted.Id.Should()
-            .Be(expected: culture.Id);
-
-        submitted.Apps.Should()
-            .BeNull();
-
-        submitted.MetaItems.Should()
-            .BeNull();
-
-        submitted.PageContents.Should()
-            .BeNull();
-
-        submitted.PageInfos.Should()
-            .BeNull();
-
-        submitted.Users.Should()
-            .BeNull();
-
-        result.Name.Should()
-            .Be(expected: culture.Name);
-
-        result.Id.Should()
-            .Be(expected: culture.Id);
-
-        result.Apps.Should()
-            .BeSameAs(expected: culture.Apps);
-
-        result.MetaItems.Should()
-            .BeSameAs(expected: culture.MetaItems);
-
-        result.PageContents.Should()
-            .BeSameAs(expected: culture.PageContents);
-
-        result.PageInfos.Should()
-            .BeSameAs(expected: culture.PageInfos);
-
-        result.Users.Should()
-            .BeSameAs(expected: culture.Users);
-
-        cultureBrokerMock.Verify(
-expression: x =>
-                x.AddCultureAsync(
-newCulture: It.Is<CmsDataModels.Culture>(match: candidate => !ReferenceEquals(objA: candidate, objB: culture))
-                ),
-times: Times.Once
-        );
+        cultureBrokerMock.Verify(expression: x => x.AddCultureAsync(
+            newCulture: It.IsAny<CmsDataModels.Culture>()), times: Times.Once);
 
         cultureBrokerMock.VerifyNoOtherCalls();
         appCultureBrokerMock.Verify(expression: x => x.GetAllAppCulturesIgnoringFilters(), times: Times.Once);
