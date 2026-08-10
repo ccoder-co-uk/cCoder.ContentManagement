@@ -4,7 +4,6 @@
 
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.Data.Models.CMS;
-using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Exposures;
 
@@ -39,17 +38,4 @@ internal sealed class PageRenderCacheManager(
     public ValueTask DeletePageAsync(int pageId) =>
         pageRenderCacheAggregationService.DeletePageAsync(pageId: pageId);
 
-    public ValueTask<PageRenderCache[]> RebuildAppAsync(int appId) =>
-        pageRenderCacheAggregationService.RebuildAppAsync(appId: appId);
-
-    public ValueTask<PageRenderCache[]> RebuildPageAsync(int pageId) =>
-        pageRenderCacheAggregationService.RebuildPageAsync(pageId: pageId);
-
-    public ValueTask<PageRenderCache[]> RebuildAllAppsAsync() =>
-        pageRenderCacheAggregationService.RebuildAllAppsAsync();
-
-    public ValueTask<PageRenderCache[]> RebuildCommonCacheConsumersAsync(
-        CommonObject commonObject) =>
-        pageRenderCacheAggregationService.RebuildCommonObjectConsumersAsync(
-            commonObjectType: commonObject.Type);
 }

@@ -21,7 +21,4 @@ internal sealed class PageEventBroker(IAuthenticatedEventHub eventHub)
     public ValueTask RaisePageDeleteEventAsync(EventMessage<Page> message) =>
         RaiseEventAsync(name: "page_delete", message: message);
 
-    public ValueTask RaiseUncachedPageRenderEventAsync(
-        EventMessage<UncachedPageRenderEvent> message) =>
-        RaiseEventAsync(name: "uncached_page_render", message: message);
 }

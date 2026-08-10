@@ -19,12 +19,11 @@ public sealed partial class PageRenderCacheManagerTests
         const int appId = 3;
         const int pageId = 17;
         PageRenderCache cache = new() { Id = "3_17__default" };
-        PageRenderCache[] caches = [cache];
         Mock<IPageRenderCacheAggregationService> aggregationService = new();
 
         aggregationService.Setup(expression: service =>
             service.GetAllPageRenderCaches())
-            .Returns(value: caches.AsQueryable());
+            .Returns(value: new[] { cache }.AsQueryable());
 
         aggregationService.Setup(expression: service =>
             service.GetPageRenderCache(pageRenderCacheId: cache.Id))
@@ -50,18 +49,6 @@ public sealed partial class PageRenderCacheManagerTests
             service.DeletePageAsync(pageId: pageId, fromEvent: false))
             .Returns(value: ValueTask.CompletedTask);
 
-        aggregationService.Setup(expression: service =>
-            service.RebuildAppAsync(appId: appId, fromEvent: false))
-            .ReturnsAsync(value: caches);
-
-        aggregationService.Setup(expression: service =>
-            service.RebuildPageAsync(pageId: pageId, fromEvent: false))
-            .ReturnsAsync(value: caches);
-
-        aggregationService.Setup(expression: service =>
-            service.RebuildAllAppsAsync(fromEvent: false))
-            .ReturnsAsync(value: caches);
-
         PageRenderCacheManager manager = new(
             pageRenderCacheAggregationService: aggregationService.Object);
 
@@ -73,10 +60,6 @@ public sealed partial class PageRenderCacheManagerTests
         await manager.DeleteAsync(pageRenderCacheId: cache.Id);
         await manager.DeleteAppAsync(appId: appId);
         await manager.DeletePageAsync(pageId: pageId);
-        _ = await manager.RebuildAppAsync(appId: appId);
-        _ = await manager.RebuildPageAsync(pageId: pageId);
-        _ = await manager.RebuildAllAppsAsync();
-
         // Then
         aggregationService.VerifyAll();
     }

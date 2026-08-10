@@ -205,7 +205,6 @@ public static partial class IServiceCollectionExtensions
         services.AddEventingForType<PackageImportEvent>();
         services.AddEventingForType<PackageItem>();
         services.AddEventingForType<Page>();
-        services.AddEventingForType<UncachedPageRenderEvent>();
         services.AddEventingForType<PageInfo>();
         services.AddEventingForType<PageRole>();
         services.AddEventingForType<Resource>();
@@ -305,9 +304,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateRenderer, TemplateRenderer>();
         services.AddTransient<IContentManagementEventHandlers, ContentManagementEventHandlers>();
         services.AddTransient<IPageRenderCacheEventHandlers, PageRenderCacheEventHandlers>();
-        services.AddTransient<
-            IUncachedPageRenderEventHandler,
-            UncachedPageRenderEventHandler>();
     }
 
     private static void AddRendering(this IServiceCollection services)
@@ -435,9 +431,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPackageEventService, PackageEventService>();
         services.AddTransient<IPackageItemEventService, PackageItemEventService>();
         services.AddTransient<IPageEventService, PageEventService>();
-        services.AddTransient<
-            IUncachedPageRenderEventService,
-            UncachedPageRenderEventService>();
         services.AddTransient<IPageInfoEventService, PageInfoEventService>();
         services.AddTransient<IPageRoleEventService, PageRoleEventService>();
         services.AddTransient<IResourceEventService, ResourceEventService>();
@@ -548,9 +541,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPackageItemProcessingService, PackageItemProcessingService>();
         services.AddTransient<IPackageProcessingService, PackageProcessingService>();
         services.AddTransient<IPageEventProcessingService, PageEventProcessingService>();
-        services.AddTransient<
-            IUncachedPageRenderEventProcessingService,
-            UncachedPageRenderEventProcessingService>();
         services.AddTransient<IPageInfoEventProcessingService, PageInfoEventProcessingService>();
         services.AddTransient<IPageInfoProcessingService, PageInfoProcessingService>();
         services.AddTransient<IPageProcessingService, PageProcessingService>();

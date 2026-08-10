@@ -20,26 +20,13 @@ internal interface IPageRenderCacheAggregationService
 
     ValueTask DeletePageRenderCacheAsync(string pageRenderCacheId);
 
-    ValueTask<PageRenderCache[]> RebuildAppAsync(
-        int appId,
-        bool fromEvent = false);
-
-    ValueTask<PageRenderCache[]> RebuildPageAsync(
-        int pageId,
-        bool fromEvent = false);
-
-    ValueTask<PageRenderCache[]> CachePageAsync(int pageId);
-
     ValueTask DeleteAppAsync(int appId, bool fromEvent = false);
 
     ValueTask RefreshCommonCacheAndInvalidateAppAsync(int appId);
 
     ValueTask DeletePageAsync(int pageId, bool fromEvent = false);
 
-    ValueTask<PageRenderCache[]> RebuildAllAppsAsync(
-        bool fromEvent = false);
-
-    ValueTask<PageRenderCache[]> RebuildCommonObjectConsumersAsync(
+    ValueTask InvalidateCommonObjectConsumersAsync(
         string commonObjectType,
         bool fromEvent = false);
 }

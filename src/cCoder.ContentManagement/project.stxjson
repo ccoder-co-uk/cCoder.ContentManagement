@@ -1683,33 +1683,6 @@
           "HasKeyParameter": false,
           "HandlesNullWithNotFound": false,
           "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Brokers.Events.PageEventBroker.RaiseUncachedPageRenderEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.UncachedPageRenderEvent\u003E)",
-          "Name": "RaiseUncachedPageRenderEventAsync",
-          "LineNumber": 24,
-          "Inputs": [
-            {
-              "Name": "message",
-              "Type": "EventMessage\u003CcCoder.ContentManagement.Models.UncachedPageRenderEvent\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Brokers.Events.IPageEventBroker.RaiseUncachedPageRenderEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.UncachedPageRenderEvent\u003E)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
         }
       ]
     },
@@ -14966,162 +14939,6 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController.GetRebuildApp(Microsoft.AspNetCore.OData.Formatter.ODataActionParameters)",
-          "Name": "GetRebuildApp",
-          "LineNumber": 166,
-          "Inputs": [
-            {
-              "Name": "parameters",
-              "Type": "Microsoft.AspNetCore.OData.Formatter.ODataActionParameters"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E",
-          "Implements": [],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
-              "MethodName": "LogError",
-              "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
-              "StandardElementType": "Broker",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager",
-              "MethodName": "RebuildAppAsync",
-              "MethodId": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.RebuildAppAsync(System.Int32)",
-              "StandardElementType": "Exposure",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [
-            "POST"
-          ],
-          "HttpResponses": [
-            {
-              "StatusCode": 200,
-              "ResultMethod": "Ok",
-              "ExceptionType": "",
-              "IsExceptionPath": false,
-              "IsNullPath": false,
-              "HasBody": true,
-              "ExposesExceptionDetails": false,
-              "LogsException": false
-            },
-            {
-              "StatusCode": 400,
-              "ResultMethod": "BadRequest",
-              "ExceptionType": "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-              "IsExceptionPath": true,
-              "IsNullPath": false,
-              "HasBody": false,
-              "ExposesExceptionDetails": false,
-              "LogsException": true
-            }
-          ],
-          "IsHttpRequestHandler": true,
-          "IsODataControllerAction": true,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": true
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController.GetRebuildPage(Microsoft.AspNetCore.OData.Formatter.ODataActionParameters)",
-          "Name": "GetRebuildPage",
-          "LineNumber": 193,
-          "Inputs": [
-            {
-              "Name": "parameters",
-              "Type": "Microsoft.AspNetCore.OData.Formatter.ODataActionParameters"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E",
-          "Implements": [],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
-              "MethodName": "LogError",
-              "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
-              "StandardElementType": "Broker",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager",
-              "MethodName": "RebuildPageAsync",
-              "MethodId": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.RebuildPageAsync(System.Int32)",
-              "StandardElementType": "Exposure",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [
-            "POST"
-          ],
-          "HttpResponses": [
-            {
-              "StatusCode": 200,
-              "ResultMethod": "Ok",
-              "ExceptionType": "",
-              "IsExceptionPath": false,
-              "IsNullPath": false,
-              "HasBody": true,
-              "ExposesExceptionDetails": false,
-              "LogsException": false
-            },
-            {
-              "StatusCode": 400,
-              "ResultMethod": "BadRequest",
-              "ExceptionType": "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-              "IsExceptionPath": true,
-              "IsNullPath": false,
-              "HasBody": false,
-              "ExposesExceptionDetails": false,
-              "LogsException": true
-            }
-          ],
-          "IsHttpRequestHandler": true,
-          "IsODataControllerAction": true,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": true
-        },
-        {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController.Post(PageRenderCache)",
           "Name": "Post",
           "LineNumber": 65,
@@ -18239,8 +18056,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -18334,10 +18149,7 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -18390,7 +18202,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.DeleteAppAsync(App)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 40,
+          "LineNumber": 37,
           "Inputs": [
             {
               "Name": "deletedApp",
@@ -18490,9 +18302,219 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(App)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 25,
+          "Inputs": [
+            {
+              "Name": "app",
+              "Type": "App"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(App)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers",
+              "MethodName": "InvalidateAppAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(App)",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(AppCulture)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 42,
+          "Inputs": [
+            {
+              "Name": "appCulture",
+              "Type": "AppCulture"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(AppCulture)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers",
+              "MethodName": "InvalidateAppAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(App)",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(Component)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 51,
+          "Inputs": [
+            {
+              "Name": "component",
+              "Type": "Component"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Component)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers",
+              "MethodName": "InvalidateAppAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(App)",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(Layout)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 45,
+          "Inputs": [
+            {
+              "Name": "layout",
+              "Type": "Layout"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Layout)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers",
+              "MethodName": "InvalidateAppAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(App)",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(Resource)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 54,
+          "Inputs": [
+            {
+              "Name": "resource",
+              "Type": "Resource"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Resource)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers",
+              "MethodName": "InvalidateAppAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(App)",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(Script)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 57,
+          "Inputs": [
+            {
+              "Name": "script",
+              "Type": "Script"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Script)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers",
+              "MethodName": "InvalidateAppAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(App)",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(System.Int32)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 31,
+          "LineNumber": 28,
           "Inputs": [
             {
               "Name": "appId",
@@ -18541,331 +18563,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(App)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 25,
-          "Inputs": [
-            {
-              "Name": "app",
-              "Type": "App"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(App)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(AppCulture)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 45,
-          "Inputs": [
-            {
-              "Name": "appCulture",
-              "Type": "AppCulture"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(AppCulture)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(Component)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 54,
-          "Inputs": [
-            {
-              "Name": "component",
-              "Type": "Component"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Component)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(Layout)",
-          "Name": "RebuildAppAsync",
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(Template)",
+          "Name": "InvalidateAppAsync",
           "LineNumber": 48,
-          "Inputs": [
-            {
-              "Name": "layout",
-              "Type": "Layout"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Layout)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(Resource)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 57,
-          "Inputs": [
-            {
-              "Name": "resource",
-              "Type": "Resource"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Resource)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(Script)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 60,
-          "Inputs": [
-            {
-              "Name": "script",
-              "Type": "Script"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Script)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(System.Int32)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 28,
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(System.Int32)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildAppAsync(Template)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 51,
           "Inputs": [
             {
               "Name": "template",
@@ -18874,31 +18574,20 @@
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Template)"
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Template)"
           ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers",
+              "MethodName": "InvalidateAppAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(App)",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            }
           ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
           "HttpMethods": [],
           "HttpResponses": [],
           "IsHttpRequestHandler": false,
@@ -18909,9 +18598,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildCommonCacheConsumersAsync(CommonObject)",
-          "Name": "RebuildCommonCacheConsumersAsync",
-          "LineNumber": 73,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateCommonCacheConsumersAsync(CommonObject)",
+          "Name": "InvalidateCommonCacheConsumersAsync",
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "commonObject",
@@ -18920,22 +18609,19 @@
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildCommonCacheConsumersAsync(CommonObject)"
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateCommonCacheConsumersAsync(CommonObject)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
-              "MethodName": "RebuildCommonObjectConsumersAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildCommonObjectConsumersAsync(System.String,System.Boolean)",
+              "MethodName": "InvalidateCommonObjectConsumersAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.InvalidateCommonObjectConsumersAsync(System.String,System.Boolean)",
               "StandardElementType": "AggregationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -18963,9 +18649,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildPageAsync(Content)",
-          "Name": "RebuildPageAsync",
-          "LineNumber": 63,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidatePageAsync(Content)",
+          "Name": "InvalidatePageAsync",
+          "LineNumber": 60,
           "Inputs": [
             {
               "Name": "content",
@@ -18974,22 +18660,19 @@
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildPageAsync(Content)"
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePageAsync(Content)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
-              "MethodName": "RebuildPageAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildPageAsync(System.Int32,System.Boolean)",
+              "MethodName": "DeletePageAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.DeletePageAsync(System.Int32,System.Boolean)",
               "StandardElementType": "AggregationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -19017,8 +18700,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildPageAsync(Page)",
-          "Name": "RebuildPageAsync",
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidatePageAsync(Page)",
+          "Name": "InvalidatePageAsync",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -19028,22 +18711,19 @@
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildPageAsync(Page)"
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePageAsync(Page)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
-              "MethodName": "RebuildPageAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildPageAsync(System.Int32,System.Boolean)",
+              "MethodName": "DeletePageAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.DeletePageAsync(System.Int32,System.Boolean)",
               "StandardElementType": "AggregationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -19071,9 +18751,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RebuildPageAsync(PageInfo)",
-          "Name": "RebuildPageAsync",
-          "LineNumber": 68,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidatePageAsync(PageInfo)",
+          "Name": "InvalidatePageAsync",
+          "LineNumber": 65,
           "Inputs": [
             {
               "Name": "pageInfo",
@@ -19082,22 +18762,19 @@
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildPageAsync(PageInfo)"
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePageAsync(PageInfo)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
-              "MethodName": "RebuildPageAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildPageAsync(System.Int32,System.Boolean)",
+              "MethodName": "DeletePageAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.DeletePageAsync(System.Int32,System.Boolean)",
               "StandardElementType": "AggregationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -19127,7 +18804,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.RefreshCommonCacheAndInvalidateAppAsync(System.Int32)",
           "Name": "RefreshCommonCacheAndInvalidateAppAsync",
-          "LineNumber": 36,
+          "LineNumber": 33,
           "Inputs": [
             {
               "Name": "appId",
@@ -19149,75 +18826,6 @@
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Exposures.EventHandlers.UncachedPageRenderEventHandler",
-      "StandardElementType": "Exposure",
-      "LineNumber": 10,
-      "IsPublic": false,
-      "Kind": "Class",
-      "BaseType": null,
-      "Interfaces": [
-        {
-          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Exposures.EventHandlers.IUncachedPageRenderEventHandler",
-          "FullName": "cCoder.ContentManagement.Exposures.EventHandlers.IUncachedPageRenderEventHandler",
-          "Name": "IUncachedPageRenderEventHandler",
-          "Namespace": "cCoder.ContentManagement.Exposures.EventHandlers",
-          "AssemblyName": "cCoder.ContentManagement",
-          "Kind": "Interface",
-          "IsInCurrentProject": true,
-          "StandardElementType": "Exposure"
-        }
-      ],
-      "Properties": [],
-      "Methods": [
-        {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.UncachedPageRenderEventHandler.CachePageAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)",
-          "Name": "CachePageAsync",
-          "LineNumber": 14,
-          "Inputs": [
-            {
-              "Name": "pageRenderEvent",
-              "Type": "cCoder.ContentManagement.Models.UncachedPageRenderEvent"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.EventHandlers.IUncachedPageRenderEventHandler.CachePageAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -19675,7 +19283,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.PageRenderCacheManager",
       "StandardElementType": "Exposure",
-      "LineNumber": 11,
+      "LineNumber": 10,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -19696,7 +19304,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.AddAsync(PageRenderCache)",
           "Name": "AddAsync",
-          "LineNumber": 22,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "newPageRenderCache",
@@ -19747,7 +19355,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.DeleteAppAsync(System.Int32)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 36,
+          "LineNumber": 35,
           "Inputs": [
             {
               "Name": "appId",
@@ -19798,7 +19406,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.DeleteAsync(System.String)",
           "Name": "DeleteAsync",
-          "LineNumber": 32,
+          "LineNumber": 31,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -19849,7 +19457,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.DeletePageAsync(System.Int32)",
           "Name": "DeletePageAsync",
-          "LineNumber": 39,
+          "LineNumber": 38,
           "Inputs": [
             {
               "Name": "pageId",
@@ -19900,7 +19508,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.Get(System.String)",
           "Name": "Get",
-          "LineNumber": 18,
+          "LineNumber": 17,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -19950,7 +19558,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 15,
+          "LineNumber": 14,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CPageRenderCache\u003E",
           "Implements": [
@@ -19992,220 +19600,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.RebuildAllAppsAsync()",
-          "Name": "RebuildAllAppsAsync",
-          "LineNumber": 48,
-          "Inputs": [],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.RebuildAllAppsAsync()"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
-              "MethodName": "RebuildAllAppsAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildAllAppsAsync(System.Boolean)",
-              "StandardElementType": "AggregationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.RebuildAppAsync(System.Int32)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 42,
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.RebuildAppAsync(System.Int32)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
-              "MethodName": "RebuildAppAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildAppAsync(System.Int32,System.Boolean)",
-              "StandardElementType": "AggregationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.RebuildCommonCacheConsumersAsync(CommonObject)",
-          "Name": "RebuildCommonCacheConsumersAsync",
-          "LineNumber": 51,
-          "Inputs": [
-            {
-              "Name": "commonObject",
-              "Type": "CommonObject"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.RebuildCommonCacheConsumersAsync(CommonObject)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
-              "MethodName": "RebuildCommonObjectConsumersAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildCommonObjectConsumersAsync(System.String,System.Boolean)",
-              "StandardElementType": "AggregationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.RebuildPageAsync(System.Int32)",
-          "Name": "RebuildPageAsync",
-          "LineNumber": 45,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.RebuildPageAsync(System.Int32)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
-              "MethodName": "RebuildPageAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildPageAsync(System.Int32,System.Boolean)",
-              "StandardElementType": "AggregationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Exposures.PageRenderCacheManager.UpdateAsync(PageRenderCache)",
           "Name": "UpdateAsync",
-          "LineNumber": 27,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "updatedPageRenderCache",
@@ -23712,22 +23109,6 @@
       "Methods": []
     },
     {
-      "Name": "cCoder.ContentManagement.Models.UncachedPageRenderEvent",
-      "StandardElementType": "Model",
-      "LineNumber": 7,
-      "IsPublic": true,
-      "Kind": "Class",
-      "BaseType": null,
-      "Interfaces": [],
-      "Properties": [
-        {
-          "Name": "PageId",
-          "Type": "System.Int32"
-        }
-      ],
-      "Methods": []
-    },
-    {
       "Name": "cCoder.ContentManagement.Rendering.Brokers.CommonObjectReaderBroker",
       "StandardElementType": "Broker",
       "LineNumber": 12,
@@ -25146,7 +24527,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService",
       "StandardElementType": "AggregationService",
-      "LineNumber": 18,
+      "LineNumber": 12,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -25167,7 +24548,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.AddPageRenderCacheAsync(PageRenderCache)",
           "Name": "AddPageRenderCacheAsync",
-          "LineNumber": 65,
+          "LineNumber": 52,
           "Inputs": [
             {
               "Name": "newPageRenderCache",
@@ -25217,55 +24598,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.CachePageAsync(System.Int32)",
-          "Name": "CachePageAsync",
-          "LineNumber": 192,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.CachePageAsync(System.Int32)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.DeleteAppAsync(System.Int32,System.Boolean)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 97,
+          "LineNumber": 81,
           "Inputs": [
             {
               "Name": "appId",
@@ -25312,7 +24647,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.DeletePageAsync(System.Int32,System.Boolean)",
           "Name": "DeletePageAsync",
-          "LineNumber": 109,
+          "LineNumber": 93,
           "Inputs": [
             {
               "Name": "pageId",
@@ -25359,7 +24694,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.DeletePageRenderCacheAsync(System.String)",
           "Name": "DeletePageRenderCacheAsync",
-          "LineNumber": 87,
+          "LineNumber": 72,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -25411,7 +24746,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.GetAllPageRenderCaches()",
           "Name": "GetAllPageRenderCaches",
-          "LineNumber": 49,
+          "LineNumber": 39,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CPageRenderCache\u003E",
           "Implements": [
@@ -25456,7 +24791,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.GetPageRenderCache(System.String)",
           "Name": "GetPageRenderCache",
-          "LineNumber": 56,
+          "LineNumber": 43,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -25505,105 +24840,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.RebuildAllAppsAsync(System.Boolean)",
-          "Name": "RebuildAllAppsAsync",
-          "LineNumber": 121,
-          "Inputs": [
-            {
-              "Name": "fromEvent",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildAllAppsAsync(System.Boolean)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.RebuildAppAsync(System.Int32,System.Boolean)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 156,
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "fromEvent",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildAppAsync(System.Int32,System.Boolean)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.RebuildCommonObjectConsumersAsync(System.String,System.Boolean)",
-          "Name": "RebuildCommonObjectConsumersAsync",
-          "LineNumber": 137,
+          "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.InvalidateCommonObjectConsumersAsync(System.String,System.Boolean)",
+          "Name": "InvalidateCommonObjectConsumersAsync",
+          "LineNumber": 105,
           "Inputs": [
             {
               "Name": "commonObjectType",
@@ -25614,66 +24853,35 @@
               "Type": "System.Boolean"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
+          "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildCommonObjectConsumersAsync(System.String,System.Boolean)"
+            "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.InvalidateCommonObjectConsumersAsync(System.String,System.Boolean)"
           ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.RebuildPageAsync(System.Int32,System.Boolean)",
-          "Name": "RebuildPageAsync",
-          "LineNumber": 174,
-          "Inputs": [
+          "Calls": [
             {
-              "Name": "pageId",
-              "Type": "System.Int32"
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Distinct",
+              "MethodId": "System.Linq.Queryable.Distinct(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
             },
             {
-              "Name": "fromEvent",
-              "Type": "System.Boolean"
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageRenderCacheOrchestrationService",
+              "MethodName": "GetAllPageRenderCaches",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRenderCacheOrchestrationService.GetAllPageRenderCaches()",
+              "StandardElementType": "OrchestrationService",
+              "IsDependencyBoundary": false
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildPageAsync(System.Int32,System.Boolean)"
-          ],
-          "Calls": [],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -25683,6 +24891,7 @@
           ],
           "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
@@ -25703,7 +24912,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.RefreshCommonCacheAndInvalidateAppAsync(System.Int32)",
           "Name": "RefreshCommonCacheAndInvalidateAppAsync",
-          "LineNumber": 38,
+          "LineNumber": 29,
           "Inputs": [
             {
               "Name": "appId",
@@ -25762,7 +24971,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.UpdatePageRenderCacheAsync(PageRenderCache)",
           "Name": "UpdatePageRenderCacheAsync",
-          "LineNumber": 76,
+          "LineNumber": 62,
           "Inputs": [
             {
               "Name": "updatedPageRenderCache",
@@ -28657,8 +27866,6 @@
           ],
           "Calls": [],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -28691,7 +27898,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.EventHandlerService.ListenToFinalAppDeleteEvent()",
           "Name": "ListenToFinalAppDeleteEvent",
-          "LineNumber": 42,
+          "LineNumber": 41,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -28753,10 +27960,7 @@
           ],
           "Calls": [],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -30814,82 +30018,6 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Services.Foundations.Events.UncachedPageRenderEventService",
-      "StandardElementType": "FoundationService",
-      "LineNumber": 11,
-      "IsPublic": false,
-      "Kind": "Class",
-      "BaseType": null,
-      "Interfaces": [
-        {
-          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Foundations.Events.IUncachedPageRenderEventService",
-          "FullName": "cCoder.ContentManagement.Services.Foundations.Events.IUncachedPageRenderEventService",
-          "Name": "IUncachedPageRenderEventService",
-          "Namespace": "cCoder.ContentManagement.Services.Foundations.Events",
-          "AssemblyName": "cCoder.ContentManagement",
-          "Kind": "Interface",
-          "IsInCurrentProject": true,
-          "StandardElementType": "FoundationService"
-        }
-      ],
-      "Properties": [],
-      "Methods": [
-        {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Events.UncachedPageRenderEventService.RaiseUncachedPageRenderEventAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)",
-          "Name": "RaiseUncachedPageRenderEventAsync",
-          "LineNumber": 14,
-          "Inputs": [
-            {
-              "Name": "pageRenderEvent",
-              "Type": "cCoder.ContentManagement.Models.UncachedPageRenderEvent"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Events.IUncachedPageRenderEventService.RaiseUncachedPageRenderEventAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Brokers.Events.IAuthenticatedEventBroker",
-              "MethodName": "GetCurrentUserId",
-              "MethodId": "cCoder.ContentManagement.Brokers.Events.IAuthenticatedEventBroker.GetCurrentUserId()",
-              "StandardElementType": "Broker",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Brokers.Events.IPageEventBroker",
-              "MethodName": "RaiseUncachedPageRenderEventAsync",
-              "MethodId": "cCoder.ContentManagement.Brokers.Events.IPageEventBroker.RaiseUncachedPageRenderEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.UncachedPageRenderEvent\u003E)",
-              "StandardElementType": "Broker",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException"
           ],
           "HttpMethods": [],
           "HttpResponses": [],
@@ -47704,7 +46832,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService",
       "StandardElementType": "OrchestrationService",
-      "LineNumber": 12,
+      "LineNumber": 15,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -47725,7 +46853,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService.RenderHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
           "Name": "RenderHttpPageRenderOperationAsync",
-          "LineNumber": 19,
+          "LineNumber": 22,
           "Inputs": [
             {
               "Name": "operation",
@@ -47752,16 +46880,16 @@
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.IPageRenderProcessingService",
-              "MethodName": "RenderPageRenderOperation",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageRenderProcessingService.RenderPageRenderOperation(cCoder.ContentManagement.Models.PageRenderOperation)",
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IPageRenderCacheProcessingService",
+              "MethodName": "StorePageRenderCacheAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageRenderCacheProcessingService.StorePageRenderCacheAsync(PageRenderCache)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.IUncachedPageRenderEventProcessingService",
-              "MethodName": "RaiseUncachedPageRenderEventAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IUncachedPageRenderEventProcessingService.RaiseUncachedPageRenderEventAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)",
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IPageRenderProcessingService",
+              "MethodName": "RenderPageRenderOperation",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageRenderProcessingService.RenderPageRenderOperation(cCoder.ContentManagement.Models.PageRenderOperation)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -55918,7 +55046,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageRenderCacheProcessingService.DeletePageRenderCacheAsync(System.String)",
           "Name": "DeletePageRenderCacheAsync",
-          "LineNumber": 36,
+          "LineNumber": 54,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -55983,7 +55111,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageRenderCacheProcessingService.ReplacePageRenderCachesAsync(System.Int32,System.Int32[],PageRenderCache[])",
           "Name": "ReplacePageRenderCachesAsync",
-          "LineNumber": 53,
+          "LineNumber": 71,
           "Inputs": [
             {
               "Name": "appId",
@@ -56049,7 +55177,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageRenderCacheProcessingService.ReplacePageRenderCachesFromEventAsync(System.Int32,System.Int32[],PageRenderCache[])",
           "Name": "ReplacePageRenderCachesFromEventAsync",
-          "LineNumber": 67,
+          "LineNumber": 85,
           "Inputs": [
             {
               "Name": "appId",
@@ -56075,6 +55203,77 @@
               "MethodId": "System.ArgumentNullException.ThrowIfNull(System.Object?,System.String?)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.PageRenderCacheProcessingService.StorePageRenderCacheAsync(PageRenderCache)",
+          "Name": "StorePageRenderCacheAsync",
+          "LineNumber": 36,
+          "Inputs": [
+            {
+              "Name": "pageRenderCache",
+              "Type": "PageRenderCache"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.IPageRenderCacheProcessingService.StorePageRenderCacheAsync(PageRenderCache)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "System.ArgumentNullException",
+              "MethodName": "ThrowIfNull",
+              "MethodId": "System.ArgumentNullException.ThrowIfNull(System.Object?,System.String?)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService",
+              "MethodName": "AddPageRenderCacheAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.AddPageRenderCacheAsync(PageRenderCache)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService",
+              "MethodName": "GetPageRenderCache",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.GetPageRenderCache(System.String)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService",
+              "MethodName": "UpdatePageRenderCacheAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.UpdatePageRenderCacheAsync(PageRenderCache)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
@@ -60371,77 +59570,6 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Services.Processings.UncachedPageRenderEventProcessingService",
-      "StandardElementType": "ProcessingService",
-      "LineNumber": 10,
-      "IsPublic": false,
-      "Kind": "Class",
-      "BaseType": null,
-      "Interfaces": [
-        {
-          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Processings.IUncachedPageRenderEventProcessingService",
-          "FullName": "cCoder.ContentManagement.Services.Processings.IUncachedPageRenderEventProcessingService",
-          "Name": "IUncachedPageRenderEventProcessingService",
-          "Namespace": "cCoder.ContentManagement.Services.Processings",
-          "AssemblyName": "cCoder.ContentManagement",
-          "Kind": "Interface",
-          "IsInCurrentProject": true,
-          "StandardElementType": "ProcessingService"
-        }
-      ],
-      "Properties": [],
-      "Methods": [
-        {
-          "Id": "cCoder.ContentManagement.Services.Processings.UncachedPageRenderEventProcessingService.RaiseUncachedPageRenderEventAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)",
-          "Name": "RaiseUncachedPageRenderEventAsync",
-          "LineNumber": 14,
-          "Inputs": [
-            {
-              "Name": "pageRenderEvent",
-              "Type": "cCoder.ContentManagement.Models.UncachedPageRenderEvent"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IUncachedPageRenderEventProcessingService.RaiseUncachedPageRenderEventAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Foundations.Events.IUncachedPageRenderEventService",
-              "MethodName": "RaiseUncachedPageRenderEventAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Events.IUncachedPageRenderEventService.RaiseUncachedPageRenderEventAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)",
-              "StandardElementType": "FoundationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        }
-      ]
-    },
-    {
       "Name": "cCoder.ContentManagement.WebApplicationExtensions",
       "StandardElementType": "App",
       "LineNumber": 17,
@@ -60514,8 +59642,6 @@
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -60570,8 +59696,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
-            "System.Collections.Generic.KeyNotFoundException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -61787,31 +60911,6 @@
             {
               "Name": "message",
               "Type": "EventMessage\u003CPage\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Brokers.Events.IPageEventBroker.RaiseUncachedPageRenderEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.UncachedPageRenderEvent\u003E)",
-          "Name": "RaiseUncachedPageRenderEventAsync",
-          "LineNumber": 19,
-          "Inputs": [
-            {
-              "Name": "message",
-              "Type": "EventMessage\u003CcCoder.ContentManagement.Models.UncachedPageRenderEvent\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
@@ -66411,7 +65510,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.DeleteAppAsync(App)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 18,
+          "LineNumber": 17,
           "Inputs": [
             {
               "Name": "deletedApp",
@@ -66459,33 +65558,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(System.Int32)",
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(App)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 16,
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(App)",
-          "Name": "RebuildAppAsync",
           "LineNumber": 14,
           "Inputs": [
             {
@@ -66509,9 +65583,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(AppCulture)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 19,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(AppCulture)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "appCulture",
@@ -66534,9 +65608,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Component)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 22,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Component)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "component",
@@ -66559,9 +65633,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Layout)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 20,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Layout)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "layout",
@@ -66584,9 +65658,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Resource)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 23,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Resource)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 22,
           "Inputs": [
             {
               "Name": "resource",
@@ -66609,9 +65683,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Script)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 24,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Script)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "script",
@@ -66634,8 +65708,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(System.Int32)",
-          "Name": "RebuildAppAsync",
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(System.Int32)",
+          "Name": "InvalidateAppAsync",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -66659,9 +65733,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildAppAsync(Template)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 21,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Template)",
+          "Name": "InvalidateAppAsync",
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "template",
@@ -66684,9 +65758,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildCommonCacheConsumersAsync(CommonObject)",
-          "Name": "RebuildCommonCacheConsumersAsync",
-          "LineNumber": 27,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateCommonCacheConsumersAsync(CommonObject)",
+          "Name": "InvalidateCommonCacheConsumersAsync",
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "commonObject",
@@ -66709,9 +65783,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildPageAsync(Content)",
-          "Name": "RebuildPageAsync",
-          "LineNumber": 25,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePageAsync(Content)",
+          "Name": "InvalidatePageAsync",
+          "LineNumber": 24,
           "Inputs": [
             {
               "Name": "content",
@@ -66734,8 +65808,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildPageAsync(Page)",
-          "Name": "RebuildPageAsync",
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePageAsync(Page)",
+          "Name": "InvalidatePageAsync",
           "LineNumber": 12,
           "Inputs": [
             {
@@ -66759,9 +65833,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RebuildPageAsync(PageInfo)",
-          "Name": "RebuildPageAsync",
-          "LineNumber": 26,
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePageAsync(PageInfo)",
+          "Name": "InvalidatePageAsync",
+          "LineNumber": 25,
           "Inputs": [
             {
               "Name": "pageInfo",
@@ -66786,48 +65860,11 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.RefreshCommonCacheAndInvalidateAppAsync(System.Int32)",
           "Name": "RefreshCommonCacheAndInvalidateAppAsync",
-          "LineNumber": 17,
+          "LineNumber": 16,
           "Inputs": [
             {
               "Name": "appId",
               "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Exposures.EventHandlers.IUncachedPageRenderEventHandler",
-      "StandardElementType": "Exposure",
-      "LineNumber": 9,
-      "IsPublic": false,
-      "Kind": "Interface",
-      "BaseType": null,
-      "Interfaces": [],
-      "Properties": [],
-      "Methods": [
-        {
-          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IUncachedPageRenderEventHandler.CachePageAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)",
-          "Name": "CachePageAsync",
-          "LineNumber": 11,
-          "Inputs": [
-            {
-              "Name": "pageRenderEvent",
-              "Type": "cCoder.ContentManagement.Models.UncachedPageRenderEvent"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
@@ -68930,7 +67967,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager",
       "StandardElementType": "Exposure",
-      "LineNumber": 10,
+      "LineNumber": 9,
       "IsPublic": true,
       "Kind": "Interface",
       "BaseType": null,
@@ -68940,7 +67977,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.AddAsync(PageRenderCache)",
           "Name": "AddAsync",
-          "LineNumber": 16,
+          "LineNumber": 15,
           "Inputs": [
             {
               "Name": "newPageRenderCache",
@@ -68965,7 +68002,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.DeleteAppAsync(System.Int32)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 22,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "appId",
@@ -68990,7 +68027,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.DeleteAsync(System.String)",
           "Name": "DeleteAsync",
-          "LineNumber": 20,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -69015,7 +68052,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.DeletePageAsync(System.Int32)",
           "Name": "DeletePageAsync",
-          "LineNumber": 24,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "pageId",
@@ -69040,7 +68077,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.Get(System.String)",
           "Name": "Get",
-          "LineNumber": 14,
+          "LineNumber": 13,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -69065,7 +68102,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 12,
+          "LineNumber": 11,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CPageRenderCache\u003E",
           "Implements": [],
@@ -69083,104 +68120,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.RebuildAllAppsAsync()",
-          "Name": "RebuildAllAppsAsync",
-          "LineNumber": 30,
-          "Inputs": [],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.RebuildAppAsync(System.Int32)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 26,
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.RebuildCommonCacheConsumersAsync(CommonObject)",
-          "Name": "RebuildCommonCacheConsumersAsync",
-          "LineNumber": 32,
-          "Inputs": [
-            {
-              "Name": "commonObject",
-              "Type": "CommonObject"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.RebuildPageAsync(System.Int32)",
-          "Name": "RebuildPageAsync",
-          "LineNumber": 28,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Exposures.IPageRenderCacheManager.UpdateAsync(PageRenderCache)",
           "Name": "UpdateAsync",
-          "LineNumber": 18,
+          "LineNumber": 17,
           "Inputs": [
             {
               "Name": "updatedPageRenderCache",
@@ -71184,34 +70126,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.CachePageAsync(System.Int32)",
-          "Name": "CachePageAsync",
-          "LineNumber": 31,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.DeleteAppAsync(System.Int32,System.Boolean)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 33,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "appId",
@@ -71240,7 +70157,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.DeletePageAsync(System.Int32,System.Boolean)",
           "Name": "DeletePageAsync",
-          "LineNumber": 37,
+          "LineNumber": 27,
           "Inputs": [
             {
               "Name": "pageId",
@@ -71337,63 +70254,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildAllAppsAsync(System.Boolean)",
-          "Name": "RebuildAllAppsAsync",
-          "LineNumber": 39,
-          "Inputs": [
-            {
-              "Name": "fromEvent",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildAppAsync(System.Int32,System.Boolean)",
-          "Name": "RebuildAppAsync",
-          "LineNumber": 23,
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "fromEvent",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildCommonObjectConsumersAsync(System.String,System.Boolean)",
-          "Name": "RebuildCommonObjectConsumersAsync",
-          "LineNumber": 42,
+          "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.InvalidateCommonObjectConsumersAsync(System.String,System.Boolean)",
+          "Name": "InvalidateCommonObjectConsumersAsync",
+          "LineNumber": 29,
           "Inputs": [
             {
               "Name": "commonObjectType",
@@ -71404,36 +70267,7 @@
               "Type": "System.Boolean"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RebuildPageAsync(System.Int32,System.Boolean)",
-          "Name": "RebuildPageAsync",
-          "LineNumber": 27,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            },
-            {
-              "Name": "fromEvent",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache[]\u003E",
+          "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -71451,7 +70285,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.RefreshCommonCacheAndInvalidateAppAsync(System.Int32)",
           "Name": "RefreshCommonCacheAndInvalidateAppAsync",
-          "LineNumber": 35,
+          "LineNumber": 25,
           "Inputs": [
             {
               "Name": "appId",
@@ -73634,43 +72468,6 @@
             {
               "Name": "entity",
               "Type": "Template"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Services.Foundations.Events.IUncachedPageRenderEventService",
-      "StandardElementType": "FoundationService",
-      "LineNumber": 9,
-      "IsPublic": false,
-      "Kind": "Interface",
-      "BaseType": null,
-      "Interfaces": [],
-      "Properties": [],
-      "Methods": [
-        {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Events.IUncachedPageRenderEventService.RaiseUncachedPageRenderEventAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)",
-          "Name": "RaiseUncachedPageRenderEventAsync",
-          "LineNumber": 11,
-          "Inputs": [
-            {
-              "Name": "pageRenderEvent",
-              "Type": "cCoder.ContentManagement.Models.UncachedPageRenderEvent"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
@@ -83016,7 +81813,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageRenderCacheProcessingService.DeletePageRenderCacheAsync(System.String)",
           "Name": "DeletePageRenderCacheAsync",
-          "LineNumber": 15,
+          "LineNumber": 17,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -83041,7 +81838,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageRenderCacheProcessingService.ReplacePageRenderCachesAsync(System.Int32,System.Int32[],PageRenderCache[])",
           "Name": "ReplacePageRenderCachesAsync",
-          "LineNumber": 17,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "appId",
@@ -83074,7 +81871,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageRenderCacheProcessingService.ReplacePageRenderCachesFromEventAsync(System.Int32,System.Int32[],PageRenderCache[])",
           "Name": "ReplacePageRenderCachesFromEventAsync",
-          "LineNumber": 19,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "appId",
@@ -83090,6 +81887,31 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.IPageRenderCacheProcessingService.StorePageRenderCacheAsync(PageRenderCache)",
+          "Name": "StorePageRenderCacheAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "pageRenderCache",
+              "Type": "PageRenderCache"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPageRenderCache\u003E",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -84673,43 +83495,6 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Services.Processings.IUncachedPageRenderEventProcessingService",
-      "StandardElementType": "ProcessingService",
-      "LineNumber": 9,
-      "IsPublic": false,
-      "Kind": "Interface",
-      "BaseType": null,
-      "Interfaces": [],
-      "Properties": [],
-      "Methods": [
-        {
-          "Id": "cCoder.ContentManagement.Services.Processings.IUncachedPageRenderEventProcessingService.RaiseUncachedPageRenderEventAsync(cCoder.ContentManagement.Models.UncachedPageRenderEvent)",
-          "Name": "RaiseUncachedPageRenderEventAsync",
-          "LineNumber": 11,
-          "Inputs": [
-            {
-              "Name": "pageRenderEvent",
-              "Type": "cCoder.ContentManagement.Models.UncachedPageRenderEvent"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        }
-      ]
-    },
-    {
       "Name": "cCoder.ContentManagement.Services.Processings.PageRendering.IComponentTagHandlingProcessingService",
       "StandardElementType": "ProcessingService",
       "LineNumber": 7,
@@ -85167,10 +83952,6 @@
       "ToType": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService"
     },
     {
-      "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.UncachedPageRenderEventHandler",
-      "ToType": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService"
-    },
-    {
       "FromType": "cCoder.ContentManagement.Exposures.PageManager",
       "ToType": "cCoder.ContentManagement.Services.Foundations.ServiceProviders.ServiceProviderExecutionService"
     },
@@ -85292,19 +84073,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageRenderCacheOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageRenderOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",
@@ -85445,10 +84214,6 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Events.TemplateEventService",
       "ToType": "cCoder.ContentManagement.Brokers.Events.TemplateEventBroker"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Foundations.Events.UncachedPageRenderEventService",
-      "ToType": "cCoder.ContentManagement.Brokers.Events.PageEventBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService",
@@ -85880,11 +84645,11 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService"
+      "ToType": "cCoder.ContentManagement.Services.Processings.PageRenderCacheProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Services.Processings.UncachedPageRenderEventProcessingService"
+      "ToType": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.AppCultureEventProcessingService",
@@ -86193,10 +84958,6 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Processings.UncachedPageRenderEventProcessingService",
-      "ToType": "cCoder.ContentManagement.Services.Foundations.Events.UncachedPageRenderEventService"
     }
   ],
   "AnalysisItems": [
@@ -86647,20 +85408,6 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController",
       "LineNumber": 143
-    },
-    {
-      "Code": "STXAPI005",
-      "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController",
-      "LineNumber": 166
-    },
-    {
-      "Code": "STXAPI005",
-      "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController",
-      "LineNumber": 193
     },
     {
       "Code": "STXAPI005",

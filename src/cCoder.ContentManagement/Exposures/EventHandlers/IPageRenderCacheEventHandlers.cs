@@ -9,20 +9,19 @@ namespace cCoder.ContentManagement.Exposures.EventHandlers;
 
 internal interface IPageRenderCacheEventHandlers
 {
-    ValueTask RebuildPageAsync(Page page);
+    ValueTask InvalidatePageAsync(Page page);
     ValueTask DeletePageAsync(Page deletedPage);
-    ValueTask RebuildAppAsync(App app);
-    ValueTask RebuildAppAsync(int appId);
+    ValueTask InvalidateAppAsync(App app);
     ValueTask InvalidateAppAsync(int appId);
     ValueTask RefreshCommonCacheAndInvalidateAppAsync(int appId);
     ValueTask DeleteAppAsync(App deletedApp);
-    ValueTask RebuildAppAsync(AppCulture appCulture);
-    ValueTask RebuildAppAsync(Layout layout);
-    ValueTask RebuildAppAsync(Template template);
-    ValueTask RebuildAppAsync(Component component);
-    ValueTask RebuildAppAsync(Resource resource);
-    ValueTask RebuildAppAsync(Script script);
-    ValueTask RebuildPageAsync(Content content);
-    ValueTask RebuildPageAsync(PageInfo pageInfo);
-    ValueTask RebuildCommonCacheConsumersAsync(CommonObject commonObject);
+    ValueTask InvalidateAppAsync(AppCulture appCulture);
+    ValueTask InvalidateAppAsync(Layout layout);
+    ValueTask InvalidateAppAsync(Template template);
+    ValueTask InvalidateAppAsync(Component component);
+    ValueTask InvalidateAppAsync(Resource resource);
+    ValueTask InvalidateAppAsync(Script script);
+    ValueTask InvalidatePageAsync(Content content);
+    ValueTask InvalidatePageAsync(PageInfo pageInfo);
+    ValueTask InvalidateCommonCacheConsumersAsync(CommonObject commonObject);
 }

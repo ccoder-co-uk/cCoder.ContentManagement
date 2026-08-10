@@ -17,9 +17,9 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
     [Theory]
     [InlineData(false, true)]
     [InlineData(true, false)]
-    public async Task ShouldRenderAndRaiseCacheEventOnlyOutsideEditModeAsync(
+    public async Task ShouldRenderAndStoreOnlyRequestedVariantOutsideEditModeAsync(
         bool edit,
-        bool shouldRaiseEvent)
+        bool shouldStore)
     {
         // Given
         App app = new()
@@ -38,13 +38,15 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
             {
                 PageId = page.Id,
                 Edit = edit,
-                User = user
+                User = user,
+                Culture = "en-gb",
+                Theme = "dark"
             }
         };
 
         Mock<IPageProcessingService> pageService = new();
         Mock<IPageRenderProcessingService> renderService = new();
-        Mock<IUncachedPageRenderEventProcessingService> eventService = new();
+        Mock<IPageRenderCacheProcessingService> cacheService = new();
 
         pageService.Setup(expression: service =>
             service.GetPageForRenderAsync(pageId: page.Id))
@@ -58,23 +60,37 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
                     item.Edit == edit)))
             .Returns(valueFunction: (PageRenderOperation item) =>
             {
-                item.Page = new PageRenderResult();
+                item.Page = new PageRenderResult
+                {
+                    AppId = app.Id,
+                    PageId = page.Id,
+                    Path = "Admin/AppManagement",
+                    HeaderHtml = "header",
+                    BodyHtml = "body"
+                };
+
                 return item;
             });
 
-        if (shouldRaiseEvent)
+        if (shouldStore)
         {
-            eventService.Setup(expression: service =>
-                service.RaiseUncachedPageRenderEventAsync(
-                    pageRenderEvent: It.Is<UncachedPageRenderEvent>(match:
-                        item => item.PageId == page.Id)))
-                .Returns(value: ValueTask.CompletedTask);
+            cacheService.Setup(expression: service =>
+                service.StorePageRenderCacheAsync(
+                    pageRenderCache: It.Is<PageRenderCache>(match:
+                        item => item.AppId == app.Id
+                            && item.PageId == page.Id
+                            && item.Culture == "en-gb"
+                            && item.Theme == "dark"
+                            && item.Path == "Admin/AppManagement"
+                            && item.Header == "header"
+                            && item.Body == "body")))
+                .ReturnsAsync(valueFunction: (PageRenderCache item) => item);
         }
 
         UncachedPageRenderOrchestrationService service = new(
             pageProcessingService: pageService.Object,
             pageRenderProcessingService: renderService.Object,
-            eventProcessingService: eventService.Object);
+            pageRenderCacheProcessingService: cacheService.Object);
 
         // When
         HttpPageRenderOperation result = await service
@@ -86,13 +102,13 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
         pageService.VerifyAll();
         renderService.VerifyAll();
 
-        if (shouldRaiseEvent)
+        if (shouldStore)
         {
-            eventService.VerifyAll();
+            cacheService.VerifyAll();
         }
         else
         {
-            eventService.VerifyNoOtherCalls();
+            cacheService.VerifyNoOtherCalls();
         }
     }
 }
