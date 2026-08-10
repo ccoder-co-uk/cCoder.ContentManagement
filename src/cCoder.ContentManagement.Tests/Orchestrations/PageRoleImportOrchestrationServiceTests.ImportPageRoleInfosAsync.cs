@@ -71,6 +71,50 @@ public partial class PageRoleImportOrchestrationServiceTests
     }
 
     [Fact]
+    public async Task ShouldFailWhenPageRoleCannotBeResolvedAsync()
+    {
+        // Given
+        const int appId = 42;
+
+        PageRoleInfo pageRoleInfo = CreatePageRoleInfo(
+            path: string.Empty,
+            roleName: "Guests");
+
+        PageRole unresolvedPageRole = CreatePageRole(
+            pageId: 123,
+            roleId: Guid.Empty);
+
+        lookupProcessingServiceMock
+            .Setup(
+                expression: service =>
+                    service.ResolvePageRole(
+                        appId: appId,
+                        path: pageRoleInfo.Path,
+                        roleName: pageRoleInfo.Role))
+            .Returns(value: unresolvedPageRole);
+
+        // When
+        Func<Task> action = async () =>
+            await orchestrationService.ImportPageRoleInfosAsync(
+                appId: appId,
+                pageRoleInfos: [pageRoleInfo]);
+
+        // Then
+        await action.Should()
+            .ThrowAsync<ContentManagementValidationException>();
+
+        lookupProcessingServiceMock.Verify(
+            expression: service =>
+                service.ResolvePageRole(
+                    appId: appId,
+                    path: pageRoleInfo.Path,
+                    roleName: pageRoleInfo.Role),
+            times: Times.Once);
+
+        persistenceProcessingServiceMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
     public async Task ShouldThrowValidationExceptionWhenPageRoleInfosAreNullAsync()
     {
         // Given

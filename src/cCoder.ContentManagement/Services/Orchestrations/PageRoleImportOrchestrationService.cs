@@ -41,10 +41,15 @@ internal sealed partial class PageRoleImportOrchestrationService(
                         appId: appId,
                         path: pageRoleInfo.Path,
                         roleName: pageRoleInfo.Role))
-            .Where(
-                predicate: pageRole =>
-                    pageRole.PageId != 0
-                    && pageRole.RoleId != Guid.Empty)
+            .ToArray();
+
+        if (!pageRoles.All(predicate: IsResolved))
+        {
+            throw new ValidationException(
+                message: "Page roles could not be resolved after their pages and roles were imported.");
+        }
+
+        pageRoles = pageRoles
             .GroupBy(
                 keySelector: pageRole =>
                     new
@@ -58,6 +63,10 @@ internal sealed partial class PageRoleImportOrchestrationService(
         await persistenceProcessingService.SynchronizePageRolesAsync(
             pageRoles: pageRoles);
     }, isValueTask: true);
+
+    private static bool IsResolved(PageRole pageRole) =>
+        pageRole.PageId != 0
+        && pageRole.RoleId != Guid.Empty;
 
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(
