@@ -6602,7 +6602,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.Dispose()",
           "Name": "Dispose",
-          "LineNumber": 188,
+          "LineNumber": 196,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -6632,7 +6632,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.EnsureAvailable()",
           "Name": "EnsureAvailable",
-          "LineNumber": 157,
+          "LineNumber": 165,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -6669,7 +6669,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.Get(System.String)",
           "Name": "Get",
-          "LineNumber": 174,
+          "LineNumber": 182,
           "Inputs": [
             {
               "Name": "key",
@@ -6704,7 +6704,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 168,
+          "LineNumber": 176,
           "Inputs": [],
           "ReturnType": "T[]",
           "Implements": [
@@ -6776,7 +6776,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.GetLatestSet()",
           "Name": "GetLatestSet",
-          "LineNumber": 165,
+          "LineNumber": 173,
           "Inputs": [],
           "ReturnType": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E",
           "Implements": [
@@ -6831,6 +6831,41 @@
               "TypeName": "System.Collections.Generic.List\u003CT\u003E",
               "MethodName": "AddRange",
               "MethodId": "System.Collections.Generic.List\u003CT\u003E.AddRange(System.Collections.Generic.IEnumerable\u003CT\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "First",
+              "MethodId": "System.Linq.Enumerable.First(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "GroupBy",
+              "MethodId": "System.Linq.Enumerable.GroupBy(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TKey\u003E,System.Collections.Generic.IEqualityComparer\u003CTKey\u003E?)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "OrderByDescending",
+              "MethodId": "System.Linq.Enumerable.OrderByDescending(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TKey\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Enumerable.Select(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TResult\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "ThenByDescending",
+              "MethodId": "System.Linq.Enumerable.ThenByDescending(System.Linq.IOrderedEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TKey\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -6934,7 +6969,7 @@
         {
           "Id": "cCoder.ContentManagement.Dependencies.Caching.CommonObjectCacheDependency.Set(System.String,System.Object)",
           "Name": "Set",
-          "LineNumber": 180,
+          "LineNumber": 188,
           "Inputs": [
             {
               "Name": "key",
