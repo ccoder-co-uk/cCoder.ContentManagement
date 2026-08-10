@@ -37,7 +37,7 @@ $testProcesses = foreach ($project in $testProjects) {
     $timeoutSeconds = if ($isAcceptanceProject) { 900 } else { 300 }
     $process = Start-Process dotnet -NoNewWindow -PassThru -ArgumentList $arguments
 
-    Write-Output "Started '$project' as PID $($process.Id) with a $timeoutSeconds second timeout."
+    Write-Host "Started '$project' as PID $($process.Id) with a $timeoutSeconds second timeout."
 
     [PSCustomObject]@{
         Project = $project
