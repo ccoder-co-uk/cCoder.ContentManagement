@@ -147,7 +147,8 @@ internal sealed partial class PageRenderProcessingService(
             Resources = MapResources(resources: app.Resources),
             ResourcesByLookup = BuildResourceLookup(resources: app.Resources),
             ComponentsByName = BuildComponentLookup(components: app.Components),
-            ScriptsByName = BuildScriptLookup(scripts: app.Scripts)
+            ScriptsByName = BuildScriptLookup(scripts: app.Scripts),
+            EmittedScriptNames = new HashSet<string>(comparer: StringComparer.OrdinalIgnoreCase)
         };
     }
 

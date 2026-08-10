@@ -23212,6 +23212,10 @@
           "Type": "cCoder.ContentManagement.Models.ContentManagementConfiguration"
         },
         {
+          "Name": "EmittedScriptNames",
+          "Type": "System.Collections.Generic.ISet\u003CSystem.String\u003E"
+        },
+        {
           "Name": "Layout",
           "Type": "cCoder.ContentManagement.Models.PageRendering.PageRenderLayout"
         },
