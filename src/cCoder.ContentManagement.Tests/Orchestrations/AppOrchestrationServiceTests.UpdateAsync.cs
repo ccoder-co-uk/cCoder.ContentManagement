@@ -76,6 +76,10 @@ public partial class AppOrchestrationServiceTests
             expression: service => service.RaiseAppUpdateEventAsync(app: postedApp),
             times: Times.Once);
 
+        appProcessingServiceMock.Verify(
+            expression: service => service.UpdateAppAsync(updatedApp: postedApp),
+            times: Times.Once);
+
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
