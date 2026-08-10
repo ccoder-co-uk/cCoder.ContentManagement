@@ -154,6 +154,14 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
         }
     }
 
+    public void EnsureAvailable()
+    {
+        if (Volatile.Read(location: ref latestSet).Length == 0)
+        {
+            Refresh();
+        }
+    }
+
     public IEnumerable<CommonObject> GetLatestSet() =>
         Volatile.Read(location: ref latestSet);
 

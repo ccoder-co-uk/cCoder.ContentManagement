@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
@@ -241,11 +242,41 @@ public sealed partial class PageRenderCacheAggregationServiceTests
         Assert.Empty(collection: caches);
     }
 
+    [Fact]
+    public async Task ShouldRefreshCommonCacheBeforeInvalidatingImportedAppAsync()
+    {
+        // Given
+        const int appId = 23;
+        MockSequence sequence = new();
+        Mock<ICommonObjectCache> commonObjectCache = new();
+        Mock<IPageRenderCacheOrchestrationService> cacheService = new();
+
+        commonObjectCache.InSequence(sequence: sequence)
+            .Setup(expression: cache => cache.Refresh());
+
+        cacheService.InSequence(sequence: sequence)
+            .Setup(expression: service =>
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: appId))
+            .Returns(value: ValueTask.CompletedTask);
+
+        PageRenderCacheAggregationService service = CreateService(
+            cacheService: cacheService,
+            commonObjectCache: commonObjectCache);
+
+        // When
+        await service.RefreshCommonCacheAndInvalidateAppAsync(appId: appId);
+
+        // Then
+        commonObjectCache.VerifyAll();
+        cacheService.VerifyAll();
+    }
+
     private static PageRenderCacheAggregationService CreateService(
         Mock<IAppOrchestrationService> appService = null,
         Mock<IPageOrchestrationService> pageService = null,
         Mock<IPageRenderOrchestrationService> renderService = null,
-        Mock<IPageRenderCacheOrchestrationService> cacheService = null) =>
+        Mock<IPageRenderCacheOrchestrationService> cacheService = null,
+        Mock<ICommonObjectCache> commonObjectCache = null) =>
         new(
             appOrchestrationService:
                 (appService ?? new Mock<IAppOrchestrationService>()).Object,
@@ -256,5 +287,7 @@ public sealed partial class PageRenderCacheAggregationServiceTests
             pageRenderCacheOrchestrationService:
                 (cacheService ??
                     new Mock<IPageRenderCacheOrchestrationService>()).Object,
-            pageRenderCacheImportState: new PageRenderCacheImportState());
+            pageRenderCacheImportState: new PageRenderCacheImportState(),
+            commonObjectCache:
+                (commonObjectCache ?? new Mock<ICommonObjectCache>()).Object);
 }

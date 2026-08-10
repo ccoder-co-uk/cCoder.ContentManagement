@@ -25,7 +25,8 @@ internal class MetadataCacheDependency : IMetadataCache
         IMetadataTypeCache metadataTypeCache,
         ICommonObjectReaderBroker resourceCache)
     {
-        metaSerialized = new Dictionary<string, IDictionary<string, string>>();
+        metaSerialized = new Dictionary<string, IDictionary<string, string>>(
+            comparer: StringComparer.OrdinalIgnoreCase);
         this.metadataTypeCache = metadataTypeCache;
         this.resourceCache = resourceCache;
         metadataSignature = string.Empty;
@@ -48,7 +49,10 @@ internal class MetadataCacheDependency : IMetadataCache
 
         foreach (var culture in Cultures.Known)
         {
-            metaSerialized.Add(key: culture.Id, value: new Dictionary<string, string>());
+            metaSerialized.Add(
+                key: culture.Id,
+                value: new Dictionary<string, string>(
+                    comparer: StringComparer.OrdinalIgnoreCase));
             MetadataContainerSet[] typeSets = GetTypeSets();
 
             foreach (MetadataContainerSet metadataContainerSet in typeSets)

@@ -12,6 +12,7 @@ internal sealed partial class CommonObjectCacheService(ICommonObjectReaderBroker
     public PageCacheSlice GetPageCacheSlice() =>
         TryCatch<PageCacheSlice>(operation: () =>
     {
+        broker.EnsureAvailable();
 
         return new PageCacheSlice
         {
