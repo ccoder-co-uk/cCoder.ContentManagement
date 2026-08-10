@@ -22,7 +22,7 @@ internal sealed partial class PageRoleImportOrchestrationService(
     IPageRoleImportPersistenceProcessingService persistenceProcessingService)
         : IPageRoleImportOrchestrationService
 {
-    private const int LookupRetryCount = 50;
+    private const int LookupRetryCount = 300;
     private const int LookupRetryDelayMilliseconds = 100;
 
     public ValueTask ImportPageRoleInfosAsync(
