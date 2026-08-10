@@ -71,7 +71,7 @@ public partial class PageRoleImportOrchestrationServiceTests
     }
 
     [Fact]
-    public async Task ShouldRetryUntilPageRoleIsResolvedAsync()
+    public async Task ShouldFailWhenPageRoleCannotBeResolvedAsync()
     {
         // Given
         const int appId = 42;
@@ -84,45 +84,34 @@ public partial class PageRoleImportOrchestrationServiceTests
             pageId: 123,
             roleId: Guid.Empty);
 
-        PageRole resolvedPageRole = CreatePageRole(
-            pageId: 123,
-            roleId: Guid.NewGuid());
-
         lookupProcessingServiceMock
-            .SetupSequence(
+            .Setup(
                 expression: service =>
                     service.ResolvePageRole(
                         appId: appId,
                         path: pageRoleInfo.Path,
                         roleName: pageRoleInfo.Role))
-            .Returns(value: unresolvedPageRole)
-            .Returns(value: resolvedPageRole);
-
-        persistenceProcessingServiceMock
-            .Setup(
-                expression: service =>
-                    service.SynchronizePageRolesAsync(
-                        pageRoles: It.Is<PageRole[]>(
-                            match: pageRoles =>
-                                pageRoles.Length == 1
-                                && pageRoles[0] == resolvedPageRole)))
-            .Returns(value: ValueTask.CompletedTask);
+            .Returns(value: unresolvedPageRole);
 
         // When
-        await orchestrationService.ImportPageRoleInfosAsync(
-            appId: appId,
-            pageRoleInfos: [pageRoleInfo]);
+        Func<Task> action = async () =>
+            await orchestrationService.ImportPageRoleInfosAsync(
+                appId: appId,
+                pageRoleInfos: [pageRoleInfo]);
 
         // Then
+        await action.Should()
+            .ThrowAsync<ContentManagementValidationException>();
+
         lookupProcessingServiceMock.Verify(
             expression: service =>
                 service.ResolvePageRole(
                     appId: appId,
                     path: pageRoleInfo.Path,
                     roleName: pageRoleInfo.Role),
-            times: Times.Exactly(callCount: 2));
+            times: Times.Once);
 
-        persistenceProcessingServiceMock.VerifyAll();
+        persistenceProcessingServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]

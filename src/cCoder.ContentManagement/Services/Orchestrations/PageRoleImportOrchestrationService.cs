@@ -22,9 +22,6 @@ internal sealed partial class PageRoleImportOrchestrationService(
     IPageRoleImportPersistenceProcessingService persistenceProcessingService)
         : IPageRoleImportOrchestrationService
 {
-    private const int LookupRetryCount = 300;
-    private const int LookupRetryDelayMilliseconds = 100;
-
     public ValueTask ImportPageRoleInfosAsync(
         int appId,
         PageRoleInfo[] pageRoleInfos) =>
@@ -37,9 +34,20 @@ internal sealed partial class PageRoleImportOrchestrationService(
             pageRoleInfos: pageRoleInfos,
             parameterName: "pageRoleInfos");
 
-        PageRole[] pageRoles = await ResolvePageRolesAsync(
-            appId: appId,
-            pageRoleInfos: pageRoleInfos);
+        PageRole[] pageRoles = pageRoleInfos
+            .Select(
+                selector: pageRoleInfo =>
+                    lookupProcessingService.ResolvePageRole(
+                        appId: appId,
+                        path: pageRoleInfo.Path,
+                        roleName: pageRoleInfo.Role))
+            .ToArray();
+
+        if (!pageRoles.All(predicate: IsResolved))
+        {
+            throw new ValidationException(
+                message: "Page roles could not be resolved after their pages and roles were imported.");
+        }
 
         pageRoles = pageRoles
             .GroupBy(
@@ -55,35 +63,6 @@ internal sealed partial class PageRoleImportOrchestrationService(
         await persistenceProcessingService.SynchronizePageRolesAsync(
             pageRoles: pageRoles);
     }, isValueTask: true);
-
-    private async ValueTask<PageRole[]> ResolvePageRolesAsync(
-        int appId,
-        PageRoleInfo[] pageRoleInfos)
-    {
-        PageRole[] pageRoles = [];
-
-        for (int attempt = 0; attempt < LookupRetryCount; attempt++)
-        {
-            pageRoles = pageRoleInfos
-                .Select(
-                    selector: pageRoleInfo =>
-                        lookupProcessingService.ResolvePageRole(
-                            appId: appId,
-                            path: pageRoleInfo.Path,
-                            roleName: pageRoleInfo.Role))
-                .ToArray();
-
-            if (pageRoles.All(predicate: IsResolved))
-            {
-                return pageRoles;
-            }
-
-            await Task.Delay(millisecondsDelay: LookupRetryDelayMilliseconds);
-        }
-
-        throw new ValidationException(
-            message: "Page roles could not be resolved after their pages and roles were imported.");
-    }
 
     private static bool IsResolved(PageRole pageRole) =>
         pageRole.PageId != 0
