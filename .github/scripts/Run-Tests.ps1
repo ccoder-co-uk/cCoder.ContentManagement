@@ -12,7 +12,7 @@ $testProjects = @(
 
 New-Item -ItemType Directory -Path "artifacts/test-results" -Force | Out-Null
 
-$processes = foreach ($project in $testProjects) {
+$testProcesses = foreach ($project in $testProjects) {
     $resultName = [IO.Path]::GetFileNameWithoutExtension($project)
     $arguments = @(
         "test",
@@ -34,12 +34,52 @@ $processes = foreach ($project in $testProjects) {
         )
     }
 
-    Start-Process dotnet -NoNewWindow -PassThru -ArgumentList $arguments
+    $timeoutSeconds = if ($isAcceptanceProject) { 900 } else { 300 }
+    $process = Start-Process dotnet -NoNewWindow -PassThru -ArgumentList $arguments
+
+    Write-Output "Started '$project' as PID $($process.Id) with a $timeoutSeconds second timeout."
+
+    [PSCustomObject]@{
+        Project = $project
+        Process = $process
+        TimeoutSeconds = $timeoutSeconds
+        Stopwatch = [Diagnostics.Stopwatch]::StartNew()
+    }
 }
 
-$processes | Wait-Process
-$failedProcesses = @($processes | Where-Object ExitCode -ne 0)
+$timedOutProjects = @()
 
-if ($failedProcesses.Count -ne 0) {
-    throw "$($failedProcesses.Count) test project(s) failed."
+while (@($testProcesses | Where-Object { -not $_.Process.HasExited }).Count -gt 0) {
+    foreach ($testProcess in $testProcesses) {
+        if (
+            -not $testProcess.Process.HasExited -and
+            $testProcess.Stopwatch.Elapsed.TotalSeconds -ge $testProcess.TimeoutSeconds
+        ) {
+            Write-Error "Test project '$($testProcess.Project)' timed out after $($testProcess.TimeoutSeconds) seconds (PID $($testProcess.Process.Id))."
+            Stop-Process -Id $testProcess.Process.Id -Force -ErrorAction SilentlyContinue
+            $timedOutProjects += $testProcess.Project
+        }
+    }
+
+    Start-Sleep -Seconds 1
+}
+
+$failedProcesses = @()
+
+foreach ($testProcess in $testProcesses) {
+    $testProcess.Process.WaitForExit()
+    $testProcess.Stopwatch.Stop()
+
+    Write-Output "Finished '$($testProcess.Project)' as PID $($testProcess.Process.Id) with exit code $($testProcess.Process.ExitCode) after $([Math]::Round($testProcess.Stopwatch.Elapsed.TotalSeconds, 1)) seconds."
+
+    if ($testProcess.Process.ExitCode -ne 0) {
+        $failedProcesses += $testProcess
+    }
+}
+
+if ($timedOutProjects.Count -ne 0 -or $failedProcesses.Count -ne 0) {
+    $failedProjectNames = @($failedProcesses | ForEach-Object Project)
+    $failureSummary = @($timedOutProjects + $failedProjectNames | Sort-Object -Unique) -join ", "
+
+    throw "Test projects failed or timed out: $failureSummary"
 }
