@@ -36,7 +36,7 @@ public partial class PageOrchestrationServiceTests
                 Item = page
             }])
             .Callback<IEnumerable<Page>>(
-                _ => page.Id = persistedPageId);
+                action: _ => page.Id = persistedPageId);
 
         // When
         Page[] importedPages = await orchestrationService.ImportPagesAsync(
