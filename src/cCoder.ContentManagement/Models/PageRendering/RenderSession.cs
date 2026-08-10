@@ -32,6 +32,7 @@ internal sealed class RenderSession
     public IReadOnlyDictionary<string, PageRenderResource> ResourcesByLookup { get; set; }
     public IDictionary<string, PageRenderComponent> ComponentsByName { get; set; }
     public IDictionary<string, PageRenderScript> ScriptsByName { get; set; }
+    public ISet<string> EmittedScriptNames { get; set; }
     public Func<string, string> MetadataResolver { get; set; }
     public IReadOnlyDictionary<string, PageRenderResource> CommonResourcesByLookup { get; set; }
     public IReadOnlyDictionary<string, PageRenderComponent> CommonComponentsByName { get; set; }

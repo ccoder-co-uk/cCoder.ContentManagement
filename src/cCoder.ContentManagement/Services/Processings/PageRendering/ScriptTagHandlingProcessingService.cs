@@ -31,12 +31,22 @@ internal sealed partial class ScriptTagHandlingProcessingService(
 
         operation.Content = scriptRegex.Replace(
             input: operation.Content,
-            evaluator: match => ResolveScript(
+            evaluator: match => ResolveScriptContent(
                 session: operation.Session,
-                name: match.Groups["name"].Value)?.Content ?? string.Empty);
+                name: match.Groups["name"].Value));
 
         return operation;
     });
+
+    private string ResolveScriptContent(RenderSession session, string name)
+    {
+        PageRenderScript script = ResolveScript(session: session, name: name);
+
+        return script is not null
+            && session.EmittedScriptNames.Add(item: script.Name)
+                ? script.Content ?? string.Empty
+                : string.Empty;
+    }
 
     private PageRenderScript ResolveScript(
         RenderSession session,
