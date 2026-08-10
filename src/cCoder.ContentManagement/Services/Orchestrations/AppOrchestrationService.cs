@@ -154,7 +154,6 @@ internal partial class AppOrchestrationService(
     public App ResolveCurrentApp() =>
         TryCatch<App>(operation: () =>
     {
-        ValidateResolveCurrentApp(inputs: []);
         return processingService.ResolveCurrentApp();
     });
 

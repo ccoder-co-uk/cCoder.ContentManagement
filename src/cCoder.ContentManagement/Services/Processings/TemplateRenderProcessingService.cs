@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
@@ -29,8 +30,8 @@ internal partial class TemplateRenderProcessingService(
     IJsonBroker jsonBroker,
     ITemplateRenderService templateRenderService,
     IWorkflowExecutionBroker workflowExecutionBroker,
-    ContentManagementConfiguration config = null,
-    ILogger<TemplateRenderProcessingService> log = null)
+    ILoggingBroker loggingBroker,
+    ContentManagementConfiguration config = null)
         : ITemplateRenderProcessingService
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
@@ -135,7 +136,11 @@ internal partial class TemplateRenderProcessingService(
             Culture = culture
         };
 
-        return ExecuteRenderTemplateRenderParamsConfig(template: template, model: model, renderParams: templateRenderParams, config: config, log: log);
+        return ExecuteRenderTemplateRenderParamsConfig(
+            template: template,
+            model: model,
+            renderParams: templateRenderParams,
+            config: config);
 
     });
 
@@ -156,9 +161,9 @@ internal partial class TemplateRenderProcessingService(
         list.Add(item: new ReplacementDependency(old: "[model]", @new: jsonBroker.Serialize(value: model)));
         list.AddRange(collection: BuildModelReplacements(model: model));
 
-        if (log != null && log.IsEnabled(logLevel: LogLevel.Debug))
+        if (loggingBroker.IsEnabled(logLevel: LogLevel.Debug))
         {
-            log.LogDebug(
+            loggingBroker.LogDebug(
                 message: "Rendering template {Template} with {ReplacementCount} replacements.",
                 args: [template.Name, list.Count]);
         }
@@ -913,8 +918,7 @@ internal partial class TemplateRenderProcessingService(
         Template template,
         object model,
         RenderParams renderParams,
-        ContentManagementConfiguration config,
-        ILogger log = null)
+        ContentManagementConfiguration config)
     {
         ValidateTemplate(template: template, parameterName: "template");
         ValidateModel(model: model, parameterName: "model");
@@ -926,9 +930,9 @@ internal partial class TemplateRenderProcessingService(
         list.Add(item: new ReplacementDependency(old: "[model]", @new: jsonBroker.Serialize(value: model)));
         list.AddRange(collection: BuildModelReplacements(model: model));
 
-        if (log != null && log.IsEnabled(logLevel: LogLevel.Debug))
+        if (loggingBroker.IsEnabled(logLevel: LogLevel.Debug))
         {
-            log.LogDebug(
+            loggingBroker.LogDebug(
                 message: "Rendering template {Template} with {ReplacementCount} replacements.",
                 args: [template.Name, list.Count]);
         }

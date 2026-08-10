@@ -14,7 +14,6 @@ internal sealed partial class HttpContextService(
     public HttpPageRenderContext GetPageRenderContext() =>
         TryCatch(operation: () =>
     {
-        ValidateGetPageRenderContext(inputs: []);
 
         HttpContext context = httpContextBroker.GetHttpContext();
         HttpRequest request = context.Request;

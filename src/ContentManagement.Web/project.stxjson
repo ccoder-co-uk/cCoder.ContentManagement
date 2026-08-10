@@ -257,7 +257,7 @@
     {
       "Name": "ContentManagement.Web.Controllers.PackageController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 12,
+      "LineNumber": 13,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -276,7 +276,7 @@
         {
           "Id": "ContentManagement.Web.Controllers.PackageController.PostImportAsync(System.Int32,cCoder.Data.Models.Packaging.Package)",
           "Name": "PostImportAsync",
-          "LineNumber": 18,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "appId",
@@ -290,6 +290,13 @@
           "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E",
           "Implements": [],
           "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
+              "MethodName": "LogError",
+              "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
             {
               "TypeName": "cCoder.ContentManagement.Exposures.IContentManagementPackageManager",
               "MethodName": "ImportPackageAsync",
@@ -312,7 +319,8 @@
               "IsExceptionPath": false,
               "IsNullPath": false,
               "HasBody": false,
-              "ExposesExceptionDetails": false
+              "ExposesExceptionDetails": false,
+              "LogsException": false
             },
             {
               "StatusCode": 400,
@@ -321,7 +329,8 @@
               "IsExceptionPath": false,
               "IsNullPath": false,
               "HasBody": true,
-              "ExposesExceptionDetails": false
+              "ExposesExceptionDetails": false,
+              "LogsException": false
             },
             {
               "StatusCode": 400,
@@ -330,7 +339,8 @@
               "IsExceptionPath": true,
               "IsNullPath": false,
               "HasBody": false,
-              "ExposesExceptionDetails": false
+              "ExposesExceptionDetails": false,
+              "LogsException": true
             }
           ],
           "IsHttpRequestHandler": true,

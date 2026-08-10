@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 [ApiController]
 [Route(template: "Api/ContentManagement")]
-public sealed class RenderController(IRenderer renderer) : ControllerBase
+public sealed class RenderController(
+    IRenderer renderer,
+    ILoggingBroker loggingBroker) : ControllerBase
 {
     [HttpPost(template: "Template/Render()")]
     [AllowAnonymous]
@@ -27,16 +30,22 @@ public sealed class RenderController(IRenderer renderer) : ControllerBase
 
             return Content(content: result.Content, contentType: "text/plain");
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(
                 statusCode: StatusCodes.Status500InternalServerError);
         }
@@ -56,16 +65,22 @@ public sealed class RenderController(IRenderer renderer) : ControllerBase
                 ? NotFound()
                 : Ok(value: result.Content);
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(
                 statusCode: StatusCodes.Status500InternalServerError);
         }

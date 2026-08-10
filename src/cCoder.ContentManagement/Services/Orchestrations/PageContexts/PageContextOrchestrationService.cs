@@ -19,7 +19,6 @@ internal sealed partial class PageContextOrchestrationService(
         ResolvePageRenderContextAsync() =>
         TryCatch(operation: async () =>
     {
-        ValidateResolvePageRenderContextAsync(inputs: []);
 
         HttpPageRenderContext context =
             httpContextService.GetPageRenderContext();

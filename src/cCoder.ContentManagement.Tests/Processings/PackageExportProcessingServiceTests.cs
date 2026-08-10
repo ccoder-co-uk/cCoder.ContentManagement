@@ -33,7 +33,7 @@ public partial class PackageExportProcessingServiceTests
     }
 
     private static Package CreatePackage(string name) =>
-        new(name: name) { Items = [] };
+        new() { Name = name, Items = [] };
 
     private void SetupKnownPackageExport(int appId, string packageName, Package expectedPackage)
     {

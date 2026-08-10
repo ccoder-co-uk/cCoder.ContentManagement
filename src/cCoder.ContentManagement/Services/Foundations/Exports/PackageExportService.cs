@@ -251,8 +251,9 @@ data: pageBroker.GetAllPagesIgnoringFilters()
     });
 
     private Package CreatePackage(string name, string itemType, object data) =>
-        new Package(name: name)
+        new Package
         {
+            Name = name,
             Items =
             [
                 new PackageItem

@@ -24,8 +24,9 @@ internal partial class PackageExportProcessingService(IPackageExportService pack
             "Resources" => packageExportService.ExportResourcesPackage(appId: appId),
             "Pages" => packageExportService.ExportPagesPackage(appId: appId),
             "PageRoles" => packageExportService.ExportPageRolesPackage(appId: appId),
-            var ignoredPackage => new Package(name: packageName)
+            var ignoredPackage => new Package
             {
+                Name = packageName,
                 Items = new List<PackageItem>()
             },
         };

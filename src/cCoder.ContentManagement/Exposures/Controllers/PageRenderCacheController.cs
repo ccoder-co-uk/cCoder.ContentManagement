@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class PageRenderCacheController(
     IPageRenderCacheManager manager,
-    ILogger<PageRenderCacheController> logger) : ODataController
+    ILoggingBroker loggingBroker) : ODataController
 {
     [HttpGet]
     [EnableQuery]
@@ -23,9 +24,18 @@ public class PageRenderCacheController(
         {
             return Ok(value: manager.GetAll());
         }
-        catch (ContentManagementValidationException) { return BadRequest(); }
-        catch (ContentManagementSecurityException) { return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception) { return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
+        catch (ContentManagementValidationException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return BadRequest(); }
+        catch (ContentManagementSecurityException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
+        catch (Exception exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
     }
 
     [HttpGet]
@@ -37,9 +47,18 @@ public class PageRenderCacheController(
             PageRenderCache result = manager.Get(pageRenderCacheId: key);
             return result == null ? NotFound() : Ok(value: result);
         }
-        catch (ContentManagementValidationException) { return BadRequest(); }
-        catch (ContentManagementSecurityException) { return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception) { return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
+        catch (ContentManagementValidationException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return BadRequest(); }
+        catch (ContentManagementSecurityException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
+        catch (Exception exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
     }
 
     [HttpPost]
@@ -53,9 +72,18 @@ public class PageRenderCacheController(
                 statusCode: StatusCodes.Status201Created,
                 value: await manager.AddAsync(newPageRenderCache: newPageRenderCache));
         }
-        catch (ContentManagementValidationException) { return BadRequest(); }
-        catch (ContentManagementSecurityException) { return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception) { return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
+        catch (ContentManagementValidationException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return BadRequest(); }
+        catch (ContentManagementSecurityException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
+        catch (Exception exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
     }
 
     [HttpPut]
@@ -68,9 +96,18 @@ public class PageRenderCacheController(
             updatedPageRenderCache.Id = key;
             return Ok(value: await manager.UpdateAsync(updatedPageRenderCache: updatedPageRenderCache));
         }
-        catch (ContentManagementValidationException) { return BadRequest(); }
-        catch (ContentManagementSecurityException) { return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception) { return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
+        catch (ContentManagementValidationException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return BadRequest(); }
+        catch (ContentManagementSecurityException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
+        catch (Exception exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
     }
 
     [AcceptVerbs("PATCH", "MERGE")]
@@ -88,9 +125,18 @@ public class PageRenderCacheController(
             updatedPageRenderCache.Patch(original: entity);
             return Ok(value: await manager.UpdateAsync(updatedPageRenderCache: entity));
         }
-        catch (ContentManagementValidationException) { return BadRequest(); }
-        catch (ContentManagementSecurityException) { return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception) { return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
+        catch (ContentManagementValidationException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return BadRequest(); }
+        catch (ContentManagementSecurityException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
+        catch (Exception exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
     }
 
     [HttpDelete]
@@ -101,9 +147,18 @@ public class PageRenderCacheController(
             await manager.DeleteAsync(pageRenderCacheId: key);
             return NoContent();
         }
-        catch (ContentManagementValidationException) { return BadRequest(); }
-        catch (ContentManagementSecurityException) { return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception) { return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
+        catch (ContentManagementValidationException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return BadRequest(); }
+        catch (ContentManagementSecurityException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
+        catch (Exception exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
     }
 
     [HttpPost]
@@ -114,11 +169,17 @@ public class PageRenderCacheController(
         {
             return Ok(value: await manager.RebuildAppAsync(appId: (int)parameters["appId"]));
         }
-        catch (ContentManagementValidationException) { return BadRequest(); }
-        catch (ContentManagementSecurityException) { return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
+        catch (ContentManagementValidationException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return BadRequest(); }
+        catch (ContentManagementSecurityException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
         catch (Exception exception)
         {
-            logger.LogError(
+            loggingBroker.LogError(
                 exception: exception,
                 message: "Unable to rebuild PageRenderCache for app {AppId}.",
                 args: parameters["appId"]);
@@ -135,8 +196,17 @@ public class PageRenderCacheController(
         {
             return Ok(value: await manager.RebuildPageAsync(pageId: (int)parameters["pageId"]));
         }
-        catch (ContentManagementValidationException) { return BadRequest(); }
-        catch (ContentManagementSecurityException) { return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception) { return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
+        catch (ContentManagementValidationException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return BadRequest(); }
+        catch (ContentManagementSecurityException exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
+        catch (Exception exception) {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
     }
 }

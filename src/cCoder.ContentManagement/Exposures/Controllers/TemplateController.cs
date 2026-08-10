@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
@@ -20,10 +21,14 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class TemplateController : ODataController
 {
+    private readonly ILoggingBroker loggingBroker;
     private readonly ITemplateManager manager;
 
-    public TemplateController(ITemplateManager manager) =>
+    public TemplateController(ITemplateManager manager, ILoggingBroker loggingBroker)
+    {
         this.manager = manager;
+        this.loggingBroker = loggingBroker;
+    }
 
     [HttpPost]
     [AllowAnonymous]
@@ -40,16 +45,22 @@ public class TemplateController : ODataController
 
             return File(fileContents: content, contentType: "application/pdf", fileDownloadName: name + ".pdf");
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -62,16 +73,22 @@ public class TemplateController : ODataController
             return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
             .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Template)) : typeof(Template).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -85,16 +102,22 @@ public class TemplateController : ODataController
         {
             return Ok(value: manager.GetAll());
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -113,16 +136,22 @@ public class TemplateController : ODataController
                 ? NotFound()
                 : Ok(value: result);
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -140,16 +169,22 @@ public class TemplateController : ODataController
 
             return StatusCode(statusCode: StatusCodes.Status201Created, value: await manager.AddAsync(newTemplate: newTemplate));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -167,16 +202,22 @@ public class TemplateController : ODataController
 
             return Ok(value: await manager.UpdateAsync(updatedTemplate: updatedTemplate));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -197,16 +238,22 @@ public class TemplateController : ODataController
             updatedTemplate.Patch(original: originalEntity);
             return Ok(value: await manager.UpdateAsync(updatedTemplate: originalEntity));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -219,16 +266,22 @@ public class TemplateController : ODataController
             await manager.DeleteAsync(templateId: key);
             return NoContent();
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }

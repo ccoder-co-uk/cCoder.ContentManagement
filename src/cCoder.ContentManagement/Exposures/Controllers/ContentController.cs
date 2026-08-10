@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using cCoder.ContentManagement.Api.OData;
@@ -18,8 +19,9 @@ using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
-public class ContentController(IContentManager contentOrchestrationService)
-    : ODataController
+public class ContentController(
+    IContentManager contentOrchestrationService,
+    ILoggingBroker loggingBroker) : ODataController
 {
     [HttpGet]
     public IActionResult GetMetadata()
@@ -29,16 +31,22 @@ public class ContentController(IContentManager contentOrchestrationService)
             return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
             .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Content)) : typeof(Content).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -52,16 +60,22 @@ public class ContentController(IContentManager contentOrchestrationService)
         {
             return Ok(value: contentOrchestrationService.GetAllContent());
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -80,16 +94,22 @@ public class ContentController(IContentManager contentOrchestrationService)
                 ? NotFound()
                 : Ok(value: result);
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -107,16 +127,22 @@ public class ContentController(IContentManager contentOrchestrationService)
 
             return StatusCode(statusCode: StatusCodes.Status201Created, value: await contentOrchestrationService.AddContentAsync(newContent: newContent));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -135,16 +161,22 @@ public class ContentController(IContentManager contentOrchestrationService)
             updatedContent.Id = key;
             return Ok(value: await contentOrchestrationService.UpdateContentAsync(updatedContent: updatedContent));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -165,16 +197,22 @@ public class ContentController(IContentManager contentOrchestrationService)
             updatedContent.Patch(original: originalEntity);
             return Ok(value: await contentOrchestrationService.UpdateContentAsync(updatedContent: originalEntity));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -187,16 +225,22 @@ public class ContentController(IContentManager contentOrchestrationService)
             await contentOrchestrationService.DeleteAsync(contentId: key);
             return NoContent();
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }

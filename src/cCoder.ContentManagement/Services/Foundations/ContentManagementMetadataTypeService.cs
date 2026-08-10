@@ -16,7 +16,6 @@ internal sealed partial class ContentManagementMetadataTypeService : IContentMan
     public IEnumerable<MetadataContainerSet> GetKnownMetadata() =>
         TryCatch<IEnumerable<MetadataContainerSet>>(operation: () =>
     {
-        ValidateKnownMetadataOnGet(inputs: []);
 
         return new MetadataContainerSet[2]
         {

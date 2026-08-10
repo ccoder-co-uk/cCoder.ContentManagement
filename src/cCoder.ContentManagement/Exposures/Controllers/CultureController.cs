@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
@@ -22,11 +23,13 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class CultureController : ODataController
 {
+    private readonly ILoggingBroker loggingBroker;
     private readonly ICultureManager service;
 
-    public CultureController(ICultureManager service, ILogger<CultureController> log)
+    public CultureController(ICultureManager service, ILoggingBroker loggingBroker)
     {
         this.service = service;
+        this.loggingBroker = loggingBroker;
     }
 
     [HttpGet]
@@ -37,16 +40,22 @@ public class CultureController : ODataController
             return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
             .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Culture)) : typeof(Culture).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -60,16 +69,22 @@ public class CultureController : ODataController
         {
             return Ok(value: service.GetAllCulture());
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -88,16 +103,22 @@ public class CultureController : ODataController
                 ? NotFound()
                 : Ok(value: result);
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -115,16 +136,22 @@ public class CultureController : ODataController
 
             return StatusCode(statusCode: StatusCodes.Status201Created, value: CreateResponseCulture(newCulture: await service.AddCultureAsync(newCulture: newCulture)));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -142,16 +169,22 @@ public class CultureController : ODataController
 
             return Ok(value: CreateResponseCulture(newCulture: await service.UpdateCultureAsync(updatedCulture: updatedCulture)));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -172,16 +205,22 @@ public class CultureController : ODataController
             updatedCulture.Patch(original: originalEntity);
             return Ok(value: CreateResponseCulture(newCulture: await service.UpdateCultureAsync(updatedCulture: originalEntity)));
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
@@ -194,16 +233,22 @@ public class CultureController : ODataController
             await service.DeleteAsync(cultureId: key);
             return NoContent();
         }
-        catch (ContentManagementValidationException)
+        catch (ContentManagementValidationException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return BadRequest();
         }
-        catch (ContentManagementSecurityException)
+        catch (ContentManagementSecurityException exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status403Forbidden);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
             return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
         }
     }

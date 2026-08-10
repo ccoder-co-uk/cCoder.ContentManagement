@@ -14,7 +14,6 @@ internal sealed partial class CurrentAppProcessingService(
     public App ResolveCurrentApp() =>
         TryCatch<App>(operation: () =>
     {
-        ValidateResolveCurrentApp(inputs: []);
         string text = httpContext?.Request.Path.Value ?? string.Empty;
 
         if (text.Contains(value: "/webdav", comparisonType: StringComparison.OrdinalIgnoreCase) && text.Contains(value: "Core/App(", comparisonType: StringComparison.OrdinalIgnoreCase))

@@ -16,6 +16,7 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Brokers.ServiceProviders;
 using Moq;
@@ -54,6 +55,7 @@ public partial class TemplateRenderProcessingServiceTests
             workflowExecutionBroker: new WorkflowExecutionBroker(
                 workflowExecutionDependency:
                     new WorkflowExecutionDependency()),
+            loggingBroker: Mock.Of<ILoggingBroker>(),
             config: config);
     }
 
