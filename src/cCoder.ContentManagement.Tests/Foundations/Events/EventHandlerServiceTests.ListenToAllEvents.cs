@@ -6,7 +6,6 @@ using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Exposures.EventHandlers;
-using cCoder.ContentManagement.Models;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -31,6 +30,11 @@ public partial class EventHandlerServiceTests
 
         // Then
         eventHubBrokerMock.VerifyAll();
+
+        Assert.DoesNotContain(
+            collection: eventHubBrokerMock.Invocations,
+            filter: invocation => invocation.Arguments.Count > 0
+                && invocation.Arguments[0] as string == "uncached_page_render");
     }
 
     [Fact]
@@ -40,16 +44,6 @@ public partial class EventHandlerServiceTests
         const int appId = 23;
 
         SetupAllEventRegistrations();
-
-        eventHubBrokerMock
-            .Setup(expression: broker => broker.ListenToEvent<
-                UncachedPageRenderEvent,
-                IUncachedPageRenderEventHandler>(
-                    eventName: "uncached_page_render",
-                    handler: It.IsAny<Func<
-                        IUncachedPageRenderEventHandler,
-                        UncachedPageRenderEvent,
-                        ValueTask>>()));
 
         Func<IPageRenderCacheEventHandlers, PackageImportEvent, ValueTask> registeredHandler = null;
 
@@ -86,9 +80,6 @@ public partial class EventHandlerServiceTests
         // Then
         handlers.VerifyAll();
 
-        handlers.Verify(
-            expression: service => service.RebuildAppAsync(appId: It.IsAny<int>()),
-            times: Times.Never());
     }
 
     private void SetupAppCoordinationEventRegistrations(string eventName)
@@ -147,8 +138,7 @@ handler: It.IsAny<Func<IAppPageComponentCoordinationService, App, ValueTask>>())
 
     }
 
-    private void SetupHostedEventRegistrations()
-    {
+    private void SetupHostedEventRegistrations() =>
         eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
             PackageImportEvent,
             IPageRenderCacheEventHandlers>(
@@ -157,16 +147,6 @@ handler: It.IsAny<Func<IAppPageComponentCoordinationService, App, ValueTask>>())
                     IPageRenderCacheEventHandlers,
                     PackageImportEvent,
                     ValueTask>>()));
-
-        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
-            UncachedPageRenderEvent,
-            IUncachedPageRenderEventHandler>(
-                eventName: "uncached_page_render",
-                handler: It.IsAny<Func<
-                    IUncachedPageRenderEventHandler,
-                    UncachedPageRenderEvent,
-                    ValueTask>>()));
-    }
 
     private void SetupPageStructureEventRegistration(string eventName) =>
         eventHubBrokerMock

@@ -71,7 +71,15 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
                 using IServiceScope serviceScope = serviceScopeFactory.CreateScope();
                 ICommonObjectBroker requiredService = serviceScope.ServiceProvider.GetRequiredService<ICommonObjectBroker>();
                 IJsonBroker jsonBroker = serviceScope.ServiceProvider.GetRequiredService<IJsonBroker>();
-                CommonObject[] latestCommonObjectsPaged = requiredService.GetLatestCommonObjectsPaged();
+                CommonObject[] latestCommonObjectsPaged = requiredService
+                    .GetLatestCommonObjectsPaged()
+                    .OrderByDescending(keySelector: commonObject => commonObject.Version)
+                    .ThenByDescending(keySelector: commonObject => commonObject.Id)
+                    .GroupBy(
+                        keySelector: GetEffectiveCacheIdentity,
+                        comparer: StringComparer.OrdinalIgnoreCase)
+                    .Select(selector: versions => versions.First())
+                    .ToArray();
 
                 CommonObject[] array = latestCommonObjectsPaged
                     .Where(predicate: commonObject => commonObject.Type == "ContentManagement/Component")
@@ -221,6 +229,11 @@ internal class CommonObjectCacheDependency : ICommonObjectCache, IDisposable
             Value = item
         });
     }
+
+    private static string GetEffectiveCacheIdentity(CommonObject commonObject) =>
+        commonObject.Type == "ContentManagement/Resource"
+            ? $"{commonObject.Type}|{commonObject.Key}|{commonObject.Name}|{commonObject.Culture}"
+            : $"{commonObject.Type}|{commonObject.Name}";
 
     private void Dispose(bool disposing)
     {

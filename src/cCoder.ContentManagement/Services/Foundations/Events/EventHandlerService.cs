@@ -36,7 +36,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
                 parameterName: "eventHubBroker");
 
             ListenToPackageImportCompleteEvents();
-            ListenToUncachedPageRenderEvents();
         });
 
     public void ListenToFinalAppDeleteEvent() =>
@@ -84,7 +83,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IAppSupportingResourcesCoordinationService service, App app) => service.HandleAppUpdateAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IAppRenderableCoordinationService service, App app) => service.HandleAppUpdateAsync(app: app));
         eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IAppPageComponentCoordinationService service, App app) => service.HandleAppUpdateAsync(app: app));
-        eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IPageRenderCacheEventHandlers service, App app) => service.RebuildAppAsync(app: app));
+        eventHubBroker.ListenToEvent(eventName: "app_update", handler: (IPageRenderCacheEventHandlers service, App app) => service.InvalidateAppAsync(app: app));
     }
 
     private void ListenToAppDeleteEvents()
@@ -100,7 +99,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "page_add", handler: (IPageCoordinationService service, Page page) => service.HandlePageAddAsync(page: page));
 
         eventHubBroker.ListenToEvent(eventName: "page_add", handler: (IPageStructureCoordinationService service, Page page) => service.HandlePageAddAsync(page: page));
-        eventHubBroker.ListenToEvent(eventName: "page_add", handler: (IPageRenderCacheEventHandlers service, Page page) => service.RebuildPageAsync(page: page));
+        eventHubBroker.ListenToEvent(eventName: "page_add", handler: (IPageRenderCacheEventHandlers service, Page page) => service.InvalidatePageAsync(page: page));
     }
 
     private void ListenToPageUpdateEvents()
@@ -108,7 +107,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "page_update", handler: (IPageCoordinationService service, Page page) => service.HandlePageUpdateAsync(page: page));
 
         eventHubBroker.ListenToEvent(eventName: "page_update", handler: (IPageStructureCoordinationService service, Page page) => service.HandlePageUpdateAsync(page: page));
-        eventHubBroker.ListenToEvent(eventName: "page_update", handler: (IPageRenderCacheEventHandlers service, Page page) => service.RebuildPageAsync(page: page));
+        eventHubBroker.ListenToEvent(eventName: "page_update", handler: (IPageRenderCacheEventHandlers service, Page page) => service.InvalidatePageAsync(page: page));
     }
 
     private void ListenToPageDeleteEvents()
@@ -130,26 +129,19 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
 
         foreach (string eventName in new[] { "content_add", "content_update", "content_delete" })
         {
-            eventHubBroker.ListenToEvent(eventName: eventName, handler: (IPageRenderCacheEventHandlers service, Content content) => service.RebuildPageAsync(content: content));
+            eventHubBroker.ListenToEvent(eventName: eventName, handler: (IPageRenderCacheEventHandlers service, Content content) => service.InvalidatePageAsync(content: content));
         }
 
         foreach (string eventName in new[] { "page_info_add", "page_info_update", "page_info_delete" })
         {
-            eventHubBroker.ListenToEvent(eventName: eventName, handler: (IPageRenderCacheEventHandlers service, PageInfo pageInfo) => service.RebuildPageAsync(pageInfo: pageInfo));
+            eventHubBroker.ListenToEvent(eventName: eventName, handler: (IPageRenderCacheEventHandlers service, PageInfo pageInfo) => service.InvalidatePageAsync(pageInfo: pageInfo));
         }
 
         foreach (string eventName in new[] { "common_object_add", "common_object_update", "common_object_delete" })
         {
-            eventHubBroker.ListenToEvent(eventName: eventName, handler: (IPageRenderCacheEventHandlers service, CommonObject commonObject) => service.RebuildCommonCacheConsumersAsync(commonObject: commonObject));
+            eventHubBroker.ListenToEvent(eventName: eventName, handler: (IPageRenderCacheEventHandlers service, CommonObject commonObject) => service.InvalidateCommonCacheConsumersAsync(commonObject: commonObject));
         }
     }
-
-    private void ListenToUncachedPageRenderEvents() =>
-        eventHubBroker.ListenToEvent(
-            eventName: "uncached_page_render",
-            handler: (IUncachedPageRenderEventHandler service,
-                UncachedPageRenderEvent pageRenderEvent) =>
-                service.CachePageAsync(pageRenderEvent: pageRenderEvent));
 
     private void ListenToAppOwnedRenderEvents<T>(string[] eventNames)
     {
@@ -159,12 +151,12 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
                 eventName: eventName,
                 handler: static (service, item) => item switch
                 {
-                    AppCulture appCulture => service.RebuildAppAsync(appCulture: appCulture),
-                    Layout layout => service.RebuildAppAsync(layout: layout),
-                    Template template => service.RebuildAppAsync(template: template),
-                    Component component => service.RebuildAppAsync(component: component),
-                    Resource resource => service.RebuildAppAsync(resource: resource),
-                    Script script => service.RebuildAppAsync(script: script),
+                    AppCulture appCulture => service.InvalidateAppAsync(appCulture: appCulture),
+                    Layout layout => service.InvalidateAppAsync(layout: layout),
+                    Template template => service.InvalidateAppAsync(template: template),
+                    Component component => service.InvalidateAppAsync(component: component),
+                    Resource resource => service.InvalidateAppAsync(resource: resource),
+                    Script script => service.InvalidateAppAsync(script: script),
                     _ => ValueTask.CompletedTask
                 });
         }

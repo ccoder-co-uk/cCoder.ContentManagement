@@ -3,7 +3,6 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Exposures.EventHandlers;
-using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
@@ -15,50 +14,25 @@ namespace cCoder.ContentManagement.Tests.Exposures.EventHandlers;
 public partial class PageRenderCacheEventHandlersTests
 {
     [Fact]
-    public async Task ShouldCacheUncachedPageRenderAsync()
-    {
-        // Given
-        Mock<IPageRenderCacheAggregationService> aggregationService = new();
-
-        UncachedPageRenderEvent pageRenderEvent = new()
-        {
-            PageId = 17
-        };
-
-        aggregationService.Setup(expression: item =>
-            item.CachePageAsync(pageId: pageRenderEvent.PageId))
-            .ReturnsAsync(value: []);
-
-        UncachedPageRenderEventHandler handlers = new(
-            pageRenderCacheAggregationService: aggregationService.Object);
-
-        // When
-        await handlers.CachePageAsync(pageRenderEvent: pageRenderEvent);
-
-        // Then
-        aggregationService.VerifyAll();
-    }
-
-    [Fact]
-    public async Task ShouldRebuildPageOnPageChangeAsync()
+    public async Task ShouldInvalidatePageOnPageChangeAsync()
     {
         // Given
         Mock<IPageRenderCacheAggregationService> aggregationService = new();
         Page page = new() { Id = 17 };
 
         aggregationService.Setup(expression: item =>
-            item.RebuildPageAsync(pageId: page.Id, fromEvent: true))
-            .ReturnsAsync(value: []);
+            item.DeletePageAsync(pageId: page.Id, fromEvent: true))
+            .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheEventHandlers handlers = CreateHandlers(
             aggregationService: aggregationService.Object);
 
         // When
-        await handlers.RebuildPageAsync(page: page);
+        await handlers.InvalidatePageAsync(page: page);
 
         // Then
         aggregationService.Verify(
-            expression: item => item.RebuildPageAsync(
+            expression: item => item.DeletePageAsync(
                 pageId: page.Id,
                 fromEvent: true),
             times: Times.Once());
@@ -113,91 +87,91 @@ public partial class PageRenderCacheEventHandlersTests
     }
 
     [Fact]
-    public async Task ShouldRebuildOwningAppOnComponentChangeAsync()
+    public async Task ShouldInvalidateOwningAppOnComponentChangeAsync()
     {
         // Given
         Mock<IPageRenderCacheAggregationService> aggregationService = new();
         Component component = new() { AppId = 23 };
 
         aggregationService.Setup(expression: item =>
-            item.RebuildAppAsync(appId: component.AppId, fromEvent: true))
-            .ReturnsAsync(value: []);
+            item.DeleteAppAsync(appId: component.AppId, fromEvent: true))
+            .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheEventHandlers handlers = CreateHandlers(
             aggregationService: aggregationService.Object);
 
         // When
-        await handlers.RebuildAppAsync(component: component);
+        await handlers.InvalidateAppAsync(component: component);
 
         // Then
         aggregationService.VerifyAll();
     }
 
     [Fact]
-    public async Task ShouldRebuildOwningAppForEveryAppScopedRenderDependencyAsync()
+    public async Task ShouldInvalidateOwningAppForEveryAppScopedRenderDependencyAsync()
     {
         // Given
         const int appId = 23;
         Mock<IPageRenderCacheAggregationService> aggregationService = new();
 
         aggregationService.Setup(expression: item =>
-            item.RebuildAppAsync(appId: appId, fromEvent: true))
-            .ReturnsAsync(value: []);
+            item.DeleteAppAsync(appId: appId, fromEvent: true))
+            .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheEventHandlers handlers = CreateHandlers(
             aggregationService: aggregationService.Object);
 
         // When
-        await handlers.RebuildAppAsync(
+        await handlers.InvalidateAppAsync(
             appCulture: new AppCulture { AppId = appId });
 
-        await handlers.RebuildAppAsync(
+        await handlers.InvalidateAppAsync(
             layout: new Layout { AppId = appId });
 
-        await handlers.RebuildAppAsync(
+        await handlers.InvalidateAppAsync(
             template: new Template { AppId = appId });
 
-        await handlers.RebuildAppAsync(
+        await handlers.InvalidateAppAsync(
             component: new Component { AppId = appId });
 
-        await handlers.RebuildAppAsync(
+        await handlers.InvalidateAppAsync(
             resource: new Resource { AppId = appId });
 
-        await handlers.RebuildAppAsync(
+        await handlers.InvalidateAppAsync(
             script: new Script { AppId = appId });
 
         // Then
         aggregationService.Verify(
-            expression: item => item.RebuildAppAsync(
+            expression: item => item.DeleteAppAsync(
                 appId: appId,
                 fromEvent: true),
             times: Times.Exactly(callCount: 6));
     }
 
     [Fact]
-    public async Task ShouldRebuildOwningPageForEveryPageScopedRenderDependencyAsync()
+    public async Task ShouldInvalidateOwningPageForEveryPageScopedRenderDependencyAsync()
     {
         // Given
         const int pageId = 17;
         Mock<IPageRenderCacheAggregationService> aggregationService = new();
 
         aggregationService.Setup(expression: item =>
-            item.RebuildPageAsync(pageId: pageId, fromEvent: true))
-            .ReturnsAsync(value: []);
+            item.DeletePageAsync(pageId: pageId, fromEvent: true))
+            .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheEventHandlers handlers = CreateHandlers(
             aggregationService: aggregationService.Object);
 
         // When
-        await handlers.RebuildPageAsync(
+        await handlers.InvalidatePageAsync(
             content: new Content { PageId = pageId });
 
-        await handlers.RebuildPageAsync(
+        await handlers.InvalidatePageAsync(
             pageInfo: new PageInfo { PageId = pageId });
 
         // Then
         aggregationService.Verify(
-            expression: item => item.RebuildPageAsync(
+            expression: item => item.DeletePageAsync(
                 pageId: pageId,
                 fromEvent: true),
             times: Times.Exactly(callCount: 2));
@@ -211,16 +185,16 @@ public partial class PageRenderCacheEventHandlersTests
         CommonObject commonObject = new() { Type = "Component" };
 
         aggregationService.Setup(expression: item =>
-            item.RebuildCommonObjectConsumersAsync(
+            item.InvalidateCommonObjectConsumersAsync(
                 commonObjectType: commonObject.Type,
                 fromEvent: true))
-            .ReturnsAsync(value: []);
+            .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheEventHandlers handlers = CreateHandlers(
             aggregationService: aggregationService.Object);
 
         // When
-        await handlers.RebuildCommonCacheConsumersAsync(
+        await handlers.InvalidateCommonCacheConsumersAsync(
             commonObject: commonObject);
 
         // Then

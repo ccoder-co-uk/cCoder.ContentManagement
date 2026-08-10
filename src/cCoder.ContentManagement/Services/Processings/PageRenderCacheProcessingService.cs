@@ -33,6 +33,24 @@ internal sealed partial class PageRenderCacheProcessingService(
         return service.UpdatePageRenderCacheAsync(updatedPageRenderCache: updatedPageRenderCache);
     }, isValueTask: true);
 
+    public ValueTask<PageRenderCache> StorePageRenderCacheAsync(
+        PageRenderCache pageRenderCache) =>
+        TryCatch<PageRenderCache>(operation: () =>
+    {
+        ArgumentNullException.ThrowIfNull(argument: pageRenderCache);
+        NormalizeKey(cache: pageRenderCache);
+        ValidatePageRenderCache(cache: pageRenderCache);
+
+        PageRenderCache existing = service.GetPageRenderCache(
+            pageRenderCacheId: pageRenderCache.Id);
+
+        return existing is null
+            ? service.AddPageRenderCacheAsync(
+                newPageRenderCache: pageRenderCache)
+            : service.UpdatePageRenderCacheAsync(
+                updatedPageRenderCache: pageRenderCache);
+    }, isValueTask: true);
+
     public ValueTask DeletePageRenderCacheAsync(string pageRenderCacheId) =>
         TryCatch(operation: () =>
     {

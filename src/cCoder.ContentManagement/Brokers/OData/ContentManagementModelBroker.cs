@@ -99,18 +99,6 @@ internal class ContentManagementModelBroker
             .Collection.Function(name: "Render")
             .Returns<PageRenderResult>();
 
-        ActionConfiguration rebuildByAppId = builder.EntityType<PageRenderCache>()
-            .Collection.Action(name: "RebuildApp");
-
-        rebuildByAppId.Parameter<int>(name: "appId");
-        rebuildByAppId.ReturnsCollectionFromEntitySet<PageRenderCache>(entitySetName: "PageRenderCache");
-
-        ActionConfiguration rebuildByPageId = builder.EntityType<PageRenderCache>()
-            .Collection.Action(name: "RebuildPage");
-
-        rebuildByPageId.Parameter<int>(name: "pageId");
-        rebuildByPageId.ReturnsCollectionFromEntitySet<PageRenderCache>(entitySetName: "PageRenderCache");
-
         builder.EntityType<Resource>()
             .Collection.Function(name: "GetAll")
             .ReturnsCollectionFromEntitySet<Resource>(entitySetName: "Resource");

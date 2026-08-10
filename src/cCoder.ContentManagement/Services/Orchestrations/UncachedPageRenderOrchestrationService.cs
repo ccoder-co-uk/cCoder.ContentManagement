@@ -6,13 +6,16 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
+using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class UncachedPageRenderOrchestrationService(
     IPageProcessingService pageProcessingService,
     IPageRenderProcessingService pageRenderProcessingService,
-    IUncachedPageRenderEventProcessingService eventProcessingService)
+    IPageRenderCacheProcessingService pageRenderCacheProcessingService)
         : IUncachedPageRenderOrchestrationService
 {
     public ValueTask<HttpPageRenderOperation>
@@ -70,15 +73,43 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
 
         if (!context.Edit)
         {
-            await eventProcessingService.RaiseUncachedPageRenderEventAsync(
-                pageRenderEvent: new UncachedPageRenderEvent
-                {
-                    PageId = page.Id
-                });
+            await pageRenderCacheProcessingService.StorePageRenderCacheAsync(
+                pageRenderCache: CreatePageRenderCache(
+                    response: operation.Response));
         }
 
         return operation;
 
     }, isValueTask: true);
+
+    private static PageRenderCache CreatePageRenderCache(
+        PageRenderResponse response)
+    {
+        PageRenderResult result = response.Page;
+
+        string fingerprintSource = JsonConvert.SerializeObject(
+            value: result,
+            formatting: Formatting.None);
+
+        return new PageRenderCache
+        {
+            AppId = result.AppId,
+            PageId = result.PageId,
+            Culture = response.Culture,
+            Theme = response.Theme,
+            ParentId = result.ParentId,
+            Path = result.Path,
+            Title = result.Title,
+            Description = result.Description,
+            Keywords = result.Keywords,
+            ShowOnMenus = result.ShowOnMenus,
+            Header = result.HeaderHtml,
+            Body = result.BodyHtml,
+            SourceFingerprint = Convert.ToHexString(
+                inArray: SHA256.HashData(
+                    source: Encoding.UTF8.GetBytes(s: fingerprintSource))),
+            RenderedOn = DateTimeOffset.UtcNow
+        };
+    }
 
 }

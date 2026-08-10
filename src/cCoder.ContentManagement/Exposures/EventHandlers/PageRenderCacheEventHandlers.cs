@@ -12,8 +12,8 @@ internal sealed class PageRenderCacheEventHandlers(
     IPageRenderCacheAggregationService pageRenderCacheAggregationService)
         : IPageRenderCacheEventHandlers
 {
-    public async ValueTask RebuildPageAsync(Page page) =>
-        _ = await pageRenderCacheAggregationService.RebuildPageAsync(
+    public ValueTask InvalidatePageAsync(Page page) =>
+        pageRenderCacheAggregationService.DeletePageAsync(
             pageId: page.Id,
             fromEvent: true);
 
@@ -22,11 +22,8 @@ internal sealed class PageRenderCacheEventHandlers(
             pageId: deletedPage.Id,
             fromEvent: true);
 
-    public async ValueTask RebuildAppAsync(App app) =>
-        _ = await ExecuteRebuildAppAsync(appId: app.Id);
-
-    public async ValueTask RebuildAppAsync(int appId) =>
-        _ = await ExecuteRebuildAppAsync(appId: appId);
+    public ValueTask InvalidateAppAsync(App app) =>
+        InvalidateAppAsync(appId: app.Id);
 
     public ValueTask InvalidateAppAsync(int appId) =>
         pageRenderCacheAggregationService.DeleteAppAsync(
@@ -42,41 +39,36 @@ internal sealed class PageRenderCacheEventHandlers(
             appId: deletedApp.Id,
             fromEvent: true);
 
-    public async ValueTask RebuildAppAsync(AppCulture appCulture) =>
-        _ = await ExecuteRebuildAppAsync(appId: appCulture.AppId);
+    public ValueTask InvalidateAppAsync(AppCulture appCulture) =>
+        InvalidateAppAsync(appId: appCulture.AppId);
 
-    public async ValueTask RebuildAppAsync(Layout layout) =>
-        _ = await ExecuteRebuildAppAsync(appId: layout.AppId);
+    public ValueTask InvalidateAppAsync(Layout layout) =>
+        InvalidateAppAsync(appId: layout.AppId);
 
-    public async ValueTask RebuildAppAsync(Template template) =>
-        _ = await ExecuteRebuildAppAsync(appId: template.AppId);
+    public ValueTask InvalidateAppAsync(Template template) =>
+        InvalidateAppAsync(appId: template.AppId);
 
-    public async ValueTask RebuildAppAsync(Component component) =>
-        _ = await ExecuteRebuildAppAsync(appId: component.AppId);
+    public ValueTask InvalidateAppAsync(Component component) =>
+        InvalidateAppAsync(appId: component.AppId);
 
-    public async ValueTask RebuildAppAsync(Resource resource) =>
-        _ = await ExecuteRebuildAppAsync(appId: resource.AppId);
+    public ValueTask InvalidateAppAsync(Resource resource) =>
+        InvalidateAppAsync(appId: resource.AppId);
 
-    public async ValueTask RebuildAppAsync(Script script) =>
-        _ = await ExecuteRebuildAppAsync(appId: script.AppId);
+    public ValueTask InvalidateAppAsync(Script script) =>
+        InvalidateAppAsync(appId: script.AppId);
 
-    public async ValueTask RebuildPageAsync(Content content) =>
-        _ = await pageRenderCacheAggregationService.RebuildPageAsync(
+    public ValueTask InvalidatePageAsync(Content content) =>
+        pageRenderCacheAggregationService.DeletePageAsync(
             pageId: content.PageId,
             fromEvent: true);
 
-    public async ValueTask RebuildPageAsync(PageInfo pageInfo) =>
-        _ = await pageRenderCacheAggregationService.RebuildPageAsync(
+    public ValueTask InvalidatePageAsync(PageInfo pageInfo) =>
+        pageRenderCacheAggregationService.DeletePageAsync(
             pageId: pageInfo.PageId,
             fromEvent: true);
 
-    public async ValueTask RebuildCommonCacheConsumersAsync(CommonObject commonObject) =>
-        _ = await pageRenderCacheAggregationService.RebuildCommonObjectConsumersAsync(
+    public ValueTask InvalidateCommonCacheConsumersAsync(CommonObject commonObject) =>
+        pageRenderCacheAggregationService.InvalidateCommonObjectConsumersAsync(
             commonObjectType: commonObject.Type,
-            fromEvent: true);
-
-    private ValueTask<PageRenderCache[]> ExecuteRebuildAppAsync(int appId) =>
-        pageRenderCacheAggregationService.RebuildAppAsync(
-            appId: appId,
             fromEvent: true);
 }
