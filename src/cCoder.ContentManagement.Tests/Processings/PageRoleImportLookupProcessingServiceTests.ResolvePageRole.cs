@@ -59,7 +59,7 @@ public partial class PageRoleImportLookupProcessingServiceTests
         const int appId = 42;
         const string path = "";
         const string roleName = "Guests";
-        Page page = CreatePage(appId: appId, path: null);
+        Page page = CreatePage(appId: appId, path: path);
         Role role = CreateRole(appId: appId, roleName: roleName);
 
         pageBrokerMock
