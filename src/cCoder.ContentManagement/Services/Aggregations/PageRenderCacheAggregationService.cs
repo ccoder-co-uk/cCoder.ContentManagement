@@ -5,6 +5,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using cCoder.ContentManagement.Dependencies;
+using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
@@ -19,7 +20,8 @@ internal sealed partial class PageRenderCacheAggregationService(
     IPageOrchestrationService pageOrchestrationService,
     IPageRenderOrchestrationService pageRenderOrchestrationService,
     IPageRenderCacheOrchestrationService pageRenderCacheOrchestrationService,
-    PageRenderCacheImportState pageRenderCacheImportState)
+    PageRenderCacheImportState pageRenderCacheImportState,
+    ICommonObjectCache commonObjectCache)
         : IPageRenderCacheAggregationService
 {
     private static readonly HashSet<string> CommonCacheRenderTypes =
@@ -32,6 +34,17 @@ internal sealed partial class PageRenderCacheAggregationService(
             "Script",
             "Scripts"
         };
+
+    public ValueTask RefreshCommonCacheAndInvalidateAppAsync(int appId) =>
+        TryCatch(operation: async () =>
+        {
+            ValidateAppPageRenderCachesOnDelete(inputs: [appId, true]);
+
+            commonObjectCache.Refresh();
+
+            await pageRenderCacheOrchestrationService
+                .DeleteAppPageRenderCachesFromEventAsync(appId: appId);
+        }, isValueTask: true);
 
     public IQueryable<PageRenderCache> GetAllPageRenderCaches() =>
         TryCatch(operation: () =>

@@ -25,10 +25,15 @@ public static partial class WebApplicationExtensions
         .ListenToContentManagementEvents()
         .StartContentManagementFinalAppDeleteEventHandler();
 
-    public static WebApplication StartContentManagementHostedServices(this WebApplication app) =>
-        app.InitialiseContentManagementCaches()
+    public static WebApplication StartContentManagementHostedServices(
+        this WebApplication app)
+    {
+        PopulateMetadataTypeCache(app: app);
+
+        return app.InitialiseContentManagementCaches()
             .ListenToContentManagementEvents()
             .ListenToContentManagementHostedEvents();
+    }
 
     public static WebApplication StartContentManagementFinalAppDeleteEventHandler(
         this WebApplication app)

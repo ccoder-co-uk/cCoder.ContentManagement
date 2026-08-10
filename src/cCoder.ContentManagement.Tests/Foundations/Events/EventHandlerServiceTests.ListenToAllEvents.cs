@@ -69,7 +69,7 @@ public partial class EventHandlerServiceTests
         Mock<IPageRenderCacheEventHandlers> handlers = new();
 
         handlers.Setup(expression: service =>
-            service.InvalidateAppAsync(appId: appId))
+            service.RefreshCommonCacheAndInvalidateAppAsync(appId: appId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
