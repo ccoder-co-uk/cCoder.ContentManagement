@@ -23,6 +23,7 @@ public static partial class WebApplicationExtensions
         ILogger log = null) =>
         app.UseContentManagementExposure(log: log)
         .ListenToContentManagementEvents()
+        .ListenToContentManagementWebCacheEvents()
         .StartContentManagementFinalAppDeleteEventHandler();
 
     public static WebApplication StartContentManagementHostedServices(
@@ -30,8 +31,7 @@ public static partial class WebApplicationExtensions
     {
         PopulateMetadataTypeCache(app: app);
 
-        return app.InitialiseContentManagementCaches()
-            .ListenToContentManagementEvents()
+        return app.ListenToContentManagementEvents()
             .ListenToContentManagementHostedEvents();
     }
 
@@ -188,6 +188,21 @@ typeSetPayloads: app.Services.GetRequiredService<IContentManagementMetadataTypeS
             .GetServices<IContentManagementEventHandlers>())
         {
             service.ListenToHostedEvents();
+        }
+
+        return app;
+    }
+
+    private static WebApplication ListenToContentManagementWebCacheEvents(
+        this WebApplication app)
+    {
+        using IServiceScope serviceScope = app.Services.CreateScope();
+
+        foreach (IContentManagementEventHandlers service in serviceScope
+            .ServiceProvider
+            .GetServices<IContentManagementEventHandlers>())
+        {
+            service.ListenToWebCacheEvents();
         }
 
         return app;

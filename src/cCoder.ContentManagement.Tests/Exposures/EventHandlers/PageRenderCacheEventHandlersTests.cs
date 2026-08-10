@@ -201,27 +201,6 @@ public partial class PageRenderCacheEventHandlersTests
         aggregationService.VerifyAll();
     }
 
-    [Fact]
-    public async Task ShouldRefreshCommonCacheBeforeInvalidatingImportedAppAsync()
-    {
-        // Given
-        const int appId = 23;
-        Mock<IPageRenderCacheAggregationService> aggregationService = new();
-
-        aggregationService.Setup(expression: item =>
-            item.RefreshCommonCacheAndInvalidateAppAsync(appId: appId))
-            .Returns(value: ValueTask.CompletedTask);
-
-        PageRenderCacheEventHandlers handlers = CreateHandlers(
-            aggregationService: aggregationService.Object);
-
-        // When
-        await handlers.RefreshCommonCacheAndInvalidateAppAsync(appId: appId);
-
-        // Then
-        aggregationService.VerifyAll();
-    }
-
     private static PageRenderCacheEventHandlers CreateHandlers(
         IPageRenderCacheAggregationService aggregationService) =>
         new(
