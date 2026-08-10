@@ -32,6 +32,8 @@ internal interface IMetadataReaderBroker
 
 internal interface ICommonObjectReaderBroker
 {
+    void EnsureAvailable();
+
     T[] GetAll<T>();
 
     T Get<T>(string key);

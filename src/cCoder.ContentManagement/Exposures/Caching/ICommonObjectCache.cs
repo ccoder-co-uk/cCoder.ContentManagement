@@ -10,6 +10,8 @@ public interface ICommonObjectCache
 {
     void Refresh();
 
+    void EnsureAvailable();
+
     T[] GetAll<T>();
 
     T Get<T>(string key);
