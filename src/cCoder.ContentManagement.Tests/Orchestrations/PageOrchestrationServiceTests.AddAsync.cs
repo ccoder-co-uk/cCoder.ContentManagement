@@ -18,6 +18,8 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
+#pragma warning disable STXFORMAT009
+
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class PageOrchestrationServiceTests
@@ -33,7 +35,8 @@ public partial class PageOrchestrationServiceTests
 
         layoutProcessingServiceMock
             .Setup(expression: x => x.GetAllLayout(ignoreFilters: true))
-            .Returns(value: new[] { CreateLayoutFor(page: entity) }.AsQueryable());
+            .Returns(value: new[] { CreateLayoutFor(page: entity) }
+                .AsQueryable());
 
         pageProcessingServiceMock
             .Setup(expression: x => x.AddPageAsync(newPage: entity))
@@ -47,8 +50,7 @@ public partial class PageOrchestrationServiceTests
         Page result = await orchestrationService.AddPageAsync(newPage: entity);
 
         // Then
-        result.Should()
-            .BeSameAs(expected: entity);
+        Assert.Same(expected: entity, actual: result);
 
         layoutProcessingServiceMock.Verify(expression: x => x.GetAllLayout(ignoreFilters: true), times: Times.Once);
         pageProcessingServiceMock.Verify(expression: x => x.AddPageAsync(newPage: entity), times: Times.Once);
