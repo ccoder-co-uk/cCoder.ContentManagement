@@ -34,8 +34,9 @@ public partial class ContentManagementMigrationAggregationServiceTests
             .Setup(expression: service => service.RaisePackagePageRolesImportEventAsync(
                 appId: appId,
                 package: It.Is<Package>(match: package =>
-                    package.Items.Count == 1
-                    && package.Items.Single().Type == "ContentManagement/PageRole")))
+                    package.Items.Count == 2
+                    && package.Items.Any(predicate: item => item.Type == "ContentManagement/Page")
+                    && package.Items.Any(predicate: item => item.Type == "ContentManagement/PageRole"))))
             .Returns(value: ValueTask.CompletedTask);
 
         packageServiceMock
