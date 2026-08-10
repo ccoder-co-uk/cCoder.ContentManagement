@@ -18,7 +18,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-#pragma warning disable STXFORMAT005, STXFORMAT008, STXFORMAT009
+#pragma warning disable STXFORMAT008, STXFORMAT009
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
