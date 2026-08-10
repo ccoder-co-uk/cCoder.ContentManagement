@@ -80,7 +80,7 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
         pageOrchestrationServiceMock
             .Setup(expression: service => service.ImportPagesAsync(appId: It.IsAny<int>(), items: It.IsAny<cCoder.Data.Models.CMS.Page[]>()))
             .Callback<int, cCoder.Data.Models.CMS.Page[]>(action: (_, items) => importedPages = items)
-            .Returns(value: ValueTask.CompletedTask);
+            .ReturnsAsync(value: Array.Empty<cCoder.Data.Models.CMS.Page>());
 
         ContentManagementMigrationAggregationService service = CreateService(
             pageOrchestrationService: pageOrchestrationServiceMock.Object);
@@ -140,9 +140,11 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
         IComponentOrchestrationService componentOrchestrationService = null,
         ILayoutOrchestrationService layoutOrchestrationService = null,
         IPageOrchestrationService pageOrchestrationService = null,
+        IPageImportOrchestrationService pageImportOrchestrationService = null,
         IResourceOrchestrationService resourceOrchestrationService = null,
         ITemplateOrchestrationService templateOrchestrationService = null,
-        IScriptOrchestrationService scriptOrchestrationService = null)
+        IScriptOrchestrationService scriptOrchestrationService = null,
+        IPackageOrchestrationService packageOrchestrationService = null)
         =>
         new(
 migrationSupportOrchestrationService: new MigrationSupportOrchestrationService(
@@ -152,9 +154,10 @@ packageExportProcessingService: packageExportProcessingService ?? Mock.Of<IPacka
 componentOrchestrationService: componentOrchestrationService ?? Mock.Of<IComponentOrchestrationService>(),
 layoutOrchestrationService: layoutOrchestrationService ?? Mock.Of<ILayoutOrchestrationService>(),
 pageOrchestrationService: pageOrchestrationService ?? Mock.Of<IPageOrchestrationService>(),
+pageImportOrchestrationService: pageImportOrchestrationService ?? Mock.Of<IPageImportOrchestrationService>(),
 resourceOrchestrationService: resourceOrchestrationService ?? Mock.Of<IResourceOrchestrationService>(),
 templateOrchestrationService: templateOrchestrationService ?? Mock.Of<ITemplateOrchestrationService>(),
 scriptOrchestrationService: scriptOrchestrationService ?? Mock.Of<IScriptOrchestrationService>(),
 pageRenderCacheImportState: new cCoder.ContentManagement.Models.PageRenderCacheImportState(),
-packageOrchestrationService: Mock.Of<IPackageOrchestrationService>());
+packageOrchestrationService: packageOrchestrationService ?? Mock.Of<IPackageOrchestrationService>());
 }

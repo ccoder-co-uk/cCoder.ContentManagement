@@ -77,10 +77,12 @@ internal sealed partial class PageAuthorizationService(
         PageAuthorizationResult authorization)
     {
         pageRenderContext.PageId = authorization.PageId;
+        pageRenderContext.Layout = authorization.Layout;
         pageRenderContext.AppId = authorization.AppId;
         pageRenderContext.TenantId = authorization.TenantId;
         pageRenderContext.Domain = authorization.Domain;
         pageRenderContext.AppConfigJson = authorization.AppConfigJson;
+        pageRenderContext.AppDefaultTheme = authorization.DefaultTheme;
 
         if (string.IsNullOrWhiteSpace(value: pageRenderContext.Culture))
         {

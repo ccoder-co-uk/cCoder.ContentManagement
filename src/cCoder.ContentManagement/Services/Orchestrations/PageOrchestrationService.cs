@@ -172,8 +172,8 @@ internal partial class PageOrchestrationService(
 
     }, isValueTask: true);
 
-    public ValueTask ImportPagesAsync(int appId, Page[] pages) =>
-        TryCatch(operation: async () =>
+    public ValueTask<Page[]> ImportPagesAsync(int appId, Page[] pages) =>
+        TryCatch<Page[]>(operation: async () =>
     {
         ValidateImportPagesAsync(inputs: [appId, pages]);
         ValidateAppId(appId: appId, parameterName: "appId");
@@ -189,6 +189,8 @@ comparison: (left, right) => left.Path.Split(separator: '/')
         Page[] allPages = processingService.GetAllPage(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
             .ToArray();
+
+        List<Page> importedPages = new();
 
         foreach (Page page in validatedPages)
         {
@@ -208,8 +210,20 @@ comparison: (left, right) => left.Path.Split(separator: '/')
                 existing.Path.Equals(value: page.Path.TrimStart(trimChar: '/'), comparisonType: StringComparison.OrdinalIgnoreCase)
                 && existing.AppId == appId)?.Id ?? 0;
 
-            await processingService.AddOrUpdatePageResult(newPage: [page]);
+            IEnumerable<OperationResult<Page>> results =
+                await processingService.AddOrUpdatePageResult(newPage: [page]);
+
+            OperationResult<Page> result = results.Single();
+
+            if (!result.Success)
+            {
+                throw new InvalidOperationException(message: result.Message);
+            }
+
+            importedPages.Add(item: result.Item);
         }
+
+        return importedPages.ToArray();
 
     }, isValueTask: true);
 

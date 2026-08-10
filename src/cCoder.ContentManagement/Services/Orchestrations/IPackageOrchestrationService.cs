@@ -24,4 +24,5 @@ internal interface IPackageOrchestrationService
     ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage);
 
     ValueTask RaisePackageImportCompleteEventAsync(int appId, Package package);
+    ValueTask RaisePackagePageRolesImportEventAsync(int appId, Package package);
 }

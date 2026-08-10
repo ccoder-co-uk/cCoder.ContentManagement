@@ -11,7 +11,8 @@ namespace cCoder.ContentManagement.Services.Coordinations;
 
 internal partial class PageCoordinationService(
     IPageInfoOrchestrationService pageInfoOrchestrationService,
-    IContentOrchestrationService contentOrchestrationService) : IPageCoordinationService
+    IContentOrchestrationService contentOrchestrationService)
+    : IPageCoordinationService
 {
     public ValueTask HandlePageAddAsync(Page page) =>
         TryCatch(operation: async () =>
@@ -32,7 +33,17 @@ internal partial class PageCoordinationService(
             })
                 .ToArray();
 
-            await pageInfoOrchestrationService.AddOrUpdatePageInfoResult(newPageInfo: pageInfos);
+            foreach (PageInfo pageInfo in pageInfos)
+            {
+                if (pageInfo.Id < 1)
+                {
+                    await pageInfoOrchestrationService.AddPageInfoAsync(newPageInfo: pageInfo);
+                }
+                else
+                {
+                    await pageInfoOrchestrationService.UpdatePageInfoAsync(updatedPageInfo: pageInfo);
+                }
+            }
         }
 
         if (page.Contents != null)
@@ -45,7 +56,17 @@ internal partial class PageCoordinationService(
                 })
                 .ToArray();
 
-            await contentOrchestrationService.AddOrUpdateContentResult(newContent: contents);
+            foreach (Content content in contents)
+            {
+                if (content.Id < 1)
+                {
+                    await contentOrchestrationService.AddContentAsync(newContent: content);
+                }
+                else
+                {
+                    await contentOrchestrationService.UpdateContentAsync(updatedContent: content);
+                }
+            }
         }
 
     }, isValueTask: true);

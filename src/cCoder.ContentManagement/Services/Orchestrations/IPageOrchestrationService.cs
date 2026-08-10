@@ -25,7 +25,7 @@ internal interface IPageOrchestrationService
 
     ValueTask<IEnumerable<OperationResult<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage);
 
-    ValueTask ImportPagesAsync(int appId, Page[] items);
+    ValueTask<Page[]> ImportPagesAsync(int appId, Page[] items);
 
     ValueTask DeleteAllPageAsync(IEnumerable<Page> deletedPage);
 
