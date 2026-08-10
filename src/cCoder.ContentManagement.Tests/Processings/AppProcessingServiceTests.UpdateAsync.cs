@@ -124,4 +124,49 @@ public partial class AppProcessingServiceTests
         appServiceMock.VerifyNoOtherCalls();
     }
 
+    [Fact]
+    public async Task ShouldUpdateOnlyAppRowAndLeavePostedChildrenForEventHandlersAsync()
+    {
+        // Given
+        User admin = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
+        App dbApp = CreateRandomApp();
+        dbApp.Id = 1;
+        dbApp.Cultures = null!;
+        dbApp.Pages = null!;
+        dbApp.Roles = null!;
+        App postedApp = CreateRandomApp();
+        postedApp.Id = dbApp.Id;
+        currentUser = admin;
+
+        authorizationManagerMock
+            .Setup(expression: manager => manager.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()));
+
+        appServiceMock
+            .Setup(expression: service => service.GetApp(appId: dbApp.Id, ignoreFilters: true))
+            .Returns(value: dbApp);
+
+        appServiceMock
+            .Setup(expression: service => service.UpdateAppAsync(updatedApp: dbApp))
+            .ReturnsAsync(value: dbApp);
+
+        // When
+        App result = await appProcessingService
+            .UpdateAppAsync(updatedApp: postedApp);
+
+        // Then
+        result.Should()
+            .BeSameAs(expected: dbApp);
+
+        dbApp.Cultures.Should()
+            .BeNull();
+
+        dbApp.Pages.Should()
+            .BeNull();
+
+        dbApp.Roles.Should()
+            .BeNull();
+
+        roleBrokerMock.VerifyNoOtherCalls();
+        userRoleBrokerMock.VerifyNoOtherCalls();
+    }
 }
