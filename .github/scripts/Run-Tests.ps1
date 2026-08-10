@@ -55,7 +55,7 @@ while (@($testProcesses | Where-Object { -not $_.Process.HasExited }).Count -gt 
             -not $testProcess.Process.HasExited -and
             $testProcess.Stopwatch.Elapsed.TotalSeconds -ge $testProcess.TimeoutSeconds
         ) {
-            Write-Error "Test project '$($testProcess.Project)' timed out after $($testProcess.TimeoutSeconds) seconds (PID $($testProcess.Process.Id))."
+            Write-Warning "Test project '$($testProcess.Project)' timed out after $($testProcess.TimeoutSeconds) seconds (PID $($testProcess.Process.Id))."
             Stop-Process -Id $testProcess.Process.Id -Force -ErrorAction SilentlyContinue
             $timedOutProjects += $testProcess.Project
         }
@@ -70,7 +70,7 @@ foreach ($testProcess in $testProcesses) {
     $testProcess.Process.WaitForExit()
     $testProcess.Stopwatch.Stop()
 
-    Write-Output "Finished '$($testProcess.Project)' as PID $($testProcess.Process.Id) with exit code $($testProcess.Process.ExitCode) after $([Math]::Round($testProcess.Stopwatch.Elapsed.TotalSeconds, 1)) seconds."
+    Write-Host "Finished '$($testProcess.Project)' as PID $($testProcess.Process.Id) with exit code $($testProcess.Process.ExitCode) after $([Math]::Round($testProcess.Stopwatch.Elapsed.TotalSeconds, 1)) seconds."
 
     if ($testProcess.Process.ExitCode -ne 0) {
         $failedProcesses += $testProcess
