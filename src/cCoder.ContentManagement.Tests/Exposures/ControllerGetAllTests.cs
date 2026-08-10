@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Controllers;
 using cCoder.ContentManagement.Services.Aggregations;
@@ -10,7 +11,6 @@ using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using App = cCoder.Data.Models.CMS.App;
@@ -33,7 +33,8 @@ public partial class ControllerGetAllTests
 
         // When
         AppController controller = new(
-            manager: managerMock.Object);
+            manager: managerMock.Object,
+            loggingBroker: Mock.Of<ILoggingBroker>());
 
         // Then
         OkObjectResult result = controller.GetAll(queryOptions: null!)
@@ -57,8 +58,8 @@ public partial class ControllerGetAllTests
 
         // When
         CultureController controller = new(
-service: serviceMock.Object,
-log: Mock.Of<ILogger<CultureController>>());
+            service: serviceMock.Object,
+            loggingBroker: Mock.Of<ILoggingBroker>());
 
         // Then
         OkObjectResult result = controller.GetAll(queryOptions: null!)
@@ -82,7 +83,8 @@ log: Mock.Of<ILogger<CultureController>>());
 
         // When
         PageController controller = new(
-            manager: managerMock.Object);
+            manager: managerMock.Object,
+            loggingBroker: Mock.Of<ILoggingBroker>());
 
         // Then
         OkObjectResult result = controller.Get(queryOptions: null!)
@@ -116,8 +118,8 @@ log: Mock.Of<ILogger<CultureController>>());
 
         // When
         SubmissionController controller = new(
-service: serviceMock.Object,
-log: Mock.Of<ILogger<SubmissionController>>());
+            service: serviceMock.Object,
+            loggingBroker: Mock.Of<ILoggingBroker>());
 
         // Then
         OkObjectResult result = controller.GetAll(queryOptions: null!)

@@ -12,7 +12,6 @@ internal sealed partial class PageRenderCacheService(IPageRenderCacheBroker brok
     public IQueryable<PageRenderCache> GetAllPageRenderCaches() =>
         TryCatch<IQueryable<PageRenderCache>>(operation: () =>
         {
-            ValidateAllPageRenderCachesOnGet(inputs: []);
 
             return broker.GetAllPageRenderCaches();
         });

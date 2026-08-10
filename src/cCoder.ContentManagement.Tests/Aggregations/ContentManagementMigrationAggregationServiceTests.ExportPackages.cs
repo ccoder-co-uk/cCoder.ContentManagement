@@ -19,8 +19,8 @@ public partial class ContentManagementMigrationAggregationServiceTests
         // Given
         Mock<IPackageExportProcessingService> packageExportProcessingServiceMock = new();
 
-        Package rolesPackage = new(name: "Roles");
-        Package pagesPackage = new(name: "Pages");
+        Package rolesPackage = new() { Name = "Roles" };
+        Package pagesPackage = new() { Name = "Pages" };
 
         packageExportProcessingServiceMock
             .Setup(expression: service => service.ExportPackage(

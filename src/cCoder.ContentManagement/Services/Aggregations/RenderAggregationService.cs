@@ -22,7 +22,6 @@ internal sealed partial class RenderAggregationService(
     public ValueTask<RenderResult> RenderPageRenderResultAsync() =>
         TryCatch<RenderResult>(operation: async () =>
     {
-        ValidateRenderPageRenderResponseAsync(inputs: []);
 
         HttpPageRenderContext context = await pageContextOrchestrationService
             .ResolvePageRenderContextAsync();

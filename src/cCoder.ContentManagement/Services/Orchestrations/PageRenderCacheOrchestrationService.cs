@@ -15,7 +15,6 @@ internal sealed partial class PageRenderCacheOrchestrationService(
     public IQueryable<PageRenderCache> GetAllPageRenderCaches() =>
         TryCatch<IQueryable<PageRenderCache>>(operation: () =>
         {
-            ValidateAllPageRenderCachesOnGet(inputs: []);
 
             return queryProcessingService.GetAllPageRenderCaches();
         });

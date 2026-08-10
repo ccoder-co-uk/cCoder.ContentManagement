@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Controllers;
 using cCoder.ContentManagement.Models;
@@ -28,7 +29,9 @@ public sealed partial class RenderControllerTests
             .Returns(value: ValueTask.FromResult<RenderResult>(
                 result: new TemplateRenderResult { Content = "template" }));
 
-        RenderController controller = new(renderer: renderer.Object);
+        RenderController controller = new(
+            renderer: renderer.Object,
+            loggingBroker: Mock.Of<ILoggingBroker>());
 
         // When
         IActionResult actionResult = await controller.PostTemplate(
@@ -61,7 +64,9 @@ public sealed partial class RenderControllerTests
             .Returns(value: ValueTask.FromResult<RenderResult>(
                 result: new ComponentRenderResult { Content = "component" }));
 
-        RenderController controller = new(renderer: renderer.Object);
+        RenderController controller = new(
+            renderer: renderer.Object,
+            loggingBroker: Mock.Of<ILoggingBroker>());
 
         // When
         IActionResult actionResult = await controller.GetComponent(name: "Hero");

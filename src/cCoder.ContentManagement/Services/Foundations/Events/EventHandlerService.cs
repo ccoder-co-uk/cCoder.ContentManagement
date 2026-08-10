@@ -19,7 +19,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
     public void ListenToAllEvents() =>
         TryCatch(operation: () =>
     {
-        ValidateListenToAllEvents(inputs: []);
         ValidateEventHubBroker(broker: eventHubBroker, parameterName: "eventHubBroker");
         ListenToAppEvents();
         ListenToPageEvents();
@@ -31,7 +30,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
     public void ListenToHostedEvents() =>
         TryCatch(operation: () =>
         {
-            ValidateListenToAllEvents(inputs: []);
 
             ValidateEventHubBroker(
                 broker: eventHubBroker,
@@ -44,7 +42,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
     public void ListenToFinalAppDeleteEvent() =>
         TryCatch(operation: () =>
         {
-            ValidateListenToFinalAppDeleteEvent(inputs: []);
 
             ValidateEventHubBroker(
                 broker: eventHubBroker,
