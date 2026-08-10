@@ -112,7 +112,10 @@ internal partial class AppSupportingResourcesCoordinationService(
             .ToArray();
 
         AppCulture[] culturesToDelete = appCultureOrchestrationService.GetAllAppCulture(ignoreFilters: true)
-            .Where(predicate: culture => culture.AppId == deletedApp.Id && !((ReadOnlySpan<string>)incomingCultureIds).Contains(value: culture.CultureId))
+            .Where(predicate: culture =>
+                culture.AppId == deletedApp.Id &&
+                culture.CultureId.Length > 0 &&
+                !((ReadOnlySpan<string>)incomingCultureIds).Contains(value: culture.CultureId))
             .ToArray();
 
         if (culturesToDelete.Length > 0)

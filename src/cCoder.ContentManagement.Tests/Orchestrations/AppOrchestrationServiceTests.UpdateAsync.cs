@@ -49,4 +49,38 @@ public partial class AppOrchestrationServiceTests
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
+    [Fact]
+    public async Task ShouldRaiseUpdateEventWithPostedGraphWhenStoredAppIsFlatAsync()
+    {
+        // Given
+        App postedApp = CreateRandomApp();
+        App storedApp = new() { Id = postedApp.Id, Name = postedApp.Name, Domain = postedApp.Domain };
+
+        appProcessingServiceMock
+            .Setup(expression: service => service.UpdateAppAsync(updatedApp: postedApp))
+            .ReturnsAsync(value: storedApp);
+
+        appEventProcessingServiceMock
+            .Setup(expression: service => service.RaiseAppUpdateEventAsync(app: postedApp))
+            .Returns(value: ValueTask.CompletedTask);
+
+        // When
+        App result = await orchestrationService
+            .UpdateAppAsync(updatedApp: postedApp);
+
+        // Then
+        result.Should()
+            .BeSameAs(expected: storedApp);
+
+        appEventProcessingServiceMock.Verify(
+            expression: service => service.RaiseAppUpdateEventAsync(app: postedApp),
+            times: Times.Once);
+
+        appProcessingServiceMock.Verify(
+            expression: service => service.UpdateAppAsync(updatedApp: postedApp),
+            times: Times.Once);
+
+        appProcessingServiceMock.VerifyNoOtherCalls();
+        appEventProcessingServiceMock.VerifyNoOtherCalls();
+    }
 }
