@@ -10,6 +10,7 @@ internal interface IPackageEventProcessingService
 {
     ValueTask RaisePackageImportEvent(int appId, Package package);
     ValueTask RaisePackageImportCompleteEvent(int appId, Package package);
+    ValueTask RaisePackagePageRolesImportEvent(int appId, Package package);
 
     ValueTask RaisePackageAddEventAsync(Package entity);
 

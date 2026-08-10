@@ -110,6 +110,15 @@ internal partial class PackageOrchestrationService(
         return eventService.RaisePackageImportCompleteEvent(appId: appId, package: package);
     }, isValueTask: true);
 
+    public ValueTask RaisePackagePageRolesImportEventAsync(int appId, Package package) =>
+        TryCatch(operation: () =>
+    {
+        ValidateRaisePackageImportCompleteEventAsync(inputs: [appId, package]);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePackage(package: package, parameterName: "package");
+        return eventService.RaisePackagePageRolesImportEvent(appId: appId, package: package);
+    }, isValueTask: true);
+
     private static int ValidateAppId(int appId, string parameterName)
     {
         if (appId < 1)

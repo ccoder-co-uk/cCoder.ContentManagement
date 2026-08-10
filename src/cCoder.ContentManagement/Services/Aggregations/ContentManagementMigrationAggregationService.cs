@@ -69,6 +69,18 @@ internal partial class ContentManagementMigrationAggregationService(
             pageRenderCacheImportState.Active = false;
         }
 
+        PackageItem[] pageRoleItems = package.Items?
+            .Where(predicate: item => item.Type == "ContentManagement/PageRole")
+            .ToArray()
+            ?? [];
+
+        if (pageRoleItems.Length > 0)
+        {
+            await packageOrchestrationService.RaisePackagePageRolesImportEventAsync(
+                appId: appId,
+                package: new Package { Items = pageRoleItems });
+        }
+
         await packageOrchestrationService.RaisePackageImportCompleteEventAsync(
             appId: appId,
             package: package);

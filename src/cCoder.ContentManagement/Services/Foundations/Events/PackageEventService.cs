@@ -57,6 +57,28 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
 
     }, isValueTask: true);
 
+    public ValueTask RaisePackagePageRolesImportEventAsync(int appId, Package package) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateRaisePackageImportEventAsync(inputs: [appId, package]);
+
+        EventMessage<PackageImportEvent> message = new EventMessage<PackageImportEvent>
+        {
+            AuthInfo = new EventAuthInfo
+            {
+                SSOUserId = packageEventBroker.GetCurrentUserId()
+            },
+            Data = new PackageImportEvent
+            {
+                AppId = appId,
+                Package = package
+            }
+        };
+
+        await packageEventBroker.RaisePackagePageRolesImportEventAsync(message: message);
+
+    }, isValueTask: true);
+
     public ValueTask RaisePackageAddEventAsync(Package package) =>
         TryCatch(operation: async () =>
     {

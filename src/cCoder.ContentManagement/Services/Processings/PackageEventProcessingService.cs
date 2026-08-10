@@ -23,6 +23,13 @@ internal partial class PackageEventProcessingService(IPackageEventService eventS
         return eventService.RaisePackageImportCompleteEventAsync(appId: appId, package: package);
     }, isValueTask: true);
 
+    public ValueTask RaisePackagePageRolesImportEvent(int appId, Package package) =>
+        TryCatch(operation: () =>
+    {
+        ValidateRaisePackageImportEvent(inputs: [appId, package]);
+        return eventService.RaisePackagePageRolesImportEventAsync(appId: appId, package: package);
+    }, isValueTask: true);
+
     public ValueTask RaisePackageAddEventAsync(Package package) =>
         TryCatch(operation: () =>
     {
