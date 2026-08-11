@@ -42,6 +42,11 @@ public partial class EventHandlerServiceTests
             collection: eventHubBrokerMock.Invocations,
             filter: invocation => invocation.Arguments.Count > 0
                 && invocation.Arguments[0] as string == "package_import");
+
+        Assert.DoesNotContain(
+            collection: eventHubBrokerMock.Invocations,
+            filter: invocation => invocation.Arguments.Count > 0
+                && invocation.Arguments[0] as string == "app_package_import_complete");
     }
 
     [Fact]
@@ -58,7 +63,7 @@ public partial class EventHandlerServiceTests
         eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
                 PackageImportEvent,
                 IPageRenderCacheEventHandlers>(
-                    eventName: "app_package_import_complete",
+                    eventName: "package_import_complete",
                     handler: It.IsAny<Func<
                         IPageRenderCacheEventHandlers,
                         PackageImportEvent,
@@ -87,7 +92,48 @@ public partial class EventHandlerServiceTests
 
         // Then
         handlers.VerifyAll();
+    }
 
+    [Fact]
+    public async Task ShouldInvalidateAllAfterCommonPackageImportCompletesAsync()
+    {
+        // Given
+        SetupAllEventRegistrations();
+        SetupPageRenderCacheEventRegistrations();
+
+        Func<IPageRenderCacheEventHandlers, PackageImportEvent, ValueTask> registeredHandler = null;
+
+        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
+                PackageImportEvent,
+                IPageRenderCacheEventHandlers>(
+                    eventName: "package_import_complete",
+                    handler: It.IsAny<Func<
+                        IPageRenderCacheEventHandlers,
+                        PackageImportEvent,
+                        ValueTask>>()))
+            .Callback<string, Func<
+                IPageRenderCacheEventHandlers,
+                PackageImportEvent,
+                ValueTask>>(action: (_, handler) => registeredHandler = handler);
+
+        Mock<IPageRenderCacheEventHandlers> handlers = new();
+
+        handlers.Setup(expression: service => service.InvalidateAllAsync())
+            .Returns(value: ValueTask.CompletedTask);
+
+        // When
+        service.ListenToWebCacheEvents();
+
+        await registeredHandler.Invoke(
+            arg1: handlers.Object,
+            arg2: new PackageImportEvent
+            {
+                AppId = null,
+                Package = new Package()
+            });
+
+        // Then
+        handlers.VerifyAll();
     }
 
     private void SetupAppCoordinationEventRegistrations(string eventName)
@@ -140,7 +186,7 @@ handler: It.IsAny<Func<IAppPageComponentCoordinationService, App, ValueTask>>())
         eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
             PackageImportEvent,
             IPageRenderCacheEventHandlers>(
-                eventName: "app_package_import_complete",
+                eventName: "package_import_complete",
                 handler: It.IsAny<Func<
                     IPageRenderCacheEventHandlers,
                     PackageImportEvent,

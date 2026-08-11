@@ -201,6 +201,26 @@ public partial class PageRenderCacheEventHandlersTests
         aggregationService.VerifyAll();
     }
 
+    [Fact]
+    public async Task ShouldInvalidateAllCachedPagesAsync()
+    {
+        // Given
+        Mock<IPageRenderCacheAggregationService> aggregationService = new();
+
+        aggregationService.Setup(expression: item =>
+            item.InvalidateCommonCacheAsync(fromEvent: true))
+            .Returns(value: ValueTask.CompletedTask);
+
+        PageRenderCacheEventHandlers handlers = CreateHandlers(
+            aggregationService: aggregationService.Object);
+
+        // When
+        await handlers.InvalidateAllAsync();
+
+        // Then
+        aggregationService.VerifyAll();
+    }
+
     private static PageRenderCacheEventHandlers CreateHandlers(
         IPageRenderCacheAggregationService aggregationService) =>
         new(

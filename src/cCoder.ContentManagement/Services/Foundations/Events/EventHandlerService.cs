@@ -200,6 +200,11 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
     }
 
     private void ListenToPackageImportCompleteEvents() =>
-        eventHubBroker.ListenToEvent(eventName: "app_package_import_complete", handler: (IPageRenderCacheEventHandlers service, PackageImportEvent args) => service.InvalidateAppAsync(appId: args.AppId.Value));
+        eventHubBroker.ListenToEvent(
+            eventName: "package_import_complete",
+            handler: static (IPageRenderCacheEventHandlers service, PackageImportEvent args) =>
+                args.AppId is int appId
+                    ? service.InvalidateAppAsync(appId: appId)
+                    : service.InvalidateAllAsync());
 
 }
