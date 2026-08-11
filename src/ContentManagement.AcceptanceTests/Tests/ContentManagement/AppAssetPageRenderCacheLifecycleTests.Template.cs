@@ -21,7 +21,10 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
     public async Task TemplateUpdate_InvalidatesAppThenRebuildsChangedPageAsync()
     {
         // Given
-        string suffix = Guid.NewGuid().ToString(format: "N");
+
+        string suffix = Guid.NewGuid()
+            .ToString(format: "N");
+
         string pagePath = $"lifecycle-template-{suffix}";
         const string originalMarker = "original-app-template-marker";
         const string updatedMarker = "updated-app-template-marker";
@@ -31,6 +34,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             marker: originalMarker);
 
         PageRenderResponse firstResponse = await RenderAsync(path: pagePath);
+
         PageRenderCache firstCache = await GetCacheAsync(
             pageId: seeded.PageId);
 
@@ -59,10 +63,12 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             pageId: seeded.PageId);
 
         PageRenderResponse rebuiltResponse = await RenderAsync(path: pagePath);
+
         PageRenderCache rebuiltCache = await GetCacheAsync(
             pageId: seeded.PageId);
 
         PageRenderResponse cachedResponse = await RenderAsync(path: pagePath);
+
         PageRenderCache cachedAgain = await GetCacheAsync(
             pageId: seeded.PageId);
 
@@ -113,6 +119,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             .CreateCoreContext();
 
         DateTimeOffset now = DateTimeOffset.UtcNow.AddMinutes(minutes: -2);
+
         Layout layout = CreateLayout(
             name: $"LifecycleLayout{Guid.NewGuid():N}",
             body: "<main>[theme[base]]</main>",
@@ -148,7 +155,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
         template.LastUpdated = now;
         template.LastUpdatedBy = "Guest";
 
-        core.AddRange(layout, page);
+        core.AddRange(entities: [layout, page]);
         await core.SaveChangesAsync();
 
         return (PageId: page.Id, TemplateId: template.Id);

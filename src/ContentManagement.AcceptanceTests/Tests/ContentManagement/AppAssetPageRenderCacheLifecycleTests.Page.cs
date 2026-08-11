@@ -21,7 +21,10 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
     public async Task PageUpdate_InvalidatesPageThenRebuildsChangedContentAsync()
     {
         // Given
-        string suffix = Guid.NewGuid().ToString(format: "N");
+
+        string suffix = Guid.NewGuid()
+            .ToString(format: "N");
+
         string pageName = $"LifecyclePage{suffix}";
         string pagePath = $"lifecycle-page-{suffix}";
         const string originalMarker = "original-page-content-marker";
@@ -33,6 +36,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             marker: originalMarker);
 
         PageRenderResponse firstResponse = await RenderAsync(path: pagePath);
+
         PageRenderCache firstCache = await GetCacheAsync(pageId: pageId);
 
         // When
@@ -74,15 +78,18 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             .ReadAsStringAsync();
 
         Page storedPage = await GetPageAsync(pageId: pageId);
+
         PageRenderCache[] cachesAfterUpdate = await GetCachesAsync(
             pageId: pageId);
 
         PageRenderResponse rebuiltResponse = await RenderAsync(
             path: storedPage.Path);
+
         PageRenderCache rebuiltCache = await GetCacheAsync(pageId: pageId);
 
         PageRenderResponse cachedResponse = await RenderAsync(
             path: storedPage.Path);
+
         PageRenderCache cachedAgain = await GetCacheAsync(pageId: pageId);
 
         // Then
@@ -134,6 +141,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             .CreateCoreContext();
 
         DateTimeOffset now = DateTimeOffset.UtcNow.AddMinutes(minutes: -2);
+
         Layout layout = CreateLayout(
             name: $"LifecycleLayout{Guid.NewGuid():N}",
             body: "<main>[content[body]]</main>",
@@ -166,7 +174,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             }
         ];
 
-        core.AddRange(layout, page);
+        core.AddRange(entities: [layout, page]);
         await core.SaveChangesAsync();
         return page.Id;
     }

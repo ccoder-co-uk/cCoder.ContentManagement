@@ -8,7 +8,7 @@ namespace cCoder.ContentManagement.Exposures;
 
 public interface IContentManagementPackageManager
 {
-    ValueTask ImportPackageAsync(int appId, Package package);
+    ValueTask ImportPackageAsync(int? appId, Package package);
 
     Package ExportPackage(int appId, string packageName);
 }

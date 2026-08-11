@@ -56,7 +56,7 @@ public partial class CommonObjectOrchestrationServiceTests
 
         eventService.Verify(
             expression: item => item.RaiseCommonObjectsImportedEventAsync(
-                commonObjects: It.Is<CommonObject[]>(items =>
+                commonObjects: It.Is<CommonObject[]>(match: items =>
                     items.Length == 1
                     && ReferenceEquals(
                         objA: items[0],

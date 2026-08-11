@@ -144,8 +144,7 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
         IResourceOrchestrationService resourceOrchestrationService = null,
         ITemplateOrchestrationService templateOrchestrationService = null,
         IScriptOrchestrationService scriptOrchestrationService = null,
-        ICommonObjectOrchestrationService commonObjectOrchestrationService = null,
-        IPackageOrchestrationService packageOrchestrationService = null)
+        ICommonObjectOrchestrationService commonObjectOrchestrationService = null)
         =>
         new(
 migrationSupportOrchestrationService: new MigrationSupportOrchestrationService(
@@ -160,6 +159,5 @@ resourceOrchestrationService: resourceOrchestrationService ?? Mock.Of<IResourceO
 templateOrchestrationService: templateOrchestrationService ?? Mock.Of<ITemplateOrchestrationService>(),
 scriptOrchestrationService: scriptOrchestrationService ?? Mock.Of<IScriptOrchestrationService>(),
 commonObjectOrchestrationService: commonObjectOrchestrationService ?? Mock.Of<ICommonObjectOrchestrationService>(),
-pageRenderCacheImportState: new cCoder.ContentManagement.Models.PageRenderCacheImportState(),
-packageOrchestrationService: packageOrchestrationService ?? Mock.Of<IPackageOrchestrationService>());
+pageRenderCacheImportState: new cCoder.ContentManagement.Models.PageRenderCacheImportState());
 }

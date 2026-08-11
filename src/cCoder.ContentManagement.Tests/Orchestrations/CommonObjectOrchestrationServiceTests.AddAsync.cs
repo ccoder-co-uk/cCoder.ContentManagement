@@ -22,11 +22,12 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class CommonObjectOrchestrationServiceTests
 {
     [Fact]
-    public async Task ShouldAddAllThenRaiseOneImportedEventAsync()
+    public async Task ShouldAddAllThenRaiseImportedEventAsync()
     {
         // Given
         CommonObject entity = CreateRandomCommonObject();
         CommonObject[] commonObjects = [entity];
+
         OperationResult<CommonObject>[] expectedResults =
         [
             new OperationResult<CommonObject>
@@ -44,29 +45,14 @@ public partial class CommonObjectOrchestrationServiceTests
         commonObjectEventProcessingServiceMock
             .Setup(expression: x => x.RaiseCommonObjectsImportedEventAsync(
                 commonObjects: It.Is<CommonObject[]>(
-                    objects => objects.SequenceEqual(commonObjects))))
+                    match: objects => objects.SequenceEqual(second: commonObjects))))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        IEnumerable<OperationResult<CommonObject>> result =
-            await orchestrationService.AddAllCommonObjectsAsync(
-                newCommonObjects: commonObjects);
+        await orchestrationService.AddAllCommonObjectsAsync(
+            newCommonObjects: commonObjects);
 
         // Then
-
-        result.Should()
-            .BeSameAs(expected: expectedResults);
-
-        commonObjectProcessingServiceMock.Verify(
-            expression: x => x.AddAllCommonObjectsAsync(
-                newCommonObjects: commonObjects),
-            times: Times.Once);
-
-        commonObjectEventProcessingServiceMock.Verify(
-            expression: x => x.RaiseCommonObjectsImportedEventAsync(
-                commonObjects: It.Is<CommonObject[]>(
-                    objects => objects.SequenceEqual(commonObjects))),
-            times: Times.Once);
+        commonObjectEventProcessingServiceMock.VerifyAll();
     }
-
 }

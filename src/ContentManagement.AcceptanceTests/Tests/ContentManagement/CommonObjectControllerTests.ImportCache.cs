@@ -52,30 +52,33 @@ public sealed partial class CommonObjectControllerTests
             });
 
             core.AddRange(
-                new PageRenderCache
-                {
-                    Id = firstCacheId,
-                    AppId = 1,
-                    PageId = 91001,
-                    Culture = string.Empty,
-                    Theme = "default",
-                    Path = "acceptance-one",
-                    Header = "header-one",
-                    Body = "body-one",
-                    RenderedOn = originalTimestamp
-                },
-                new PageRenderCache
-                {
-                    Id = secondCacheId,
-                    AppId = 2,
-                    PageId = 91002,
-                    Culture = string.Empty,
-                    Theme = "default",
-                    Path = "acceptance-two",
-                    Header = "header-two",
-                    Body = "body-two",
-                    RenderedOn = originalTimestamp
-                });
+                entities:
+                [
+                    new PageRenderCache
+                    {
+                        Id = firstCacheId,
+                        AppId = 1,
+                        PageId = 91001,
+                        Culture = string.Empty,
+                        Theme = "default",
+                        Path = "acceptance-one",
+                        Header = "header-one",
+                        Body = "body-one",
+                        RenderedOn = originalTimestamp
+                    },
+                    new PageRenderCache
+                    {
+                        Id = secondCacheId,
+                        AppId = 2,
+                        PageId = 91002,
+                        Culture = string.Empty,
+                        Theme = "default",
+                        Path = "acceptance-two",
+                        Header = "header-two",
+                        Body = "body-two",
+                        RenderedOn = originalTimestamp
+                    }
+                ]);
 
             await core.SaveChangesAsync();
         }

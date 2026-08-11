@@ -37,6 +37,11 @@ public partial class EventHandlerServiceTests
             collection: eventHubBrokerMock.Invocations,
             filter: invocation => invocation.Arguments.Count > 0
                 && invocation.Arguments[0] as string == "uncached_page_render");
+
+        Assert.DoesNotContain(
+            collection: eventHubBrokerMock.Invocations,
+            filter: invocation => invocation.Arguments.Count > 0
+                && invocation.Arguments[0] as string == "package_import");
     }
 
     [Fact]
@@ -129,19 +134,9 @@ handler: It.IsAny<Func<IAppPageComponentCoordinationService, App, ValueTask>>())
         SetupPageStructureEventRegistration(eventName: "page_update");
         SetupPageStructureEventRegistration(eventName: "page_delete");
 
-        eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
-            PackageImportEvent,
-            IContentManagementMigrationAggregationService>(
-                eventName: "package_import",
-                handler: It.IsAny<Func<
-                    IContentManagementMigrationAggregationService,
-                    PackageImportEvent,
-                    ValueTask>>()));
-
     }
 
-    private void SetupPackageCompletionEventRegistrations()
-    {
+    private void SetupPackageCompletionEventRegistrations() =>
         eventHubBrokerMock.Setup(expression: broker => broker.ListenToEvent<
             PackageImportEvent,
             IPageRenderCacheEventHandlers>(
@@ -150,8 +145,6 @@ handler: It.IsAny<Func<IAppPageComponentCoordinationService, App, ValueTask>>())
                     IPageRenderCacheEventHandlers,
                     PackageImportEvent,
                     ValueTask>>()));
-
-    }
 
     private void SetupPageStructureEventRegistration(string eventName) =>
         eventHubBrokerMock

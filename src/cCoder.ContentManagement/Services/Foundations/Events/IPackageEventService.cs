@@ -8,11 +8,6 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal interface IPackageEventService
 {
-    ValueTask RaisePackageImportEventAsync(int appId, Package package);
-    ValueTask RaisePackageImportCompleteEventAsync(int appId, Package package);
-    ValueTask RaiseCommonCachePackageImportCompleteEventAsync(Package package);
-    ValueTask RaisePackagePageRolesImportEventAsync(int appId, Package package);
-
     ValueTask RaisePackageAddEventAsync(Package entity);
 
     ValueTask RaisePackageUpdateEventAsync(Package entity);
