@@ -10,5 +10,5 @@ internal interface IContentManagementMigrationAggregationService
 {
     Package[] ExportPackages(int appId, string[] packageNames);
 
-    ValueTask ImportPackageAsync(int appId, Package package);
+    ValueTask ImportPackageAsync(int? appId, Package package);
 }

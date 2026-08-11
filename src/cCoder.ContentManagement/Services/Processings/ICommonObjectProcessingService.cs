@@ -25,5 +25,6 @@ internal interface ICommonObjectProcessingService
 
     IEnumerable<CommonObject> LatestCommonObject(string type);
 
-    ValueTask<IEnumerable<OperationResult<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items);
+    ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
+        CommonObject[] newCommonObjects);
 }

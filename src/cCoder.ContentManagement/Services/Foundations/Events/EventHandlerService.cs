@@ -36,6 +36,7 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
             ListenToAppPageRenderCacheEvents();
             ListenToPagePageRenderCacheEvents();
             ListenToPageRenderCacheEvents();
+            ListenToPackageImportCompleteEvents();
         });
 
     public void ListenToHostedEvents() =>
@@ -46,7 +47,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
                 broker: eventHubBroker,
                 parameterName: "eventHubBroker");
 
-            ListenToPackageImportCompleteEvents();
         });
 
     public void ListenToFinalAppDeleteEvent() =>
@@ -147,6 +147,13 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         {
             eventHubBroker.ListenToEvent(eventName: eventName, handler: (IPageRenderCacheEventHandlers service, CommonObject commonObject) => service.InvalidateCommonCacheConsumersAsync(commonObject: commonObject));
         }
+
+        eventHubBroker.ListenToEvent(
+            eventName: "common_objects_imported",
+            handler: (IPageRenderCacheEventHandlers service,
+                CommonObject[] commonObjects) =>
+                service.InvalidateCommonObjectsAsync(
+                    commonObjects: commonObjects));
     }
 
     private void ListenToAppPageRenderCacheEvents()
@@ -203,6 +210,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         eventHubBroker.ListenToEvent(eventName: "package_import", handler: (IContentManagementMigrationAggregationService service, PackageImportEvent args) => service.ImportPackageAsync(appId: args.AppId, package: args.Package));
 
     private void ListenToPackageImportCompleteEvents() =>
-        eventHubBroker.ListenToEvent(eventName: "package_import_complete", handler: (IPageRenderCacheEventHandlers service, PackageImportEvent args) => service.InvalidateAppAsync(appId: args.AppId));
+        eventHubBroker.ListenToEvent(eventName: "app_package_import_complete", handler: (IPageRenderCacheEventHandlers service, PackageImportEvent args) => service.InvalidateAppAsync(appId: args.AppId.Value));
 
 }

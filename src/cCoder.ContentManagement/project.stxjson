@@ -757,6 +757,33 @@
           "HasKeyParameter": false,
           "HandlesNullWithNotFound": false,
           "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Events.CommonObjectEventBroker.RaiseCommonObjectsImportedEventAsync(EventMessage\u003CCommonObject[]\u003E)",
+          "Name": "RaiseCommonObjectsImportedEventAsync",
+          "LineNumber": 23,
+          "Inputs": [
+            {
+              "Name": "message",
+              "Type": "EventMessage\u003CCommonObject[]\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.Events.ICommonObjectEventBroker.RaiseCommonObjectsImportedEventAsync(EventMessage\u003CCommonObject[]\u003E)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
         }
       ]
     },
@@ -1297,9 +1324,36 @@
       "Properties": [],
       "Methods": [
         {
+          "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaiseCommonCachePackageImportCompleteEventAsync(EventMessage\u003CPackage\u003E)",
+          "Name": "RaiseCommonCachePackageImportCompleteEventAsync",
+          "LineNumber": 21,
+          "Inputs": [
+            {
+              "Name": "message",
+              "Type": "EventMessage\u003CPackage\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaiseCommonCachePackageImportCompleteEventAsync(EventMessage\u003CPackage\u003E)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackageAddEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageAddEventAsync",
-          "LineNumber": 24,
+          "LineNumber": 28,
           "Inputs": [
             {
               "Name": "message",
@@ -1326,7 +1380,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackageDeleteEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageDeleteEventAsync",
-          "LineNumber": 30,
+          "LineNumber": 34,
           "Inputs": [
             {
               "Name": "message",
@@ -1407,7 +1461,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackagePageRolesImportEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E)",
           "Name": "RaisePackagePageRolesImportEventAsync",
-          "LineNumber": 21,
+          "LineNumber": 25,
           "Inputs": [
             {
               "Name": "message",
@@ -1434,7 +1488,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker.RaisePackageUpdateEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageUpdateEventAsync",
-          "LineNumber": 27,
+          "LineNumber": 31,
           "Inputs": [
             {
               "Name": "message",
@@ -9288,7 +9342,7 @@
             {
               "TypeName": "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService",
               "MethodName": "ImportPackageAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32,Package)",
+              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32?,Package)",
               "StandardElementType": "AggregationService",
               "IsDependencyBoundary": false
             }
@@ -10452,7 +10506,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 298,
+          "LineNumber": 275,
           "Inputs": [
             {
               "Name": "key",
@@ -10527,7 +10581,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController.Get(System.Int32)",
           "Name": "Get",
-          "LineNumber": 163,
+          "LineNumber": 123,
           "Inputs": [
             {
               "Name": "key",
@@ -10617,7 +10671,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 134,
+          "LineNumber": 94,
           "Inputs": [],
           "ReturnType": "IActionResult",
           "Implements": [],
@@ -10769,7 +10823,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController.GetMetadata()",
           "Name": "GetMetadata",
-          "LineNumber": 104,
+          "LineNumber": 64,
           "Inputs": [],
           "ReturnType": "IActionResult",
           "Implements": [],
@@ -10832,74 +10886,9 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController.Post(CommonObject)",
+          "Id": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController.Post(System.Text.Json.JsonElement)",
           "Name": "Post",
-          "LineNumber": 196,
-          "Inputs": [
-            {
-              "Name": "newCommonObject",
-              "Type": "CommonObject"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E",
-          "Implements": [],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
-              "MethodName": "LogError",
-              "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
-              "StandardElementType": "Broker",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Exposures.ICommonObjectManager",
-              "MethodName": "AddCommonObjectAsync",
-              "MethodId": "cCoder.ContentManagement.Exposures.ICommonObjectManager.AddCommonObjectAsync(CommonObject)",
-              "StandardElementType": "Exposure",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [
-            "POST"
-          ],
-          "HttpResponses": [
-            {
-              "StatusCode": 400,
-              "ResultMethod": "BadRequest",
-              "ExceptionType": "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-              "IsExceptionPath": true,
-              "IsNullPath": false,
-              "HasBody": false,
-              "ExposesExceptionDetails": false,
-              "LogsException": true
-            }
-          ],
-          "IsHttpRequestHandler": true,
-          "IsODataControllerAction": true,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": true
-        },
-        {
-          "Id": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController.PostImportAsync(System.Text.Json.JsonElement)",
-          "Name": "PostImportAsync",
-          "LineNumber": 65,
+          "LineNumber": 156,
           "Inputs": [
             {
               "Name": "payload",
@@ -10910,6 +10899,13 @@
           "Implements": [],
           "Calls": [
             {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "Single",
+              "MethodId": "System.Linq.Enumerable.Single(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
@@ -10918,8 +10914,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Exposures.ICommonObjectManager",
-              "MethodName": "ImportCommonObjectResultAsync",
-              "MethodId": "cCoder.ContentManagement.Exposures.ICommonObjectManager.ImportCommonObjectResultAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
+              "MethodName": "AddAllCommonObjectsAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.ICommonObjectManager.AddAllCommonObjectsAsync(CommonObject[])",
               "StandardElementType": "Exposure",
               "IsDependencyBoundary": false
             }
@@ -10943,16 +10939,6 @@
             "POST"
           ],
           "HttpResponses": [
-            {
-              "StatusCode": 200,
-              "ResultMethod": "Ok",
-              "ExceptionType": "",
-              "IsExceptionPath": false,
-              "IsNullPath": false,
-              "HasBody": true,
-              "ExposesExceptionDetails": false,
-              "LogsException": false
-            },
             {
               "StatusCode": 400,
               "ResultMethod": "BadRequest",
@@ -10984,7 +10970,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController.Put(System.Int32,CommonObject)",
           "Name": "Put",
-          "LineNumber": 229,
+          "LineNumber": 206,
           "Inputs": [
             {
               "Name": "key",
@@ -11063,7 +11049,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController.PutPatch(System.Int32,Delta\u003CCommonObject\u003E)",
           "Name": "PutPatch",
-          "LineNumber": 263,
+          "LineNumber": 240,
           "Inputs": [
             {
               "Name": "key",
@@ -14714,7 +14700,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController.Delete(System.String)",
           "Name": "Delete",
-          "LineNumber": 143,
+          "LineNumber": 173,
           "Inputs": [
             {
               "Name": "key",
@@ -14857,7 +14843,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController.Get(System.String)",
           "Name": "Get",
-          "LineNumber": 43,
+          "LineNumber": 49,
           "Inputs": [
             {
               "Name": "key",
@@ -14941,7 +14927,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController.Post(PageRenderCache)",
           "Name": "Post",
-          "LineNumber": 65,
+          "LineNumber": 77,
           "Inputs": [
             {
               "Name": "newPageRenderCache",
@@ -15016,7 +15002,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController.Put(System.String,PageRenderCache)",
           "Name": "Put",
-          "LineNumber": 90,
+          "LineNumber": 108,
           "Inputs": [
             {
               "Name": "key",
@@ -15105,7 +15091,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController.PutPatch(System.String,Delta\u003CPageRenderCache\u003E)",
           "Name": "PutPatch",
-          "LineNumber": 114,
+          "LineNumber": 138,
           "Inputs": [
             {
               "Name": "key",
@@ -18150,7 +18136,6 @@
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
@@ -18662,6 +18647,57 @@
               "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
               "MethodName": "InvalidateCommonObjectConsumersAsync",
               "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.InvalidateCommonObjectConsumersAsync(System.String,System.Boolean)",
+              "StandardElementType": "AggregationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateCommonObjectsAsync(CommonObject[])",
+          "Name": "InvalidateCommonObjectsAsync",
+          "LineNumber": 71,
+          "Inputs": [
+            {
+              "Name": "commonObjects",
+              "Type": "CommonObject[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateCommonObjectsAsync(CommonObject[])"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
+              "MethodName": "InvalidateCommonCacheAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.InvalidateCommonCacheAsync(System.Boolean)",
               "StandardElementType": "AggregationService",
               "IsDependencyBoundary": false
             }
@@ -21758,7 +21794,7 @@
       "Properties": [
         {
           "Name": "AppId",
-          "Type": "System.Int32"
+          "Type": "System.Int32?"
         },
         {
           "Name": "Package",
@@ -24379,7 +24415,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
       "StandardElementType": "AggregationService",
-      "LineNumber": 14,
+      "LineNumber": 16,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -24400,7 +24436,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService.ExportPackages(System.Int32,System.String[])",
           "Name": "ExportPackages",
-          "LineNumber": 35,
+          "LineNumber": 38,
           "Inputs": [
             {
               "Name": "appId",
@@ -24454,13 +24490,13 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32,Package)",
+          "Id": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32?,Package)",
           "Name": "ImportPackageAsync",
-          "LineNumber": 49,
+          "LineNumber": 52,
           "Inputs": [
             {
               "Name": "appId",
-              "Type": "System.Int32"
+              "Type": "System.Int32?"
             },
             {
               "Name": "package",
@@ -24469,7 +24505,7 @@
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32,Package)"
+            "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32?,Package)"
           ],
           "Calls": [
             {
@@ -24835,6 +24871,50 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.InvalidateCommonCacheAsync(System.Boolean)",
+          "Name": "InvalidateCommonCacheAsync",
+          "LineNumber": 111,
+          "Inputs": [
+            {
+              "Name": "fromEvent",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.InvalidateCommonCacheAsync(System.Boolean)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService.InvalidateCommonObjectConsumersAsync(System.String,System.Boolean)",
           "Name": "InvalidateCommonObjectConsumersAsync",
           "LineNumber": 95,
@@ -24852,36 +24932,7 @@
           "Implements": [
             "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.InvalidateCommonObjectConsumersAsync(System.String,System.Boolean)"
           ],
-          "Calls": [
-            {
-              "TypeName": "System.Linq.Queryable",
-              "MethodName": "Distinct",
-              "MethodId": "System.Linq.Queryable.Distinct(System.Linq.IQueryable\u003CTSource\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Queryable",
-              "MethodName": "Select",
-              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache",
-              "MethodName": "Refresh",
-              "MethodId": "cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache.Refresh()",
-              "StandardElementType": "Exposure",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageRenderCacheOrchestrationService",
-              "MethodName": "GetAllPageRenderCaches",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRenderCacheOrchestrationService.GetAllPageRenderCaches()",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            }
-          ],
+          "Calls": [],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.Security.SecurityException",
@@ -27201,6 +27252,62 @@
           "HasKeyParameter": false,
           "HandlesNullWithNotFound": false,
           "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.CommonObjectEventService.RaiseCommonObjectsImportedEventAsync(CommonObject[])",
+          "Name": "RaiseCommonObjectsImportedEventAsync",
+          "LineNumber": 68,
+          "Inputs": [
+            {
+              "Name": "commonObjects",
+              "Type": "CommonObject[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Foundations.Events.ICommonObjectEventService.RaiseCommonObjectsImportedEventAsync(CommonObject[])"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IAuthenticatedEventBroker",
+              "MethodName": "GetCurrentUserId",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IAuthenticatedEventBroker.GetCurrentUserId()",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.ICommonObjectEventBroker",
+              "MethodName": "RaiseCommonObjectsImportedEventAsync",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.ICommonObjectEventBroker.RaiseCommonObjectsImportedEventAsync(EventMessage\u003CCommonObject[]\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
         }
       ]
     },
@@ -27895,7 +28002,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.EventHandlerService.ListenToHostedEvents()",
           "Name": "ListenToHostedEvents",
-          "LineNumber": 41,
+          "LineNumber": 42,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -27904,7 +28011,6 @@
           "Calls": [],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
@@ -28185,9 +28291,65 @@
       "Properties": [],
       "Methods": [
         {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService.RaiseCommonCachePackageImportCompleteEventAsync(Package)",
+          "Name": "RaiseCommonCachePackageImportCompleteEventAsync",
+          "LineNumber": 60,
+          "Inputs": [
+            {
+              "Name": "package",
+              "Type": "Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Foundations.Events.IPackageEventService.RaiseCommonCachePackageImportCompleteEventAsync(Package)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IAuthenticatedEventBroker",
+              "MethodName": "GetCurrentUserId",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IAuthenticatedEventBroker.GetCurrentUserId()",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker",
+              "MethodName": "RaiseCommonCachePackageImportCompleteEventAsync",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaiseCommonCachePackageImportCompleteEventAsync(EventMessage\u003CPackage\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService.RaisePackageAddEventAsync(Package)",
           "Name": "RaisePackageAddEventAsync",
-          "LineNumber": 82,
+          "LineNumber": 103,
           "Inputs": [
             {
               "Name": "package",
@@ -28243,7 +28405,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService.RaisePackageDeleteEventAsync(Package)",
           "Name": "RaisePackageDeleteEventAsync",
-          "LineNumber": 118,
+          "LineNumber": 139,
           "Inputs": [
             {
               "Name": "package",
@@ -28419,7 +28581,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService.RaisePackagePageRolesImportEventAsync(System.Int32,Package)",
           "Name": "RaisePackagePageRolesImportEventAsync",
-          "LineNumber": 60,
+          "LineNumber": 81,
           "Inputs": [
             {
               "Name": "appId",
@@ -28479,7 +28641,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService.RaisePackageUpdateEventAsync(Package)",
           "Name": "RaisePackageUpdateEventAsync",
-          "LineNumber": 100,
+          "LineNumber": 121,
           "Inputs": [
             {
               "Name": "package",
@@ -38059,31 +38221,45 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.AddCommonObjectAsync(CommonObject)",
-          "Name": "AddCommonObjectAsync",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.AddAllCommonObjectsAsync(CommonObject[])",
+          "Name": "AddAllCommonObjectsAsync",
           "LineNumber": 30,
           "Inputs": [
             {
-              "Name": "newCommonObject",
-              "Type": "CommonObject"
+              "Name": "newCommonObjects",
+              "Type": "CommonObject[]"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CCommonObject\u003E",
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.ICommonObjectManager.AddCommonObjectAsync(CommonObject)"
+            "cCoder.ContentManagement.Exposures.ICommonObjectManager.AddAllCommonObjectsAsync(CommonObject[])"
           ],
           "Calls": [
             {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Enumerable.Select(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TResult\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "Where",
+              "MethodId": "System.Linq.Enumerable.Where(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, System.Boolean\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService",
-              "MethodName": "RaiseCommonObjectAddEventAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService.RaiseCommonObjectAddEventAsync(CommonObject)",
+              "MethodName": "RaiseCommonObjectsImportedEventAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService.RaiseCommonObjectsImportedEventAsync(CommonObject[])",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService",
-              "MethodName": "AddCommonObjectAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.AddCommonObjectAsync(CommonObject)",
+              "MethodName": "AddAllCommonObjectsAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.AddAllCommonObjectsAsync(CommonObject[])",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -38120,7 +38296,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
           "Name": "AddOrUpdateCommonObjectResult",
-          "LineNumber": 63,
+          "LineNumber": 87,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -38172,7 +38348,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
           "Name": "DeleteAllCommonObjectAsync",
-          "LineNumber": 70,
+          "LineNumber": 94,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -38224,7 +38400,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 52,
+          "LineNumber": 76,
           "Inputs": [
             {
               "Name": "commonObjectId",
@@ -38389,61 +38565,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.ImportCommonObjectResultAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
-          "Name": "ImportCommonObjectResultAsync",
-          "LineNumber": 86,
-          "Inputs": [
-            {
-              "Name": "items",
-              "Type": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Exposures.ICommonObjectManager.ImportCommonObjectResultAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService",
-              "MethodName": "ImportCommonObjectResultAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.ImportCommonObjectResultAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.LatestCommonObject(System.String)",
           "Name": "LatestCommonObject",
-          "LineNumber": 77,
+          "LineNumber": 101,
           "Inputs": [
             {
               "Name": "type",
@@ -38494,7 +38618,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.UpdateCommonObjectAsync(CommonObject)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 41,
+          "LineNumber": 65,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -41593,6 +41717,57 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService.RaiseCommonCachePackageImportCompleteEventAsync(Package)",
+          "Name": "RaiseCommonCachePackageImportCompleteEventAsync",
+          "LineNumber": 113,
+          "Inputs": [
+            {
+              "Name": "package",
+              "Type": "Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Orchestrations.IPackageOrchestrationService.RaiseCommonCachePackageImportCompleteEventAsync(Package)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IPackageEventProcessingService",
+              "MethodName": "RaiseCommonCachePackageImportCompleteEventAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPackageEventProcessingService.RaiseCommonCachePackageImportCompleteEventAsync(Package)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService.RaisePackageImportCompleteEventAsync(System.Int32,Package)",
           "Name": "RaisePackageImportCompleteEventAsync",
           "LineNumber": 104,
@@ -41650,7 +41825,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService.RaisePackagePageRolesImportEventAsync(System.Int32,Package)",
           "Name": "RaisePackagePageRolesImportEventAsync",
-          "LineNumber": 113,
+          "LineNumber": 126,
           "Inputs": [
             {
               "Name": "appId",
@@ -48923,6 +49098,55 @@
           "HasKeyParameter": false,
           "HandlesNullWithNotFound": false,
           "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectEventProcessingService.RaiseCommonObjectsImportedEventAsync(CommonObject[])",
+          "Name": "RaiseCommonObjectsImportedEventAsync",
+          "LineNumber": 43,
+          "Inputs": [
+            {
+              "Name": "commonObjects",
+              "Type": "CommonObject[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService.RaiseCommonObjectsImportedEventAsync(CommonObject[])"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Events.ICommonObjectEventService",
+              "MethodName": "RaiseCommonObjectsImportedEventAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Events.ICommonObjectEventService.RaiseCommonObjectsImportedEventAsync(CommonObject[])",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
         }
       ]
     },
@@ -48948,9 +49172,110 @@
       "Properties": [],
       "Methods": [
         {
+          "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.AddAllCommonObjectsAsync(CommonObject[])",
+          "Name": "AddAllCommonObjectsAsync",
+          "LineNumber": 50,
+          "Inputs": [
+            {
+              "Name": "newCommonObjects",
+              "Type": "CommonObject[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.AddAllCommonObjectsAsync(CommonObject[])"
+          ],
+          "Calls": [
+            {
+              "TypeName": "System.Collections.Generic.List\u003CT\u003E",
+              "MethodName": ".ctor",
+              "MethodId": "System.Collections.Generic.List\u003CT\u003E..ctor()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Collections.Generic.List\u003CT\u003E",
+              "MethodName": "Add",
+              "MethodId": "System.Collections.Generic.List\u003CT\u003E.Add(T)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Collections.Generic.List\u003CT\u003E",
+              "MethodName": "AddRange",
+              "MethodId": "System.Collections.Generic.List\u003CT\u003E.AddRange(System.Collections.Generic.IEnumerable\u003CT\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "Distinct",
+              "MethodId": "System.Linq.Enumerable.Distinct(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "FirstOrDefault",
+              "MethodId": "System.Linq.Enumerable.FirstOrDefault(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, System.Boolean\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Enumerable.Select(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TResult\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "ToArray",
+              "MethodId": "System.Linq.Enumerable.ToArray(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "Where",
+              "MethodId": "System.Linq.Enumerable.Where(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, System.Boolean\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.AddCommonObjectAsync(CommonObject)",
           "Name": "AddCommonObjectAsync",
-          "LineNumber": 110,
+          "LineNumber": 113,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -49009,7 +49334,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
           "Name": "AddOrUpdateCommonObjectResult",
-          "LineNumber": 220,
+          "LineNumber": 223,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -49064,7 +49389,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
           "Name": "DeleteAllCommonObjectAsync",
-          "LineNumber": 255,
+          "LineNumber": 258,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -49109,7 +49434,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 210,
+          "LineNumber": 213,
           "Inputs": [
             {
               "Name": "commonObjectId",
@@ -49269,107 +49594,6 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.ImportCommonObjectResultAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
-          "Name": "ImportCommonObjectResultAsync",
-          "LineNumber": 50,
-          "Inputs": [
-            {
-              "Name": "items",
-              "Type": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.ImportCommonObjectResultAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "System.Collections.Generic.List\u003CT\u003E",
-              "MethodName": ".ctor",
-              "MethodId": "System.Collections.Generic.List\u003CT\u003E..ctor()",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Collections.Generic.List\u003CT\u003E",
-              "MethodName": "Add",
-              "MethodId": "System.Collections.Generic.List\u003CT\u003E.Add(T)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Collections.Generic.List\u003CT\u003E",
-              "MethodName": "AddRange",
-              "MethodId": "System.Collections.Generic.List\u003CT\u003E.AddRange(System.Collections.Generic.IEnumerable\u003CT\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Enumerable",
-              "MethodName": "Distinct",
-              "MethodId": "System.Linq.Enumerable.Distinct(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Enumerable",
-              "MethodName": "FirstOrDefault",
-              "MethodId": "System.Linq.Enumerable.FirstOrDefault(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, System.Boolean\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Enumerable",
-              "MethodName": "Select",
-              "MethodId": "System.Linq.Enumerable.Select(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TResult\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Enumerable",
-              "MethodName": "ToArray",
-              "MethodId": "System.Linq.Enumerable.ToArray(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Enumerable",
-              "MethodName": "Where",
-              "MethodId": "System.Linq.Enumerable.Where(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, System.Boolean\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.LatestCommonObject(System.String)",
           "Name": "LatestCommonObject",
           "LineNumber": 39,
@@ -49430,7 +49654,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.UpdateCommonObjectAsync(CommonObject)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 121,
+          "LineNumber": 124,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -52070,9 +52294,58 @@
       "Properties": [],
       "Methods": [
         {
+          "Id": "cCoder.ContentManagement.Services.Processings.PackageEventProcessingService.RaiseCommonCachePackageImportCompleteEventAsync(Package)",
+          "Name": "RaiseCommonCachePackageImportCompleteEventAsync",
+          "LineNumber": 26,
+          "Inputs": [
+            {
+              "Name": "package",
+              "Type": "Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.IPackageEventProcessingService.RaiseCommonCachePackageImportCompleteEventAsync(Package)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Events.IPackageEventService",
+              "MethodName": "RaiseCommonCachePackageImportCompleteEventAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Events.IPackageEventService.RaiseCommonCachePackageImportCompleteEventAsync(Package)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Processings.PackageEventProcessingService.RaisePackageAddEventAsync(Package)",
           "Name": "RaisePackageAddEventAsync",
-          "LineNumber": 33,
+          "LineNumber": 45,
           "Inputs": [
             {
               "Name": "package",
@@ -52121,7 +52394,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PackageEventProcessingService.RaisePackageDeleteEventAsync(Package)",
           "Name": "RaisePackageDeleteEventAsync",
-          "LineNumber": 47,
+          "LineNumber": 59,
           "Inputs": [
             {
               "Name": "package",
@@ -52276,7 +52549,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PackageEventProcessingService.RaisePackagePageRolesImportEvent(System.Int32,Package)",
           "Name": "RaisePackagePageRolesImportEvent",
-          "LineNumber": 26,
+          "LineNumber": 38,
           "Inputs": [
             {
               "Name": "appId",
@@ -52329,7 +52602,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PackageEventProcessingService.RaisePackageUpdateEventAsync(Package)",
           "Name": "RaisePackageUpdateEventAsync",
-          "LineNumber": 40,
+          "LineNumber": 52,
           "Inputs": [
             {
               "Name": "package",
@@ -60107,6 +60380,31 @@
           "HasKeyParameter": false,
           "HandlesNullWithNotFound": false,
           "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Events.ICommonObjectEventBroker.RaiseCommonObjectsImportedEventAsync(EventMessage\u003CCommonObject[]\u003E)",
+          "Name": "RaiseCommonObjectsImportedEventAsync",
+          "LineNumber": 18,
+          "Inputs": [
+            {
+              "Name": "message",
+              "Type": "EventMessage\u003CCommonObject[]\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
         }
       ]
     },
@@ -60565,9 +60863,34 @@
       "Properties": [],
       "Methods": [
         {
+          "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaiseCommonCachePackageImportCompleteEventAsync(EventMessage\u003CPackage\u003E)",
+          "Name": "RaiseCommonCachePackageImportCompleteEventAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "message",
+              "Type": "EventMessage\u003CPackage\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageAddEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageAddEventAsync",
-          "LineNumber": 17,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "message",
@@ -60592,7 +60915,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageDeleteEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageDeleteEventAsync",
-          "LineNumber": 21,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "message",
@@ -60667,7 +60990,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackagePageRolesImportEventAsync(EventMessage\u003CcCoder.ContentManagement.Models.PackageImportEvent\u003E)",
           "Name": "RaisePackagePageRolesImportEventAsync",
-          "LineNumber": 15,
+          "LineNumber": 17,
           "Inputs": [
             {
               "Name": "message",
@@ -60692,7 +61015,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageUpdateEventAsync(EventMessage\u003CPackage\u003E)",
           "Name": "RaisePackageUpdateEventAsync",
-          "LineNumber": 19,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "message",
@@ -65785,6 +66108,31 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateCommonObjectsAsync(CommonObject[])",
+          "Name": "InvalidateCommonObjectsAsync",
+          "LineNumber": 26,
+          "Inputs": [
+            {
+              "Name": "commonObjects",
+              "Type": "CommonObject[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePageAsync(Content)",
           "Name": "InvalidatePageAsync",
           "LineNumber": 23,
@@ -66447,16 +66795,16 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.AddCommonObjectAsync(CommonObject)",
-          "Name": "AddCommonObjectAsync",
+          "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.AddAllCommonObjectsAsync(CommonObject[])",
+          "Name": "AddAllCommonObjectsAsync",
           "LineNumber": 16,
           "Inputs": [
             {
-              "Name": "newCommonObject",
-              "Type": "CommonObject"
+              "Name": "newCommonObjects",
+              "Type": "CommonObject[]"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CCommonObject\u003E",
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -66474,7 +66822,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
           "Name": "AddOrUpdateCommonObjectResult",
-          "LineNumber": 22,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -66499,7 +66847,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
           "Name": "DeleteAllCommonObjectAsync",
-          "LineNumber": 24,
+          "LineNumber": 25,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -66524,7 +66872,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 20,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "commonObjectId",
@@ -66597,34 +66945,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.ImportCommonObjectResultAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
-          "Name": "ImportCommonObjectResultAsync",
-          "LineNumber": 28,
-          "Inputs": [
-            {
-              "Name": "items",
-              "Type": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.LatestCommonObject(System.String)",
           "Name": "LatestCommonObject",
-          "LineNumber": 26,
+          "LineNumber": 27,
           "Inputs": [
             {
               "Name": "type",
@@ -66649,7 +66972,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.UpdateCommonObjectAsync(CommonObject)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 18,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -70037,13 +70360,13 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32,Package)",
+          "Id": "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32?,Package)",
           "Name": "ImportPackageAsync",
           "LineNumber": 13,
           "Inputs": [
             {
               "Name": "appId",
-              "Type": "System.Int32"
+              "Type": "System.Int32?"
             },
             {
               "Name": "package",
@@ -70216,6 +70539,31 @@
             }
           ],
           "ReturnType": "PageRenderCache",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.InvalidateCommonCacheAsync(System.Boolean)",
+          "Name": "InvalidateCommonCacheAsync",
+          "LineNumber": 31,
+          "Inputs": [
+            {
+              "Name": "fromEvent",
+              "Type": "System.Boolean"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -71171,6 +71519,31 @@
           "HasKeyParameter": false,
           "HandlesNullWithNotFound": false,
           "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.ICommonObjectEventService.RaiseCommonObjectsImportedEventAsync(CommonObject[])",
+          "Name": "RaiseCommonObjectsImportedEventAsync",
+          "LineNumber": 17,
+          "Inputs": [
+            {
+              "Name": "commonObjects",
+              "Type": "CommonObject[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
         }
       ]
     },
@@ -71625,9 +71998,34 @@
       "Properties": [],
       "Methods": [
         {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.IPackageEventService.RaiseCommonCachePackageImportCompleteEventAsync(Package)",
+          "Name": "RaiseCommonCachePackageImportCompleteEventAsync",
+          "LineNumber": 13,
+          "Inputs": [
+            {
+              "Name": "package",
+              "Type": "Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.IPackageEventService.RaisePackageAddEventAsync(Package)",
           "Name": "RaisePackageAddEventAsync",
-          "LineNumber": 15,
+          "LineNumber": 16,
           "Inputs": [
             {
               "Name": "entity",
@@ -71652,7 +72050,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.IPackageEventService.RaisePackageDeleteEventAsync(Package)",
           "Name": "RaisePackageDeleteEventAsync",
-          "LineNumber": 19,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "entity",
@@ -71735,7 +72133,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.IPackageEventService.RaisePackagePageRolesImportEventAsync(System.Int32,Package)",
           "Name": "RaisePackagePageRolesImportEventAsync",
-          "LineNumber": 13,
+          "LineNumber": 14,
           "Inputs": [
             {
               "Name": "appId",
@@ -71764,7 +72162,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Events.IPackageEventService.RaisePackageUpdateEventAsync(Package)",
           "Name": "RaisePackageUpdateEventAsync",
-          "LineNumber": 17,
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "entity",
@@ -76641,6 +77039,31 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IPackageOrchestrationService.RaiseCommonCachePackageImportCompleteEventAsync(Package)",
+          "Name": "RaiseCommonCachePackageImportCompleteEventAsync",
+          "LineNumber": 27,
+          "Inputs": [
+            {
+              "Name": "package",
+              "Type": "Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPackageOrchestrationService.RaisePackageImportCompleteEventAsync(System.Int32,Package)",
           "Name": "RaisePackageImportCompleteEventAsync",
           "LineNumber": 26,
@@ -76672,7 +77095,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPackageOrchestrationService.RaisePackagePageRolesImportEventAsync(System.Int32,Package)",
           "Name": "RaisePackagePageRolesImportEventAsync",
-          "LineNumber": 27,
+          "LineNumber": 28,
           "Inputs": [
             {
               "Name": "appId",
@@ -78952,6 +79375,31 @@
           "HasKeyParameter": false,
           "HandlesNullWithNotFound": false,
           "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService.RaiseCommonObjectsImportedEventAsync(CommonObject[])",
+          "Name": "RaiseCommonObjectsImportedEventAsync",
+          "LineNumber": 17,
+          "Inputs": [
+            {
+              "Name": "commonObjects",
+              "Type": "CommonObject[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
         }
       ]
     },
@@ -78965,6 +79413,31 @@
       "Interfaces": [],
       "Properties": [],
       "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.AddAllCommonObjectsAsync(CommonObject[])",
+          "Name": "AddAllCommonObjectsAsync",
+          "LineNumber": 28,
+          "Inputs": [
+            {
+              "Name": "newCommonObjects",
+              "Type": "CommonObject[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
         {
           "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.AddCommonObjectAsync(CommonObject)",
           "Name": "AddCommonObjectAsync",
@@ -79101,31 +79574,6 @@
             }
           ],
           "ReturnType": "CommonObject",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.ImportCommonObjectResultAsync(System.Collections.Generic.IEnumerable\u003CCommonObject\u003E)",
-          "Name": "ImportCommonObjectResultAsync",
-          "LineNumber": 28,
-          "Inputs": [
-            {
-              "Name": "items",
-              "Type": "System.Collections.Generic.IEnumerable\u003CCommonObject\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CCommonObject\u003E\u003E\u003E",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -80405,9 +80853,34 @@
       "Properties": [],
       "Methods": [
         {
+          "Id": "cCoder.ContentManagement.Services.Processings.IPackageEventProcessingService.RaiseCommonCachePackageImportCompleteEventAsync(Package)",
+          "Name": "RaiseCommonCachePackageImportCompleteEventAsync",
+          "LineNumber": 13,
+          "Inputs": [
+            {
+              "Name": "package",
+              "Type": "Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Processings.IPackageEventProcessingService.RaisePackageAddEventAsync(Package)",
           "Name": "RaisePackageAddEventAsync",
-          "LineNumber": 15,
+          "LineNumber": 16,
           "Inputs": [
             {
               "Name": "entity",
@@ -80432,7 +80905,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPackageEventProcessingService.RaisePackageDeleteEventAsync(Package)",
           "Name": "RaisePackageDeleteEventAsync",
-          "LineNumber": 19,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "entity",
@@ -80515,7 +80988,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPackageEventProcessingService.RaisePackagePageRolesImportEvent(System.Int32,Package)",
           "Name": "RaisePackagePageRolesImportEvent",
-          "LineNumber": 13,
+          "LineNumber": 14,
           "Inputs": [
             {
               "Name": "appId",
@@ -80544,7 +81017,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPackageEventProcessingService.RaisePackageUpdateEventAsync(Package)",
           "Name": "RaisePackageUpdateEventAsync",
-          "LineNumber": 17,
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "entity",
@@ -84001,6 +84474,10 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService"
     },
     {
@@ -85029,49 +85506,42 @@
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 65
+      "LineNumber": 94
     },
     {
       "Code": "STXAPI005",
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 134
+      "LineNumber": 123
     },
     {
       "Code": "STXAPI005",
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 163
+      "LineNumber": 156
     },
     {
       "Code": "STXAPI005",
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 196
+      "LineNumber": 206
     },
     {
       "Code": "STXAPI005",
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 229
+      "LineNumber": 240
     },
     {
       "Code": "STXAPI005",
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 263
-    },
-    {
-      "Code": "STXAPI005",
-      "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
-      "Severity": "Warning",
-      "Type": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "LineNumber": 298
+      "LineNumber": 275
     },
     {
       "Code": "STXAPI005",
@@ -85351,35 +85821,35 @@
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController",
-      "LineNumber": 43
+      "LineNumber": 49
     },
     {
       "Code": "STXAPI005",
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController",
-      "LineNumber": 65
+      "LineNumber": 77
     },
     {
       "Code": "STXAPI005",
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController",
-      "LineNumber": 90
+      "LineNumber": 108
     },
     {
       "Code": "STXAPI005",
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController",
-      "LineNumber": 114
+      "LineNumber": 138
     },
     {
       "Code": "STXAPI005",
       "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRenderCacheController",
-      "LineNumber": 143
+      "LineNumber": 173
     },
     {
       "Code": "STXAPI005",

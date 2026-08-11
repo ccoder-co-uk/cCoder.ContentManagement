@@ -47,19 +47,22 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
 
     });
 
-    public ValueTask<IEnumerable<OperationResult<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items) =>
+    public ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
+        CommonObject[] newCommonObjects) =>
         TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: async () =>
     {
-        ValidateImportCommonObjectResultAsync(inputs: [items]);
-        ValidateCommonObjects(commonObjects: items, parameterName: "items");
-        CommonObject[] commonObjects = (items as CommonObject[]) ?? items.ToArray();
+        ValidateImportCommonObjectResultAsync(inputs: [newCommonObjects]);
 
-        foreach (CommonObject commonObject in commonObjects)
+        ValidateCommonObjects(
+            commonObjects: newCommonObjects,
+            parameterName: "newCommonObjects");
+
+        foreach (CommonObject commonObject in newCommonObjects)
         {
             NormalizeCulture(commonObject: commonObject);
         }
 
-        IEnumerable<string> types = commonObjects.Select(selector: (CommonObject i) => i.Type)
+        IEnumerable<string> types = newCommonObjects.Select(selector: (CommonObject i) => i.Type)
             .Distinct();
 
         List<OperationResult<CommonObject>> results = new List<OperationResult<CommonObject>>();
@@ -70,7 +73,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
         {
             IEnumerable<CommonObject> dbSet = ExecuteLatestCommonObject(type: type);
 
-            CommonObject[] newSet = commonObjects.Where(predicate: (CommonObject i) => i.Type == type)
+            CommonObject[] newSet = newCommonObjects.Where(predicate: (CommonObject i) => i.Type == type)
                 .ToArray();
 
             CommonObject[] array = newSet;

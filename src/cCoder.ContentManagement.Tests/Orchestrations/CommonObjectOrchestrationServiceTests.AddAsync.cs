@@ -22,28 +22,51 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class CommonObjectOrchestrationServiceTests
 {
     [Fact]
-    public async Task ShouldCallProcessingThenRaiseAddEventAsyncWhenAddAsync()
+    public async Task ShouldAddAllThenRaiseOneImportedEventAsync()
     {
         // Given
         CommonObject entity = CreateRandomCommonObject();
+        CommonObject[] commonObjects = [entity];
+        OperationResult<CommonObject>[] expectedResults =
+        [
+            new OperationResult<CommonObject>
+            {
+                Success = true,
+                Item = entity
+            }
+        ];
 
-        commonObjectProcessingServiceMock.Setup(expression: x => x.AddCommonObjectAsync(newCommonObject: entity))
-            .ReturnsAsync(value: entity);
+        commonObjectProcessingServiceMock
+            .Setup(expression: x => x.AddAllCommonObjectsAsync(
+                newCommonObjects: commonObjects))
+            .ReturnsAsync(value: expectedResults);
 
         commonObjectEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseCommonObjectAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseCommonObjectsImportedEventAsync(
+                commonObjects: It.Is<CommonObject[]>(
+                    objects => objects.SequenceEqual(commonObjects))))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        CommonObject result = await orchestrationService.AddCommonObjectAsync(newCommonObject: entity);
+        IEnumerable<OperationResult<CommonObject>> result =
+            await orchestrationService.AddAllCommonObjectsAsync(
+                newCommonObjects: commonObjects);
 
         // Then
 
         result.Should()
-            .BeSameAs(expected: entity);
+            .BeSameAs(expected: expectedResults);
 
-        commonObjectProcessingServiceMock.Verify(expression: x => x.AddCommonObjectAsync(newCommonObject: entity), times: Times.Once);
-        commonObjectEventProcessingServiceMock.Verify(expression: x => x.RaiseCommonObjectAddEventAsync(entity: entity), times: Times.Once);
+        commonObjectProcessingServiceMock.Verify(
+            expression: x => x.AddAllCommonObjectsAsync(
+                newCommonObjects: commonObjects),
+            times: Times.Once);
+
+        commonObjectEventProcessingServiceMock.Verify(
+            expression: x => x.RaiseCommonObjectsImportedEventAsync(
+                commonObjects: It.Is<CommonObject[]>(
+                    objects => objects.SequenceEqual(commonObjects))),
+            times: Times.Once);
     }
 
 }

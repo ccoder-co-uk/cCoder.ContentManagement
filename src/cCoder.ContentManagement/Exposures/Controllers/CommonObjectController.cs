@@ -60,46 +60,6 @@ public class CommonObjectController(
         }
     }
 
-    [HttpPost]
-    [ActionName("Import")]
-    public async Task<IActionResult> PostImportAsync([FromBody] JsonElement payload)
-    {
-        try
-        {
-            if (!base.ModelState.IsValid)
-            {
-                return new BadRequestResult(modelState: base.ModelState);
-            }
-
-            IEnumerable<CommonObject> items = DeserializeCommonObjects(payload: payload);
-
-            if (items == null)
-            {
-                return BadRequest(message: "A common object payload is required.");
-            }
-
-            return Ok(value: await service.ImportCommonObjectResultAsync(items: items));
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
     [HttpGet]
     public IActionResult GetMetadata()
     {
@@ -193,7 +153,7 @@ public class CommonObjectController(
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] CommonObject newCommonObject)
+    public async Task<IActionResult> Post([FromBody] JsonElement payload)
     {
         try
         {
@@ -202,7 +162,24 @@ public class CommonObjectController(
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            return StatusCode(statusCode: StatusCodes.Status201Created, value: await service.AddCommonObjectAsync(newCommonObject: newCommonObject));
+            CommonObject[] commonObjects = DeserializeCommonObjects(payload: payload);
+
+            if (commonObjects is null)
+            {
+                return BadRequest(message: "A common object payload is required.");
+            }
+
+            IEnumerable<OperationResult<CommonObject>> results =
+                await service.AddAllCommonObjectsAsync(
+                    newCommonObjects: commonObjects);
+
+            object response = commonObjects.Length == 1
+                ? results.Single().Item
+                : results;
+
+            return StatusCode(
+                statusCode: StatusCodes.Status201Created,
+                value: response);
         }
         catch (ContentManagementValidationException exception)
         {
@@ -322,7 +299,7 @@ public class CommonObjectController(
         }
     }
 
-    private static IEnumerable<CommonObject> DeserializeCommonObjects(JsonElement payload)
+    private static CommonObject[] DeserializeCommonObjects(JsonElement payload)
     {
         JsonElement itemsPayload = payload.ValueKind == JsonValueKind.Object &&
                                    payload.TryGetProperty(propertyName: "value", value: out JsonElement valueElement)
@@ -332,8 +309,14 @@ public class CommonObjectController(
         return itemsPayload.ValueKind switch
         {
             JsonValueKind.Array => JsonSerializer.Deserialize<CommonObject[]>(
-json: itemsPayload.GetRawText(),
-options: new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
+                json: itemsPayload.GetRawText(),
+                options: new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
+            JsonValueKind.Object =>
+            [
+                JsonSerializer.Deserialize<CommonObject>(
+                    json: itemsPayload.GetRawText(),
+                    options: new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+            ],
             JsonValueKind.Null => null,
             var ignoredRequest => null
         };

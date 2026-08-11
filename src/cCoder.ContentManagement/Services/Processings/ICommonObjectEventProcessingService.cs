@@ -13,4 +13,7 @@ internal interface ICommonObjectEventProcessingService
     ValueTask RaiseCommonObjectUpdateEventAsync(CommonObject entity);
 
     ValueTask RaiseCommonObjectDeleteEventAsync(CommonObject entity);
+
+    ValueTask RaiseCommonObjectsImportedEventAsync(
+        CommonObject[] commonObjects);
 }

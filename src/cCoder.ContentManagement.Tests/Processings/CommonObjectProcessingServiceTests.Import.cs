@@ -66,7 +66,7 @@ type: "Core/Other"
 
         // When
         OperationResult<CommonObject>[] results = (
-            await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { commonObject })
+            await commonObjectProcessingService.AddAllCommonObjectsAsync(newCommonObjects: new[] { commonObject })
         ).ToArray();
 
         // Then
@@ -151,7 +151,7 @@ type: "Core/Other"
 
         // When
         OperationResult<CommonObject>[] results = (
-            await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { incoming })
+            await commonObjectProcessingService.AddAllCommonObjectsAsync(newCommonObjects: new[] { incoming })
         ).ToArray();
 
         // Then
@@ -223,7 +223,7 @@ type: "Core/Other"
 
         // When
         OperationResult<CommonObject>[] results = (
-            await commonObjectProcessingService.ImportCommonObjectResultAsync(items: new[] { incoming })
+            await commonObjectProcessingService.AddAllCommonObjectsAsync(newCommonObjects: new[] { incoming })
         ).ToArray();
 
         // Then

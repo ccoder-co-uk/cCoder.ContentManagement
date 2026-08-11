@@ -197,6 +197,7 @@ public static partial class IServiceCollectionExtensions
         services.AddEventingForType<App>();
         services.AddEventingForType<AppCulture>();
         services.AddEventingForType<CommonObject>();
+        services.AddEventingForType<CommonObject[]>();
         services.AddEventingForType<Component>();
         services.AddEventingForType<Content>();
         services.AddEventingForType<Culture>();

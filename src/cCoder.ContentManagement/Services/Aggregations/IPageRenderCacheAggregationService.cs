@@ -27,4 +27,6 @@ internal interface IPageRenderCacheAggregationService
     ValueTask InvalidateCommonObjectConsumersAsync(
         string commonObjectType,
         bool fromEvent = false);
+
+    ValueTask InvalidateCommonCacheAsync(bool fromEvent = false);
 }

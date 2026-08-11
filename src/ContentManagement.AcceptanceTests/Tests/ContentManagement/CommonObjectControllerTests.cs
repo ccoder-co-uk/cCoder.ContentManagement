@@ -196,13 +196,13 @@ public sealed partial class CommonObjectControllerTests(WebAcceptanceFixture fix
         return JsonSerializer.Deserialize<List<CommonObject>>(json: content, options: JsonOptions)!;
     }
 
-    private async Task<string> ImportCommonObjectsAsync(object payload)
+    private async Task<string> PostCommonObjectsAsync(object payload)
     {
-        using HttpResponseMessage response = await Client.PostAsJsonAsync(requestUri: $"{BaseUrl}/Import", value: payload);
+        using HttpResponseMessage response = await Client.PostAsJsonAsync(requestUri: BaseUrl, value: payload);
         string content = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should()
-            .Be(expected: HttpStatusCode.OK, because: content);
+            .Be(expected: HttpStatusCode.Created, because: content);
 
         return content;
     }

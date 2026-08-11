@@ -40,6 +40,18 @@ internal partial class CommonObjectEventProcessingService(ICommonObjectEventServ
 
     }, isValueTask: true);
 
+    public ValueTask RaiseCommonObjectsImportedEventAsync(
+        CommonObject[] commonObjects) =>
+        TryCatch(operation: () =>
+    {
+        ValidateRaiseCommonObjectsImportedEventAsync(
+            inputs: [commonObjects]);
+
+        return eventService.RaiseCommonObjectsImportedEventAsync(
+            commonObjects: commonObjects);
+
+    }, isValueTask: true);
+
     private static void ValidateCommonObject(CommonObject commonObject, string parameterName) =>
         ThrowIf(condition: commonObject == null, message: parameterName + " is required.");
 
