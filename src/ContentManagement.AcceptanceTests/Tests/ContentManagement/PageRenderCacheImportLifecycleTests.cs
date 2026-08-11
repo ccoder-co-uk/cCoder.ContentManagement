@@ -19,14 +19,16 @@ using Xunit;
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 [Collection(WebAcceptanceCollection.Name)]
-public sealed class PageRenderCacheImportLifecycleTests(
-    WebAcceptanceFixture fixture)
+public sealed partial class PageRenderCacheImportLifecycleTests(WebAcceptanceFixture fixture)
 {
     [Fact]
     public async Task CacheMiss_RendersCurrentCommonComponentThenCachesExactResult()
     {
         // Given
-        string suffix = Guid.NewGuid().ToString(format: "N");
+
+        string suffix = Guid.NewGuid()
+            .ToString(format: "N");
+
         string componentName = $"AcceptanceComponent{suffix}";
         string commonObjectName = $"AcceptanceObject{suffix}";
         string commonObjectKey = $"AcceptanceKey{suffix}";
@@ -109,6 +111,7 @@ public sealed class PageRenderCacheImportLifecycleTests(
             .CreateCoreContext();
 
         DateTimeOffset now = DateTimeOffset.UtcNow.AddMinutes(minutes: -2);
+
         App app = await core.Apps
             .IgnoreQueryFilters()
             .SingleAsync(predicate: item => item.Id == 1);
@@ -142,14 +145,17 @@ public sealed class PageRenderCacheImportLifecycleTests(
         };
 
         core.AddRange(
-            layout,
-            page,
+            entities:
+            [
+                layout,
+                page,
             CreateCommonObject(
                 commonObjectName: commonObjectName,
                 commonObjectKey: commonObjectKey,
                 componentName: componentName,
                 marker: marker,
-                timestamp: now));
+                timestamp: now)
+            ]);
 
         await core.SaveChangesAsync();
         return page.Id;
@@ -162,6 +168,7 @@ public sealed class PageRenderCacheImportLifecycleTests(
         string marker)
     {
         DateTimeOffset timestamp = DateTimeOffset.UtcNow;
+
         CommonObject commonObject = CreateCommonObject(
             commonObjectName: commonObjectName,
             commonObjectKey: commonObjectKey,
@@ -194,7 +201,9 @@ public sealed class PageRenderCacheImportLifecycleTests(
 
         context.Request.Host = new HostString(value: "localhost");
         context.Request.Path = new PathString(value: $"/{path}");
+
         context.Request.QueryString = new QueryString(value: "?culture=&theme=Default");
+
         context.Items[ContentSecurityPolicyNonceContract.HttpContextItemKey] =
             "acceptance-request-nonce";
 

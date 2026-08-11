@@ -22,8 +22,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         ValidateEventHubBroker(broker: eventHubBroker, parameterName: "eventHubBroker");
         ListenToAppEvents();
         ListenToPageEvents();
-        ListenToPackageEvents();
-
     });
 
     public void ListenToWebCacheEvents() =>
@@ -75,11 +73,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
         ListenToPageAddEvents();
         ListenToPageUpdateEvents();
         ListenToPageDeleteEvents();
-    }
-
-    private void ListenToPackageEvents()
-    {
-        ListenToPackageImportEvents();
     }
 
     private void ListenToAppAddEvents()
@@ -205,9 +198,6 @@ internal partial class EventHandlerService(IEventHubBroker eventHubBroker) : IEv
                 });
         }
     }
-
-    private void ListenToPackageImportEvents() =>
-        eventHubBroker.ListenToEvent(eventName: "package_import", handler: (IContentManagementMigrationAggregationService service, PackageImportEvent args) => service.ImportPackageAsync(appId: args.AppId, package: args.Package));
 
     private void ListenToPackageImportCompleteEvents() =>
         eventHubBroker.ListenToEvent(eventName: "app_package_import_complete", handler: (IPageRenderCacheEventHandlers service, PackageImportEvent args) => service.InvalidateAppAsync(appId: args.AppId.Value));

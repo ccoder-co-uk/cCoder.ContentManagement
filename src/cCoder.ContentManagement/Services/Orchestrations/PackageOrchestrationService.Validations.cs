@@ -29,6 +29,4 @@ internal partial class PackageOrchestrationService
     private static void ValidateAllPackageOnDelete(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
-    private static void ValidateRaisePackageImportCompleteEventAsync(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
 }

@@ -8,9 +8,6 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PackageEventProcessingService
 {
-    private static void ValidateRaisePackageImportEvent(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
-
     private static void ValidateRaisePackageAddEventAsync(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

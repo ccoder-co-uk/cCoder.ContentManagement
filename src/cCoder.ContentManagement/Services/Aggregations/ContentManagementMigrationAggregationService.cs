@@ -23,8 +23,7 @@ internal partial class ContentManagementMigrationAggregationService(
     ITemplateOrchestrationService templateOrchestrationService,
     IScriptOrchestrationService scriptOrchestrationService,
     ICommonObjectOrchestrationService commonObjectOrchestrationService,
-    PageRenderCacheImportState pageRenderCacheImportState,
-    IPackageOrchestrationService packageOrchestrationService)
+    PageRenderCacheImportState pageRenderCacheImportState)
         : IContentManagementMigrationAggregationService
 {
     private static readonly HashSet<string> ComputedImportFields = new(comparer: StringComparer.OrdinalIgnoreCase)
@@ -80,18 +79,6 @@ internal partial class ContentManagementMigrationAggregationService(
             pageRenderCacheImportState.Active = false;
         }
 
-        if (package.Items?.Any(predicate: item =>
-            item.Type == "ContentManagement/PageRole") == true)
-        {
-            await packageOrchestrationService.RaisePackagePageRolesImportEventAsync(
-                appId: appId.Value,
-                package: package);
-        }
-
-        await packageOrchestrationService.RaisePackageImportCompleteEventAsync(
-            appId: appId.Value,
-            package: package);
-
     }, isValueTask: true);
 
     private async ValueTask ImportCommonCachePackageAsync(Package package)
@@ -112,9 +99,6 @@ internal partial class ContentManagementMigrationAggregationService(
                     newCommonObjects: commonObjects);
         }
 
-        await packageOrchestrationService
-            .RaiseCommonCachePackageImportCompleteEventAsync(
-                package: package);
     }
 
     private static IEnumerable<CommonObject> ConvertToCommonObjects(

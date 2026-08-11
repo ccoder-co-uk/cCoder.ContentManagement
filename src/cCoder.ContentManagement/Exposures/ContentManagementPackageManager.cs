@@ -11,7 +11,7 @@ internal class ContentManagementPackageManager(
     IContentManagementMigrationAggregationService contentManagementMigrationAggregationService)
     : IContentManagementPackageManager
 {
-    public ValueTask ImportPackageAsync(int appId, Package package) =>
+    public ValueTask ImportPackageAsync(int? appId, Package package) =>
         contentManagementMigrationAggregationService.ImportPackageAsync(appId: appId, package: package);
 
     public Package ExportPackage(int appId, string packageName) =>

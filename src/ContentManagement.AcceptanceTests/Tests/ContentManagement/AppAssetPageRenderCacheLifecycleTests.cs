@@ -19,14 +19,16 @@ using Xunit;
 namespace Web.AcceptanceTests.Tests.ContentManagement;
 
 [Collection(WebAcceptanceCollection.Name)]
-public sealed partial class AppAssetPageRenderCacheLifecycleTests(
-    WebAcceptanceFixture fixture)
+public sealed partial class AppAssetPageRenderCacheLifecycleTests(WebAcceptanceFixture fixture)
 {
     [Fact]
     public async Task ComponentUpdate_InvalidatesAppThenRebuildsChangedPageAsync()
     {
         // Given
-        string suffix = Guid.NewGuid().ToString(format: "N");
+
+        string suffix = Guid.NewGuid()
+            .ToString(format: "N");
+
         string componentName = $"LifecycleComponent{suffix}";
         string pagePath = $"lifecycle-component-{suffix}";
         const string originalMarker = "original-app-component-marker";
@@ -38,6 +40,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests(
             marker: originalMarker);
 
         PageRenderResponse firstResponse = await RenderAsync(path: pagePath);
+
         PageRenderCache firstCache = await GetCacheAsync(
             pageId: seeded.PageId);
 
@@ -68,10 +71,12 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests(
             pageId: seeded.PageId);
 
         PageRenderResponse rebuiltResponse = await RenderAsync(path: pagePath);
+
         PageRenderCache rebuiltCache = await GetCacheAsync(
             pageId: seeded.PageId);
 
         PageRenderResponse cachedResponse = await RenderAsync(path: pagePath);
+
         PageRenderCache cachedAgain = await GetCacheAsync(
             pageId: seeded.PageId);
 
@@ -123,6 +128,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests(
             .CreateCoreContext();
 
         DateTimeOffset now = DateTimeOffset.UtcNow.AddMinutes(minutes: -2);
+
         Layout layout = CreateLayout(
             name: $"LifecycleLayout{Guid.NewGuid():N}",
             body: $"<main>[component[{componentName}]]</main>",
@@ -149,7 +155,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests(
             LastUpdatedBy = "Guest"
         };
 
-        core.AddRange(layout, page, component);
+        core.AddRange(entities: [layout, page, component]);
         await core.SaveChangesAsync();
 
         return (PageId: page.Id, ComponentId: component.Id);
@@ -170,6 +176,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests(
 
         context.Request.Host = new HostString(value: "localhost");
         context.Request.Path = new PathString(value: $"/{path}");
+
         context.Request.QueryString = new QueryString(
             value: "?culture=&theme=Default");
 

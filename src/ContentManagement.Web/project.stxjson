@@ -300,7 +300,7 @@
             {
               "TypeName": "cCoder.ContentManagement.Exposures.IContentManagementPackageManager",
               "MethodName": "ImportPackageAsync",
-              "MethodId": "cCoder.ContentManagement.Exposures.IContentManagementPackageManager.ImportPackageAsync(System.Int32,cCoder.Data.Models.Packaging.Package)",
+              "MethodId": "cCoder.ContentManagement.Exposures.IContentManagementPackageManager.ImportPackageAsync(System.Int32?,cCoder.Data.Models.Packaging.Package)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             }

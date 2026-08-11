@@ -2,8 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Aggregations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models;
 using cCoder.Data.Models.Packaging;
 using FluentAssertions;
@@ -15,13 +15,10 @@ namespace cCoder.ContentManagement.Tests.Aggregations;
 public partial class ContentManagementMigrationAggregationServiceTests
 {
     [Fact]
-    public async Task ImportPackageAsync_ShouldImportCommonObjectsThenRaiseCompletionAsync()
+    public async Task ImportPackageAsync_ShouldImportCommonObjectsAsync()
     {
         // Given
         Mock<ICommonObjectOrchestrationService> commonObjectService =
-            new(behavior: MockBehavior.Strict);
-
-        Mock<IPackageOrchestrationService> packageService =
             new(behavior: MockBehavior.Strict);
 
         Package package = new()
@@ -60,27 +57,16 @@ public partial class ContentManagementMigrationAggregationServiceTests
                 }
             ]);
 
-        packageService
-            .Setup(expression: service =>
-                service.RaiseCommonCachePackageImportCompleteEventAsync(
-                    package: package))
-            .Returns(value: ValueTask.CompletedTask);
-
         ContentManagementMigrationAggregationService service = CreateService(
-            commonObjectOrchestrationService: commonObjectService.Object,
-            packageOrchestrationService: packageService.Object);
+            commonObjectOrchestrationService: commonObjectService.Object);
 
         // When
         await service.ImportPackageAsync(appId: null, package: package);
 
         // Then
         commonObjectService.VerifyAll();
-        packageService.VerifyAll();
 
         commonObjectService.Invocations.Should()
-            .ContainSingle();
-
-        packageService.Invocations.Should()
             .ContainSingle();
     }
 }

@@ -21,7 +21,10 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
     public async Task LayoutUpdate_InvalidatesAppThenRebuildsChangedPageAsync()
     {
         // Given
-        string suffix = Guid.NewGuid().ToString(format: "N");
+
+        string suffix = Guid.NewGuid()
+            .ToString(format: "N");
+
         string layoutName = $"LifecycleLayout{suffix}";
         string pagePath = $"lifecycle-layout-{suffix}";
         const string originalMarker = "original-app-layout-marker";
@@ -33,6 +36,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             marker: originalMarker);
 
         PageRenderResponse firstResponse = await RenderAsync(path: pagePath);
+
         PageRenderCache firstCache = await GetCacheAsync(
             pageId: seeded.PageId);
 
@@ -56,14 +60,17 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             .ReadAsStringAsync();
 
         Layout storedLayout = await GetLayoutAsync(layoutId: seeded.LayoutId);
+
         PageRenderCache[] cachesAfterUpdate = await GetCachesAsync(
             pageId: seeded.PageId);
 
         PageRenderResponse rebuiltResponse = await RenderAsync(path: pagePath);
+
         PageRenderCache rebuiltCache = await GetCacheAsync(
             pageId: seeded.PageId);
 
         PageRenderResponse cachedResponse = await RenderAsync(path: pagePath);
+
         PageRenderCache cachedAgain = await GetCacheAsync(
             pageId: seeded.PageId);
 
@@ -115,6 +122,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             .CreateCoreContext();
 
         DateTimeOffset now = DateTimeOffset.UtcNow.AddMinutes(minutes: -2);
+
         Layout layout = CreateLayout(
             name: layoutName,
             body: $"<main>{marker}</main>",
@@ -126,7 +134,7 @@ public sealed partial class AppAssetPageRenderCacheLifecycleTests
             layoutName: layout.Name,
             timestamp: now);
 
-        core.AddRange(layout, page);
+        core.AddRange(entities: [layout, page]);
         await core.SaveChangesAsync();
 
         return (PageId: page.Id, LayoutId: layout.Id);
