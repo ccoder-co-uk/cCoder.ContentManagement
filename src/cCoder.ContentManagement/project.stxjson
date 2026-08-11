@@ -18125,7 +18125,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.DeleteAppAsync(App)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 33,
+          "LineNumber": 37,
           "Inputs": [
             {
               "Name": "deletedApp",
@@ -18225,6 +18225,52 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAllAsync()",
+          "Name": "InvalidateAllAsync",
+          "LineNumber": 33,
+          "Inputs": [],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAllAsync()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService",
+              "MethodName": "InvalidateCommonCacheAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IPageRenderCacheAggregationService.InvalidateCommonCacheAsync(System.Boolean)",
+              "StandardElementType": "AggregationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(App)",
           "Name": "InvalidateAppAsync",
           "LineNumber": 25,
@@ -18262,7 +18308,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(AppCulture)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 38,
+          "LineNumber": 42,
           "Inputs": [
             {
               "Name": "appCulture",
@@ -18297,7 +18343,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(Component)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 47,
+          "LineNumber": 51,
           "Inputs": [
             {
               "Name": "component",
@@ -18332,7 +18378,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(Layout)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 41,
+          "LineNumber": 45,
           "Inputs": [
             {
               "Name": "layout",
@@ -18367,7 +18413,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(Resource)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 50,
+          "LineNumber": 54,
           "Inputs": [
             {
               "Name": "resource",
@@ -18402,7 +18448,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(Script)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 53,
+          "LineNumber": 57,
           "Inputs": [
             {
               "Name": "script",
@@ -18488,7 +18534,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateAppAsync(Template)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 44,
+          "LineNumber": 48,
           "Inputs": [
             {
               "Name": "template",
@@ -18523,7 +18569,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateCommonCacheConsumersAsync(CommonObject)",
           "Name": "InvalidateCommonCacheConsumersAsync",
-          "LineNumber": 66,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "commonObject",
@@ -18574,7 +18620,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidateCommonObjectsAsync(CommonObject[])",
           "Name": "InvalidateCommonObjectsAsync",
-          "LineNumber": 71,
+          "LineNumber": 75,
           "Inputs": [
             {
               "Name": "commonObjects",
@@ -18625,7 +18671,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidatePageAsync(Content)",
           "Name": "InvalidatePageAsync",
-          "LineNumber": 56,
+          "LineNumber": 60,
           "Inputs": [
             {
               "Name": "content",
@@ -18727,7 +18773,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers.InvalidatePageAsync(PageInfo)",
           "Name": "InvalidatePageAsync",
-          "LineNumber": 61,
+          "LineNumber": 65,
           "Inputs": [
             {
               "Name": "pageInfo",
@@ -65007,7 +65053,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.DeleteAppAsync(App)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 16,
+          "LineNumber": 17,
           "Inputs": [
             {
               "Name": "deletedApp",
@@ -65055,6 +65101,26 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAllAsync()",
+          "Name": "InvalidateAllAsync",
+          "LineNumber": 16,
+          "Inputs": [],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(App)",
           "Name": "InvalidateAppAsync",
           "LineNumber": 14,
@@ -65082,7 +65148,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(AppCulture)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 17,
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "appCulture",
@@ -65107,7 +65173,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Component)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 20,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "component",
@@ -65132,7 +65198,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Layout)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 18,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "layout",
@@ -65157,7 +65223,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Resource)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 21,
+          "LineNumber": 22,
           "Inputs": [
             {
               "Name": "resource",
@@ -65182,7 +65248,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Script)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 22,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "script",
@@ -65232,7 +65298,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(Template)",
           "Name": "InvalidateAppAsync",
-          "LineNumber": 19,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "template",
@@ -65257,7 +65323,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateCommonCacheConsumersAsync(CommonObject)",
           "Name": "InvalidateCommonCacheConsumersAsync",
-          "LineNumber": 25,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "commonObject",
@@ -65282,7 +65348,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateCommonObjectsAsync(CommonObject[])",
           "Name": "InvalidateCommonObjectsAsync",
-          "LineNumber": 26,
+          "LineNumber": 27,
           "Inputs": [
             {
               "Name": "commonObjects",
@@ -65307,7 +65373,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePageAsync(Content)",
           "Name": "InvalidatePageAsync",
-          "LineNumber": 23,
+          "LineNumber": 24,
           "Inputs": [
             {
               "Name": "content",
@@ -65357,7 +65423,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePageAsync(PageInfo)",
           "Name": "InvalidatePageAsync",
-          "LineNumber": 24,
+          "LineNumber": 25,
           "Inputs": [
             {
               "Name": "pageInfo",
