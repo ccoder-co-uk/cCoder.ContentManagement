@@ -13,7 +13,8 @@ public interface ICommonObjectManager
 
     IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false);
 
-    ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject);
+    ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
+        CommonObject[] newCommonObjects);
 
     ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);
 
@@ -25,5 +26,4 @@ public interface ICommonObjectManager
 
     IEnumerable<CommonObject> LatestCommonObject(string type);
 
-    ValueTask<IEnumerable<OperationResult<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items);
 }

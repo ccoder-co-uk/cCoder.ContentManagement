@@ -105,29 +105,45 @@ internal sealed partial class PageRenderCacheAggregationService(
                 return;
             }
 
-            commonObjectCache.Refresh();
-
-            int[] appIds =
-            [
-                .. pageRenderCacheOrchestrationService
-                    .GetAllPageRenderCaches()
-                    .Select(selector: cache => cache.AppId)
-                    .Distinct()
-            ];
-
-            foreach (int appId in appIds)
-            {
-                if (fromEvent)
-                {
-                    await DeleteAppPageRenderCacheFromEventAsync(
-                        appId: appId);
-                }
-                else
-                {
-                    await DeleteAppPageRenderCacheAsync(appId: appId);
-                }
-            }
+            await ExecuteInvalidateCommonCacheAsync(fromEvent: fromEvent);
         }, isValueTask: true);
+
+    public ValueTask InvalidateCommonCacheAsync(bool fromEvent = false) =>
+        TryCatch(operation: async () =>
+        {
+            ValidateCommonObjectPageRenderCachesOnRebuild(
+                inputs: ["CommonCache", fromEvent]);
+
+            await ExecuteInvalidateCommonCacheAsync(
+                fromEvent: fromEvent);
+        }, isValueTask: true);
+
+    private async ValueTask ExecuteInvalidateCommonCacheAsync(
+        bool fromEvent)
+    {
+        commonObjectCache.Refresh();
+
+        int[] appIds =
+        [
+            .. pageRenderCacheOrchestrationService
+                .GetAllPageRenderCaches()
+                .Select(selector: cache => cache.AppId)
+                .Distinct()
+        ];
+
+        foreach (int appId in appIds)
+        {
+            if (fromEvent)
+            {
+                await DeleteAppPageRenderCacheFromEventAsync(
+                    appId: appId);
+            }
+            else
+            {
+                await DeleteAppPageRenderCacheAsync(appId: appId);
+            }
+        }
+    }
 
     private ValueTask DeleteAppPageRenderCacheAsync(int appId) =>
         TryCatch(operation: () =>

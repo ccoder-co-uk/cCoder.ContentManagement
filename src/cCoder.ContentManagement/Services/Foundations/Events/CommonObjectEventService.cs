@@ -64,4 +64,25 @@ internal partial class CommonObjectEventService(ICommonObjectEventBroker commonO
         await commonObjectEventBroker.RaiseCommonObjectDeleteEventAsync(message: message);
 
     }, isValueTask: true);
+
+    public ValueTask RaiseCommonObjectsImportedEventAsync(
+        CommonObject[] commonObjects) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateRaiseCommonObjectsImportedEventAsync(
+            inputs: [commonObjects]);
+
+        EventMessage<CommonObject[]> message = new EventMessage<CommonObject[]>
+        {
+            AuthInfo = new EventAuthInfo
+            {
+                SSOUserId = commonObjectEventBroker.GetCurrentUserId()
+            },
+            Data = commonObjects
+        };
+
+        await commonObjectEventBroker
+            .RaiseCommonObjectsImportedEventAsync(message: message);
+
+    }, isValueTask: true);
 }

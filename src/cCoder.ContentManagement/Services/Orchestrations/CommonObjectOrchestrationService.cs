@@ -27,14 +27,38 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
         return processingService.GetAllCommonObject(ignoreFilters: ignoreFilters);
     });
 
-    public ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject) =>
-        TryCatch<CommonObject>(operation: async () =>
+    public ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
+        CommonObject[] newCommonObjects) =>
+        TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: async () =>
     {
-        ValidateCommonObjectOnAdd(inputs: [newCommonObject]);
-        ValidateCommonObject(commonObject: newCommonObject, parameterName: "entity");
-        CommonObject result = await processingService.AddCommonObjectAsync(newCommonObject: newCommonObject);
-        await eventService.RaiseCommonObjectAddEventAsync(entity: result);
-        return result;
+        ValidateImportCommonObjectResultAsync(inputs: [newCommonObjects]);
+
+        CommonObject[] validatedCommonObjects =
+        [
+            .. ValidateCommonObjects(
+                commonObjects: newCommonObjects,
+                parameterName: "newCommonObjects")
+        ];
+
+        IEnumerable<OperationResult<CommonObject>> results =
+            await processingService.AddAllCommonObjectsAsync(
+                newCommonObjects: validatedCommonObjects);
+
+        CommonObject[] importedObjects =
+        [
+            .. results
+                .Where(predicate: result =>
+                    result.Success && result.Item is not null)
+                .Select(selector: result => result.Item)
+        ];
+
+        if (importedObjects.Length > 0)
+        {
+            await eventService.RaiseCommonObjectsImportedEventAsync(
+                commonObjects: importedObjects);
+        }
+
+        return results;
 
     }, isValueTask: true);
 
@@ -82,13 +106,6 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
         return processingService.LatestCommonObject(type: type);
 
     });
-
-    public ValueTask<IEnumerable<OperationResult<CommonObject>>> ImportCommonObjectResultAsync(IEnumerable<CommonObject> items) =>
-        TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: () =>
-    {
-        ValidateImportCommonObjectResultAsync(inputs: [items]);
-        return processingService.ImportCommonObjectResultAsync(items: ValidateCommonObjects(commonObjects: items, parameterName: "items"));
-    }, isValueTask: true);
 
     private static void ValidateId(int commonObjectId, string parameterName) =>
         ThrowIf(condition: commonObjectId < 1, message: parameterName + " must be greater than 0.");

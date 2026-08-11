@@ -16,4 +16,8 @@ internal partial class CommonObjectEventProcessingService
 
     private static void ValidateRaiseCommonObjectDeleteEventAsync(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateRaiseCommonObjectsImportedEventAsync(
+        object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
 }

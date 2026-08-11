@@ -12,7 +12,7 @@ namespace Web.AcceptanceTests.Tests.ContentManagement;
 public sealed partial class CommonObjectControllerTests
 {
     [Fact]
-    public async Task Import_CreatesCommonObjects()
+    public async Task Post_ArrayCreatesCommonObjects()
     {
         // Given
         string name = Unique(prefix: "ImportedCommonObject");
@@ -20,7 +20,7 @@ public sealed partial class CommonObjectControllerTests
 
         // When
 
-        await ImportCommonObjectsAsync(payload: new
+        await PostCommonObjectsAsync(payload: new
         {
             value = new object[]
             {

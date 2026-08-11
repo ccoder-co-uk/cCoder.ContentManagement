@@ -8,6 +8,8 @@ using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.CMS;
+using cCoder.Data.Models;
+using System.Text.Json;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
@@ -20,6 +22,7 @@ internal partial class ContentManagementMigrationAggregationService(
     IResourceOrchestrationService resourceOrchestrationService,
     ITemplateOrchestrationService templateOrchestrationService,
     IScriptOrchestrationService scriptOrchestrationService,
+    ICommonObjectOrchestrationService commonObjectOrchestrationService,
     PageRenderCacheImportState pageRenderCacheImportState,
     IPackageOrchestrationService packageOrchestrationService)
         : IContentManagementMigrationAggregationService
@@ -46,12 +49,19 @@ internal partial class ContentManagementMigrationAggregationService(
 
     });
 
-    public ValueTask ImportPackageAsync(int appId, Package package) =>
+    public ValueTask ImportPackageAsync(int? appId, Package package) =>
         TryCatch(operation: async () =>
     {
         ValidateImportPackageAsync(inputs: [appId, package]);
-        ValidateAppId(appId: appId, parameterName: "appId");
         ValidatePackage(package: package, parameterName: "package");
+
+        if (appId is null)
+        {
+            await ImportCommonCachePackageAsync(package: package);
+            return;
+        }
+
+        ValidateAppId(appId: appId.Value, parameterName: "appId");
 
         pageRenderCacheImportState.Active = true;
 
@@ -61,7 +71,7 @@ internal partial class ContentManagementMigrationAggregationService(
             {
                 foreach (PackageItem item in package.Items)
                 {
-                    await ImportPackageItemAsync(appId: appId, item: item);
+                    await ImportPackageItemAsync(appId: appId.Value, item: item);
                 }
             }
         }
@@ -74,15 +84,96 @@ internal partial class ContentManagementMigrationAggregationService(
             item.Type == "ContentManagement/PageRole") == true)
         {
             await packageOrchestrationService.RaisePackagePageRolesImportEventAsync(
-                appId: appId,
+                appId: appId.Value,
                 package: package);
         }
 
         await packageOrchestrationService.RaisePackageImportCompleteEventAsync(
-            appId: appId,
+            appId: appId.Value,
             package: package);
 
     }, isValueTask: true);
+
+    private async ValueTask ImportCommonCachePackageAsync(Package package)
+    {
+        CommonObject[] commonObjects =
+        [
+            .. package.Items?
+                .SelectMany(selector: item =>
+                    ConvertToCommonObjects(
+                        package: package,
+                        item: item)) ?? []
+        ];
+
+        if (commonObjects.Length > 0)
+        {
+            await commonObjectOrchestrationService
+                .AddAllCommonObjectsAsync(
+                    newCommonObjects: commonObjects);
+        }
+
+        await packageOrchestrationService
+            .RaiseCommonCachePackageImportCompleteEventAsync(
+                package: package);
+    }
+
+    private static IEnumerable<CommonObject> ConvertToCommonObjects(
+        Package package,
+        PackageItem item)
+    {
+        using JsonDocument document = JsonDocument.Parse(json: item.Data);
+
+        IEnumerable<JsonElement> records =
+            document.RootElement.ValueKind == JsonValueKind.Array
+                ? document.RootElement.EnumerateArray()
+                : [document.RootElement];
+
+        foreach (JsonElement record in records)
+        {
+            yield return new CommonObject
+            {
+                Name = ReadRequiredString(record: record, name: "Name"),
+                Description = ReadOptionalString(record: record, name: "Description"),
+                Version = 1,
+                Key = ReadOptionalString(record: record, name: "ResourceKey")
+                    ?? ReadOptionalString(record: record, name: "Key")
+                    ?? package.Category,
+                Type = item.Type,
+                Json = record.GetRawText(),
+                Culture = ReadOptionalString(record: record, name: "Culture")
+                    ?? string.Empty,
+                CreatedOn = ReadOptionalDateTimeOffset(
+                    record: record,
+                    name: "CreatedOn"),
+                LastUpdated = ReadOptionalDateTimeOffset(
+                    record: record,
+                    name: "LastUpdated")
+            };
+        }
+    }
+
+    private static DateTimeOffset ReadOptionalDateTimeOffset(
+        JsonElement record,
+        string name) =>
+        record.TryGetProperty(propertyName: name, value: out JsonElement value)
+            && value.TryGetDateTimeOffset(value: out DateTimeOffset result)
+                ? result
+                : DateTimeOffset.UtcNow;
+
+    private static string ReadOptionalString(
+        JsonElement record,
+        string name) =>
+        record.TryGetProperty(propertyName: name, value: out JsonElement value)
+            && value.ValueKind == JsonValueKind.String
+                ? value.GetString()
+                : null;
+
+    private static string ReadRequiredString(
+        JsonElement record,
+        string name) =>
+        ReadOptionalString(record: record, name: name)
+            ?? throw new ValidationException(
+                message: name + " is required.");
 
     private async ValueTask ImportPackageItemAsync(int appId, PackageItem item)
     {

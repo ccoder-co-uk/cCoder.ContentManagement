@@ -22,23 +22,23 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class CommonObjectOrchestrationServiceTests
 {
     [Fact]
-    public async Task ShouldReturnProcessingResultsWhenImportAsync()
+    public async Task ShouldNotRaiseImportedEventWhenNoObjectWasChangedAsync()
     {
         // Given
         CommonObject[] items = [CreateRandomCommonObject()];
         OperationResult<CommonObject>[] expectedResults = [];
 
-        commonObjectProcessingServiceMock.Setup(expression: x => x.ImportCommonObjectResultAsync(items: items))
+        commonObjectProcessingServiceMock.Setup(expression: x => x.AddAllCommonObjectsAsync(newCommonObjects: items))
             .ReturnsAsync(value: expectedResults);
 
         // When
-        IEnumerable<OperationResult<CommonObject>> result = await orchestrationService.ImportCommonObjectResultAsync(items: items);
+        IEnumerable<OperationResult<CommonObject>> result = await orchestrationService.AddAllCommonObjectsAsync(newCommonObjects: items);
 
         // Then
         result.Should()
             .BeSameAs(expected: expectedResults);
 
-        commonObjectProcessingServiceMock.Verify(expression: x => x.ImportCommonObjectResultAsync(items: items), times: Times.Once);
+        commonObjectProcessingServiceMock.Verify(expression: x => x.AddAllCommonObjectsAsync(newCommonObjects: items), times: Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
     }

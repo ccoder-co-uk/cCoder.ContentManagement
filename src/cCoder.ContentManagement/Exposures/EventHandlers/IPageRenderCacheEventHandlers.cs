@@ -23,4 +23,6 @@ internal interface IPageRenderCacheEventHandlers
     ValueTask InvalidatePageAsync(Content content);
     ValueTask InvalidatePageAsync(PageInfo pageInfo);
     ValueTask InvalidateCommonCacheConsumersAsync(CommonObject commonObject);
+    ValueTask InvalidateCommonObjectsAsync(
+        CommonObject[] commonObjects);
 }

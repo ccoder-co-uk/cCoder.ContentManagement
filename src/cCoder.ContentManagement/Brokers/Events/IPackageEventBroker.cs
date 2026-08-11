@@ -12,6 +12,8 @@ public interface IPackageEventBroker : IAuthenticatedEventBroker
 {
     ValueTask RaisePackageImportEventAsync(EventMessage<PackageImportEvent> message);
     ValueTask RaisePackageImportCompleteEventAsync(EventMessage<PackageImportEvent> message);
+    ValueTask RaiseCommonCachePackageImportCompleteEventAsync(
+        EventMessage<Package> message);
     ValueTask RaisePackagePageRolesImportEventAsync(EventMessage<PackageImportEvent> message);
 
     ValueTask RaisePackageAddEventAsync(EventMessage<Package> message);

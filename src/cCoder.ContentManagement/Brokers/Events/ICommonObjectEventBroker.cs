@@ -14,4 +14,7 @@ public interface ICommonObjectEventBroker : IAuthenticatedEventBroker
     ValueTask RaiseCommonObjectUpdateEventAsync(EventMessage<CommonObject> message);
 
     ValueTask RaiseCommonObjectDeleteEventAsync(EventMessage<CommonObject> message);
+
+    ValueTask RaiseCommonObjectsImportedEventAsync(
+        EventMessage<CommonObject[]> message);
 }

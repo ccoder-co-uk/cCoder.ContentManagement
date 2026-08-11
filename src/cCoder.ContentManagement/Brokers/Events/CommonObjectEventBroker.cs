@@ -19,4 +19,10 @@ internal sealed class CommonObjectEventBroker(IAuthenticatedEventHub eventHub)
 
     public ValueTask RaiseCommonObjectDeleteEventAsync(EventMessage<CommonObject> message) =>
         RaiseEventAsync(name: "common_object_delete", message: message);
+
+    public ValueTask RaiseCommonObjectsImportedEventAsync(
+        EventMessage<CommonObject[]> message) =>
+        RaiseEventAsync(
+            name: "common_objects_imported",
+            message: message);
 }

@@ -67,4 +67,9 @@ internal sealed class PageRenderCacheEventHandlers(
         pageRenderCacheAggregationService.InvalidateCommonObjectConsumersAsync(
             commonObjectType: commonObject.Type,
             fromEvent: true);
+
+    public ValueTask InvalidateCommonObjectsAsync(
+        CommonObject[] commonObjects) =>
+        pageRenderCacheAggregationService.InvalidateCommonCacheAsync(
+            fromEvent: true);
 }
