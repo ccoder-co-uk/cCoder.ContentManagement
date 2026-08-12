@@ -186,9 +186,9 @@ comparison: (left, right) => left.Path.Split(separator: '/')
             .Length.CompareTo(value: right.Path.Split(separator: '/')
             .Length));
 
-        Page[] allPages = processingService.GetAllPage(ignoreFilters: true)
+        List<Page> allPages = processingService.GetAllPage(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
-            .ToArray();
+            .ToList();
 
         List<Page> importedPages = new();
 
@@ -210,17 +210,14 @@ comparison: (left, right) => left.Path.Split(separator: '/')
                 existing.Path.Equals(value: page.Path.TrimStart(trimChar: '/'), comparisonType: StringComparison.OrdinalIgnoreCase)
                 && existing.AppId == appId)?.Id ?? 0;
 
-            IEnumerable<OperationResult<Page>> results =
-                await processingService.AddOrUpdatePageResult(newPage: [page]);
+            Page result = await processingService.ImportPageAsync(page: page);
 
-            OperationResult<Page> result = results.Single();
-
-            if (!result.Success)
+            if (!allPages.Contains(item: result))
             {
-                throw new InvalidOperationException(message: result.Message);
+                allPages.Add(item: result);
             }
 
-            importedPages.Add(item: result.Item);
+            importedPages.Add(item: result);
         }
 
         return importedPages.ToArray();
