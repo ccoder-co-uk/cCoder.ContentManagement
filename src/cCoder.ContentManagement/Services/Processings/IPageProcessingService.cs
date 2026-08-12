@@ -17,6 +17,8 @@ internal interface IPageProcessingService
 
     ValueTask<Page> AddPageAsync(Page newPage);
 
+    ValueTask<Page> ImportPageAsync(Page page);
+
     ValueTask<Page> UpdatePageAsync(Page updatedPage);
 
     ValueTask DeleteAsync(int pageId);

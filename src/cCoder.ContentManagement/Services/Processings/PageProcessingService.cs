@@ -238,6 +238,21 @@ internal partial class PageProcessingService(
 
     }, isValueTask: true);
 
+    public ValueTask<Page> ImportPageAsync(Page page) =>
+        TryCatch<Page>(operation: async () =>
+    {
+        ValidatePage(page: page, parameterName: "page");
+
+        page.Path = (page.Path ?? string.Empty)
+            .TrimStart(trimChar: '/');
+
+        ValidatePathDoesNotExistForApp(page: page);
+
+        return page.Id <= 0
+            ? await service.AddPageAsync(newPage: page)
+            : await service.UpdatePageAsync(updatedPage: page);
+    }, isValueTask: true);
+
     public ValueTask<IEnumerable<OperationResult<Page>>> AddOrUpdatePageResult(IEnumerable<Page> newPage) =>
         TryCatch<IEnumerable<OperationResult<Page>>>(operation: async () =>
     {
