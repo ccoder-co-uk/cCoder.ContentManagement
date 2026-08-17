@@ -9241,7 +9241,6 @@
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -24448,7 +24447,6 @@
           "Calls": [],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -41496,6 +41494,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "System.String",
+              "MethodName": "IsNullOrWhiteSpace",
+              "MethodId": "System.String.IsNullOrWhiteSpace(System.String?)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Authorization.IAuthorizationService",
               "MethodName": "ResolveCurrentAuthorizationContext",
               "MethodId": "cCoder.ContentManagement.Services.Foundations.Authorization.IAuthorizationService.ResolveCurrentAuthorizationContext(cCoder.ContentManagement.Models.AuthorizationContext)",
@@ -42266,7 +42271,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.DeleteAllPageAsync(System.Collections.Generic.IEnumerable\u003CPage\u003E)",
           "Name": "DeleteAllPageAsync",
-          "LineNumber": 230,
+          "LineNumber": 227,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -42523,7 +42528,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetChildrenPage(System.Int32)",
           "Name": "GetChildrenPage",
-          "LineNumber": 261,
+          "LineNumber": 258,
           "Inputs": [
             {
               "Name": "pageId",
@@ -42677,7 +42682,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetRootPage(System.Int32)",
           "Name": "GetRootPage",
-          "LineNumber": 252,
+          "LineNumber": 249,
           "Inputs": [
             {
               "Name": "pageId",
@@ -42768,15 +42773,15 @@
             },
             {
               "TypeName": "System.Collections.Generic.List\u003CT\u003E",
-              "MethodName": "ToArray",
-              "MethodId": "System.Collections.Generic.List\u003CT\u003E.ToArray()",
+              "MethodName": "Contains",
+              "MethodId": "System.Collections.Generic.List\u003CT\u003E.Contains(T)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
             {
-              "TypeName": "System.InvalidOperationException",
-              "MethodName": ".ctor",
-              "MethodId": "System.InvalidOperationException..ctor(System.String?)",
+              "TypeName": "System.Collections.Generic.List\u003CT\u003E",
+              "MethodName": "ToArray",
+              "MethodId": "System.Collections.Generic.List\u003CT\u003E.ToArray()",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -42789,15 +42794,15 @@
             },
             {
               "TypeName": "System.Linq.Enumerable",
-              "MethodName": "Single",
-              "MethodId": "System.Linq.Enumerable.Single(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
+              "MethodName": "ToArray",
+              "MethodId": "System.Linq.Enumerable.ToArray(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
             {
               "TypeName": "System.Linq.Enumerable",
-              "MethodName": "ToArray",
-              "MethodId": "System.Linq.Enumerable.ToArray(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
+              "MethodName": "ToList",
+              "MethodId": "System.Linq.Enumerable.ToList(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -42810,22 +42815,21 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
-              "MethodName": "AddOrUpdatePageResult",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.AddOrUpdatePageResult(System.Collections.Generic.IEnumerable\u003CPage\u003E)",
+              "MethodName": "GetAllPage",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPage(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPage(System.Boolean)",
+              "MethodName": "ImportPageAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.ImportPageAsync(Page)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -42835,7 +42839,6 @@
           ],
           "IncomingExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
@@ -42857,7 +42860,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.MenuFor(System.Int32,System.String)",
           "Name": "MenuFor",
-          "LineNumber": 270,
+          "LineNumber": 267,
           "Inputs": [
             {
               "Name": "pageId",
@@ -42912,7 +42915,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.RecomputeAllForAppAsync(System.Int32)",
           "Name": "RecomputeAllForAppAsync",
-          "LineNumber": 245,
+          "LineNumber": 242,
           "Inputs": [
             {
               "Name": "appId",
@@ -53783,7 +53786,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.AddOrUpdatePageResult(System.Collections.Generic.IEnumerable\u003CPage\u003E)",
           "Name": "AddOrUpdatePageResult",
-          "LineNumber": 241,
+          "LineNumber": 256,
           "Inputs": [
             {
               "Name": "newPage",
@@ -53947,7 +53950,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.DeleteAllPageAsync(System.Collections.Generic.IEnumerable\u003CPage\u003E)",
           "Name": "DeleteAllPageAsync",
-          "LineNumber": 276,
+          "LineNumber": 291,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -54303,6 +54306,65 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.ImportPageAsync(Page)",
+          "Name": "ImportPageAsync",
+          "LineNumber": 241,
+          "Inputs": [
+            {
+              "Name": "page",
+              "Type": "Page"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPage\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.IPageProcessingService.ImportPageAsync(Page)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService",
+              "MethodName": "AddPageAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.AddPageAsync(Page)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService",
+              "MethodName": "UpdatePageAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.UpdatePageAsync(Page)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.MenuFor(System.Int32,System.String)",
           "Name": "MenuFor",
           "LineNumber": 54,
@@ -54395,7 +54457,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.RecomputeAllForAppAsync(System.Int32)",
           "Name": "RecomputeAllForAppAsync",
-          "LineNumber": 289,
+          "LineNumber": 304,
           "Inputs": [
             {
               "Name": "appId",
@@ -80848,7 +80910,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.AddOrUpdatePageResult(System.Collections.Generic.IEnumerable\u003CPage\u003E)",
           "Name": "AddOrUpdatePageResult",
-          "LineNumber": 24,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "newPage",
@@ -80898,7 +80960,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.DeleteAllPageAsync(System.Collections.Generic.IEnumerable\u003CPage\u003E)",
           "Name": "DeleteAllPageAsync",
-          "LineNumber": 26,
+          "LineNumber": 28,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -80923,7 +80985,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 22,
+          "LineNumber": 24,
           "Inputs": [
             {
               "Name": "pageId",
@@ -80973,7 +81035,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetChildrenPage(System.Int32)",
           "Name": "GetChildrenPage",
-          "LineNumber": 32,
+          "LineNumber": 34,
           "Inputs": [
             {
               "Name": "pageId",
@@ -81048,7 +81110,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetRootPage(System.Int32)",
           "Name": "GetRootPage",
-          "LineNumber": 30,
+          "LineNumber": 32,
           "Inputs": [
             {
               "Name": "pageId",
@@ -81071,9 +81133,34 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.ImportPageAsync(Page)",
+          "Name": "ImportPageAsync",
+          "LineNumber": 20,
+          "Inputs": [
+            {
+              "Name": "page",
+              "Type": "Page"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CPage\u003E",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.MenuFor(System.Int32,System.String)",
           "Name": "MenuFor",
-          "LineNumber": 34,
+          "LineNumber": 36,
           "Inputs": [
             {
               "Name": "pageId",
@@ -81102,7 +81189,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.RecomputeAllForAppAsync(System.Int32)",
           "Name": "RecomputeAllForAppAsync",
-          "LineNumber": 28,
+          "LineNumber": 30,
           "Inputs": [
             {
               "Name": "appId",
@@ -81127,7 +81214,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.UpdatePageAsync(Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 20,
+          "LineNumber": 22,
           "Inputs": [
             {
               "Name": "updatedPage",
