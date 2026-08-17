@@ -20,6 +20,7 @@ public sealed partial class PageContextOrchestrationServiceTests
     {
         // Given
         HttpPageRenderContext context = new();
+
         User user = new()
         {
             Id = "Paul",
@@ -37,7 +38,7 @@ public sealed partial class PageContextOrchestrationServiceTests
         pageAuthorizationService.Setup(expression: service =>
             service.AuthorizeHttpPageRenderContextAsync(
                 pageRenderContext: context))
-            .Callback(() => context.Culture = "en-GB")
+            .Callback(action: () => context.Culture = "en-GB")
             .ReturnsAsync(value: context);
 
         authorizationService.Setup(expression: service =>
