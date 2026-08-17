@@ -23,6 +23,9 @@ internal sealed partial class PageContextOrchestrationService(
         HttpPageRenderContext context =
             httpContextService.GetPageRenderContext();
 
+        bool hasCultureOverride = !string.IsNullOrWhiteSpace(
+            value: context.Culture);
+
         context = await pageAuthorizationService
             .AuthorizeHttpPageRenderContextAsync(
                 pageRenderContext: context);
@@ -34,6 +37,13 @@ internal sealed partial class PageContextOrchestrationService(
                     Culture = context.Culture
                 })
             .User;
+
+        if (!hasCultureOverride
+            && !string.IsNullOrWhiteSpace(
+                value: context.User?.DefaultCultureId))
+        {
+            context.Culture = context.User.DefaultCultureId;
+        }
 
         return context;
 
