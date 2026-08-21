@@ -23,8 +23,7 @@ internal sealed partial class PageContextOrchestrationService(
         HttpPageRenderContext context =
             httpContextService.GetPageRenderContext();
 
-        bool hasCultureOverride = !string.IsNullOrWhiteSpace(
-            value: context.Culture);
+        bool hasCultureOverride = context.CultureWasExplicitlyRequested;
 
         context = await pageAuthorizationService
             .AuthorizeHttpPageRenderContextAsync(

@@ -200,7 +200,7 @@ public sealed partial class RenderAggregationServiceTests
                 service.RenderTemplateRenderResult(
                     appId: 17,
                     name: "Welcome",
-                    culture: "en-gb",
+                    culture: "en-GB",
                     model: It.IsAny<object>()))
             .Returns(value: expected);
 
@@ -251,7 +251,7 @@ public sealed partial class RenderAggregationServiceTests
                 service.RenderComponentRenderResult(
                     appId: 17,
                     name: "Hero",
-                    culture: "en-gb",
+                    culture: "en-GB",
                     theme: "default"))
             .Returns(value: expected);
 

@@ -24,9 +24,17 @@ internal sealed partial class HttpContextService(
             ? routePath?.ToString()
             : request.Path.Value?.Trim(trimChar: '/');
 
-        string culture = request.Query.TryGetValue(
+        bool hasCultureQuery = request.Query.TryGetValue(
                 key: "culture",
-                value: out Microsoft.Extensions.Primitives.StringValues cultureValue)
+                value: out Microsoft.Extensions.Primitives.StringValues cultureValue);
+
+        bool cultureWasExplicitlyRequested = hasCultureQuery
+            || string.Equals(
+                a: context.Session.GetString(key: "cultureexplicit"),
+                b: bool.TrueString,
+                comparisonType: StringComparison.OrdinalIgnoreCase);
+
+        string culture = hasCultureQuery
             ? cultureValue.ToString()
             : context.Session.GetString(key: "culture");
 
@@ -46,6 +54,7 @@ internal sealed partial class HttpContextService(
                 .ToLowerInvariant(),
             Path = path ?? string.Empty,
             Culture = culture,
+            CultureWasExplicitlyRequested = cultureWasExplicitlyRequested,
             Theme = theme,
             Nonce = context.Items[
                     ContentSecurityPolicyNonceContract.HttpContextItemKey]
