@@ -21,9 +21,10 @@ public sealed class HttpPageRenderContext
     {
         get => culture;
         set => culture = (value ?? string.Empty)
-            .Trim()
-            .ToLowerInvariant();
+            .Trim();
     }
+
+    public bool CultureWasExplicitlyRequested { get; set; }
 
     public string Theme
     {

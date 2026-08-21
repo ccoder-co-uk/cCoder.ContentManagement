@@ -24,7 +24,7 @@ public sealed partial class CachedPageRenderOrchestrationServiceTests
 
         queryService.Setup(expression: service => service.GetPageRenderCache(
             pageId: 17,
-            culture: "en-gb",
+            culture: "en-GB",
             theme: "default"))
             .Returns(value: cache);
 
@@ -58,7 +58,7 @@ public sealed partial class CachedPageRenderOrchestrationServiceTests
 
         queryService.Setup(expression: service => service.GetPageRenderCache(
             pageId: 17,
-            culture: "en-gb",
+            culture: "en-GB",
             theme: "default"))
             .Returns(value: (PageRenderCache)null);
 
