@@ -3,20 +3,23 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <NoWarn>1591</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NETSDK1233</WarningsNotAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.8.26.1209" PrivateAssets="all" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="10.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
-    <PackageReference Include="cCoder.AppSecurity" Version="2026.8.10.1714" />
-    <PackageReference Include="cCoder.Eventing" Version="2026.8.10.1536" />
-    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.8.4.2342" />
-    <PackageReference Include="cCoder.Eventing.Http" Version="2026.8.4.2342" />
-    <PackageReference Include="cCoder.Security" Version="2026.8.10.1617" />
-    <PackageReference Include="cCoder.Security.Data" Version="2026.8.10.1617" />
+    <PackageReference Include="cCoder.AppSecurity" Version="2026.8.26.1400" />
+    <PackageReference Include="cCoder.Eventing" Version="2026.8.15.955" />
+    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.8.15.955" />
+    <PackageReference Include="cCoder.Eventing.Http" Version="2026.8.15.955" />
+    <PackageReference Include="cCoder.Security" Version="2026.8.26.1344" />
+    <PackageReference Include="cCoder.Security.Data" Version="2026.8.26.1344" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" />
