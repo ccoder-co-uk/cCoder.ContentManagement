@@ -9,8 +9,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Shared\Testing\AcceptanceTestConfiguration.cs" Link="Shared\Testing\AcceptanceTestConfiguration.cs" />
-    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.8.26.1209" PrivateAssets="all" />
-    <PackageReference Include="cCoder.Security.Data" Version="2026.8.26.1344" />
+    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.8.26.2138" PrivateAssets="all" />
+    <PackageReference Include="cCoder.Security.Data" Version="2026.8.26.2208" />
     <PackageReference Include="FluentAssertions" Version="8.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.11" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.2" />
