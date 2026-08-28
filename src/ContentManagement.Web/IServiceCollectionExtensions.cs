@@ -3,36 +3,25 @@
 // ---------------------------------------------------------------
 
 using cCoder.AppSecurity;
-using cCoder.AppSecurity.Models;
 using cCoder.ContentManagement;
-using cCoder.ContentManagement.Models;
 using cCoder.Data;
-using cCoder.Data.Models;
 using cCoder.Eventing;
-using cCoder.Eventing.Models;
 using cCoder.Eventing.Http;
 using cCoder.Eventing.Http.Models;
 using cCoder.Security;
-using cCoder.Security.Models;
+using cCoder.Security.Data.EF;
 using ContentManagement.Web.Models;
 
 namespace ContentManagement.Web;
 
 public static class IServiceCollectionExtensions
 {
-    public static IServiceCollection AddContentManagementWeb(
+    public static IServiceCollection AddWeb(
         this IServiceCollection services,
         IConfiguration configuration,
-        Action<ContentManagementWebConfiguration> configure = null)
+        Action<AppConfiguration> configure = null)
     {
-        ContentManagementWebConfiguration webConfiguration = new()
-        {
-            ContentManagement = new ContentManagementConfiguration(),
-            Data = new DataConfiguration(),
-            Security = new SecurityConfiguration(),
-            AppSecurity = new AppSecurityConfiguration(),
-            Eventing = new EventingConfiguration()
-        };
+        AppConfiguration webConfiguration = new();
 
         configuration.Bind(instance: webConfiguration);
         configure?.Invoke(obj: webConfiguration);
@@ -48,7 +37,8 @@ public static class IServiceCollectionExtensions
                     new System.Text.Json.JsonSerializerOptions(
                         System.Text.Json.JsonSerializerDefaults.Web)
             });
-        services.AddData(configuration: webConfiguration.Data);
+        services.AddData(configuration: webConfiguration.CoreData);
+        services.AddSecurityData(configuration: webConfiguration.SecurityData);
         services.AddSecurityWeb(configuration: webConfiguration.Security);
         services.AddAppSecurityWeb(
             configuration: webConfiguration.AppSecurity);

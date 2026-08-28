@@ -87,10 +87,7 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
         services.AddContentManagementHostedServices(
             configuration:
                 new cCoder.ContentManagement.Models
-                    .ContentManagementConfiguration
-                {
-                    ConnectionString = settings.CoreConnectionString,
-                });
+                    .ContentManagementConfiguration());
 
         return services.BuildServiceProvider(validateScopes: false);
     }

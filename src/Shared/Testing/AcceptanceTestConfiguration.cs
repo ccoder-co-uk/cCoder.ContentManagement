@@ -33,11 +33,11 @@ internal sealed class AcceptanceTestConfiguration
             contentManagementConnectionString: AddDatabaseSuffix(
                 connectionString: ReadRequiredValue(
                     variableName:
-                        "ContentManagement__ConnectionString"),
+                        "CoreData__ConnectionString"),
                 suffix: suffix),
             securityConnectionString: AddDatabaseSuffix(
                 connectionString: ReadRequiredValue(
-                    variableName: "Security__ConnectionString"),
+                    variableName: "SecurityData__ConnectionString"),
                 suffix: suffix),
             securityDecryptionKey: ReadRequiredValue(
                 variableName: "Security__DecryptionKey"));

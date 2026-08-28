@@ -576,17 +576,6 @@ public static partial class IServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(argument: configuration);
         services.AddSingleton(implementationInstance: configuration);
 
-        if (!string.IsNullOrWhiteSpace(configuration.ConnectionString))
-        {
-            services.AddData(
-                configuration: new cCoder.Data.Models.DataConfiguration
-                {
-                    ConnectionString = configuration.ConnectionString,
-                    DebugInfo = configuration.DebugInfo,
-                    LogSQL = configuration.LogSQL,
-                });
-        }
-
         services.AddEventProviders(eventProviders: configuration.EventProviders);
     }
 

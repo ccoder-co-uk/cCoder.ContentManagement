@@ -10,16 +10,17 @@ using cCoder.Security.Models;
 
 namespace ContentManagement.Web.Models;
 
-public sealed class ContentManagementWebConfiguration
+public sealed class AppConfiguration
 {
+    public AppSecurityConfiguration AppSecurity { get; set; }
+
     public ContentManagementConfiguration ContentManagement { get; set; }
 
-    public DataConfiguration Data { get; set; }
-
-    public SecurityConfiguration Security { get; set; }
-
-    public AppSecurityConfiguration AppSecurity { get; set; }
+    public CoreDataConfiguration CoreData { get; set; }
 
     public EventingConfiguration Eventing { get; set; }
 
+    public SecurityConfiguration Security { get; set; }
+
+    public SecurityDataConfiguration SecurityData { get; set; }
 }
