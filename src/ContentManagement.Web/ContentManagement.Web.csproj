@@ -14,12 +14,12 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
-    <PackageReference Include="cCoder.AppSecurity" Version="2026.8.27.1757" />
+    <PackageReference Include="cCoder.AppSecurity" Version="2026.8.28.1718" />
     <PackageReference Include="cCoder.Eventing" Version="2026.8.27.1708" />
     <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.8.27.1708" />
     <PackageReference Include="cCoder.Eventing.Http" Version="2026.8.27.1708" />
-    <PackageReference Include="cCoder.Security" Version="2026.8.27.1720" />
-    <PackageReference Include="cCoder.Security.Data" Version="2026.8.27.1720" />
+    <PackageReference Include="cCoder.Security" Version="2026.8.28.1335" />
+    <PackageReference Include="cCoder.Security.Data" Version="2026.8.28.1335" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" />

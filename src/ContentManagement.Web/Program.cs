@@ -12,7 +12,7 @@ public class Program
             WebApplication.CreateBuilder(
                 args: args);
 
-        builder.Services.AddContentManagementWeb(
+        builder.Services.AddWeb(
             configuration: builder.Configuration,
             configure: configuration =>
                 configuration.ContentManagement.EventProviders =

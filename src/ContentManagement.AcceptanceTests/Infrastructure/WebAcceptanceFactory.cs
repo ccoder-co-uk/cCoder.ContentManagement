@@ -31,20 +31,14 @@ internal sealed class WebAcceptanceFactory(AcceptanceSettings settings)
             config.AddInMemoryCollection(
 initialData: [
                 new KeyValuePair<string, string>(
-                    key: "ContentManagement:ConnectionString",
+                    key: "CoreData:ConnectionString",
                     value: settings.CoreConnectionString),
                 new KeyValuePair<string, string>(
-                    key: "Data:ConnectionString",
-                    value: settings.CoreConnectionString),
-                new KeyValuePair<string, string>(
-                    key: "Security:ConnectionString",
+                    key: "SecurityData:ConnectionString",
                     value: settings.SsoConnectionString),
                 new KeyValuePair<string, string>(
                     key: "Security:DecryptionKey",
                     value: settings.DecryptionKey),
-                new KeyValuePair<string, string>(
-                    key: "AppSecurity:ConnectionString",
-                    value: settings.CoreConnectionString),
             ]);
         });
 

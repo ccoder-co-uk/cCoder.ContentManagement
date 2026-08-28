@@ -47,21 +47,33 @@ The full solution test run includes unit tests, Web acceptance tests, and integr
 
 ## Local Configuration
 
-The standalone web host binds each section of `appsettings.json` directly to
-its domain configuration class. Non-secret defaults remain in that file.
+The standalone Web host binds the complete configuration root into an
+`AppConfiguration` containing `ContentManagement`, `CoreData`, `SecurityData`,
+`Security`, `AppSecurity`, and `Eventing`. The app registers Data domains first
+and business domains second. `cCoder.ContentManagement` owns no persistence
+configuration and does not register `cCoder.Data` itself.
+
 Leave secret values empty and define these user-level or machine-level
 environment variables:
 
-- `ContentManagement__ConnectionString`
-- `Security__ConnectionString`
+- `CoreData__ConnectionString`
+- `SecurityData__ConnectionString`
 - `Security__DecryptionKey`
-- `AppSecurity__ConnectionString`
+
+Optional migration-only overrides:
+
+- `CoreData__AdminConnectionString`
+- `SecurityData__AdminConnectionString`
 
 Restart Visual Studio after changing the environment, select
 `ContentManagement.Web` as the startup project, and press F5. Acceptance and
 integration tests use the same Content Management and Security connection
 strings, but replace each database name with a unique
 `-acceptance-{guid}` database before performing any database operation.
+
+Applications that consume `cCoder.Core` should use Core's composite API rather
+than composing these domains directly. Core is the deliberate aggregate
+composition root for its configured domain graph.
 
 ## Local Run
 

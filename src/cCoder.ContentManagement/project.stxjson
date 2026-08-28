@@ -21044,20 +21044,8 @@
           "Type": "System.Int32?"
         },
         {
-          "Name": "ConnectionString",
-          "Type": "System.String"
-        },
-        {
-          "Name": "DebugInfo",
-          "Type": "System.Boolean"
-        },
-        {
           "Name": "EventProviders",
           "Type": "EventProvider[]"
-        },
-        {
-          "Name": "LogSQL",
-          "Type": "System.Boolean"
         },
         {
           "Name": "RootPath",

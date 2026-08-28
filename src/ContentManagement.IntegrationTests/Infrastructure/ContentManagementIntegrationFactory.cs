@@ -31,11 +31,9 @@ internal sealed class ContentManagementIntegrationFactory(
         {
             config.AddInMemoryCollection(
 initialData: [
-                new KeyValuePair<string, string>(key: "ContentManagement:ConnectionString", value: coreConnectionString),
-                new KeyValuePair<string, string>(key: "Data:ConnectionString", value: coreConnectionString),
-                new KeyValuePair<string, string>(key: "Security:ConnectionString", value: ssoConnectionString),
+                new KeyValuePair<string, string>(key: "CoreData:ConnectionString", value: coreConnectionString),
+                new KeyValuePair<string, string>(key: "SecurityData:ConnectionString", value: ssoConnectionString),
                 new KeyValuePair<string, string>(key: "Security:DecryptionKey", value: decryptionKey),
-                new KeyValuePair<string, string>(key: "AppSecurity:ConnectionString", value: coreConnectionString),
                 new KeyValuePair<string, string>(key: "Eventing:ProviderType", value: "Http"),
                 new KeyValuePair<string, string>(key: "Eventing:Http:MaxConcurrency", value: "1"),
             ]);
