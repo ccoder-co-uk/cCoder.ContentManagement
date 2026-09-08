@@ -709,6 +709,15 @@
     }
   ],
   "Interfaces": [],
-  "Links": [],
+  "Links": [
+    {
+      "FromType": "ContentManagement.Web.Controllers.PackageController",
+      "ToType": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker"
+    },
+    {
+      "FromType": "ContentManagement.Web.Controllers.PackageController",
+      "ToType": "cCoder.ContentManagement.Exposures.IContentManagementPackageManager"
+    }
+  ],
   "AnalysisItems": []
 }
