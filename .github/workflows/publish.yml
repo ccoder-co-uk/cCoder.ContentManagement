@@ -30,7 +30,30 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.x
+          # 10.0.400's Windows ARM64 reference packs are incomplete. Pin the
+          # corrected servicing release so setup-dotnet repairs this runner and
+          # all subsequent repository builds can use the complete machine SDK.
+          dotnet-version: 10.0.401
+
+      - name: Verify .NET reference packs
+        run: |
+          $sdk = dotnet --list-sdks | Select-Object -Last 1
+          $dotnetRoot = (Get-Command dotnet).Source | Split-Path
+          $missingAnalyzerPacks = @(
+            'Microsoft.NETCore.App.Ref',
+            'Microsoft.AspNetCore.App.Ref'
+          ) | Where-Object {
+            -not (Get-ChildItem (Join-Path $dotnetRoot "packs/$_") -Recurse -Filter '*.dll' |
+              Where-Object FullName -Match '[\\/]analyzers[\\/]' |
+              Select-Object -First 1)
+          }
+
+          "Using SDK: $sdk" | Write-Output
+          "DOTNET_ROOT: $dotnetRoot" | Write-Output
+
+          if ($missingAnalyzerPacks.Count -gt 0) {
+            throw "The installed SDK has incomplete reference packs: $($missingAnalyzerPacks -join ', ')."
+          }
 
       - name: Create version number
         id: version
