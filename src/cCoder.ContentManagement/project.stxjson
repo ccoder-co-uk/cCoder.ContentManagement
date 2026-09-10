@@ -15095,6 +15095,85 @@
       "Properties": [],
       "Methods": [
         {
+          "Id": "cCoder.ContentManagement.Exposures.Controllers.PageRoleController.Delete(System.Int32,System.Guid)",
+          "Name": "Delete",
+          "LineNumber": 151,
+          "Inputs": [
+            {
+              "Name": "keyPageId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "keyRoleId",
+              "Type": "System.Guid"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.Task\u003CIActionResult\u003E",
+          "Implements": [],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
+              "MethodName": "LogError",
+              "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.IPageRoleManager",
+              "MethodName": "DeletePageRoleAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.IPageRoleManager.DeletePageRoleAsync(PageRole)",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [
+            "DELETE"
+          ],
+          "HttpResponses": [
+            {
+              "StatusCode": 204,
+              "ResultMethod": "NoContent",
+              "ExceptionType": "",
+              "IsExceptionPath": false,
+              "IsNullPath": false,
+              "HasBody": false,
+              "ExposesExceptionDetails": false,
+              "LogsException": false
+            },
+            {
+              "StatusCode": 400,
+              "ResultMethod": "BadRequest",
+              "ExceptionType": "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
+              "IsExceptionPath": true,
+              "IsNullPath": false,
+              "HasBody": false,
+              "ExposesExceptionDetails": false,
+              "LogsException": true
+            }
+          ],
+          "IsHttpRequestHandler": true,
+          "IsODataControllerAction": true,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": true
+        },
+        {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageRoleController.DeleteAll(System.Collections.Generic.IEnumerable\u003CPageRole\u003E)",
           "Name": "DeleteAll",
           "LineNumber": 118,
@@ -15138,7 +15217,7 @@
           ],
           "ThrowsExceptionTypes": [],
           "HttpMethods": [
-            "POST"
+            "DELETE"
           ],
           "HttpResponses": [
             {
@@ -15332,7 +15411,7 @@
           ],
           "ThrowsExceptionTypes": [],
           "HttpMethods": [
-            "DELETE"
+            "POST"
           ],
           "HttpResponses": [
             {
@@ -85144,6 +85223,13 @@
       "Severity": "Warning",
       "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRoleController",
       "LineNumber": 118
+    },
+    {
+      "Code": "STXAPI005",
+      "Description": "Every public HTTP handler must map success and caught failure paths to 2xx, 4xx, or 5xx responses.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Exposures.Controllers.PageRoleController",
+      "LineNumber": 151
     },
     {
       "Code": "STXAPI005",

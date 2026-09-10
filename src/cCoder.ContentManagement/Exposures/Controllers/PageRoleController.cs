@@ -82,7 +82,7 @@ public class PageRoleController : ODataController
         }
     }
 
-    [HttpDelete]
+    [HttpPost]
     public async Task<IActionResult> Post([FromBody] PageRole newPageRole)
     {
         try
@@ -114,7 +114,7 @@ public class PageRoleController : ODataController
         }
     }
 
-    [HttpPost]
+    [HttpDelete]
     public async Task<IActionResult> DeleteAll([FromBody] IEnumerable<PageRole> deletedPageRole)
     {
         try
@@ -125,6 +125,39 @@ public class PageRoleController : ODataController
             }
 
             await service.DeleteAllPageRoleAsync(deletedPageRole: deletedPageRole);
+            return NoContent();
+        }
+        catch (ContentManagementValidationException exception)
+        {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return BadRequest();
+        }
+        catch (ContentManagementSecurityException exception)
+        {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
+        }
+        catch (Exception exception)
+        {
+            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+
+            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete([FromRoute] int keyPageId, [FromRoute] Guid keyRoleId)
+    {
+        try
+        {
+            await service.DeletePageRoleAsync(deletedPageRole: new PageRole
+            {
+                PageId = keyPageId,
+                RoleId = keyRoleId
+            });
+
             return NoContent();
         }
         catch (ContentManagementValidationException exception)
