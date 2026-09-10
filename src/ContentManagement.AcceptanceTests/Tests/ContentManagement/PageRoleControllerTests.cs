@@ -166,6 +166,19 @@ public sealed partial class PageRoleControllerTests(WebAcceptanceFixture fixture
         return JsonSerializer.Deserialize<PageRole>(json: content, options: JsonOptions)!;
     }
 
+    private async Task<int> DeletePageRoleAsync(int pageId, Guid roleId)
+    {
+        using HttpResponseMessage response = await Client.DeleteAsync(
+            requestUri: $"{BaseUrl}(PageId={pageId},RoleId={roleId})");
+
+        string content = await response.Content.ReadAsStringAsync();
+
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.NoContent, because: content);
+
+        return (int)response.StatusCode;
+    }
+
     private async Task<int> GetPageRoleCountAsync()
     {
         using HttpResponseMessage response = await Client.GetAsync(requestUri: $"{BaseUrl}/$count");
