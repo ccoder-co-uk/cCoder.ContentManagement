@@ -1,0 +1,37 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+using cCoder.ContentManagement.Services.Coordinations;
+using cCoder.Data.Models.CMS;
+using cCoder.Eventing;
+
+namespace cCoder.ContentManagement.Exposures.EventHandlers;
+
+internal sealed class PageCoordinationEventHandlers(IEventHub eventHub)
+    : IContentManagementEventHandlers
+{
+    public void ListenToAllEvents()
+    {
+        eventHub.ListenToEvent(
+            name: "page_add",
+            handler: (IPageCoordinationService service, Page page) =>
+                service.HandlePageAddAsync(page: page));
+
+        eventHub.ListenToEvent(
+            name: "page_update",
+            handler: (IPageCoordinationService service, Page page) =>
+                service.HandlePageUpdateAsync(page: page));
+
+        eventHub.ListenToEvent(
+            name: "page_delete",
+            handler: (IPageCoordinationService service, Page page) =>
+                service.HandlePageDeleteAsync(page: page));
+    }
+
+    public void ListenToWebCacheEvents() { }
+
+    public void ListenToHostedEvents() { }
+
+    public void ListenToFinalAppDeleteEvent() { }
+}

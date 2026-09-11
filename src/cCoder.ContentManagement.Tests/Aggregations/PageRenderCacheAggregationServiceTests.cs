@@ -132,6 +132,44 @@ public sealed partial class PageRenderCacheAggregationServiceTests
         cacheService.VerifyAll();
     }
 
+    [Fact]
+    public async Task ShouldInvalidateOnlyOwningAppAfterAppPackageImportAsync()
+    {
+        const int appId = 7;
+        Mock<IPageRenderCacheOrchestrationService> cacheService = new();
+
+        cacheService.Setup(service =>
+            service.DeleteAppPageRenderCachesFromEventAsync(appId))
+            .Returns(ValueTask.CompletedTask);
+
+        PageRenderCacheAggregationService service = CreateService(
+            cacheService: cacheService);
+
+        await service.InvalidatePackageAsync(appId: appId);
+
+        cacheService.VerifyAll();
+    }
+
+    [Fact]
+    public async Task ShouldInvalidateAllAppsAfterCommonPackageImportAsync()
+    {
+        Mock<ICommonObjectCache> commonObjectCache = new();
+        Mock<IPageRenderCacheOrchestrationService> cacheService = new();
+
+        commonObjectCache.Setup(cache => cache.Refresh());
+        cacheService.Setup(service => service.GetAllPageRenderCaches())
+            .Returns(Array.Empty<PageRenderCache>().AsQueryable());
+
+        PageRenderCacheAggregationService service = CreateService(
+            cacheService: cacheService,
+            commonObjectCache: commonObjectCache);
+
+        await service.InvalidatePackageAsync(appId: null);
+
+        commonObjectCache.VerifyAll();
+        cacheService.VerifyAll();
+    }
+
     private static PageRenderCacheAggregationService CreateService(
         Mock<IPageRenderCacheOrchestrationService> cacheService = null,
         Mock<ICommonObjectCache> commonObjectCache = null) =>

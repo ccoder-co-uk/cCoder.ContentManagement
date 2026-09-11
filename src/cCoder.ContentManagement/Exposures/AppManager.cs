@@ -2,90 +2,69 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Services.Foundations.ServiceProviders;
-using cCoder.ContentManagement.Services.Orchestrations;
-using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class AppManager(
-    IServiceProviderExecutionService serviceProviderExecutionService)
+    IAppManagerAggregationService appManagerAggregationService)
         : IAppManager
 {
     public App Get(int appManagerId, bool ignoreFilters = false) =>
-        serviceProviderExecutionService.Execute<
-            IAppOrchestrationService,
-            App>(
-                name: "App",
-                operation: service => service.GetApp(
-                    appId: appManagerId));
+        appManagerAggregationService.GetAppManagerContext(
+            appManagerContext: new AppManagerContext { AppId = appManagerId })
+        .App;
 
     public App GetByDomain(string domain, bool ignoreFilters = false) =>
-        serviceProviderExecutionService.Execute<
-            IAppOrchestrationService,
-            App>(
-                name: "App",
-                operation: service => service.GetByDomainApp(
-                    domain: domain,
-                    ignoreFilters: ignoreFilters));
+        appManagerAggregationService.GetByDomainAppManagerContext(
+            appManagerContext: new AppManagerContext
+            {
+                Domain = domain,
+                IgnoreFilters = ignoreFilters
+            })
+        .App;
 
     public IQueryable<App> GetAll(bool ignoreFilters = false) =>
-        serviceProviderExecutionService.Execute<
-            IAppOrchestrationService,
-            IQueryable<App>>(
-                name: "App",
-                operation: service => service.GetAllApp(
-                    ignoreFilters: ignoreFilters));
+        appManagerAggregationService.GetAllAppManagerContext(
+            appManagerContext: new AppManagerContext { IgnoreFilters = ignoreFilters })
+        .Apps;
 
-    public ValueTask<App> AddAsync(App newApp) =>
-        serviceProviderExecutionService.Execute<
-            IAppOrchestrationService,
-            ValueTask<App>>(
-                name: "App",
-                operation: service => service.AddAppAsync(
-                    newApp: newApp));
+    public async ValueTask<App> AddAsync(App newApp) =>
+        (await appManagerAggregationService.AddAppManagerContextAsync(
+            newAppManagerContext: new AppManagerContext { App = newApp }))
+        .App;
 
-    public ValueTask<App> UpdateAsync(App updatedApp) =>
-        serviceProviderExecutionService.Execute<
-            IAppOrchestrationService,
-            ValueTask<App>>(
-                name: "App",
-                operation: service => service.UpdateAppAsync(
-                    updatedApp: updatedApp));
+    public async ValueTask<App> UpdateAsync(App updatedApp) =>
+        (await appManagerAggregationService.UpdateAppManagerContextAsync(
+            updatedAppManagerContext: new AppManagerContext { App = updatedApp }))
+        .App;
 
     public ValueTask DeleteAsync(int appId) =>
-        serviceProviderExecutionService.Execute<
-            IAppOrchestrationService,
-            ValueTask>(
-                name: "App",
-                operation: service => service.DeleteAsync(
-                    appId: appId));
+        appManagerAggregationService.DeleteAppManagerContextAsync(
+            deletedAppManagerContext: new AppManagerContext { AppId = appId });
 
     public bool IsAdmin(int appId, string userName) =>
-        serviceProviderExecutionService.Execute<
-            IAppOrchestrationService,
-            bool>(
-                name: "App",
-                operation: service => service.IsAdminApp(
-                    appId: appId,
-                    userName: userName));
+        appManagerAggregationService.GetAdminAppManagerContext(
+            appManagerContext: new AppManagerContext
+            {
+                AppId = appId,
+                UserName = userName
+            })
+        .IsAdmin;
 
     public IQueryable<User> GetUsers(int appId) =>
-        serviceProviderExecutionService.Execute<
-            IAppUserProcessingService,
-            IQueryable<User>>(
-                name: "AppUser",
-                operation: service => service.GetAppUsers(
-                    appId: appId));
+        appManagerAggregationService.GetUsersAppManagerContext(
+            appManagerContext: new AppManagerContext { AppId = appId })
+        .Users;
 
     public ValueTask UpdatePageOrderAsync(int appId, App updatedApp) =>
-        serviceProviderExecutionService.Execute<
-            IAppOrchestrationService,
-            ValueTask>(
-                name: "App",
-                operation: service => service.UpdatePageOrderAppAsync(
-                    key: appId,
-                    updatedApp: updatedApp));
+        appManagerAggregationService.UpdatePageOrderAppManagerContextAsync(
+            updatedAppManagerContext: new AppManagerContext
+            {
+                AppId = appId,
+                App = updatedApp
+            });
 }

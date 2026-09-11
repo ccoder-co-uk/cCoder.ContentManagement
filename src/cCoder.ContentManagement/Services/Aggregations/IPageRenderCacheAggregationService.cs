@@ -29,4 +29,6 @@ internal interface IPageRenderCacheAggregationService
         bool fromEvent = false);
 
     ValueTask InvalidateCommonCacheAsync(bool fromEvent = false);
+
+    ValueTask InvalidatePackageAsync(int? appId);
 }
