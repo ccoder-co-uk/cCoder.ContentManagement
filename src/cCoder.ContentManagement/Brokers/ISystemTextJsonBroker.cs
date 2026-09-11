@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text.Json;
+using cCoder.ContentManagement.Models.Serialization;
 
 namespace cCoder.ContentManagement.Brokers;
 
@@ -12,5 +12,9 @@ internal interface ISystemTextJsonBroker
 
     string Serialize(object value);
 
-    JsonDocument Parse(string json);
+    JsonRecordsDocument ParseRecords(string json);
+
+    JsonRecordsDocument ParseRecords(object payload);
+
+    JsonValueDocument Normalize(object value);
 }

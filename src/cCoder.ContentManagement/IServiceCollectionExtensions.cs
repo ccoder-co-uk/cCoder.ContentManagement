@@ -182,6 +182,7 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddBrokers(this IServiceCollection services)
     {
+        services.AddTransient<SystemTextJsonDependency>();
         services.AddTransient<Brokers.Loggings.ILoggingBroker, Brokers.Loggings.LoggingBroker>();
         services.AddHttpContextAccessor();
 
