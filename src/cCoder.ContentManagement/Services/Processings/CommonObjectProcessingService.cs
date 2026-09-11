@@ -152,7 +152,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
 
         if (updatedCommonObject.Type.ToLowerInvariant() == "core/component")
         {
-            service.CacheComponent(commonObject: updatedCommonObject);
+            service.CacheCommonObjectComponent(commonObject: updatedCommonObject);
 
             CommonObject latestSetObject = service.GetLatestSet()
                 .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "ContentManagement/Component");
@@ -172,7 +172,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
         {
             if (updatedCommonObject.Type.ToLowerInvariant() == "core/resource")
             {
-                service.CacheResource(commonObject: updatedCommonObject);
+                service.CacheCommonObjectResource(commonObject: updatedCommonObject);
 
                 CommonObject latestSetObject2 = service.GetLatestSet()
                     .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Key.ToLowerInvariant() == updatedCommonObject.Key.ToLowerInvariant() && r.Name == updatedCommonObject.Name.ToLowerInvariant() && r.Culture.ToLowerInvariant() == updatedCommonObject.Culture.ToLowerInvariant() && r.Type == "ContentManagement/Resource");
@@ -205,7 +205,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
                     latestSetObject3.LastUpdated = updatedCommonObject.LastUpdated;
                     latestSetObject3.LastUpdatedBy = updatedCommonObject.LastUpdatedBy;
                     latestSetObject3.CreatedBy = updatedCommonObject.CreatedBy;
-                    service.CacheScript(commonObject: updatedCommonObject);
+                    service.CacheCommonObjectScript(commonObject: updatedCommonObject);
                 }
             }
         }
@@ -375,7 +375,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
 
         if (updatedCommonObject.Type.ToLowerInvariant() == "core/component")
         {
-            service.CacheComponent(commonObject: updatedCommonObject);
+            service.CacheCommonObjectComponent(commonObject: updatedCommonObject);
 
             CommonObject latestSetObject = service.GetLatestSet()
                 .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "ContentManagement/Component");
@@ -395,7 +395,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
         {
             if (updatedCommonObject.Type.ToLowerInvariant() == "core/resource")
             {
-                service.CacheResource(commonObject: updatedCommonObject);
+                service.CacheCommonObjectResource(commonObject: updatedCommonObject);
 
                 CommonObject latestSetObject2 = service.GetLatestSet()
                     .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Key.ToLowerInvariant() == updatedCommonObject.Key.ToLowerInvariant() && r.Name == updatedCommonObject.Name.ToLowerInvariant() && r.Culture.ToLowerInvariant() == updatedCommonObject.Culture.ToLowerInvariant() && r.Type == "ContentManagement/Resource");
@@ -428,7 +428,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
                     latestSetObject3.LastUpdated = updatedCommonObject.LastUpdated;
                     latestSetObject3.LastUpdatedBy = updatedCommonObject.LastUpdatedBy;
                     latestSetObject3.CreatedBy = updatedCommonObject.CreatedBy;
-                    service.CacheScript(commonObject: updatedCommonObject);
+                    service.CacheCommonObjectScript(commonObject: updatedCommonObject);
                 }
             }
         }

@@ -10,6 +10,9 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal sealed partial class PageRenderCacheService
 {
+    private static void ValidateAuthorization(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateId(string pageRenderCacheId, string parameterName) =>
         ThrowIf(
             condition: string.IsNullOrWhiteSpace(value: pageRenderCacheId),

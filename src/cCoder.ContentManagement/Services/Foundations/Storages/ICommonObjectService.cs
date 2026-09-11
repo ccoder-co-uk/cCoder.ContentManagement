@@ -28,9 +28,9 @@ internal interface ICommonObjectService
 
     IEnumerable<CommonObject> GetLatestSet();
 
-    void CacheComponent(CommonObject commonObject);
+    void CacheCommonObjectComponent(CommonObject commonObject);
 
-    void CacheResource(CommonObject commonObject);
+    void CacheCommonObjectResource(CommonObject commonObject);
 
-    void CacheScript(CommonObject commonObject);
+    void CacheCommonObjectScript(CommonObject commonObject);
 }

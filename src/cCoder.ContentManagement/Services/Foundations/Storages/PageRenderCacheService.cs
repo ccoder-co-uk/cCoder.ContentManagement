@@ -13,7 +13,12 @@ internal sealed partial class PageRenderCacheService(
     IAuthorizationManager authorizationManager) : IPageRenderCacheService
 {
     public void Authorize(int? appId, string privilege) =>
+        TryCatch<object>(operation: () =>
+    {
+        ValidateAuthorization(inputs: [appId, privilege]);
         authorizationManager.Authorize(appId: appId, privilege: privilege);
+        return null;
+    });
 
     public IQueryable<PageRenderCache> GetAllPageRenderCaches() =>
         TryCatch<IQueryable<PageRenderCache>>(operation: () =>

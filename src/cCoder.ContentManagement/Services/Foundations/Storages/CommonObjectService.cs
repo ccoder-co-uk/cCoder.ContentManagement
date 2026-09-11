@@ -56,37 +56,40 @@ internal partial class CommonObjectService(
         TryCatch<IEnumerable<CommonObject>>(operation: () =>
             cache.GetLatestSet());
 
-    public void CacheComponent(CommonObject commonObject) =>
+    public void CacheCommonObjectComponent(CommonObject commonObject) =>
         TryCatch(operation: () =>
     {
         ValidateComponentOnCache(inputs: [commonObject]);
         ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
 
+        Component component = jsonBroker.ParseJson<Component>(json: commonObject.Json);
         cache.Set(
             key: "component|" + commonObject.Name.ToLowerInvariant(),
-            item: jsonBroker.ParseJson<Component>(json: commonObject.Json));
+            item: component);
     });
 
-    public void CacheResource(CommonObject commonObject) =>
+    public void CacheCommonObjectResource(CommonObject commonObject) =>
         TryCatch(operation: () =>
     {
         ValidateResourceOnCache(inputs: [commonObject]);
         ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
 
+        Resource resource = jsonBroker.ParseJson<Resource>(json: commonObject.Json);
         cache.Set(
             key: $"resource|{commonObject.Key?.ToLowerInvariant() ?? string.Empty}-{commonObject.Name?.ToLowerInvariant() ?? string.Empty}-{commonObject.Culture?.ToLowerInvariant() ?? string.Empty}",
-            item: jsonBroker.ParseJson<Resource>(json: commonObject.Json));
+            item: resource);
     });
 
-    public void CacheScript(CommonObject commonObject) =>
+    public void CacheCommonObjectScript(CommonObject commonObject) =>
         TryCatch(operation: () =>
     {
         ValidateScriptOnCache(inputs: [commonObject]);
         ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
 
+        Script script = jsonBroker.ParseJson<Script>(json: commonObject.Json);
         cache.Set(
             key: "script|" + commonObject.Name.ToLowerInvariant(),
-            item: jsonBroker.ParseJson<Script>(json: commonObject.Json));
+            item: script);
     });
 
     public CommonObject GetCommonObject(int commonObjectId, bool ignoreFilters = false) =>

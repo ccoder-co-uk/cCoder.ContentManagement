@@ -12,25 +12,54 @@ internal partial class JsonService(
     ISystemTextJsonBroker systemTextJsonBroker = null) : IJsonService
 {
     public object ParseJson(string json) =>
-        jsonBroker.ParseJson(json: json);
+        TryCatch<object>(operation: () =>
+    {
+        ValidateJsonOnParse(inputs: [json]);
+        return jsonBroker.ParseJson(json: json);
+    });
 
     public string Serialize(object value) =>
-        jsonBroker.Serialize(value: value);
+        TryCatch<string>(operation: () =>
+    {
+        ValidateValueOnSerialize(inputs: [value]);
+        return jsonBroker.Serialize(value: value);
+    });
 
     public bool IsJsonObject(object value) =>
-        jsonBroker.IsJsonObject(value: value);
+        TryCatch<bool>(operation: () =>
+    {
+        ValidateJsonObjectOnCheck(inputs: [value]);
+        return jsonBroker.IsJsonObject(value: value);
+    });
 
     public bool IsJsonArray(object value) =>
-        jsonBroker.IsJsonArray(value: value);
+        TryCatch<bool>(operation: () =>
+    {
+        ValidateJsonArrayOnCheck(inputs: [value]);
+        return jsonBroker.IsJsonArray(value: value);
+    });
 
     public IEnumerable<KeyValuePair<string, object>> GetJsonProperties(object value) =>
-        jsonBroker.GetJsonProperties(value: value);
+        TryCatch<IEnumerable<KeyValuePair<string, object>>>(operation: () =>
+    {
+        ValidateJsonPropertiesOnGet(inputs: [value]);
+        return jsonBroker.GetJsonProperties(value: value);
+    });
 
     public IEnumerable<object> GetJsonItems(object value) =>
-        jsonBroker.GetJsonItems(value: value);
+        TryCatch<IEnumerable<object>>(operation: () =>
+    {
+        ValidateJsonItemsOnGet(inputs: [value]);
+        return jsonBroker.GetJsonItems(value: value);
+    });
 
     public void RemoveJsonProperty(object value, string propertyName) =>
+        TryCatch<object>(operation: () =>
+    {
+        ValidateJsonPropertyOnRemove(inputs: [value, propertyName]);
         jsonBroker.RemoveJsonProperty(value: value, propertyName: propertyName);
+        return null;
+    });
 
     public T Deserialize<T>(string json) =>
         TryCatch<T>(operation: () =>
@@ -43,7 +72,7 @@ internal partial class JsonService(
         JsonRecordsDocument jsonRecordsDocument) =>
         TryCatch<JsonRecordsDocument>(operation: () =>
     {
-        ValidateDeserialize(inputs: [jsonRecordsDocument]);
+        ValidateJsonRecordsDocumentOnParse(inputs: [jsonRecordsDocument]);
 
         return systemTextJsonBroker.ParseRecords(json: jsonRecordsDocument.Json);
     });
