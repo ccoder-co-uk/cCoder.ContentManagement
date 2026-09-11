@@ -125,9 +125,7 @@ times: Times.Once
         cultureBrokerMock.Verify(expression: x => x.GetAllCultures(), times: Times.Once);
         privilegeBrokerMock.Verify(expression: x => x.GetAllPrivileges(), times: Times.Exactly(callCount: 2));
         appServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
-        appServiceMock.VerifyNoOtherCalls();
-        cultureBrokerMock.VerifyNoOtherCalls();
-        privilegeBrokerMock.VerifyNoOtherCalls();
+        VerifyNoOtherAppServiceCalls();
     }
 
     [Fact]
@@ -184,7 +182,7 @@ times: Times.Once
         privilegeBrokerMock.Verify(expression: x => x.GetAllPrivileges(), times: Times.Exactly(callCount: 2));
         appServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
         appServiceMock.Verify(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()), times: Times.Once);
-        appServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherAppServiceCalls();
     }
 
     [Fact]

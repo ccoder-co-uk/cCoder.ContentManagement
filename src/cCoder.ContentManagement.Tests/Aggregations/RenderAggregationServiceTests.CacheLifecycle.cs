@@ -57,8 +57,7 @@ public sealed partial class RenderAggregationServiceTests
             .ReturnsAsync(valueFunction: (PageRenderCache cache) => cache);
 
         PageRenderCacheProcessingService cacheProcessing = new(
-            service: cacheFoundation.Object,
-            authorizationManager: Mock.Of<IAuthorizationManager>());
+            service: cacheFoundation.Object);
 
         PageRenderCacheQueryProcessingService cacheQuery = new(
             pageRenderCacheService: cacheFoundation.Object);

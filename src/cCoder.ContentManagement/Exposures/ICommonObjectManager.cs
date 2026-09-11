@@ -13,7 +13,7 @@ public interface ICommonObjectManager
 
     IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false);
 
-    CommonObject[] DeserializeCommonObjects(string json, bool isArray);
+    CommonObject[] DeserializeCommonObjects(object payload);
 
     ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
         CommonObject[] newCommonObjects);

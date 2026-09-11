@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
@@ -15,7 +15,7 @@ internal interface IPageRoleImportPersistenceProcessingService
 }
 
 internal sealed partial class PageRoleImportPersistenceProcessingService(
-    IPageRoleBroker pageRoleBroker)
+    IPageRoleService service)
         : IPageRoleImportPersistenceProcessingService
 {
     public ValueTask SynchronizePageRolesAsync(PageRole[] pageRoles) =>
@@ -29,7 +29,7 @@ internal sealed partial class PageRoleImportPersistenceProcessingService(
             .Distinct()
             .ToArray();
 
-        PageRole[] existingPageRoles = pageRoleBroker
+        PageRole[] existingPageRoles = service
             .GetAllPageRolesIgnoringFilters()
             .Where(
                 predicate: pageRole =>
@@ -49,7 +49,7 @@ internal sealed partial class PageRoleImportPersistenceProcessingService(
 
         if (pageRolesToDelete.Length > 0)
         {
-            await pageRoleBroker.DeleteAllPageRolesAsync(
+            await service.DeleteAllPageRolesAsync(
                 deletedPageRole: pageRolesToDelete);
         }
 
@@ -61,7 +61,7 @@ internal sealed partial class PageRoleImportPersistenceProcessingService(
                             existing.PageId == incoming.PageId
                             && existing.RoleId == incoming.RoleId)))
         {
-            await pageRoleBroker.AddPageRoleAsync(
+            await service.AddPageRoleForImportAsync(
                 newPageRole: pageRole);
         }
     }, isValueTask: true);

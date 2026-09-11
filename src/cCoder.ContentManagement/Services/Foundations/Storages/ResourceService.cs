@@ -13,6 +13,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class ResourceService(IResourceBroker resourceBroker, IAuthorizationManager authorizationManager) : IResourceService
 {
+    public string GetCurrentUserId() =>
+        TryCatch<string>(operation: () =>
+            authorizationManager.GetCurrentUserId());
+
     public Resource GetResource(int resourceId, bool ignoreFilters = false) =>
         TryCatch<Resource>(operation: () =>
     {

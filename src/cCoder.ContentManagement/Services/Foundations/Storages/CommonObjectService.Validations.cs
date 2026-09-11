@@ -10,6 +10,24 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class CommonObjectService
 {
+    private static void ValidateCommonObjectsOnDeserialize(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAuthorization(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAppAdministration(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateComponentOnCache(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateResourceOnCache(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateScriptOnCache(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateId(int commonObjectId, string parameterName) =>
         ThrowIf(condition: commonObjectId < 1, message: parameterName + " must be greater than 0.");
 

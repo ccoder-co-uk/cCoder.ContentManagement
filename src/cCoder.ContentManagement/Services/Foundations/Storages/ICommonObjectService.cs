@@ -17,4 +17,20 @@ internal interface ICommonObjectService
     ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);
 
     ValueTask DeleteAsync(int commonObjectId);
+
+    CommonObject[] DeserializeCommonObjects(object payload);
+
+    string GetCurrentUserId();
+
+    void Authorize(int? appId, string privilege);
+
+    bool IsAdminOfApp(int appId);
+
+    IEnumerable<CommonObject> GetLatestSet();
+
+    void CacheComponent(CommonObject commonObject);
+
+    void CacheResource(CommonObject commonObject);
+
+    void CacheScript(CommonObject commonObject);
 }

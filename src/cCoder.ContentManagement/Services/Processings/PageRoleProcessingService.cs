@@ -5,8 +5,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Extensions;
 using System.Security;
-using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Foundations.Authorization;
 using cCoder.ContentManagement.Models;
@@ -15,19 +13,11 @@ using cCoder.Data.Models.Security;
 
 using cCoder.ContentManagement.Services.Foundations;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PageRoleProcessingService(
-    IPageRoleService service,
-    IRoleBroker roleBroker,
-    IPageBroker pageBroker,
-    IAuthorizationManager authorizationManager) : IPageRoleProcessingService
+    IPageRoleService service) : IPageRoleProcessingService
 {
-    private User GetCurrentUser() =>
-        authorizationManager.GetCurrentUser();
-
     public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageRole>>(operation: () =>
     {
@@ -40,17 +30,9 @@ internal partial class PageRoleProcessingService(
     {
         ValidatePageRoleOnAdd(inputs: [newPageRole]);
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
-        var (role, page) = GetRoleAndPage(entity: newPageRole);
-
-        if (role != null && page != null && authorizationManager.UserCanPageAuthorization(
-            pageAuthorization: new PageAuthorization
-            {
-                Page = page,
-                User = GetCurrentUser(),
-                Privilege = "pagerole_create"
-            }))
+        if (service.UserCanAddPageRole(pageRole: newPageRole))
         {
-            return (!(page.Roles ?? Array.Empty<PageRole>()).Any(predicate: (PageRole r) => r.RoleId == role.Id))
+            return !service.PageRoleExists(pageRole: newPageRole)
                 ? service.AddPageRoleAsync(newPageRole: newPageRole)
                 : ValueTask.FromResult(result: newPageRole);
         }
@@ -65,19 +47,10 @@ internal partial class PageRoleProcessingService(
         ValidatePageRoleOnDelete(inputs: [deletedPageRole]);
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "link");
 
-        Page page = pageBroker.GetAllPagesIgnoringFilters()
-            .FirstOrDefault(predicate: existingPage => existingPage.Id == deletedPageRole.PageId);
-
         PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)
             .FirstOrDefault(predicate: pageRole => pageRole.RoleId == deletedPageRole.RoleId && pageRole.PageId == deletedPageRole.PageId);
 
-        if (dbVersion == null || page == null || !authorizationManager.UserCanPageAuthorization(
-            pageAuthorization: new PageAuthorization
-            {
-                Page = page,
-                User = GetCurrentUser(),
-                Privilege = "pagerole_delete"
-            }))
+        if (dbVersion == null || !service.UserCanDeletePageRole(pageRole: deletedPageRole))
         {
             throw new SecurityException(message: "Access Denied!");
         }
@@ -156,14 +129,6 @@ internal partial class PageRoleProcessingService(
 
     }, isValueTask: true);
 
-    private (Role role, Page page) GetRoleAndPage(PageRole entity) =>
-        (
-            role: roleBroker.GetAllRolesIgnoringFilters()
-        .Where(predicate: role => role.Id == entity.RoleId)
-        .FirstOrDefault(),
-            page: pageBroker.GetAllPagesIgnoringFilters()
-        .FirstOrDefault(predicate: page => page.Id == entity.PageId));
-
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
 
@@ -209,17 +174,9 @@ internal partial class PageRoleProcessingService(
     private ValueTask<PageRole> ExecuteAddPageRoleAsync(PageRole newPageRole)
     {
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
-        var (role, page) = GetRoleAndPage(entity: newPageRole);
-
-        if (role != null && page != null && authorizationManager.UserCanPageAuthorization(
-            pageAuthorization: new PageAuthorization
-            {
-                Page = page,
-                User = GetCurrentUser(),
-                Privilege = "pagerole_create"
-            }))
+        if (service.UserCanAddPageRole(pageRole: newPageRole))
         {
-            return (!(page.Roles ?? Array.Empty<PageRole>()).Any(predicate: (PageRole r) => r.RoleId == role.Id))
+            return !service.PageRoleExists(pageRole: newPageRole)
                 ? service.AddPageRoleAsync(newPageRole: newPageRole)
                 : ValueTask.FromResult(result: newPageRole);
         }
@@ -241,19 +198,10 @@ internal partial class PageRoleProcessingService(
     {
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "link");
 
-        Page page = pageBroker.GetAllPagesIgnoringFilters()
-            .FirstOrDefault(predicate: existingPage => existingPage.Id == deletedPageRole.PageId);
-
         PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)
             .FirstOrDefault(predicate: pageRole => pageRole.RoleId == deletedPageRole.RoleId && pageRole.PageId == deletedPageRole.PageId);
 
-        if (dbVersion == null || page == null || !authorizationManager.UserCanPageAuthorization(
-            pageAuthorization: new PageAuthorization
-            {
-                Page = page,
-                User = GetCurrentUser(),
-                Privilege = "pagerole_delete"
-            }))
+        if (dbVersion == null || !service.UserCanDeletePageRole(pageRole: deletedPageRole))
         {
             throw new SecurityException(message: "Access Denied!");
         }

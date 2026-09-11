@@ -4,26 +4,15 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Security;
-using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class AppProcessingService(
-    IAppService service,
-    ICultureBroker cultureBroker,
-    IPrivilegeBroker privilegeBroker,
-    IAuthorizationManager authorizationManager,
-    IRoleBroker roleBroker,
-    IUserRoleBroker userRoleBroker,
-    IPageBroker pageBroker,
-    HttpContext httpContext = null) : IAppProcessingService
+    IAppService service) : IAppProcessingService
 {
     public ValueTask<App> GetAppForRenderAsync(int appId) =>
         TryCatch<App>(operation: async () =>
@@ -105,7 +94,7 @@ internal partial class AppProcessingService(
                 role.AppId = storedApp.Id;
                 role.App = null;
 
-                await roleBroker.AddRoleAsync(newRole: new Role
+                await service.AddRoleAsync(newRole: new Role
                 {
                     Id = role.Id,
                     AppId = role.AppId,
@@ -124,7 +113,7 @@ internal partial class AppProcessingService(
                     user.RoleId = role.Id;
                     user.Role = null;
 
-                    await userRoleBroker.AddUserRoleAsync(newUserRole: new UserRole
+                    await service.AddUserRoleAsync(newUserRole: new UserRole
                     {
                         RoleId = user.RoleId,
                         UserId = user.UserId,
@@ -222,7 +211,7 @@ internal partial class AppProcessingService(
     public App ResolveCurrentApp() =>
         TryCatch<App>(operation: () =>
     {
-        string text = httpContext?.Request.Path.Value ?? string.Empty;
+        string text = service.GetRequestPath();
 
         if (text.Contains(value: "/webdav", comparisonType: StringComparison.OrdinalIgnoreCase) && text.Contains(value: "Core/App(", comparisonType: StringComparison.OrdinalIgnoreCase))
         {
@@ -240,7 +229,7 @@ internal partial class AppProcessingService(
             }
         }
 
-        string domain = httpContext?.Request.Host.Host ?? string.Empty;
+        string domain = service.GetRequestHost();
         return ExecuteGetByDomainApp(domain: domain);
 
     });
@@ -251,13 +240,13 @@ internal partial class AppProcessingService(
         ValidatePageOrderAppOnUpdate(inputs: [key, updatedApp]);
         ValidateId(appId: key, parameterName: "key");
         ValidateApp(app: updatedApp, parameterName: "app");
-        authorizationManager.Authorize(appId: key, privilege: "App_update");
+        service.Authorize(appId: key, privilege: "App_update");
 
         Dictionary<int, Page> incomingPagesById =
             (updatedApp.Pages ?? [])
             .ToDictionary(keySelector: page => page.Id);
 
-        Page[] existingPages = pageBroker.GetAllPagesIgnoringFilters()
+        Page[] existingPages = service.GetAllPagesIgnoringFilters()
             .Where(predicate: page => page.AppId == key)
             .ToArray();
 
@@ -269,7 +258,7 @@ internal partial class AppProcessingService(
             {
                 existingPage.Order = incomingPage.Order;
                 existingPage.ParentId = incomingPage.ParentId;
-                await pageBroker.UpdatePageAsync(updatedPage: existingPage);
+                await service.UpdatePageAsync(updatedPage: existingPage);
             }
         }
 
@@ -284,7 +273,7 @@ internal partial class AppProcessingService(
         string[] requestedCultureIds = enumerable.Distinct()
             .ToArray();
 
-        AppCulture[] culturesForApp = cultureBroker.GetAllCultures()
+        AppCulture[] culturesForApp = service.GetAllCultures()
             .Where(predicate: culture => culture.Id == string.Empty || requestedCultureIds.Contains(value: culture.Id))
             .Select(selector: culture => new AppCulture
             {
@@ -304,8 +293,8 @@ internal partial class AppProcessingService(
     {
         List<Role> list = (app.Roles ?? new List<Role>()).ToList();
 
-        string currentUserId = authorizationManager.GetCurrentUser()?.Id
-            ?? authorizationManager.GetCurrentUserId();
+        string currentUserId = service.GetCurrentUser()?.Id
+            ?? service.GetCurrentUserId();
 
         bool isFirstApp = !service.GetAllApp(ignoreFilters: true)
             .Any();
@@ -316,13 +305,13 @@ internal partial class AppProcessingService(
             ? NormalizeBootstrapUserId(userId: currentUserId)
             : defaultUserId;
 
-        string[] administratorPrivilegeIds = privilegeBroker.GetAllPrivileges()
+        string[] administratorPrivilegeIds = service.GetAllPrivileges()
             .ToArray()
             .Where(predicate: privilege => isFirstApp || privilege.Id != "app_create")
             .Select(selector: privilege => privilege.Id)
             .ToArray();
 
-        string[] userPrivilegeIds = privilegeBroker.GetAllPrivileges()
+        string[] userPrivilegeIds = service.GetAllPrivileges()
             .ToArray()
             .Where(predicate: privilege =>
                 string.Equals(a: privilege.Operation, b: "Read", comparisonType: StringComparison.OrdinalIgnoreCase) &&
@@ -552,7 +541,7 @@ internal partial class AppProcessingService(
                 role.AppId = storedApp.Id;
                 role.App = null;
 
-                await roleBroker.AddRoleAsync(newRole: new Role
+                await service.AddRoleAsync(newRole: new Role
                 {
                     Id = role.Id,
                     AppId = role.AppId,
@@ -571,7 +560,7 @@ internal partial class AppProcessingService(
                     user.RoleId = role.Id;
                     user.Role = null;
 
-                    await userRoleBroker.AddUserRoleAsync(newUserRole: new UserRole
+                    await service.AddUserRoleAsync(newUserRole: new UserRole
                     {
                         RoleId = user.RoleId,
                         UserId = user.UserId,
@@ -639,7 +628,7 @@ internal partial class AppProcessingService(
 
         if (updatedApp.Roles != null)
         {
-            Role[] existingRoles = roleBroker.GetAllRolesIgnoringFilters()
+            Role[] existingRoles = service.GetAllRolesIgnoringFilters()
                 .Where(predicate: role => role.AppId == updatedApp.Id)
                 .ToArray();
 
@@ -650,7 +639,7 @@ internal partial class AppProcessingService(
 
                 if (existingRoles.Any(predicate: existingRole => existingRole.Id == role.Id))
                 {
-                    await roleBroker.UpdateRoleAsync(updatedRole: new Role
+                    await service.UpdateRoleAsync(updatedRole: new Role
                     {
                         Id = role.Id,
                         AppId = role.AppId,
@@ -661,7 +650,7 @@ internal partial class AppProcessingService(
                 }
                 else
                 {
-                    await roleBroker.AddRoleAsync(newRole: new Role
+                    await service.AddRoleAsync(newRole: new Role
                     {
                         Id = role.Id,
                         AppId = role.AppId,
@@ -671,7 +660,7 @@ internal partial class AppProcessingService(
                     });
                 }
 
-                UserRole[] existingUserRoles = userRoleBroker.GetAllUserRolesIgnoringFilters()
+                UserRole[] existingUserRoles = service.GetAllUserRolesIgnoringFilters()
                     .Where(predicate: userRole => userRole.RoleId == role.Id)
                     .ToArray();
 
@@ -687,7 +676,7 @@ internal partial class AppProcessingService(
 
                 if (userRolesToDelete.Length > 0)
                 {
-                    await userRoleBroker.DeleteAllUserRolesAsync(deletedUserRole: userRolesToDelete);
+                    await service.DeleteAllUserRolesAsync(deletedUserRole: userRolesToDelete);
                 }
 
                 foreach (string userId in incomingUserIds)
@@ -697,7 +686,7 @@ internal partial class AppProcessingService(
                         continue;
                     }
 
-                    await userRoleBroker.AddUserRoleAsync(newUserRole: new UserRole
+                    await service.AddUserRoleAsync(newUserRole: new UserRole
                     {
                         RoleId = role.Id,
                         UserId = userId,

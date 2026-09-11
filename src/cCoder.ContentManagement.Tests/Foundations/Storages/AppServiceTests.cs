@@ -14,6 +14,7 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Brokers;
 
 
 
@@ -44,7 +45,12 @@ public partial class AppServiceTests
 
         appService = new AppService(
 appBroker: appBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object);
+authorizationManager: authorizationManagerMock.Object,
+cultureBroker: cultureBrokerMock.Object,
+privilegeBroker: privilegeBrokerMock.Object,
+roleBroker: Mock.Of<IRoleBroker>(),
+userRoleBroker: Mock.Of<IUserRoleBroker>(),
+pageBroker: Mock.Of<IPageBroker>());
     }
 
     private static App CreateRandomApp(int id = 42)

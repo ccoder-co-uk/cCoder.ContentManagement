@@ -19,8 +19,7 @@ using cCoder.ContentManagement.Exposures;
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PageProcessingService(
-    IPageService service,
-    IAuthorizationManager authorizationManager) : IPageProcessingService
+    IPageService service) : IPageProcessingService
 {
     public ValueTask<Page> GetPageForRenderAsync(int pageId) =>
         TryCatch<Page>(operation: async () =>
@@ -31,9 +30,6 @@ internal partial class PageProcessingService(
         return await service.GetPageForRenderAsync(
             pageId: pageId);
     }, isValueTask: true);
-
-    private User GetCurrentUser() =>
-        authorizationManager.GetCurrentUser();
 
     public Page GetPage(int pageId) =>
         TryCatch<Page>(operation: () =>
@@ -156,7 +152,7 @@ internal partial class PageProcessingService(
         ValidatePageOnAdd(inputs: [newPage]);
         ValidatePage(page: newPage, parameterName: "page");
 
-        if (!authorizationManager.IsAdminOfApp(appId: newPage.AppId) && newPage.ParentId.HasValue)
+        if (!service.IsAdminOfApp(appId: newPage.AppId) && newPage.ParentId.HasValue)
         {
             UserCan(privKey: "page_create", pageId: newPage.ParentId.Value);
         }
@@ -307,7 +303,7 @@ internal partial class PageProcessingService(
         ValidateRecomputeAllForAppAsync(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        if (!authorizationManager.IsAdminOfApp(appId: appId))
+        if (!service.IsAdminOfApp(appId: appId))
         {
             throw new SecurityException(message: "Access Denied!");
         }
@@ -361,12 +357,11 @@ internal partial class PageProcessingService(
                     RoleId = role.RoleId
                 })
             .ToArray()
-            : ((GetCurrentUser()?.Roles ?? Array.Empty<UserRole>())
-                .Where(predicate: userRole => userRole.Role?.AppId == page.AppId)
-            .Select(selector: userRole => new PageRole
+            : service.GetCurrentUserRoleIds(appId: page.AppId)
+            .Select(selector: roleId => new PageRole
             {
-                RoleId = userRole.RoleId
-            }))
+                RoleId = roleId
+            })
                 .ToArray();
     }
 
@@ -376,13 +371,9 @@ internal partial class PageProcessingService(
             .Where(predicate: existingPage => existingPage.Id == pageId)
             .FirstOrDefault();
 
-        return page != null && authorizationManager.UserCanPageAuthorization(
-            pageAuthorization: new PageAuthorization
-            {
-                Page = page,
-                User = GetCurrentUser(),
-                Privilege = privKey
-            });
+        return page != null && service.UserCanPage(
+            page: page,
+            privilege: privKey);
     }
 
     private static string BuildPath(string pageName, string parentPath)
@@ -434,7 +425,7 @@ internal partial class PageProcessingService(
     {
         ValidatePage(page: page, parameterName: "page");
 
-        if (!authorizationManager.IsAdminOfApp(appId: page.AppId) && page.ParentId.HasValue)
+        if (!service.IsAdminOfApp(appId: page.AppId) && page.ParentId.HasValue)
         {
             UserCan(privKey: "page_create", pageId: page.ParentId.Value);
         }

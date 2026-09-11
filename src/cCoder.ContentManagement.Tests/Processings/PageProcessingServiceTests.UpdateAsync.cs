@@ -42,8 +42,6 @@ public partial class PageProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
 
@@ -107,7 +105,7 @@ public partial class PageProcessingServiceTests
             updated.AppId == page.AppId &&
             updated.Name == page.Name)), times: Times.Once);
 
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 
     [Fact]
@@ -128,8 +126,6 @@ public partial class PageProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         Page page = CreateRandomPage();
 
@@ -149,7 +145,7 @@ public partial class PageProcessingServiceTests
 
         pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 
     [Fact]
@@ -171,8 +167,6 @@ public partial class PageProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
         Page dbPage = CreateRandomPage();
@@ -234,7 +228,7 @@ public partial class PageProcessingServiceTests
 
         pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Exactly(callCount: 2));
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 
 }

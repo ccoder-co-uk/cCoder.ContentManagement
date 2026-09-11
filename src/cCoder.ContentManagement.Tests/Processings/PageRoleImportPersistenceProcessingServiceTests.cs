@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.Security;
 using Moq;
@@ -11,8 +11,10 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class PageRoleImportPersistenceProcessingServiceTests
 {
-    private readonly Mock<IPageRoleBroker> pageRoleBrokerMock = new(
+    private readonly Mock<IPageRoleService> pageRoleServiceMock = new(
         behavior: MockBehavior.Strict);
+
+    private Mock<IPageRoleService> pageRoleBrokerMock => pageRoleServiceMock;
 
     private readonly PageRoleImportPersistenceProcessingService processingService;
 
@@ -20,7 +22,7 @@ public partial class PageRoleImportPersistenceProcessingServiceTests
     {
         processingService =
             new PageRoleImportPersistenceProcessingService(
-                pageRoleBroker: pageRoleBrokerMock.Object);
+                service: pageRoleServiceMock.Object);
     }
 
     private static PageRole CreatePageRole(

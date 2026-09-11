@@ -73,7 +73,7 @@ public partial class AppProcessingServiceTests
 
         appServiceMock.Verify(expression: x => x.GetApp(appId: dbApp.Id, ignoreFilters: true), times: Times.Once);
         appServiceMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: dbApp), times: Times.Once);
-        appServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherAppServiceCalls();
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public partial class AppProcessingServiceTests
 
         appServiceMock.Verify(expression: x => x.GetApp(appId: app.Id, ignoreFilters: true), times: Times.Once);
         appServiceMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<App>()), times: Times.Once);
-        appServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherAppServiceCalls();
     }
 
     [Fact]
@@ -166,7 +166,16 @@ public partial class AppProcessingServiceTests
         dbApp.Roles.Should()
             .BeNull();
 
-        roleBrokerMock.VerifyNoOtherCalls();
-        userRoleBrokerMock.VerifyNoOtherCalls();
+        appServiceMock.Verify(
+            expression: service => service.GetApp(
+                dbApp.Id,
+                true),
+            times: Times.Once);
+
+        appServiceMock.Verify(
+            expression: service => service.UpdateAppAsync(dbApp),
+            times: Times.Once);
+
+        VerifyNoOtherAppServiceCalls();
     }
 }

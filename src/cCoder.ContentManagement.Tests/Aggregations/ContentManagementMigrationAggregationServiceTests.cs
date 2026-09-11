@@ -151,15 +151,13 @@ migrationSupportOrchestrationService: new MigrationSupportOrchestrationService(
 jsonProcessingService: new JsonProcessingService(
 jsonService: new JsonService(
 jsonBroker: new JsonBroker(),
-systemTextJsonBroker: new SystemTextJsonBroker()),
-jsonBroker: new JsonBroker()),
+systemTextJsonBroker: new SystemTextJsonBroker())),
 packageExportProcessingService: packageExportProcessingService ?? Mock.Of<IPackageExportProcessingService>()),
 jsonOrchestrationService: new JsonOrchestrationService(
 jsonProcessingService: new JsonProcessingService(
 jsonService: new JsonService(
 jsonBroker: new JsonBroker(),
-systemTextJsonBroker: new SystemTextJsonBroker()),
-jsonBroker: new JsonBroker()),
+systemTextJsonBroker: new SystemTextJsonBroker())),
 pageRenderProcessingService: Mock.Of<IPageRenderProcessingService>()),
 componentOrchestrationService: componentOrchestrationService ?? Mock.Of<IComponentOrchestrationService>(),
 layoutOrchestrationService: layoutOrchestrationService ?? Mock.Of<ILayoutOrchestrationService>(),

@@ -9,15 +9,14 @@ using cCoder.Data.Models.CMS;
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class PageRenderCacheProcessingService(
-    IPageRenderCacheService service,
-    IAuthorizationManager authorizationManager) : IPageRenderCacheProcessingService
+    IPageRenderCacheService service) : IPageRenderCacheProcessingService
 {
     public ValueTask<PageRenderCache> AddPageRenderCacheAsync(PageRenderCache newPageRenderCache) =>
         TryCatch<PageRenderCache>(operation: () =>
     {
         ValidatePageRenderCacheOnAdd(inputs: [newPageRenderCache]);
         ValidatePageRenderCache(cache: newPageRenderCache);
-        authorizationManager.Authorize(appId: newPageRenderCache.AppId, privilege: "pagerendercache_create");
+        service.Authorize(appId: newPageRenderCache.AppId, privilege: "pagerendercache_create");
         NormalizeKey(cache: newPageRenderCache);
         return service.AddPageRenderCacheAsync(newPageRenderCache: newPageRenderCache);
     }, isValueTask: true);
@@ -28,7 +27,7 @@ internal sealed partial class PageRenderCacheProcessingService(
         ValidatePageRenderCacheOnUpdate(inputs: [updatedPageRenderCache]);
         ValidatePageRenderCache(cache: updatedPageRenderCache);
         ValidateId(pageRenderCacheId: updatedPageRenderCache.Id);
-        authorizationManager.Authorize(appId: updatedPageRenderCache.AppId, privilege: "pagerendercache_update");
+        service.Authorize(appId: updatedPageRenderCache.AppId, privilege: "pagerendercache_update");
         NormalizeKey(cache: updatedPageRenderCache);
         return service.UpdatePageRenderCacheAsync(updatedPageRenderCache: updatedPageRenderCache);
     }, isValueTask: true);
@@ -64,7 +63,7 @@ internal sealed partial class PageRenderCacheProcessingService(
             return ValueTask.CompletedTask;
         }
 
-        authorizationManager.Authorize(appId: cache.AppId, privilege: "pagerendercache_delete");
+        service.Authorize(appId: cache.AppId, privilege: "pagerendercache_delete");
         return service.DeletePageRenderCacheAsync(pageRenderCacheId: pageRenderCacheId);
     }, isValueTask: true);
 
@@ -74,7 +73,7 @@ internal sealed partial class PageRenderCacheProcessingService(
         ValidatePageRenderCachesOnReplace(inputs: [appId, pageIds, replacements]);
         ValidateId(pageRenderCacheId: appId);
         ArgumentNullException.ThrowIfNull(argument: replacements);
-        authorizationManager.Authorize(appId: appId, privilege: "pagerendercache_rebuild");
+        service.Authorize(appId: appId, privilege: "pagerendercache_rebuild");
 
         return ReplacePageRenderCaches(
             appId: appId,

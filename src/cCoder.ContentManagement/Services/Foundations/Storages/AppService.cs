@@ -6,6 +6,7 @@ using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 using cCoder.ContentManagement.Exposures;
 
@@ -13,8 +14,62 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class AppService(
     IAppBroker appBroker,
-    IAuthorizationManager authorizationManager) : IAppService
+    IAuthorizationManager authorizationManager,
+    ICultureBroker cultureBroker,
+    IPrivilegeBroker privilegeBroker,
+    IRoleBroker roleBroker,
+    IUserRoleBroker userRoleBroker,
+    IPageBroker pageBroker,
+    HttpContext httpContext = null) : IAppService
 {
+    public string GetRequestPath() =>
+        httpContext?.Request.Path.Value ?? string.Empty;
+
+    public string GetRequestHost() =>
+        httpContext?.Request.Host.Host ?? string.Empty;
+
+    public IQueryable<Culture> GetAllCultures() =>
+        cultureBroker.GetAllCultures();
+
+    public IQueryable<Privilege> GetAllPrivileges() =>
+        privilegeBroker.GetAllPrivileges();
+
+    public User GetCurrentUser() =>
+        authorizationManager.GetCurrentUser();
+
+    public string GetCurrentUserId() =>
+        authorizationManager.GetCurrentUserId();
+
+    public bool IsAdminOfApp(int appId) =>
+        authorizationManager.IsAdminOfApp(appId: appId);
+
+    public void Authorize(int? appId, string privilege) =>
+        authorizationManager.Authorize(appId: appId, privilege: privilege);
+
+    public ValueTask<Role> AddRoleAsync(Role newRole) =>
+        roleBroker.AddRoleAsync(newRole: newRole);
+
+    public ValueTask<Role> UpdateRoleAsync(Role updatedRole) =>
+        roleBroker.UpdateRoleAsync(updatedRole: updatedRole);
+
+    public IQueryable<Role> GetAllRolesIgnoringFilters() =>
+        roleBroker.GetAllRolesIgnoringFilters();
+
+    public ValueTask<UserRole> AddUserRoleAsync(UserRole newUserRole) =>
+        userRoleBroker.AddUserRoleAsync(newUserRole: newUserRole);
+
+    public IQueryable<UserRole> GetAllUserRolesIgnoringFilters() =>
+        userRoleBroker.GetAllUserRolesIgnoringFilters();
+
+    public ValueTask DeleteAllUserRolesAsync(IEnumerable<UserRole> deletedUserRole) =>
+        userRoleBroker.DeleteAllUserRolesAsync(deletedUserRole: deletedUserRole);
+
+    public IQueryable<Page> GetAllPagesIgnoringFilters() =>
+        pageBroker.GetAllPagesIgnoringFilters();
+
+    public ValueTask<Page> UpdatePageAsync(Page updatedPage) =>
+        pageBroker.UpdatePageAsync(updatedPage: updatedPage);
+
     public ValueTask<App> GetAppForRenderAsync(int appId) =>
         TryCatch<App>(operation: async () =>
     {

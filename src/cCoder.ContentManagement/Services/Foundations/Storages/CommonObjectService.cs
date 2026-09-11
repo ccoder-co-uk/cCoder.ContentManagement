@@ -5,14 +5,90 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.Data.Models;
+using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 using cCoder.ContentManagement.Exposures;
+using cCoder.ContentManagement.Models.Serialization;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class CommonObjectService(ICommonObjectBroker commonObjectBroker, IAuthorizationManager authorizationManager) : ICommonObjectService
+internal partial class CommonObjectService(
+    ICommonObjectBroker commonObjectBroker,
+    IAuthorizationManager authorizationManager,
+    ICommonObjectReaderBroker cache,
+    IJsonBroker jsonBroker,
+    ISystemTextJsonBroker systemTextJsonBroker = null) : ICommonObjectService
 {
+    public CommonObject[] DeserializeCommonObjects(object payload) =>
+        TryCatch<CommonObject[]>(operation: () =>
+    {
+        ValidateCommonObjectsOnDeserialize(inputs: [payload]);
+        JsonRecordsDocument document = systemTextJsonBroker.ParseRecords(payload: payload);
+
+        return document?.Records
+            .Select(selector: record =>
+                systemTextJsonBroker.Deserialize<CommonObject>(json: record.RawText))
+            .ToArray();
+    });
+
+    public string GetCurrentUserId() =>
+        TryCatch<string>(operation: () =>
+            authorizationManager.GetCurrentUserId());
+
+    public void Authorize(int? appId, string privilege) =>
+        TryCatch(operation: () =>
+    {
+        ValidateAuthorization(inputs: [appId, privilege]);
+        authorizationManager.Authorize(appId: appId, privilege: privilege);
+    });
+
+    public bool IsAdminOfApp(int appId) =>
+        TryCatch<bool>(operation: () =>
+    {
+        ValidateAppAdministration(inputs: [appId]);
+        return authorizationManager.IsAdminOfApp(appId: appId);
+    });
+
+    public IEnumerable<CommonObject> GetLatestSet() =>
+        TryCatch<IEnumerable<CommonObject>>(operation: () =>
+            cache.GetLatestSet());
+
+    public void CacheComponent(CommonObject commonObject) =>
+        TryCatch(operation: () =>
+    {
+        ValidateComponentOnCache(inputs: [commonObject]);
+        ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
+
+        cache.Set(
+            key: "component|" + commonObject.Name.ToLowerInvariant(),
+            item: jsonBroker.ParseJson<Component>(json: commonObject.Json));
+    });
+
+    public void CacheResource(CommonObject commonObject) =>
+        TryCatch(operation: () =>
+    {
+        ValidateResourceOnCache(inputs: [commonObject]);
+        ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
+
+        cache.Set(
+            key: $"resource|{commonObject.Key?.ToLowerInvariant() ?? string.Empty}-{commonObject.Name?.ToLowerInvariant() ?? string.Empty}-{commonObject.Culture?.ToLowerInvariant() ?? string.Empty}",
+            item: jsonBroker.ParseJson<Resource>(json: commonObject.Json));
+    });
+
+    public void CacheScript(CommonObject commonObject) =>
+        TryCatch(operation: () =>
+    {
+        ValidateScriptOnCache(inputs: [commonObject]);
+        ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
+
+        cache.Set(
+            key: "script|" + commonObject.Name.ToLowerInvariant(),
+            item: jsonBroker.ParseJson<Script>(json: commonObject.Json));
+    });
+
     public CommonObject GetCommonObject(int commonObjectId, bool ignoreFilters = false) =>
         TryCatch<CommonObject>(operation: () =>
     {

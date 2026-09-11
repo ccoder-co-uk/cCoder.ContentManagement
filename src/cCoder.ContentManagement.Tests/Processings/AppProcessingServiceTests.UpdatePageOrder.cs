@@ -96,7 +96,7 @@ public partial class AppProcessingServiceTests
             expression: broker => broker.UpdatePageAsync(updatedPage: existingPage),
             times: Times.Once);
 
-        appServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherAppServiceCalls();
     }
 
     [Fact]
@@ -147,7 +147,7 @@ public partial class AppProcessingServiceTests
             expression: broker => broker.GetAllPagesIgnoringFilters(),
             times: Times.Once);
 
-        appServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherAppServiceCalls();
     }
 
 }

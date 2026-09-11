@@ -10,6 +10,18 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageRoleService
 {
+    private static void ValidatePageRoleAuthorization(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidatePageRoleExistence(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidatePageRoleOnResolve(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAllPageRolesOnDelete(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidatePageId(int pageId, string parameterName) =>
         ThrowIf(condition: pageId < 1, message: parameterName + " must be greater than 0.");
 

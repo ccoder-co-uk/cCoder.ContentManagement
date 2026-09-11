@@ -6,6 +6,8 @@ using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models;
 
 using cCoder.ContentManagement.Exposures;
 
@@ -13,6 +15,45 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageService(IPageBroker pageBroker, IAuthorizationManager authorizationManager) : IPageService
 {
+    public Guid[] GetCurrentUserRoleIds(int appId) =>
+        TryCatch<Guid[]>(operation: () =>
+    {
+        ValidateCurrentUserRolesOnGet(inputs: [appId]);
+
+        return (authorizationManager.GetCurrentUser()?.Roles ?? [])
+            .Where(predicate: userRole => userRole.Role?.AppId == appId)
+            .Select(selector: userRole => userRole.RoleId)
+            .ToArray();
+    });
+
+    public bool IsAdminOfApp(int appId) =>
+        TryCatch<bool>(operation: () =>
+    {
+        ValidateAppAdministration(inputs: [appId]);
+        return authorizationManager.IsAdminOfApp(appId: appId);
+    });
+
+    public void Authorize(int? appId, string privilege) =>
+        TryCatch(operation: () =>
+    {
+        ValidateAuthorization(inputs: [appId, privilege]);
+        authorizationManager.Authorize(appId: appId, privilege: privilege);
+    });
+
+    public bool UserCanPage(Page page, string privilege) =>
+        TryCatch<bool>(operation: () =>
+    {
+        ValidatePageAuthorization(inputs: [page, privilege]);
+
+        return authorizationManager.UserCanPageAuthorization(
+            pageAuthorization: new PageAuthorization
+            {
+                Page = page,
+                User = authorizationManager.GetCurrentUser(),
+                Privilege = privilege
+            });
+    });
+
     public ValueTask<Page> GetPageForRenderAsync(int pageId) =>
         TryCatch<Page>(operation: async () =>
     {

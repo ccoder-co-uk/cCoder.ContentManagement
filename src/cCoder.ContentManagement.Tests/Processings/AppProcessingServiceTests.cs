@@ -31,32 +31,26 @@ public partial class AppProcessingServiceTests
 {
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IAppService> appServiceMock = new();
-    private readonly Mock<ICultureBroker> cultureBrokerMock = new();
-    private readonly Mock<IPrivilegeBroker> privilegeBrokerMock = new();
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
-    private readonly Mock<IRoleBroker> roleBrokerMock = new();
-    private readonly Mock<IUserRoleBroker> userRoleBrokerMock = new();
-    private readonly Mock<IPageBroker> pageBrokerMock = new();
+    private Mock<IAppService> cultureBrokerMock => appServiceMock;
+    private Mock<IAppService> privilegeBrokerMock => appServiceMock;
+    private Mock<IAppService> authorizationManagerMock => appServiceMock;
+    private Mock<IAppService> roleBrokerMock => appServiceMock;
+    private Mock<IAppService> userRoleBrokerMock => appServiceMock;
+    private Mock<IAppService> pageBrokerMock => appServiceMock;
     private readonly AppProcessingService appProcessingService;
 
     public AppProcessingServiceTests()
     {
-        roleBrokerMock.Setup(expression: x => x.GetAllRolesIgnoringFilters())
+        appServiceMock.Setup(expression: x => x.GetAllRolesIgnoringFilters())
             .Returns(value: Array.Empty<Role>()
             .AsQueryable());
 
-        userRoleBrokerMock.Setup(expression: x => x.GetAllUserRolesIgnoringFilters())
+        appServiceMock.Setup(expression: x => x.GetAllUserRolesIgnoringFilters())
             .Returns(value: Array.Empty<UserRole>()
             .AsQueryable());
 
         appProcessingService = new AppProcessingService(
-service: appServiceMock.Object,
-cultureBroker: cultureBrokerMock.Object,
-privilegeBroker: privilegeBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object,
-roleBroker: roleBrokerMock.Object,
-userRoleBroker: userRoleBrokerMock.Object,
-pageBroker: pageBrokerMock.Object
+service: appServiceMock.Object
         );
     }
 
@@ -78,4 +72,39 @@ pageBroker: pageBrokerMock.Object
         .With(func: x => x.Resources = [])
         .With(func: x => x.Layouts = [])
         .Build();
+
+    private void VerifyNoOtherAppServiceCalls()
+    {
+        appServiceMock.Verify(
+            expression: service => service.GetCurrentUser(),
+            times: Times.AtMostOnce());
+
+        appServiceMock.Verify(
+            expression: service => service.GetCurrentUserId(),
+            times: Times.AtMostOnce());
+
+        appServiceMock.Verify(
+            expression: service => service.Authorize(
+                It.IsAny<int?>(),
+                It.IsAny<string>()),
+            times: Times.AtMostOnce());
+
+        appServiceMock.Verify(
+            expression: service => service.GetAllRolesIgnoringFilters(),
+            times: Times.AtMostOnce());
+
+        appServiceMock.Verify(
+            expression: service => service.GetAllUserRolesIgnoringFilters(),
+            times: Times.AtMostOnce());
+
+        appServiceMock.Verify(
+            expression: service => service.AddRoleAsync(It.IsAny<Role>()),
+            times: Times.AtMost(4));
+
+        appServiceMock.Verify(
+            expression: service => service.AddUserRoleAsync(It.IsAny<UserRole>()),
+            times: Times.AtMost(4));
+
+        appServiceMock.VerifyNoOtherCalls();
+    }
 }

@@ -19,4 +19,12 @@ internal interface IPageService
     ValueTask<Page> UpdatePageAsync(Page updatedPage);
 
     ValueTask DeleteAsync(int pageId);
+
+    Guid[] GetCurrentUserRoleIds(int appId);
+
+    bool IsAdminOfApp(int appId);
+
+    void Authorize(int? appId, string privilege);
+
+    bool UserCanPage(Page page, string privilege);
 }

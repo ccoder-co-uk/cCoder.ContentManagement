@@ -10,6 +10,18 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageService
 {
+    private static void ValidateCurrentUserRolesOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAppAdministration(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAuthorization(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidatePageAuthorization(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateId(int pageId, string parameterName) =>
         ThrowIf(condition: pageId < 1, message: parameterName + " must be greater than 0.");
 

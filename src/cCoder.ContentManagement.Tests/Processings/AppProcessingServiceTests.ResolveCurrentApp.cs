@@ -53,16 +53,11 @@ public partial class AppProcessingServiceTests
         app.Id = 7;
         DefaultHttpContext context = new();
         context.Request.Path = "/api/webdav/Core/App(7)/DAV/folder/file.txt";
+        appServiceMock.Setup(expression: x => x.GetRequestPath())
+            .Returns(value: context.Request.Path.Value);
 
         AppProcessingService serviceWithContext = new(
-service: appServiceMock.Object,
-cultureBroker: cultureBrokerMock.Object,
-privilegeBroker: privilegeBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object,
-roleBroker: roleBrokerMock.Object,
-userRoleBroker: userRoleBrokerMock.Object,
-pageBroker: pageBrokerMock.Object,
-httpContext: context
+service: appServiceMock.Object
         );
 
         appServiceMock.Setup(expression: x => x.GetApp(appId: 7))
@@ -77,6 +72,7 @@ httpContext: context
             .BeSameAs(expected: app);
 
         appServiceMock.Verify(expression: x => x.GetApp(appId: 7), times: Times.Once);
+        appServiceMock.Verify(expression: x => x.GetRequestPath(), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 
@@ -107,16 +103,13 @@ httpContext: context
         DefaultHttpContext context = new();
         context.Request.Path = "/api/dms/folder/file.txt";
         context.Request.Host = new HostString(value: "tenant.test");
+        appServiceMock.Setup(expression: x => x.GetRequestPath())
+            .Returns(value: context.Request.Path.Value);
+        appServiceMock.Setup(expression: x => x.GetRequestHost())
+            .Returns(value: context.Request.Host.Host);
 
         AppProcessingService serviceWithContext = new(
-service: appServiceMock.Object,
-cultureBroker: cultureBrokerMock.Object,
-privilegeBroker: privilegeBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object,
-roleBroker: roleBrokerMock.Object,
-userRoleBroker: userRoleBrokerMock.Object,
-pageBroker: pageBrokerMock.Object,
-httpContext: context
+service: appServiceMock.Object
         );
 
         appServiceMock.Setup(expression: x => x.GetAllApp())
@@ -131,6 +124,8 @@ httpContext: context
             .BeSameAs(expected: app);
 
         appServiceMock.Verify(expression: x => x.GetAllApp(), times: Times.Once);
+        appServiceMock.Verify(expression: x => x.GetRequestPath(), times: Times.Once);
+        appServiceMock.Verify(expression: x => x.GetRequestHost(), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 

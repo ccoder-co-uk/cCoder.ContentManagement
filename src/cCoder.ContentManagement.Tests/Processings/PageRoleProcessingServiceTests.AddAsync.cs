@@ -31,23 +31,6 @@ public partial class PageRoleProcessingServiceTests
     public async Task ShouldUseDataContextWhenUserCanCreatePageRoleForAddAsync()
     {
         // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
-
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
-
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
-
         User user = TestUsers.WithPrivilege(privilege: "pagerole_create", appId: 1);
         UserRole currentUserRole = user.Roles.First();
 
@@ -78,13 +61,11 @@ public partial class PageRoleProcessingServiceTests
         };
 
         LocalPageRole link = new() { PageId = page.Id, RoleId = roleToAdd.Id };
-        currentUser = user;
+        pageRoleServiceMock.Setup(expression: x => x.UserCanAddPageRole(link))
+            .Returns(value: true);
 
-        roleBrokerMock.Setup(expression: x => x.GetAllRolesIgnoringFilters())
-            .Returns(value: new[] { roleToAdd }.AsQueryable());
-
-        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
-            .Returns(value: new[] { page }.AsQueryable());
+        pageRoleServiceMock.Setup(expression: x => x.PageRoleExists(link))
+            .Returns(value: false);
 
         pageRoleServiceMock.Setup(expression: x => x.AddPageRoleAsync(newPageRole: link))
             .ReturnsAsync(value: link);
@@ -101,23 +82,6 @@ public partial class PageRoleProcessingServiceTests
     public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
     {
         // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
-
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
-
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
-
         SecurityDataModels.Role roleToAdd = new()
         {
             Id = Guid.NewGuid(),
@@ -136,11 +100,9 @@ public partial class PageRoleProcessingServiceTests
             Roles = [],
         };
 
-        roleBrokerMock.Setup(expression: x => x.GetAllRolesIgnoringFilters())
-            .Returns(value: new[] { roleToAdd }.AsQueryable());
-
-        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
-            .Returns(value: new[] { page }.AsQueryable());
+        pageRoleServiceMock.Setup(expression: x => x.UserCanAddPageRole(
+                It.IsAny<LocalPageRole>()))
+            .Returns(value: false);
 
         // When
 

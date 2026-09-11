@@ -28,19 +28,16 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class CommonObjectProcessingServiceTests
 {
-    private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
+    private Mock<ICommonObjectService> commonObjectCacheMock => commonObjectServiceMock;
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<ICommonObjectService> commonObjectServiceMock = new();
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
+    private Mock<ICommonObjectService> authorizationManagerMock => commonObjectServiceMock;
     private readonly CommonObjectProcessingService commonObjectProcessingService;
 
     public CommonObjectProcessingServiceTests()
     {
         commonObjectProcessingService = new CommonObjectProcessingService(
-service: commonObjectServiceMock.Object,
-cache: commonObjectCacheMock.Object,
-authorizationManager: authorizationManagerMock.Object,
-jsonBroker: new JsonBroker()
+service: commonObjectServiceMock.Object
         );
     }
 
@@ -61,4 +58,23 @@ jsonBroker: new JsonBroker()
         .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
         .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
         .Build();
+
+    private void VerifyNoOtherCommonObjectServiceCalls()
+    {
+        commonObjectServiceMock.Verify(
+            expression: service => service.GetCurrentUserId(),
+            times: Times.AtMost(2));
+
+        commonObjectServiceMock.Verify(
+            expression: service => service.Authorize(
+                It.IsAny<int?>(),
+                It.IsAny<string>()),
+            times: Times.AtMost(2));
+
+        commonObjectServiceMock.Verify(
+            expression: service => service.GetLatestSet(),
+            times: Times.AtMost(3));
+
+        commonObjectServiceMock.VerifyNoOtherCalls();
+    }
 }

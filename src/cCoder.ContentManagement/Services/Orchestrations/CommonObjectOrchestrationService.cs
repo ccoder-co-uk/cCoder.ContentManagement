@@ -11,15 +11,14 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingService processingService, ICommonObjectEventProcessingService eventService) : ICommonObjectOrchestrationService
 {
-    public CommonObject[] DeserializeCommonObjects(string json, bool isArray) =>
+    public CommonObject[] DeserializeCommonObjects(object payload) =>
         TryCatch<CommonObject[]>(operation: () =>
     {
-        ValidateDeserializeCommonObjects(inputs: [json, isArray]);
+        ValidateDeserializeCommonObjects(inputs: [payload]);
 
         return
             processingService.DeserializeCommonObjects(
-                json: json,
-                isArray: isArray);
+                payload: payload);
     });
 
     public CommonObject GetCommonObject(int commonObjectId) =>
