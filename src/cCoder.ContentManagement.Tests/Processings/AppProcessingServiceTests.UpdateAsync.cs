@@ -120,7 +120,7 @@ public partial class AppProcessingServiceTests
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         appServiceMock.Verify(expression: x => x.GetApp(appId: app.Id, ignoreFilters: true), times: Times.Once);
-        appServiceMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<App>()), times: Times.Once);
+        appServiceMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<App>()), times: Times.Never);
         VerifyNoOtherAppServiceCalls();
     }
 

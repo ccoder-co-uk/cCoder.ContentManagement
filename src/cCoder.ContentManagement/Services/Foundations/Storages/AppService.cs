@@ -2,13 +2,13 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Security;
 using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.HttpContexts;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Exposures;
+using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
@@ -20,190 +20,223 @@ internal partial class AppService(
     IRoleBroker roleBroker,
     IUserRoleBroker userRoleBroker,
     IPageBroker pageBroker,
-    HttpContext httpContext = null) : IAppService
+    IHttpContextBroker httpContextBroker) : IAppService
 {
-    public string GetRequestPath() =>
-        httpContext?.Request.Path.Value ?? string.Empty;
-
-    public string GetRequestHost() =>
-        httpContext?.Request.Host.Host ?? string.Empty;
-
-    public IQueryable<Culture> GetAllCultures() =>
-        cultureBroker.GetAllCultures();
-
-    public IQueryable<Privilege> GetAllPrivileges() =>
-        privilegeBroker.GetAllPrivileges();
-
-    public User GetCurrentUser() =>
-        authorizationManager.GetCurrentUser();
-
-    public string GetCurrentUserId() =>
-        authorizationManager.GetCurrentUserId();
-
-    public bool IsAdminOfApp(int appId) =>
-        authorizationManager.IsAdminOfApp(appId: appId);
-
-    public void Authorize(int? appId, string privilege) =>
-        authorizationManager.Authorize(appId: appId, privilege: privilege);
-
-    public ValueTask<Role> AddRoleAsync(Role newRole) =>
-        roleBroker.AddRoleAsync(newRole: newRole);
-
-    public ValueTask<Role> UpdateRoleAsync(Role updatedRole) =>
-        roleBroker.UpdateRoleAsync(updatedRole: updatedRole);
-
-    public IQueryable<Role> GetAllRolesIgnoringFilters() =>
-        roleBroker.GetAllRolesIgnoringFilters();
-
-    public ValueTask<UserRole> AddUserRoleAsync(UserRole newUserRole) =>
-        userRoleBroker.AddUserRoleAsync(newUserRole: newUserRole);
-
-    public IQueryable<UserRole> GetAllUserRolesIgnoringFilters() =>
-        userRoleBroker.GetAllUserRolesIgnoringFilters();
-
-    public ValueTask DeleteAllUserRolesAsync(IEnumerable<UserRole> deletedUserRole) =>
-        userRoleBroker.DeleteAllUserRolesAsync(deletedUserRole: deletedUserRole);
-
-    public IQueryable<Page> GetAllPagesIgnoringFilters() =>
-        pageBroker.GetAllPagesIgnoringFilters();
-
-    public ValueTask<Page> UpdatePageAsync(Page updatedPage) =>
-        pageBroker.UpdatePageAsync(updatedPage: updatedPage);
-
-    public ValueTask<App> GetAppForRenderAsync(int appId) =>
-        TryCatch<App>(operation: async () =>
+    public AppOperation GetVisibleAppsAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
     {
-        ValidateAppForRenderOnGet(inputs: [appId]);
-        ValidateId(appId: appId, parameterName: "id");
-
-        return await appBroker.GetAppForRenderAsync(appId: appId);
-    }, isValueTask: true);
-
-    public App GetAppForDelete(int appId) =>
-        TryCatch<App>(operation: () =>
-    {
-        ValidateAppForDeleteOnGet(inputs: [appId]);
-        ValidateId(appId: appId, parameterName: "id");
-        return appBroker.GetAppForDelete(appId: appId);
+        ValidateVisibleAppsAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Apps = appBroker.GetAllApps();
+        return appOperation;
     });
 
-    public App GetApp(int appId, bool ignoreFilters = false) =>
-        TryCatch<App>(operation: () =>
+    public AppOperation GetUnfilteredAppsAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
     {
-        ValidateAppOnGet(inputs: [appId, ignoreFilters]);
-        ValidateId(appId: appId, parameterName: "id");
-
-        if (ignoreFilters)
-        {
-            return appBroker.GetAllAppsIgnoringFilters()
-                .FirstOrDefault(predicate: app => app.Id == appId);
-        }
-
-        App app = appBroker.GetAllApps()
-            .FirstOrDefault(predicate: foundApp => foundApp.Id == appId);
-
-        if (app != null)
-        {
-            return app;
-        }
-
-        App app2 = appBroker.GetAllAppsIgnoringFilters()
-            .FirstOrDefault(predicate: foundApp => foundApp.Id == appId);
-
-        if (app2 != null)
-        {
-            throw new SecurityException(message: "Access Denied!");
-        }
-
-        return null;
-
+        ValidateUnfilteredAppsAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Apps = appBroker.GetAllAppsIgnoringFilters();
+        return appOperation;
     });
 
-    public IQueryable<App> GetAllApp(bool ignoreFilters = false) =>
-        TryCatch<IQueryable<App>>(operation: () =>
+    public AppOperation GetVisibleAppAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
     {
-        ValidateAllAppOnGet(inputs: [ignoreFilters]);
+        ValidateVisibleAppAppOperationOnGet(inputs: [appOperation]);
 
-        return ignoreFilters
-            ? appBroker.GetAllAppsIgnoringFilters()
-            : appBroker.GetAllApps();
+        appOperation.App = appBroker.GetAllApps()
+            .FirstOrDefault(predicate: app => app.Id == appOperation.AppId);
+
+        return appOperation;
     });
 
-    public ValueTask<App> AddAppAsync(App newApp) =>
-        TryCatch<App>(operation: async () =>
+    public AppOperation GetUnfilteredAppAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
     {
-        ValidateAppOnAdd(inputs: [newApp]);
-        ValidateApp(app: newApp, parameterName: "app");
+        ValidateUnfilteredAppAppOperationOnGet(inputs: [appOperation]);
 
-        if (appBroker.GetAllAppsIgnoringFilters()
-            .Any())
-        {
-            authorizationManager.Authorize(
-                appId: null,
-                privilege: "App_create");
-        }
+        appOperation.App = appBroker.GetAllAppsIgnoringFilters()
+            .FirstOrDefault(predicate: app => app.Id == appOperation.AppId);
 
-        App storedApp = CreateStorageApp(newApp: newApp);
-        App result = await appBroker.AddAppAsync(newApp: storedApp);
-        newApp.Id = result.Id;
-        newApp.DefaultCultureId = result.DefaultCultureId;
-        newApp.TenantId = result.TenantId;
-        newApp.Name = result.Name;
-        newApp.Domain = result.Domain;
-        newApp.DefaultTheme = result.DefaultTheme;
-        newApp.ConfigJson = result.ConfigJson;
-        return newApp;
+        return appOperation;
+    });
 
+    public ValueTask<AppOperation> GetAppForRenderAppOperationAsync(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: async () =>
+    {
+        ValidateAppForRenderAppOperationOnGet(inputs: [appOperation]);
+        appOperation.App = await appBroker.GetAppForRenderAsync(appId: appOperation.AppId);
+        return appOperation;
     }, isValueTask: true);
 
-    public ValueTask<App> UpdateAppAsync(App updatedApp) =>
-        TryCatch<App>(operation: async () =>
+    public AppOperation GetAppForDeleteAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
     {
-        ValidateAppOnUpdate(inputs: [updatedApp]);
-        ValidateApp(app: updatedApp, parameterName: "app");
-        authorizationManager.Authorize(appId: updatedApp.Id, privilege: "App_update");
-        App storedApp = CreateStorageApp(newApp: updatedApp);
-        App result = await appBroker.UpdateAppAsync(updatedApp: storedApp);
-        updatedApp.Id = result.Id;
-        updatedApp.DefaultCultureId = result.DefaultCultureId;
-        updatedApp.TenantId = result.TenantId;
-        updatedApp.Name = result.Name;
-        updatedApp.Domain = result.Domain;
-        updatedApp.DefaultTheme = result.DefaultTheme;
-        updatedApp.ConfigJson = result.ConfigJson;
-        return updatedApp;
+        ValidateAppForDeleteAppOperationOnGet(inputs: [appOperation]);
+        appOperation.App = appBroker.GetAppForDelete(appId: appOperation.AppId);
+        return appOperation;
+    });
 
+    public ValueTask<AppOperation> AddAppOperationAsync(AppOperation newAppOperation) =>
+        TryCatch<AppOperation>(operation: async () =>
+    {
+        ValidateAppOperationOnAdd(inputs: [newAppOperation]);
+        App storageApp = CreateStorageApp(newApp: newAppOperation.App);
+        App result = await appBroker.AddAppAsync(newApp: storageApp);
+        CopyApp(source: result, destination: newAppOperation.App);
+        return newAppOperation;
     }, isValueTask: true);
 
-    public ValueTask DeleteAsync(int appId) =>
-        TryCatch(operation: async () =>
+    public ValueTask<AppOperation> UpdateAppOperationAsync(AppOperation updatedAppOperation) =>
+        TryCatch<AppOperation>(operation: async () =>
     {
-        ValidateDeleteAsync(inputs: [appId]);
-        ValidateId(appId: appId, parameterName: "id");
-        App app = appBroker.GetAppForDelete(appId: appId);
-
-        if (app == null)
-        {
-            return;
-        }
-
-        if (app.Roles?.Any() == true)
-        {
-            authorizationManager.Authorize(appId: app.Id, privilege: "App_delete");
-        }
-
-        await appBroker.DeleteAppAggregateAsync(deletedApp: app);
-
+        ValidateAppOperationOnUpdate(inputs: [updatedAppOperation]);
+        App storageApp = CreateStorageApp(newApp: updatedAppOperation.App);
+        App result = await appBroker.UpdateAppAsync(updatedApp: storageApp);
+        CopyApp(source: result, destination: updatedAppOperation.App);
+        return updatedAppOperation;
     }, isValueTask: true);
 
-    private static App CreateStorageApp(App newApp)
+    public ValueTask<AppOperation> DeleteAppOperationAsync(AppOperation deletedAppOperation) =>
+        TryCatch<AppOperation>(operation: async () =>
     {
-        if (newApp == null)
-        {
-            return null;
-        }
+        ValidateAppOperationOnDelete(inputs: [deletedAppOperation]);
+        await appBroker.DeleteAppAggregateAsync(deletedApp: deletedAppOperation.App);
+        return deletedAppOperation;
+    }, isValueTask: true);
 
-        return new App
+    public AppOperation GetRequestPathAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidateRequestPathAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Text = httpContextBroker.GetRequestPath();
+        return appOperation;
+    });
+
+    public AppOperation GetRequestHostAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidateRequestHostAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Text = httpContextBroker.GetRequestHost();
+        return appOperation;
+    });
+
+    public AppOperation GetCulturesAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidateCulturesAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Cultures = cultureBroker.GetAllCultures();
+        return appOperation;
+    });
+
+    public AppOperation GetPrivilegesAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidatePrivilegesAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Privileges = privilegeBroker.GetAllPrivileges();
+        return appOperation;
+    });
+
+    public AppOperation GetCurrentUserAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidateCurrentUserAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Text = authorizationManager.GetCurrentUser()?.Id;
+        return appOperation;
+    });
+
+    public AppOperation GetCurrentUserIdAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidateCurrentUserIdAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Text = authorizationManager.GetCurrentUserId();
+        return appOperation;
+    });
+
+    public AppOperation IsAdminOfAppAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidateAdminOfAppAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Result = authorizationManager.IsAdminOfApp(appId: appOperation.AppId);
+        return appOperation;
+    });
+
+    public AppOperation AuthorizeAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidateAppOperationOnAuthorize(inputs: [appOperation]);
+        authorizationManager.Authorize(appId: appOperation.OptionalAppId, privilege: appOperation.Privilege);
+        return appOperation;
+    });
+
+    public ValueTask<AppOperation> AddRoleAppOperationAsync(AppOperation newAppOperation) =>
+        TryCatch<AppOperation>(operation: async () =>
+    {
+        ValidateRoleAppOperationOnAdd(inputs: [newAppOperation]);
+        Role storageRole = CreateStorageRole(role: newAppOperation.Role);
+        newAppOperation.Role = await roleBroker.AddRoleAsync(newRole: storageRole);
+        return newAppOperation;
+    }, isValueTask: true);
+
+    public ValueTask<AppOperation> UpdateRoleAppOperationAsync(AppOperation updatedAppOperation) =>
+        TryCatch<AppOperation>(operation: async () =>
+    {
+        ValidateRoleAppOperationOnUpdate(inputs: [updatedAppOperation]);
+        Role storageRole = CreateStorageRole(role: updatedAppOperation.Role);
+        updatedAppOperation.Role = await roleBroker.UpdateRoleAsync(updatedRole: storageRole);
+        return updatedAppOperation;
+    }, isValueTask: true);
+
+    public AppOperation GetRolesAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidateRolesAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Roles = roleBroker.GetAllRolesIgnoringFilters();
+        return appOperation;
+    });
+
+    public ValueTask<AppOperation> AddUserRoleAppOperationAsync(AppOperation newAppOperation) =>
+        TryCatch<AppOperation>(operation: async () =>
+    {
+        ValidateUserRoleAppOperationOnAdd(inputs: [newAppOperation]);
+        UserRole storageUserRole = CreateStorageUserRole(userRole: newAppOperation.UserRole);
+        newAppOperation.UserRole = await userRoleBroker.AddUserRoleAsync(newUserRole: storageUserRole);
+        return newAppOperation;
+    }, isValueTask: true);
+
+    public AppOperation GetUserRolesAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidateUserRolesAppOperationOnGet(inputs: [appOperation]);
+        appOperation.UserRoles = userRoleBroker.GetAllUserRolesIgnoringFilters();
+        return appOperation;
+    });
+
+    public ValueTask<AppOperation> DeleteUserRolesAppOperationAsync(AppOperation deletedAppOperation) =>
+        TryCatch<AppOperation>(operation: async () =>
+    {
+        ValidateUserRolesAppOperationOnDelete(inputs: [deletedAppOperation]);
+        await userRoleBroker.DeleteAllUserRolesAsync(deletedUserRole: deletedAppOperation.DeletedUserRoles);
+        return deletedAppOperation;
+    }, isValueTask: true);
+
+    public AppOperation GetPagesAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
+    {
+        ValidatePagesAppOperationOnGet(inputs: [appOperation]);
+        appOperation.Pages = pageBroker.GetAllPagesIgnoringFilters();
+        return appOperation;
+    });
+
+    public ValueTask<AppOperation> UpdatePageAppOperationAsync(AppOperation updatedAppOperation) =>
+        TryCatch<AppOperation>(operation: async () =>
+    {
+        ValidatePageAppOperationOnUpdate(inputs: [updatedAppOperation]);
+        updatedAppOperation.Page = await pageBroker.UpdatePageAsync(updatedPage: updatedAppOperation.Page);
+        return updatedAppOperation;
+    }, isValueTask: true);
+
+    private static App CreateStorageApp(App newApp) =>
+        newApp == null ? null : new App
         {
             Id = newApp.Id,
             DefaultCultureId = newApp.DefaultCultureId,
@@ -213,6 +246,32 @@ internal partial class AppService(
             DefaultTheme = newApp.DefaultTheme,
             ConfigJson = newApp.ConfigJson,
         };
-    }
 
+    private static Role CreateStorageRole(Role role) =>
+        role == null ? null : new Role
+        {
+            Id = role.Id,
+            AppId = role.AppId,
+            Name = role.Name,
+            Description = role.Description,
+            Privs = role.Privs
+        };
+
+    private static UserRole CreateStorageUserRole(UserRole userRole) =>
+        userRole == null ? null : new UserRole
+        {
+            RoleId = userRole.RoleId,
+            UserId = userRole.UserId
+        };
+
+    private static void CopyApp(App source, App destination)
+    {
+        destination.Id = source.Id;
+        destination.DefaultCultureId = source.DefaultCultureId;
+        destination.TenantId = source.TenantId;
+        destination.Name = source.Name;
+        destination.Domain = source.Domain;
+        destination.DefaultTheme = source.DefaultTheme;
+        destination.ConfigJson = source.ConfigJson;
+    }
 }

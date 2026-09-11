@@ -57,7 +57,7 @@ public partial class AppProcessingServiceTests
             .Returns(value: context.Request.Path.Value);
 
         AppProcessingService serviceWithContext = new(
-service: appServiceMock.Object
+service: new AppServiceTestAdapter(service: appServiceMock.Object)
         );
 
         appServiceMock.Setup(expression: x => x.GetApp(appId: 7))
@@ -109,7 +109,7 @@ service: appServiceMock.Object
             .Returns(value: context.Request.Host.Host);
 
         AppProcessingService serviceWithContext = new(
-service: appServiceMock.Object
+service: new AppServiceTestAdapter(service: appServiceMock.Object)
         );
 
         appServiceMock.Setup(expression: x => x.GetAllApp())

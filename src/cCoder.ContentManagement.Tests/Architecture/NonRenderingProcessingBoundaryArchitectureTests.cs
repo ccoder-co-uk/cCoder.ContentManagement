@@ -24,6 +24,7 @@ public sealed class NonRenderingProcessingBoundaryArchitectureTests
     [InlineData("PageRoleImportLookupProcessingService", "IPageRoleService")]
     [InlineData("PageRoleImportPersistenceProcessingService", "IPageRoleService")]
     [InlineData("ResourceProcessingService", "IResourceService")]
+    [InlineData("CurrentAppProcessingService", "IAppService")]
     public void ProcessingService_WhenComposed_UsesOnlyItsMatchingFoundation(
         string processingServiceName,
         string foundationServiceName)
@@ -46,5 +47,51 @@ public sealed class NonRenderingProcessingBoundaryArchitectureTests
         // Then
         dependencies.Should().ContainSingle();
         dependencies.Single().Name.Should().Be(foundationServiceName);
+    }
+
+    [Fact]
+    public void AppFoundation_WhenExposed_UsesOnlyAppOperationContract()
+    {
+        // Given
+        Type appService = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Services.Foundations.Storages.IAppService");
+
+        // When
+        MethodInfo[] methods = appService.GetMethods();
+
+        // Then
+        methods.Should().NotBeEmpty();
+
+        methods.SelectMany(selector: method => method.GetParameters())
+            .Should()
+            .OnlyContain(predicate: parameter => parameter.ParameterType.Name == "AppOperation");
+
+        methods.Should().OnlyContain(predicate: method =>
+            method.ReturnType.Name == "AppOperation"
+            || (method.ReturnType.GenericTypeArguments.Length == 1
+                && method.ReturnType.GenericTypeArguments[0].Name == "AppOperation"));
+    }
+
+    [Fact]
+    public void AppFoundation_WhenComposed_UsesHttpContextBrokerInsteadOfHttpContext()
+    {
+        // Given
+        Type appService = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Services.Foundations.Storages.AppService");
+
+        // When
+        Type[] dependencies = appService
+            .GetConstructors(
+                bindingAttr: BindingFlags.Instance
+                    | BindingFlags.NonPublic
+                    | BindingFlags.Public)
+            .Single()
+            .GetParameters()
+            .Select(selector: parameter => parameter.ParameterType)
+            .ToArray();
+
+        // Then
+        dependencies.Should().ContainSingle(predicate: type => type.Name == "IHttpContextBroker");
+        dependencies.Should().NotContain(predicate: type => type.Name == "HttpContext");
     }
 }

@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models;
+using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
@@ -15,6 +16,7 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.HttpContexts;
 
 
 
@@ -50,7 +52,8 @@ cultureBroker: cultureBrokerMock.Object,
 privilegeBroker: privilegeBrokerMock.Object,
 roleBroker: Mock.Of<IRoleBroker>(),
 userRoleBroker: Mock.Of<IUserRoleBroker>(),
-pageBroker: Mock.Of<IPageBroker>());
+pageBroker: Mock.Of<IPageBroker>(),
+httpContextBroker: Mock.Of<IHttpContextBroker>());
     }
 
     private static App CreateRandomApp(int id = 42)

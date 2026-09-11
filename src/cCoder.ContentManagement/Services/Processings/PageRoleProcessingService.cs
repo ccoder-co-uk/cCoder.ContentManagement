@@ -30,6 +30,7 @@ internal partial class PageRoleProcessingService(
     {
         ValidatePageRoleOnAdd(inputs: [newPageRole]);
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
+
         if (service.UserCanAddPageRole(pageRole: newPageRole))
         {
             return !service.PageRoleExists(pageRole: newPageRole)
@@ -174,6 +175,7 @@ internal partial class PageRoleProcessingService(
     private ValueTask<PageRole> ExecuteAddPageRoleAsync(PageRole newPageRole)
     {
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
+
         if (service.UserCanAddPageRole(pageRole: newPageRole))
         {
             return !service.PageRoleExists(pageRole: newPageRole)

@@ -15,4 +15,8 @@ internal interface IHttpContextBroker
     string GetSessionValue(string key);
 
     string GetEncodedRequestUrl();
+
+    string GetRequestPath();
+
+    string GetRequestHost();
 }

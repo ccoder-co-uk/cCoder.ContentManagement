@@ -20,7 +20,7 @@ internal partial class AppProcessingService(
         ValidateAppForRenderOnGet(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
 
-        return await service.GetAppForRenderAsync(appId: appId);
+        return await GetAppForRenderFromStorageAsync(appId: appId);
     }, isValueTask: true);
 
     public App GetAppForDelete(int appId) =>
@@ -28,7 +28,7 @@ internal partial class AppProcessingService(
     {
         ValidateAppForDeleteOnGet(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
-        return service.GetAppForDelete(appId: appId);
+        return GetAppForDeleteFromStorage(appId: appId);
     });
 
     public App GetApp(int appId) =>
@@ -36,7 +36,7 @@ internal partial class AppProcessingService(
     {
         ValidateAppOnGet(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
-        return service.GetApp(appId: appId);
+        return GetAppFromStorage(appId: appId);
 
     });
 
@@ -46,7 +46,7 @@ internal partial class AppProcessingService(
         ValidateDomainOnGet(inputs: [appId, ignoreFilters]);
         ValidateId(appId: appId, parameterName: "id");
 
-        return service.GetAllApp(ignoreFilters: ignoreFilters)
+        return GetAllAppsFromStorage(ignoreFilters: ignoreFilters)
             .Where(predicate: app => app.Id == appId)
             .Select(selector: app => app.Domain)
             .FirstOrDefault();
@@ -59,7 +59,7 @@ internal partial class AppProcessingService(
         ValidateByDomainAppOnGet(inputs: [domain, ignoreFilters]);
         ValidateDomain(domain: domain, parameterName: "domain");
 
-        return service.GetAllApp(ignoreFilters: ignoreFilters)
+        return GetAllAppsFromStorage(ignoreFilters: ignoreFilters)
             .Where(predicate: app => app.Domain == domain)
             .FirstOrDefault();
 
@@ -69,7 +69,7 @@ internal partial class AppProcessingService(
         TryCatch<IQueryable<App>>(operation: () =>
     {
         ValidateAllAppOnGet(inputs: [ignoreFilters]);
-        return service.GetAllApp(ignoreFilters: ignoreFilters);
+        return GetAllAppsFromStorage(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<App> AddAppAsync(App newApp) =>
@@ -84,8 +84,8 @@ internal partial class AppProcessingService(
         }
 
         newApp.Cultures = BuildCulturesForApp(newApp: newApp);
-        newApp.Roles = BuildRolesForApp(app: newApp);
-        App storedApp = await service.AddAppAsync(newApp: newApp);
+        newApp.Roles = BuildRolesForApp(app: newApp, isFirstApp: out bool isFirstApp);
+        App storedApp = await AddAppToStorageAsync(newApp: newApp, isFirstApp: isFirstApp);
 
         if (storedApp.Roles != null)
         {
@@ -94,7 +94,7 @@ internal partial class AppProcessingService(
                 role.AppId = storedApp.Id;
                 role.App = null;
 
-                await service.AddRoleAsync(newRole: new Role
+                await AddRoleAsync(newRole: new Role
                 {
                     Id = role.Id,
                     AppId = role.AppId,
@@ -113,7 +113,7 @@ internal partial class AppProcessingService(
                     user.RoleId = role.Id;
                     user.Role = null;
 
-                    await service.AddUserRoleAsync(newUserRole: new UserRole
+                    await AddUserRoleAsync(newUserRole: new UserRole
                     {
                         RoleId = user.RoleId,
                         UserId = user.UserId,
@@ -132,7 +132,7 @@ internal partial class AppProcessingService(
     {
         ValidateAppOnUpdate(inputs: [updatedApp]);
         ValidateApp(app: updatedApp, parameterName: "app");
-        App existingApp = service.GetApp(appId: updatedApp.Id, ignoreFilters: true);
+        App existingApp = GetAppFromStorage(appId: updatedApp.Id, ignoreFilters: true);
 
         if (existingApp == null)
         {
@@ -145,7 +145,7 @@ internal partial class AppProcessingService(
         existingApp.Domain = updatedApp.Domain;
         existingApp.DefaultTheme = updatedApp.DefaultTheme;
         existingApp.ConfigJson = updatedApp.ConfigJson;
-        return await service.UpdateAppAsync(updatedApp: existingApp);
+        return await UpdateAppInStorageAsync(updatedApp: existingApp);
 
     }, isValueTask: true);
 
@@ -154,7 +154,7 @@ internal partial class AppProcessingService(
     {
         ValidateDeleteAsync(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
-        await service.DeleteAsync(appId: appId);
+        await DeleteAppFromStorageAsync(appId: appId);
 
     }, isValueTask: true);
 
@@ -211,7 +211,7 @@ internal partial class AppProcessingService(
     public App ResolveCurrentApp() =>
         TryCatch<App>(operation: () =>
     {
-        string text = service.GetRequestPath();
+        string text = GetRequestPath();
 
         if (text.Contains(value: "/webdav", comparisonType: StringComparison.OrdinalIgnoreCase) && text.Contains(value: "Core/App(", comparisonType: StringComparison.OrdinalIgnoreCase))
         {
@@ -224,12 +224,12 @@ internal partial class AppProcessingService(
 
                 if (int.TryParse(s: text.Substring(startIndex: num3, length: num2 - num3), result: out var result))
                 {
-                    return service.GetApp(appId: result);
+                    return GetAppFromStorage(appId: result);
                 }
             }
         }
 
-        string domain = service.GetRequestHost();
+        string domain = GetRequestHost();
         return ExecuteGetByDomainApp(domain: domain);
 
     });
@@ -240,13 +240,13 @@ internal partial class AppProcessingService(
         ValidatePageOrderAppOnUpdate(inputs: [key, updatedApp]);
         ValidateId(appId: key, parameterName: "key");
         ValidateApp(app: updatedApp, parameterName: "app");
-        service.Authorize(appId: key, privilege: "App_update");
+        Authorize(appId: key, privilege: "App_update");
 
         Dictionary<int, Page> incomingPagesById =
             (updatedApp.Pages ?? [])
             .ToDictionary(keySelector: page => page.Id);
 
-        Page[] existingPages = service.GetAllPagesIgnoringFilters()
+        Page[] existingPages = GetAllPagesIgnoringFilters()
             .Where(predicate: page => page.AppId == key)
             .ToArray();
 
@@ -258,7 +258,7 @@ internal partial class AppProcessingService(
             {
                 existingPage.Order = incomingPage.Order;
                 existingPage.ParentId = incomingPage.ParentId;
-                await service.UpdatePageAsync(updatedPage: existingPage);
+                await UpdatePageAsync(updatedPage: existingPage);
             }
         }
 
@@ -273,7 +273,7 @@ internal partial class AppProcessingService(
         string[] requestedCultureIds = enumerable.Distinct()
             .ToArray();
 
-        AppCulture[] culturesForApp = service.GetAllCultures()
+        AppCulture[] culturesForApp = GetAllCultures()
             .Where(predicate: culture => culture.Id == string.Empty || requestedCultureIds.Contains(value: culture.Id))
             .Select(selector: culture => new AppCulture
             {
@@ -289,29 +289,31 @@ internal partial class AppProcessingService(
         return culturesForApp;
     }
 
-    private ICollection<Role> BuildRolesForApp(App app)
+    private ICollection<Role> BuildRolesForApp(App app, out bool isFirstApp)
     {
         List<Role> list = (app.Roles ?? new List<Role>()).ToList();
 
-        string currentUserId = service.GetCurrentUser()?.Id
-            ?? service.GetCurrentUserId();
+        string currentUserId = GetCurrentUser()?.Id
+            ?? GetCurrentUserId();
 
-        bool isFirstApp = !service.GetAllApp(ignoreFilters: true)
+        bool firstApp = !GetAllAppsFromStorage(ignoreFilters: true)
             .Any();
+
+        isFirstApp = firstApp;
 
         string defaultUserId = string.IsNullOrWhiteSpace(value: currentUserId) ? "Guest" : currentUserId;
 
-        string bootstrapUserId = isFirstApp
+        string bootstrapUserId = firstApp
             ? NormalizeBootstrapUserId(userId: currentUserId)
             : defaultUserId;
 
-        string[] administratorPrivilegeIds = service.GetAllPrivileges()
+        string[] administratorPrivilegeIds = GetAllPrivileges()
             .ToArray()
-            .Where(predicate: privilege => isFirstApp || privilege.Id != "app_create")
+            .Where(predicate: privilege => firstApp || privilege.Id != "app_create")
             .Select(selector: privilege => privilege.Id)
             .ToArray();
 
-        string[] userPrivilegeIds = service.GetAllPrivileges()
+        string[] userPrivilegeIds = GetAllPrivileges()
             .ToArray()
             .Where(predicate: privilege =>
                 string.Equals(a: privilege.Operation, b: "Read", comparisonType: StringComparison.OrdinalIgnoreCase) &&
@@ -324,7 +326,7 @@ internal partial class AppProcessingService(
         EnsureRole(roles: list, roleName: "Users", requiredPrivileges: userPrivilegeIds, userId: bootstrapUserId);
         EnsureRole(roles: list, roleName: "Guests", requiredPrivileges: userPrivilegeIds, userId: "Guest");
 
-        if (isFirstApp)
+        if (firstApp)
         {
             EnsureRole(
                 roles: list,
@@ -531,8 +533,8 @@ internal partial class AppProcessingService(
         }
 
         newApp.Cultures = BuildCulturesForApp(newApp: newApp);
-        newApp.Roles = BuildRolesForApp(app: newApp);
-        App storedApp = await service.AddAppAsync(newApp: newApp);
+        newApp.Roles = BuildRolesForApp(app: newApp, isFirstApp: out bool isFirstApp);
+        App storedApp = await AddAppToStorageAsync(newApp: newApp, isFirstApp: isFirstApp);
 
         if (storedApp.Roles != null)
         {
@@ -541,7 +543,7 @@ internal partial class AppProcessingService(
                 role.AppId = storedApp.Id;
                 role.App = null;
 
-                await service.AddRoleAsync(newRole: new Role
+                await AddRoleAsync(newRole: new Role
                 {
                     Id = role.Id,
                     AppId = role.AppId,
@@ -560,7 +562,7 @@ internal partial class AppProcessingService(
                     user.RoleId = role.Id;
                     user.Role = null;
 
-                    await service.AddUserRoleAsync(newUserRole: new UserRole
+                    await AddUserRoleAsync(newUserRole: new UserRole
                     {
                         RoleId = user.RoleId,
                         UserId = user.UserId,
@@ -576,20 +578,20 @@ internal partial class AppProcessingService(
     private async ValueTask ExecuteDeleteAsync(int appId)
     {
         ValidateId(appId: appId, parameterName: "id");
-        await service.DeleteAsync(appId: appId);
+        await DeleteAppFromStorageAsync(appId: appId);
     }
 
     private App ExecuteGetApp(int appId)
     {
         ValidateId(appId: appId, parameterName: "id");
-        return service.GetApp(appId: appId);
+        return GetAppFromStorage(appId: appId);
     }
 
     private App ExecuteGetByDomainApp(string domain, bool ignoreFilters = false)
     {
         ValidateDomain(domain: domain, parameterName: "domain");
 
-        return service.GetAllApp(ignoreFilters: ignoreFilters)
+        return GetAllAppsFromStorage(ignoreFilters: ignoreFilters)
             .Where(predicate: app => app.Domain == domain)
             .FirstOrDefault();
     }
@@ -597,7 +599,7 @@ internal partial class AppProcessingService(
     private async ValueTask<App> ExecuteUpdateAppAsync(App app)
     {
         ValidateApp(app: app, parameterName: "app");
-        App existingApp = service.GetApp(appId: app.Id, ignoreFilters: true);
+        App existingApp = GetAppFromStorage(appId: app.Id, ignoreFilters: true);
 
         if (existingApp == null)
         {
@@ -624,11 +626,11 @@ internal partial class AppProcessingService(
             existingApp.Cultures = BuildCulturesForApp(newApp: existingApp);
         }
 
-        App updatedApp = await service.UpdateAppAsync(updatedApp: existingApp);
+        App updatedApp = await UpdateAppInStorageAsync(updatedApp: existingApp);
 
         if (updatedApp.Roles != null)
         {
-            Role[] existingRoles = service.GetAllRolesIgnoringFilters()
+            Role[] existingRoles = GetAllRolesIgnoringFilters()
                 .Where(predicate: role => role.AppId == updatedApp.Id)
                 .ToArray();
 
@@ -639,7 +641,7 @@ internal partial class AppProcessingService(
 
                 if (existingRoles.Any(predicate: existingRole => existingRole.Id == role.Id))
                 {
-                    await service.UpdateRoleAsync(updatedRole: new Role
+                    await UpdateRoleAsync(updatedRole: new Role
                     {
                         Id = role.Id,
                         AppId = role.AppId,
@@ -650,7 +652,7 @@ internal partial class AppProcessingService(
                 }
                 else
                 {
-                    await service.AddRoleAsync(newRole: new Role
+                    await AddRoleAsync(newRole: new Role
                     {
                         Id = role.Id,
                         AppId = role.AppId,
@@ -660,7 +662,7 @@ internal partial class AppProcessingService(
                     });
                 }
 
-                UserRole[] existingUserRoles = service.GetAllUserRolesIgnoringFilters()
+                UserRole[] existingUserRoles = GetAllUserRolesIgnoringFilters()
                     .Where(predicate: userRole => userRole.RoleId == role.Id)
                     .ToArray();
 
@@ -676,7 +678,7 @@ internal partial class AppProcessingService(
 
                 if (userRolesToDelete.Length > 0)
                 {
-                    await service.DeleteAllUserRolesAsync(deletedUserRole: userRolesToDelete);
+                    await DeleteAllUserRolesAsync(deletedUserRole: userRolesToDelete);
                 }
 
                 foreach (string userId in incomingUserIds)
@@ -686,7 +688,7 @@ internal partial class AppProcessingService(
                         continue;
                     }
 
-                    await service.AddUserRoleAsync(newUserRole: new UserRole
+                    await AddUserRoleAsync(newUserRole: new UserRole
                     {
                         RoleId = role.Id,
                         UserId = userId,
@@ -698,4 +700,147 @@ internal partial class AppProcessingService(
         StampAppChildren(app: updatedApp);
         return updatedApp;
     }
+
+    private async ValueTask<App> GetAppForRenderFromStorageAsync(int appId) =>
+        (await service.GetAppForRenderAppOperationAsync(
+            appOperation: new AppOperation { AppId = appId })).App;
+
+    private App GetAppForDeleteFromStorage(int appId) =>
+        service.GetAppForDeleteAppOperation(
+            appOperation: new AppOperation { AppId = appId }).App;
+
+    private App GetAppFromStorage(int appId, bool ignoreFilters = false)
+    {
+        AppOperation appOperation = new() { AppId = appId };
+
+        App app = ignoreFilters
+            ? service.GetUnfilteredAppAppOperation(appOperation: appOperation).App
+            : service.GetVisibleAppAppOperation(appOperation: appOperation).App;
+
+        if (app != null || ignoreFilters)
+        {
+            return app;
+        }
+
+        bool exists = service.GetUnfilteredAppAppOperation(
+            appOperation: new AppOperation { AppId = appId }).App != null;
+
+        return exists
+            ? throw new SecurityException(message: "Access Denied!")
+            : null;
+    }
+
+    private IQueryable<App> GetAllAppsFromStorage(bool ignoreFilters = false)
+    {
+        AppOperation appOperation = new();
+
+        return ignoreFilters
+            ? service.GetUnfilteredAppsAppOperation(appOperation: appOperation).Apps.AsQueryable()
+            : service.GetVisibleAppsAppOperation(appOperation: appOperation).Apps.AsQueryable();
+    }
+
+    private async ValueTask<App> AddAppToStorageAsync(App newApp, bool isFirstApp)
+    {
+        if (!isFirstApp)
+        {
+            Authorize(appId: null, privilege: "App_create");
+        }
+
+        AppOperation appOperation = await service.AddAppOperationAsync(
+            newAppOperation: new AppOperation { App = newApp });
+
+        return appOperation.App;
+    }
+
+    private async ValueTask<App> UpdateAppInStorageAsync(App updatedApp)
+    {
+        Authorize(appId: updatedApp.Id, privilege: "App_update");
+
+        AppOperation appOperation = await service.UpdateAppOperationAsync(
+            updatedAppOperation: new AppOperation { App = updatedApp });
+
+        return appOperation.App;
+    }
+
+    private async ValueTask DeleteAppFromStorageAsync(int appId)
+    {
+        App app = GetAppForDeleteFromStorage(appId: appId);
+
+        if (app == null)
+        {
+            return;
+        }
+
+        if (app.Roles?.Any() == true)
+        {
+            Authorize(appId: app.Id, privilege: "App_delete");
+        }
+
+        await service.DeleteAppOperationAsync(
+            deletedAppOperation: new AppOperation { App = app });
+    }
+
+    private string GetRequestPath() =>
+        service.GetRequestPathAppOperation(appOperation: new AppOperation()).Text;
+
+    private string GetRequestHost() =>
+        service.GetRequestHostAppOperation(appOperation: new AppOperation()).Text;
+
+    private IQueryable<Culture> GetAllCultures() =>
+        service.GetCulturesAppOperation(appOperation: new AppOperation()).Cultures.AsQueryable();
+
+    private IQueryable<Privilege> GetAllPrivileges() =>
+        service.GetPrivilegesAppOperation(appOperation: new AppOperation()).Privileges.AsQueryable();
+
+    private User GetCurrentUser()
+    {
+        string userId = service.GetCurrentUserAppOperation(
+            appOperation: new AppOperation()).Text;
+
+        return userId == null ? null : new User { Id = userId };
+    }
+
+    private string GetCurrentUserId() =>
+        service.GetCurrentUserIdAppOperation(appOperation: new AppOperation()).Text;
+
+    private bool IsAdminOfApp(int appId) =>
+        service.IsAdminOfAppAppOperation(
+            appOperation: new AppOperation { AppId = appId }).Result;
+
+    private void Authorize(int? appId, string privilege) =>
+        service.AuthorizeAppOperation(appOperation: new AppOperation
+        {
+            AppId = appId ?? 0,
+            OptionalAppId = appId,
+            Privilege = privilege
+        });
+
+    private async ValueTask<Role> AddRoleAsync(Role newRole) =>
+        (await service.AddRoleAppOperationAsync(
+            newAppOperation: new AppOperation { Role = newRole })).Role;
+
+    private async ValueTask<Role> UpdateRoleAsync(Role updatedRole) =>
+        (await service.UpdateRoleAppOperationAsync(
+            updatedAppOperation: new AppOperation { Role = updatedRole })).Role;
+
+    private IQueryable<Role> GetAllRolesIgnoringFilters() =>
+        service.GetRolesAppOperation(appOperation: new AppOperation()).Roles.AsQueryable();
+
+    private async ValueTask<UserRole> AddUserRoleAsync(UserRole newUserRole) =>
+        (await service.AddUserRoleAppOperationAsync(
+            newAppOperation: new AppOperation { UserRole = newUserRole })).UserRole;
+
+    private IQueryable<UserRole> GetAllUserRolesIgnoringFilters() =>
+        service.GetUserRolesAppOperation(appOperation: new AppOperation()).UserRoles.AsQueryable();
+
+    private ValueTask<AppOperation> DeleteAllUserRolesAsync(IEnumerable<UserRole> deletedUserRole) =>
+        service.DeleteUserRolesAppOperationAsync(
+            deletedAppOperation: new AppOperation { DeletedUserRoles = deletedUserRole.ToArray() });
+
+    private IQueryable<Page> GetAllPagesIgnoringFilters() =>
+        service.GetPagesAppOperation(appOperation: new AppOperation()).Pages.AsQueryable();
+
+    private async ValueTask<Page> UpdatePageAsync(Page updatedPage) =>
+        (await service.UpdatePageAppOperationAsync(
+            updatedAppOperation: new AppOperation { Page = updatedPage })).Page;
 }

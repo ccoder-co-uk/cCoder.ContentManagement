@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models;
+using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
@@ -28,47 +29,37 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class AppServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForDeleteAsync()
+    public async Task ShouldDelegateAppAggregateToBrokerForDeleteAppOperationAsync()
     {
         // Given
         App app = CreateRandomApp(id: 5);
         app.Roles = [new Role { Id = Guid.NewGuid(), AppId = app.Id, Users = [] }];
-
-        appBrokerMock.Setup(expression: x => x.GetAppForDelete(appId: app.Id))
-            .Returns(value: app);
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_delete"));
 
         appBrokerMock.Setup(expression: x => x.DeleteAppAggregateAsync(deletedApp: It.IsAny<CmsDataModels.App>()))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await appService.DeleteAsync(appId: 5);
+        await appService.DeleteAppOperationAsync(deletedAppOperation: new AppOperation { App = app });
 
         // Then
-        appBrokerMock.Verify(expression: x => x.GetAppForDelete(appId: app.Id), times: Times.Once);
         appBrokerMock.Verify(expression: x => x.DeleteAppAggregateAsync(deletedApp: It.Is<CmsDataModels.App>(match: actual => actual.Id == app.Id)), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_delete"), times: Times.Once);
         authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
+    public async Task ShouldTranslateSecurityExceptionFromBrokerForDeleteAppOperationAsync()
     {
         // Given
         App app = CreateRandomApp(id: 5);
         app.Roles = [new Role { Id = Guid.NewGuid(), AppId = app.Id, Users = [] }];
 
-        appBrokerMock.Setup(expression: x => x.GetAppForDelete(appId: app.Id))
-            .Returns(value: app);
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_delete"))
+        appBrokerMock
+            .Setup(expression: x => x.DeleteAppAggregateAsync(deletedApp: It.IsAny<App>()))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await appService.DeleteAsync(appId: 5);
+        Func<Task> action = async () => await appService.DeleteAppOperationAsync(deletedAppOperation: new AppOperation { App = app });
 
         // Then
 
@@ -76,9 +67,11 @@ public partial class AppServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        appBrokerMock.Verify(expression: x => x.GetAppForDelete(appId: app.Id), times: Times.Once);
+        appBrokerMock.Verify(
+            expression: x => x.DeleteAppAggregateAsync(deletedApp: It.IsAny<App>()),
+            times: Times.Once);
+
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_delete"), times: Times.Once);
         authorizationManagerMock.VerifyNoOtherCalls();
     }
 
