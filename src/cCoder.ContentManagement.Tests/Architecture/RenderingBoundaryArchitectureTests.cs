@@ -16,7 +16,7 @@ public sealed class RenderingBoundaryArchitectureTests
     [Fact]
     public void ComponentRenderingFoundation_WhenComposed_ShouldUseFileContentBrokerOnly()
     {
-        Type componentRenderServiceType = typeof(PageRenderService).Assembly
+        Type componentRenderServiceType = typeof(ComponentRenderService).Assembly
             .GetType("cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService");
 
         Type[] dependencyTypes = componentRenderServiceType
@@ -32,7 +32,7 @@ public sealed class RenderingBoundaryArchitectureTests
     [Fact]
     public void TemplateRenderingProcessing_WhenComposed_ShouldNotUseServiceLocatorFoundation()
     {
-        Assembly assembly = typeof(PageRenderService).Assembly;
+        Assembly assembly = typeof(ComponentRenderService).Assembly;
 
         assembly.GetType(name: "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService")
             .Should().BeNull();

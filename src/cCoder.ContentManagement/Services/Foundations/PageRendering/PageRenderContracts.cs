@@ -21,10 +21,23 @@ internal interface IMarkupRenderService
 {
     string MarkContentSecurityPolicyNonce(string markup);
 
-    string RenderRenderSessionReplacementDependencies(
-        string key,
-        string content,
-        RenderSession session,
-        IReadOnlyCollection<ReplacementDependency> replacements,
-        bool allowContentTags = true);
+    TagHandlingOperation RenderCultureLinkTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation RenderMetadataTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation RenderNavigationTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation RenderContentTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation RenderComponentTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation RenderScriptTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation RenderStyleTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation RenderDmsTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation RenderResourceTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation RenderExecuteTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
 }

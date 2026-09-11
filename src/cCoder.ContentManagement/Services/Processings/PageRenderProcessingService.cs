@@ -7,8 +7,8 @@ using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
+using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services;
-using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
@@ -18,7 +18,7 @@ using cCoder.ContentManagement.Brokers;
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class PageRenderProcessingService(
-    IPageRenderService pageRenderService,
+    IRenderBroker renderBroker,
     ContentManagementConfiguration config,
     ISystemTextJsonBroker systemTextJsonBroker = null) : IPageRenderProcessingService
 {
@@ -73,14 +73,8 @@ internal sealed partial class PageRenderProcessingService(
                 headerOnly: headerOnly,
                 cacheTemplate: cacheTemplate);
 
-        RenderSession renderedSession =
-            pageRenderService.Execute<
-                IRenderOrchestrationService,
-                RenderSession>(
-                    name: "Render",
-                    operation: service =>
-                        service.RenderRenderSession(
-                            session: session));
+        RenderSession renderedSession = renderBroker.RenderRenderSession(
+            renderSession: session);
 
         return new PageRenderResult
         {

@@ -4,21 +4,13 @@
 
 using System.Text;
 using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Models.PageRendering;
-using cCoder.ContentManagement.Rendering.Brokers;
 
-namespace cCoder.ContentManagement.Rendering.Services.Foundations;
+namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
-internal sealed partial class MarkupRenderService(
-    IComponentReaderBroker componentReaderBroker,
-    IScriptReaderBroker scriptReaderBroker,
-    IRenderFileContentBroker renderFileContentBroker,
-    IJsonBroker jsonBroker,
-    IWorkflowExecutionBroker workflowExecutionBroker,
+internal sealed partial class CachedPageRenderService(
     IRegularExpressionBroker regularExpressionBroker)
-        : IMarkupRenderService
+        : ICachedPageRenderService
 {
     private const string ElementPattern = "<(?<tag>script|style)\\b";
 
@@ -32,11 +24,7 @@ internal sealed partial class MarkupRenderService(
         TryCatch<string>(operation: () =>
     {
         ValidateMarkContentSecurityPolicyNonce(inputs: [markup]);
-        return MarkContentSecurityPolicyNonceCore(markup: markup);
-    });
 
-    private string MarkContentSecurityPolicyNonceCore(string markup)
-    {
         if (string.IsNullOrEmpty(value: markup))
         {
             return markup ?? string.Empty;
@@ -97,7 +85,7 @@ internal sealed partial class MarkupRenderService(
             count: markup.Length - position);
 
         return result.ToString();
-    }
+    });
 
     private string MarkOpeningTag(string openingTag)
     {
@@ -130,12 +118,8 @@ internal sealed partial class MarkupRenderService(
             index: out int matchIndex,
             groups: out IReadOnlyDictionary<string, string> groups);
 
-        tagName = success
-            ? groups["tag"]
-            : string.Empty;
-
+        tagName = success ? groups["tag"] : string.Empty;
         openingStart = success ? matchIndex : -1;
-
         return success;
     }
 

@@ -4,13 +4,13 @@
 
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
-using cCoder.ContentManagement.Rendering.Services.Foundations;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class CachedPageRenderProcessingService(
-    IMarkupRenderService markupRenderService)
+    ICachedPageRenderService cachedPageRenderService)
     : ICachedPageRenderProcessingService
 {
     public PageRenderCacheOperation RenderPageRenderCacheOperation(
@@ -47,10 +47,10 @@ internal sealed partial class CachedPageRenderProcessingService(
                     Title = cached.Title,
                     Description = cached.Description,
                     Keywords = cached.Keywords,
-                    HeaderHtml = markupRenderService
+                    HeaderHtml = cachedPageRenderService
                         .MarkContentSecurityPolicyNonce(
                             markup: cached.Header),
-                    BodyHtml = markupRenderService
+                    BodyHtml = cachedPageRenderService
                         .MarkContentSecurityPolicyNonce(
                             markup: cached.Body),
                     StatusCode = StatusCodes.Status200OK

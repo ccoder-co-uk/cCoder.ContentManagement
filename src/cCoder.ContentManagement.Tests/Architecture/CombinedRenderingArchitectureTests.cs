@@ -12,7 +12,7 @@ namespace cCoder.ContentManagement.Tests.Architecture;
 public sealed class CombinedRenderingArchitectureTests
 {
     private static readonly Assembly ContentManagementAssembly =
-        typeof(PageRenderService).Assembly;
+        typeof(ComponentRenderService).Assembly;
 
     [Fact]
     public void MarkupRendering_WhenComposed_DoesNotHideProcessingHandlersBehindBroker()
@@ -35,14 +35,12 @@ public sealed class CombinedRenderingArchitectureTests
     public void PageRendering_WhenComposed_DoesNotUseServiceProviderBroker()
     {
         // Given
-        Type pageRenderService = typeof(PageRenderService);
-
-        // When
-        Type[] dependencies = GetConstructorDependencies(type: pageRenderService);
+        Type pageRenderService = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService");
 
         // Then
-        dependencies.Should().NotContain(dependency =>
-            dependency.Name == "IServiceProviderBroker");
+        pageRenderService.Should().BeNull(
+            because: "page rendering must use the typed render broker boundary");
     }
 
     [Fact]

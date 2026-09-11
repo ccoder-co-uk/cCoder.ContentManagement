@@ -34,7 +34,6 @@ using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data;
 using cCoder.ContentManagement.Services.Foundations.Serialization;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
-using cCoder.ContentManagement.Services.Processings.PageRendering;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
@@ -120,10 +119,6 @@ public static partial class IServiceCollectionExtensions
         this IServiceCollection services)
     {
         services.AddTransient<IServiceProviderBroker, ServiceProviderBroker>();
-        services.AddKeyedTransient<IRenderOrchestrationService>(
-            serviceKey: "Render",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<IRenderOrchestrationService>());
 
         services.AddKeyedTransient<IAppService>(
             serviceKey: "AppStorage",
@@ -268,6 +263,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageManager, PageManager>();
         services.AddTransient<IPageRenderCacheManager, PageRenderCacheManager>();
         services.AddTransient<IPageRenderer, PageRenderer>();
+        services.AddTransient<IRenderSessionManager, RenderSessionManager>();
         services.AddTransient<ITemplateManager, TemplateManager>();
         services.AddTransient<ITemplateRenderer, TemplateRenderer>();
         services.AddTransient<IContentManagementEventHandlers, AppSupportingResourcesEventHandlers>();
@@ -304,87 +300,11 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IMetadataCacheService, MetadataCacheService>();
         services.AddTransient<ICommonObjectCacheService, CommonObjectCacheService>();
         services.AddTransient<IMarkupRenderService, MarkupRenderService>();
+        services.AddTransient<ICachedPageRenderService, CachedPageRenderService>();
         services.AddTransient<IMarkupRenderProcessingService, MarkupRenderProcessingService>();
         services.AddTransient<IMetadataCacheProcessingService, MetadataCacheProcessingService>();
         services.AddTransient<ICommonObjectCacheProcessingService, CommonObjectCacheProcessingService>();
         services.AddScoped<IRenderBroker, RenderBroker>();
-        services.AddScoped<
-            ICultureLinkTagHandlingProcessingService,
-            CultureLinkTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    ICultureLinkTagHandlingProcessingService>());
-        services.AddScoped<
-            IMetadataTagHandlingProcessingService,
-            MetadataTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IMetadataTagHandlingProcessingService>());
-        services.AddScoped<
-            INavigationTagHandlingProcessingService,
-            NavigationTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    INavigationTagHandlingProcessingService>());
-        services.AddScoped<
-            IContentTagHandlingProcessingService,
-            ContentTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IContentTagHandlingProcessingService>());
-        services.AddScoped<
-            IComponentTagHandlingProcessingService,
-            ComponentTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IComponentTagHandlingProcessingService>());
-        services.AddScoped<
-            IScriptTagHandlingProcessingService,
-            ScriptTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IScriptTagHandlingProcessingService>());
-        services.AddScoped<
-            IStyleTagHandlingProcessingService,
-            StyleTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IStyleTagHandlingProcessingService>());
-        services.AddScoped<
-            IReplacementTagHandlingProcessingService,
-            ReplacementTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IReplacementTagHandlingProcessingService>());
-        services.AddScoped<
-            IDmsTagHandlingProcessingService,
-            DmsTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IDmsTagHandlingProcessingService>());
-        services.AddScoped<
-            IResourceTagHandlingProcessingService,
-            ResourceTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IResourceTagHandlingProcessingService>());
-        services.AddScoped<
-            IExecuteTagHandlingProcessingService,
-            ExecuteTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IExecuteTagHandlingProcessingService>());
         services.AddTransient<IComponentReaderBroker, ComponentReaderBroker>();
         services.AddTransient<IScriptReaderBroker, ScriptReaderBroker>();
         services.AddTransient<IMetadataReaderBroker, MetadataReaderBroker>();
@@ -439,7 +359,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentManagementMetadataTypeService, ContentManagementMetadataTypeService>();
         services.AddTransient<IRenderFileContentService, RenderFileContentService>();
         services.AddTransient<IComponentRenderService, ComponentRenderService>();
-        services.AddTransient<IPageRenderService, PageRenderService>();
         services.AddTransient<IResourceProvider, CoreResourceBroker>();
         services.AddSingleton<ICommonObjectCache, CommonObjectCacheDependency>();
         services.AddSingleton<MetadataCacheDependency>();

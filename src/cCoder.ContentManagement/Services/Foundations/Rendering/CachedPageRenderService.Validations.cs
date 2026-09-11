@@ -4,13 +4,10 @@
 
 using cCoder.ContentManagement.Dependencies;
 
-namespace cCoder.ContentManagement.Rendering.Services.Foundations;
+namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
-internal sealed partial class MarkupRenderService
+internal sealed partial class CachedPageRenderService
 {
-    private static void ValidateTagHandlingOperation(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
-
     private static void ValidateMarkContentSecurityPolicyNonce(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 }

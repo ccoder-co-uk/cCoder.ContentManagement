@@ -9,6 +9,7 @@ using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 using cCoder.ContentManagement.Services.Processings;
@@ -65,8 +66,7 @@ public sealed partial class RenderAggregationServiceTests
         CachedPageRenderOrchestrationService cached = new(
             queryProcessingService: cacheQuery,
             renderProcessingService: new CachedPageRenderProcessingService(
-                markupRenderService: new MarkupRenderService(
-                    renderBroker: Mock.Of<IRenderBroker>(),
+                cachedPageRenderService: new CachedPageRenderService(
                     regularExpressionBroker: new RegularExpressionBroker())));
 
         Mock<IPageProcessingService> pageProcessing = new();

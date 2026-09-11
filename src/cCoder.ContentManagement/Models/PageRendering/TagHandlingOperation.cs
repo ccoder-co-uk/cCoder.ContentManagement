@@ -16,7 +16,7 @@ internal sealed class TagHandlingOperation
 
     public bool Editable { get; set; }
 
-    public IReadOnlyCollection<ReplacementDependency> Replacements { get; set; }
+    public IReadOnlyCollection<MarkupReplacement> Replacements { get; set; }
 
     public ICollection<TagHandlingFragment> Fragments { get; set; }
 }

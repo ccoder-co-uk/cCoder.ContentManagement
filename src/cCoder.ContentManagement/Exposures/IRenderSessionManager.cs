@@ -4,9 +4,9 @@
 
 using cCoder.ContentManagement.Models.PageRendering;
 
-namespace cCoder.ContentManagement.Rendering.Brokers;
+namespace cCoder.ContentManagement.Exposures;
 
-internal interface IRenderBroker
+internal interface IRenderSessionManager
 {
     RenderSession RenderRenderSession(RenderSession renderSession);
 }
