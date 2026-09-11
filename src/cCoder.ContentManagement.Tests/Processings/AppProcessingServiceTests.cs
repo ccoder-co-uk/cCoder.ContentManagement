@@ -86,8 +86,8 @@ public partial class AppProcessingServiceTests
 
         appServiceMock.Verify(
             expression: service => service.Authorize(
-                It.IsAny<int?>(),
-                It.IsAny<string>()),
+                appId: It.IsAny<int?>(),
+                privilege: It.IsAny<string>()),
             times: Times.AtMostOnce());
 
         appServiceMock.Verify(
@@ -99,12 +99,12 @@ public partial class AppProcessingServiceTests
             times: Times.AtMostOnce());
 
         appServiceMock.Verify(
-            expression: service => service.AddRoleAsync(It.IsAny<Role>()),
-            times: Times.AtMost(4));
+            expression: service => service.AddRoleAsync(newRole: It.IsAny<Role>()),
+            times: Times.AtMost(callCount: 4));
 
         appServiceMock.Verify(
-            expression: service => service.AddUserRoleAsync(It.IsAny<UserRole>()),
-            times: Times.AtMost(4));
+            expression: service => service.AddUserRoleAsync(newUserRole: It.IsAny<UserRole>()),
+            times: Times.AtMost(callCount: 4));
 
         appServiceMock.VerifyNoOtherCalls();
     }
@@ -192,21 +192,105 @@ public partial class AppProcessingServiceTests
             return deletedAppOperation;
         }
 
-        public AppOperation GetRequestPathAppOperation(AppOperation appOperation) { appOperation.Text = service.GetRequestPath(); return appOperation; }
-        public AppOperation GetRequestHostAppOperation(AppOperation appOperation) { appOperation.Text = service.GetRequestHost(); return appOperation; }
-        public AppOperation GetCulturesAppOperation(AppOperation appOperation) { appOperation.Cultures = service.GetAllCultures(); return appOperation; }
-        public AppOperation GetPrivilegesAppOperation(AppOperation appOperation) { appOperation.Privileges = service.GetAllPrivileges(); return appOperation; }
-        public AppOperation GetCurrentUserAppOperation(AppOperation appOperation) { appOperation.Text = service.GetCurrentUser()?.Id; return appOperation; }
-        public AppOperation GetCurrentUserIdAppOperation(AppOperation appOperation) { appOperation.Text = service.GetCurrentUserId(); return appOperation; }
-        public AppOperation IsAdminOfAppAppOperation(AppOperation appOperation) { appOperation.Result = service.IsAdminOfApp(appId: appOperation.AppId); return appOperation; }
-        public AppOperation AuthorizeAppOperation(AppOperation appOperation) { service.Authorize(appId: appOperation.OptionalAppId, privilege: appOperation.Privilege); return appOperation; }
-        public async ValueTask<AppOperation> AddRoleAppOperationAsync(AppOperation newAppOperation) { newAppOperation.Role = await service.AddRoleAsync(newRole: newAppOperation.Role); return newAppOperation; }
-        public async ValueTask<AppOperation> UpdateRoleAppOperationAsync(AppOperation updatedAppOperation) { updatedAppOperation.Role = await service.UpdateRoleAsync(updatedRole: updatedAppOperation.Role); return updatedAppOperation; }
-        public AppOperation GetRolesAppOperation(AppOperation appOperation) { appOperation.Roles = service.GetAllRolesIgnoringFilters(); return appOperation; }
-        public async ValueTask<AppOperation> AddUserRoleAppOperationAsync(AppOperation newAppOperation) { newAppOperation.UserRole = await service.AddUserRoleAsync(newUserRole: newAppOperation.UserRole); return newAppOperation; }
-        public AppOperation GetUserRolesAppOperation(AppOperation appOperation) { appOperation.UserRoles = service.GetAllUserRolesIgnoringFilters(); return appOperation; }
-        public async ValueTask<AppOperation> DeleteUserRolesAppOperationAsync(AppOperation deletedAppOperation) { await service.DeleteAllUserRolesAsync(deletedUserRole: deletedAppOperation.DeletedUserRoles); return deletedAppOperation; }
-        public AppOperation GetPagesAppOperation(AppOperation appOperation) { appOperation.Pages = service.GetAllPagesIgnoringFilters(); return appOperation; }
-        public async ValueTask<AppOperation> UpdatePageAppOperationAsync(AppOperation updatedAppOperation) { updatedAppOperation.Page = await service.UpdatePageAsync(updatedPage: updatedAppOperation.Page); return updatedAppOperation; }
+        public AppOperation GetRequestPathAppOperation(AppOperation appOperation)
+        {
+            appOperation.Text = service.GetRequestPath();
+            return appOperation;
+        }
+
+        public AppOperation GetRequestHostAppOperation(AppOperation appOperation)
+        {
+            appOperation.Text = service.GetRequestHost();
+            return appOperation;
+        }
+
+        public AppOperation GetCulturesAppOperation(AppOperation appOperation)
+        {
+            appOperation.Cultures = service.GetAllCultures();
+            return appOperation;
+        }
+
+        public AppOperation GetPrivilegesAppOperation(AppOperation appOperation)
+        {
+            appOperation.Privileges = service.GetAllPrivileges();
+            return appOperation;
+        }
+
+        public AppOperation GetCurrentUserAppOperation(AppOperation appOperation)
+        {
+            appOperation.Text = service.GetCurrentUser()?.Id;
+            return appOperation;
+        }
+
+        public AppOperation GetCurrentUserIdAppOperation(AppOperation appOperation)
+        {
+            appOperation.Text = service.GetCurrentUserId();
+            return appOperation;
+        }
+
+        public AppOperation IsAdminOfAppAppOperation(AppOperation appOperation)
+        {
+            appOperation.Result = service.IsAdminOfApp(appId: appOperation.AppId);
+            return appOperation;
+        }
+
+        public AppOperation AuthorizeAppOperation(AppOperation appOperation)
+        {
+            service.Authorize(
+                appId: appOperation.OptionalAppId,
+                privilege: appOperation.Privilege);
+
+            return appOperation;
+        }
+
+        public async ValueTask<AppOperation> AddRoleAppOperationAsync(AppOperation newAppOperation)
+        {
+            newAppOperation.Role = await service.AddRoleAsync(newRole: newAppOperation.Role);
+            return newAppOperation;
+        }
+
+        public async ValueTask<AppOperation> UpdateRoleAppOperationAsync(AppOperation updatedAppOperation)
+        {
+            updatedAppOperation.Role = await service.UpdateRoleAsync(updatedRole: updatedAppOperation.Role);
+            return updatedAppOperation;
+        }
+
+        public AppOperation GetRolesAppOperation(AppOperation appOperation)
+        {
+            appOperation.Roles = service.GetAllRolesIgnoringFilters();
+            return appOperation;
+        }
+
+        public async ValueTask<AppOperation> AddUserRoleAppOperationAsync(AppOperation newAppOperation)
+        {
+            newAppOperation.UserRole = await service.AddUserRoleAsync(newUserRole: newAppOperation.UserRole);
+            return newAppOperation;
+        }
+
+        public AppOperation GetUserRolesAppOperation(AppOperation appOperation)
+        {
+            appOperation.UserRoles = service.GetAllUserRolesIgnoringFilters();
+            return appOperation;
+        }
+
+        public async ValueTask<AppOperation> DeleteUserRolesAppOperationAsync(AppOperation deletedAppOperation)
+        {
+            await service.DeleteAllUserRolesAsync(
+                deletedUserRole: deletedAppOperation.DeletedUserRoles);
+
+            return deletedAppOperation;
+        }
+
+        public AppOperation GetPagesAppOperation(AppOperation appOperation)
+        {
+            appOperation.Pages = service.GetAllPagesIgnoringFilters();
+            return appOperation;
+        }
+
+        public async ValueTask<AppOperation> UpdatePageAppOperationAsync(AppOperation updatedAppOperation)
+        {
+            updatedAppOperation.Page = await service.UpdatePageAsync(updatedPage: updatedAppOperation.Page);
+            return updatedAppOperation;
+        }
     }
 }

@@ -53,8 +53,13 @@ public sealed partial class JsonBrokerSystemTextTests
         JsonRecordsDocument result = broker.ParseRecords(payload: payload);
 
         // Then
-        result.Records.Should().ContainSingle();
-        result.Records.Single().StringValues["name"].Should().Be("single");
+        result.Records.Should()
+            .ContainSingle();
+
+        result.Records
+            .Single()
+            .StringValues["name"].Should()
+            .Be(expected: "single");
     }
 
     [Fact]
@@ -62,6 +67,7 @@ public sealed partial class JsonBrokerSystemTextTests
     {
         // Given
         SystemTextJsonBroker broker = new();
+
         JsonElement payload = ParseElement(
             json: "[{\"name\":\"first\"},{\"name\":\"second\"}]");
 
@@ -69,8 +75,10 @@ public sealed partial class JsonBrokerSystemTextTests
         JsonRecordsDocument result = broker.ParseRecords(payload: payload);
 
         // Then
-        result.Records.Select(selector: record => record.StringValues["name"])
-            .Should().Equal("first", "second");
+        result.Records
+            .Select(selector: record => record.StringValues["name"])
+            .Should()
+            .Equal(elements: ["first", "second"]);
     }
 
     [Fact]
@@ -78,6 +86,7 @@ public sealed partial class JsonBrokerSystemTextTests
     {
         // Given
         SystemTextJsonBroker broker = new();
+
         JsonElement payload = ParseElement(
             json: "{\"value\":[{\"name\":\"wrapped\"}]}");
 
@@ -85,8 +94,13 @@ public sealed partial class JsonBrokerSystemTextTests
         JsonRecordsDocument result = broker.ParseRecords(payload: payload);
 
         // Then
-        result.Records.Should().ContainSingle();
-        result.Records.Single().StringValues["name"].Should().Be("wrapped");
+        result.Records.Should()
+            .ContainSingle();
+
+        result.Records
+            .Single()
+            .StringValues["name"].Should()
+            .Be(expected: "wrapped");
     }
 
     [Fact]
@@ -100,7 +114,8 @@ public sealed partial class JsonBrokerSystemTextTests
         JsonRecordsDocument result = broker.ParseRecords(payload: payload);
 
         // Then
-        result.Should().BeNull();
+        result.Should()
+            .BeNull();
     }
 
     [Fact]
@@ -114,8 +129,11 @@ public sealed partial class JsonBrokerSystemTextTests
         JsonValueDocument result = broker.Normalize(value: payload);
 
         // Then
-        result.IsRawJson.Should().BeFalse();
-        result.Value.Should().BeSameAs(payload);
+        result.IsRawJson.Should()
+            .BeFalse();
+
+        result.Value.Should()
+            .BeSameAs(expected: payload);
     }
 
     [Fact]
@@ -129,9 +147,14 @@ public sealed partial class JsonBrokerSystemTextTests
         JsonValueDocument result = broker.Normalize(value: payload);
 
         // Then
-        result.IsRawJson.Should().BeTrue();
-        result.RawJson.Should().Be("{\"name\":\"json\"}");
-        result.Value.Should().BeNull();
+        result.IsRawJson.Should()
+            .BeTrue();
+
+        result.RawJson.Should()
+            .Be(expected: "{\"name\":\"json\"}");
+
+        result.Value.Should()
+            .BeNull();
     }
 
     private static JsonElement ParseElement(string json)

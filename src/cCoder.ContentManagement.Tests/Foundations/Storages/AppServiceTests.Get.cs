@@ -33,7 +33,7 @@ public partial class AppServiceTests
             .Returns(value: new[] { app }.AsQueryable());
 
         // When
-        App result = appService.GetVisibleAppsAppOperation(appOperation: new AppOperation()).Apps.Single(app => app.Id == 5);
+        App result = appService.GetVisibleAppsAppOperation(appOperation: new AppOperation()).Apps.Single(predicate: app => app.Id == 5);
 
         // Then
         result.Should()
@@ -54,7 +54,7 @@ public partial class AppServiceTests
             .Returns(value: new[] { app }.AsQueryable());
 
         // When
-        App result = appService.GetUnfilteredAppsAppOperation(appOperation: new AppOperation()).Apps.Single(app => app.Id == 7);
+        App result = appService.GetUnfilteredAppsAppOperation(appOperation: new AppOperation()).Apps.Single(predicate: app => app.Id == 7);
 
         // Then
         result.Should()
@@ -78,7 +78,7 @@ public partial class AppServiceTests
         // When
         App result = appService.GetVisibleAppsAppOperation(
             appOperation: new AppOperation()).Apps
-            .SingleOrDefault(app => app.Id == 9);
+            .SingleOrDefault(predicate: app => app.Id == 9);
 
         // Then
         result.Should()

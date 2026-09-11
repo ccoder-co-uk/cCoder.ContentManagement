@@ -10,7 +10,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Architecture;
 
-public sealed class RenderingProcessingBoundaryArchitectureTests
+public sealed partial class RenderingProcessingBoundaryArchitectureTests
 {
     private static readonly Assembly ContentManagementAssembly =
         typeof(ComponentRenderService).Assembly;
@@ -65,11 +65,13 @@ public sealed class RenderingProcessingBoundaryArchitectureTests
             .ToArray();
 
         // Then
-        dependencies.Should().ContainSingle(dependency =>
-            dependency.Name == foundationContractName);
+        dependencies.Should()
+            .ContainSingle(predicate: dependency =>
+                dependency.Name == foundationContractName);
 
-        dependencies.Should().NotContain(dependency =>
-            IsForbiddenProcessingDependency(type: dependency));
+        dependencies.Should()
+            .NotContain(predicate: dependency =>
+                IsForbiddenProcessingDependency(type: dependency));
     }
 
     [Theory]
@@ -78,22 +80,26 @@ public sealed class RenderingProcessingBoundaryArchitectureTests
         string relativeSourcePath)
     {
         // Given
-        string sourcePath = Path.GetFullPath(path: Path.Combine(
-            Path.GetDirectoryName(path: GetThisFilePath()),
-            "..",
-            "..",
-            "cCoder.ContentManagement",
-            relativeSourcePath));
+        string sourcePath = Path.GetFullPath(
+            path: Path.Combine(
+                paths:
+                [
+                    Path.GetDirectoryName(path: GetThisFilePath()),
+                    "..",
+                    "..",
+                    "cCoder.ContentManagement",
+                    relativeSourcePath
+                ]));
 
         // When
         string source = File.ReadAllText(path: sourcePath);
 
         // Then
-        source.Should().NotContain(
-            unexpected: "System.Text.Json");
+        source.Should()
+            .NotContain(unexpected: "System.Text.Json");
 
-        source.Should().NotContain(
-            unexpected: "JsonElement");
+        source.Should()
+            .NotContain(unexpected: "JsonElement");
     }
 
     private static bool IsForbiddenProcessingDependency(Type type)

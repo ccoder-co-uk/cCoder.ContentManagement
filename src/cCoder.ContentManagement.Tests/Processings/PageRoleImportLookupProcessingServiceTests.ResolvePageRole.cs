@@ -24,10 +24,10 @@ public partial class PageRoleImportLookupProcessingServiceTests
         Role role = CreateRole(appId: appId, roleName: roleName);
 
         pageRoleServiceMock.Setup(expression: service => service.ResolvePageRole(
-                appId,
-                path,
-                roleName))
-            .Returns(new PageRole { PageId = page.Id, RoleId = role.Id });
+                appId: appId,
+                path: path,
+                roleName: roleName))
+            .Returns(value: new PageRole { PageId = page.Id, RoleId = role.Id });
 
         // When
         PageRole result = processingService.ResolvePageRole(
@@ -56,10 +56,10 @@ public partial class PageRoleImportLookupProcessingServiceTests
         Role role = CreateRole(appId: appId, roleName: roleName);
 
         pageRoleServiceMock.Setup(expression: service => service.ResolvePageRole(
-                appId,
-                path,
-                roleName))
-            .Returns(new PageRole { PageId = page.Id, RoleId = role.Id });
+                appId: appId,
+                path: path,
+                roleName: roleName))
+            .Returns(value: new PageRole { PageId = page.Id, RoleId = role.Id });
 
         // When
         PageRole result = processingService.ResolvePageRole(
@@ -106,7 +106,9 @@ public partial class PageRoleImportLookupProcessingServiceTests
 
         pageRoleServiceMock
             .Setup(expression: service => service.ResolvePageRole(
-                It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+                appId: It.IsAny<int>(),
+                path: It.IsAny<string>(),
+                roleName: It.IsAny<string>()))
             .Throws(exception: dependencyException);
 
         // When
@@ -132,7 +134,9 @@ public partial class PageRoleImportLookupProcessingServiceTests
 
         pageRoleServiceMock
             .Setup(expression: service => service.ResolvePageRole(
-                It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+                appId: It.IsAny<int>(),
+                path: It.IsAny<string>(),
+                roleName: It.IsAny<string>()))
             .Throws(exception: serviceException);
 
         // When

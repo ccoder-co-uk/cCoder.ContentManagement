@@ -168,12 +168,12 @@ public partial class AppProcessingServiceTests
 
         appServiceMock.Verify(
             expression: service => service.GetApp(
-                dbApp.Id,
-                true),
+                appId: dbApp.Id,
+                ignoreFilters: true),
             times: Times.Once);
 
         appServiceMock.Verify(
-            expression: service => service.UpdateAppAsync(dbApp),
+            expression: service => service.UpdateAppAsync(updatedApp: dbApp),
             times: Times.Once);
 
         VerifyNoOtherAppServiceCalls();

@@ -61,10 +61,11 @@ public partial class PageRoleProcessingServiceTests
         };
 
         LocalPageRole link = new() { PageId = page.Id, RoleId = roleToAdd.Id };
-        pageRoleServiceMock.Setup(expression: x => x.UserCanAddPageRole(link))
+
+        pageRoleServiceMock.Setup(expression: x => x.UserCanAddPageRole(pageRole: link))
             .Returns(value: true);
 
-        pageRoleServiceMock.Setup(expression: x => x.PageRoleExists(link))
+        pageRoleServiceMock.Setup(expression: x => x.PageRoleExists(pageRole: link))
             .Returns(value: false);
 
         pageRoleServiceMock.Setup(expression: x => x.AddPageRoleAsync(newPageRole: link))
@@ -101,7 +102,7 @@ public partial class PageRoleProcessingServiceTests
         };
 
         pageRoleServiceMock.Setup(expression: x => x.UserCanAddPageRole(
-                It.IsAny<LocalPageRole>()))
+                pageRole: It.IsAny<LocalPageRole>()))
             .Returns(value: false);
 
         // When

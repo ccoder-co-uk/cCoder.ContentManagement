@@ -66,7 +66,7 @@ public partial class PageRoleProcessingServiceTests
             .Returns(value: new[] { link }.AsQueryable());
 
         pageRoleServiceMock.Setup(expression: x => x.UserCanDeletePageRole(
-                It.IsAny<LocalPageRole>()))
+                pageRole: It.IsAny<LocalPageRole>()))
             .Returns(value: true);
 
         pageRoleServiceMock.Setup(expression: x => x.DeletePageRoleAsync(deletedPageRole: link))

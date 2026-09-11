@@ -43,7 +43,9 @@ public partial class ComponentRenderProcessingServiceTests
             .Returns(value: new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
 
         renderFileContentBrokerMock
-            .Setup(expression: broker => broker.GetLatestRawData(app.Id, "snippets/info"))
+            .Setup(expression: broker => broker.GetLatestRawData(
+                appId: app.Id,
+                path: "snippets/info"))
             .Returns(value: System.Text.Encoding.UTF8.GetBytes(s: "snippet-text"));
 
         // When

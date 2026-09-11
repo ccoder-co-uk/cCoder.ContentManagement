@@ -53,6 +53,7 @@ public partial class AppProcessingServiceTests
         app.Id = 7;
         DefaultHttpContext context = new();
         context.Request.Path = "/api/webdav/Core/App(7)/DAV/folder/file.txt";
+
         appServiceMock.Setup(expression: x => x.GetRequestPath())
             .Returns(value: context.Request.Path.Value);
 
@@ -103,8 +104,10 @@ service: new AppServiceTestAdapter(service: appServiceMock.Object)
         DefaultHttpContext context = new();
         context.Request.Path = "/api/dms/folder/file.txt";
         context.Request.Host = new HostString(value: "tenant.test");
+
         appServiceMock.Setup(expression: x => x.GetRequestPath())
             .Returns(value: context.Request.Path.Value);
+
         appServiceMock.Setup(expression: x => x.GetRequestHost())
             .Returns(value: context.Request.Host.Host);
 

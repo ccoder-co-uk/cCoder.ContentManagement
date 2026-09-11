@@ -34,11 +34,11 @@ public partial class PageProcessingServiceTests
     {
         pageServiceMock
             .Setup(expression: manager => manager.GetCurrentUserRoleIds(
-                It.IsAny<int>()))
+                appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) =>
                 (currentUser?.Roles ?? [])
-                    .Where(userRole => userRole.Role?.AppId == appId)
-                    .Select(userRole => userRole.RoleId)
+                    .Where(predicate: userRole => userRole.Role?.AppId == appId)
+                    .Select(selector: userRole => userRole.RoleId)
                     .ToArray());
 
         authorizationManagerMock
@@ -49,8 +49,8 @@ public partial class PageProcessingServiceTests
 
         authorizationManagerMock
             .Setup(expression: manager => manager.UserCanPage(
-                It.IsAny<Page>(),
-                It.IsAny<string>()))
+                page: It.IsAny<Page>(),
+                privilege: It.IsAny<string>()))
             .Returns(valueFunction: (Page page, string privilege) =>
                 TestUsers.UserCanPage(authorization: new PageAuthorization
                 {
@@ -113,17 +113,17 @@ service: pageServiceMock.Object
     private void VerifyNoOtherPageServiceCalls()
     {
         pageServiceMock.Verify(
-            expression: service => service.GetCurrentUserRoleIds(It.IsAny<int>()),
+            expression: service => service.GetCurrentUserRoleIds(appId: It.IsAny<int>()),
             times: Times.AtMostOnce());
 
         pageServiceMock.Verify(
-            expression: service => service.IsAdminOfApp(It.IsAny<int>()),
+            expression: service => service.IsAdminOfApp(appId: It.IsAny<int>()),
             times: Times.AtMostOnce());
 
         pageServiceMock.Verify(
             expression: service => service.UserCanPage(
-                It.IsAny<Page>(),
-                It.IsAny<string>()),
+                page: It.IsAny<Page>(),
+                privilege: It.IsAny<string>()),
             times: Times.AtMostOnce());
 
         pageServiceMock.VerifyNoOtherCalls();

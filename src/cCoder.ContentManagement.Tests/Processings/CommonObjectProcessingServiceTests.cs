@@ -63,17 +63,17 @@ service: commonObjectServiceMock.Object
     {
         commonObjectServiceMock.Verify(
             expression: service => service.GetCurrentUserId(),
-            times: Times.AtMost(2));
+            times: Times.AtMost(callCount: 2));
 
         commonObjectServiceMock.Verify(
             expression: service => service.Authorize(
-                It.IsAny<int?>(),
-                It.IsAny<string>()),
-            times: Times.AtMost(2));
+                appId: It.IsAny<int?>(),
+                privilege: It.IsAny<string>()),
+            times: Times.AtMost(callCount: 2));
 
         commonObjectServiceMock.Verify(
             expression: service => service.GetLatestSet(),
-            times: Times.AtMost(3));
+            times: Times.AtMost(callCount: 3));
 
         commonObjectServiceMock.VerifyNoOtherCalls();
     }

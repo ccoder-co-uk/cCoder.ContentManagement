@@ -9,7 +9,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Architecture;
 
-public sealed class NonRenderingProcessingBoundaryArchitectureTests
+public sealed partial class NonRenderingProcessingBoundaryArchitectureTests
 {
     private static readonly Assembly ContentManagementAssembly =
         typeof(IAppManager).Assembly;
@@ -45,8 +45,13 @@ public sealed class NonRenderingProcessingBoundaryArchitectureTests
             .ToArray();
 
         // Then
-        dependencies.Should().ContainSingle();
-        dependencies.Single().Name.Should().Be(foundationServiceName);
+        dependencies.Should()
+            .ContainSingle();
+
+        dependencies
+            .Single()
+            .Name.Should()
+            .Be(expected: foundationServiceName);
     }
 
     [Fact]
@@ -60,16 +65,18 @@ public sealed class NonRenderingProcessingBoundaryArchitectureTests
         MethodInfo[] methods = appService.GetMethods();
 
         // Then
-        methods.Should().NotBeEmpty();
+        methods.Should()
+            .NotBeEmpty();
 
         methods.SelectMany(selector: method => method.GetParameters())
             .Should()
             .OnlyContain(predicate: parameter => parameter.ParameterType.Name == "AppOperation");
 
-        methods.Should().OnlyContain(predicate: method =>
-            method.ReturnType.Name == "AppOperation"
-            || (method.ReturnType.GenericTypeArguments.Length == 1
-                && method.ReturnType.GenericTypeArguments[0].Name == "AppOperation"));
+        methods.Should()
+            .OnlyContain(predicate: method =>
+                method.ReturnType.Name == "AppOperation"
+                || (method.ReturnType.GenericTypeArguments.Length == 1
+                    && method.ReturnType.GenericTypeArguments[0].Name == "AppOperation"));
     }
 
     [Fact]
@@ -91,7 +98,10 @@ public sealed class NonRenderingProcessingBoundaryArchitectureTests
             .ToArray();
 
         // Then
-        dependencies.Should().ContainSingle(predicate: type => type.Name == "IHttpContextBroker");
-        dependencies.Should().NotContain(predicate: type => type.Name == "HttpContext");
+        dependencies.Should()
+            .ContainSingle(predicate: type => type.Name == "IHttpContextBroker");
+
+        dependencies.Should()
+            .NotContain(predicate: type => type.Name == "HttpContext");
     }
 }
