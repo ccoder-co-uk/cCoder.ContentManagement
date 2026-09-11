@@ -23,6 +23,7 @@ internal partial class PageRoleService(
     {
         ValidatePageRoleAuthorization(inputs: [pageRole]);
         Page page = GetPage(pageId: pageRole.PageId);
+
         bool roleExists = roleBroker.GetAllRolesIgnoringFilters()
             .Any(predicate: role => role.Id == pageRole.RoleId);
 
@@ -76,20 +77,28 @@ internal partial class PageRoleService(
 
     public ValueTask<PageRole> AddPageRoleForImportAsync(PageRole newPageRole) =>
         TryCatch<PageRole>(operation: () =>
-            pageRoleBroker.AddPageRoleAsync(newPageRole: newPageRole),
-            isValueTask: true);
+    {
+        ValidatePageRoleForImportOnAdd(inputs: [newPageRole]);
+        ValidatePageRole(pageRole: newPageRole, parameterName: "pageRole");
 
-    public IQueryable<PageRole> GetAllPageRolesIgnoringFilters() =>
-        pageRoleBroker.GetAllPageRolesIgnoringFilters();
+        return pageRoleBroker.AddPageRoleAsync(newPageRole: newPageRole);
+    }, isValueTask: true);
+
+    public IQueryable<PageRole> GetAllPageRolesIgnoringFilters(bool ignoreFilters = true) =>
+        TryCatch<IQueryable<PageRole>>(operation: () =>
+    {
+        ValidateAllPageRolesIgnoringFiltersOnGet(inputs: [ignoreFilters]);
+        return pageRoleBroker.GetAllPageRolesIgnoringFilters();
+    });
 
     public ValueTask DeleteAllPageRolesAsync(IEnumerable<PageRole> deletedPageRole) =>
         TryCatch(operation: async () =>
     {
         ValidateAllPageRolesOnDelete(inputs: [deletedPageRole]);
+
         await pageRoleBroker.DeleteAllPageRolesAsync(
             deletedPageRole: deletedPageRole);
     }, isValueTask: true);
-
 
     public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageRole>>(operation: () =>

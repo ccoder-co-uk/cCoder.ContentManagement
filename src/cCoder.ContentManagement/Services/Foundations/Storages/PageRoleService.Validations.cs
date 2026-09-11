@@ -10,6 +10,12 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageRoleService
 {
+    private static void ValidatePageRoleForImportOnAdd(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateAllPageRolesIgnoringFiltersOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidatePageRoleAuthorization(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

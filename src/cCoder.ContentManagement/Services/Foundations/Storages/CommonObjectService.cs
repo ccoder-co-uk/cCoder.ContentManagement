@@ -63,6 +63,7 @@ internal partial class CommonObjectService(
         ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
 
         Component component = jsonBroker.ParseJson<Component>(json: commonObject.Json);
+
         cache.Set(
             key: "component|" + commonObject.Name.ToLowerInvariant(),
             item: component);
@@ -75,6 +76,7 @@ internal partial class CommonObjectService(
         ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
 
         Resource resource = jsonBroker.ParseJson<Resource>(json: commonObject.Json);
+
         cache.Set(
             key: $"resource|{commonObject.Key?.ToLowerInvariant() ?? string.Empty}-{commonObject.Name?.ToLowerInvariant() ?? string.Empty}-{commonObject.Culture?.ToLowerInvariant() ?? string.Empty}",
             item: resource);
@@ -87,6 +89,7 @@ internal partial class CommonObjectService(
         ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
 
         Script script = jsonBroker.ParseJson<Script>(json: commonObject.Json);
+
         cache.Set(
             key: "script|" + commonObject.Name.ToLowerInvariant(),
             item: script);

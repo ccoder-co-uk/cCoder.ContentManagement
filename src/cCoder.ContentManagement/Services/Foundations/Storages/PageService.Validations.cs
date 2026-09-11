@@ -10,7 +10,7 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageService
 {
-    private static void ValidateCurrentUserRolesOnGet(object[] inputs) =>
+    private static void ValidateCurrentUserRoleIdsOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
     private static void ValidateAppAdministration(object[] inputs) =>

@@ -18,7 +18,7 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationManager
     public Guid[] GetCurrentUserRoleIds(int appId) =>
         TryCatch<Guid[]>(operation: () =>
     {
-        ValidateCurrentUserRolesOnGet(inputs: [appId]);
+        ValidateCurrentUserRoleIdsOnGet(inputs: [appId]);
 
         return (authorizationManager.GetCurrentUser()?.Roles ?? [])
             .Where(predicate: userRole => userRole.Role?.AppId == appId)

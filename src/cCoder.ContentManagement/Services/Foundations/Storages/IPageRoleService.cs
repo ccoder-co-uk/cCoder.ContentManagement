@@ -25,7 +25,7 @@ internal interface IPageRoleService
 
     ValueTask<PageRole> AddPageRoleForImportAsync(PageRole newPageRole);
 
-    IQueryable<PageRole> GetAllPageRolesIgnoringFilters();
+    IQueryable<PageRole> GetAllPageRolesIgnoringFilters(bool ignoreFilters = true);
 
     ValueTask DeleteAllPageRolesAsync(IEnumerable<PageRole> deletedPageRole);
 }
