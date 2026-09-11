@@ -42,7 +42,7 @@ public partial class ComponentRenderProcessingServiceTests
             .Setup(expression: x => x.Get<RenderScript>(key: "script|bootstrap"))
             .Returns(value: new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
 
-        renderFileContentServiceMock.Setup(expression: x => x.GetLatestTextContent(appId: app.Id, path: "snippets/info"))
+        componentRenderServiceMock.Setup(expression: x => x.GetLatestTextContent(appId: app.Id, path: "snippets/info"))
             .Returns(value: "snippet-text");
 
         // When

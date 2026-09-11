@@ -9,25 +9,29 @@ namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class ComponentRenderService
 {
-    private static void ValidateExecute(object[] inputs) =>
+    private static void ValidateLatestTextContentOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(
             inputs: inputs);
 
-    private static void ValidateName(string name)
+    private static int ValidateAppId(int appId, string parameterName)
     {
-        if (string.IsNullOrWhiteSpace(value: name))
+        if (appId < 1)
         {
             throw new ValidationException(
-                message: "Service name is required.");
+                message: parameterName + " must be greater than 0.");
         }
+
+        return appId;
     }
 
-    private static void ValidateOperation(Delegate operation)
+    private static string ValidatePath(string path, string parameterName)
     {
-        if (operation is null)
+        if (string.IsNullOrWhiteSpace(value: path))
         {
             throw new ValidationException(
-                message: "Service operation is required.");
+                message: parameterName + " is required.");
         }
+
+        return path;
     }
 }

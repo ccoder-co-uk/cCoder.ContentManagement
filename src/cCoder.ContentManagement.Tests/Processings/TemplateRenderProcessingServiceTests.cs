@@ -16,9 +16,9 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Dependencies;
-using cCoder.ContentManagement.Brokers.ServiceProviders;
 using Moq;
 using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
@@ -41,17 +41,15 @@ public partial class TemplateRenderProcessingServiceTests
 
     private TemplateRenderProcessingService CreateSut(RenderConfig config)
     {
-        Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
-
-        TemplateRenderService templateRenderService =
-            new(
-                serviceProviderBroker: serviceProviderBrokerMock.Object);
-
         return new TemplateRenderProcessingService(
             metadataCache: metadataCacheMock.Object,
             objectCache: commonObjectCacheMock.Object,
             jsonBroker: new JsonBroker(),
-            templateRenderService: templateRenderService,
+            appBroker: Mock.Of<IAppBroker>(),
+            componentBroker: Mock.Of<IComponentBroker>(),
+            resourceBroker: Mock.Of<IResourceBroker>(),
+            scriptBroker: Mock.Of<IScriptBroker>(),
+            templateBroker: Mock.Of<ITemplateBroker>(),
             workflowExecutionBroker: new WorkflowExecutionBroker(
                 workflowExecutionDependency:
                     new WorkflowExecutionDependency()),

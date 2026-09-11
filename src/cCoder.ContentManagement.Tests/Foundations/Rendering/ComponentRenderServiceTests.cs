@@ -2,23 +2,34 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers.ServiceProviders;
+using System.Text;
+using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
+using FluentAssertions;
 using Moq;
+using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Foundations.Rendering;
 
-public partial class ComponentRenderServiceTests
+public sealed class ComponentRenderServiceTests
 {
-    private readonly Mock<IServiceProviderBroker> serviceProviderBrokerMock;
-    private readonly ComponentRenderService componentRenderService;
-
-    public ComponentRenderServiceTests()
+    [Fact]
+    public void FileContent_WhenRendered_ShouldReturnLatestUtf8Text()
     {
-        serviceProviderBrokerMock = new Mock<IServiceProviderBroker>();
+        const int appId = 123;
+        const string path = "documents/example.html";
+        const string expectedContent = "<p>latest content</p>";
+        Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new(MockBehavior.Strict);
 
-        componentRenderService =
-            new ComponentRenderService(
-                serviceProviderBroker: serviceProviderBrokerMock.Object);
+        renderFileContentBrokerMock.Setup(expression: broker => broker.GetLatestRawData(appId, path))
+            .Returns(Encoding.UTF8.GetBytes(expectedContent));
+
+        IComponentRenderService componentRenderService = new ComponentRenderService(
+            renderFileContentBroker: renderFileContentBrokerMock.Object);
+
+        string actualContent = componentRenderService.GetLatestTextContent(appId: appId, path: path);
+
+        actualContent.Should().Be(expectedContent);
+        renderFileContentBrokerMock.VerifyAll();
     }
 }

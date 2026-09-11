@@ -6,8 +6,5 @@ namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal interface IComponentRenderService
 {
-    TResult Execute<TService, TResult>(
-        string name,
-        Func<TService, TResult> operation)
-        where TService : notnull;
+    string GetLatestTextContent(int appId, string path);
 }

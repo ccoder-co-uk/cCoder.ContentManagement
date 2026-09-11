@@ -11,10 +11,9 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Services.Foundations.Storages;
-using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
@@ -25,7 +24,11 @@ internal partial class TemplateRenderProcessingService(
     IMetadataReaderBroker metadataCache,
     ICommonObjectReaderBroker objectCache,
     IJsonBroker jsonBroker,
-    ITemplateRenderService templateRenderService,
+    IAppBroker appBroker,
+    IComponentBroker componentBroker,
+    IResourceBroker resourceBroker,
+    IScriptBroker scriptBroker,
+    ITemplateBroker templateBroker,
     IWorkflowExecutionBroker workflowExecutionBroker,
     ILoggingBroker loggingBroker,
     ContentManagementConfiguration config = null)
@@ -68,11 +71,8 @@ internal partial class TemplateRenderProcessingService(
         ValidateModel(model: model, parameterName: "model");
         ValidateUser(user: user, parameterName: "user");
 
-        App app = templateRenderService
-            .Execute<IAppService, IQueryable<App>>(
-                name: "AppStorage",
-                operation: service => service.GetAllApp(
-                    ignoreFilters: true))
+        App app = appBroker
+            .GetAllAppsIgnoringFilters()
             .Where(predicate: existingApp => existingApp.Id == appId)
             .Select(selector: existingApp => new App
             {
@@ -91,35 +91,23 @@ internal partial class TemplateRenderProcessingService(
             throw new InvalidOperationException(message: $"App '{appId}' was not found.");
         }
 
-        app.Components = templateRenderService
-            .Execute<IComponentService, IQueryable<Component>>(
-                name: "ComponentStorage",
-                operation: service => service.GetAllComponent(
-                    ignoreFilters: true))
+        app.Components = componentBroker
+            .GetAllComponentsIgnoringFilters()
             .Where(predicate: existingComponent => existingComponent.AppId == appId)
             .ToArray();
 
-        app.Resources = templateRenderService
-            .Execute<IResourceService, IQueryable<Resource>>(
-                name: "ResourceStorage",
-                operation: service => service.GetAllResource(
-                    ignoreFilters: true))
+        app.Resources = resourceBroker
+            .GetAllResourcesIgnoringFilters()
             .Where(predicate: existingResource => existingResource.AppId == appId)
             .ToArray();
 
-        app.Scripts = templateRenderService
-            .Execute<IScriptService, IQueryable<Script>>(
-                name: "ScriptStorage",
-                operation: service => service.GetAllScript(
-                    ignoreFilters: true))
+        app.Scripts = scriptBroker
+            .GetAllScriptsIgnoringFilters()
             .Where(predicate: existingScript => existingScript.AppId == appId)
             .ToArray();
 
-        Template template = templateRenderService
-            .Execute<ITemplateService, IQueryable<Template>>(
-                name: "TemplateStorage",
-                operation: service => service.GetAllTemplate(
-                    ignoreFilters: true))
+        Template template = templateBroker
+            .GetAllTemplatesIgnoringFilters()
             .Where(predicate: existingTemplate => existingTemplate.AppId == appId)
             .ToArray()
             .FirstOrDefault(predicate: existingTemplate =>

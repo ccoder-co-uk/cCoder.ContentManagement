@@ -2,27 +2,28 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers.ServiceProviders;
+using System.Text;
+using cCoder.ContentManagement.Brokers.Storages;
 
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class ComponentRenderService(
-    IServiceProviderBroker serviceProviderBroker) : IComponentRenderService
+    IRenderFileContentBroker renderFileContentBroker)
+        : IComponentRenderService
 {
-    public TResult Execute<TService, TResult>(
-        string name,
-        Func<TService, TResult> operation)
-        where TService : notnull =>
-        TryCatch(operation: () =>
+    public string GetLatestTextContent(int appId, string path) =>
+        TryCatch<string>(operation: () =>
     {
-        ValidateExecute(inputs: [name, operation]);
-        ValidateName(name: name);
-        ValidateOperation(operation: operation);
+        ValidateLatestTextContentOnGet(inputs: [appId, path]);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePath(path: path, parameterName: "path");
 
-        TService service =
-            serviceProviderBroker.GetRequiredService<TService>(
-                name: name);
+        byte[] latestRawData = renderFileContentBroker.GetLatestRawData(
+            appId: appId,
+            path: path);
 
-        return operation(arg: service);
+        return latestRawData is { Length: > 0 }
+            ? Encoding.UTF8.GetString(bytes: latestRawData)
+            : string.Empty;
     });
 }
