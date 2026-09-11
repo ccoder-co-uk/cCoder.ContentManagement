@@ -8,7 +8,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Brokers;
 
-public sealed class JsonBrokerSystemTextTests
+public sealed partial class JsonBrokerSystemTextTests
 {
     [Fact]
     public void DeserializeSystemText_WhenPropertyCaseDiffers_IsCaseInsensitive()
@@ -21,7 +21,8 @@ public sealed class JsonBrokerSystemTextTests
             json: "{\"name\":\"Example\"}");
 
         // Then
-        result.Name.Should().Be(expected: "Example");
+        result.Name.Should()
+            .Be(expected: "Example");
     }
 
     [Fact]
@@ -35,7 +36,8 @@ public sealed class JsonBrokerSystemTextTests
             value: new TestPayload { Name = "<script>" });
 
         // Then
-        result.Should().Be(expected: "{\"Name\":\"\\u003Cscript\\u003E\"}");
+        result.Should()
+            .Be(expected: "{\"Name\":\"\\u003Cscript\\u003E\"}");
     }
 
     private sealed class TestPayload

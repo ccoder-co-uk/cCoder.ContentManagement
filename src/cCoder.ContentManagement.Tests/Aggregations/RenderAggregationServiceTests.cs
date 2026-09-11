@@ -54,8 +54,8 @@ public sealed partial class RenderAggregationServiceTests
         Mock<IJsonOrchestrationService> jsonService = new();
 
         jsonService.Setup(expression: service =>
-            service.SerializeRuntimeValue(It.IsAny<object>()))
-            .Returns((object value) =>
+            service.SerializeRuntimeValue(value: It.IsAny<object>()))
+            .Returns(valueFunction: (object value) =>
                 new SystemTextJsonBroker().Serialize(value: value));
 
         contextService.Setup(expression: service =>
@@ -116,7 +116,7 @@ public sealed partial class RenderAggregationServiceTests
 
         jsonService.Verify(
             expression: service => service.SerializeRuntimeValue(
-                It.IsAny<object>()),
+                value: It.IsAny<object>()),
             times: Times.Once);
 
         uncachedService.VerifyNoOtherCalls();
@@ -152,8 +152,8 @@ public sealed partial class RenderAggregationServiceTests
         Mock<IJsonOrchestrationService> jsonService = new();
 
         jsonService.Setup(expression: service =>
-            service.SerializeRuntimeValue(It.IsAny<object>()))
-            .Returns((object value) =>
+            service.SerializeRuntimeValue(value: It.IsAny<object>()))
+            .Returns(valueFunction: (object value) =>
                 new SystemTextJsonBroker().Serialize(value: value));
 
         contextService.Setup(expression: service =>

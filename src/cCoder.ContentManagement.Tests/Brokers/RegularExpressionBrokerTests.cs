@@ -8,7 +8,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Brokers;
 
-public sealed class RegularExpressionBrokerTests
+public sealed partial class RegularExpressionBrokerTests
 {
     [Fact]
     public void Replace_WhenNamedAndNumberedGroupsAreUsed_PreservesMatchSemantics()
@@ -24,7 +24,8 @@ public sealed class RegularExpressionBrokerTests
                 $"<{groups["code"]}|{groups["1"]}|{value}>");
 
         // Then
-        result.Should().Be(
+        result.Should()
+            .Be(
             expected: "before <return 42;|return 42;|[execute]return 42;[/execute]> after");
     }
 
@@ -43,9 +44,14 @@ public sealed class RegularExpressionBrokerTests
             groups: out IReadOnlyDictionary<string, string> groups);
 
         // Then
-        result.Should().BeTrue();
-        index.Should().Be(20);
-        groups["tag"].Should().Be(expected: "script");
+        result.Should()
+            .BeTrue();
+
+        index.Should()
+            .Be(expected: 20);
+
+        groups["tag"].Should()
+            .Be(expected: "script");
     }
 
     [Fact]
@@ -63,6 +69,7 @@ public sealed class RegularExpressionBrokerTests
             action: (value, groups) => results.Add(item: groups["name"]));
 
         // Then
-        results.Should().Equal(expected: ["a", "b"]);
+        results.Should()
+            .Equal(expected: ["a", "b"]);
     }
 }

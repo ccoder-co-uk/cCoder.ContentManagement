@@ -11,25 +11,31 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Foundations.Rendering;
 
-public sealed class ComponentRenderServiceTests
+public sealed partial class ComponentRenderServiceTests
 {
     [Fact]
     public void FileContent_WhenRendered_ShouldReturnLatestUtf8Text()
     {
+        // Given
         const int appId = 123;
         const string path = "documents/example.html";
         const string expectedContent = "<p>latest content</p>";
         Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new(MockBehavior.Strict);
 
-        renderFileContentBrokerMock.Setup(expression: broker => broker.GetLatestRawData(appId, path))
-            .Returns(Encoding.UTF8.GetBytes(expectedContent));
+        renderFileContentBrokerMock.Setup(expression: broker =>
+            broker.GetLatestRawData(appId: appId, path: path))
+            .Returns(value: Encoding.UTF8.GetBytes(s: expectedContent));
 
         IComponentRenderService componentRenderService = new ComponentRenderService(
             renderFileContentBroker: renderFileContentBrokerMock.Object);
 
+        // When
         string actualContent = componentRenderService.GetLatestTextContent(appId: appId, path: path);
 
-        actualContent.Should().Be(expectedContent);
+        // Then
+        actualContent.Should()
+            .Be(expected: expectedContent);
+
         renderFileContentBrokerMock.VerifyAll();
     }
 }

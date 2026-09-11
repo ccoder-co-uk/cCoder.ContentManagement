@@ -135,37 +135,45 @@ public sealed partial class PageRenderCacheAggregationServiceTests
     [Fact]
     public async Task ShouldInvalidateOnlyOwningAppAfterAppPackageImportAsync()
     {
+        // Given
         const int appId = 7;
         Mock<IPageRenderCacheOrchestrationService> cacheService = new();
 
-        cacheService.Setup(service =>
-            service.DeleteAppPageRenderCachesFromEventAsync(appId))
-            .Returns(ValueTask.CompletedTask);
+        cacheService.Setup(expression: service =>
+            service.DeleteAppPageRenderCachesFromEventAsync(appId: appId))
+            .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheAggregationService service = CreateService(
             cacheService: cacheService);
 
+        // When
         await service.InvalidatePackageAsync(appId: appId);
 
+        // Then
         cacheService.VerifyAll();
     }
 
     [Fact]
     public async Task ShouldInvalidateAllAppsAfterCommonPackageImportAsync()
     {
+        // Given
         Mock<ICommonObjectCache> commonObjectCache = new();
         Mock<IPageRenderCacheOrchestrationService> cacheService = new();
 
-        commonObjectCache.Setup(cache => cache.Refresh());
-        cacheService.Setup(service => service.GetAllPageRenderCaches())
-            .Returns(Array.Empty<PageRenderCache>().AsQueryable());
+        commonObjectCache.Setup(expression: cache => cache.Refresh());
+
+        cacheService.Setup(expression: service => service.GetAllPageRenderCaches())
+            .Returns(value: Array.Empty<PageRenderCache>()
+                .AsQueryable());
 
         PageRenderCacheAggregationService service = CreateService(
             cacheService: cacheService,
             commonObjectCache: commonObjectCache);
 
+        // When
         await service.InvalidatePackageAsync(appId: null);
 
+        // Then
         commonObjectCache.VerifyAll();
         cacheService.VerifyAll();
     }
@@ -176,8 +184,10 @@ public sealed partial class PageRenderCacheAggregationServiceTests
         new(
             pageRenderCacheOrchestrationService:
                 (cacheService ??
-                    new Mock<IPageRenderCacheOrchestrationService>()).Object,
+                    new Mock<IPageRenderCacheOrchestrationService>())
+            .Object,
             pageRenderCacheImportState: new PageRenderCacheImportState(),
             commonObjectCache:
-                (commonObjectCache ?? new Mock<ICommonObjectCache>()).Object);
+                (commonObjectCache ?? new Mock<ICommonObjectCache>())
+            .Object);
 }

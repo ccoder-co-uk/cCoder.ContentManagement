@@ -21,7 +21,8 @@ public sealed partial class ContentSecurityPolicyNonceTests
         const string markup = "<style>.page { color: red; }</style><script src='/site.js'></script><script>start();</script>";
 
         // When
-        string result = CreateService().MarkContentSecurityPolicyNonce(markup: markup);
+        string result = CreateService()
+            .MarkContentSecurityPolicyNonce(markup: markup);
 
         // Then
         result.Should()
@@ -57,7 +58,8 @@ public sealed partial class ContentSecurityPolicyNonceTests
         const string markup = "<script>const example = \"<style>not markup</style>\";</script><p>content</p>";
 
         // When
-        string result = CreateService().MarkContentSecurityPolicyNonce(markup: markup);
+        string result = CreateService()
+            .MarkContentSecurityPolicyNonce(markup: markup);
 
         // Then
         result.Should()
@@ -72,7 +74,8 @@ public sealed partial class ContentSecurityPolicyNonceTests
         const string markup = "<script data-example='a > b'>start();</script>";
 
         // When
-        string result = CreateService().MarkContentSecurityPolicyNonce(markup: markup);
+        string result = CreateService()
+            .MarkContentSecurityPolicyNonce(markup: markup);
 
         // Then
         result.Should()
@@ -87,7 +90,8 @@ public sealed partial class ContentSecurityPolicyNonceTests
         const string markup = "<button style='color:red' onclick='start()'>Start</button>";
 
         // When
-        string result = CreateService().MarkContentSecurityPolicyNonce(markup: markup);
+        string result = CreateService()
+            .MarkContentSecurityPolicyNonce(markup: markup);
 
         // Then
         result.Should()

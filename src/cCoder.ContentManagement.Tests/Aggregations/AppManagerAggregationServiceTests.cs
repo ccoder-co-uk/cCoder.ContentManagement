@@ -14,17 +14,19 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Aggregations;
 
-public sealed class AppManagerAggregationServiceTests
+public sealed partial class AppManagerAggregationServiceTests
 {
     [Fact]
     public void GetUsersAppManagerContext_WhenAppHasRoleUsers_ShouldReturnThoseUsers()
     {
+        // Given
         const int appId = 23;
         User expectedUser = new() { Id = "user-id" };
         Mock<IAppOrchestrationService> appOrchestrationServiceMock = new();
 
-        appOrchestrationServiceMock.Setup(service => service.GetApp(appId))
-            .Returns(new App
+        appOrchestrationServiceMock.Setup(
+            expression: service => service.GetApp(appId: appId))
+            .Returns(value: new App
             {
                 Id = appId,
                 Roles =
@@ -42,28 +44,40 @@ public sealed class AppManagerAggregationServiceTests
         AppManagerAggregationService service = new(
             appOrchestrationService: appOrchestrationServiceMock.Object);
 
+        // When
         AppManagerContext result = service.GetUsersAppManagerContext(
             appManagerContext: new AppManagerContext { AppId = appId });
 
-        result.Users.Should().Equal(expectedUser);
+        // Then
+        result.Users.Should()
+            .Equal(elements: expectedUser);
+
         appOrchestrationServiceMock.VerifyAll();
     }
 
     [Fact]
     public void GetUsersAppManagerContext_WhenAppDoesNotExist_ShouldThrowSecurityException()
     {
+        // Given
         const int appId = 23;
         Mock<IAppOrchestrationService> appOrchestrationServiceMock = new();
-        appOrchestrationServiceMock.Setup(service => service.GetApp(appId))
-            .Returns((App)null);
+
+        appOrchestrationServiceMock.Setup(
+            expression: service => service.GetApp(appId: appId))
+            .Returns(value: (App)null);
+
         AppManagerAggregationService service = new(
             appOrchestrationService: appOrchestrationServiceMock.Object);
 
+        // When
         Action getUsers = () => service.GetUsersAppManagerContext(
             appManagerContext: new AppManagerContext { AppId = appId });
 
-        getUsers.Should().Throw<SecurityException>()
-            .WithMessage("Access Denied!");
+        // Then
+        getUsers.Should()
+            .Throw<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
         appOrchestrationServiceMock.VerifyAll();
     }
 }

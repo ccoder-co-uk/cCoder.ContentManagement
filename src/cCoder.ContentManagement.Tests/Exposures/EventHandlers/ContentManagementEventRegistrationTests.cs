@@ -16,7 +16,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Exposures.EventHandlers;
 
-public sealed class ContentManagementEventRegistrationTests
+public sealed partial class ContentManagementEventRegistrationTests
 {
     public static TheoryData<Type, Type, string[]> RegistrationCases => new()
     {
@@ -30,14 +30,18 @@ public sealed class ContentManagementEventRegistrationTests
     [Fact]
     public void ContentManagement_WhenConfigured_ShouldRegisterEveryEventHandlerExposure()
     {
+        // Given
         ServiceCollection services = new();
 
+        // When
         services.AddContentManagementHostedServices();
 
-        services.Where(descriptor =>
+        // Then
+        services.Where(predicate: descriptor =>
                 descriptor.ServiceType == typeof(IContentManagementEventHandlers))
-            .Select(descriptor => descriptor.ImplementationType)
-            .Should().BeEquivalentTo(
+            .Select(selector: descriptor => descriptor.ImplementationType)
+            .Should()
+            .BeEquivalentTo(expectation:
             [
                 typeof(AppSupportingResourcesEventHandlers),
                 typeof(AppRenderableEventHandlers),
@@ -55,11 +59,15 @@ public sealed class ContentManagementEventRegistrationTests
     [Fact]
     public void ContentManagement_WhenConfigured_ShouldRegisterAppManagerAggregation()
     {
+        // Given
         ServiceCollection services = new();
 
+        // When
         services.AddContentManagementHostedServices();
 
-        services.Should().ContainSingle(descriptor =>
+        // Then
+        services.Should()
+            .ContainSingle(predicate: descriptor =>
             descriptor.ServiceType == typeof(IAppManagerAggregationService) &&
             descriptor.ImplementationType == typeof(AppManagerAggregationService));
     }
@@ -71,67 +79,92 @@ public sealed class ContentManagementEventRegistrationTests
         Type expectedServiceType,
         string[] expectedEventNames)
     {
+        // Given
         Mock<IEventHub> eventHubMock = new();
+
         IContentManagementEventHandlers eventHandlers =
             (IContentManagementEventHandlers)Activator.CreateInstance(
                 type: eventHandlersType,
                 args: eventHubMock.Object);
 
+        // When
         eventHandlers.ListenToAllEvents();
 
-        eventHubMock.Invocations.Select(invocation => invocation.Arguments[0])
-            .Should().Equal(expectedEventNames);
+        // Then
+        eventHubMock.Invocations.Select(
+            selector: invocation => invocation.Arguments[0])
+            .Should()
+            .Equal(expected: expectedEventNames);
 
-        eventHubMock.Invocations.Should().OnlyContain(
-            invocation => invocation.Method.GetGenericArguments()[1] == expectedServiceType);
+        eventHubMock.Invocations.Should()
+            .OnlyContain(
+                predicate: invocation =>
+                    invocation.Method.GetGenericArguments()[1] == expectedServiceType);
     }
 
     [Fact]
     public void FinalAppDeleteEventHandlers_WhenListening_ShouldRegisterFinalDeleteBoundary()
     {
+        // Given
         Mock<IEventHub> eventHubMock = new();
         FinalAppDeleteEventHandlers eventHandlers = new(eventHub: eventHubMock.Object);
 
+        // When
         eventHandlers.ListenToFinalAppDeleteEvent();
 
-        eventHubMock.Invocations.Should().ContainSingle();
-        eventHubMock.Invocations[0].Arguments[0].Should().Be("app_delete");
+        // Then
+        eventHubMock.Invocations.Should()
+            .ContainSingle();
+
+        eventHubMock.Invocations[0].Arguments[0].Should()
+            .Be(expected: "app_delete");
+
         eventHubMock.Invocations[0].Method.GetGenericArguments()[1]
-            .Should().Be(typeof(IAppOrchestrationService));
+            .Should()
+            .Be(expected: typeof(IAppOrchestrationService));
     }
 
     [Fact]
     public async Task PageRenderCacheEventHandlers_WhenPackageImportCompletes_ShouldSelectCorrectInvalidationAsync()
     {
+        // Given
         const int appId = 23;
         Mock<IEventHub> eventHubMock = new();
         PackageImportRenderCacheEventHandlers eventHandlers = new(eventHub: eventHubMock.Object);
         Mock<IPageRenderCacheEventHandlers> cacheHandlersMock = new(MockBehavior.Strict);
 
-        cacheHandlersMock.Setup(service => service.InvalidatePackageAsync(appId))
-            .Returns(ValueTask.CompletedTask);
-        cacheHandlersMock.Setup(service => service.InvalidatePackageAsync(null))
-            .Returns(ValueTask.CompletedTask);
+        cacheHandlersMock.Setup(
+            expression: service => service.InvalidatePackageAsync(appId: appId))
+            .Returns(value: ValueTask.CompletedTask);
+
+        cacheHandlersMock.Setup(
+            expression: service => service.InvalidatePackageAsync(appId: null))
+            .Returns(value: ValueTask.CompletedTask);
 
         eventHandlers.ListenToWebCacheEvents();
 
         Func<IPageRenderCacheEventHandlers, PackageImportEvent, ValueTask> packageHandler =
             (Func<IPageRenderCacheEventHandlers, PackageImportEvent, ValueTask>)eventHubMock
-                .Invocations.Single(invocation =>
+                .Invocations.Single(predicate: invocation =>
                     invocation.Arguments[0] as string == "package_import_complete")
                 .Arguments[1];
 
+        // When
         await packageHandler(
-            cacheHandlersMock.Object,
-            new PackageImportEvent { AppId = appId, Package = new Package() });
+            arg1: cacheHandlersMock.Object,
+            arg2: new PackageImportEvent { AppId = appId, Package = new Package() });
 
         await packageHandler(
-            cacheHandlersMock.Object,
-            new PackageImportEvent { AppId = null, Package = new Package() });
+            arg1: cacheHandlersMock.Object,
+            arg2: new PackageImportEvent { AppId = null, Package = new Package() });
 
+        // Then
         cacheHandlersMock.VerifyAll();
 
-        eventHubMock.Invocations.Select(invocation => invocation.Arguments[0])
-            .Should().NotContain(["uncached_page_render", "package_import", "app_package_import_complete"]);
+        eventHubMock.Invocations.Select(
+            selector: invocation => invocation.Arguments[0])
+            .Should()
+            .NotContain(unexpected:
+                ["uncached_page_render", "package_import", "app_package_import_complete"]);
     }
 }

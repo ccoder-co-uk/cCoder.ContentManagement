@@ -10,7 +10,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Foundations.Serialization;
 
-public sealed class JsonServiceRecordTests
+public sealed partial class JsonServiceRecordTests
 {
     [Fact]
     public void ParseRecords_WhenPayloadIsAnArray_PreservesRawRecordTextAndValues()
@@ -30,11 +30,23 @@ public sealed class JsonServiceRecordTests
         IReadOnlyCollection<JsonObjectRecord> results = document.Records;
 
         // Then
-        results.Should().HaveCount(expected: 2);
-        results.First().RawText.Should().Be(expected: "{ \"Name\": \"First\", \"CreatedOn\": \"2026-09-11T12:00:00+00:00\" }");
-        results.First().StringValues["Name"].Should().Be(expected: "First");
-        results.First().DateTimeOffsetValues["CreatedOn"].Should()
+        results.Should()
+            .HaveCount(expected: 2);
+
+        results.First()
+            .RawText.Should()
+            .Be(expected: "{ \"Name\": \"First\", \"CreatedOn\": \"2026-09-11T12:00:00+00:00\" }");
+
+        results.First()
+            .StringValues["Name"].Should()
+            .Be(expected: "First");
+
+        results.First()
+            .DateTimeOffsetValues["CreatedOn"].Should()
             .Be(expected: DateTimeOffset.Parse(input: "2026-09-11T12:00:00+00:00"));
-        results.Last().StringValues.Should().NotContainKey(unexpected: "Missing");
+
+        results.Last()
+            .StringValues.Should()
+            .NotContainKey(unexpected: "Missing");
     }
 }

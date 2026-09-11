@@ -14,7 +14,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Processings;
 
-public sealed class MarkupRenderProcessingServiceTagPipelineTests
+public sealed partial class MarkupRenderProcessingServiceTagPipelineTests
 {
     [Fact]
     public void ShouldApplyTagHandlersInTheirDefinedOrder()
@@ -39,7 +39,8 @@ public sealed class MarkupRenderProcessingServiceTagPipelineTests
             allowContentTags: true);
 
         // Then
-        result.Should().Be(expected: "ordered");
+        result.Should()
+            .Be(expected: "ordered");
     }
 
     [Fact]
@@ -76,10 +77,17 @@ public sealed class MarkupRenderProcessingServiceTagPipelineTests
             allowContentTags: true);
 
         // Then
-        result.Should().Contain(expected: "name='Parent'");
-        result.Should().Contain(expected: "name='Child'");
-        result.Should().Contain(expected: "Nested content");
-        result.Should().NotContain(unexpected: "[[render-fragment:");
+        result.Should()
+            .Contain(expected: "name='Parent'");
+
+        result.Should()
+            .Contain(expected: "name='Child'");
+
+        result.Should()
+            .Contain(expected: "Nested content");
+
+        result.Should()
+            .NotContain(unexpected: "[[render-fragment:");
     }
 
     [Fact]
@@ -89,9 +97,9 @@ public sealed class MarkupRenderProcessingServiceTagPipelineTests
         Mock<IWorkflowExecutionBroker> workflowExecutionBroker = new();
 
         workflowExecutionBroker
-            .SetupSequence(expression => expression.Execute(
-                It.IsAny<string>(),
-                It.IsAny<string>()))
+            .SetupSequence(expression: broker => broker.Execute(
+                baseAddress: It.IsAny<string>(),
+                content: It.IsAny<string>()))
             .Returns(value: "A")
             .Returns(value: "B")
             .Returns(value: "A");
@@ -118,7 +126,7 @@ public sealed class MarkupRenderProcessingServiceTagPipelineTests
         // Then
         action.Should()
             .Throw<InvalidOperationException>()
-            .WithMessage("*replacement cycle*");
+            .WithMessage(expectedWildcardPattern: "*replacement cycle*");
     }
 
     [Fact]
@@ -146,7 +154,7 @@ public sealed class MarkupRenderProcessingServiceTagPipelineTests
         // Then
         action.Should()
             .Throw<InvalidOperationException>()
-            .WithMessage("*maximum replacement passes*");
+            .WithMessage(expectedWildcardPattern: "*maximum replacement passes*");
     }
 
     private static MarkupRenderProcessingService CreateService(

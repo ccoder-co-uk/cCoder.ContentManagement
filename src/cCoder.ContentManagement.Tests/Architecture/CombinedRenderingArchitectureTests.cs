@@ -9,10 +9,11 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Architecture;
 
-public sealed class CombinedRenderingArchitectureTests
+public sealed partial class CombinedRenderingArchitectureTests
 {
     private static readonly Assembly ContentManagementAssembly =
-        typeof(ComponentRenderService).Assembly;
+        typeof(ComponentRenderService)
+            .Assembly;
 
     [Fact]
     public void MarkupRendering_WhenComposed_DoesNotHideProcessingHandlersBehindBroker()
@@ -25,9 +26,11 @@ public sealed class CombinedRenderingArchitectureTests
         Type[] dependencies = GetConstructorDependencies(type: renderBroker);
 
         // Then
-        dependencies.Should().NotContain(dependency =>
+        dependencies.Should()
+            .NotContain(predicate: dependency =>
             dependency.IsGenericType
-            && dependency.GetGenericArguments().Any(argument =>
+            && dependency.GetGenericArguments()
+                .Any(predicate: argument =>
                 argument.Name == "ITagHandlingProcessingService"));
     }
 
@@ -38,8 +41,12 @@ public sealed class CombinedRenderingArchitectureTests
         Type pageRenderService = ContentManagementAssembly.GetType(
             name: "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService");
 
+        // When
+        Type actualPageRenderService = pageRenderService;
+
         // Then
-        pageRenderService.Should().BeNull(
+        actualPageRenderService.Should()
+            .BeNull(
             because: "page rendering must use the typed render broker boundary");
     }
 
@@ -51,13 +58,14 @@ public sealed class CombinedRenderingArchitectureTests
 
         // When
         Type[] processingHandlers = contentManagementTypes
-            .Where(type => type.Name.EndsWith(
+            .Where(predicate: type => type.Name.EndsWith(
                 value: "TagHandlingProcessingService",
                 comparisonType: StringComparison.Ordinal))
             .ToArray();
 
         // Then
-        processingHandlers.Should().BeEmpty();
+        processingHandlers.Should()
+            .BeEmpty();
     }
 
     [Fact]
@@ -72,8 +80,11 @@ public sealed class CombinedRenderingArchitectureTests
             name: "cCoder.ContentManagement.Models.PageRendering.MarkupReplacement");
 
         // Then
-        oldDependency.Should().BeNull();
-        markupReplacement.Should().NotBeNull();
+        oldDependency.Should()
+            .BeNull();
+
+        markupReplacement.Should()
+            .NotBeNull();
     }
 
     [Fact]
@@ -88,7 +99,8 @@ public sealed class CombinedRenderingArchitectureTests
             type: cachedPageRenderProcessing);
 
         // Then
-        dependencies.Should().ContainSingle(dependency =>
+        dependencies.Should()
+            .ContainSingle(predicate: dependency =>
             dependency.Name == "ICachedPageRenderService");
     }
 

@@ -13,18 +13,21 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Exposures;
 
-public sealed class AppManagerTests
+public sealed partial class AppManagerTests
 {
     [Fact]
     public void GetUsers_WhenAppHasRoleUsers_ShouldReturnThoseUsers()
     {
+        // Given
         const int appId = 23;
         User expectedUser = new() { Id = "user-id" };
         Mock<IAppManagerAggregationService> appManagerAggregationServiceMock = new();
 
-        appManagerAggregationServiceMock.Setup(service => service.GetUsersAppManagerContext(
-                It.Is<AppManagerContext>(context => context.AppId == appId)))
-            .Returns(new AppManagerContext
+        appManagerAggregationServiceMock.Setup(
+            expression: service => service.GetUsersAppManagerContext(
+                appManagerContext: It.Is<AppManagerContext>(
+                    match: context => context.AppId == appId)))
+            .Returns(value: new AppManagerContext
             {
                 Users = new[] { expectedUser }.AsQueryable()
             });
@@ -32,29 +35,42 @@ public sealed class AppManagerTests
         AppManager appManager = new(
             appManagerAggregationService: appManagerAggregationServiceMock.Object);
 
-        User[] actualUsers = appManager.GetUsers(appId: appId).ToArray();
+        // When
+        User[] actualUsers = appManager.GetUsers(appId: appId)
+            .ToArray();
 
-        actualUsers.Should().Equal(expectedUser);
+        // Then
+        actualUsers.Should()
+            .Equal(elements: expectedUser);
+
         appManagerAggregationServiceMock.VerifyAll();
     }
 
     [Fact]
     public void GetUsers_WhenAppDoesNotExist_ShouldThrowSecurityException()
     {
+        // Given
         const int appId = 23;
         Mock<IAppManagerAggregationService> appManagerAggregationServiceMock = new();
 
-        appManagerAggregationServiceMock.Setup(service => service.GetUsersAppManagerContext(
-                It.Is<AppManagerContext>(context => context.AppId == appId)))
-            .Throws(new SecurityException(message: "Access Denied!"));
+        appManagerAggregationServiceMock.Setup(
+            expression: service => service.GetUsersAppManagerContext(
+                appManagerContext: It.Is<AppManagerContext>(
+                    match: context => context.AppId == appId)))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         AppManager appManager = new(
             appManagerAggregationService: appManagerAggregationServiceMock.Object);
 
-        Action getUsers = () => appManager.GetUsers(appId: appId).ToArray();
+        // When
+        Action getUsers = () => appManager.GetUsers(appId: appId)
+            .ToArray();
 
-        getUsers.Should().Throw<SecurityException>()
-            .WithMessage("Access Denied!");
+        // Then
+        getUsers.Should()
+            .Throw<SecurityException>()
+            .WithMessage(expectedWildcardPattern: "Access Denied!");
+
         appManagerAggregationServiceMock.VerifyAll();
     }
 }

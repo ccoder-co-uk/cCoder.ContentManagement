@@ -10,43 +10,55 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Exposures;
 
-public sealed class TemplateManagerTests
+public sealed partial class TemplateManagerTests
 {
     [Fact]
     public async Task ReadContentAsync_WhenCalled_ShouldDelegateToTemplateOrchestrationAsync()
     {
+        // Given
         const string expectedContent = "template-content";
         using MemoryStream source = new();
         Mock<ITemplateOrchestrationService> templateOrchestrationServiceMock = new();
 
-        templateOrchestrationServiceMock.Setup(service => service.ReadContentAsync(source))
-            .ReturnsAsync(expectedContent);
+        templateOrchestrationServiceMock.Setup(
+            expression: service => service.ReadContentAsync(source: source))
+            .ReturnsAsync(value: expectedContent);
 
         TemplateManager templateManager = new(
             templateOrchestrationService: templateOrchestrationServiceMock.Object);
 
+        // When
         string actualContent = await templateManager.ReadContentAsync(source: source);
 
-        actualContent.Should().Be(expectedContent);
+        // Then
+        actualContent.Should()
+            .Be(expected: expectedContent);
+
         templateOrchestrationServiceMock.VerifyAll();
     }
 
     [Fact]
     public void ConvertHtmlToPdf_WhenCalled_ShouldDelegateToTemplateOrchestration()
     {
+        // Given
         const string html = "<html></html>";
         byte[] expectedPdf = [1, 2, 3];
         Mock<ITemplateOrchestrationService> templateOrchestrationServiceMock = new();
 
-        templateOrchestrationServiceMock.Setup(service => service.ConvertHtmlToPdf(html))
-            .Returns(expectedPdf);
+        templateOrchestrationServiceMock.Setup(
+            expression: service => service.ConvertHtmlToPdf(html: html))
+            .Returns(value: expectedPdf);
 
         TemplateManager templateManager = new(
             templateOrchestrationService: templateOrchestrationServiceMock.Object);
 
+        // When
         byte[] actualPdf = templateManager.ConvertHtmlToPdf(html: html);
 
-        actualPdf.Should().Equal(expectedPdf);
+        // Then
+        actualPdf.Should()
+            .Equal(expected: expectedPdf);
+
         templateOrchestrationServiceMock.VerifyAll();
     }
 }

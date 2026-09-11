@@ -11,14 +11,17 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Architecture;
 
-public sealed class RenderingBoundaryArchitectureTests
+public sealed partial class RenderingBoundaryArchitectureTests
 {
     [Fact]
     public void ComponentRenderingFoundation_WhenComposed_ShouldUseFileContentBrokerOnly()
     {
-        Type componentRenderServiceType = typeof(ComponentRenderService).Assembly
-            .GetType("cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService");
+        // Given
+        Type componentRenderServiceType = typeof(ComponentRenderService)
+            .Assembly
+            .GetType(name: "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService");
 
+        // When
         Type[] dependencyTypes = componentRenderServiceType
             .GetConstructors(bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
             .Single()
@@ -26,15 +29,25 @@ public sealed class RenderingBoundaryArchitectureTests
             .Select(selector: parameter => parameter.ParameterType)
             .ToArray();
 
-        dependencyTypes.Should().Equal(typeof(IRenderFileContentBroker));
+        // Then
+        dependencyTypes.Should()
+            .Equal(elements: typeof(IRenderFileContentBroker));
     }
 
     [Fact]
     public void TemplateRenderingProcessing_WhenComposed_ShouldNotUseServiceLocatorFoundation()
     {
-        Assembly assembly = typeof(ComponentRenderService).Assembly;
+        // Given
+        Assembly assembly = typeof(ComponentRenderService)
+            .Assembly;
 
-        assembly.GetType(name: "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService")
-            .Should().BeNull();
+        // When
+        Type templateRenderService = assembly.GetType(
+            name: "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService");
+
+        // Then
+        templateRenderService
+            .Should()
+            .BeNull();
     }
 }

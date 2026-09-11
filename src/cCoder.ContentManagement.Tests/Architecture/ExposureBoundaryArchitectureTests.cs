@@ -11,7 +11,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Architecture;
 
-public sealed class ExposureBoundaryArchitectureTests
+public sealed partial class ExposureBoundaryArchitectureTests
 {
     [Theory]
     [InlineData("cCoder.ContentManagement.Exposures.AppManager", typeof(IAppManagerAggregationService))]
@@ -22,24 +22,37 @@ public sealed class ExposureBoundaryArchitectureTests
         string managerTypeName,
         Type expectedDependencyType)
     {
-        Type managerType = typeof(IAppManager).Assembly.GetType(managerTypeName);
+        // Given
+        Type managerType = typeof(IAppManager)
+            .Assembly.GetType(name: managerTypeName);
 
+        // When
         Type[] dependencyTypes = managerType
-            .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+            .GetConstructors(bindingAttr:
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
             .Single()
             .GetParameters()
-            .Select(parameter => parameter.ParameterType)
+            .Select(selector: parameter => parameter.ParameterType)
             .ToArray();
 
-        dependencyTypes.Should().Equal(expectedDependencyType);
+        // Then
+        dependencyTypes.Should()
+            .Equal(elements: expectedDependencyType);
     }
 
     [Fact]
     public void EventRegistration_WhenComposed_ShouldNotUseFoundationService()
     {
-        Type foundationEventHandlerType = typeof(IAppManager).Assembly.GetType(
-            "cCoder.ContentManagement.Services.Foundations.Events.EventHandlerService");
+        // Given
+        Assembly assembly = typeof(IAppManager)
+            .Assembly;
 
-        foundationEventHandlerType.Should().BeNull();
+        // When
+        Type foundationEventHandlerType = assembly.GetType(
+            name: "cCoder.ContentManagement.Services.Foundations.Events.EventHandlerService");
+
+        // Then
+        foundationEventHandlerType.Should()
+            .BeNull();
     }
 }

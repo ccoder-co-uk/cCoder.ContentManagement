@@ -73,7 +73,7 @@ public sealed partial class RenderAggregationServiceTests
         Mock<IPageRenderProcessingService> renderProcessing = new();
 
         renderProcessing.Setup(expression: service =>
-            service.SerializeRuntimeValue(It.IsAny<object>()))
+            service.SerializeRuntimeValue(value: It.IsAny<object>()))
             .Returns(value: "{}");
 
         pageProcessing.Setup(expression: service =>
@@ -105,8 +105,8 @@ public sealed partial class RenderAggregationServiceTests
         Mock<IJsonOrchestrationService> json = new();
 
         json.Setup(expression: service =>
-            service.SerializeRuntimeValue(It.IsAny<object>()))
-            .Returns((object value) =>
+            service.SerializeRuntimeValue(value: It.IsAny<object>()))
+            .Returns(valueFunction: (object value) =>
                 new SystemTextJsonBroker().Serialize(value: value));
 
         Mock<IPageContextOrchestrationService> pageContext = new();

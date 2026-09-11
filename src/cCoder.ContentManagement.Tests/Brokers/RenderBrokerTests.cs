@@ -12,7 +12,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Brokers;
 
-public sealed class RenderBrokerTests
+public sealed partial class RenderBrokerTests
 {
     [Fact]
     public void ShouldPassRenderSessionThroughExposureToOrchestration()
@@ -22,7 +22,8 @@ public sealed class RenderBrokerTests
         Mock<IRenderOrchestrationService> renderOrchestrationService = new();
 
         renderOrchestrationService
-            .Setup(expression => expression.RenderRenderSession(session))
+            .Setup(expression: service => service.RenderRenderSession(
+                session: session))
             .Returns(value: session);
 
         RenderBroker broker = new(
@@ -34,10 +35,12 @@ public sealed class RenderBrokerTests
             renderSession: session);
 
         // Then
-        result.Should().BeSameAs(expected: session);
+        result.Should()
+            .BeSameAs(expected: session);
 
         renderOrchestrationService.Verify(
-            expression => expression.RenderRenderSession(session),
+            expression: service => service.RenderRenderSession(
+                session: session),
             times: Times.Once);
     }
 }
