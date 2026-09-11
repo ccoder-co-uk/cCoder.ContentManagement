@@ -11,6 +11,9 @@ internal partial class AppProcessingService
     private static void ValidateAppForRenderOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
+    private static void ValidateAppForDeleteOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateAppOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

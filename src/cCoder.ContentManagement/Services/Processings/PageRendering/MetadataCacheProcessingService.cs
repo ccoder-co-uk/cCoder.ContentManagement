@@ -10,16 +10,16 @@ namespace cCoder.ContentManagement.Rendering.Services.Processings;
 internal sealed partial class MetadataCacheProcessingService(
     IMetadataCacheService metadataCacheService) : IMetadataCacheProcessingService
 {
-    public RenderSession PrepareRenderSession(RenderSession session) =>
+    public RenderSession PrepareRenderSession(RenderSession renderSession) =>
         TryCatch(operation: () =>
     {
-        ValidatePrepareRenderSession(inputs: [session]);
+        ValidatePrepareRenderSession(inputs: [renderSession]);
 
-        string culture = !string.IsNullOrWhiteSpace(value: session.Request.Culture)
-            ? session.Request.Culture
-            : session.App?.DefaultCulture ?? string.Empty;
+        string culture = !string.IsNullOrWhiteSpace(value: renderSession.Request.Culture)
+            ? renderSession.Request.Culture
+            : renderSession.App?.DefaultCulture ?? string.Empty;
 
-        session.MetadataResolver = metadataCacheService.Get(culture: culture);
-        return session;
+        renderSession.MetadataResolver = metadataCacheService.Get(culture: culture);
+        return renderSession;
     });
 }

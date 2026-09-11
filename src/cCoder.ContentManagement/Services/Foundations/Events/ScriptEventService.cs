@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker) : IScriptEventService
 {
-    public ValueTask RaiseScriptAddEventAsync(Script entity) =>
+    public ValueTask RaiseScriptAddEventAsync(Script script) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseScriptAddEventAsync(inputs: [entity]);
+        ValidateRaiseScriptAddEventAsync(inputs: [script]);
 
         EventMessage<Script> message = new EventMessage<Script>
         {
@@ -22,17 +22,17 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker) 
             {
                 SSOUserId = scriptEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = script
         };
 
         await scriptEventBroker.RaiseScriptAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseScriptUpdateEventAsync(Script entity) =>
+    public ValueTask RaiseScriptUpdateEventAsync(Script script) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseScriptUpdateEventAsync(inputs: [entity]);
+        ValidateRaiseScriptUpdateEventAsync(inputs: [script]);
 
         EventMessage<Script> message = new EventMessage<Script>
         {
@@ -40,17 +40,17 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker) 
             {
                 SSOUserId = scriptEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = script
         };
 
         await scriptEventBroker.RaiseScriptUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseScriptDeleteEventAsync(Script entity) =>
+    public ValueTask RaiseScriptDeleteEventAsync(Script script) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseScriptDeleteEventAsync(inputs: [entity]);
+        ValidateRaiseScriptDeleteEventAsync(inputs: [script]);
 
         EventMessage<Script> message = new EventMessage<Script>
         {
@@ -58,7 +58,7 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker) 
             {
                 SSOUserId = scriptEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = script
         };
 
         await scriptEventBroker.RaiseScriptDeleteEventAsync(message: message);

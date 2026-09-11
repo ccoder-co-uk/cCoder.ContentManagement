@@ -105,7 +105,7 @@ public partial class MarkupRenderServiceTests
 
         // When
         RenderOutput result =
-            service.RenderRenderSession(session: session).Output;
+            service.RenderRenderSession(renderSession: session).Output;
 
         // Then
         result.HeaderMarkup.Should()

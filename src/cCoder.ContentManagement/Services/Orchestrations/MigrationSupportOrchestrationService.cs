@@ -20,6 +20,18 @@ internal partial class MigrationSupportOrchestrationService(
         return jsonProcessingService.DeserializeItems<T>(json: json);
     });
 
+    public string RemovePropertiesRecursively(
+        string json,
+        IReadOnlyCollection<string> propertyNames) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateRemovePropertiesRecursively(inputs: [json, propertyNames]);
+
+        return jsonProcessingService.RemovePropertiesRecursively(
+            json: json,
+            propertyNames: propertyNames);
+    });
+
     public Package[] ExportPackages(int appId, string[] packageNames) =>
         TryCatch<Package[]>(operation: () =>
     {

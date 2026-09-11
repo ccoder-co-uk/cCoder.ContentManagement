@@ -14,6 +14,8 @@ public interface IAppBroker
 
     ValueTask<App> GetAppForRenderAsync(int appId);
 
+    App GetAppForDelete(int appId);
+
     ValueTask<App> AddAppAsync(App newApp);
 
     ValueTask<App> UpdateAppAsync(App updatedApp);

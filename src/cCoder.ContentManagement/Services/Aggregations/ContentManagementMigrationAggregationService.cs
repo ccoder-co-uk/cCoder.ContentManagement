@@ -3,7 +3,6 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json.Linq;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.Packaging;
@@ -263,48 +262,10 @@ internal partial class ContentManagementMigrationAggregationService(
         await templateOrchestrationService.ImportTemplatesAsync(appId: appId, items: items);
     }
 
-    private static string RemoveComputedFields(string json)
-    {
-        if (string.IsNullOrWhiteSpace(value: json))
-        {
-            return json;
-        }
-
-        JToken token = JToken.Parse(json: json);
-        RemoveComputedFields(token: token);
-        return token.ToString();
-    }
-
-    private static void RemoveComputedFields(JToken token)
-    {
-        if (token is JObject jsonObject)
-        {
-            JProperty[] computedProperties = jsonObject.Properties()
-                .Where(predicate: property => ComputedImportFields.Contains(item: property.Name))
-                .ToArray();
-
-            foreach (JProperty property in computedProperties)
-            {
-                property.Remove();
-            }
-
-            foreach (JProperty property in jsonObject.Properties()
-                .ToArray())
-            {
-                RemoveComputedFields(token: property.Value);
-            }
-        }
-        else
-        {
-            if (token is JArray jsonArray)
-            {
-                foreach (JToken arrayItem in jsonArray)
-                {
-                    RemoveComputedFields(token: arrayItem);
-                }
-            }
-        }
-    }
+    private string RemoveComputedFields(string json) =>
+        migrationSupportOrchestrationService.RemovePropertiesRecursively(
+            json: json,
+            propertyNames: ComputedImportFields);
 
     private static int ValidateAppId(int appId, string parameterName)
     {

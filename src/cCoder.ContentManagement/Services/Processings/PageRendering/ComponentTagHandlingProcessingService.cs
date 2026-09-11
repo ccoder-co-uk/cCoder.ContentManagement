@@ -21,27 +21,27 @@ internal sealed partial class ComponentTagHandlingProcessingService(
             | RegexOptions.Singleline);
 
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        if (operation.Editable)
+        if (tagHandlingOperation.Editable)
         {
-            return operation;
+            return tagHandlingOperation;
         }
 
-        operation.Content = componentRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = componentRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => ReplaceComponentTag(
-                operation: operation,
+                operation: tagHandlingOperation,
                 match: match));
 
-        return operation;
+        return tagHandlingOperation;
     });
 
     private string ReplaceComponentTag(

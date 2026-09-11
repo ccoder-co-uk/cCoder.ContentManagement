@@ -37,7 +37,7 @@ public partial class ComponentEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseComponentUpdateEventAsync(entity: entity);
+        await service.RaiseComponentUpdateEventAsync(component: entity);
 
         // Then
 

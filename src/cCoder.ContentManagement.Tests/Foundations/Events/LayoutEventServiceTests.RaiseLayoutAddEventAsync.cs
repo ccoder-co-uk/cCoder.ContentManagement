@@ -37,7 +37,7 @@ public partial class LayoutEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseLayoutAddEventAsync(entity: entity);
+        await service.RaiseLayoutAddEventAsync(layout: entity);
 
         // Then
 

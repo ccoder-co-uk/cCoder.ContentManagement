@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class ComponentEventService(IComponentEventBroker componentEventBroker) : IComponentEventService
 {
-    public ValueTask RaiseComponentAddEventAsync(Component entity) =>
+    public ValueTask RaiseComponentAddEventAsync(Component component) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseComponentAddEventAsync(inputs: [entity]);
+        ValidateRaiseComponentAddEventAsync(inputs: [component]);
 
         EventMessage<Component> message = new EventMessage<Component>
         {
@@ -22,17 +22,17 @@ internal partial class ComponentEventService(IComponentEventBroker componentEven
             {
                 SSOUserId = componentEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = component
         };
 
         await componentEventBroker.RaiseComponentAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseComponentUpdateEventAsync(Component entity) =>
+    public ValueTask RaiseComponentUpdateEventAsync(Component component) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseComponentUpdateEventAsync(inputs: [entity]);
+        ValidateRaiseComponentUpdateEventAsync(inputs: [component]);
 
         EventMessage<Component> message = new EventMessage<Component>
         {
@@ -40,17 +40,17 @@ internal partial class ComponentEventService(IComponentEventBroker componentEven
             {
                 SSOUserId = componentEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = component
         };
 
         await componentEventBroker.RaiseComponentUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseComponentDeleteEventAsync(Component entity) =>
+    public ValueTask RaiseComponentDeleteEventAsync(Component component) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseComponentDeleteEventAsync(inputs: [entity]);
+        ValidateRaiseComponentDeleteEventAsync(inputs: [component]);
 
         EventMessage<Component> message = new EventMessage<Component>
         {
@@ -58,7 +58,7 @@ internal partial class ComponentEventService(IComponentEventBroker componentEven
             {
                 SSOUserId = componentEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = component
         };
 
         await componentEventBroker.RaiseComponentDeleteEventAsync(message: message);

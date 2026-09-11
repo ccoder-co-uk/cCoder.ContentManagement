@@ -7,11 +7,8 @@ using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
-using cCoder.ContentManagement.Extensions.OData;
-using cCoder.Data.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -44,34 +41,6 @@ public class TemplateController : ODataController
                 html: htmlContent);
 
             return File(fileContents: content, contentType: "application/pdf", fileDownloadName: name + ".pdf");
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [HttpGet]
-    public IActionResult GetMetadata()
-    {
-        try
-        {
-            return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Template)) : typeof(Template).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -201,42 +170,6 @@ public class TemplateController : ODataController
             }
 
             return Ok(value: await manager.UpdateAsync(updatedTemplate: updatedTemplate));
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Template> updatedTemplate)
-    {
-        try
-        {
-            Template originalEntity = manager.Get(templateId: key);
-
-            if (originalEntity == null)
-            {
-                return NotFound();
-            }
-
-            updatedTemplate.Patch(original: originalEntity);
-            return Ok(value: await manager.UpdateAsync(updatedTemplate: originalEntity));
         }
         catch (ContentManagementValidationException exception)
         {

@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class ContentEventService(IContentEventBroker contentEventBroker) : IContentEventService
 {
-    public ValueTask RaiseContentAddEventAsync(Content entity) =>
+    public ValueTask RaiseContentAddEventAsync(Content content) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseContentAddEventAsync(inputs: [entity]);
+        ValidateRaiseContentAddEventAsync(inputs: [content]);
 
         EventMessage<Content> message = new EventMessage<Content>
         {
@@ -22,17 +22,17 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
             {
                 SSOUserId = contentEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = content
         };
 
         await contentEventBroker.RaiseContentAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseContentUpdateEventAsync(Content entity) =>
+    public ValueTask RaiseContentUpdateEventAsync(Content content) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseContentUpdateEventAsync(inputs: [entity]);
+        ValidateRaiseContentUpdateEventAsync(inputs: [content]);
 
         EventMessage<Content> message = new EventMessage<Content>
         {
@@ -40,17 +40,17 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
             {
                 SSOUserId = contentEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = content
         };
 
         await contentEventBroker.RaiseContentUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseContentDeleteEventAsync(Content entity) =>
+    public ValueTask RaiseContentDeleteEventAsync(Content content) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseContentDeleteEventAsync(inputs: [entity]);
+        ValidateRaiseContentDeleteEventAsync(inputs: [content]);
 
         EventMessage<Content> message = new EventMessage<Content>
         {
@@ -58,7 +58,7 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
             {
                 SSOUserId = contentEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = content
         };
 
         await contentEventBroker.RaiseContentDeleteEventAsync(message: message);

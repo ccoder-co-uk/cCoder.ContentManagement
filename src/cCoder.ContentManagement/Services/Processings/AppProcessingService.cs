@@ -34,6 +34,14 @@ internal partial class AppProcessingService(
         return await service.GetAppForRenderAsync(appId: appId);
     }, isValueTask: true);
 
+    public App GetAppForDelete(int appId) =>
+        TryCatch<App>(operation: () =>
+    {
+        ValidateAppForDeleteOnGet(inputs: [appId]);
+        ValidateId(appId: appId, parameterName: "id");
+        return service.GetAppForDelete(appId: appId);
+    });
+
     public App GetApp(int appId) =>
         TryCatch<App>(operation: () =>
     {

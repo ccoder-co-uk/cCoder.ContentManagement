@@ -37,7 +37,7 @@ public partial class ScriptEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseScriptDeleteEventAsync(entity: entity);
+        await service.RaiseScriptDeleteEventAsync(script: entity);
 
         // Then
 

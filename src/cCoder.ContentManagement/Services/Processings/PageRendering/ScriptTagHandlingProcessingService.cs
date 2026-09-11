@@ -20,22 +20,22 @@ internal sealed partial class ScriptTagHandlingProcessingService(
             | RegexOptions.Singleline);
 
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        operation.Content = scriptRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = scriptRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => ResolveScriptContent(
-                session: operation.Session,
+                session: tagHandlingOperation.Session,
                 name: match.Groups["name"].Value));
 
-        return operation;
+        return tagHandlingOperation;
     });
 
     private string ResolveScriptContent(RenderSession session, string name)

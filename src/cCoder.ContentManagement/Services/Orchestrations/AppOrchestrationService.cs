@@ -5,7 +5,6 @@
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
-using Microsoft.EntityFrameworkCore;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.Security;
 
@@ -98,9 +97,7 @@ internal partial class AppOrchestrationService(
         ValidateDeleteAsync(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
 
-        App app = processingService.GetAllApp(ignoreFilters: true)
-            .Include(navigationPropertyPath: foundApp => foundApp.Roles)
-            .FirstOrDefault(predicate: foundApp => foundApp.Id == appId);
+        App app = processingService.GetAppForDelete(appId: appId);
 
         if (app?.Roles?.Any() == true)
         {

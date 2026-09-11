@@ -10,23 +10,23 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class AppCultureEventProcessingService(IAppCultureEventService eventService) : IAppCultureEventProcessingService
 {
-    public ValueTask RaiseAppCultureAddEventAsync(AppCulture entity) =>
+    public ValueTask RaiseAppCultureAddEventAsync(AppCulture appCulture) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseAppCultureAddEventAsync(inputs: [entity]);
-        ValidateAppCulture(appCulture: entity, parameterName: "entity");
+        ValidateRaiseAppCultureAddEventAsync(inputs: [appCulture]);
+        ValidateAppCulture(appCulture: appCulture, parameterName: "entity");
 
-        return eventService.RaiseAppCultureAddEventAsync(entity: entity);
+        return eventService.RaiseAppCultureAddEventAsync(entity: appCulture);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity) =>
+    public ValueTask RaiseAppCultureDeleteEventAsync(AppCulture appCulture) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseAppCultureDeleteEventAsync(inputs: [entity]);
-        ValidateAppCulture(appCulture: entity, parameterName: "entity");
+        ValidateRaiseAppCultureDeleteEventAsync(inputs: [appCulture]);
+        ValidateAppCulture(appCulture: appCulture, parameterName: "entity");
 
-        return eventService.RaiseAppCultureDeleteEventAsync(entity: entity);
+        return eventService.RaiseAppCultureDeleteEventAsync(entity: appCulture);
 
     }, isValueTask: true);
 

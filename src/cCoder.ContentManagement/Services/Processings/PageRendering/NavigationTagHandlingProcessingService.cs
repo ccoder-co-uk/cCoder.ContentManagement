@@ -23,30 +23,30 @@ internal sealed partial class NavigationTagHandlingProcessingService
             | RegexOptions.Singleline);
 
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        operation.Content = navigationRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = navigationRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => BuildMenu(
-                session: operation.Session,
+                session: tagHandlingOperation.Session,
                 tagName: match.Groups["name"].Value,
                 expand: false));
 
-        operation.Content = expandedNavigationRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = expandedNavigationRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => BuildMenu(
-                session: operation.Session,
+                session: tagHandlingOperation.Session,
                 tagName: match.Groups["name"].Value,
                 expand: true));
 
-        return operation;
+        return tagHandlingOperation;
     });
 
     private static string BuildMenu(

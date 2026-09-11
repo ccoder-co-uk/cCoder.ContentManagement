@@ -16,66 +16,66 @@ namespace cCoder.ContentManagement.Services.Foundations.Authorization;
 internal partial class AuthorizationService(
     IAuthorizationBroker authorizationBroker) : IAuthorizationService
 {
-    public void AuthorizeAuthorizationContext(AuthorizationContext context) =>
+    public void AuthorizeAuthorizationContext(AuthorizationContext authorizationContext) =>
         TryCatch(operation: () =>
     {
-        ValidateAuthorize(inputs: [context]);
+        ValidateAuthorize(inputs: [authorizationContext]);
         string userId = ResolveCurrentUserId();
 
         if (!HasAppAdminPrivilege(
             userId: userId,
-            appId: context.Request.AppId)
+            appId: authorizationContext.Request.AppId)
             && !HasPrivilege(
                 userId: userId,
-                appId: context.Request.AppId,
-                privilege: context.Request.Privilege))
+                appId: authorizationContext.Request.AppId,
+                privilege: authorizationContext.Request.Privilege))
         {
             throw new SecurityException(message: "Access Denied!");
         }
     });
 
     public AuthorizationContext ResolveCurrentAuthorizationContext(
-        AuthorizationContext context) =>
+        AuthorizationContext authorizationContext) =>
         TryCatch<AuthorizationContext>(operation: () =>
     {
-        ValidateResolveCurrentAuthorizationContext(inputs: [context]);
-        context.User = authorizationBroker.GetCurrentUser();
-        context.UserId = authorizationBroker.GetCurrentUserId();
+        ValidateResolveCurrentAuthorizationContext(inputs: [authorizationContext]);
+        authorizationContext.User = authorizationBroker.GetCurrentUser();
+        authorizationContext.UserId = authorizationBroker.GetCurrentUserId();
 
-        return context;
+        return authorizationContext;
     });
 
-    public bool IsAdminAuthorizationContext(AuthorizationContext context) =>
+    public bool IsAdminAuthorizationContext(AuthorizationContext authorizationContext) =>
         TryCatch<bool>(operation: () =>
     {
-        ValidateIsAdmin(inputs: [context]);
+        ValidateIsAdmin(inputs: [authorizationContext]);
 
         User user = authorizationBroker.GetUserWithRoles(
-            userId: context.Request.UserName);
+            userId: authorizationContext.Request.UserName);
 
         App app = authorizationBroker.GetAppWithRoles(
-            appId: context.Request.AppId.Value);
+            appId: authorizationContext.Request.AppId.Value);
 
         return app?.IsAppAdmin(user: user) ?? false;
     });
 
     public bool IsAdminOfAppAuthorizationContext(
-        AuthorizationContext context) =>
+        AuthorizationContext authorizationContext) =>
         TryCatch<bool>(operation: () =>
     {
-        ValidateIsAdminOfApp(inputs: [context]);
+        ValidateIsAdminOfApp(inputs: [authorizationContext]);
 
         return HasAppAdminPrivilege(
             userId: ResolveCurrentUserId(),
-            appId: context.AppId);
+            appId: authorizationContext.AppId);
     });
 
     public bool UserCanPageAuthorizationContext(
-        AuthorizationContext context) =>
+        AuthorizationContext authorizationContext) =>
         TryCatch<bool>(operation: () =>
     {
-        ValidateUserCanPageAuthorization(inputs: [context]);
-        PageAuthorization pageAuthorization = context.PageAuthorization;
+        ValidateUserCanPageAuthorization(inputs: [authorizationContext]);
+        PageAuthorization pageAuthorization = authorizationContext.PageAuthorization;
 
         Guid[] userRoles = pageAuthorization.User?.Roles?
             .Select(selector: role => role.RoleId)

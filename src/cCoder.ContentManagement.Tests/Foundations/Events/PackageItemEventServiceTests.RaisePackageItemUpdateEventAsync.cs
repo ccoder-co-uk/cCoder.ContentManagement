@@ -37,7 +37,7 @@ public partial class PackageItemEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePackageItemUpdateEventAsync(entity: entity);
+        await service.RaisePackageItemUpdateEventAsync(packageItem: entity);
 
         // Then
 

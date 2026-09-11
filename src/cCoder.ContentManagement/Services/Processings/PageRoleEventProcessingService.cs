@@ -10,23 +10,23 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PageRoleEventProcessingService(IPageRoleEventService eventService) : IPageRoleEventProcessingService
 {
-    public ValueTask RaisePageRoleAddEventAsync(PageRole entity) =>
+    public ValueTask RaisePageRoleAddEventAsync(PageRole pageRole) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageRoleAddEventAsync(inputs: [entity]);
-        ValidatePageRole(pageRole: entity, parameterName: "entity");
+        ValidateRaisePageRoleAddEventAsync(inputs: [pageRole]);
+        ValidatePageRole(pageRole: pageRole, parameterName: "entity");
 
-        return eventService.RaisePageRoleAddEventAsync(entity: entity);
+        return eventService.RaisePageRoleAddEventAsync(entity: pageRole);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageRoleDeleteEventAsync(PageRole entity) =>
+    public ValueTask RaisePageRoleDeleteEventAsync(PageRole pageRole) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageRoleDeleteEventAsync(inputs: [entity]);
-        ValidatePageRole(pageRole: entity, parameterName: "entity");
+        ValidateRaisePageRoleDeleteEventAsync(inputs: [pageRole]);
+        ValidatePageRole(pageRole: pageRole, parameterName: "entity");
 
-        return eventService.RaisePageRoleDeleteEventAsync(entity: entity);
+        return eventService.RaisePageRoleDeleteEventAsync(entity: pageRole);
 
     }, isValueTask: true);
 

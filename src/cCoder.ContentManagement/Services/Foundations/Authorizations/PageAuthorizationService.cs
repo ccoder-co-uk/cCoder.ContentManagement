@@ -13,62 +13,62 @@ internal sealed partial class PageAuthorizationService(
         : IPageAuthorizationService
 {
     public ValueTask<HttpPageRenderContext> AuthorizeHttpPageRenderContextAsync(
-        HttpPageRenderContext pageRenderContext) =>
+        HttpPageRenderContext httpPageRenderContext) =>
         TryCatch(operation: async () =>
     {
         ValidateAuthorizeHttpPageRenderContextAsync(
-            inputs: [pageRenderContext]);
+            inputs: [httpPageRenderContext]);
 
         ValidatePageRenderContext(
-            pageRenderContext: pageRenderContext,
+            pageRenderContext: httpPageRenderContext,
             parameterName: "pageRenderContext");
 
         PageAuthorizationResult authorization = await pageAuthorizationBroker
             .GetAuthorizedPageAsync(
-                domain: pageRenderContext.Domain,
-                path: pageRenderContext.Path);
+                domain: httpPageRenderContext.Domain,
+                path: httpPageRenderContext.Path);
 
         if (authorization?.PageId is not null)
         {
             ApplyAuthorization(
-                pageRenderContext: pageRenderContext,
+                pageRenderContext: httpPageRenderContext,
                 authorization: authorization);
 
-            if (pageRenderContext.Edit)
+            if (httpPageRenderContext.Edit)
             {
-                pageRenderContext.Edit = await pageAuthorizationBroker
+                httpPageRenderContext.Edit = await pageAuthorizationBroker
                     .CanUpdatePageAsync(
                         appId: authorization.AppId,
                         pageId: authorization.PageId.Value);
             }
 
-            return pageRenderContext;
+            return httpPageRenderContext;
         }
 
         authorization = await pageAuthorizationBroker
             .GetPageIgnoringFiltersAsync(
-                domain: pageRenderContext.Domain,
-                path: pageRenderContext.Path);
+                domain: httpPageRenderContext.Domain,
+                path: httpPageRenderContext.Path);
 
         if (authorization?.PageId is not null)
         {
             ApplyAuthorization(
-                pageRenderContext: pageRenderContext,
+                pageRenderContext: httpPageRenderContext,
                 authorization: authorization);
 
-            pageRenderContext.AccessDenied = true;
+            httpPageRenderContext.AccessDenied = true;
 
-            return pageRenderContext;
+            return httpPageRenderContext;
         }
 
         if (authorization is not null)
         {
             ApplyAuthorization(
-                pageRenderContext: pageRenderContext,
+                pageRenderContext: httpPageRenderContext,
                 authorization: authorization);
         }
 
-        return pageRenderContext;
+        return httpPageRenderContext;
 
     }, isValueTask: true);
 

@@ -149,7 +149,8 @@ componentOrchestrationService: componentOrchestrationServiceMock.Object);
         new(
 migrationSupportOrchestrationService: new MigrationSupportOrchestrationService(
 jsonProcessingService: new JsonProcessingService(
-jsonService: new JsonService(jsonBroker: new JsonBroker())),
+jsonService: new JsonService(jsonBroker: new JsonBroker()),
+jsonBroker: new JsonBroker()),
 packageExportProcessingService: packageExportProcessingService ?? Mock.Of<IPackageExportProcessingService>()),
 componentOrchestrationService: componentOrchestrationService ?? Mock.Of<IComponentOrchestrationService>(),
 layoutOrchestrationService: layoutOrchestrationService ?? Mock.Of<ILayoutOrchestrationService>(),

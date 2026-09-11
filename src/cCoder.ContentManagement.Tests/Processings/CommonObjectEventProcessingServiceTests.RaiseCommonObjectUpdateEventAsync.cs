@@ -33,7 +33,7 @@ public partial class CommonObjectEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCommonObjectUpdateEventAsync(entity: entity);
+        await service.RaiseCommonObjectUpdateEventAsync(commonObject: entity);
 
         // Then
         commonObjectEventServiceMock.Verify(expression: x => x.RaiseCommonObjectUpdateEventAsync(entity: entity), times: Times.Once);

@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class ResourceEventProcessingService(IResourceEventService eventService) : IResourceEventProcessingService
 {
-    public ValueTask RaiseResourceAddEventAsync(Resource entity) =>
+    public ValueTask RaiseResourceAddEventAsync(Resource resource) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseResourceAddEventAsync(inputs: [entity]);
-        ValidateResource(resource: entity, parameterName: "entity");
+        ValidateRaiseResourceAddEventAsync(inputs: [resource]);
+        ValidateResource(resource: resource, parameterName: "entity");
 
-        return eventService.RaiseResourceAddEventAsync(entity: entity);
+        return eventService.RaiseResourceAddEventAsync(entity: resource);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseResourceUpdateEventAsync(Resource entity) =>
+    public ValueTask RaiseResourceUpdateEventAsync(Resource resource) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseResourceUpdateEventAsync(inputs: [entity]);
-        ValidateResource(resource: entity, parameterName: "entity");
+        ValidateRaiseResourceUpdateEventAsync(inputs: [resource]);
+        ValidateResource(resource: resource, parameterName: "entity");
 
-        return eventService.RaiseResourceUpdateEventAsync(entity: entity);
+        return eventService.RaiseResourceUpdateEventAsync(entity: resource);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseResourceDeleteEventAsync(Resource entity) =>
+    public ValueTask RaiseResourceDeleteEventAsync(Resource resource) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseResourceDeleteEventAsync(inputs: [entity]);
-        ValidateResource(resource: entity, parameterName: "entity");
+        ValidateRaiseResourceDeleteEventAsync(inputs: [resource]);
+        ValidateResource(resource: resource, parameterName: "entity");
 
-        return eventService.RaiseResourceDeleteEventAsync(entity: entity);
+        return eventService.RaiseResourceDeleteEventAsync(entity: resource);
 
     }, isValueTask: true);
 

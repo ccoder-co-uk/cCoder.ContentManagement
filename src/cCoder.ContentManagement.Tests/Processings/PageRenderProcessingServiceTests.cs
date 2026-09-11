@@ -94,7 +94,8 @@ public partial class PageRenderProcessingServiceTests
                         commonObjectCacheService: commonObjectCacheService),
                 markupRenderProcessingService:
                     new MarkupRenderProcessingService(
-                        markupRenderService: markupRenderService));
+                        markupRenderService: markupRenderService,
+                        jsonBroker: Mock.Of<IJsonBroker>()));
 
         Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
 

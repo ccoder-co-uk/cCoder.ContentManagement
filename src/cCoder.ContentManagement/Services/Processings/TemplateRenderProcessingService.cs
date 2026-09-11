@@ -15,9 +15,6 @@ using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
@@ -37,24 +34,24 @@ internal partial class TemplateRenderProcessingService(
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
 
     public string RenderTemplateRenderOperation(
-        TemplateRenderOperation operation) =>
+        TemplateRenderOperation templateRenderOperation) =>
         TryCatch<string>(operation: () =>
     {
-        ValidateRenderTemplateOperation(inputs: [operation]);
+        ValidateRenderTemplateOperation(inputs: [templateRenderOperation]);
 
-        operation.Result = operation.Template != null
+        templateRenderOperation.Result = templateRenderOperation.Template != null
             ? RenderTemplateRenderParams(
-                template: operation.Template,
-                model: operation.Model,
-                renderParams: operation.RenderParams)
+                template: templateRenderOperation.Template,
+                model: templateRenderOperation.Model,
+                renderParams: templateRenderOperation.RenderParams)
             : RenderUser(
-                appId: operation.AppId,
-                name: operation.Name,
-                model: operation.Model,
-                user: operation.User,
-                culture: operation.Culture);
+                appId: templateRenderOperation.AppId,
+                name: templateRenderOperation.Name,
+                model: templateRenderOperation.Model,
+                user: templateRenderOperation.User,
+                culture: templateRenderOperation.Culture);
 
-        return operation.Result;
+        return templateRenderOperation.Result;
     });
 
     internal string RenderUser(
@@ -351,7 +348,7 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                      {
                                                                                                                                          string value = match.Groups[1].Value;
 
-                                                                                                                                         string content = SerializeForOData(model: new
+                                                                                                                                         string content = jsonBroker.SerializeIgnoringReferences(value: new
                                                                                                                                          {
                                                                                                                                              Script = value,
                                                                                                                                              Model = jsonBroker.ParseJson(json: replacements.First(predicate: (ReplacementDependency r) => r.Old == "[model]")
@@ -364,22 +361,6 @@ internal partial class TemplateRenderProcessingService(
 
                                                                                                                                          return ProcessContentString(key: key, renderParams: renderParams, content: result, replacements: replacements);
                                                                                                                                      });
-
-    private static string SerializeForOData(object model) =>
-        JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.None,
-            Formatting = Formatting.None,
-            DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            NullValueHandling = NullValueHandling.Ignore,
-            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-            ContractResolver = new DefaultContractResolver
-            {
-                IgnoreSerializableAttribute = true
-            },
-            MaxDepth = 4
-        });
 
     private void Resource(string key, StringBuilder source, RenderParams renderParams, IEnumerable<ReplacementDependency> replacements)
     {
@@ -566,12 +547,13 @@ internal partial class TemplateRenderProcessingService(
     private IEnumerable<ReplacementDependency> BuildThemeReplacements<T>(T model, string prefix = "")
     {
         if ((object)model.GetType()
-            .GetInterface(name: "IDynamicMetaObjectProvider") != null && !(model is JObject))
+            .GetInterface(name: "IDynamicMetaObjectProvider") != null
+            && !jsonBroker.IsJsonObject(value: model))
         {
             return BuildDynamicThemeReplacements(model: model, prefix: prefix);
         }
 
-        if (model is JObject)
+        if (jsonBroker.IsJsonObject(value: model))
         {
             return BuildJObjectThemeReplacements(model: model, prefix: prefix);
         }
@@ -649,13 +631,14 @@ internal partial class TemplateRenderProcessingService(
 
     private IEnumerable<ReplacementDependency> BuildJObjectThemeReplacements<T>(T model, string prefix)
     {
-        IEnumerable<KeyValuePair<string, JToken>> source = (IEnumerable<KeyValuePair<string, JToken>>)(object)model;
+        IEnumerable<KeyValuePair<string, object>> source =
+            jsonBroker.GetJsonProperties(value: model);
 
         return source.SelectMany(selector: token =>
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + token.Key) : token.Key);
 
-            if (token.Value.GetType() == typeof(JValue))
+            if (jsonBroker.IsJsonValue(value: token.Value))
             {
                 return new[] { new ReplacementDependency(old: "[theme[" + text + "]]", @new: token.Value.ToString() ?? string.Empty) };
             }
@@ -704,7 +687,7 @@ internal partial class TemplateRenderProcessingService(
         if (model is JsonElement jsonElement)
         {
             return BuildModelReplacements(
-                model: JToken.Parse(json: jsonElement.GetRawText()),
+                model: jsonBroker.ParseJson(json: jsonElement.GetRawText()),
                 prefix: prefix);
         }
 
@@ -713,12 +696,12 @@ internal partial class TemplateRenderProcessingService(
             return new[] { new ReplacementDependency(old: "[theme[" + prefix + "]]", @new: model.ToString()) };
         }
 
-        if (model is JObject)
+        if (jsonBroker.IsJsonObject(value: model))
         {
             return BuildModelReplacementsForJObject(model: model, prefix: prefix);
         }
 
-        if (model is JArray)
+        if (jsonBroker.IsJsonArray(value: model))
         {
             return BuildModelReplacementsForCollection(model: model, prefix: prefix);
         }
@@ -786,13 +769,14 @@ internal partial class TemplateRenderProcessingService(
 
     private IEnumerable<ReplacementDependency> BuildModelReplacementsForJObject(object model, string prefix)
     {
-        IEnumerable<KeyValuePair<string, JToken>> source = (IEnumerable<KeyValuePair<string, JToken>>)model;
+        IEnumerable<KeyValuePair<string, object>> source =
+            jsonBroker.GetJsonProperties(value: model);
 
         return source.SelectMany(selector: token =>
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + token.Key) : token.Key);
 
-            if (token.Value.GetType() == typeof(JValue))
+            if (jsonBroker.IsJsonValue(value: token.Value))
             {
                 return new[] { new ReplacementDependency(old: "[model[" + text + "]]", @new: token.Value.ToString() ?? string.Empty) };
             }

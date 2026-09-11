@@ -33,7 +33,7 @@ public partial class PackageItemEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePackageItemAddEventAsync(entity: entity);
+        await service.RaisePackageItemAddEventAsync(packageItem: entity);
 
         // Then
         packageItemEventServiceMock.Verify(expression: x => x.RaisePackageItemAddEventAsync(entity: entity), times: Times.Once);

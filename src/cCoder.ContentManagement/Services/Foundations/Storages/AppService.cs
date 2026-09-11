@@ -5,7 +5,6 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using Microsoft.EntityFrameworkCore;
 using cCoder.Data.Models.CMS;
 
 using cCoder.ContentManagement.Exposures;
@@ -24,6 +23,14 @@ internal partial class AppService(
 
         return await appBroker.GetAppForRenderAsync(appId: appId);
     }, isValueTask: true);
+
+    public App GetAppForDelete(int appId) =>
+        TryCatch<App>(operation: () =>
+    {
+        ValidateAppForDeleteOnGet(inputs: [appId]);
+        ValidateId(appId: appId, parameterName: "id");
+        return appBroker.GetAppForDelete(appId: appId);
+    });
 
     public App GetApp(int appId, bool ignoreFilters = false) =>
         TryCatch<App>(operation: () =>
@@ -118,7 +125,7 @@ internal partial class AppService(
     {
         ValidateDeleteAsync(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
-        App app = GetAppForDelete(appId: appId);
+        App app = appBroker.GetAppForDelete(appId: appId);
 
         if (app == null)
         {
@@ -133,12 +140,6 @@ internal partial class AppService(
         await appBroker.DeleteAppAggregateAsync(deletedApp: app);
 
     }, isValueTask: true);
-
-    private App GetAppForDelete(int appId) =>
-        appBroker.GetAllAppsIgnoringFilters()
-        .Include(navigationPropertyPath: app => app.Roles)
-        .ThenInclude(navigationPropertyPath: role => role.Users)
-        .FirstOrDefault(predicate: app => app.Id == appId);
 
     private static App CreateStorageApp(App newApp)
     {

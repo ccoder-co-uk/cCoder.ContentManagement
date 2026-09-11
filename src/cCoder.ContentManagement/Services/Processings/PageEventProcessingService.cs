@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PageEventProcessingService(IPageEventService eventService) : IPageEventProcessingService
 {
-    public ValueTask RaisePageAddEventAsync(Page entity) =>
+    public ValueTask RaisePageAddEventAsync(Page page) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageAddEventAsync(inputs: [entity]);
-        ValidatePage(page: entity, parameterName: "entity");
+        ValidateRaisePageAddEventAsync(inputs: [page]);
+        ValidatePage(page: page, parameterName: "entity");
 
-        return eventService.RaisePageAddEventAsync(entity: entity);
+        return eventService.RaisePageAddEventAsync(entity: page);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageUpdateEventAsync(Page entity) =>
+    public ValueTask RaisePageUpdateEventAsync(Page page) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageUpdateEventAsync(inputs: [entity]);
-        ValidatePage(page: entity, parameterName: "entity");
+        ValidateRaisePageUpdateEventAsync(inputs: [page]);
+        ValidatePage(page: page, parameterName: "entity");
 
-        return eventService.RaisePageUpdateEventAsync(entity: entity);
+        return eventService.RaisePageUpdateEventAsync(entity: page);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageDeleteEventAsync(Page entity) =>
+    public ValueTask RaisePageDeleteEventAsync(Page page) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageDeleteEventAsync(inputs: [entity]);
-        ValidatePage(page: entity, parameterName: "entity");
+        ValidateRaisePageDeleteEventAsync(inputs: [page]);
+        ValidatePage(page: page, parameterName: "entity");
 
-        return eventService.RaisePageDeleteEventAsync(entity: entity);
+        return eventService.RaisePageDeleteEventAsync(entity: page);
 
     }, isValueTask: true);
 

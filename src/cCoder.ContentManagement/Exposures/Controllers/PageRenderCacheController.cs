@@ -6,7 +6,6 @@ using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 
@@ -95,35 +94,6 @@ public class PageRenderCacheController(
 
             updatedPageRenderCache.Id = key;
             return Ok(value: await manager.UpdateAsync(updatedPageRenderCache: updatedPageRenderCache));
-        }
-        catch (ContentManagementValidationException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest(); }
-        catch (ContentManagementSecurityException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
-    }
-
-    [AcceptVerbs("PATCH", "MERGE")]
-    public async Task<IActionResult> PutPatch([FromRoute] string key, Delta<PageRenderCache> updatedPageRenderCache)
-    {
-        try
-        {
-            PageRenderCache entity = manager.Get(pageRenderCacheId: key);
-
-            if (entity == null)
-            {
-                return NotFound();
-            }
-
-            updatedPageRenderCache.Patch(original: entity);
-            return Ok(value: await manager.UpdateAsync(updatedPageRenderCache: entity));
         }
         catch (ContentManagementValidationException exception) {
             loggingBroker.LogError(exception: exception, message: "Controller request failed.");

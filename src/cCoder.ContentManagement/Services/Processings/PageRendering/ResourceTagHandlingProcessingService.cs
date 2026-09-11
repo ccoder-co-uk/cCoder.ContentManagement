@@ -20,42 +20,42 @@ internal sealed partial class ResourceTagHandlingProcessingService
         type: "resource_description");
 
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        if (operation.Editable)
+        if (tagHandlingOperation.Editable)
         {
-            return operation;
+            return tagHandlingOperation;
         }
 
-        operation.Content = resourceDisplayNameRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = resourceDisplayNameRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => ResolveResourceValue(
-                operation: operation,
+                operation: tagHandlingOperation,
                 match: match,
                 selector: resource => resource.DisplayName));
 
-        operation.Content = resourceShortDisplayNameRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = resourceShortDisplayNameRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => ResolveResourceValue(
-                operation: operation,
+                operation: tagHandlingOperation,
                 match: match,
                 selector: resource => resource.ShortDisplayName));
 
-        operation.Content = resourceDescriptionRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = resourceDescriptionRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => ResolveResourceValue(
-                operation: operation,
+                operation: tagHandlingOperation,
                 match: match,
                 selector: resource => resource.Description));
 
-        return operation;
+        return tagHandlingOperation;
     });
 
     private static string ResolveResourceValue(

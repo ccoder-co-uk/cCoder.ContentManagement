@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class SubmissionEventProcessingService(ISubmissionEventService eventService) : ISubmissionEventProcessingService
 {
-    public ValueTask RaiseSubmissionAddEventAsync(Submission entity) =>
+    public ValueTask RaiseSubmissionAddEventAsync(Submission submission) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseSubmissionAddEventAsync(inputs: [entity]);
-        ValidateSubmission(submission: entity, parameterName: "entity");
+        ValidateRaiseSubmissionAddEventAsync(inputs: [submission]);
+        ValidateSubmission(submission: submission, parameterName: "entity");
 
-        return eventService.RaiseSubmissionAddEventAsync(entity: entity);
+        return eventService.RaiseSubmissionAddEventAsync(entity: submission);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseSubmissionUpdateEventAsync(Submission entity) =>
+    public ValueTask RaiseSubmissionUpdateEventAsync(Submission submission) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseSubmissionUpdateEventAsync(inputs: [entity]);
-        ValidateSubmission(submission: entity, parameterName: "entity");
+        ValidateRaiseSubmissionUpdateEventAsync(inputs: [submission]);
+        ValidateSubmission(submission: submission, parameterName: "entity");
 
-        return eventService.RaiseSubmissionUpdateEventAsync(entity: entity);
+        return eventService.RaiseSubmissionUpdateEventAsync(entity: submission);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseSubmissionDeleteEventAsync(Submission entity) =>
+    public ValueTask RaiseSubmissionDeleteEventAsync(Submission submission) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseSubmissionDeleteEventAsync(inputs: [entity]);
-        ValidateSubmission(submission: entity, parameterName: "entity");
+        ValidateRaiseSubmissionDeleteEventAsync(inputs: [submission]);
+        ValidateSubmission(submission: submission, parameterName: "entity");
 
-        return eventService.RaiseSubmissionDeleteEventAsync(entity: entity);
+        return eventService.RaiseSubmissionDeleteEventAsync(entity: submission);
 
     }, isValueTask: true);
 

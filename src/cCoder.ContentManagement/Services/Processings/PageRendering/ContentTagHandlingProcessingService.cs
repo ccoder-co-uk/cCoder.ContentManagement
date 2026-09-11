@@ -17,27 +17,27 @@ internal sealed partial class ContentTagHandlingProcessingService
             | RegexOptions.Singleline);
 
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        if (!operation.AllowContentTags)
+        if (!tagHandlingOperation.AllowContentTags)
         {
-            return operation;
+            return tagHandlingOperation;
         }
 
-        operation.Content = contentRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = contentRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => ReplaceContentTag(
-                operation: operation,
+                operation: tagHandlingOperation,
                 match: match));
 
-        return operation;
+        return tagHandlingOperation;
     });
 
     private static string ReplaceContentTag(

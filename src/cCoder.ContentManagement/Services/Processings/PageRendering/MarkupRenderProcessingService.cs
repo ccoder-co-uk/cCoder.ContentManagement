@@ -6,54 +6,54 @@ using System.Collections;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace cCoder.ContentManagement.Rendering.Services.Processings;
 
 internal sealed partial class MarkupRenderProcessingService(
-    IMarkupRenderService markupRenderService) : IMarkupRenderProcessingService
+    IMarkupRenderService markupRenderService,
+    IJsonBroker jsonBroker) : IMarkupRenderProcessingService
 {
-    public RenderSession RenderRenderSession(RenderSession session) =>
+    public RenderSession RenderRenderSession(RenderSession renderSession) =>
         TryCatch<RenderSession>(operation: () =>
     {
-        ValidateRenderRenderSession(inputs: [session]);
-        ValidateRenderSession(session: session);
+        ValidateRenderRenderSession(inputs: [renderSession]);
+        ValidateRenderSession(session: renderSession);
 
-        string key = string.IsNullOrWhiteSpace(value: session.Target?.ResourceKey)
+        string key = string.IsNullOrWhiteSpace(value: renderSession.Target?.ResourceKey)
             ? "Default"
-            : session.Target.ResourceKey;
+            : renderSession.Target.ResourceKey;
 
-        List<ReplacementDependency> replacements = BuildDefaultReplacements(session: session)
+        List<ReplacementDependency> replacements = BuildDefaultReplacements(session: renderSession)
             .ToList();
 
-        AddThemeTemplateReplacements(newRenderSession: session, newReplacement: replacements);
+        AddThemeTemplateReplacements(newRenderSession: renderSession, newReplacement: replacements);
 
-        session.Output = new RenderOutput
+        renderSession.Output = new RenderOutput
         {
             HeaderMarkup = MarkupRenderService.MarkContentSecurityPolicyNonce(
                 markup: markupRenderService.RenderRenderSessionReplacementDependencies(
                     key: key,
-                    content: session.Target?.HeaderMarkup ?? string.Empty,
-                    session: session,
+                    content: renderSession.Target?.HeaderMarkup ?? string.Empty,
+                    session: renderSession,
                     replacements: replacements,
-                    allowContentTags: session.Target?.AllowHeaderContentTags ?? false)),
-            BodyMarkup = session.Request.HeaderOnly
+                    allowContentTags: renderSession.Target?.AllowHeaderContentTags ?? false)),
+            BodyMarkup = renderSession.Request.HeaderOnly
                 ? string.Empty
                 : MarkupRenderService.MarkContentSecurityPolicyNonce(
                     markup: markupRenderService.RenderRenderSessionReplacementDependencies(
                         key: key,
-                        content: session.Target?.BodyMarkup ?? string.Empty,
-                        session: session,
+                        content: renderSession.Target?.BodyMarkup ?? string.Empty,
+                        session: renderSession,
                         replacements: replacements,
-                        allowContentTags: session.Target?.AllowBodyContentTags ?? true))
+                        allowContentTags: renderSession.Target?.AllowBodyContentTags ?? true))
         };
 
-        return session;
+        return renderSession;
 
     });
 
@@ -73,7 +73,7 @@ internal sealed partial class MarkupRenderProcessingService(
         [
             new(old: "[[user]]", @new: cacheTemplate
                 ? PageRenderRuntimeTokens.User
-                : JsonConvert.SerializeObject(value: new
+                : jsonBroker.Serialize(value: new
             {
                 Id = isGuest ? "Guest" : user.Id,
                 DefaultCultureId = string.IsNullOrWhiteSpace(value: user.DefaultCultureId) ? culture : user.DefaultCultureId,
@@ -143,7 +143,7 @@ internal sealed partial class MarkupRenderProcessingService(
         {
             replacements.Add(item: new ReplacementDependency(
                 old: "[model]",
-                @new: JsonConvert.SerializeObject(value: session.Target.Model)));
+                @new: jsonBroker.Serialize(value: session.Target.Model)));
 
             replacements.AddRange(collection: BuildModelReplacements(
                 model: session.Target.Model));
@@ -235,7 +235,7 @@ internal sealed partial class MarkupRenderProcessingService(
     private string RenderTemplate(PageRenderTemplate template, object model, RenderSession session, IReadOnlyCollection<ReplacementDependency> pageReplacements)
     {
         List<ReplacementDependency> replacements = pageReplacements.ToList();
-        replacements.Add(item: new ReplacementDependency(old: "[model]", @new: JsonConvert.SerializeObject(value: model)));
+        replacements.Add(item: new ReplacementDependency(old: "[model]", @new: jsonBroker.Serialize(value: model)));
         replacements.AddRange(collection: BuildModelReplacements(model: model));
 
         return markupRenderService.RenderRenderSessionReplacementDependencies(
@@ -261,18 +261,18 @@ internal sealed partial class MarkupRenderProcessingService(
         if (model is JsonElement jsonElement)
         {
             return BuildModelReplacements(
-                model: JToken.Parse(json: jsonElement.GetRawText()),
+                model: jsonBroker.ParseJson(json: jsonElement.GetRawText()),
                 prefix: prefix);
         }
 
-        if (model is JObject jObject)
+        if (jsonBroker.IsJsonObject(value: model))
         {
-            return BuildJObjectReplacements(model: jObject, prefix: prefix);
+            return BuildJObjectReplacements(model: model, prefix: prefix);
         }
 
-        if (model is JArray jArray)
+        if (jsonBroker.IsJsonArray(value: model))
         {
-            return BuildCollectionReplacements(model: jArray, prefix: prefix);
+            return BuildCollectionReplacements(model: (IEnumerable)model, prefix: prefix);
         }
 
         if (model.GetType()
@@ -324,14 +324,14 @@ internal sealed partial class MarkupRenderProcessingService(
                     : Array.Empty<ReplacementDependency>();
             });
 
-    private IEnumerable<ReplacementDependency> BuildJObjectReplacements(JObject model, string prefix) =>
-        model.Properties()
+    private IEnumerable<ReplacementDependency> BuildJObjectReplacements(object model, string prefix) =>
+        jsonBroker.GetJsonProperties(value: model)
         .SelectMany(selector: property =>
         {
-            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
+            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Key : prefix + "." + property.Key;
 
-            return property.Value is JValue value
-                ? [new ReplacementDependency(old: "[model[" + bindingExpression + "]]", @new: value.ToString())]
+            return jsonBroker.IsJsonValue(value: property.Value)
+                ? [new ReplacementDependency(old: "[model[" + bindingExpression + "]]", @new: property.Value.ToString())]
                 : BuildModelReplacements(model: property.Value, prefix: bindingExpression);
         });
 
@@ -359,9 +359,9 @@ internal sealed partial class MarkupRenderProcessingService(
             return Array.Empty<ReplacementDependency>();
         }
 
-        if (model is JObject jObject)
+        if (jsonBroker.IsJsonObject(value: model))
         {
-            return BuildThemeJObjectReplacements(model: jObject, prefix: prefix);
+            return BuildThemeJObjectReplacements(model: model, prefix: prefix);
         }
 
         if (model is string text)
@@ -423,14 +423,14 @@ internal sealed partial class MarkupRenderProcessingService(
                     : Array.Empty<ReplacementDependency>();
             });
 
-    private IEnumerable<ReplacementDependency> BuildThemeJObjectReplacements(JObject model, string prefix) =>
-        model.Properties()
+    private IEnumerable<ReplacementDependency> BuildThemeJObjectReplacements(object model, string prefix) =>
+        jsonBroker.GetJsonProperties(value: model)
         .SelectMany(selector: property =>
         {
-            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
+            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Key : prefix + "." + property.Key;
 
-            return property.Value is JValue value
-                ? [new ReplacementDependency(old: "[theme[" + bindingExpression + "]]", @new: value.ToString())]
+            return jsonBroker.IsJsonValue(value: property.Value)
+                ? [new ReplacementDependency(old: "[theme[" + bindingExpression + "]]", @new: property.Value.ToString())]
                 : BuildThemeReplacements(model: property.Value, prefix: bindingExpression);
         });
 

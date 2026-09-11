@@ -32,7 +32,7 @@ public partial class ContentEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseContentDeleteEventAsync(entity: entity);
+        await service.RaiseContentDeleteEventAsync(content: entity);
 
         // Then
         contentEventServiceMock.Verify(expression: x => x.RaiseContentDeleteEventAsync(entity: entity), times: Times.Once);

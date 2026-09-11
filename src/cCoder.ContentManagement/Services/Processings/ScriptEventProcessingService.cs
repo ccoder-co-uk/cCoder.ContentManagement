@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class ScriptEventProcessingService(IScriptEventService eventService) : IScriptEventProcessingService
 {
-    public ValueTask RaiseScriptAddEventAsync(Script entity) =>
+    public ValueTask RaiseScriptAddEventAsync(Script script) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseScriptAddEventAsync(inputs: [entity]);
-        ValidateScript(script: entity, parameterName: "entity");
+        ValidateRaiseScriptAddEventAsync(inputs: [script]);
+        ValidateScript(script: script, parameterName: "entity");
 
-        return eventService.RaiseScriptAddEventAsync(entity: entity);
+        return eventService.RaiseScriptAddEventAsync(entity: script);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseScriptUpdateEventAsync(Script entity) =>
+    public ValueTask RaiseScriptUpdateEventAsync(Script script) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseScriptUpdateEventAsync(inputs: [entity]);
-        ValidateScript(script: entity, parameterName: "entity");
+        ValidateRaiseScriptUpdateEventAsync(inputs: [script]);
+        ValidateScript(script: script, parameterName: "entity");
 
-        return eventService.RaiseScriptUpdateEventAsync(entity: entity);
+        return eventService.RaiseScriptUpdateEventAsync(entity: script);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseScriptDeleteEventAsync(Script entity) =>
+    public ValueTask RaiseScriptDeleteEventAsync(Script script) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseScriptDeleteEventAsync(inputs: [entity]);
-        ValidateScript(script: entity, parameterName: "entity");
+        ValidateRaiseScriptDeleteEventAsync(inputs: [script]);
+        ValidateScript(script: script, parameterName: "entity");
 
-        return eventService.RaiseScriptDeleteEventAsync(entity: entity);
+        return eventService.RaiseScriptDeleteEventAsync(entity: script);
 
     }, isValueTask: true);
 

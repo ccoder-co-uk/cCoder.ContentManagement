@@ -28,14 +28,14 @@ internal sealed partial class MarkupRenderService(
     public string RenderRenderSessionReplacementDependencies(
         string key,
         string content,
-        RenderSession session,
+        RenderSession renderSession,
         IReadOnlyCollection<ReplacementDependency> replacements,
         bool allowContentTags = true)
         =>
         TryCatch(operation: () =>
     {
         ValidateRenderRenderSessionReplacementDependencies(
-            inputs: [key, content, session, replacements, allowContentTags]);
+            inputs: [key, content, renderSession, replacements, allowContentTags]);
 
         if (string.IsNullOrEmpty(value: content))
         {
@@ -45,11 +45,11 @@ internal sealed partial class MarkupRenderService(
         TagHandlingOperation operation = HandleTags(
             operation: new TagHandlingOperation
             {
-                Session = session,
+                Session = renderSession,
                 ResourceKey = key,
                 Content = content,
                 AllowContentTags = allowContentTags,
-                Editable = session.Request.Edit,
+                Editable = renderSession.Request.Edit,
                 Replacements = replacements,
                 Fragments = []
             });

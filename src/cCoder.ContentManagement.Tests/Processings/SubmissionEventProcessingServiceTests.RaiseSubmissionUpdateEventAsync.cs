@@ -32,7 +32,7 @@ public partial class SubmissionEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseSubmissionUpdateEventAsync(entity: entity);
+        await service.RaiseSubmissionUpdateEventAsync(submission: entity);
 
         // Then
         submissionEventServiceMock.Verify(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity), times: Times.Once);

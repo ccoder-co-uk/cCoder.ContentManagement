@@ -41,15 +41,6 @@ payload: new
             .Should()
             .BeTrue();
 
-        await PatchResourceAsync(id: createdResource.Id, payload: new { description = "Patched resource" });
-        Resource actualResource = await GetResourceAsync(id: createdResource.Id);
-
-        actualResource.Should()
-            .NotBeNull();
-
-        actualResource!.Description.Should()
-            .Be(expected: "Patched resource");
-
         await DeleteResourceAsync(id: createdResource.Id);
     }
 }

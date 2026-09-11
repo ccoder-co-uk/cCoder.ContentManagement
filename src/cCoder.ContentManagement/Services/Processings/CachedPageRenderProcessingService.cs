@@ -13,15 +13,15 @@ internal sealed partial class CachedPageRenderProcessingService
     : ICachedPageRenderProcessingService
 {
     public PageRenderCacheOperation RenderPageRenderCacheOperation(
-        PageRenderCacheOperation operation) =>
+        PageRenderCacheOperation pageRenderCacheOperation) =>
         TryCatch(operation: () =>
         {
-            ValidatePageRenderCacheOperationOnRender(inputs: [operation]);
+            ValidatePageRenderCacheOperationOnRender(inputs: [pageRenderCacheOperation]);
 
-            HttpPageRenderContext context = operation.RenderOperation.Context;
-            PageRenderCache cached = operation.Cache;
+            HttpPageRenderContext context = pageRenderCacheOperation.RenderOperation.Context;
+            PageRenderCache cached = pageRenderCacheOperation.Cache;
 
-            operation.RenderOperation.Response = new PageRenderResponse
+            pageRenderCacheOperation.RenderOperation.Response = new PageRenderResponse
             {
                 App = new App
                 {
@@ -59,6 +59,6 @@ internal sealed partial class CachedPageRenderProcessingService
                 Edit = false
             };
 
-            return operation;
+            return pageRenderCacheOperation;
         });
 }

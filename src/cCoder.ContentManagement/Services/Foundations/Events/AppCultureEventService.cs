@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class AppCultureEventService(IAppCultureEventBroker appCultureEventBroker) : IAppCultureEventService
 {
-    public ValueTask RaiseAppCultureAddEventAsync(AppCulture entity) =>
+    public ValueTask RaiseAppCultureAddEventAsync(AppCulture appCulture) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseAppCultureAddEventAsync(inputs: [entity]);
+        ValidateRaiseAppCultureAddEventAsync(inputs: [appCulture]);
 
         EventMessage<AppCulture> message = new EventMessage<AppCulture>
         {
@@ -22,17 +22,17 @@ internal partial class AppCultureEventService(IAppCultureEventBroker appCultureE
             {
                 SSOUserId = appCultureEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = appCulture
         };
 
         await appCultureEventBroker.RaiseAppCultureAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity) =>
+    public ValueTask RaiseAppCultureDeleteEventAsync(AppCulture appCulture) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseAppCultureDeleteEventAsync(inputs: [entity]);
+        ValidateRaiseAppCultureDeleteEventAsync(inputs: [appCulture]);
 
         EventMessage<AppCulture> message = new EventMessage<AppCulture>
         {
@@ -40,7 +40,7 @@ internal partial class AppCultureEventService(IAppCultureEventBroker appCultureE
             {
                 SSOUserId = appCultureEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = appCulture
         };
 
         await appCultureEventBroker.RaiseAppCultureDeleteEventAsync(message: message);

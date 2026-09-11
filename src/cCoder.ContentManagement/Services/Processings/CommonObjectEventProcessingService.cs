@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class CommonObjectEventProcessingService(ICommonObjectEventService eventService) : ICommonObjectEventProcessingService
 {
-    public ValueTask RaiseCommonObjectAddEventAsync(CommonObject entity) =>
+    public ValueTask RaiseCommonObjectAddEventAsync(CommonObject commonObject) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseCommonObjectAddEventAsync(inputs: [entity]);
-        ValidateCommonObject(commonObject: entity, parameterName: "entity");
+        ValidateRaiseCommonObjectAddEventAsync(inputs: [commonObject]);
+        ValidateCommonObject(commonObject: commonObject, parameterName: "entity");
 
-        return eventService.RaiseCommonObjectAddEventAsync(entity: entity);
+        return eventService.RaiseCommonObjectAddEventAsync(entity: commonObject);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCommonObjectUpdateEventAsync(CommonObject entity) =>
+    public ValueTask RaiseCommonObjectUpdateEventAsync(CommonObject commonObject) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseCommonObjectUpdateEventAsync(inputs: [entity]);
-        ValidateCommonObject(commonObject: entity, parameterName: "entity");
+        ValidateRaiseCommonObjectUpdateEventAsync(inputs: [commonObject]);
+        ValidateCommonObject(commonObject: commonObject, parameterName: "entity");
 
-        return eventService.RaiseCommonObjectUpdateEventAsync(entity: entity);
+        return eventService.RaiseCommonObjectUpdateEventAsync(entity: commonObject);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCommonObjectDeleteEventAsync(CommonObject entity) =>
+    public ValueTask RaiseCommonObjectDeleteEventAsync(CommonObject commonObject) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseCommonObjectDeleteEventAsync(inputs: [entity]);
-        ValidateCommonObject(commonObject: entity, parameterName: "entity");
+        ValidateRaiseCommonObjectDeleteEventAsync(inputs: [commonObject]);
+        ValidateCommonObject(commonObject: commonObject, parameterName: "entity");
 
-        return eventService.RaiseCommonObjectDeleteEventAsync(entity: entity);
+        return eventService.RaiseCommonObjectDeleteEventAsync(entity: commonObject);
 
     }, isValueTask: true);
 

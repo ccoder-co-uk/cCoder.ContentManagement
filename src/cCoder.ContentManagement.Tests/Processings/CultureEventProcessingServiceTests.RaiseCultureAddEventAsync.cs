@@ -32,7 +32,7 @@ public partial class CultureEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCultureAddEventAsync(entity: entity);
+        await service.RaiseCultureAddEventAsync(culture: entity);
 
         // Then
         cultureEventServiceMock.Verify(expression: x => x.RaiseCultureAddEventAsync(entity: entity), times: Times.Once);

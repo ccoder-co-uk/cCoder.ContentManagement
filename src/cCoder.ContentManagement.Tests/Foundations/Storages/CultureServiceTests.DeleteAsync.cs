@@ -42,7 +42,7 @@ public partial class CultureServiceTests
         authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_delete"));
 
         cultureBrokerMock.Setup(expression: x => x.DeleteCultureAsync(
-                It.Is<Culture>(deletedCulture =>
+                deletedCulture: It.Is<Culture>(match: deletedCulture =>
                     deletedCulture.Id == culture.Id &&
                     deletedCulture.Name == culture.Name)))
             .ReturnsAsync(value: 1);
@@ -52,10 +52,14 @@ public partial class CultureServiceTests
 
         // Then
         cultureBrokerMock.Verify(expression: x => x.GetAllCultures(), times: Times.Once);
-        cultureBrokerMock.Verify(expression: x => x.DeleteCultureAsync(
-            It.Is<Culture>(deletedCulture =>
-                deletedCulture.Id == culture.Id &&
-                deletedCulture.Name == culture.Name)), times: Times.Once);
+
+        cultureBrokerMock.Verify(
+            expression: x => x.DeleteCultureAsync(
+                deletedCulture: It.Is<Culture>(match: deletedCulture =>
+                    deletedCulture.Id == culture.Id &&
+                    deletedCulture.Name == culture.Name)),
+            times: Times.Once);
+
         cultureBrokerMock.VerifyNoOtherCalls();
         appCultureBrokerMock.Verify(expression: x => x.GetAllAppCulturesIgnoringFilters(), times: Times.Once);
         appCultureBrokerMock.VerifyNoOtherCalls();

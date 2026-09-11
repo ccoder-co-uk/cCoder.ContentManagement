@@ -12,19 +12,19 @@ internal sealed partial class RenderOrchestrationService(
     ICommonObjectCacheProcessingService commonObjectCacheProcessingService,
     IMarkupRenderProcessingService markupRenderProcessingService) : IRenderOrchestrationService
 {
-    public RenderSession RenderRenderSession(RenderSession session) =>
+    public RenderSession RenderRenderSession(RenderSession renderSession) =>
         TryCatch<RenderSession>(operation: () =>
     {
-        ValidateRenderRenderSession(inputs: [session]);
+        ValidateRenderRenderSession(inputs: [renderSession]);
 
-        session = metadataCacheProcessingService
-            .PrepareRenderSession(session: session);
+        renderSession = metadataCacheProcessingService
+            .PrepareRenderSession(session: renderSession);
 
-        session = commonObjectCacheProcessingService
-            .PrepareRenderSession(session: session);
+        renderSession = commonObjectCacheProcessingService
+            .PrepareRenderSession(session: renderSession);
 
         return markupRenderProcessingService.RenderRenderSession(
-            session: session);
+            session: renderSession);
 
     });
 }

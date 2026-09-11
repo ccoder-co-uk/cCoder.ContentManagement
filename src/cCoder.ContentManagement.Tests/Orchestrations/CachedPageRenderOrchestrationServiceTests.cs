@@ -41,7 +41,7 @@ public sealed partial class CachedPageRenderOrchestrationServiceTests
 
         // When
         HttpPageRenderOperation result =
-            service.RenderHttpPageRenderOperation(operation: operation);
+            service.RenderHttpPageRenderOperation(httpPageRenderOperation: operation);
 
         // Then
         Assert.Same(expected: operation, actual: result);
@@ -69,7 +69,7 @@ public sealed partial class CachedPageRenderOrchestrationServiceTests
 
         // When
         HttpPageRenderOperation result =
-            service.RenderHttpPageRenderOperation(operation: operation);
+            service.RenderHttpPageRenderOperation(httpPageRenderOperation: operation);
 
         // Then
         Assert.Same(expected: operation, actual: result);

@@ -5,7 +5,6 @@
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Api.OData;
-using cCoder.ContentManagement.Extensions.OData;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Mvc;
@@ -24,33 +23,6 @@ public class PageRoleController : ODataController
     {
         this.service = service;
         this.loggingBroker = loggingBroker;
-    }
-
-    [HttpGet]
-    public IActionResult GetMetadata()
-    {
-        try
-        {
-            return Ok(value: typeof(PageRole).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
     }
 
     [HttpGet]

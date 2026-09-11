@@ -7,12 +7,9 @@ using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
-using cCoder.ContentManagement.Extensions.OData;
-using cCoder.Data.Extensions;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -29,34 +26,6 @@ public class ScriptController : ODataController
     {
         this.service = service;
         this.loggingBroker = loggingBroker;
-    }
-
-    [HttpGet]
-    public IActionResult GetMetadata()
-    {
-        try
-        {
-            return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Script)) : typeof(Script).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
     }
 
     [HttpGet]
@@ -167,42 +136,6 @@ public class ScriptController : ODataController
             }
 
             return Ok(value: await service.UpdateScriptAsync(updatedScript: updatedScript));
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Script> updatedScript)
-    {
-        try
-        {
-            Script originalEntity = service.GetScript(scriptId: key);
-
-            if (originalEntity == null)
-            {
-                return NotFound();
-            }
-
-            updatedScript.Patch(original: originalEntity);
-            return Ok(value: await service.UpdateScriptAsync(updatedScript: originalEntity));
         }
         catch (ContentManagementValidationException exception)
         {

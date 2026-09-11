@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PageInfoEventProcessingService(IPageInfoEventService eventService) : IPageInfoEventProcessingService
 {
-    public ValueTask RaisePageInfoAddEventAsync(PageInfo entity) =>
+    public ValueTask RaisePageInfoAddEventAsync(PageInfo pageInfo) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageInfoAddEventAsync(inputs: [entity]);
-        ValidatePageInfo(pageInfo: entity, parameterName: "entity");
+        ValidateRaisePageInfoAddEventAsync(inputs: [pageInfo]);
+        ValidatePageInfo(pageInfo: pageInfo, parameterName: "entity");
 
-        return eventService.RaisePageInfoAddEventAsync(entity: entity);
+        return eventService.RaisePageInfoAddEventAsync(entity: pageInfo);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageInfoUpdateEventAsync(PageInfo entity) =>
+    public ValueTask RaisePageInfoUpdateEventAsync(PageInfo pageInfo) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageInfoUpdateEventAsync(inputs: [entity]);
-        ValidatePageInfo(pageInfo: entity, parameterName: "entity");
+        ValidateRaisePageInfoUpdateEventAsync(inputs: [pageInfo]);
+        ValidatePageInfo(pageInfo: pageInfo, parameterName: "entity");
 
-        return eventService.RaisePageInfoUpdateEventAsync(entity: entity);
+        return eventService.RaisePageInfoUpdateEventAsync(entity: pageInfo);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageInfoDeleteEventAsync(PageInfo entity) =>
+    public ValueTask RaisePageInfoDeleteEventAsync(PageInfo pageInfo) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageInfoDeleteEventAsync(inputs: [entity]);
-        ValidatePageInfo(pageInfo: entity, parameterName: "entity");
+        ValidateRaisePageInfoDeleteEventAsync(inputs: [pageInfo]);
+        ValidatePageInfo(pageInfo: pageInfo, parameterName: "entity");
 
-        return eventService.RaisePageInfoDeleteEventAsync(entity: entity);
+        return eventService.RaisePageInfoDeleteEventAsync(entity: pageInfo);
 
     }, isValueTask: true);
 

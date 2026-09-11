@@ -79,6 +79,6 @@ internal sealed class CommonObjectBroker(ICoreContextFactory coreContextFactory)
         await coreDataContext.SaveChangesAsync();
     }
 
-    public int? GetAppId(CommonObject entity) =>
+    public int? GetAppId(CommonObject commonObject) =>
         null;
 }

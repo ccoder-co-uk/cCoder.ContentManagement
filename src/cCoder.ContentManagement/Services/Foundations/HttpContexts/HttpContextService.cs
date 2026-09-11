@@ -4,7 +4,6 @@
 
 using cCoder.ContentManagement.Brokers.HttpContexts;
 using cCoder.ContentManagement.Models;
-using Microsoft.AspNetCore.Http.Extensions;
 
 namespace cCoder.ContentManagement.Services.Foundations.HttpContexts;
 
@@ -18,31 +17,28 @@ internal sealed partial class HttpContextService(
         HttpContext context = httpContextBroker.GetHttpContext();
         HttpRequest request = context.Request;
 
-        string path = request.RouteValues.TryGetValue(
-                key: "path",
-                value: out object routePath)
-            ? routePath?.ToString()
-            : request.Path.Value?.Trim(trimChar: '/');
+        string path = httpContextBroker.GetRouteValue(key: "path")?.ToString()
+            ?? request.Path.Value?.Trim(trimChar: '/');
 
-        bool hasCultureQuery = request.Query.TryGetValue(
-                key: "culture",
-                value: out Microsoft.Extensions.Primitives.StringValues cultureValue);
+        bool hasCultureQuery = httpContextBroker.TryGetQueryValue(
+            key: "culture",
+            value: out string cultureValue);
 
         bool cultureWasExplicitlyRequested = hasCultureQuery
             || string.Equals(
-                a: context.Session.GetString(key: "cultureexplicit"),
+                a: httpContextBroker.GetSessionValue(key: "cultureexplicit"),
                 b: bool.TrueString,
                 comparisonType: StringComparison.OrdinalIgnoreCase);
 
         string culture = hasCultureQuery
             ? cultureValue.ToString()
-            : context.Session.GetString(key: "culture");
+            : httpContextBroker.GetSessionValue(key: "culture");
 
-        string theme = request.Query.TryGetValue(
+        string theme = httpContextBroker.TryGetQueryValue(
                 key: "theme",
-                value: out Microsoft.Extensions.Primitives.StringValues themeValue)
-            ? themeValue.ToString()
-            : context.Session.GetString(key: "theme");
+                value: out string themeValue)
+            ? themeValue
+            : httpContextBroker.GetSessionValue(key: "theme");
 
         return new HttpPageRenderContext
         {
@@ -60,12 +56,12 @@ internal sealed partial class HttpContextService(
                     ContentSecurityPolicyNonceContract.HttpContextItemKey]
                 ?.ToString()
                 ?? string.Empty,
-            RequestUrl = request.GetEncodedUrl(),
-            Edit = request.Query.TryGetValue(
+            RequestUrl = httpContextBroker.GetEncodedRequestUrl(),
+            Edit = httpContextBroker.TryGetQueryValue(
                     key: "edit",
-                    value: out Microsoft.Extensions.Primitives.StringValues editValue)
+                    value: out string editValue)
                 && bool.TryParse(
-                    value: editValue.ToString(),
+                    value: editValue,
                     result: out bool edit)
                 && edit
         };

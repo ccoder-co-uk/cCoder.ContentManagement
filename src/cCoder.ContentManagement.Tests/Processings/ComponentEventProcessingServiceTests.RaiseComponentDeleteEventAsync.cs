@@ -32,7 +32,7 @@ public partial class ComponentEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseComponentDeleteEventAsync(entity: entity);
+        await service.RaiseComponentDeleteEventAsync(component: entity);
 
         // Then
         componentEventServiceMock.Verify(expression: x => x.RaiseComponentDeleteEventAsync(entity: entity), times: Times.Once);

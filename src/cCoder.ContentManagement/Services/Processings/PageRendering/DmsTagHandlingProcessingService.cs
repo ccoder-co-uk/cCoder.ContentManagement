@@ -20,22 +20,22 @@ internal sealed partial class DmsTagHandlingProcessingService(
             | RegexOptions.Singleline);
 
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        operation.Content = dmsRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = dmsRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => ResolveContent(
-                appId: operation.Session.App?.Id ?? 0,
+                appId: tagHandlingOperation.Session.App?.Id ?? 0,
                 path: match.Groups["name"].Value));
 
-        return operation;
+        return tagHandlingOperation;
     });
 
     private string ResolveContent(int appId, string path)

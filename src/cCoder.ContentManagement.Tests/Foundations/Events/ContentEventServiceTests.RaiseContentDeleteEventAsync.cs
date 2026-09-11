@@ -37,7 +37,7 @@ public partial class ContentEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseContentDeleteEventAsync(entity: entity);
+        await service.RaiseContentDeleteEventAsync(content: entity);
 
         // Then
 

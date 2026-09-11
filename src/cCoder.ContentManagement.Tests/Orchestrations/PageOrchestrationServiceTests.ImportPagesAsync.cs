@@ -34,7 +34,8 @@ public partial class PageOrchestrationServiceTests
 
         processingServiceMock
             .Setup(expression: service => service.GetAllPage(ignoreFilters: true))
-            .Returns(value: Array.Empty<Page>().AsQueryable());
+            .Returns(value: Array.Empty<Page>()
+                .AsQueryable());
 
         processingServiceMock
             .Setup(expression: service => service.AddOrUpdatePageResult(
@@ -76,7 +77,8 @@ public partial class PageOrchestrationServiceTests
 
         pageProcessingServiceMock
             .Setup(expression: service => service.GetAllPage(ignoreFilters: true))
-            .Returns(value: Array.Empty<Page>().AsQueryable());
+            .Returns(value: Array.Empty<Page>()
+                .AsQueryable());
 
         pageProcessingServiceMock
             .Setup(expression: service => service.ImportPageAsync(page: page))

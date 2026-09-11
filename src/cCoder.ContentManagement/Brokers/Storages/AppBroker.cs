@@ -43,6 +43,17 @@ internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBr
             .SingleOrDefaultAsync(predicate: app => app.Id == appId);
     }
 
+    public App GetAppForDelete(int appId)
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Apps
+            .IgnoreQueryFilters()
+            .Include(navigationPropertyPath: app => app.Roles)
+            .ThenInclude(navigationPropertyPath: role => role.Users)
+            .FirstOrDefault(predicate: app => app.Id == appId);
+    }
+
     public async ValueTask<App> AddAppAsync(App newApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();

@@ -6,8 +6,6 @@ using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models.Exports;
-using cCoder.Data.Extensions;
-using Newtonsoft.Json;
 using cCoder.Data.Models.Packaging;
 
 using cCoder.ContentManagement.Exposures;
@@ -22,7 +20,8 @@ internal partial class PackageExportService(
     IComponentBroker componentBroker,
     IScriptBroker scriptBroker,
     IResourceBroker resourceBroker,
-    IPageBroker pageBroker) : IPackageExportService
+    IPageBroker pageBroker,
+    IJsonBroker jsonBroker) : IPackageExportService
 {
     public Package ExportRolesPackage(int appId) =>
         TryCatch<Package>(operation: () =>
@@ -259,9 +258,8 @@ data: pageBroker.GetAllPagesIgnoringFilters()
                 new PackageItem
                 {
                     Type = itemType,
-                    Data = JsonConvert.SerializeObject(
-                        value: data,
-                        settings: CreateJsonSerializerSettings())
+                    Data = jsonBroker.SerializeIgnoringReferences(
+                        value: data)
                 }
             ]
         };
@@ -274,10 +272,4 @@ data: pageBroker.GetAllPagesIgnoringFilters()
         }
     }
 
-    private static JsonSerializerSettings CreateJsonSerializerSettings()
-    {
-        JsonSerializerSettings settings = ObjectExtensions.GetJSONSettings();
-        settings.TypeNameHandling = TypeNameHandling.None;
-        return settings;
-    }
 }

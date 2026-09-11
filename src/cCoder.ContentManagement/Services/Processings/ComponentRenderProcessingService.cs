@@ -14,9 +14,6 @@ using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
@@ -35,23 +32,23 @@ internal partial class ComponentRenderProcessingService(
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
 
     public string RenderComponentRenderOperation(
-        ComponentRenderOperation operation) =>
+        ComponentRenderOperation componentRenderOperation) =>
         TryCatch<string>(operation: () =>
     {
-        ValidateRenderComponentOperation(inputs: [operation]);
+        ValidateRenderComponentOperation(inputs: [componentRenderOperation]);
 
-        operation.Result = operation.Component != null
+        componentRenderOperation.Result = componentRenderOperation.Component != null
             ? RenderComponentComponentRenderParams(
-                component: operation.Component,
-                renderParams: operation.RenderParams)
+                component: componentRenderOperation.Component,
+                renderParams: componentRenderOperation.RenderParams)
             : RenderUser(
-                appId: operation.AppId,
-                name: operation.Name,
-                user: operation.User,
-                culture: operation.Culture,
-                theme: operation.Theme);
+                appId: componentRenderOperation.AppId,
+                name: componentRenderOperation.Name,
+                user: componentRenderOperation.User,
+                culture: componentRenderOperation.Culture,
+                theme: componentRenderOperation.Theme);
 
-        return operation.Result;
+        return componentRenderOperation.Result;
     });
 
     internal string RenderUser(int appId, string name, User user, string culture, string theme) =>
@@ -324,7 +321,7 @@ internal partial class ComponentRenderProcessingService(
                                                                                                                                          string value = match.Groups[1].Value;
                                                                                                                                          string json = replacements.FirstOrDefault(predicate: (ReplacementDependency r) => r.Old == "[model]")?.New ?? "{}";
 
-                                                                                                                                         string content = SerializeForOData(model: new
+                                                                                                                                         string content = jsonBroker.SerializeIgnoringReferences(value: new
                                                                                                                                          {
                                                                                                                                              Script = value,
                                                                                                                                              Model = jsonBroker.ParseJson(json: json)
@@ -336,22 +333,6 @@ internal partial class ComponentRenderProcessingService(
 
                                                                                                                                          return ProcessContentString(key: key, renderParams: renderParams, content: result, replacements: replacements);
                                                                                                                                      });
-
-    private static string SerializeForOData(object model) =>
-        JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.None,
-            Formatting = Formatting.None,
-            DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            NullValueHandling = NullValueHandling.Ignore,
-            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-            ContractResolver = new DefaultContractResolver
-            {
-                IgnoreSerializableAttribute = true
-            },
-            MaxDepth = 4
-        });
 
     private void Dms(string key, StringBuilder source, ComponentRenderParams renderParams, IEnumerable<ReplacementDependency> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[dms\\[[A-Za-z\\d_/. \\-]*\\]\\]", action: match =>
@@ -496,12 +477,13 @@ internal partial class ComponentRenderProcessingService(
     private IEnumerable<ReplacementDependency> BuildThemeReplacements<T>(T model, string prefix = "")
     {
         if ((object)model.GetType()
-            .GetInterface(name: "IDynamicMetaObjectProvider") != null && !(model is JObject))
+            .GetInterface(name: "IDynamicMetaObjectProvider") != null
+            && !jsonBroker.IsJsonObject(value: model))
         {
             return BuildDynamicThemeReplacements(model: model, prefix: prefix);
         }
 
-        if (model is JObject)
+        if (jsonBroker.IsJsonObject(value: model))
         {
             return BuildJObjectThemeReplacements(model: model, prefix: prefix);
         }
@@ -579,13 +561,14 @@ internal partial class ComponentRenderProcessingService(
 
     private IEnumerable<ReplacementDependency> BuildJObjectThemeReplacements<T>(T model, string prefix)
     {
-        IEnumerable<KeyValuePair<string, JToken>> source = (IEnumerable<KeyValuePair<string, JToken>>)(object)model;
+        IEnumerable<KeyValuePair<string, object>> source =
+            jsonBroker.GetJsonProperties(value: model);
 
         return source.SelectMany(selector: token =>
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + token.Key) : token.Key);
 
-            if (token.Value.GetType() == typeof(JValue))
+            if (jsonBroker.IsJsonValue(value: token.Value))
             {
                 return new[] { new ReplacementDependency(old: "[theme[" + text + "]]", @new: token.Value.ToString() ?? string.Empty) };
             }

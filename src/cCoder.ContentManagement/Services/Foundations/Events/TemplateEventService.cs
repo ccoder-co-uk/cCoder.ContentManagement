@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class TemplateEventService(ITemplateEventBroker templateEventBroker) : ITemplateEventService
 {
-    public ValueTask RaiseTemplateAddEventAsync(Template entity) =>
+    public ValueTask RaiseTemplateAddEventAsync(Template template) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseTemplateAddEventAsync(inputs: [entity]);
+        ValidateRaiseTemplateAddEventAsync(inputs: [template]);
 
         EventMessage<Template> message = new EventMessage<Template>
         {
@@ -22,17 +22,17 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
             {
                 SSOUserId = templateEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = template
         };
 
         await templateEventBroker.RaiseTemplateAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseTemplateUpdateEventAsync(Template entity) =>
+    public ValueTask RaiseTemplateUpdateEventAsync(Template template) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseTemplateUpdateEventAsync(inputs: [entity]);
+        ValidateRaiseTemplateUpdateEventAsync(inputs: [template]);
 
         EventMessage<Template> message = new EventMessage<Template>
         {
@@ -40,17 +40,17 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
             {
                 SSOUserId = templateEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = template
         };
 
         await templateEventBroker.RaiseTemplateUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseTemplateDeleteEventAsync(Template entity) =>
+    public ValueTask RaiseTemplateDeleteEventAsync(Template template) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseTemplateDeleteEventAsync(inputs: [entity]);
+        ValidateRaiseTemplateDeleteEventAsync(inputs: [template]);
 
         EventMessage<Template> message = new EventMessage<Template>
         {
@@ -58,7 +58,7 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
             {
                 SSOUserId = templateEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = template
         };
 
         await templateEventBroker.RaiseTemplateDeleteEventAsync(message: message);

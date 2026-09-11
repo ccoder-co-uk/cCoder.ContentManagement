@@ -8,12 +8,9 @@ using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Api.OData;
-using cCoder.ContentManagement.Extensions.OData;
-using cCoder.Data.Extensions;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -136,34 +133,6 @@ public class PageController : ODataController
     }
 
     [HttpGet]
-    public IActionResult GetMetadata()
-    {
-        try
-        {
-            return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Page)) : typeof(Page).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [HttpGet]
     [AllowAnonymous]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 3, MaxExpansionDepth = 3)]
     public IActionResult Get([FromRoute] int key)
@@ -243,42 +212,6 @@ public class PageController : ODataController
 
             updatedPage.Id = key;
             return Ok(value: CreateResponsePage(newPage: await manager.UpdateAsync(updatedPage: updatedPage)));
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Page> updatedPage)
-    {
-        try
-        {
-            Page originalEntity = manager.Get(pageId: key);
-
-            if (originalEntity == null)
-            {
-                return NotFound();
-            }
-
-            updatedPage.Patch(original: originalEntity);
-            return Ok(value: CreateResponsePage(newPage: await manager.UpdateAsync(updatedPage: originalEntity)));
         }
         catch (ContentManagementValidationException exception)
         {

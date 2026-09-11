@@ -6,9 +6,9 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
-using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -20,12 +20,12 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
 {
     public ValueTask<HttpPageRenderOperation>
         RenderHttpPageRenderOperationAsync(
-            HttpPageRenderOperation operation) =>
+            HttpPageRenderOperation httpPageRenderOperation) =>
         TryCatch<HttpPageRenderOperation>(operation: async () =>
     {
-        ValidateHttpPageRenderOperationOnRenderAsync(inputs: [operation]);
+        ValidateHttpPageRenderOperationOnRenderAsync(inputs: [httpPageRenderOperation]);
 
-        HttpPageRenderContext context = operation.Context;
+        HttpPageRenderContext context = httpPageRenderOperation.Context;
 
         if (context.PageId is null)
         {
@@ -62,7 +62,7 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
                     Edit = context.Edit
                 });
 
-        operation.Response = new PageRenderResponse
+        httpPageRenderOperation.Response = new PageRenderResponse
         {
             App = page.App,
             Page = renderOperation.Page,
@@ -75,10 +75,10 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
         {
             await pageRenderCacheProcessingService.StorePageRenderCacheAsync(
                 pageRenderCache: CreatePageRenderCache(
-                    response: operation.Response));
+                    response: httpPageRenderOperation.Response));
         }
 
-        return operation;
+        return httpPageRenderOperation;
 
     }, isValueTask: true);
 
@@ -87,9 +87,7 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
     {
         PageRenderResult result = response.Page;
 
-        string fingerprintSource = JsonConvert.SerializeObject(
-            value: result,
-            formatting: Formatting.None);
+        string fingerprintSource = JsonSerializer.Serialize(value: result);
 
         return new PageRenderCache
         {

@@ -12,54 +12,54 @@ internal partial class AuthorizationProcessingService(
         : IAuthorizationProcessingService
 {
     public void AuthorizeAuthorizationContext(
-        AuthorizationContext context) =>
+        AuthorizationContext authorizationContext) =>
         TryCatch(operation: () =>
     {
-        ValidateAuthorize(inputs: [context]);
+        ValidateAuthorize(inputs: [authorizationContext]);
 
         authorizationService.AuthorizeAuthorizationContext(
-            context: context);
+            context: authorizationContext);
     });
 
     public AuthorizationContext ResolveCurrentAuthorizationContext(
-        AuthorizationContext context) =>
+        AuthorizationContext authorizationContext) =>
         TryCatch<AuthorizationContext>(operation: () =>
     {
-        ValidateResolveCurrentAuthorizationContext(inputs: [context]);
+        ValidateResolveCurrentAuthorizationContext(inputs: [authorizationContext]);
 
         return authorizationService.ResolveCurrentAuthorizationContext(
-            context: context);
+            context: authorizationContext);
     });
 
     public bool IsAdminAuthorizationContext(
-        AuthorizationContext context) =>
+        AuthorizationContext authorizationContext) =>
         TryCatch<bool>(operation: () =>
     {
-        ValidateIsAdmin(inputs: [context]);
+        ValidateIsAdmin(inputs: [authorizationContext]);
 
         return authorizationService.IsAdminAuthorizationContext(
-            context: context);
+            context: authorizationContext);
     });
 
     public bool IsAdminOfAppAuthorizationContext(
-        AuthorizationContext context) =>
+        AuthorizationContext authorizationContext) =>
         TryCatch<bool>(operation: () =>
     {
-        ValidateIsAdminOfApp(inputs: [context]);
+        ValidateIsAdminOfApp(inputs: [authorizationContext]);
 
         return authorizationService.IsAdminOfAppAuthorizationContext(
-            context: context);
+            context: authorizationContext);
     });
 
     public AuthorizationContext ResolveRenderAuthorizationContext(
-        AuthorizationContext context) =>
+        AuthorizationContext authorizationContext) =>
         TryCatch<AuthorizationContext>(operation: () =>
     {
-        ValidateResolveRenderAuthorization(inputs: [context]);
+        ValidateResolveRenderAuthorization(inputs: [authorizationContext]);
 
         AuthorizationContext currentContext =
             authorizationService.ResolveCurrentAuthorizationContext(
-                context: context);
+                context: authorizationContext);
 
         currentContext.RenderAuthorization = new()
         {
@@ -72,12 +72,12 @@ internal partial class AuthorizationProcessingService(
     });
 
     public bool UserCanPageAuthorizationContext(
-        AuthorizationContext context) =>
+        AuthorizationContext authorizationContext) =>
         TryCatch<bool>(operation: () =>
     {
-        ValidateUserCanPageAuthorization(inputs: [context]);
+        ValidateUserCanPageAuthorization(inputs: [authorizationContext]);
 
         return authorizationService.UserCanPageAuthorizationContext(
-            context: context);
+            context: authorizationContext);
     });
 }

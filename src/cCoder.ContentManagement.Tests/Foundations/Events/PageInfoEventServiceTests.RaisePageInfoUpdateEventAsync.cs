@@ -36,7 +36,7 @@ public partial class PageInfoEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageInfoUpdateEventAsync(entity: entity);
+        await service.RaisePageInfoUpdateEventAsync(pageInfo: entity);
 
         // Then
 

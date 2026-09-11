@@ -94,7 +94,7 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
 
         // When
         HttpPageRenderOperation result = await service
-            .RenderHttpPageRenderOperationAsync(operation: operation);
+            .RenderHttpPageRenderOperationAsync(httpPageRenderOperation: operation);
 
         // Then
         Assert.NotNull(@object: result.Response);

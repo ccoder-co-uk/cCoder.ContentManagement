@@ -12,6 +12,8 @@ internal interface IAppService
 
     ValueTask<App> GetAppForRenderAsync(int appId);
 
+    App GetAppForDelete(int appId);
+
     IQueryable<App> GetAllApp(bool ignoreFilters = false);
 
     ValueTask<App> AddAppAsync(App newApp);

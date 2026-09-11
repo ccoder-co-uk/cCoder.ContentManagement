@@ -21,21 +21,21 @@ internal sealed partial class PageRenderProcessingService(
     ContentManagementConfiguration config) : IPageRenderProcessingService
 {
     public PageRenderOperation RenderPageRenderOperation(
-        PageRenderOperation operation) =>
+        PageRenderOperation pageRenderOperation) =>
         TryCatch<PageRenderOperation>(operation: () =>
     {
-        ValidateRenderPageRenderOperation(inputs: [operation]);
+        ValidateRenderPageRenderOperation(inputs: [pageRenderOperation]);
 
-        operation.Page = RenderPageUserRenderResult(
-            page: operation.SourcePage,
-            user: operation.User,
-            theme: operation.Theme,
-            culture: operation.Culture,
-            edit: operation.Edit,
-            headerOnly: operation.HeaderOnly,
-            cacheTemplate: operation.CacheTemplate);
+        pageRenderOperation.Page = RenderPageUserRenderResult(
+            page: pageRenderOperation.SourcePage,
+            user: pageRenderOperation.User,
+            theme: pageRenderOperation.Theme,
+            culture: pageRenderOperation.Culture,
+            edit: pageRenderOperation.Edit,
+            headerOnly: pageRenderOperation.HeaderOnly,
+            cacheTemplate: pageRenderOperation.CacheTemplate);
 
-        return operation;
+        return pageRenderOperation;
     });
 
     internal PageRenderResult RenderPageUserRenderResult(

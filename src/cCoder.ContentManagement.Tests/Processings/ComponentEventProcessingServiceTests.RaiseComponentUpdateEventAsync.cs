@@ -32,7 +32,7 @@ public partial class ComponentEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseComponentUpdateEventAsync(entity: entity);
+        await service.RaiseComponentUpdateEventAsync(component: entity);
 
         // Then
         componentEventServiceMock.Verify(expression: x => x.RaiseComponentUpdateEventAsync(entity: entity), times: Times.Once);

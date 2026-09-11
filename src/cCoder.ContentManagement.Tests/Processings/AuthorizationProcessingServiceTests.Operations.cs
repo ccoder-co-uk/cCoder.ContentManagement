@@ -44,20 +44,20 @@ public partial class AuthorizationProcessingServiceTests
             .Returns(value: true);
 
         // When
-        processingService.AuthorizeAuthorizationContext(context: context);
+        processingService.AuthorizeAuthorizationContext(authorizationContext: context);
 
         AuthorizationContext actualContext =
             processingService.ResolveCurrentAuthorizationContext(
-                context: context);
+                authorizationContext: context);
 
         bool isAdmin = processingService.IsAdminAuthorizationContext(
-            context: context);
+            authorizationContext: context);
 
         bool isAppAdmin = processingService
-            .IsAdminOfAppAuthorizationContext(context: context);
+            .IsAdminOfAppAuthorizationContext(authorizationContext: context);
 
         bool canAccessPage = processingService
-            .UserCanPageAuthorizationContext(context: context);
+            .UserCanPageAuthorizationContext(authorizationContext: context);
 
         // Then
         actualContext.Should()
@@ -104,7 +104,7 @@ public partial class AuthorizationProcessingServiceTests
 
         // When
         AuthorizationContext result = processingService
-            .ResolveRenderAuthorizationContext(context: context);
+            .ResolveRenderAuthorizationContext(authorizationContext: context);
 
         // Then
         result.Should()

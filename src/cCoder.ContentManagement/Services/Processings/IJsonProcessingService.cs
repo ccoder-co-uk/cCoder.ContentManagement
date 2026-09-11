@@ -7,4 +7,8 @@ namespace cCoder.ContentManagement.Services.Processings;
 internal interface IJsonProcessingService
 {
     T[] DeserializeItems<T>(string json);
+
+    string RemovePropertiesRecursively(
+        string json,
+        IReadOnlyCollection<string> propertyNames);
 }

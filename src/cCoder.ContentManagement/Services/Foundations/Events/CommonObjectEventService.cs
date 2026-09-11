@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class CommonObjectEventService(ICommonObjectEventBroker commonObjectEventBroker) : ICommonObjectEventService
 {
-    public ValueTask RaiseCommonObjectAddEventAsync(CommonObject entity) =>
+    public ValueTask RaiseCommonObjectAddEventAsync(CommonObject commonObject) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCommonObjectAddEventAsync(inputs: [entity]);
+        ValidateRaiseCommonObjectAddEventAsync(inputs: [commonObject]);
 
         EventMessage<CommonObject> message = new EventMessage<CommonObject>
         {
@@ -22,17 +22,17 @@ internal partial class CommonObjectEventService(ICommonObjectEventBroker commonO
             {
                 SSOUserId = commonObjectEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = commonObject
         };
 
         await commonObjectEventBroker.RaiseCommonObjectAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCommonObjectUpdateEventAsync(CommonObject entity) =>
+    public ValueTask RaiseCommonObjectUpdateEventAsync(CommonObject commonObject) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCommonObjectUpdateEventAsync(inputs: [entity]);
+        ValidateRaiseCommonObjectUpdateEventAsync(inputs: [commonObject]);
 
         EventMessage<CommonObject> message = new EventMessage<CommonObject>
         {
@@ -40,17 +40,17 @@ internal partial class CommonObjectEventService(ICommonObjectEventBroker commonO
             {
                 SSOUserId = commonObjectEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = commonObject
         };
 
         await commonObjectEventBroker.RaiseCommonObjectUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCommonObjectDeleteEventAsync(CommonObject entity) =>
+    public ValueTask RaiseCommonObjectDeleteEventAsync(CommonObject commonObject) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCommonObjectDeleteEventAsync(inputs: [entity]);
+        ValidateRaiseCommonObjectDeleteEventAsync(inputs: [commonObject]);
 
         EventMessage<CommonObject> message = new EventMessage<CommonObject>
         {
@@ -58,7 +58,7 @@ internal partial class CommonObjectEventService(ICommonObjectEventBroker commonO
             {
                 SSOUserId = commonObjectEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = commonObject
         };
 
         await commonObjectEventBroker.RaiseCommonObjectDeleteEventAsync(message: message);

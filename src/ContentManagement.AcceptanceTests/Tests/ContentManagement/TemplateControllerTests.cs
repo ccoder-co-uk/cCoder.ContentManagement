@@ -45,22 +45,6 @@ public sealed partial class TemplateControllerTests(WebAcceptanceFixture fixture
         return (int)response.StatusCode;
     }
 
-    private async Task<int> PatchTemplateAsync(int id, object payload)
-    {
-        using HttpRequestMessage request = new(method: HttpMethod.Patch, requestUri: $"{BaseUrl}({id})")
-        {
-            Content = JsonContent.Create(inputValue: payload),
-        };
-
-        using HttpResponseMessage response = await Client.SendAsync(request: request);
-        string content = await response.Content.ReadAsStringAsync();
-
-        response.StatusCode.Should()
-            .Be(expected: HttpStatusCode.OK, because: content);
-
-        return (int)response.StatusCode;
-    }
-
     private async Task<int> DeleteTemplateAsync(int id)
     {
         using HttpResponseMessage response = await Client.DeleteAsync(requestUri: $"{BaseUrl}({id})");

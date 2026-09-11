@@ -32,7 +32,7 @@ public partial class ScriptEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseScriptUpdateEventAsync(entity: entity);
+        await service.RaiseScriptUpdateEventAsync(script: entity);
 
         // Then
         scriptEventServiceMock.Verify(expression: x => x.RaiseScriptUpdateEventAsync(entity: entity), times: Times.Once);
