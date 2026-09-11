@@ -30,4 +30,10 @@ internal sealed class HttpContextBroker(HttpContext httpContext)
 
     public string GetEncodedRequestUrl() =>
         httpContext.Request.GetEncodedUrl();
+
+    public string GetRequestPath() =>
+        httpContext?.Request.Path.Value ?? string.Empty;
+
+    public string GetRequestHost() =>
+        httpContext?.Request.Host.Host ?? string.Empty;
 }

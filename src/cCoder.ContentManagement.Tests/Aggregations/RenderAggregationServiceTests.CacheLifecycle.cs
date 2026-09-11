@@ -3,9 +3,13 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Exposures;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 using cCoder.ContentManagement.Services.Processings;
@@ -53,18 +57,23 @@ public sealed partial class RenderAggregationServiceTests
             .ReturnsAsync(valueFunction: (PageRenderCache cache) => cache);
 
         PageRenderCacheProcessingService cacheProcessing = new(
-            service: cacheFoundation.Object,
-            authorizationManager: Mock.Of<IAuthorizationManager>());
+            service: cacheFoundation.Object);
 
         PageRenderCacheQueryProcessingService cacheQuery = new(
             pageRenderCacheService: cacheFoundation.Object);
 
         CachedPageRenderOrchestrationService cached = new(
             queryProcessingService: cacheQuery,
-            renderProcessingService: new CachedPageRenderProcessingService());
+            renderProcessingService: new CachedPageRenderProcessingService(
+                cachedPageRenderService: new CachedPageRenderService(
+                    regularExpressionBroker: new RegularExpressionBroker())));
 
         Mock<IPageProcessingService> pageProcessing = new();
         Mock<IPageRenderProcessingService> renderProcessing = new();
+
+        renderProcessing.Setup(expression: service =>
+            service.SerializeRuntimeValue(value: It.IsAny<object>()))
+            .Returns(value: "{}");
 
         pageProcessing.Setup(expression: service =>
             service.GetPageForRenderAsync(pageId: page.Id))
@@ -92,6 +101,13 @@ public sealed partial class RenderAggregationServiceTests
             pageRenderProcessingService: renderProcessing.Object,
             pageRenderCacheProcessingService: cacheProcessing);
 
+        Mock<IJsonOrchestrationService> json = new();
+
+        json.Setup(expression: service =>
+            service.SerializeRuntimeValue(value: It.IsAny<object>()))
+            .Returns(valueFunction: (object value) =>
+                new SystemTextJsonBroker().Serialize(value: value));
+
         Mock<IPageContextOrchestrationService> pageContext = new();
 
         pageContext.Setup(expression: service =>
@@ -102,6 +118,7 @@ public sealed partial class RenderAggregationServiceTests
             pageContextOrchestrationService: pageContext.Object,
             cachedPageRenderOrchestrationService: cached,
             uncachedPageRenderOrchestrationService: uncached,
+            jsonOrchestrationService: json.Object,
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:

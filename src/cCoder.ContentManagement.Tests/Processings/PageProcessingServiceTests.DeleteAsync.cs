@@ -41,8 +41,6 @@ public partial class PageProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         User user = TestUsers.WithPrivilege(privilege: "page_delete", appId: 1);
         Page page = CreateRandomPage(user: user);
@@ -60,7 +58,7 @@ public partial class PageProcessingServiceTests
         // Then
         pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.DeleteAsync(pageId: page.Id), times: Times.Once);
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 
     [Fact]
@@ -81,8 +79,6 @@ public partial class PageProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         Page page = CreateRandomPage();
         currentUser = TestUsers.WithoutPrivileges();
@@ -98,6 +94,6 @@ public partial class PageProcessingServiceTests
             .ThrowAsync<SecurityException>();
 
         pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 }

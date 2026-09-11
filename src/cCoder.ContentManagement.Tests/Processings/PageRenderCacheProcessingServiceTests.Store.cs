@@ -55,8 +55,7 @@ public sealed partial class PageRenderCacheProcessingServiceTests
         }
 
         PageRenderCacheProcessingService service = new(
-            service: cacheService.Object,
-            authorizationManager: Mock.Of<IAuthorizationManager>());
+            service: cacheService.Object);
 
         // When
         PageRenderCache result = await service.StorePageRenderCacheAsync(

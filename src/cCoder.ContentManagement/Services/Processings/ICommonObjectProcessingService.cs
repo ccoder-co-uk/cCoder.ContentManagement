@@ -13,6 +13,8 @@ internal interface ICommonObjectProcessingService
 
     IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false);
 
+    CommonObject[] DeserializeCommonObjects(object payload);
+
     ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject);
 
     ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);

@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models;
+using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
@@ -28,14 +29,12 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class AppServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
+    public async Task ShouldDelegateSingleAppRowToBrokerForUpdateAppOperationAsync()
     {
         // Given
         App app = CreateRandomApp(id: 5);
 
         CmsDataModels.App submitted = null;
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"));
 
         appBrokerMock
             .Setup(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<CmsDataModels.App>()))
@@ -43,7 +42,7 @@ public partial class AppServiceTests
             .ReturnsAsync(valueFunction: (CmsDataModels.App value) => value);
 
         // When
-        App result = await appService.UpdateAppAsync(updatedApp: app);
+        App result = (await appService.UpdateAppOperationAsync(updatedAppOperation: new AppOperation { App = app })).App;
 
         // Then
 
@@ -91,22 +90,21 @@ public partial class AppServiceTests
 
         appBrokerMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<CmsDataModels.App>()), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"), times: Times.Once);
         authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
+    public async Task ShouldTranslateSecurityExceptionFromBrokerForUpdateAppOperationAsync()
     {
         // Given
         App app = CreateRandomApp(id: 5);
 
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"))
+        appBrokerMock
+            .Setup(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<App>()))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await appService.UpdateAppAsync(updatedApp: app);
+        Func<Task> action = async () => await appService.UpdateAppOperationAsync(updatedAppOperation: new AppOperation { App = app });
 
         // Then
 
@@ -114,8 +112,11 @@ public partial class AppServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
+        appBrokerMock.Verify(
+            expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<App>()),
+            times: Times.Once);
+
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_update"), times: Times.Once);
         authorizationManagerMock.VerifyNoOtherCalls();
     }
 

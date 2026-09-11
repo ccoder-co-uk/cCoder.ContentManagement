@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models;
+using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
@@ -28,7 +29,7 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class AppServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForAddAsync()
+    public async Task ShouldDelegateSingleAppRowToBrokerForAddAppOperationAsync()
     {
         // Given
         App app = CreateRandomApp(id: 0);
@@ -48,18 +49,12 @@ public partial class AppServiceTests
         CmsDataModels.App submitted = null;
 
         appBrokerMock
-            .Setup(expression: x => x.GetAllAppsIgnoringFilters())
-            .Returns(value: new[] { CreateRandomApp() }.AsQueryable());
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"));
-
-        appBrokerMock
             .Setup(expression: x => x.AddAppAsync(newApp: It.IsAny<CmsDataModels.App>()))
             .Callback<CmsDataModels.App>(action: candidate => submitted = candidate)
             .ReturnsAsync(valueFunction: (CmsDataModels.App value) => value);
 
         // When
-        App result = await appService.AddAppAsync(newApp: app);
+        App result = (await appService.AddAppOperationAsync(newAppOperation: new AppOperation { App = app })).App;
 
         // Then
 
@@ -110,31 +105,22 @@ expression: x => x.AddAppAsync(newApp: It.IsAny<CmsDataModels.App>()),
 times: Times.Once
         );
 
-        appBrokerMock.Verify(
-            expression: x => x.GetAllAppsIgnoringFilters(),
-            times: Times.Once);
-
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"), times: Times.Once);
         authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
+    public async Task ShouldTranslateSecurityExceptionFromBrokerForAddAppOperationAsync()
     {
         // Given
         App app = CreateRandomApp(id: 0);
 
         appBrokerMock
-            .Setup(expression: x => x.GetAllAppsIgnoringFilters())
-            .Returns(value: new[] { CreateRandomApp() }.AsQueryable());
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"))
+            .Setup(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         // When
-        Func<Task> action = async () => await appService.AddAppAsync(newApp: app);
+        Func<Task> action = async () => await appService.AddAppOperationAsync(newAppOperation: new AppOperation { App = app });
 
         // Then
 
@@ -143,32 +129,25 @@ times: Times.Once
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         appBrokerMock.Verify(
-            expression: x => x.GetAllAppsIgnoringFilters(),
+            expression: x => x.AddAppAsync(newApp: It.IsAny<App>()),
             times: Times.Once);
 
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: It.Is<int?>(match: appId => appId == null), privilege: "App_create"), times: Times.Once);
         authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task ShouldAllowFirstAppWithoutExistingAppPrivilegeForAddAsync()
+    public async Task ShouldPreserveAppOnAddAppOperationAsync()
     {
         // Given
         App app = CreateRandomApp(id: 0);
-
-        appBrokerMock
-            .Setup(expression: x => x.GetAllAppsIgnoringFilters())
-            .Returns(
-                value: Array.Empty<App>()
-                    .AsQueryable());
 
         appBrokerMock
             .Setup(expression: x => x.AddAppAsync(newApp: It.IsAny<App>()))
             .ReturnsAsync(value: app);
 
         // When
-        App result = await appService.AddAppAsync(newApp: app);
+        App result = (await appService.AddAppOperationAsync(newAppOperation: new AppOperation { App = app })).App;
 
         // Then
         result.Should()

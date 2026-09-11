@@ -23,17 +23,11 @@ public partial class PageRoleImportLookupProcessingServiceTests
         Page page = CreatePage(appId: appId, path: path);
         Role role = CreateRole(appId: appId, roleName: roleName);
 
-        pageBrokerMock
-            .Setup(
-                expression: broker =>
-                    broker.GetAllPagesIgnoringFilters())
-            .Returns(value: new[] { page }.AsQueryable());
-
-        roleBrokerMock
-            .Setup(
-                expression: broker =>
-                    broker.GetAllRolesIgnoringFilters())
-            .Returns(value: new[] { role }.AsQueryable());
+        pageRoleServiceMock.Setup(expression: service => service.ResolvePageRole(
+                appId: appId,
+                path: path,
+                roleName: roleName))
+            .Returns(value: new PageRole { PageId = page.Id, RoleId = role.Id });
 
         // When
         PageRole result = processingService.ResolvePageRole(
@@ -48,8 +42,7 @@ public partial class PageRoleImportLookupProcessingServiceTests
         result.RoleId.Should()
             .Be(expected: role.Id);
 
-        pageBrokerMock.VerifyAll();
-        roleBrokerMock.VerifyAll();
+        pageRoleServiceMock.VerifyAll();
     }
 
     [Fact]
@@ -62,17 +55,11 @@ public partial class PageRoleImportLookupProcessingServiceTests
         Page page = CreatePage(appId: appId, path: path);
         Role role = CreateRole(appId: appId, roleName: roleName);
 
-        pageBrokerMock
-            .Setup(
-                expression: broker =>
-                    broker.GetAllPagesIgnoringFilters())
-            .Returns(value: new[] { page }.AsQueryable());
-
-        roleBrokerMock
-            .Setup(
-                expression: broker =>
-                    broker.GetAllRolesIgnoringFilters())
-            .Returns(value: new[] { role }.AsQueryable());
+        pageRoleServiceMock.Setup(expression: service => service.ResolvePageRole(
+                appId: appId,
+                path: path,
+                roleName: roleName))
+            .Returns(value: new PageRole { PageId = page.Id, RoleId = role.Id });
 
         // When
         PageRole result = processingService.ResolvePageRole(
@@ -87,8 +74,7 @@ public partial class PageRoleImportLookupProcessingServiceTests
         result.RoleId.Should()
             .Be(expected: role.Id);
 
-        pageBrokerMock.VerifyAll();
-        roleBrokerMock.VerifyAll();
+        pageRoleServiceMock.VerifyAll();
     }
 
     [Fact]
@@ -108,8 +94,7 @@ public partial class PageRoleImportLookupProcessingServiceTests
         action.Should()
             .Throw<ContentManagementValidationException>();
 
-        pageBrokerMock.VerifyNoOtherCalls();
-        roleBrokerMock.VerifyNoOtherCalls();
+        pageRoleServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -119,10 +104,11 @@ public partial class PageRoleImportLookupProcessingServiceTests
         InvalidOperationException dependencyException = new(
             message: "Role query failed.");
 
-        roleBrokerMock
-            .Setup(
-                expression: broker =>
-                    broker.GetAllRolesIgnoringFilters())
+        pageRoleServiceMock
+            .Setup(expression: service => service.ResolvePageRole(
+                appId: It.IsAny<int>(),
+                path: It.IsAny<string>(),
+                roleName: It.IsAny<string>()))
             .Throws(exception: dependencyException);
 
         // When
@@ -136,8 +122,7 @@ public partial class PageRoleImportLookupProcessingServiceTests
         action.Should()
             .Throw<ContentManagementDependencyException>();
 
-        roleBrokerMock.VerifyAll();
-        pageBrokerMock.VerifyNoOtherCalls();
+        pageRoleServiceMock.VerifyAll();
     }
 
     [Fact]
@@ -147,10 +132,11 @@ public partial class PageRoleImportLookupProcessingServiceTests
         Exception serviceException = new(
             message: "Unexpected role query failure.");
 
-        roleBrokerMock
-            .Setup(
-                expression: broker =>
-                    broker.GetAllRolesIgnoringFilters())
+        pageRoleServiceMock
+            .Setup(expression: service => service.ResolvePageRole(
+                appId: It.IsAny<int>(),
+                path: It.IsAny<string>(),
+                roleName: It.IsAny<string>()))
             .Throws(exception: serviceException);
 
         // When
@@ -164,7 +150,6 @@ public partial class PageRoleImportLookupProcessingServiceTests
         action.Should()
             .Throw<ContentManagementServiceException>();
 
-        roleBrokerMock.VerifyAll();
-        pageBrokerMock.VerifyNoOtherCalls();
+        pageRoleServiceMock.VerifyAll();
     }
 }

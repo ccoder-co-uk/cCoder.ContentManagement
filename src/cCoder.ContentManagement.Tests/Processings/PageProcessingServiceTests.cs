@@ -27,14 +27,19 @@ public partial class PageProcessingServiceTests
 {
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPageService> pageServiceMock = new();
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
+    private Mock<IPageService> authorizationManagerMock => pageServiceMock;
     private readonly PageProcessingService pageProcessingService;
 
     public PageProcessingServiceTests()
     {
-        authorizationManagerMock
-            .Setup(expression: manager => manager.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
+        pageServiceMock
+            .Setup(expression: manager => manager.GetCurrentUserRoleIds(
+                appId: It.IsAny<int>()))
+            .Returns(valueFunction: (int appId) =>
+                (currentUser?.Roles ?? [])
+                    .Where(predicate: userRole => userRole.Role?.AppId == appId)
+                    .Select(selector: userRole => userRole.RoleId)
+                    .ToArray());
 
         authorizationManagerMock
             .Setup(expression: manager => manager.IsAdminOfApp(
@@ -43,14 +48,19 @@ public partial class PageProcessingServiceTests
                 currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
         authorizationManagerMock
-            .Setup(expression: manager => manager.UserCanPageAuthorization(
-                pageAuthorization: It.IsAny<PageAuthorization>()))
-            .Returns(valueFunction: (PageAuthorization authorization) =>
-                TestUsers.UserCanPage(authorization: authorization));
+            .Setup(expression: manager => manager.UserCanPage(
+                page: It.IsAny<Page>(),
+                privilege: It.IsAny<string>()))
+            .Returns(valueFunction: (Page page, string privilege) =>
+                TestUsers.UserCanPage(authorization: new PageAuthorization
+                {
+                    Page = page,
+                    User = currentUser,
+                    Privilege = privilege
+                }));
 
         pageProcessingService = new PageProcessingService(
-service: pageServiceMock.Object,
-authorizationManager: authorizationManagerMock.Object
+service: pageServiceMock.Object
         );
     }
 
@@ -98,5 +108,24 @@ authorizationManager: authorizationManagerMock.Object
                 ];
 
         return page;
+    }
+
+    private void VerifyNoOtherPageServiceCalls()
+    {
+        pageServiceMock.Verify(
+            expression: service => service.GetCurrentUserRoleIds(appId: It.IsAny<int>()),
+            times: Times.AtMostOnce());
+
+        pageServiceMock.Verify(
+            expression: service => service.IsAdminOfApp(appId: It.IsAny<int>()),
+            times: Times.AtMostOnce());
+
+        pageServiceMock.Verify(
+            expression: service => service.UserCanPage(
+                page: It.IsAny<Page>(),
+                privilege: It.IsAny<string>()),
+            times: Times.AtMostOnce());
+
+        pageServiceMock.VerifyNoOtherCalls();
     }
 }

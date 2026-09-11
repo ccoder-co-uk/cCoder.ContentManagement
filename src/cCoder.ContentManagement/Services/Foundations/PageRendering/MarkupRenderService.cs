@@ -3,112 +3,40 @@
 // ---------------------------------------------------------------
 
 using System.Text;
-using System.Text.RegularExpressions;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Services.Processings.PageRendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class MarkupRenderService(
-    IRenderBroker renderBroker) : IMarkupRenderService
+    IComponentReaderBroker componentReaderBroker,
+    IScriptReaderBroker scriptReaderBroker,
+    IRenderFileContentBroker renderFileContentBroker,
+    IJsonBroker jsonBroker,
+    ISystemTextJsonBroker systemTextJsonBroker,
+    IWorkflowExecutionBroker workflowExecutionBroker,
+    IRegularExpressionBroker regularExpressionBroker)
+        : IMarkupRenderService
 {
-    private static readonly Regex elementRegex = new(
-        pattern: "<(?<tag>script|style)\\b",
-        options: RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    private const string ElementPattern = "<(?<tag>script|style)\\b";
 
-    private static readonly Regex nonceRegex = new(
-        pattern: "\\s+nonce\\s*=\\s*(?:'[^']*'|\"[^\"]*\"|[^\\s>]+)",
-        options: RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    private const string NoncePattern =
+        "\\s+nonce\\s*=\\s*(?:'[^']*'|\"[^\"]*\"|[^\\s>]+)";
 
     private const string NonceAttribute =
         "nonce='" + ContentSecurityPolicyNonceContract.Placeholder + "'";
 
-    public string RenderRenderSessionReplacementDependencies(
-        string key,
-        string content,
-        RenderSession renderSession,
-        IReadOnlyCollection<ReplacementDependency> replacements,
-        bool allowContentTags = true)
-        =>
-        TryCatch(operation: () =>
+    public string MarkContentSecurityPolicyNonce(string markup) =>
+        TryCatch<string>(operation: () =>
     {
-        ValidateRenderRenderSessionReplacementDependencies(
-            inputs: [key, content, renderSession, replacements, allowContentTags]);
-
-        if (string.IsNullOrEmpty(value: content))
-        {
-            return string.Empty;
-        }
-
-        TagHandlingOperation operation = HandleTags(
-            operation: new TagHandlingOperation
-            {
-                Session = renderSession,
-                ResourceKey = key,
-                Content = content,
-                AllowContentTags = allowContentTags,
-                Editable = renderSession.Request.Edit,
-                Replacements = replacements,
-                Fragments = []
-            });
-
-        return operation.Content;
+        ValidateMarkContentSecurityPolicyNonce(inputs: [markup]);
+        return MarkContentSecurityPolicyNonceCore(markup: markup);
     });
 
-    private TagHandlingOperation HandleTags(TagHandlingOperation operation)
-    {
-        ITagHandlingProcessingService[] handlers =
-        [
-            .. renderBroker.GetTagHandlers()
-        ];
-
-        HashSet<string> observedContent = new(
-            comparer: StringComparer.Ordinal);
-
-        for (int pass = 0; pass < 64; pass++)
-        {
-            string contentBeforePass = operation.Content;
-
-            if (!observedContent.Add(item: contentBeforePass))
-            {
-                throw new InvalidOperationException(
-                    message: "Tag rendering entered a replacement cycle.");
-            }
-
-            foreach (ITagHandlingProcessingService handler in handlers)
-            {
-                operation = handler.HandleTagHandlingOperation(
-                    operation: operation);
-            }
-
-            foreach (TagHandlingFragment fragment in operation.Fragments)
-            {
-                TagHandlingOperation renderedFragment = HandleTags(
-                    operation: fragment.Operation);
-
-                operation.Content = operation.Content.Replace(
-                    oldValue: fragment.Token,
-                    newValue: renderedFragment.Content);
-            }
-
-            operation.Fragments.Clear();
-
-            if (string.Equals(
-                a: contentBeforePass,
-                b: operation.Content,
-                comparisonType: StringComparison.Ordinal))
-            {
-                return operation;
-            }
-        }
-
-        throw new InvalidOperationException(
-            message: "Tag rendering exceeded the maximum replacement passes.");
-    }
-
-    internal static string MarkContentSecurityPolicyNonce(string markup)
+    private string MarkContentSecurityPolicyNonceCore(string markup)
     {
         if (string.IsNullOrEmpty(value: markup))
         {
@@ -172,10 +100,11 @@ internal sealed partial class MarkupRenderService(
         return result.ToString();
     }
 
-    private static string MarkOpeningTag(string openingTag)
+    private string MarkOpeningTag(string openingTag)
     {
-        string withoutNonce = nonceRegex.Replace(
+        string withoutNonce = regularExpressionBroker.Replace(
             input: openingTag,
+            pattern: NoncePattern,
             replacement: string.Empty);
 
         int insertAt = withoutNonce.EndsWith(
@@ -189,25 +118,26 @@ internal sealed partial class MarkupRenderService(
             value: " " + NonceAttribute);
     }
 
-    private static bool TryFindElement(
+    private bool TryFindElement(
         string markup,
         int startIndex,
         out string tagName,
         out int openingStart)
     {
-        Match match = elementRegex.Match(
+        bool success = regularExpressionBroker.TryMatch(
             input: markup,
-            startat: startIndex);
+            pattern: ElementPattern,
+            startIndex: startIndex,
+            index: out int matchIndex,
+            groups: out IReadOnlyDictionary<string, string> groups);
 
-        tagName = match.Success
-            ? match.Groups["tag"].Value
+        tagName = success
+            ? groups["tag"]
             : string.Empty;
 
-        openingStart = match.Success
-            ? match.Index
-            : -1;
+        openingStart = success ? matchIndex : -1;
 
-        return match.Success;
+        return success;
     }
 
     private static int FindTagEnd(string markup, int startIndex)

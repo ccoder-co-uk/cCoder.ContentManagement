@@ -8,7 +8,12 @@ namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class MarkupRenderService
 {
-    private static void ValidateRenderRenderSessionReplacementDependencies(
-        object[] inputs) =>
+    private static void ValidateTagHandlingOperation(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateMarkContentSecurityPolicyNonce(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateJsonPropertiesTagHandlingOperationOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 }

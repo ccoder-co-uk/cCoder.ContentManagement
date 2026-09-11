@@ -3,9 +3,8 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.Data.Models;
 using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
@@ -16,8 +15,7 @@ internal interface IPageRoleImportLookupProcessingService
 }
 
 internal sealed partial class PageRoleImportLookupProcessingService(
-    IRoleBroker roleBroker,
-    IPageBroker pageBroker)
+    IPageRoleService service)
         : IPageRoleImportLookupProcessingService
 {
     public PageRole ResolvePageRole(
@@ -31,23 +29,10 @@ internal sealed partial class PageRoleImportLookupProcessingService(
         ValidatePath(value: path, parameterName: "path");
         ValidateText(value: roleName, parameterName: "roleName");
 
-        Role role = roleBroker.GetAllRolesIgnoringFilters()
-            .FirstOrDefault(
-                predicate: existing =>
-                    existing.AppId == appId
-                    && existing.Name == roleName);
-
-        Page page = pageBroker.GetAllPagesIgnoringFilters()
-            .FirstOrDefault(
-                predicate: existing =>
-                    existing.AppId == appId
-                    && existing.Path == path);
-
-        return new PageRole
-        {
-            PageId = page?.Id ?? 0,
-            RoleId = role?.Id ?? Guid.Empty
-        };
+        return service.ResolvePageRole(
+            appId: appId,
+            path: path,
+            roleName: roleName);
     });
 
     private static void ValidateAppId(int appId, string parameterName) =>

@@ -42,8 +42,6 @@ public partial class PageProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
         Page page = CreateRandomPage(user: actor);
@@ -80,7 +78,7 @@ public partial class PageProcessingServiceTests
 
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.UpdatePageAsync(updatedPage: It.Is<Page>(match: updated => updated.Id == page.Id && updated.Path == string.Empty)), times: Times.Once);
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 
     [Fact]
@@ -101,8 +99,6 @@ public partial class PageProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithoutPrivileges();
 
@@ -116,7 +112,7 @@ public partial class PageProcessingServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 
 }

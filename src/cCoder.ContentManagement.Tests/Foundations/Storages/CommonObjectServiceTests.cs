@@ -14,6 +14,8 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
@@ -37,7 +39,10 @@ public partial class CommonObjectServiceTests
 
         commonObjectService = new CommonObjectService(
 commonObjectBroker: commonObjectBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object
+authorizationManager: authorizationManagerMock.Object,
+cache: Mock.Of<ICommonObjectReaderBroker>(),
+jsonBroker: Mock.Of<IJsonBroker>(),
+systemTextJsonBroker: Mock.Of<ISystemTextJsonBroker>()
         );
     }
 

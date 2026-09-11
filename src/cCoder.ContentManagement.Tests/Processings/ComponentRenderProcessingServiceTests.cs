@@ -16,8 +16,8 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Dependencies;
-using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
 using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
@@ -36,37 +36,33 @@ public partial class ComponentRenderProcessingServiceTests
 {
     private readonly Mock<IMetadataCache> metadataCacheMock = new();
     private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
-    private readonly Mock<IRenderFileContentService> renderFileContentServiceMock = new();
+    private readonly Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new();
 
     private ComponentRenderProcessingService CreateSut(string workflowBaseUrl)
     {
-        Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
-
-        serviceProviderBrokerMock
-            .Setup(expression: broker =>
-                broker.GetRequiredService<IRenderFileContentService>(
-                    name: "RenderFileContent"))
-            .Returns(value: renderFileContentServiceMock.Object);
-
-        ComponentRenderService componentRenderService =
-            new(
-                serviceProviderBroker: serviceProviderBrokerMock.Object);
-
         RenderConfig config = new()
         {
             SslPort = 443,
             WorkflowServiceUrl = workflowBaseUrl,
         };
 
-        return new ComponentRenderProcessingService(
-            metadataCache: metadataCacheMock.Object,
-            objectCache: commonObjectCacheMock.Object,
+        ComponentRenderService componentRenderService = new(
+            metadataReaderBroker: metadataCacheMock.Object,
+            commonObjectReaderBroker: commonObjectCacheMock.Object,
             jsonBroker: new JsonBroker(),
-            config: config,
-            componentRenderService: componentRenderService,
             workflowExecutionBroker: new WorkflowExecutionBroker(
                 workflowExecutionDependency:
-                    new WorkflowExecutionDependency()));
+                    new WorkflowExecutionDependency()),
+            regularExpressionBroker: new RegularExpressionBroker(),
+            renderFileContentBroker: renderFileContentBrokerMock.Object,
+            appBroker: Mock.Of<IAppBroker>(),
+            componentBroker: Mock.Of<IComponentBroker>(),
+            resourceBroker: Mock.Of<IResourceBroker>(),
+            scriptBroker: Mock.Of<IScriptBroker>());
+
+        return new ComponentRenderProcessingService(
+            componentRenderService: componentRenderService,
+            config: config);
     }
 
     private static (RenderApp app, RenderUser user, RenderComponent component, RenderComponentParams renderParams) CreateComponentRenderContext()

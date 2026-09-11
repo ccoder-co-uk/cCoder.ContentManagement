@@ -27,8 +27,8 @@ public partial class CommonObjectProcessingServiceTests
     public async Task ShouldCreateNewVersionAndAddItWhenUserHasPrivilegesForUpdateAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(valueFunction: () => currentUser?.Id);
 
         User actor = TestUsers.WithPrivileges(
 privileges: new[] { "commonobject_create", "commonobject_update" }
@@ -89,8 +89,7 @@ newCommonObject: It.Is<CommonObject>(match: item =>
 times: Times.Once
         );
 
-        commonObjectServiceMock.VerifyNoOtherCalls();
-        commonObjectCacheMock.VerifyNoOtherCalls();
+        VerifyNoOtherCommonObjectServiceCalls();
     }
 
 }

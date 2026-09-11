@@ -26,17 +26,16 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class ResourceProcessingServiceTests
 {
     private readonly Mock<IResourceService> resourceServiceMock = new();
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
+    private Mock<IResourceService> authorizationManagerMock => resourceServiceMock;
     private readonly ResourceProcessingService resourceProcessingService;
 
     public ResourceProcessingServiceTests()
     {
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => TestUsers.WithoutPrivileges());
+        resourceServiceMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(value: TestUsers.WithoutPrivileges().Id);
 
         resourceProcessingService = new ResourceProcessingService(
-service: resourceServiceMock.Object,
-authorizationManager: authorizationManagerMock.Object
+service: resourceServiceMock.Object
         );
     }
 

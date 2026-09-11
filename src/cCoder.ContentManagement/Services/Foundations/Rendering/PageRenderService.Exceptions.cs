@@ -8,42 +8,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class PageRenderService
 {
-    private static TResult TryCatch<TResult>(
-        Func<TResult> operation)
+    private static TResult TryCatch<TResult>(Func<TResult> operation)
     {
-        try
-        {
-            return operation();
-        }
-        catch (ContentManagementValidationException innerException)
-        {
-            throw new ContentManagementValidationException(
-                innerException: innerException);
-        }
-        catch (ContentManagementDependencyException innerException)
-        {
-            throw new ContentManagementDependencyException(
-                innerException: innerException);
-        }
-        catch (System.ComponentModel.DataAnnotations.ValidationException innerException)
-        {
-            throw new ContentManagementValidationException(
-                innerException: innerException);
-        }
-        catch (ArgumentException innerException)
-        {
-            throw new ContentManagementValidationException(
-                innerException: innerException);
-        }
-        catch (InvalidOperationException innerException)
-        {
-            throw new ContentManagementDependencyException(
-                innerException: innerException);
-        }
-        catch (Exception innerException)
-        {
-            throw new ContentManagementServiceException(
-                innerException: innerException);
-        }
+        try { return operation(); }
+        catch (ContentManagementValidationException innerException) { throw new ContentManagementValidationException(innerException: innerException); }
+        catch (ContentManagementDependencyException innerException) { throw new ContentManagementDependencyException(innerException: innerException); }
+        catch (Exception innerException) { throw new ContentManagementServiceException(innerException: innerException); }
     }
 }

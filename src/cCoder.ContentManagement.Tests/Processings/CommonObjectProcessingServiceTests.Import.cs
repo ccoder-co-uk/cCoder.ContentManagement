@@ -43,8 +43,8 @@ public partial class CommonObjectProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(valueFunction: () => currentUser?.Id);
 
         User actor = TestUsers.WithPrivilege(privilege: "commonobject_create");
 
@@ -83,9 +83,8 @@ type: "Core/Other"
             .Be(expected: 1);
 
         commonObjectServiceMock.Verify(expression: x => x.AddCommonObjectAsync(newCommonObject: commonObject), times: Times.Once);
-        commonObjectServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherCommonObjectServiceCalls();
         commonObjectCacheMock.Verify(expression: x => x.GetLatestSet(), times: Times.Once);
-        commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -107,8 +106,8 @@ type: "Core/Other"
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(valueFunction: () => currentUser?.Id);
 
         User actor = TestUsers.WithPrivileges(privileges: ["commonobject_create", "commonobject_update"]);
         CommonObject dbObject = CreateRandomCommonObject(type: "Core/Other");
@@ -169,9 +168,8 @@ type: "Core/Other"
 
         commonObjectServiceMock.Verify(expression: x => x.GetAllCommonObject(), times: Times.Exactly(callCount: 2));
         commonObjectServiceMock.Verify(expression: x => x.AddCommonObjectAsync(newCommonObject: incoming), times: Times.Once);
-        commonObjectServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherCommonObjectServiceCalls();
         commonObjectCacheMock.Verify(expression: x => x.GetLatestSet(), times: Times.Once);
-        commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -192,8 +190,8 @@ type: "Core/Other"
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(valueFunction: () => currentUser?.Id);
 
         CommonObject dbObject = CreateRandomCommonObject(type: "Core/Other");
         CommonObject incoming = CreateRandomCommonObject(type: "Core/Other");
@@ -230,9 +228,8 @@ type: "Core/Other"
         results.Should()
             .BeEmpty();
 
-        commonObjectServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherCommonObjectServiceCalls();
         commonObjectCacheMock.Verify(expression: x => x.GetLatestSet(), times: Times.Once);
-        commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
 }

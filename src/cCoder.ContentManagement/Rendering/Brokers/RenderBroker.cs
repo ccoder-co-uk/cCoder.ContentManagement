@@ -2,14 +2,15 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Services.Processings.PageRendering;
+using cCoder.ContentManagement.Exposures;
+using cCoder.ContentManagement.Models.PageRendering;
 
 namespace cCoder.ContentManagement.Rendering.Brokers;
 
 internal sealed class RenderBroker(
-    IEnumerable<ITagHandlingProcessingService> tagHandlers)
+    IRenderSessionManager renderSessionManager)
         : IRenderBroker
 {
-    public IEnumerable<ITagHandlingProcessingService> GetTagHandlers() =>
-        tagHandlers;
+    public RenderSession RenderRenderSession(RenderSession renderSession) =>
+        renderSessionManager.RenderRenderSession(renderSession: renderSession);
 }

@@ -24,8 +24,6 @@ public partial class PageProcessingServiceTests
     public async Task ShouldDeleteEachPageWhenUserIsAppAdminForDeleteAllAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
         Page page = CreateRandomPage(user: actor);
@@ -43,6 +41,6 @@ public partial class PageProcessingServiceTests
         // Then
         pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.DeleteAsync(pageId: page.Id), times: Times.Once);
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 }

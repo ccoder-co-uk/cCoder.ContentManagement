@@ -3,8 +3,11 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Services.Processings.PageRendering;
+using cCoder.ContentManagement.Rendering.Services.Foundations;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -20,6 +23,14 @@ public sealed partial class ScriptTagHandlingProcessingServiceTests
         RenderSession session = new()
         {
             Request = new RenderRequest { AppId = 7 },
+            Target = new RenderTarget
+            {
+                Scope = RenderScope.Component,
+                ResourceKey = "Default",
+                HeaderMarkup = string.Empty,
+                BodyMarkup = "[script[Widgets.Dialog]][script[Widgets.Dialog]]",
+                AllowBodyContentTags = true
+            },
             ScriptsByName = new Dictionary<string, PageRenderScript>(StringComparer.OrdinalIgnoreCase)
             {
                 ["Widgets.Dialog"] = new PageRenderScript
@@ -37,31 +48,34 @@ public sealed partial class ScriptTagHandlingProcessingServiceTests
             EmittedScriptNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         };
 
-        ScriptTagHandlingProcessingService service = new(
-            scriptReaderBroker: Mock.Of<IScriptReaderBroker>());
-
-        TagHandlingOperation operation = new()
-        {
-            Session = session,
-            Content = "[script[Widgets.Dialog]][script[Widgets.Dialog]]"
-        };
+        MarkupRenderProcessingService service = new(
+            markupRenderService: new MarkupRenderService(
+                componentReaderBroker: Mock.Of<IComponentReaderBroker>(),
+                scriptReaderBroker: Mock.Of<IScriptReaderBroker>(),
+                renderFileContentBroker: Mock.Of<IRenderFileContentBroker>(),
+                jsonBroker: Mock.Of<IJsonBroker>(),
+                systemTextJsonBroker: new SystemTextJsonBroker(),
+                workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
+                regularExpressionBroker: new RegularExpressionBroker()));
 
         // When
-        TagHandlingOperation duplicateResult = service.HandleTagHandlingOperation(tagHandlingOperation: operation);
-        TagHandlingOperation nestedResult = service.HandleTagHandlingOperation(tagHandlingOperation: duplicateResult);
+        RenderSession nestedSession = service.RenderRenderSession(
+            renderSession: session);
 
-        TagHandlingOperation repeatedResult = service.HandleTagHandlingOperation(
-            tagHandlingOperation: new TagHandlingOperation
-            {
-                Session = session,
-                Content = "[script[Widgets.Dialog]][script[Widgets.Helper]]"
-            });
+        string nestedResult = nestedSession.Output.BodyMarkup;
+
+        session.Target.BodyMarkup =
+            "[script[Widgets.Dialog]][script[Widgets.Helper]]";
+
+        string repeatedResult = service.RenderRenderSession(
+            renderSession: session)
+            .Output.BodyMarkup;
 
         // Then
-        nestedResult.Content.Should()
+        nestedResult.Should()
             .Be(expected: "class Dialog { }class Helper { }");
 
-        repeatedResult.Content.Should()
+        repeatedResult.Should()
             .BeEmpty();
     }
 }

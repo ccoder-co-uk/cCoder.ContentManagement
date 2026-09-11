@@ -6,13 +6,13 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
-using cCoder.ContentManagement.Rendering.Services.Orchestrations;
 using cCoder.ContentManagement.Services;
-using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
 using cCoder.ContentManagement.Services.Foundations;
+using cCoder.ContentManagement.Models.Rendering;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -20,6 +20,19 @@ internal sealed partial class PageRenderProcessingService(
     IPageRenderService pageRenderService,
     ContentManagementConfiguration config) : IPageRenderProcessingService
 {
+    public string SerializeRuntimeValue(object value) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateSerializeRuntimeValue(inputs: [value]);
+
+        return pageRenderService.SerializePageRenderFoundationOperation(
+            pageRenderFoundationOperation: new PageRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Json;
+    });
+
     public PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation pageRenderOperation) =>
         TryCatch<PageRenderOperation>(operation: () =>
@@ -64,14 +77,13 @@ internal sealed partial class PageRenderProcessingService(
                 headerOnly: headerOnly,
                 cacheTemplate: cacheTemplate);
 
-        RenderSession renderedSession =
-            pageRenderService.Execute<
-                IRenderOrchestrationService,
-                RenderSession>(
-                    name: "Render",
-                    operation: service =>
-                        service.RenderRenderSession(
-                            session: session));
+        RenderSession renderedSession = pageRenderService
+            .RenderPageRenderFoundationOperation(
+                pageRenderFoundationOperation: new PageRenderFoundationOperation
+                {
+                    RenderSession = session
+                })
+            .RenderSession;
 
         return new PageRenderResult
         {

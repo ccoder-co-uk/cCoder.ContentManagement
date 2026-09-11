@@ -6,17 +6,16 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
 
 using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class ResourceProcessingService(IResourceService service, IAuthorizationManager authorizationManager) : IResourceProcessingService
+internal partial class ResourceProcessingService(IResourceService service) : IResourceProcessingService
 {
-    private User GetCurrentUser() =>
-        authorizationManager.GetCurrentUser();
+    private string GetCurrentUserId() =>
+        service.GetCurrentUserId();
 
     public Resource GetResource(int resourceId) =>
         TryCatch<Resource>(operation: () =>
@@ -40,9 +39,9 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
         ValidateResourceOnAdd(inputs: [newResource]);
         ValidateResource(resource: newResource, parameterName: "entity");
         newResource.CreatedOn = DateTimeOffset.Now;
-        newResource.CreatedBy = GetCurrentUser().Id;
+        newResource.CreatedBy = GetCurrentUserId();
         newResource.LastUpdated = newResource.CreatedOn;
-        newResource.LastUpdatedBy = GetCurrentUser().Id;
+        newResource.LastUpdatedBy = GetCurrentUserId();
         return service.AddResourceAsync(newResource: newResource);
 
     }, isValueTask: true);
@@ -53,7 +52,7 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
         ValidateResourceOnUpdate(inputs: [updatedResource]);
         ValidateResource(resource: updatedResource, parameterName: "entity");
         updatedResource.LastUpdated = DateTimeOffset.Now;
-        updatedResource.LastUpdatedBy = GetCurrentUser().Id;
+        updatedResource.LastUpdatedBy = GetCurrentUserId();
         return service.UpdateResourceAsync(updatedResource: updatedResource);
 
     }, isValueTask: true);
@@ -185,9 +184,9 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
     {
         ValidateResource(resource: newResource, parameterName: "entity");
         newResource.CreatedOn = DateTimeOffset.Now;
-        newResource.CreatedBy = GetCurrentUser().Id;
+        newResource.CreatedBy = GetCurrentUserId();
         newResource.LastUpdated = newResource.CreatedOn;
-        newResource.LastUpdatedBy = GetCurrentUser().Id;
+        newResource.LastUpdatedBy = GetCurrentUserId();
         return service.AddResourceAsync(newResource: newResource);
     }
 
@@ -233,7 +232,7 @@ internal partial class ResourceProcessingService(IResourceService service, IAuth
     {
         ValidateResource(resource: updatedResource, parameterName: "entity");
         updatedResource.LastUpdated = DateTimeOffset.Now;
-        updatedResource.LastUpdatedBy = GetCurrentUser().Id;
+        updatedResource.LastUpdatedBy = GetCurrentUserId();
         return service.UpdateResourceAsync(updatedResource: updatedResource);
     }
 }

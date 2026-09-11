@@ -41,8 +41,6 @@ public partial class PageProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
 
@@ -95,7 +93,7 @@ times: Times.Once
         );
 
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 
     [Fact]
@@ -116,8 +114,6 @@ times: Times.Once
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         User actor = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
 
@@ -175,7 +171,7 @@ expression: x => x.AddPageAsync(newPage: It.Is<Page>(match: p => p.Path == "pare
 times: Times.Once
         );
 
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 
     [Fact]
@@ -196,8 +192,6 @@ times: Times.Once
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         currentUser = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
 
@@ -229,7 +223,7 @@ times: Times.Once
             .WithMessage(expectedWildcardPattern: "A page already exists for app 1 with path 'About'.");
 
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 
     [Fact]
@@ -250,8 +244,6 @@ times: Times.Once
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         currentUser = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
 
@@ -299,7 +291,7 @@ times: Times.Once
 expression: x => x.AddPageAsync(newPage: It.Is<Page>(match: p => p.AppId == 1 && p.Path == "About")),
 times: Times.Once);
 
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 
     [Fact]
@@ -320,8 +312,6 @@ times: Times.Once);
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
 
         currentUser = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
         UserRole userRole = currentUser.Roles.First();
@@ -379,6 +369,6 @@ times: Times.Once);
 
         pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Exactly(callCount: 2));
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
-        pageServiceMock.VerifyNoOtherCalls();
+        VerifyNoOtherPageServiceCalls();
     }
 }

@@ -26,8 +26,8 @@ public partial class CommonObjectProcessingServiceTests
     public async Task ShouldDeleteEachItemWhenUserHasDeletePrivilegeForDeleteAllAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(valueFunction: () => currentUser?.Id);
 
         User actor = TestUsers.WithPrivilege(privilege: "commonobject_delete");
         CommonObject first = CreateRandomCommonObject();
@@ -48,8 +48,7 @@ public partial class CommonObjectProcessingServiceTests
         // Then
         commonObjectServiceMock.Verify(expression: x => x.DeleteAsync(commonObjectId: first.Id), times: Times.Once);
         commonObjectServiceMock.Verify(expression: x => x.DeleteAsync(commonObjectId: second.Id), times: Times.Once);
-        commonObjectServiceMock.VerifyNoOtherCalls();
-        commonObjectCacheMock.VerifyNoOtherCalls();
+        VerifyNoOtherCommonObjectServiceCalls();
     }
 
 }

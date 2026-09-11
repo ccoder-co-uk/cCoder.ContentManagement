@@ -33,9 +33,7 @@ using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data;
 using cCoder.ContentManagement.Services.Foundations.Serialization;
-using cCoder.ContentManagement.Services.Foundations.ServiceProviders;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
-using cCoder.ContentManagement.Services.Processings.PageRendering;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
@@ -121,34 +119,6 @@ public static partial class IServiceCollectionExtensions
         this IServiceCollection services)
     {
         services.AddTransient<IServiceProviderBroker, ServiceProviderBroker>();
-        services.AddTransient<
-            IServiceProviderExecutionService,
-            ServiceProviderExecutionService>();
-
-        services.AddKeyedTransient<IComponentOrchestrationService>(
-            serviceKey: "Component",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<IComponentOrchestrationService>());
-
-        services.AddKeyedTransient<IAppOrchestrationService>(
-            serviceKey: "App",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<IAppOrchestrationService>());
-
-        services.AddKeyedTransient<IAppUserProcessingService>(
-            serviceKey: "AppUser",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<IAppUserProcessingService>());
-
-        services.AddKeyedTransient<IPageOrchestrationService>(
-            serviceKey: "Page",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<IPageOrchestrationService>());
-
-        services.AddKeyedTransient<IRenderOrchestrationService>(
-            serviceKey: "Render",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<IRenderOrchestrationService>());
 
         services.AddKeyedTransient<IAppService>(
             serviceKey: "AppStorage",
@@ -179,16 +149,6 @@ public static partial class IServiceCollectionExtensions
             serviceKey: "RenderFileContent",
             implementationFactory: (serviceProvider, _) =>
                 serviceProvider.GetRequiredService<IRenderFileContentService>());
-
-        services.AddKeyedTransient<ITemplateOrchestrationService>(
-            serviceKey: "Template",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<ITemplateOrchestrationService>());
-
-        services.AddKeyedTransient<ITemplateContentBroker>(
-            serviceKey: "TemplateContent",
-            implementationFactory: (serviceProvider, _) =>
-                serviceProvider.GetRequiredService<ITemplateContentBroker>());
 
     }
 
@@ -222,6 +182,7 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddBrokers(this IServiceCollection services)
     {
+        services.AddTransient<SystemTextJsonDependency>();
         services.AddTransient<Brokers.Loggings.ILoggingBroker, Brokers.Loggings.LoggingBroker>();
         services.AddHttpContextAccessor();
 
@@ -233,7 +194,6 @@ public static partial class IServiceCollectionExtensions
                         .HttpContext));
         services.AddTransient<IPageAuthorizationBroker, PageAuthorizationBroker>();
         services.AddTransient<IAuthenticatedEventHub, AuthenticatedEventHubDependency>();
-        services.AddTransient<IEventHubBroker, EventHubBroker>();
         services.AddTransient<IAppCultureEventBroker, AppCultureEventBroker>();
         services.AddTransient<IAppEventBroker, AppEventBroker>();
         services.AddTransient<ICommonObjectEventBroker, CommonObjectEventBroker>();
@@ -272,6 +232,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateBroker, TemplateBroker>();
         services.AddTransient<IAuthorizationBroker, AuthorizationBroker>();
         services.AddTransient<IJsonBroker, JsonBroker>();
+        services.AddTransient<ISystemTextJsonBroker, SystemTextJsonBroker>();
+        services.AddTransient<IRegularExpressionBroker, RegularExpressionBroker>();
         services.AddTransient<
             ITemplateContentBroker,
             TemplateContentBroker>();
@@ -283,6 +245,7 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddCoordinations(this IServiceCollection services)
     {
+        services.AddTransient<IAppManagerAggregationService, AppManagerAggregationService>();
         services.AddTransient<IAppRenderableCoordinationService, AppRenderableCoordinationService>();
         services.AddTransient<IAppPageComponentCoordinationService, AppPageComponentCoordinationService>();
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
@@ -301,9 +264,19 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageManager, PageManager>();
         services.AddTransient<IPageRenderCacheManager, PageRenderCacheManager>();
         services.AddTransient<IPageRenderer, PageRenderer>();
+        services.AddTransient<IRenderSessionManager, RenderSessionManager>();
         services.AddTransient<ITemplateManager, TemplateManager>();
         services.AddTransient<ITemplateRenderer, TemplateRenderer>();
-        services.AddTransient<IContentManagementEventHandlers, ContentManagementEventHandlers>();
+        services.AddTransient<IContentManagementEventHandlers, AppSupportingResourcesEventHandlers>();
+        services.AddTransient<IContentManagementEventHandlers, AppRenderableEventHandlers>();
+        services.AddTransient<IContentManagementEventHandlers, AppPageComponentEventHandlers>();
+        services.AddTransient<IContentManagementEventHandlers, PageCoordinationEventHandlers>();
+        services.AddTransient<IContentManagementEventHandlers, PageStructureEventHandlers>();
+        services.AddTransient<IContentManagementEventHandlers, FinalAppDeleteEventHandlers>();
+        services.AddTransient<IContentManagementEventHandlers, AppOwnedRenderCacheEventHandlers>();
+        services.AddTransient<IContentManagementEventHandlers, PageOwnedRenderCacheEventHandlers>();
+        services.AddTransient<IContentManagementEventHandlers, CommonObjectRenderCacheEventHandlers>();
+        services.AddTransient<IContentManagementEventHandlers, PackageImportRenderCacheEventHandlers>();
         services.AddTransient<IPageRenderCacheEventHandlers, PageRenderCacheEventHandlers>();
     }
 
@@ -328,87 +301,11 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IMetadataCacheService, MetadataCacheService>();
         services.AddTransient<ICommonObjectCacheService, CommonObjectCacheService>();
         services.AddTransient<IMarkupRenderService, MarkupRenderService>();
+        services.AddTransient<ICachedPageRenderService, CachedPageRenderService>();
         services.AddTransient<IMarkupRenderProcessingService, MarkupRenderProcessingService>();
         services.AddTransient<IMetadataCacheProcessingService, MetadataCacheProcessingService>();
         services.AddTransient<ICommonObjectCacheProcessingService, CommonObjectCacheProcessingService>();
         services.AddScoped<IRenderBroker, RenderBroker>();
-        services.AddScoped<
-            ICultureLinkTagHandlingProcessingService,
-            CultureLinkTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    ICultureLinkTagHandlingProcessingService>());
-        services.AddScoped<
-            IMetadataTagHandlingProcessingService,
-            MetadataTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IMetadataTagHandlingProcessingService>());
-        services.AddScoped<
-            INavigationTagHandlingProcessingService,
-            NavigationTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    INavigationTagHandlingProcessingService>());
-        services.AddScoped<
-            IContentTagHandlingProcessingService,
-            ContentTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IContentTagHandlingProcessingService>());
-        services.AddScoped<
-            IComponentTagHandlingProcessingService,
-            ComponentTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IComponentTagHandlingProcessingService>());
-        services.AddScoped<
-            IScriptTagHandlingProcessingService,
-            ScriptTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IScriptTagHandlingProcessingService>());
-        services.AddScoped<
-            IStyleTagHandlingProcessingService,
-            StyleTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IStyleTagHandlingProcessingService>());
-        services.AddScoped<
-            IReplacementTagHandlingProcessingService,
-            ReplacementTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IReplacementTagHandlingProcessingService>());
-        services.AddScoped<
-            IDmsTagHandlingProcessingService,
-            DmsTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IDmsTagHandlingProcessingService>());
-        services.AddScoped<
-            IResourceTagHandlingProcessingService,
-            ResourceTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IResourceTagHandlingProcessingService>());
-        services.AddScoped<
-            IExecuteTagHandlingProcessingService,
-            ExecuteTagHandlingProcessingService>();
-        services.AddScoped<ITagHandlingProcessingService>(
-            implementationFactory: serviceProvider =>
-                serviceProvider.GetRequiredService<
-                    IExecuteTagHandlingProcessingService>());
         services.AddTransient<IComponentReaderBroker, ComponentReaderBroker>();
         services.AddTransient<IScriptReaderBroker, ScriptReaderBroker>();
         services.AddTransient<IMetadataReaderBroker, MetadataReaderBroker>();
@@ -419,7 +316,6 @@ public static partial class IServiceCollectionExtensions
     {
         services.AddTransient<IHttpContextService, HttpContextService>();
         services.AddTransient<IPageAuthorizationService, PageAuthorizationService>();
-        services.AddTransient<IEventHandlerService, EventHandlerService>();
         services.AddTransient<IJsonService, JsonService>();
         services.AddTransient<IAuthorizationService, AuthorizationService>();
         services.AddTransient<IAppCultureEventService, AppCultureEventService>();
@@ -464,8 +360,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentManagementMetadataTypeService, ContentManagementMetadataTypeService>();
         services.AddTransient<IRenderFileContentService, RenderFileContentService>();
         services.AddTransient<IComponentRenderService, ComponentRenderService>();
-        services.AddTransient<IPageRenderService, PageRenderService>();
         services.AddTransient<ITemplateRenderService, TemplateRenderService>();
+        services.AddTransient<IPageRenderService, PageRenderService>();
         services.AddTransient<IResourceProvider, CoreResourceBroker>();
         services.AddSingleton<ICommonObjectCache, CommonObjectCacheDependency>();
         services.AddSingleton<MetadataCacheDependency>();
@@ -495,6 +391,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ILayoutOrchestrationService, LayoutOrchestrationService>();
         services.AddTransient<ILayoutManager, LayoutOrchestrationService>();
         services.AddTransient<IMigrationSupportOrchestrationService, MigrationSupportOrchestrationService>();
+        services.AddTransient<IJsonOrchestrationService, JsonOrchestrationService>();
         services.AddTransient<IPackageItemOrchestrationService, PackageItemOrchestrationService>();
         services.AddTransient<IPackageOrchestrationService, PackageOrchestrationService>();
         services.AddTransient<IPageInfoOrchestrationService, PageInfoOrchestrationService>();
@@ -523,7 +420,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppCultureProcessingService, AppCultureProcessingService>();
         services.AddTransient<IAppEventProcessingService, AppEventProcessingService>();
         services.AddTransient<IAppProcessingService, AppProcessingService>();
-        services.AddTransient<IAppUserProcessingService, AppUserProcessingService>();
         services.AddTransient<ICommonObjectEventProcessingService, CommonObjectEventProcessingService>();
         services.AddTransient<ICommonObjectProcessingService, CommonObjectProcessingService>();
         services.AddTransient<IComponentEventProcessingService, ComponentEventProcessingService>();

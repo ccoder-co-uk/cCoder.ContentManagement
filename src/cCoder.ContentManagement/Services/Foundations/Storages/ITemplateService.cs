@@ -8,6 +8,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal interface ITemplateService
 {
+    ValueTask<string> ReadContentAsync(Stream source);
+
+    byte[] ConvertHtmlToPdf(string html);
+
     Template GetTemplate(int templateId, bool ignoreFilters = false);
 
     IQueryable<Template> GetAllTemplate(bool ignoreFilters = false);

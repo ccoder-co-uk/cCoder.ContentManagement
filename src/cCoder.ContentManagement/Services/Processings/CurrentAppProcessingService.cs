@@ -3,18 +3,20 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
+using System.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class CurrentAppProcessingService(
-    IAppService service,
-    HttpContext httpContext = null) : ICurrentAppProcessingService
+    IAppService service) : ICurrentAppProcessingService
 {
     public App ResolveCurrentApp() =>
         TryCatch<App>(operation: () =>
     {
-        string text = httpContext?.Request.Path.Value ?? string.Empty;
+        string text = service.GetRequestPathAppOperation(
+            appOperation: new AppOperation()).Text;
 
         if (text.Contains(value: "/webdav", comparisonType: StringComparison.OrdinalIgnoreCase) && text.Contains(value: "Core/App(", comparisonType: StringComparison.OrdinalIgnoreCase))
         {
@@ -27,14 +29,29 @@ internal sealed partial class CurrentAppProcessingService(
 
                 if (int.TryParse(s: text.Substring(startIndex: num3, length: num2 - num3), result: out var result))
                 {
-                    return service.GetApp(appId: result);
+                    App app = service.GetVisibleAppAppOperation(
+                        appOperation: new AppOperation { AppId = result }).App;
+
+                    if (app != null)
+                    {
+                        return app;
+                    }
+
+                    bool exists = service.GetUnfilteredAppAppOperation(
+                        appOperation: new AppOperation { AppId = result }).App != null;
+
+                    return exists
+                        ? throw new SecurityException(message: "Access Denied!")
+                        : null;
                 }
             }
         }
 
-        string host = httpContext?.Request.Host.Host ?? string.Empty;
+        string host = service.GetRequestHostAppOperation(
+            appOperation: new AppOperation()).Text;
 
-        return service.GetAllApp()
+        return service.GetVisibleAppsAppOperation(
+            appOperation: new AppOperation()).Apps
             .FirstOrDefault(predicate: (App app) => app.Domain == host);
     });
 }

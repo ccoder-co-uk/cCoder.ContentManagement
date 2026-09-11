@@ -29,36 +29,13 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class PageRoleProcessingServiceTests
 {
-    private readonly Mock<IPageBroker> pageBrokerMock = new();
-    private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPageRoleService> pageRoleServiceMock = new();
-    private readonly Mock<IRoleBroker> roleBrokerMock = new();
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
     private readonly PageRoleProcessingService pageRoleProcessingService;
 
     public PageRoleProcessingServiceTests()
     {
-        authorizationManagerMock
-            .Setup(expression: manager => manager.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
-
-        authorizationManagerMock
-            .Setup(expression: manager => manager.IsAdminOfApp(
-                appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) =>
-                currentUser?.IsAdminOfApp(appId: appId) ?? false);
-
-        authorizationManagerMock
-            .Setup(expression: manager => manager.UserCanPageAuthorization(
-                pageAuthorization: It.IsAny<PageAuthorization>()))
-            .Returns(valueFunction: (PageAuthorization authorization) =>
-                TestUsers.UserCanPage(authorization: authorization));
-
         pageRoleProcessingService = new PageRoleProcessingService(
-service: pageRoleServiceMock.Object,
-roleBroker: roleBrokerMock.Object,
-pageBroker: pageBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object
+service: pageRoleServiceMock.Object
         );
     }
 

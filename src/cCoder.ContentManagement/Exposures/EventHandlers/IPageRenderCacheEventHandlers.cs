@@ -14,6 +14,7 @@ internal interface IPageRenderCacheEventHandlers
     ValueTask InvalidateAppAsync(App app);
     ValueTask InvalidateAppAsync(int appId);
     ValueTask InvalidateAllAsync();
+    ValueTask InvalidatePackageAsync(int? appId);
     ValueTask DeleteAppAsync(App deletedApp);
     ValueTask InvalidateAppAsync(AppCulture appCulture);
     ValueTask InvalidateAppAsync(Layout layout);

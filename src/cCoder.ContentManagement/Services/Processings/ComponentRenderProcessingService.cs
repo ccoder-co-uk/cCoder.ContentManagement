@@ -8,25 +8,19 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
-using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Services.Foundations;
-using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Models.RegularExpressions;
+using cCoder.ContentManagement.Models.Rendering;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class ComponentRenderProcessingService(
-    IMetadataReaderBroker metadataCache,
-    ICommonObjectReaderBroker objectCache,
-    IJsonBroker jsonBroker,
-    ContentManagementConfiguration config,
     IComponentRenderService componentRenderService,
-    IWorkflowExecutionBroker workflowExecutionBroker)
+    ContentManagementConfiguration config)
         : IComponentRenderProcessingService
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
@@ -61,11 +55,7 @@ internal partial class ComponentRenderProcessingService(
         ValidateUser(user: user, parameterName: "user");
         culture ??= user.DefaultCultureId;
 
-        App app = componentRenderService
-            .Execute<IAppService, IQueryable<App>>(
-                name: "AppStorage",
-                operation: service => service.GetAllApp(
-                    ignoreFilters: true))
+        App app = GetApps()
             .Where(predicate: existingApp => existingApp.Id == appId)
             .Select(selector: existingApp => new App
             {
@@ -81,27 +71,15 @@ internal partial class ComponentRenderProcessingService(
 
         if (app != null)
         {
-            app.Components = componentRenderService
-                .Execute<IComponentService, IQueryable<Component>>(
-                    name: "ComponentStorage",
-                    operation: service => service.GetAllComponent(
-                        ignoreFilters: true))
+            app.Components = GetComponents()
                 .Where(predicate: existingComponent => existingComponent.AppId == appId)
                 .ToArray();
 
-            app.Resources = componentRenderService
-                .Execute<IResourceService, IQueryable<Resource>>(
-                    name: "ResourceStorage",
-                    operation: service => service.GetAllResource(
-                        ignoreFilters: true))
+            app.Resources = GetResources()
                 .Where(predicate: existingResource => existingResource.AppId == appId)
                 .ToArray();
 
-            app.Scripts = componentRenderService
-                .Execute<IScriptService, IQueryable<Script>>(
-                    name: "ScriptStorage",
-                    operation: service => service.GetAllScript(
-                        ignoreFilters: true))
+            app.Scripts = GetScripts()
                 .Where(predicate: existingScript => existingScript.AppId == appId)
                 .ToArray();
         }
@@ -110,7 +88,7 @@ internal partial class ComponentRenderProcessingService(
             .Where(predicate: existingComponent => existingComponent.AppId == appId)
             .FirstOrDefault(predicate: existingComponent =>
                 existingComponent.Name.Equals(value: name, comparisonType: StringComparison.OrdinalIgnoreCase))
-            ?? objectCache.Get<Component>(key: "component|" + name.ToLower())
+            ?? GetComponent(key: "component|" + name.ToLower())
             ?? throw new InvalidOperationException(message: "Component '" + name + "' was not found.");
 
         ComponentRenderParams renderParams = new()
@@ -131,12 +109,12 @@ internal partial class ComponentRenderProcessingService(
         ValidateRenderComponentComponentRenderParams(inputs: [component, renderParams]);
         ValidateComponent(component: component, parameterName: "component");
         ValidateComponentRenderParams(renderParams: renderParams, parameterName: "renderParams");
-        ICollection<ReplacementDependency> replacements = DefaultReplacements(renderParams: renderParams);
+        ICollection<MarkupReplacement> replacements = DefaultReplacements(renderParams: renderParams);
         return $"<section name='{component.Name}' class='component' data-id='{component.Id}' data-resource-key='{component.ResourceKey}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}<script type='text/javascript' nonce='{ContentSecurityPolicyNonceContract.Placeholder}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script></section>";
 
     });
 
-    private ICollection<ReplacementDependency> DefaultReplacements(RenderParams renderParams)
+    private ICollection<MarkupReplacement> DefaultReplacements(RenderParams renderParams)
     {
         ValidateRenderParams(renderParams: renderParams, replacements: null);
 
@@ -152,47 +130,45 @@ internal partial class ComponentRenderProcessingService(
             : string.Empty;
 
         int num = 10;
-        List<ReplacementDependency> list = new List<ReplacementDependency>(capacity: num);
+        List<MarkupReplacement> list = new List<MarkupReplacement>(capacity: num);
         CollectionsMarshal.SetCount(list: list, count: num);
-        Span<ReplacementDependency> span = CollectionsMarshal.AsSpan(list: list);
+        Span<MarkupReplacement> span = CollectionsMarshal.AsSpan(list: list);
 
-        span[0] = new ReplacementDependency(old: "[[user]]", @new: jsonBroker.Serialize(value: new
+        span[0] = new MarkupReplacement { Old = "[[user]]", Value = Serialize(value: new
         {
             Id = renderParams.User?.Id,
             DefaultCultureId = renderParams.User?.DefaultCultureId,
             DisplayName = renderParams.User?.DisplayName,
             Email = renderParams.User?.Email
-        }));
+        }) };
 
-        span[1] = new ReplacementDependency(old: "[[displayname]]", @new: renderParams.User?.DisplayName);
-        span[2] = new ReplacementDependency(old: "[[loginlink]]", @new: (renderParams.User?.Id == "Guest") ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>");
-        span[3] = new ReplacementDependency(old: "[[date]]", @new: DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy"));
-        span[4] = new ReplacementDependency(old: "[[culture]]", @new: text2);
+        span[1] = new MarkupReplacement { Old = "[[displayname]]", Value = renderParams.User?.DisplayName };
+        span[2] = new MarkupReplacement { Old = "[[loginlink]]", Value = (renderParams.User?.Id == "Guest") ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>" };
+        span[3] = new MarkupReplacement { Old = "[[date]]", Value = DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy") };
+        span[4] = new MarkupReplacement { Old = "[[culture]]", Value = text2 };
 
-        span[5] = new ReplacementDependency(old: "[[lang]]", @new: text2.Split(separator: '-')
-            .First());
+        span[5] = new MarkupReplacement { Old = "[[lang]]", Value = text2.Split(separator: '-')
+            .First() };
 
-        span[6] = new ReplacementDependency(old: "[app[name]]", @new: renderParams.App?.Name);
-        span[7] = new ReplacementDependency(old: "[app[domain]]", @new: renderParams.App?.Domain);
-        span[8] = new ReplacementDependency(old: "[app[root]]", @new: "https://" + renderParams.App?.Domain + text3 + "/");
-        span[9] = new ReplacementDependency(old: "[app[id]]", @new: renderParams.App?.Id.ToString());
-        List<ReplacementDependency> list2 = list;
+        span[6] = new MarkupReplacement { Old = "[app[name]]", Value = renderParams.App?.Name };
+        span[7] = new MarkupReplacement { Old = "[app[domain]]", Value = renderParams.App?.Domain };
+        span[8] = new MarkupReplacement { Old = "[app[root]]", Value = "https://" + renderParams.App?.Domain + text3 + "/" };
+        span[9] = new MarkupReplacement { Old = "[app[id]]", Value = renderParams.App?.Id.ToString() };
+        List<MarkupReplacement> list2 = list;
 
         if (config != null)
         {
             if (!string.IsNullOrWhiteSpace(value: config.WorkflowServiceUrl))
             {
-                list2.Add(item: new ReplacementDependency(
-                    old: "[api[workflow]]",
-                    @new: config.WorkflowServiceUrl));
+                list2.Add(item: new MarkupReplacement { Old = "[api[workflow]]", Value = config.WorkflowServiceUrl });
             }
 
-            list2.Add(item: new ReplacementDependency(old: "[api[root]]", @new: "https://" + renderParams.App?.Domain + text3 + "/Api/"));
+            list2.Add(item: new MarkupReplacement { Old = "[api[root]]", Value = "https://" + renderParams.App?.Domain + text3 + "/Api/" });
         }
 
         if (renderParams is ComponentRenderParams componentRenderParams)
         {
-            list2.Add(item: new ReplacementDependency(old: "[theme[name]]", @new: componentRenderParams.Theme));
+            list2.Add(item: new MarkupReplacement { Old = "[theme[name]]", Value = componentRenderParams.Theme });
             IDictionary<string, object> dictionary = default(IDictionary<string, object>);
             object value3 = null;
 
@@ -205,7 +181,7 @@ internal partial class ComponentRenderProcessingService(
         return list2;
     }
 
-    private string ProcessContentString(string key, RenderParams renderParams, string content, IEnumerable<ReplacementDependency> replacements)
+    private string ProcessContentString(string key, RenderParams renderParams, string content, IEnumerable<MarkupReplacement> replacements)
     {
         if (content == null)
         {
@@ -237,7 +213,7 @@ internal partial class ComponentRenderProcessingService(
         Resource(key: key, source: result, renderParams: renderParams, replacements: replacements);
         ExecuteAsync(key: key, source: result, renderParams: renderParams, replacements: replacements);
 
-        foreach (ReplacementDependency replacement in replacements)
+        foreach (MarkupReplacement replacement in replacements)
         {
             result.Replace(oldValue: replacement.Old, newValue: replacement.New);
         }
@@ -245,7 +221,7 @@ internal partial class ComponentRenderProcessingService(
         return result.ToString();
     }
 
-    private static void ValidateRenderParams(RenderParams renderParams, IEnumerable<ReplacementDependency> replacements)
+    private static void ValidateRenderParams(RenderParams renderParams, IEnumerable<MarkupReplacement> replacements)
     {
         if (renderParams == null)
         {
@@ -268,9 +244,10 @@ internal partial class ComponentRenderProcessingService(
         }
     }
 
-    private static (string type, string name, string[] options) SplitMatch(Match match)
+    private static (string type, string name, string[] options) SplitMatch(
+        RegularExpressionMatch match)
     {
-        string[] array = match.ToString()
+        string[] array = match.Value
             .Split(separator: "[");
 
         string[] array2 = array.Last()
@@ -279,15 +256,15 @@ internal partial class ComponentRenderProcessingService(
         return (type: array[1].ToLower(), name: array2[0].ToLower(), options: array2[1].Split(separator: "|", options: StringSplitOptions.RemoveEmptyEntries));
     }
 
-    private void Component(string key, RenderParams renderParams, IEnumerable<ReplacementDependency> replacements, StringBuilder result) =>
+    private void Component(string key, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements, StringBuilder result) =>
         RegexReplace(source: result, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "component"), action: match =>
                                                                                                                                   {
                                                                                                                                       (string _, string name, string[] options) tag = SplitMatch(match: match);
-                                                                                                                                      Component component = renderParams.App?.Components?.FirstOrDefault(predicate: (Component c) => c.Name.Equals(value: tag.name, comparisonType: StringComparison.CurrentCultureIgnoreCase)) ?? objectCache.Get<Component>(key: "component|" + tag.name);
+                                                                                                                                      Component component = renderParams.App?.Components?.FirstOrDefault(predicate: (Component c) => c.Name.Equals(value: tag.name, comparisonType: StringComparison.CurrentCultureIgnoreCase)) ?? GetComponent(key: "component|" + tag.name);
                                                                                                                                       return (component == null) ? ("[[Missing Component:" + tag.name + "]]") : ProcessContentString(key: key, renderParams: renderParams, content: BuildComponentMarkup(component: component, tag: tag, replacements: replacements, renderParams: renderParams), replacements: replacements);
                                                                                                                                   });
 
-    private string BuildComponentMarkup(Component component, (string type, string name, string[] options) tag, IEnumerable<ReplacementDependency> replacements, RenderParams renderParams)
+    private string BuildComponentMarkup(Component component, (string type, string name, string[] options) tag, IEnumerable<MarkupReplacement> replacements, RenderParams renderParams)
     {
         string value = string.Join(separator: " ", values: tag.options
             .Where(predicate: option => option.StartsWith(value: "class="))
@@ -297,14 +274,14 @@ internal partial class ComponentRenderProcessingService(
         return ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: content, replacements: replacements);
     }
 
-    private void Script(string key, StringBuilder source, RenderParams renderParams, IEnumerable<ReplacementDependency> replacements) =>
+    private void Script(string key, StringBuilder source, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[script\\[[A-Za-z\\d_/. \\-]*\\]\\]", action: match =>
                                                                                                                                {
                                                                                                                                    string name = match.Value.Replace(oldValue: "[script[", newValue: "")
                                                                                                                                        .Replace(oldValue: "]]", newValue: "")
                                                                                                                                        .ToLower();
 
-                                                                                                                                   Script script = objectCache.Get<Script>(key: "script|" + name);
+                                                                                                                                   Script script = GetScript(key: "script|" + name);
 
                                                                                                                                    if (script != null)
                                                                                                                                    {
@@ -315,42 +292,40 @@ internal partial class ComponentRenderProcessingService(
                                                                                                                                    return string.Empty;
                                                                                                                                });
 
-    private void ExecuteAsync(string key, StringBuilder source, RenderParams renderParams, IEnumerable<ReplacementDependency> replacements) =>
+    private void ExecuteAsync(string key, StringBuilder source, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[execute\\](.*?)\\[/execute\\]", action: match =>
                                                                                                                                      {
-                                                                                                                                         string value = match.Groups[1].Value;
-                                                                                                                                         string json = replacements.FirstOrDefault(predicate: (ReplacementDependency r) => r.Old == "[model]")?.New ?? "{}";
+                                                                                                                                         string value = match.Groups["1"];
+                                                                                                                                         string json = replacements.FirstOrDefault(predicate: (MarkupReplacement r) => r.Old == "[model]")?.New ?? "{}";
 
-                                                                                                                                         string content = jsonBroker.SerializeIgnoringReferences(value: new
+                                                                                                                                         string content = SerializeIgnoringReferences(value: new
                                                                                                                                          {
                                                                                                                                              Script = value,
-                                                                                                                                             Model = jsonBroker.ParseJson(json: json)
+                                                                                                                                             Model = ParseJson(json: json)
                                                                                                                                          });
 
-                                                                                                                                         string result = workflowExecutionBroker.Execute(
+                                                                                                                                         string result = ExecuteWorkflow(
                                                                                                                                              baseAddress: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]").New,
                                                                                                                                              content: content);
 
                                                                                                                                          return ProcessContentString(key: key, renderParams: renderParams, content: result, replacements: replacements);
                                                                                                                                      });
 
-    private void Dms(string key, StringBuilder source, ComponentRenderParams renderParams, IEnumerable<ReplacementDependency> replacements) =>
+    private void Dms(string key, StringBuilder source, ComponentRenderParams renderParams, IEnumerable<MarkupReplacement> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[dms\\[[A-Za-z\\d_/. \\-]*\\]\\]", action: match =>
                                                                                                                                      {
                                                                                                                                          string path = match.Value.Replace(oldValue: "[dms[", newValue: "")
                                                                                                                                              .Replace(oldValue: "]]", newValue: "")
                                                                                                                                              .ToLowerInvariant();
 
-                                                                                                                                         string latestTextContent = componentRenderService.Execute<IRenderFileContentService, string>(
-                                                                                                                                             name: "RenderFileContent",
-                                                                                                                                             operation: service => service.GetLatestTextContent(
-                                                                                                                                                 appId: renderParams.App.Id,
-                                                                                                                                                 path: path));
+                                                                                                                                         string latestTextContent = GetLatestTextContent(
+                                                                                                                                             appId: renderParams.App.Id,
+                                                                                                                                             path: path);
 
                                                                                                                                          return string.IsNullOrEmpty(value: latestTextContent) ? string.Empty : ProcessContentString(key: key, renderParams: renderParams, content: latestTextContent, replacements: replacements);
                                                                                                                                      });
 
-    private void Resource(string key, StringBuilder source, RenderParams renderParams, IEnumerable<ReplacementDependency> replacements)
+    private void Resource(string key, StringBuilder source, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements)
     {
         List<Resource> known = new List<Resource>();
         List<string> namesInKey = new List<string>();
@@ -426,7 +401,7 @@ internal partial class ComponentRenderProcessingService(
         string name,
         string culture)
     {
-        Resource resource = objectCache.Get<Resource>(key: $"resource|{key}-{name}-{culture}");
+        Resource resource = GetResource(key: $"resource|{key}-{name}-{culture}");
 
         if (resource != null)
         {
@@ -436,7 +411,7 @@ internal partial class ComponentRenderProcessingService(
         if (culture.Contains(value: '-'))
         {
             string value = culture.Split(separator: "-")[0];
-            Resource resource2 = objectCache.Get<Resource>(key: $"resource|{key}-{name}-{value}");
+            Resource resource2 = GetResource(key: $"resource|{key}-{name}-{value}");
 
             if (resource2 != null)
             {
@@ -444,7 +419,7 @@ internal partial class ComponentRenderProcessingService(
             }
         }
 
-        return objectCache.Get<Resource>(key: $"resource|{key}-{name}-{string.Empty}");
+        return GetResource(key: $"resource|{key}-{name}-{string.Empty}");
     }
 
     private void Meta(StringBuilder source, string culture) =>
@@ -453,7 +428,7 @@ internal partial class ComponentRenderProcessingService(
                                                                    string value = match.Value;
                                                                    string text = value.Substring(startIndex: 6, length: value.Length - 6);
                                                                    string key = text[..text.IndexOf(value: ']')].ToLowerInvariant();
-                                                                   return metadataCache.Get(key: key, culture: culture);
+                                                                   return GetMetadata(key: key, culture: culture);
                                                                });
 
     private static bool TryGetThemeDictionary(dynamic config, out IDictionary<string, object> themeDictionary)
@@ -474,23 +449,23 @@ internal partial class ComponentRenderProcessingService(
         return themeDictionary != null;
     }
 
-    private IEnumerable<ReplacementDependency> BuildThemeReplacements<T>(T model, string prefix = "")
+    private IEnumerable<MarkupReplacement> BuildThemeReplacements<T>(T model, string prefix = "")
     {
         if ((object)model.GetType()
             .GetInterface(name: "IDynamicMetaObjectProvider") != null
-            && !jsonBroker.IsJsonObject(value: model))
+            && !IsJsonObject(value: model))
         {
             return BuildDynamicThemeReplacements(model: model, prefix: prefix);
         }
 
-        if (jsonBroker.IsJsonObject(value: model))
+        if (IsJsonObject(value: model))
         {
             return BuildJObjectThemeReplacements(model: model, prefix: prefix);
         }
 
         if (model is string)
         {
-            return new[] { new ReplacementDependency(old: "[theme[" + prefix + "]]", @new: model.ToString()) };
+            return new[] { new MarkupReplacement { Old = "[theme[" + prefix + "]]", Value = model.ToString() } };
         }
 
         if (!(model is IEnumerable))
@@ -501,10 +476,10 @@ internal partial class ComponentRenderProcessingService(
         return BuildObjectThemeReplacements(model: model, prefix: prefix);
     }
 
-    private List<ReplacementDependency> BuildObjectThemeReplacements<T>(T model, string prefix)
+    private List<MarkupReplacement> BuildObjectThemeReplacements<T>(T model, string prefix)
     {
         string text = prefix ?? string.Empty;
-        List<ReplacementDependency> list = new List<ReplacementDependency>();
+        List<MarkupReplacement> list = new List<MarkupReplacement>();
         int num = 0;
 
         foreach (object item in (IEnumerable)(object)model)
@@ -515,11 +490,11 @@ internal partial class ComponentRenderProcessingService(
         }
 
         string text2 = ((text.Length == 0) ? "Length" : (text + ".Length"));
-        list.Add(item: new ReplacementDependency(old: "[theme[" + text2 + "]]", @new: num.ToString()));
+        list.Add(item: new MarkupReplacement { Old = "[theme[" + text2 + "]]", Value = num.ToString() });
         return list;
     }
 
-    private IEnumerable<ReplacementDependency> BuildIEnumerableThemeReplacements<T>(T model, string prefix) =>
+    private IEnumerable<MarkupReplacement> BuildIEnumerableThemeReplacements<T>(T model, string prefix) =>
         model.GetType()
         .GetProperties()
         .SelectMany(selector: property =>
@@ -529,7 +504,7 @@ internal partial class ComponentRenderProcessingService(
 
                 if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
                 {
-                    ReplacementDependency[] array = new ReplacementDependency[2];
+                    MarkupReplacement[] array = new MarkupReplacement[2];
                     string old = "[theme[" + prefix + "]]";
                     object obj = model?.ToString();
 
@@ -538,16 +513,16 @@ internal partial class ComponentRenderProcessingService(
                         obj = string.Empty;
                     }
 
-                    array[0] = new ReplacementDependency(old: old, @new: (string)obj);
-                    array[1] = new ReplacementDependency(old: "[theme[" + text + "]]", @new: value?.ToString() ?? string.Empty);
+                    array[0] = new MarkupReplacement { Old = old, Value = (string)obj };
+                    array[1] = new MarkupReplacement { Old = "[theme[" + text + "]]", Value = value?.ToString() ?? string.Empty };
                     return array;
                 }
 
-                IEnumerable<ReplacementDependency> result;
+                IEnumerable<MarkupReplacement> result;
 
                 if (value == null)
                 {
-                    IEnumerable<ReplacementDependency> enumerable = Array.Empty<ReplacementDependency>();
+                    IEnumerable<MarkupReplacement> enumerable = Array.Empty<MarkupReplacement>();
                     result = enumerable;
                 }
                 else
@@ -559,25 +534,25 @@ internal partial class ComponentRenderProcessingService(
             })
         .Where(predicate: replacement => replacement.Old != null && replacement.New != null);
 
-    private IEnumerable<ReplacementDependency> BuildJObjectThemeReplacements<T>(T model, string prefix)
+    private IEnumerable<MarkupReplacement> BuildJObjectThemeReplacements<T>(T model, string prefix)
     {
         IEnumerable<KeyValuePair<string, object>> source =
-            jsonBroker.GetJsonProperties(value: model);
+            GetJsonProperties(value: model);
 
         return source.SelectMany(selector: token =>
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + token.Key) : token.Key);
 
-            if (jsonBroker.IsJsonValue(value: token.Value))
+            if (IsJsonValue(value: token.Value))
             {
-                return new[] { new ReplacementDependency(old: "[theme[" + text + "]]", @new: token.Value.ToString() ?? string.Empty) };
+                return new[] { new MarkupReplacement { Old = "[theme[" + text + "]]", Value = token.Value.ToString() ?? string.Empty } };
             }
 
-            IEnumerable<ReplacementDependency> result;
+            IEnumerable<MarkupReplacement> result;
 
             if (token.Value == null)
             {
-                IEnumerable<ReplacementDependency> enumerable = Array.Empty<ReplacementDependency>();
+                IEnumerable<MarkupReplacement> enumerable = Array.Empty<MarkupReplacement>();
                 result = enumerable;
             }
             else
@@ -589,7 +564,7 @@ internal partial class ComponentRenderProcessingService(
         });
     }
 
-    private IEnumerable<ReplacementDependency> BuildDynamicThemeReplacements<T>(T model, string prefix)
+    private IEnumerable<MarkupReplacement> BuildDynamicThemeReplacements<T>(T model, string prefix)
     {
         IDictionary<string, object> dynamicModel = (IDictionary<string, object>)(object)model;
 
@@ -597,10 +572,10 @@ internal partial class ComponentRenderProcessingService(
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + key) : key);
             int num = 1;
-            List<ReplacementDependency> list = new List<ReplacementDependency>(capacity: num);
+            List<MarkupReplacement> list = new List<MarkupReplacement>(capacity: num);
             CollectionsMarshal.SetCount(list: list, count: num);
-            CollectionsMarshal.AsSpan(list: list)[0] = new ReplacementDependency(old: "[theme[" + text + "]]", @new: dynamicModel[key]?.ToString() ?? string.Empty);
-            List<ReplacementDependency> list2 = list;
+            CollectionsMarshal.AsSpan(list: list)[0] = new MarkupReplacement { Old = "[theme[" + text + "]]", Value = dynamicModel[key]?.ToString() ?? string.Empty };
+            List<MarkupReplacement> list2 = list;
 
             if (dynamicModel[key] != null && !dynamicModel[key].GetType()
                 .IsValueType)
@@ -651,25 +626,40 @@ internal partial class ComponentRenderProcessingService(
         return user;
     }
 
-    private static void RegexReplace(StringBuilder source, string matchExpression, Func<Match, string> action)
+    private void RegexReplace(
+        StringBuilder source,
+        string matchExpression,
+        Func<RegularExpressionMatch, string> action)
     {
-        Regex regex = new(pattern: matchExpression, options: RegexOptions.Singleline | RegexOptions.IgnoreCase);
-        string result = regex.Replace(input: source.ToString(), evaluator: match => action(arg: match));
+        string result = ReplaceRegularExpression(
+            input: source.ToString(),
+            pattern: matchExpression,
+            evaluator: (value, groups) => action(
+                arg: new RegularExpressionMatch
+                {
+                    Value = value,
+                    Groups = groups
+                }));
+
         source.Clear();
         source.Append(value: result);
     }
 
-    private static void RegexMatch(StringBuilder source, string matchExpression, Action<Match> action)
-    {
-        MatchCollection matches = Regex.Matches(input: source.ToString(), pattern: matchExpression, options: RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    private void RegexMatch(
+        StringBuilder source,
+        string matchExpression,
+        Action<RegularExpressionMatch> action) =>
+        ForEachRegularExpressionMatch(
+            input: source.ToString(),
+            pattern: matchExpression,
+            action: (value, groups) => action(
+                obj: new RegularExpressionMatch
+                {
+                    Value = value,
+                    Groups = groups
+                }));
 
-        foreach (Match match in matches)
-        {
-            action(obj: match);
-        }
-    }
-
-    private static string GetTagName(Match source) =>
+    private static string GetTagName(RegularExpressionMatch source) =>
         source.Value.Split(separator: '[')[2].Replace(oldValue: "]", newValue: "")
         .ToLowerInvariant();
 
@@ -707,11 +697,156 @@ internal partial class ComponentRenderProcessingService(
         return resource ?? potentials.FirstOrDefault(predicate: (Resource resource2) => string.IsNullOrEmpty(value: resource2.Culture));
     }
 
+    private IReadOnlyCollection<App> GetApps() =>
+        componentRenderService.GetAppsComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation())
+        .Apps;
+
+    private IReadOnlyCollection<Component> GetComponents() =>
+        componentRenderService.GetComponentsComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation())
+        .Components;
+
+    private IReadOnlyCollection<Resource> GetResources() =>
+        componentRenderService.GetResourcesComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation())
+        .Resources;
+
+    private IReadOnlyCollection<Script> GetScripts() =>
+        componentRenderService.GetScriptsComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation())
+        .Scripts;
+
+    private Component GetComponent(string key) =>
+        componentRenderService.GetComponentComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Key = key
+            })
+        .Component;
+
+    private Script GetScript(string key) =>
+        componentRenderService.GetScriptComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Key = key
+            })
+        .Script;
+
+    private Resource GetResource(string key) =>
+        componentRenderService.GetResourceComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Key = key
+            })
+        .Resource;
+
+    private string GetMetadata(string key, string culture) =>
+        componentRenderService.GetMetadataComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Key = key,
+                Culture = culture
+            })
+        .Content;
+
+    private string GetLatestTextContent(int appId, string path) =>
+        componentRenderService.GetLatestTextContentComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                AppId = appId,
+                Path = path
+            })
+        .Content;
+
+    private string Serialize(object value) =>
+        componentRenderService.SerializeComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Content;
+
+    private string SerializeIgnoringReferences(object value) =>
+        componentRenderService.SerializeIgnoringReferencesComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Content;
+
+    private object ParseJson(string json) =>
+        componentRenderService.ParseJsonComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Content = json
+            })
+        .Value;
+
+    private bool IsJsonObject(object value) =>
+        componentRenderService.IsJsonObjectComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Condition;
+
+    private bool IsJsonValue(object value) =>
+        componentRenderService.IsJsonValueComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Condition;
+
+    private IReadOnlyCollection<KeyValuePair<string, object>> GetJsonProperties(
+        object value) =>
+        componentRenderService.GetJsonPropertiesComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Value = value
+            })
+        .JsonProperties;
+
+    private string ExecuteWorkflow(string baseAddress, string content) =>
+        componentRenderService.ExecuteWorkflowComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                BaseAddress = baseAddress,
+                Content = content
+            })
+        .Content;
+
+    private string ReplaceRegularExpression(
+        string input,
+        string pattern,
+        Func<string, IReadOnlyDictionary<string, string>, string> evaluator) =>
+        componentRenderService.ReplaceRegularExpressionComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Input = input,
+                Pattern = pattern,
+                Evaluator = evaluator
+            })
+        .Content;
+
+    private void ForEachRegularExpressionMatch(
+        string input,
+        string pattern,
+        Action<string, IReadOnlyDictionary<string, string>> action) =>
+        componentRenderService.ForEachRegularExpressionMatchComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Input = input,
+                Pattern = pattern,
+                MatchAction = action
+            });
+
     private string ExecuteRenderComponentComponentRenderParams(Component component, ComponentRenderParams renderParams)
     {
         ValidateComponent(component: component, parameterName: "component");
         ValidateComponentRenderParams(renderParams: renderParams, parameterName: "renderParams");
-        ICollection<ReplacementDependency> replacements = DefaultReplacements(renderParams: renderParams);
+        ICollection<MarkupReplacement> replacements = DefaultReplacements(renderParams: renderParams);
         return $"<section name='{component.Name}' class='component' data-id='{component.Id}' data-resource-key='{component.ResourceKey}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}<script type='text/javascript' nonce='{ContentSecurityPolicyNonceContract.Placeholder}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script></section>";
     }
 

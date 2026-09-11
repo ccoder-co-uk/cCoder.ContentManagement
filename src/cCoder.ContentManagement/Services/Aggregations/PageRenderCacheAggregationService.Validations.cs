@@ -11,6 +11,9 @@ namespace cCoder.ContentManagement.Services.Aggregations;
 
 internal sealed partial class PageRenderCacheAggregationService
 {
+    private static void ValidatePackageImportOnComplete(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidatePageRenderCacheOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

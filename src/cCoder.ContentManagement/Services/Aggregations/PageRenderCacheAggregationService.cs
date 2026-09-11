@@ -118,6 +118,16 @@ internal sealed partial class PageRenderCacheAggregationService(
                 fromEvent: fromEvent);
         }, isValueTask: true);
 
+    public ValueTask InvalidatePackageAsync(int? appId) =>
+        TryCatch(operation: () =>
+        {
+            ValidatePackageImportOnComplete(inputs: [appId]);
+
+            return appId is int resolvedAppId
+                ? DeleteAppPageRenderCacheFromEventAsync(appId: resolvedAppId)
+                : ExecuteInvalidateCommonCacheAsync(fromEvent: true);
+        }, isValueTask: true);
+
     private async ValueTask ExecuteInvalidateCommonCacheAsync(
         bool fromEvent)
     {

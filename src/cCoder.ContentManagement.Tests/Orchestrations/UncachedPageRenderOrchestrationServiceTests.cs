@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
@@ -47,6 +48,13 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
         Mock<IPageProcessingService> pageService = new();
         Mock<IPageRenderProcessingService> renderService = new();
         Mock<IPageRenderCacheProcessingService> cacheService = new();
+
+        if (edit is false)
+        {
+            renderService.Setup(expression: service =>
+                service.SerializeRuntimeValue(value: It.IsAny<object>()))
+                .Returns(value: "{}");
+        }
 
         pageService.Setup(expression: service =>
             service.GetPageForRenderAsync(pageId: page.Id))

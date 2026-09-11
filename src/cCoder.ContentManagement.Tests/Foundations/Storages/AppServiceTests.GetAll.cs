@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models;
+using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
@@ -36,7 +37,7 @@ public partial class AppServiceTests
             .Returns(value: apps);
 
         // When
-        IQueryable<App> result = appService.GetAllApp();
+        IQueryable<App> result = appService.GetVisibleAppsAppOperation(appOperation: new AppOperation()).Apps.AsQueryable();
 
         // Then
 

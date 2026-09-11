@@ -7,39 +7,24 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Processings;
-using cCoder.ContentManagement.Services.Processings.PageRendering;
 using Moq;
 
 namespace cCoder.ContentManagement.Tests.PenetrationTests;
 
 public partial class MarkupRenderServiceTests
 {
-    private static MarkupRenderProcessingService CreateMarkupRenderService() =>
-        new(
+    private static MarkupRenderProcessingService CreateMarkupRenderService()
+    {
+        RegularExpressionBroker regularExpressionBroker = new();
+
+        return new(
             markupRenderService: new MarkupRenderService(
-            renderBroker: new RenderBroker(
-                tagHandlers:
-                [
-                    new CultureLinkTagHandlingProcessingService(),
-                    new MetadataTagHandlingProcessingService(),
-                    new NavigationTagHandlingProcessingService(),
-                    new ContentTagHandlingProcessingService(),
-                    new ComponentTagHandlingProcessingService(
-                        componentReaderBroker:
-                            Mock.Of<IComponentReaderBroker>()),
-                    new ScriptTagHandlingProcessingService(
-                        scriptReaderBroker:
-                            Mock.Of<IScriptReaderBroker>()),
-                    new StyleTagHandlingProcessingService(),
-                    new ReplacementTagHandlingProcessingService(),
-                    new DmsTagHandlingProcessingService(
-                        renderFileContentBroker:
-                            Mock.Of<IRenderFileContentBroker>()),
-                    new ResourceTagHandlingProcessingService(),
-                    new ExecuteTagHandlingProcessingService(
-                        jsonBroker: Mock.Of<IJsonBroker>(),
-                        workflowExecutionBroker:
-                            Mock.Of<IWorkflowExecutionBroker>())
-                ])),
-            jsonBroker: Mock.Of<IJsonBroker>());
+                componentReaderBroker: Mock.Of<IComponentReaderBroker>(),
+                scriptReaderBroker: Mock.Of<IScriptReaderBroker>(),
+                renderFileContentBroker: Mock.Of<IRenderFileContentBroker>(),
+                jsonBroker: Mock.Of<IJsonBroker>(),
+                systemTextJsonBroker: new SystemTextJsonBroker(),
+                workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
+                regularExpressionBroker: regularExpressionBroker));
+    }
 }

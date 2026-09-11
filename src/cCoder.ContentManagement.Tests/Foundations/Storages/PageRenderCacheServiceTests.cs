@@ -5,6 +5,7 @@
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Exposures;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -39,7 +40,9 @@ public partial class PageRenderCacheServiceTests
                 pageRenderCacheId: stored.Id))
             .Returns(value: ValueTask.CompletedTask);
 
-        PageRenderCacheService service = new(broker: brokerMock.Object);
+        PageRenderCacheService service = new(
+            broker: brokerMock.Object,
+            authorizationManager: Mock.Of<IAuthorizationManager>());
 
         // When
         PageRenderCache[] all = [.. service.GetAllPageRenderCaches()];

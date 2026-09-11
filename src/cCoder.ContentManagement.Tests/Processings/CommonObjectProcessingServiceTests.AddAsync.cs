@@ -44,8 +44,8 @@ public partial class CommonObjectProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(valueFunction: () => currentUser?.Id);
 
         CommonObject commonObject = CreateRandomCommonObject();
         currentUser = TestUsers.WithPrivilege(privilege: "commonobject_create");
@@ -80,8 +80,8 @@ public partial class CommonObjectProcessingServiceTests
             .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
             .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
+        authorizationManagerMock.Setup(expression: x => x.GetCurrentUserId())
+            .Returns(valueFunction: () => currentUser?.Id);
 
         CommonObject commonObject = CreateRandomCommonObject();
 

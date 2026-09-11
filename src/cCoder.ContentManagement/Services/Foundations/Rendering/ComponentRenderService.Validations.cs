@@ -9,25 +9,59 @@ namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class ComponentRenderService
 {
-    private static void ValidateExecute(object[] inputs) =>
+    private static void ValidateComponentRenderFoundationOperation(object[] inputs) =>
         ValidationRulesEngine.Validate(
             inputs: inputs);
 
-    private static void ValidateName(string name)
+    private static void ValidateAppsComponentRenderFoundationOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateComponentsComponentRenderFoundationOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateResourcesComponentRenderFoundationOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateScriptsComponentRenderFoundationOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateComponentComponentRenderFoundationOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateScriptComponentRenderFoundationOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateResourceComponentRenderFoundationOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateMetadataComponentRenderFoundationOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateLatestTextContentComponentRenderFoundationOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateJsonPropertiesComponentRenderFoundationOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static int ValidateAppId(int appId, string parameterName)
     {
-        if (string.IsNullOrWhiteSpace(value: name))
+        if (appId < 1)
         {
             throw new ValidationException(
-                message: "Service name is required.");
+                message: parameterName + " must be greater than 0.");
         }
+
+        return appId;
     }
 
-    private static void ValidateOperation(Delegate operation)
+    private static string ValidatePath(string path, string parameterName)
     {
-        if (operation is null)
+        if (string.IsNullOrWhiteSpace(value: path))
         {
             throw new ValidationException(
-                message: "Service operation is required.");
+                message: parameterName + " is required.");
         }
+
+        return path;
     }
 }

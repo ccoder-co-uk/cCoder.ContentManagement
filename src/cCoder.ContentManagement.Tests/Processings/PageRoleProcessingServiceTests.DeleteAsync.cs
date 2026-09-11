@@ -27,9 +27,6 @@ public partial class PageRoleProcessingServiceTests
     public async Task ShouldDelegateToFoundationDeleteWhenUserCanDeletePageRoleForDeleteAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
-
         User user = TestUsers.WithPrivilege(privilege: "pagerole_delete", appId: 1);
 
         Page page = new()
@@ -65,13 +62,12 @@ public partial class PageRoleProcessingServiceTests
             },
         };
 
-        currentUser = user;
-
-        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
-            .Returns(value: new[] { page }.AsQueryable());
-
         pageRoleServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
             .Returns(value: new[] { link }.AsQueryable());
+
+        pageRoleServiceMock.Setup(expression: x => x.UserCanDeletePageRole(
+                pageRole: It.IsAny<LocalPageRole>()))
+            .Returns(value: true);
 
         pageRoleServiceMock.Setup(expression: x => x.DeletePageRoleAsync(deletedPageRole: link))
             .Returns(value: ValueTask.CompletedTask);
@@ -83,7 +79,6 @@ deletedPageRole: new LocalPageRole { PageId = link.PageId, RoleId = link.RoleId 
     );
 
         // Then
-        pageBrokerMock.Verify(expression: x => x.GetAllPagesIgnoringFilters(), times: Times.Once);
         pageRoleServiceMock.Verify(expression: x => x.GetAllPageRole(ignoreFilters: true), times: Times.Once);
 
         pageRoleServiceMock.Verify(

@@ -58,7 +58,7 @@ public partial class PageRoleImportPersistenceProcessingServiceTests
         pageRoleBrokerMock
             .Setup(
                 expression: broker =>
-                    broker.AddPageRoleAsync(
+                    broker.AddPageRoleForImportAsync(
                         newPageRole: addedPageRole))
             .ReturnsAsync(value: addedPageRole);
 

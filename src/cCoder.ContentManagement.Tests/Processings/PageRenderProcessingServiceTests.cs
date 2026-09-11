@@ -20,12 +20,11 @@ using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Orchestrations;
 using cCoder.ContentManagement.Rendering.Services.Processings;
+using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Services.Processings;
-using cCoder.ContentManagement.Services.Processings.PageRendering;
 using Moq;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
 using RenderApp = cCoder.Data.Models.CMS.App;
@@ -52,6 +51,8 @@ public partial class PageRenderProcessingServiceTests
 
     private PageRenderProcessingService CreateSut(RenderConfig config)
     {
+        RegularExpressionBroker regularExpressionBroker = new();
+
         MetadataCacheService metadataCacheService = new(
             broker: metadataReaderBroker);
 
@@ -59,30 +60,16 @@ public partial class PageRenderProcessingServiceTests
             broker: commonObjectReaderBrokerMock.Object);
 
         MarkupRenderService markupRenderService = new(
-            renderBroker: new RenderBroker(
-                tagHandlers:
-                [
-                    new CultureLinkTagHandlingProcessingService(),
-                    new MetadataTagHandlingProcessingService(),
-                    new NavigationTagHandlingProcessingService(),
-                    new ContentTagHandlingProcessingService(),
-                    new ComponentTagHandlingProcessingService(
-                        componentReaderBroker: componentReaderBroker),
-                    new ScriptTagHandlingProcessingService(
-                        scriptReaderBroker: scriptReaderBroker),
-                    new StyleTagHandlingProcessingService(),
-                    new ReplacementTagHandlingProcessingService(),
-                    new DmsTagHandlingProcessingService(
-                        renderFileContentBroker:
-                            renderFileContentBrokerMock.Object),
-                    new ResourceTagHandlingProcessingService(),
-                    new ExecuteTagHandlingProcessingService(
-                        jsonBroker: new JsonBroker(),
-                        workflowExecutionBroker:
-                            new WorkflowExecutionBroker(
-                                workflowExecutionDependency:
-                                    new WorkflowExecutionDependency()))
-                ]));
+            componentReaderBroker: componentReaderBroker,
+            scriptReaderBroker: scriptReaderBroker,
+            renderFileContentBroker: renderFileContentBrokerMock.Object,
+            jsonBroker: new JsonBroker(),
+            systemTextJsonBroker: new SystemTextJsonBroker(),
+            workflowExecutionBroker:
+                new WorkflowExecutionBroker(
+                    workflowExecutionDependency:
+                        new WorkflowExecutionDependency()),
+            regularExpressionBroker: regularExpressionBroker);
 
         RenderOrchestrationService executionOrchestrationService =
             new(
@@ -94,20 +81,17 @@ public partial class PageRenderProcessingServiceTests
                         commonObjectCacheService: commonObjectCacheService),
                 markupRenderProcessingService:
                     new MarkupRenderProcessingService(
-                        markupRenderService: markupRenderService,
-                        jsonBroker: Mock.Of<IJsonBroker>()));
+                        markupRenderService: markupRenderService));
 
-        Mock<IServiceProviderBroker> serviceProviderBrokerMock = new();
+        RenderSessionManager renderSessionManager = new(
+            renderOrchestrationService: executionOrchestrationService);
 
-        serviceProviderBrokerMock
-            .Setup(expression: broker =>
-                broker.GetRequiredService<IRenderOrchestrationService>(
-                    name: "Render"))
-            .Returns(value: executionOrchestrationService);
+        RenderBroker renderBroker = new(
+            renderSessionManager: renderSessionManager);
 
-        PageRenderService pageRenderService =
-            new(
-                serviceProviderBroker: serviceProviderBrokerMock.Object);
+        PageRenderService pageRenderService = new(
+            renderBroker: renderBroker,
+            systemTextJsonBroker: new SystemTextJsonBroker());
 
         return new PageRenderProcessingService(
             pageRenderService: pageRenderService,

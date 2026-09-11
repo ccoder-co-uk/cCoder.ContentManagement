@@ -4,7 +4,12 @@
 
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Rendering.Services.Foundations;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.Data.Models.CMS;
+using Moq;
 using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Processings;
@@ -38,7 +43,9 @@ public sealed partial class CachedPageRenderProcessingServiceTests
             }
         };
 
-        CachedPageRenderProcessingService service = new();
+        CachedPageRenderProcessingService service = new(
+            cachedPageRenderService: new CachedPageRenderService(
+                regularExpressionBroker: new RegularExpressionBroker()));
 
         // When
         PageRenderCacheOperation result =

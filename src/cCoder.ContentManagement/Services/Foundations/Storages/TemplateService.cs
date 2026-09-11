@@ -11,8 +11,25 @@ using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class TemplateService(ITemplateBroker templateBroker, IAuthorizationManager authorizationManager) : ITemplateService
+internal partial class TemplateService(
+    ITemplateBroker templateBroker,
+    ITemplateContentBroker templateContentBroker,
+    IAuthorizationManager authorizationManager) : ITemplateService
 {
+    public ValueTask<string> ReadContentAsync(Stream source) =>
+        TryCatch<string>(operation: () =>
+        {
+            ValidateTemplateContentOnRead(inputs: [source]);
+            return templateContentBroker.ReadAsync(source: source);
+        }, isValueTask: true);
+
+    public byte[] ConvertHtmlToPdf(string html) =>
+        TryCatch(operation: () =>
+        {
+            ValidateTemplateContentOnConvert(inputs: [html]);
+            return templateContentBroker.ConvertHtmlToPdf(html: html);
+        });
+
     public Template GetTemplate(int templateId, bool ignoreFilters = false) =>
         TryCatch<Template>(operation: () =>
     {

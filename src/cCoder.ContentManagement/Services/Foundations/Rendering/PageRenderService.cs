@@ -2,27 +2,32 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers.ServiceProviders;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Models.Rendering;
+using cCoder.ContentManagement.Rendering.Brokers;
 
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class PageRenderService(
-    IServiceProviderBroker serviceProviderBroker) : IPageRenderService
+    IRenderBroker renderBroker,
+    ISystemTextJsonBroker systemTextJsonBroker)
+        : IPageRenderService
 {
-    public TResult Execute<TService, TResult>(
-        string name,
-        Func<TService, TResult> operation)
-        where TService : notnull =>
+    public PageRenderFoundationOperation SerializePageRenderFoundationOperation(
+        PageRenderFoundationOperation pageRenderFoundationOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateExecute(inputs: [name, operation]);
-        ValidateName(name: name);
-        ValidateOperation(operation: operation);
+        ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
+        pageRenderFoundationOperation.Json = systemTextJsonBroker.Serialize(value: pageRenderFoundationOperation.Value);
+        return pageRenderFoundationOperation;
+    });
 
-        TService service =
-            serviceProviderBroker.GetRequiredService<TService>(
-                name: name);
-
-        return operation(arg: service);
+    public PageRenderFoundationOperation RenderPageRenderFoundationOperation(
+        PageRenderFoundationOperation pageRenderFoundationOperation) =>
+        TryCatch(operation: () =>
+    {
+        ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
+        pageRenderFoundationOperation.RenderSession = renderBroker.RenderRenderSession(renderSession: pageRenderFoundationOperation.RenderSession);
+        return pageRenderFoundationOperation;
     });
 }

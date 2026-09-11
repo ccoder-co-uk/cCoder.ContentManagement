@@ -73,14 +73,14 @@ public partial class PageRenderCacheEventHandlersTests
         Mock<IPageRenderCacheAggregationService> aggregationService = new();
 
         aggregationService.Setup(expression: item =>
-            item.DeleteAppAsync(appId: appId, fromEvent: true))
+            item.InvalidatePackageAsync(appId: appId))
             .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheEventHandlers handlers = CreateHandlers(
             aggregationService: aggregationService.Object);
 
         // When
-        await handlers.InvalidateAppAsync(appId: appId);
+        await handlers.InvalidatePackageAsync(appId: appId);
 
         // Then
         aggregationService.VerifyAll();

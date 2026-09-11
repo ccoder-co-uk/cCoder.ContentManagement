@@ -6,7 +6,6 @@ using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
-using System.Text.Json;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
@@ -122,7 +121,7 @@ public class CommonObjectController(
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
-    public async Task<IActionResult> Post([FromBody] JsonElement payload)
+    public async Task<IActionResult> Post([FromBody] object payload)
     {
         try
         {
@@ -131,7 +130,7 @@ public class CommonObjectController(
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            CommonObject[] commonObjects = DeserializeCommonObjects(payload: payload);
+            CommonObject[] commonObjects = service.DeserializeCommonObjects(payload: payload);
 
             if (commonObjects is null)
             {
@@ -232,26 +231,4 @@ public class CommonObjectController(
         }
     }
 
-    private static CommonObject[] DeserializeCommonObjects(JsonElement payload)
-    {
-        JsonElement itemsPayload = payload.ValueKind == JsonValueKind.Object &&
-                                   payload.TryGetProperty(propertyName: "value", value: out JsonElement valueElement)
-            ? valueElement
-            : payload;
-
-        return itemsPayload.ValueKind switch
-        {
-            JsonValueKind.Array => JsonSerializer.Deserialize<CommonObject[]>(
-                json: itemsPayload.GetRawText(),
-                options: new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
-            JsonValueKind.Object =>
-            [
-                JsonSerializer.Deserialize<CommonObject>(
-                    json: itemsPayload.GetRawText(),
-                    options: new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
-            ],
-            JsonValueKind.Null => null,
-            var ignoredRequest => null
-        };
-    }
 }
