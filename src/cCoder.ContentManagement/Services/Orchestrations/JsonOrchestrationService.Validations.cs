@@ -4,16 +4,13 @@
 
 using cCoder.ContentManagement.Dependencies;
 
-namespace cCoder.ContentManagement.Services.Processings;
+namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal partial class JsonProcessingService
+internal sealed partial class JsonOrchestrationService
 {
-    private static void ValidateDeserializeItems(object[] inputs) =>
+    private static void ValidateSerializeRuntimeValue(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
     private static void ValidateParseJsonRecordsDocument(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
-
-    private static void ValidateRemovePropertiesRecursively(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 }

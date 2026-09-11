@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text.RegularExpressions;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.Data.Models.CMS;
@@ -10,14 +10,12 @@ using cCoder.Data.Models.CMS;
 namespace cCoder.ContentManagement.Services.Processings.PageRendering;
 
 internal sealed partial class ScriptTagHandlingProcessingService(
-    IScriptReaderBroker scriptReaderBroker)
+    IScriptReaderBroker scriptReaderBroker,
+    IRegularExpressionBroker regularExpressionBroker)
         : IScriptTagHandlingProcessingService
 {
-    private static readonly Regex scriptRegex = new(
-        pattern: "\\[script\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]",
-        options: RegexOptions.IgnoreCase
-            | RegexOptions.Compiled
-            | RegexOptions.Singleline);
+    private const string ScriptPattern =
+        "\\[script\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]";
 
     public TagHandlingOperation HandleTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation) =>
@@ -29,11 +27,12 @@ internal sealed partial class ScriptTagHandlingProcessingService(
             operation: tagHandlingOperation,
             parameterName: "operation");
 
-        tagHandlingOperation.Content = scriptRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => ResolveScriptContent(
+            pattern: ScriptPattern,
+            evaluator: (value, groups) => ResolveScriptContent(
                 session: tagHandlingOperation.Session,
-                name: match.Groups["name"].Value));
+                name: groups["name"]));
 
         return tagHandlingOperation;
     });

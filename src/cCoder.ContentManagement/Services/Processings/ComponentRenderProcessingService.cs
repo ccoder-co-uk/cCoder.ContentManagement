@@ -8,12 +8,12 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.RegularExpressions;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
@@ -29,7 +29,8 @@ internal partial class ComponentRenderProcessingService(
     IResourceBroker resourceBroker,
     IScriptBroker scriptBroker,
     IComponentRenderService componentRenderService,
-    IWorkflowExecutionBroker workflowExecutionBroker)
+    IWorkflowExecutionBroker workflowExecutionBroker,
+    IRegularExpressionBroker regularExpressionBroker)
         : IComponentRenderProcessingService
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
@@ -259,9 +260,10 @@ internal partial class ComponentRenderProcessingService(
         }
     }
 
-    private static (string type, string name, string[] options) SplitMatch(Match match)
+    private static (string type, string name, string[] options) SplitMatch(
+        RegularExpressionMatch match)
     {
-        string[] array = match.ToString()
+        string[] array = match.Value
             .Split(separator: "[");
 
         string[] array2 = array.Last()
@@ -309,7 +311,7 @@ internal partial class ComponentRenderProcessingService(
     private void ExecuteAsync(string key, StringBuilder source, RenderParams renderParams, IEnumerable<ReplacementDependency> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[execute\\](.*?)\\[/execute\\]", action: match =>
                                                                                                                                      {
-                                                                                                                                         string value = match.Groups[1].Value;
+                                                                                                                                         string value = match.Groups["1"];
                                                                                                                                          string json = replacements.FirstOrDefault(predicate: (ReplacementDependency r) => r.Old == "[model]")?.New ?? "{}";
 
                                                                                                                                          string content = jsonBroker.SerializeIgnoringReferences(value: new
@@ -640,25 +642,40 @@ internal partial class ComponentRenderProcessingService(
         return user;
     }
 
-    private static void RegexReplace(StringBuilder source, string matchExpression, Func<Match, string> action)
+    private void RegexReplace(
+        StringBuilder source,
+        string matchExpression,
+        Func<RegularExpressionMatch, string> action)
     {
-        Regex regex = new(pattern: matchExpression, options: RegexOptions.Singleline | RegexOptions.IgnoreCase);
-        string result = regex.Replace(input: source.ToString(), evaluator: match => action(arg: match));
+        string result = regularExpressionBroker.Replace(
+            input: source.ToString(),
+            pattern: matchExpression,
+            evaluator: (value, groups) => action(
+                arg: new RegularExpressionMatch
+                {
+                    Value = value,
+                    Groups = groups
+                }));
+
         source.Clear();
         source.Append(value: result);
     }
 
-    private static void RegexMatch(StringBuilder source, string matchExpression, Action<Match> action)
-    {
-        MatchCollection matches = Regex.Matches(input: source.ToString(), pattern: matchExpression, options: RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    private void RegexMatch(
+        StringBuilder source,
+        string matchExpression,
+        Action<RegularExpressionMatch> action) =>
+        regularExpressionBroker.ForEachMatch(
+            input: source.ToString(),
+            pattern: matchExpression,
+            action: (value, groups) => action(
+                obj: new RegularExpressionMatch
+                {
+                    Value = value,
+                    Groups = groups
+                }));
 
-        foreach (Match match in matches)
-        {
-            action(obj: match);
-        }
-    }
-
-    private static string GetTagName(Match source) =>
+    private static string GetTagName(RegularExpressionMatch source) =>
         source.Value.Split(separator: '[')[2].Replace(oldValue: "]", newValue: "")
         .ToLowerInvariant();
 

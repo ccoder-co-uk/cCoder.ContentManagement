@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Processings.PageRendering;
 using FluentAssertions;
@@ -38,7 +39,8 @@ public sealed partial class ScriptTagHandlingProcessingServiceTests
         };
 
         ScriptTagHandlingProcessingService service = new(
-            scriptReaderBroker: Mock.Of<IScriptReaderBroker>());
+            scriptReaderBroker: Mock.Of<IScriptReaderBroker>(),
+            regularExpressionBroker: new RegularExpressionBroker());
 
         TagHandlingOperation operation = new()
         {

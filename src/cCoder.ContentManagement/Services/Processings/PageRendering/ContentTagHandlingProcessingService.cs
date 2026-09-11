@@ -2,19 +2,18 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text.RegularExpressions;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Models.RegularExpressions;
 
 namespace cCoder.ContentManagement.Services.Processings.PageRendering;
 
-internal sealed partial class ContentTagHandlingProcessingService
+internal sealed partial class ContentTagHandlingProcessingService(
+    IRegularExpressionBroker regularExpressionBroker)
     : IContentTagHandlingProcessingService
 {
-    private static readonly Regex contentRegex = new(
-        pattern: "\\[content\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\](?<options>[^\\]]*)\\]",
-        options: RegexOptions.IgnoreCase
-            | RegexOptions.Compiled
-            | RegexOptions.Singleline);
+    private const string ContentPattern =
+        "\\[content\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\](?<options>[^\\]]*)\\]";
 
     public TagHandlingOperation HandleTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation) =>
@@ -31,22 +30,27 @@ internal sealed partial class ContentTagHandlingProcessingService
             return tagHandlingOperation;
         }
 
-        tagHandlingOperation.Content = contentRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => ReplaceContentTag(
+            pattern: ContentPattern,
+            evaluator: (value, groups) => ReplaceContentTag(
                 operation: tagHandlingOperation,
-                match: match));
+                match: new RegularExpressionMatch
+                {
+                    Value = value,
+                    Groups = groups
+                }));
 
         return tagHandlingOperation;
     });
 
     private static string ReplaceContentTag(
         TagHandlingOperation operation,
-        Match match)
+        RegularExpressionMatch match)
     {
-        string name = match.Groups["name"].Value;
+        string name = match.Groups["name"];
 
-        string[] options = match.Groups["options"].Value
+        string[] options = match.Groups["options"]
             .Split(
                 separator: ' ',
                 options: StringSplitOptions.RemoveEmptyEntries);

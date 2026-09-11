@@ -4,6 +4,7 @@
 
 using cCoder.ContentManagement.Services.Foundations.Serialization;
 using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Models.Serialization;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
@@ -20,6 +21,16 @@ internal partial class JsonProcessingService(
             ? [jsonService.Deserialize<T>(json: json)]
             : jsonService.Deserialize<T[]>(json: json);
 
+    });
+
+    public JsonRecordsDocument ParseJsonRecordsDocument(
+        JsonRecordsDocument jsonRecordsDocument) =>
+        TryCatch<JsonRecordsDocument>(operation: () =>
+    {
+        ValidateParseJsonRecordsDocument(inputs: [jsonRecordsDocument]);
+
+        return jsonService.ParseJsonRecordsDocument(
+            jsonRecordsDocument: jsonRecordsDocument);
     });
 
     public string RemovePropertiesRecursively(

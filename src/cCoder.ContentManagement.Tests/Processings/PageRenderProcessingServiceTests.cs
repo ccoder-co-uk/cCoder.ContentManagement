@@ -52,6 +52,8 @@ public partial class PageRenderProcessingServiceTests
 
     private PageRenderProcessingService CreateSut(RenderConfig config)
     {
+        RegularExpressionBroker regularExpressionBroker = new();
+
         MetadataCacheService metadataCacheService = new(
             broker: metadataReaderBroker);
 
@@ -62,27 +64,32 @@ public partial class PageRenderProcessingServiceTests
             renderBroker: new RenderBroker(
                 tagHandlers:
                 [
-                    new CultureLinkTagHandlingProcessingService(),
-                    new MetadataTagHandlingProcessingService(),
-                    new NavigationTagHandlingProcessingService(),
-                    new ContentTagHandlingProcessingService(),
+                    new CultureLinkTagHandlingProcessingService(regularExpressionBroker),
+                    new MetadataTagHandlingProcessingService(regularExpressionBroker),
+                    new NavigationTagHandlingProcessingService(regularExpressionBroker),
+                    new ContentTagHandlingProcessingService(regularExpressionBroker),
                     new ComponentTagHandlingProcessingService(
-                        componentReaderBroker: componentReaderBroker),
+                        componentReaderBroker: componentReaderBroker,
+                        regularExpressionBroker: regularExpressionBroker),
                     new ScriptTagHandlingProcessingService(
-                        scriptReaderBroker: scriptReaderBroker),
-                    new StyleTagHandlingProcessingService(),
+                        scriptReaderBroker: scriptReaderBroker,
+                        regularExpressionBroker: regularExpressionBroker),
+                    new StyleTagHandlingProcessingService(regularExpressionBroker),
                     new ReplacementTagHandlingProcessingService(),
                     new DmsTagHandlingProcessingService(
                         renderFileContentBroker:
-                            renderFileContentBrokerMock.Object),
-                    new ResourceTagHandlingProcessingService(),
+                            renderFileContentBrokerMock.Object,
+                        regularExpressionBroker: regularExpressionBroker),
+                    new ResourceTagHandlingProcessingService(regularExpressionBroker),
                     new ExecuteTagHandlingProcessingService(
                         jsonBroker: new JsonBroker(),
                         workflowExecutionBroker:
                             new WorkflowExecutionBroker(
                                 workflowExecutionDependency:
-                                    new WorkflowExecutionDependency()))
-                ]));
+                                    new WorkflowExecutionDependency()),
+                        regularExpressionBroker: regularExpressionBroker)
+                ]),
+            regularExpressionBroker: regularExpressionBroker);
 
         RenderOrchestrationService executionOrchestrationService =
             new(

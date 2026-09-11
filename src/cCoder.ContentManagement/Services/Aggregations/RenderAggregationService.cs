@@ -7,7 +7,6 @@ using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 using System.Net;
-using System.Text.Json;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
@@ -15,6 +14,7 @@ internal sealed partial class RenderAggregationService(
     IPageContextOrchestrationService pageContextOrchestrationService,
     ICachedPageRenderOrchestrationService cachedPageRenderOrchestrationService,
     IUncachedPageRenderOrchestrationService uncachedPageRenderOrchestrationService,
+    IJsonOrchestrationService jsonOrchestrationService,
     ITemplateRenderOrchestrationService templateRenderOrchestrationService,
     IComponentRenderOrchestrationService componentRenderOrchestrationService)
         : IRenderAggregationService
@@ -57,7 +57,7 @@ internal sealed partial class RenderAggregationService(
 
     }, isValueTask: true);
 
-    private static void HydrateRequestValues(
+    private void HydrateRequestValues(
         PageRenderResult page,
         HttpPageRenderContext context)
     {
@@ -76,7 +76,7 @@ internal sealed partial class RenderAggregationService(
             ? "<a href='/Login'>Login</a>"
             : "<a name='logout' href=''>Logout</a>";
 
-        string serializedUser = JsonSerializer.Serialize(value: new
+        string serializedUser = jsonOrchestrationService.SerializeRuntimeValue(value: new
         {
             Id = isGuest ? "Guest" : context.User.Id,
             DefaultCultureId = string.IsNullOrWhiteSpace(

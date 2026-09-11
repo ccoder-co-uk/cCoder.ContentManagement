@@ -2,8 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text.RegularExpressions;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.RegularExpressions;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.Data.Models.CMS;
@@ -11,14 +12,12 @@ using cCoder.Data.Models.CMS;
 namespace cCoder.ContentManagement.Services.Processings.PageRendering;
 
 internal sealed partial class ComponentTagHandlingProcessingService(
-    IComponentReaderBroker componentReaderBroker)
+    IComponentReaderBroker componentReaderBroker,
+    IRegularExpressionBroker regularExpressionBroker)
         : IComponentTagHandlingProcessingService
 {
-    private static readonly Regex componentRegex = new(
-        pattern: "\\[component\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\](?<options>[^\\]]*)\\]",
-        options: RegexOptions.IgnoreCase
-            | RegexOptions.Compiled
-            | RegexOptions.Singleline);
+    private const string ComponentPattern =
+        "\\[component\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\](?<options>[^\\]]*)\\]";
 
     public TagHandlingOperation HandleTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation) =>
@@ -35,20 +34,25 @@ internal sealed partial class ComponentTagHandlingProcessingService(
             return tagHandlingOperation;
         }
 
-        tagHandlingOperation.Content = componentRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => ReplaceComponentTag(
+            pattern: ComponentPattern,
+            evaluator: (value, groups) => ReplaceComponentTag(
                 operation: tagHandlingOperation,
-                match: match));
+                match: new RegularExpressionMatch
+                {
+                    Value = value,
+                    Groups = groups
+                }));
 
         return tagHandlingOperation;
     });
 
     private string ReplaceComponentTag(
         TagHandlingOperation operation,
-        Match match)
+        RegularExpressionMatch match)
     {
-        string name = match.Groups["name"].Value;
+        string name = match.Groups["name"];
 
         PageRenderComponent component = ResolveComponent(
             session: operation.Session,
@@ -59,7 +63,7 @@ internal sealed partial class ComponentTagHandlingProcessingService(
             return "[[Missing Component:" + name + "]]";
         }
 
-        string[] options = match.Groups["options"].Value
+        string[] options = match.Groups["options"]
             .Split(
                 separator: ' ',
                 options: StringSplitOptions.RemoveEmptyEntries);

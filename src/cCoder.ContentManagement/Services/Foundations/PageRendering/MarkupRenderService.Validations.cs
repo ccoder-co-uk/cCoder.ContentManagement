@@ -11,4 +11,7 @@ internal sealed partial class MarkupRenderService
     private static void ValidateRenderRenderSessionReplacementDependencies(
         object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateMarkContentSecurityPolicyNonce(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
 }

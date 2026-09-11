@@ -3,21 +3,19 @@
 // ---------------------------------------------------------------
 
 using System.Text;
-using System.Text.RegularExpressions;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models.PageRendering;
 
 namespace cCoder.ContentManagement.Services.Processings.PageRendering;
 
 internal sealed partial class DmsTagHandlingProcessingService(
-    IRenderFileContentBroker renderFileContentBroker)
+    IRenderFileContentBroker renderFileContentBroker,
+    IRegularExpressionBroker regularExpressionBroker)
         : IDmsTagHandlingProcessingService
 {
-    private static readonly Regex dmsRegex = new(
-        pattern: "\\[dms\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]",
-        options: RegexOptions.IgnoreCase
-            | RegexOptions.Compiled
-            | RegexOptions.Singleline);
+    private const string DmsPattern =
+        "\\[dms\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]";
 
     public TagHandlingOperation HandleTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation) =>
@@ -29,11 +27,12 @@ internal sealed partial class DmsTagHandlingProcessingService(
             operation: tagHandlingOperation,
             parameterName: "operation");
 
-        tagHandlingOperation.Content = dmsRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => ResolveContent(
+            pattern: DmsPattern,
+            evaluator: (value, groups) => ResolveContent(
                 appId: tagHandlingOperation.Session.App?.Id ?? 0,
-                path: match.Groups["name"].Value));
+                path: groups["name"]));
 
         return tagHandlingOperation;
     });

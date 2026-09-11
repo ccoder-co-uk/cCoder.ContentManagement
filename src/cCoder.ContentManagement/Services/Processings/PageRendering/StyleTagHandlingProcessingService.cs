@@ -2,19 +2,17 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text.RegularExpressions;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.PageRendering;
 
 namespace cCoder.ContentManagement.Services.Processings.PageRendering;
 
-internal sealed partial class StyleTagHandlingProcessingService
+internal sealed partial class StyleTagHandlingProcessingService(
+    IRegularExpressionBroker regularExpressionBroker)
     : IStyleTagHandlingProcessingService
 {
-    private static readonly Regex styleRegex = new(
-        pattern: "\\[style\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]",
-        options: RegexOptions.IgnoreCase
-            | RegexOptions.Compiled
-            | RegexOptions.Singleline);
+    private const string StylePattern =
+        "\\[style\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]";
 
     public TagHandlingOperation HandleTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation) =>
@@ -26,12 +24,13 @@ internal sealed partial class StyleTagHandlingProcessingService
             operation: tagHandlingOperation,
             parameterName: "operation");
 
-        tagHandlingOperation.Content = styleRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => ResolveStyle(
+            pattern: StylePattern,
+            evaluator: (value, groups) => ResolveStyle(
                 session: tagHandlingOperation.Session,
-                name: match.Groups["name"].Value)?.Content
-                    ?? string.Empty);
+                name: groups["name"])?.Content
+                ?? string.Empty);
 
         return tagHandlingOperation;
     });

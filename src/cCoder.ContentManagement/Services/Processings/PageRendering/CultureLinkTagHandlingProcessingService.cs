@@ -2,19 +2,17 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text.RegularExpressions;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.PageRendering;
 
 namespace cCoder.ContentManagement.Services.Processings.PageRendering;
 
-internal sealed partial class CultureLinkTagHandlingProcessingService
+internal sealed partial class CultureLinkTagHandlingProcessingService(
+    IRegularExpressionBroker regularExpressionBroker)
     : ICultureLinkTagHandlingProcessingService
 {
-    private static readonly Regex cultureLinkRegex = new(
-        pattern: "\\[culturelink\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]",
-        options: RegexOptions.IgnoreCase
-            | RegexOptions.Compiled
-            | RegexOptions.Singleline);
+    private const string CultureLinkPattern =
+        "\\[culturelink\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]";
 
     public TagHandlingOperation HandleTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation) =>
@@ -26,8 +24,9 @@ internal sealed partial class CultureLinkTagHandlingProcessingService
             operation: tagHandlingOperation,
             parameterName: "operation");
 
-        tagHandlingOperation.Content = cultureLinkRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
+            pattern: CultureLinkPattern,
             replacement: "?culture=");
 
         return tagHandlingOperation;

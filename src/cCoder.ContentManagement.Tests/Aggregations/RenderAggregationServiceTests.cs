@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
@@ -50,6 +51,12 @@ public sealed partial class RenderAggregationServiceTests
         Mock<IPageContextOrchestrationService> contextService = new();
         Mock<ICachedPageRenderOrchestrationService> cachedService = new();
         Mock<IUncachedPageRenderOrchestrationService> uncachedService = new();
+        Mock<IJsonOrchestrationService> jsonService = new();
+
+        jsonService.Setup(expression: service =>
+            service.SerializeRuntimeValue(It.IsAny<object>()))
+            .Returns((object value) =>
+                new SystemTextJsonBroker().Serialize(value: value));
 
         contextService.Setup(expression: service =>
                 service.ResolvePageRenderContextAsync())
@@ -69,6 +76,7 @@ public sealed partial class RenderAggregationServiceTests
             pageContextOrchestrationService: contextService.Object,
             cachedPageRenderOrchestrationService: cachedService.Object,
             uncachedPageRenderOrchestrationService: uncachedService.Object,
+            jsonOrchestrationService: jsonService.Object,
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
@@ -106,6 +114,11 @@ public sealed partial class RenderAggregationServiceTests
             .Should()
             .NotContain(unexpected: "{{ccoder-runtime-");
 
+        jsonService.Verify(
+            expression: service => service.SerializeRuntimeValue(
+                It.IsAny<object>()),
+            times: Times.Once);
+
         uncachedService.VerifyNoOtherCalls();
     }
 
@@ -136,6 +149,12 @@ public sealed partial class RenderAggregationServiceTests
         Mock<IPageContextOrchestrationService> contextService = new();
         Mock<ICachedPageRenderOrchestrationService> cachedService = new();
         Mock<IUncachedPageRenderOrchestrationService> uncachedService = new();
+        Mock<IJsonOrchestrationService> jsonService = new();
+
+        jsonService.Setup(expression: service =>
+            service.SerializeRuntimeValue(It.IsAny<object>()))
+            .Returns((object value) =>
+                new SystemTextJsonBroker().Serialize(value: value));
 
         contextService.Setup(expression: service =>
                 service.ResolvePageRenderContextAsync())
@@ -154,6 +173,7 @@ public sealed partial class RenderAggregationServiceTests
             pageContextOrchestrationService: contextService.Object,
             cachedPageRenderOrchestrationService: cachedService.Object,
             uncachedPageRenderOrchestrationService: uncachedService.Object,
+            jsonOrchestrationService: jsonService.Object,
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
@@ -210,6 +230,8 @@ public sealed partial class RenderAggregationServiceTests
                 Mock.Of<ICachedPageRenderOrchestrationService>(),
             uncachedPageRenderOrchestrationService:
                 Mock.Of<IUncachedPageRenderOrchestrationService>(),
+            jsonOrchestrationService:
+                Mock.Of<IJsonOrchestrationService>(),
             templateRenderOrchestrationService: templateService.Object,
             componentRenderOrchestrationService:
                 Mock.Of<IComponentRenderOrchestrationService>());
@@ -261,6 +283,8 @@ public sealed partial class RenderAggregationServiceTests
                 Mock.Of<ICachedPageRenderOrchestrationService>(),
             uncachedPageRenderOrchestrationService:
                 Mock.Of<IUncachedPageRenderOrchestrationService>(),
+            jsonOrchestrationService:
+                Mock.Of<IJsonOrchestrationService>(),
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService: componentService.Object);

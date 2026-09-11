@@ -8,7 +8,6 @@ using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -82,12 +81,13 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
 
     }, isValueTask: true);
 
-    private static PageRenderCache CreatePageRenderCache(
+    private PageRenderCache CreatePageRenderCache(
         PageRenderResponse response)
     {
         PageRenderResult result = response.Page;
 
-        string fingerprintSource = JsonSerializer.Serialize(value: result);
+        string fingerprintSource = pageRenderProcessingService
+            .SerializeRuntimeValue(value: result);
 
         return new PageRenderCache
         {

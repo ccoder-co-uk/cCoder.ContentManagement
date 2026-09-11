@@ -54,6 +54,7 @@ public partial class TemplateRenderProcessingServiceTests
                 workflowExecutionDependency:
                     new WorkflowExecutionDependency()),
             loggingBroker: Mock.Of<ILoggingBroker>(),
+            regularExpressionBroker: new RegularExpressionBroker(),
             config: config);
     }
 

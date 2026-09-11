@@ -9,7 +9,8 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal sealed partial class CachedPageRenderProcessingService
+internal sealed partial class CachedPageRenderProcessingService(
+    IMarkupRenderService markupRenderService)
     : ICachedPageRenderProcessingService
 {
     public PageRenderCacheOperation RenderPageRenderCacheOperation(
@@ -46,10 +47,10 @@ internal sealed partial class CachedPageRenderProcessingService
                     Title = cached.Title,
                     Description = cached.Description,
                     Keywords = cached.Keywords,
-                    HeaderHtml = MarkupRenderService
+                    HeaderHtml = markupRenderService
                         .MarkContentSecurityPolicyNonce(
                             markup: cached.Header),
-                    BodyHtml = MarkupRenderService
+                    BodyHtml = markupRenderService
                         .MarkContentSecurityPolicyNonce(
                             markup: cached.Body),
                     StatusCode = StatusCodes.Status200OK

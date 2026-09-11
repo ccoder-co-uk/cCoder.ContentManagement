@@ -3,6 +3,9 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Exposures;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
@@ -61,10 +64,17 @@ public sealed partial class RenderAggregationServiceTests
 
         CachedPageRenderOrchestrationService cached = new(
             queryProcessingService: cacheQuery,
-            renderProcessingService: new CachedPageRenderProcessingService());
+            renderProcessingService: new CachedPageRenderProcessingService(
+                markupRenderService: new MarkupRenderService(
+                    renderBroker: Mock.Of<IRenderBroker>(),
+                    regularExpressionBroker: new RegularExpressionBroker())));
 
         Mock<IPageProcessingService> pageProcessing = new();
         Mock<IPageRenderProcessingService> renderProcessing = new();
+
+        renderProcessing.Setup(expression: service =>
+            service.SerializeRuntimeValue(It.IsAny<object>()))
+            .Returns(value: "{}");
 
         pageProcessing.Setup(expression: service =>
             service.GetPageForRenderAsync(pageId: page.Id))
@@ -92,6 +102,13 @@ public sealed partial class RenderAggregationServiceTests
             pageRenderProcessingService: renderProcessing.Object,
             pageRenderCacheProcessingService: cacheProcessing);
 
+        Mock<IJsonOrchestrationService> json = new();
+
+        json.Setup(expression: service =>
+            service.SerializeRuntimeValue(It.IsAny<object>()))
+            .Returns((object value) =>
+                new SystemTextJsonBroker().Serialize(value: value));
+
         Mock<IPageContextOrchestrationService> pageContext = new();
 
         pageContext.Setup(expression: service =>
@@ -102,6 +119,7 @@ public sealed partial class RenderAggregationServiceTests
             pageContextOrchestrationService: pageContext.Object,
             cachedPageRenderOrchestrationService: cached,
             uncachedPageRenderOrchestrationService: uncached,
+            jsonOrchestrationService: json.Object,
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:

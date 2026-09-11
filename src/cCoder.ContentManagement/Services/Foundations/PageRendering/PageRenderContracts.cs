@@ -19,6 +19,8 @@ internal interface ICommonObjectCacheService
 
 internal interface IMarkupRenderService
 {
+    string MarkContentSecurityPolicyNonce(string markup);
+
     string RenderRenderSessionReplacementDependencies(
         string key,
         string content,

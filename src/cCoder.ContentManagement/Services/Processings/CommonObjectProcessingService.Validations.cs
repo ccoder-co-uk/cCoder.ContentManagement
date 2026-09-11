@@ -8,6 +8,9 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class CommonObjectProcessingService
 {
+    private static void ValidateDeserializeCommonObjects(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateCommonObjectOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

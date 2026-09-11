@@ -3,7 +3,10 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Rendering.Services.Foundations;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Rendering.Brokers;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Foundations.Rendering;
@@ -17,7 +20,7 @@ public sealed partial class ContentSecurityPolicyNonceTests
         const string markup = "<style>.page { color: red; }</style><script src='/site.js'></script><script>start();</script>";
 
         // When
-        string result = MarkupRenderService.MarkContentSecurityPolicyNonce(markup: markup);
+        string result = CreateService().MarkContentSecurityPolicyNonce(markup: markup);
 
         // Then
         result.Should()
@@ -34,8 +37,9 @@ public sealed partial class ContentSecurityPolicyNonceTests
         const string markup = "<script nonce=\"stale\">start();</script>";
 
         // When
-        string firstResult = MarkupRenderService.MarkContentSecurityPolicyNonce(markup: markup);
-        string secondResult = MarkupRenderService.MarkContentSecurityPolicyNonce(markup: firstResult);
+        MarkupRenderService service = CreateService();
+        string firstResult = service.MarkContentSecurityPolicyNonce(markup: markup);
+        string secondResult = service.MarkContentSecurityPolicyNonce(markup: firstResult);
 
         // Then
         firstResult.Should()
@@ -52,7 +56,7 @@ public sealed partial class ContentSecurityPolicyNonceTests
         const string markup = "<script>const example = \"<style>not markup</style>\";</script><p>content</p>";
 
         // When
-        string result = MarkupRenderService.MarkContentSecurityPolicyNonce(markup: markup);
+        string result = CreateService().MarkContentSecurityPolicyNonce(markup: markup);
 
         // Then
         result.Should()
@@ -67,7 +71,7 @@ public sealed partial class ContentSecurityPolicyNonceTests
         const string markup = "<script data-example='a > b'>start();</script>";
 
         // When
-        string result = MarkupRenderService.MarkContentSecurityPolicyNonce(markup: markup);
+        string result = CreateService().MarkContentSecurityPolicyNonce(markup: markup);
 
         // Then
         result.Should()
@@ -82,10 +86,15 @@ public sealed partial class ContentSecurityPolicyNonceTests
         const string markup = "<button style='color:red' onclick='start()'>Start</button>";
 
         // When
-        string result = MarkupRenderService.MarkContentSecurityPolicyNonce(markup: markup);
+        string result = CreateService().MarkContentSecurityPolicyNonce(markup: markup);
 
         // Then
         result.Should()
             .Be(expected: markup);
     }
+
+    private static MarkupRenderService CreateService() =>
+        new(
+            renderBroker: Mock.Of<IRenderBroker>(),
+            regularExpressionBroker: new RegularExpressionBroker());
 }

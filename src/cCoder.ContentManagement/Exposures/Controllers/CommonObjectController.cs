@@ -232,7 +232,7 @@ public class CommonObjectController(
         }
     }
 
-    private static CommonObject[] DeserializeCommonObjects(JsonElement payload)
+    private CommonObject[] DeserializeCommonObjects(JsonElement payload)
     {
         JsonElement itemsPayload = payload.ValueKind == JsonValueKind.Object &&
                                    payload.TryGetProperty(propertyName: "value", value: out JsonElement valueElement)
@@ -241,15 +241,12 @@ public class CommonObjectController(
 
         return itemsPayload.ValueKind switch
         {
-            JsonValueKind.Array => JsonSerializer.Deserialize<CommonObject[]>(
+            JsonValueKind.Array => service.DeserializeCommonObjects(
                 json: itemsPayload.GetRawText(),
-                options: new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
-            JsonValueKind.Object =>
-            [
-                JsonSerializer.Deserialize<CommonObject>(
-                    json: itemsPayload.GetRawText(),
-                    options: new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
-            ],
+                isArray: true),
+            JsonValueKind.Object => service.DeserializeCommonObjects(
+                json: itemsPayload.GetRawText(),
+                isArray: false),
             JsonValueKind.Null => null,
             var ignoredRequest => null
         };

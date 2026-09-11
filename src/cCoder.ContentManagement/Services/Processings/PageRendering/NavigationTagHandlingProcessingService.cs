@@ -2,25 +2,20 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text.RegularExpressions;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.PageRendering;
 
 namespace cCoder.ContentManagement.Services.Processings.PageRendering;
 
-internal sealed partial class NavigationTagHandlingProcessingService
+internal sealed partial class NavigationTagHandlingProcessingService(
+    IRegularExpressionBroker regularExpressionBroker)
     : INavigationTagHandlingProcessingService
 {
-    private static readonly Regex navigationRegex = new(
-        pattern: "\\[nav\\[(?<name>[A-Za-z\\d_\\-/. ]*)\\]\\]",
-        options: RegexOptions.IgnoreCase
-            | RegexOptions.Compiled
-            | RegexOptions.Singleline);
+    private const string NavigationPattern =
+        "\\[nav\\[(?<name>[A-Za-z\\d_\\-/. ]*)\\]\\]";
 
-    private static readonly Regex expandedNavigationRegex = new(
-        pattern: "\\[navExpanded\\[(?<name>[A-Za-z\\d_\\-/. ]*)\\]\\]",
-        options: RegexOptions.IgnoreCase
-            | RegexOptions.Compiled
-            | RegexOptions.Singleline);
+    private const string ExpandedNavigationPattern =
+        "\\[navExpanded\\[(?<name>[A-Za-z\\d_\\-/. ]*)\\]\\]";
 
     public TagHandlingOperation HandleTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation) =>
@@ -32,18 +27,20 @@ internal sealed partial class NavigationTagHandlingProcessingService
             operation: tagHandlingOperation,
             parameterName: "operation");
 
-        tagHandlingOperation.Content = navigationRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => BuildMenu(
+            pattern: NavigationPattern,
+            evaluator: (value, groups) => BuildMenu(
                 session: tagHandlingOperation.Session,
-                tagName: match.Groups["name"].Value,
+                tagName: groups["name"],
                 expand: false));
 
-        tagHandlingOperation.Content = expandedNavigationRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => BuildMenu(
+            pattern: ExpandedNavigationPattern,
+            evaluator: (value, groups) => BuildMenu(
                 session: tagHandlingOperation.Session,
-                tagName: match.Groups["name"].Value,
+                tagName: groups["name"],
                 expand: true));
 
         return tagHandlingOperation;

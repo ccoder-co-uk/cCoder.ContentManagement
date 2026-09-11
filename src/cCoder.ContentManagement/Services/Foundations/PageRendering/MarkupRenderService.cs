@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using System.Text;
-using System.Text.RegularExpressions;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Brokers;
@@ -12,15 +12,13 @@ using cCoder.ContentManagement.Services.Processings.PageRendering;
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class MarkupRenderService(
-    IRenderBroker renderBroker) : IMarkupRenderService
+    IRenderBroker renderBroker,
+    IRegularExpressionBroker regularExpressionBroker) : IMarkupRenderService
 {
-    private static readonly Regex elementRegex = new(
-        pattern: "<(?<tag>script|style)\\b",
-        options: RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    private const string ElementPattern = "<(?<tag>script|style)\\b";
 
-    private static readonly Regex nonceRegex = new(
-        pattern: "\\s+nonce\\s*=\\s*(?:'[^']*'|\"[^\"]*\"|[^\\s>]+)",
-        options: RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    private const string NoncePattern =
+        "\\s+nonce\\s*=\\s*(?:'[^']*'|\"[^\"]*\"|[^\\s>]+)";
 
     private const string NonceAttribute =
         "nonce='" + ContentSecurityPolicyNonceContract.Placeholder + "'";
@@ -108,7 +106,14 @@ internal sealed partial class MarkupRenderService(
             message: "Tag rendering exceeded the maximum replacement passes.");
     }
 
-    internal static string MarkContentSecurityPolicyNonce(string markup)
+    public string MarkContentSecurityPolicyNonce(string markup) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateMarkContentSecurityPolicyNonce(inputs: [markup]);
+        return MarkContentSecurityPolicyNonceCore(markup: markup);
+    });
+
+    private string MarkContentSecurityPolicyNonceCore(string markup)
     {
         if (string.IsNullOrEmpty(value: markup))
         {
@@ -172,10 +177,11 @@ internal sealed partial class MarkupRenderService(
         return result.ToString();
     }
 
-    private static string MarkOpeningTag(string openingTag)
+    private string MarkOpeningTag(string openingTag)
     {
-        string withoutNonce = nonceRegex.Replace(
+        string withoutNonce = regularExpressionBroker.Replace(
             input: openingTag,
+            pattern: NoncePattern,
             replacement: string.Empty);
 
         int insertAt = withoutNonce.EndsWith(
@@ -189,25 +195,26 @@ internal sealed partial class MarkupRenderService(
             value: " " + NonceAttribute);
     }
 
-    private static bool TryFindElement(
+    private bool TryFindElement(
         string markup,
         int startIndex,
         out string tagName,
         out int openingStart)
     {
-        Match match = elementRegex.Match(
+        bool success = regularExpressionBroker.TryMatch(
             input: markup,
-            startat: startIndex);
+            pattern: ElementPattern,
+            startIndex: startIndex,
+            index: out int matchIndex,
+            groups: out IReadOnlyDictionary<string, string> groups);
 
-        tagName = match.Success
-            ? match.Groups["tag"].Value
+        tagName = success
+            ? groups["tag"]
             : string.Empty;
 
-        openingStart = match.Success
-            ? match.Index
-            : -1;
+        openingStart = success ? matchIndex : -1;
 
-        return match.Success;
+        return success;
     }
 
     private static int FindTagEnd(string markup, int startIndex)

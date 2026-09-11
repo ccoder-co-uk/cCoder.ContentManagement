@@ -35,7 +35,7 @@ internal sealed partial class MarkupRenderProcessingService(
 
         renderSession.Output = new RenderOutput
         {
-            HeaderMarkup = MarkupRenderService.MarkContentSecurityPolicyNonce(
+            HeaderMarkup = markupRenderService.MarkContentSecurityPolicyNonce(
                 markup: markupRenderService.RenderRenderSessionReplacementDependencies(
                     key: key,
                     content: renderSession.Target?.HeaderMarkup ?? string.Empty,
@@ -44,7 +44,7 @@ internal sealed partial class MarkupRenderProcessingService(
                     allowContentTags: renderSession.Target?.AllowHeaderContentTags ?? false)),
             BodyMarkup = renderSession.Request.HeaderOnly
                 ? string.Empty
-                : MarkupRenderService.MarkContentSecurityPolicyNonce(
+                : markupRenderService.MarkContentSecurityPolicyNonce(
                     markup: markupRenderService.RenderRenderSessionReplacementDependencies(
                         key: key,
                         content: renderSession.Target?.BodyMarkup ?? string.Empty,

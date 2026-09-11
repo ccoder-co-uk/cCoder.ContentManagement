@@ -13,13 +13,22 @@ using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
 using cCoder.ContentManagement.Services.Foundations;
+using cCoder.ContentManagement.Brokers;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class PageRenderProcessingService(
     IPageRenderService pageRenderService,
-    ContentManagementConfiguration config) : IPageRenderProcessingService
+    ContentManagementConfiguration config,
+    ISystemTextJsonBroker systemTextJsonBroker = null) : IPageRenderProcessingService
 {
+    public string SerializeRuntimeValue(object value) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateSerializeRuntimeValue(inputs: [value]);
+        return systemTextJsonBroker.Serialize(value: value);
+    });
+
     public PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation pageRenderOperation) =>
         TryCatch<PageRenderOperation>(operation: () =>

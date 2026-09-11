@@ -9,4 +9,6 @@ internal interface IPageRenderProcessingService
 {
     PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation operation);
+
+    string SerializeRuntimeValue(object value);
 }

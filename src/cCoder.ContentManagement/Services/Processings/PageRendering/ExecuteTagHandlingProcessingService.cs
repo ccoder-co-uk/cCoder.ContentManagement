@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text.RegularExpressions;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.PageRendering;
 
@@ -10,14 +9,11 @@ namespace cCoder.ContentManagement.Services.Processings.PageRendering;
 
 internal sealed partial class ExecuteTagHandlingProcessingService(
     IJsonBroker jsonBroker,
-    IWorkflowExecutionBroker workflowExecutionBroker)
+    IWorkflowExecutionBroker workflowExecutionBroker,
+    IRegularExpressionBroker regularExpressionBroker)
         : IExecuteTagHandlingProcessingService
 {
-    private static readonly Regex executeRegex = new(
-        pattern: "\\[execute\\](.*?)\\[/execute\\]",
-        options: RegexOptions.IgnoreCase
-            | RegexOptions.Compiled
-            | RegexOptions.Singleline);
+    private const string ExecutePattern = "\\[execute\\](.*?)\\[/execute\\]";
 
     public TagHandlingOperation HandleTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation) =>
@@ -29,10 +25,11 @@ internal sealed partial class ExecuteTagHandlingProcessingService(
             operation: tagHandlingOperation,
             parameterName: "operation");
 
-        tagHandlingOperation.Content = executeRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => Execute(
-                code: match.Groups[1].Value,
+            pattern: ExecutePattern,
+            evaluator: (value, groups) => Execute(
+                code: groups["1"],
                 replacements: tagHandlingOperation.Replacements));
 
         return tagHandlingOperation;

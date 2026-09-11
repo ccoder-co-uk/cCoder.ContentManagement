@@ -8,6 +8,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class CommonObjectOrchestrationService
 {
+    private static void ValidateDeserializeCommonObjects(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateCommonObjectOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 

@@ -14,32 +14,41 @@ namespace cCoder.ContentManagement.Tests.PenetrationTests;
 
 public partial class MarkupRenderServiceTests
 {
-    private static MarkupRenderProcessingService CreateMarkupRenderService() =>
-        new(
+    private static MarkupRenderProcessingService CreateMarkupRenderService()
+    {
+        RegularExpressionBroker regularExpressionBroker = new();
+
+        return new(
             markupRenderService: new MarkupRenderService(
             renderBroker: new RenderBroker(
                 tagHandlers:
                 [
-                    new CultureLinkTagHandlingProcessingService(),
-                    new MetadataTagHandlingProcessingService(),
-                    new NavigationTagHandlingProcessingService(),
-                    new ContentTagHandlingProcessingService(),
+                    new CultureLinkTagHandlingProcessingService(regularExpressionBroker),
+                    new MetadataTagHandlingProcessingService(regularExpressionBroker),
+                    new NavigationTagHandlingProcessingService(regularExpressionBroker),
+                    new ContentTagHandlingProcessingService(regularExpressionBroker),
                     new ComponentTagHandlingProcessingService(
                         componentReaderBroker:
-                            Mock.Of<IComponentReaderBroker>()),
+                            Mock.Of<IComponentReaderBroker>(),
+                        regularExpressionBroker: regularExpressionBroker),
                     new ScriptTagHandlingProcessingService(
                         scriptReaderBroker:
-                            Mock.Of<IScriptReaderBroker>()),
-                    new StyleTagHandlingProcessingService(),
+                            Mock.Of<IScriptReaderBroker>(),
+                        regularExpressionBroker: regularExpressionBroker),
+                    new StyleTagHandlingProcessingService(regularExpressionBroker),
                     new ReplacementTagHandlingProcessingService(),
                     new DmsTagHandlingProcessingService(
                         renderFileContentBroker:
-                            Mock.Of<IRenderFileContentBroker>()),
-                    new ResourceTagHandlingProcessingService(),
+                            Mock.Of<IRenderFileContentBroker>(),
+                        regularExpressionBroker: regularExpressionBroker),
+                    new ResourceTagHandlingProcessingService(regularExpressionBroker),
                     new ExecuteTagHandlingProcessingService(
                         jsonBroker: Mock.Of<IJsonBroker>(),
                         workflowExecutionBroker:
-                            Mock.Of<IWorkflowExecutionBroker>())
-                ])),
+                            Mock.Of<IWorkflowExecutionBroker>(),
+                        regularExpressionBroker: regularExpressionBroker)
+                ]),
+                regularExpressionBroker: regularExpressionBroker),
             jsonBroker: Mock.Of<IJsonBroker>());
+    }
 }

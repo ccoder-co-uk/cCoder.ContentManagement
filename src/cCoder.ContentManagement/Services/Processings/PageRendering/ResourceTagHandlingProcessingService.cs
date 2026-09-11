@@ -2,21 +2,23 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text.RegularExpressions;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Models.RegularExpressions;
 
 namespace cCoder.ContentManagement.Services.Processings.PageRendering;
 
-internal sealed partial class ResourceTagHandlingProcessingService
+internal sealed partial class ResourceTagHandlingProcessingService(
+    IRegularExpressionBroker regularExpressionBroker)
     : IResourceTagHandlingProcessingService
 {
-    private static readonly Regex resourceDisplayNameRegex = CreateRegex(
+    private static readonly string resourceDisplayNamePattern = CreatePattern(
         type: "resource_displayname");
 
-    private static readonly Regex resourceShortDisplayNameRegex = CreateRegex(
+    private static readonly string resourceShortDisplayNamePattern = CreatePattern(
         type: "resource_shortdisplayname");
 
-    private static readonly Regex resourceDescriptionRegex = CreateRegex(
+    private static readonly string resourceDescriptionPattern = CreatePattern(
         type: "resource_description");
 
     public TagHandlingOperation HandleTagHandlingOperation(
@@ -34,25 +36,28 @@ internal sealed partial class ResourceTagHandlingProcessingService
             return tagHandlingOperation;
         }
 
-        tagHandlingOperation.Content = resourceDisplayNameRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => ResolveResourceValue(
+            pattern: resourceDisplayNamePattern,
+            evaluator: (value, groups) => ResolveResourceValue(
                 operation: tagHandlingOperation,
-                match: match,
+                match: new RegularExpressionMatch { Value = value, Groups = groups },
                 selector: resource => resource.DisplayName));
 
-        tagHandlingOperation.Content = resourceShortDisplayNameRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => ResolveResourceValue(
+            pattern: resourceShortDisplayNamePattern,
+            evaluator: (value, groups) => ResolveResourceValue(
                 operation: tagHandlingOperation,
-                match: match,
+                match: new RegularExpressionMatch { Value = value, Groups = groups },
                 selector: resource => resource.ShortDisplayName));
 
-        tagHandlingOperation.Content = resourceDescriptionRegex.Replace(
+        tagHandlingOperation.Content = regularExpressionBroker.Replace(
             input: tagHandlingOperation.Content,
-            evaluator: match => ResolveResourceValue(
+            pattern: resourceDescriptionPattern,
+            evaluator: (value, groups) => ResolveResourceValue(
                 operation: tagHandlingOperation,
-                match: match,
+                match: new RegularExpressionMatch { Value = value, Groups = groups },
                 selector: resource => resource.Description));
 
         return tagHandlingOperation;
@@ -60,10 +65,10 @@ internal sealed partial class ResourceTagHandlingProcessingService
 
     private static string ResolveResourceValue(
         TagHandlingOperation operation,
-        Match match,
+        RegularExpressionMatch match,
         Func<PageRenderResource, string> selector)
     {
-        string name = match.Groups["name"].Value.ToLowerInvariant();
+        string name = match.Groups["name"].ToLowerInvariant();
 
         PageRenderResource resource = ResolveResource(
             session: operation.Session,
@@ -170,10 +175,6 @@ internal sealed partial class ResourceTagHandlingProcessingService
             ? session.Request.Culture
             : session.App?.DefaultCulture ?? string.Empty;
 
-    private static Regex CreateRegex(string type) =>
-        new(
-            pattern: $"\\[{type}\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]",
-            options: RegexOptions.IgnoreCase
-                | RegexOptions.Compiled
-                | RegexOptions.Singleline);
+    private static string CreatePattern(string type) =>
+        $"\\[{type}\\[(?<name>[A-Za-z\\d_\\-/. ]+)\\]\\]";
 }

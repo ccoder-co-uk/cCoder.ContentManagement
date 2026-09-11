@@ -272,6 +272,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateBroker, TemplateBroker>();
         services.AddTransient<IAuthorizationBroker, AuthorizationBroker>();
         services.AddTransient<IJsonBroker, JsonBroker>();
+        services.AddTransient<ISystemTextJsonBroker, SystemTextJsonBroker>();
+        services.AddTransient<IRegularExpressionBroker, RegularExpressionBroker>();
         services.AddTransient<
             ITemplateContentBroker,
             TemplateContentBroker>();
@@ -494,6 +496,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ILayoutOrchestrationService, LayoutOrchestrationService>();
         services.AddTransient<ILayoutManager, LayoutOrchestrationService>();
         services.AddTransient<IMigrationSupportOrchestrationService, MigrationSupportOrchestrationService>();
+        services.AddTransient<IJsonOrchestrationService, JsonOrchestrationService>();
         services.AddTransient<IPackageItemOrchestrationService, PackageItemOrchestrationService>();
         services.AddTransient<IPackageOrchestrationService, PackageOrchestrationService>();
         services.AddTransient<IPageInfoOrchestrationService, PageInfoOrchestrationService>();

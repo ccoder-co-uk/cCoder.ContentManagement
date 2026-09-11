@@ -2,18 +2,14 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-namespace cCoder.ContentManagement.Services.Processings;
-
 using cCoder.ContentManagement.Models.Serialization;
 
-internal interface IJsonProcessingService
+namespace cCoder.ContentManagement.Services.Orchestrations;
+
+internal interface IJsonOrchestrationService
 {
-    T[] DeserializeItems<T>(string json);
+    string SerializeRuntimeValue(object value);
 
     JsonRecordsDocument ParseJsonRecordsDocument(
         JsonRecordsDocument jsonRecordsDocument);
-
-    string RemovePropertiesRecursively(
-        string json,
-        IReadOnlyCollection<string> propertyNames);
 }

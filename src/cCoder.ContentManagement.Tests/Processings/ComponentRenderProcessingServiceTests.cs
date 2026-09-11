@@ -58,7 +58,8 @@ public partial class ComponentRenderProcessingServiceTests
             componentRenderService: componentRenderServiceMock.Object,
             workflowExecutionBroker: new WorkflowExecutionBroker(
                 workflowExecutionDependency:
-                    new WorkflowExecutionDependency()));
+                    new WorkflowExecutionDependency()),
+            regularExpressionBroker: new RegularExpressionBroker());
     }
 
     private static (RenderApp app, RenderUser user, RenderComponent component, RenderComponentParams renderParams) CreateComponentRenderContext()

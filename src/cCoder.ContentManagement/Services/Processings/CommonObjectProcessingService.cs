@@ -15,8 +15,18 @@ using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class CommonObjectProcessingService(ICommonObjectService service, ICommonObjectReaderBroker cache, IAuthorizationManager authorizationManager, IJsonBroker jsonBroker) : ICommonObjectProcessingService
+internal partial class CommonObjectProcessingService(ICommonObjectService service, ICommonObjectReaderBroker cache, IAuthorizationManager authorizationManager, IJsonBroker jsonBroker, ISystemTextJsonBroker systemTextJsonBroker = null) : ICommonObjectProcessingService
 {
+    public CommonObject[] DeserializeCommonObjects(string json, bool isArray) =>
+        TryCatch<CommonObject[]>(operation: () =>
+    {
+        ValidateDeserializeCommonObjects(inputs: [json, isArray]);
+
+        return isArray
+            ? systemTextJsonBroker.Deserialize<CommonObject[]>(json: json)
+            : [systemTextJsonBroker.Deserialize<CommonObject>(json: json)];
+    });
+
     private User GetCurrentUser() =>
         authorizationManager.GetCurrentUser();
 

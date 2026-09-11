@@ -8,12 +8,14 @@ using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models;
-using System.Text.Json;
+using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Models.Serialization;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
 internal partial class ContentManagementMigrationAggregationService(
     IMigrationSupportOrchestrationService migrationSupportOrchestrationService,
+    IJsonOrchestrationService jsonOrchestrationService,
     IComponentOrchestrationService componentOrchestrationService,
     ILayoutOrchestrationService layoutOrchestrationService,
     IPageOrchestrationService pageOrchestrationService,
@@ -100,18 +102,18 @@ internal partial class ContentManagementMigrationAggregationService(
 
     }
 
-    private static IEnumerable<CommonObject> ConvertToCommonObjects(
+    private IEnumerable<CommonObject> ConvertToCommonObjects(
         Package package,
         PackageItem item)
     {
-        using JsonDocument document = JsonDocument.Parse(json: item.Data);
+        JsonRecordsDocument document = jsonOrchestrationService
+            .ParseJsonRecordsDocument(
+                jsonRecordsDocument: new JsonRecordsDocument
+                {
+                    Json = item.Data
+                });
 
-        IEnumerable<JsonElement> records =
-            document.RootElement.ValueKind == JsonValueKind.Array
-                ? document.RootElement.EnumerateArray()
-                : [document.RootElement];
-
-        foreach (JsonElement record in records)
+        foreach (JsonObjectRecord record in document.Records)
         {
             yield return new CommonObject
             {
@@ -122,7 +124,7 @@ internal partial class ContentManagementMigrationAggregationService(
                     ?? ReadOptionalString(record: record, name: "Key")
                     ?? package.Category,
                 Type = item.Type,
-                Json = record.GetRawText(),
+                Json = record.RawText,
                 Culture = ReadOptionalString(record: record, name: "Culture")
                     ?? string.Empty,
                 CreatedOn = ReadOptionalDateTimeOffset(
@@ -136,23 +138,21 @@ internal partial class ContentManagementMigrationAggregationService(
     }
 
     private static DateTimeOffset ReadOptionalDateTimeOffset(
-        JsonElement record,
+        JsonObjectRecord record,
         string name) =>
-        record.TryGetProperty(propertyName: name, value: out JsonElement value)
-            && value.TryGetDateTimeOffset(value: out DateTimeOffset result)
-                ? result
-                : DateTimeOffset.UtcNow;
+        record.DateTimeOffsetValues.TryGetValue(key: name, value: out DateTimeOffset value)
+            ? value
+            : DateTimeOffset.UtcNow;
 
     private static string ReadOptionalString(
-        JsonElement record,
+        JsonObjectRecord record,
         string name) =>
-        record.TryGetProperty(propertyName: name, value: out JsonElement value)
-            && value.ValueKind == JsonValueKind.String
-                ? value.GetString()
-                : null;
+        record.StringValues.TryGetValue(key: name, value: out string value)
+            ? value
+            : null;
 
     private static string ReadRequiredString(
-        JsonElement record,
+        JsonObjectRecord record,
         string name) =>
         ReadOptionalString(record: record, name: name)
             ?? throw new ValidationException(
