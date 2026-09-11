@@ -17,20 +17,20 @@ internal sealed partial class MetadataTagHandlingProcessingService
             | RegexOptions.Singleline);
 
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        operation.Content = metadataRegex.Replace(
-            input: operation.Content,
-            evaluator: match => operation.Session.MetadataResolver(
+        tagHandlingOperation.Content = metadataRegex.Replace(
+            input: tagHandlingOperation.Content,
+            evaluator: match => tagHandlingOperation.Session.MetadataResolver(
                 arg: match.Groups["name"].Value) ?? string.Empty);
 
-        return operation;
+        return tagHandlingOperation;
     });
 }

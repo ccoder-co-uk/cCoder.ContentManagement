@@ -37,7 +37,7 @@ public partial class SubmissionEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseSubmissionAddEventAsync(entity: entity);
+        await service.RaiseSubmissionAddEventAsync(submission: entity);
 
         // Then
 

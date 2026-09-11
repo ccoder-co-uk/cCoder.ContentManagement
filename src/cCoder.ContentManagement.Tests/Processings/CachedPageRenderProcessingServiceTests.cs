@@ -42,7 +42,7 @@ public sealed partial class CachedPageRenderProcessingServiceTests
 
         // When
         PageRenderCacheOperation result =
-            service.RenderPageRenderCacheOperation(operation: operation);
+            service.RenderPageRenderCacheOperation(pageRenderCacheOperation: operation);
 
         // Then
         Assert.Same(

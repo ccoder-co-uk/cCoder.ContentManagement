@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class CultureEventService(ICultureEventBroker cultureEventBroker) : ICultureEventService
 {
-    public ValueTask RaiseCultureAddEventAsync(Culture entity) =>
+    public ValueTask RaiseCultureAddEventAsync(Culture culture) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCultureAddEventAsync(inputs: [entity]);
+        ValidateRaiseCultureAddEventAsync(inputs: [culture]);
 
         EventMessage<Culture> message = new EventMessage<Culture>
         {
@@ -22,17 +22,17 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
             {
                 SSOUserId = cultureEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = culture
         };
 
         await cultureEventBroker.RaiseCultureAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCultureUpdateEventAsync(Culture entity) =>
+    public ValueTask RaiseCultureUpdateEventAsync(Culture culture) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCultureUpdateEventAsync(inputs: [entity]);
+        ValidateRaiseCultureUpdateEventAsync(inputs: [culture]);
 
         EventMessage<Culture> message = new EventMessage<Culture>
         {
@@ -40,17 +40,17 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
             {
                 SSOUserId = cultureEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = culture
         };
 
         await cultureEventBroker.RaiseCultureUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCultureDeleteEventAsync(Culture entity) =>
+    public ValueTask RaiseCultureDeleteEventAsync(Culture culture) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCultureDeleteEventAsync(inputs: [entity]);
+        ValidateRaiseCultureDeleteEventAsync(inputs: [culture]);
 
         EventMessage<Culture> message = new EventMessage<Culture>
         {
@@ -58,7 +58,7 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
             {
                 SSOUserId = cultureEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = culture
         };
 
         await cultureEventBroker.RaiseCultureDeleteEventAsync(message: message);

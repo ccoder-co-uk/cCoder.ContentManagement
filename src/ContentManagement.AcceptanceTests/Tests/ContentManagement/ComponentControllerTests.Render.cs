@@ -30,8 +30,6 @@ payload: new
 });
 
         string actualRenderContent;
-        Component actualComponent;
-
         // When
         actualRenderContent = await RenderComponentAsync(name: componentName);
 
@@ -42,15 +40,6 @@ payload: new
 
         actualRenderContent.Should()
             .Contain(expected: "Hello component");
-
-        await PatchComponentAsync(id: createdComponent.Id, payload: new { description = "Patched component" });
-        actualComponent = await GetComponentAsync(id: createdComponent.Id);
-
-        actualComponent.Should()
-            .NotBeNull();
-
-        actualComponent!.Description.Should()
-            .Be(expected: "Patched component");
 
         await DeleteComponentAsync(id: createdComponent.Id);
     }

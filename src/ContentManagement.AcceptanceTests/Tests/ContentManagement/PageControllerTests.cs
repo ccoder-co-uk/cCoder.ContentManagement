@@ -142,22 +142,6 @@ values: privileges
         return JsonSerializer.Deserialize<Page>(json: content, options: JsonOptions)!;
     }
 
-    private async Task<Page> PatchPageAsync(int id, object payload)
-    {
-        using HttpRequestMessage request = new(method: HttpMethod.Patch, requestUri: $"{BaseUrl}({id})")
-        {
-            Content = JsonContent.Create(inputValue: payload),
-        };
-
-        using HttpResponseMessage response = await Client.SendAsync(request: request);
-        string content = await response.Content.ReadAsStringAsync();
-
-        response.StatusCode.Should()
-            .Be(expected: HttpStatusCode.OK, because: content);
-
-        return JsonSerializer.Deserialize<Page>(json: content, options: JsonOptions)!;
-    }
-
     private async Task<int> DeletePageAsync(int id)
     {
         using HttpResponseMessage response = await Client.DeleteAsync(requestUri: $"{BaseUrl}({id})");

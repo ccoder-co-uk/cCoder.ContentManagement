@@ -32,7 +32,7 @@ public partial class AppCultureEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseAppCultureDeleteEventAsync(entity: entity);
+        await service.RaiseAppCultureDeleteEventAsync(appCulture: entity);
 
         // Then
         appCultureEventServiceMock.Verify(expression: x => x.RaiseAppCultureDeleteEventAsync(entity: entity), times: Times.Once);

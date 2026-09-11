@@ -49,53 +49,53 @@ internal partial class PageRenderOrchestrationService(
     });
 
     public PageRenderOperation ProcessPageRenderOperation(
-        PageRenderOperation operation) =>
+        PageRenderOperation pageRenderOperation) =>
         TryCatch<PageRenderOperation>(operation: () =>
     {
-        ValidateProcessPageRenderOperation(inputs: [operation]);
+        ValidateProcessPageRenderOperation(inputs: [pageRenderOperation]);
 
-        if (operation.OperationType == PageRenderOperationType.UserCanPage)
+        if (pageRenderOperation.OperationType == PageRenderOperationType.UserCanPage)
         {
             RenderAuthorization authorization = authorizationProcessingService
                 .ResolveRenderAuthorizationContext(
                     context: new AuthorizationContext())
                 .RenderAuthorization;
 
-            operation.User = authorization.User;
+            pageRenderOperation.User = authorization.User;
 
-            operation.IsAuthorized = authorizationProcessingService
+            pageRenderOperation.IsAuthorized = authorizationProcessingService
                 .UserCanPageAuthorizationContext(
                     context: new AuthorizationContext
                     {
                         PageAuthorization = new PageAuthorization
                         {
-                            Page = operation.SourcePage,
+                            Page = pageRenderOperation.SourcePage,
                             User = authorization.User,
-                            Privilege = operation.Privilege
+                            Privilege = pageRenderOperation.Privilege
                         }
                     });
 
-            return operation;
+            return pageRenderOperation;
         }
 
-        operation.Page = operation.User == null
+        pageRenderOperation.Page = pageRenderOperation.User == null
             ? RenderPageRenderResult(
-                page: operation.SourcePage,
-                theme: operation.Theme,
-                culture: operation.Culture,
-                edit: operation.Edit,
-                headerOnly: operation.HeaderOnly,
-                cacheTemplate: operation.CacheTemplate)
+                page: pageRenderOperation.SourcePage,
+                theme: pageRenderOperation.Theme,
+                culture: pageRenderOperation.Culture,
+                edit: pageRenderOperation.Edit,
+                headerOnly: pageRenderOperation.HeaderOnly,
+                cacheTemplate: pageRenderOperation.CacheTemplate)
             : RenderPageUserRenderResult(
-                page: operation.SourcePage,
-                user: operation.User,
-                theme: operation.Theme,
-                culture: operation.Culture,
-                edit: operation.Edit,
-                headerOnly: operation.HeaderOnly,
-                cacheTemplate: operation.CacheTemplate);
+                page: pageRenderOperation.SourcePage,
+                user: pageRenderOperation.User,
+                theme: pageRenderOperation.Theme,
+                culture: pageRenderOperation.Culture,
+                edit: pageRenderOperation.Edit,
+                headerOnly: pageRenderOperation.HeaderOnly,
+                cacheTemplate: pageRenderOperation.CacheTemplate);
 
-        return operation;
+        return pageRenderOperation;
     });
 
     internal bool UserCanPage(Page page, string privilege) =>

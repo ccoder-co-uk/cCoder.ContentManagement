@@ -10,5 +10,9 @@ internal interface IMigrationSupportOrchestrationService
 {
     T[] DeserializeItems<T>(string json);
 
+    string RemovePropertiesRecursively(
+        string json,
+        IReadOnlyCollection<string> propertyNames);
+
     Package[] ExportPackages(int appId, string[] packageNames);
 }

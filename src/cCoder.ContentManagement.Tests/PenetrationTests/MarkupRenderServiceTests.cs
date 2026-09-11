@@ -40,5 +40,6 @@ public partial class MarkupRenderServiceTests
                         jsonBroker: Mock.Of<IJsonBroker>(),
                         workflowExecutionBroker:
                             Mock.Of<IWorkflowExecutionBroker>())
-                ])));
+                ])),
+            jsonBroker: Mock.Of<IJsonBroker>());
 }

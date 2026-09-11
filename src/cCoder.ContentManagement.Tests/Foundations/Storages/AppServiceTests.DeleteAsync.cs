@@ -34,8 +34,8 @@ public partial class AppServiceTests
         App app = CreateRandomApp(id: 5);
         app.Roles = [new Role { Id = Guid.NewGuid(), AppId = app.Id, Users = [] }];
 
-        appBrokerMock.Setup(expression: x => x.GetAllAppsIgnoringFilters())
-            .Returns(value: new[] { app }.AsQueryable());
+        appBrokerMock.Setup(expression: x => x.GetAppForDelete(appId: app.Id))
+            .Returns(value: app);
 
         authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_delete"));
 
@@ -46,7 +46,7 @@ public partial class AppServiceTests
         await appService.DeleteAsync(appId: 5);
 
         // Then
-        appBrokerMock.Verify(expression: x => x.GetAllAppsIgnoringFilters(), times: Times.Once);
+        appBrokerMock.Verify(expression: x => x.GetAppForDelete(appId: app.Id), times: Times.Once);
         appBrokerMock.Verify(expression: x => x.DeleteAppAggregateAsync(deletedApp: It.Is<CmsDataModels.App>(match: actual => actual.Id == app.Id)), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
         authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_delete"), times: Times.Once);
@@ -60,8 +60,8 @@ public partial class AppServiceTests
         App app = CreateRandomApp(id: 5);
         app.Roles = [new Role { Id = Guid.NewGuid(), AppId = app.Id, Users = [] }];
 
-        appBrokerMock.Setup(expression: x => x.GetAllAppsIgnoringFilters())
-            .Returns(value: new[] { app }.AsQueryable());
+        appBrokerMock.Setup(expression: x => x.GetAppForDelete(appId: app.Id))
+            .Returns(value: app);
 
         authorizationManagerMock
             .Setup(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_delete"))
@@ -76,7 +76,7 @@ public partial class AppServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        appBrokerMock.Verify(expression: x => x.GetAllAppsIgnoringFilters(), times: Times.Once);
+        appBrokerMock.Verify(expression: x => x.GetAppForDelete(appId: app.Id), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
         authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)app.Id, privilege: "App_delete"), times: Times.Once);
         authorizationManagerMock.VerifyNoOtherCalls();

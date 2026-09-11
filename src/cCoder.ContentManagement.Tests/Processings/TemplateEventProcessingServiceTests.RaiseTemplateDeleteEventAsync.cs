@@ -32,7 +32,7 @@ public partial class TemplateEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseTemplateDeleteEventAsync(entity: entity);
+        await service.RaiseTemplateDeleteEventAsync(template: entity);
 
         // Then
         templateEventServiceMock.Verify(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entity), times: Times.Once);

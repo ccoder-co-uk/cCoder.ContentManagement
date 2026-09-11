@@ -36,7 +36,7 @@ public partial class PageRoleEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageRoleAddEventAsync(entity: entity);
+        await service.RaisePageRoleAddEventAsync(pageRole: entity);
 
         // Then
 

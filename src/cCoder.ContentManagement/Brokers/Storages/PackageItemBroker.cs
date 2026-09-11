@@ -57,6 +57,6 @@ internal sealed class PackageItemBroker(ICoreContextFactory coreContextFactory) 
         await coreDataContext.SaveChangesAsync();
     }
 
-    public int? GetAppId(PackageItem entity) =>
+    public int? GetAppId(PackageItem packageItem) =>
         null;
 }

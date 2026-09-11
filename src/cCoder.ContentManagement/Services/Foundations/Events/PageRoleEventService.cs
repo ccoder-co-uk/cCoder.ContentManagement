@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker) : IPageRoleEventService
 {
-    public ValueTask RaisePageRoleAddEventAsync(PageRole entity) =>
+    public ValueTask RaisePageRoleAddEventAsync(PageRole pageRole) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageRoleAddEventAsync(inputs: [entity]);
+        ValidateRaisePageRoleAddEventAsync(inputs: [pageRole]);
 
         EventMessage<PageRole> message = new EventMessage<PageRole>
         {
@@ -22,17 +22,17 @@ internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBr
             {
                 SSOUserId = pageRoleEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = pageRole
         };
 
         await pageRoleEventBroker.RaisePageRoleAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageRoleDeleteEventAsync(PageRole entity) =>
+    public ValueTask RaisePageRoleDeleteEventAsync(PageRole pageRole) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageRoleDeleteEventAsync(inputs: [entity]);
+        ValidateRaisePageRoleDeleteEventAsync(inputs: [pageRole]);
 
         EventMessage<PageRole> message = new EventMessage<PageRole>
         {
@@ -40,7 +40,7 @@ internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBr
             {
                 SSOUserId = pageRoleEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = pageRole
         };
 
         await pageRoleEventBroker.RaisePageRoleDeleteEventAsync(message: message);

@@ -32,7 +32,7 @@ public partial class ResourceEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseResourceUpdateEventAsync(entity: entity);
+        await service.RaiseResourceUpdateEventAsync(resource: entity);
 
         // Then
         resourceEventServiceMock.Verify(expression: x => x.RaiseResourceUpdateEventAsync(entity: entity), times: Times.Once);

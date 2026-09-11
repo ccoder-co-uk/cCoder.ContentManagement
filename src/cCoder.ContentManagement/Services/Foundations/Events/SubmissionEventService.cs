@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class SubmissionEventService(ISubmissionEventBroker submissionEventBroker) : ISubmissionEventService
 {
-    public ValueTask RaiseSubmissionAddEventAsync(Submission entity) =>
+    public ValueTask RaiseSubmissionAddEventAsync(Submission submission) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseSubmissionAddEventAsync(inputs: [entity]);
+        ValidateRaiseSubmissionAddEventAsync(inputs: [submission]);
 
         EventMessage<Submission> message = new EventMessage<Submission>
         {
@@ -22,17 +22,17 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
             {
                 SSOUserId = submissionEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = submission
         };
 
         await submissionEventBroker.RaiseSubmissionAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseSubmissionUpdateEventAsync(Submission entity) =>
+    public ValueTask RaiseSubmissionUpdateEventAsync(Submission submission) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseSubmissionUpdateEventAsync(inputs: [entity]);
+        ValidateRaiseSubmissionUpdateEventAsync(inputs: [submission]);
 
         EventMessage<Submission> message = new EventMessage<Submission>
         {
@@ -40,17 +40,17 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
             {
                 SSOUserId = submissionEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = submission
         };
 
         await submissionEventBroker.RaiseSubmissionUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseSubmissionDeleteEventAsync(Submission entity) =>
+    public ValueTask RaiseSubmissionDeleteEventAsync(Submission submission) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseSubmissionDeleteEventAsync(inputs: [entity]);
+        ValidateRaiseSubmissionDeleteEventAsync(inputs: [submission]);
 
         EventMessage<Submission> message = new EventMessage<Submission>
         {
@@ -58,7 +58,7 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
             {
                 SSOUserId = submissionEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = submission
         };
 
         await submissionEventBroker.RaiseSubmissionDeleteEventAsync(message: message);

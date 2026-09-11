@@ -17,19 +17,19 @@ internal sealed partial class CultureLinkTagHandlingProcessingService
             | RegexOptions.Singleline);
 
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        operation.Content = cultureLinkRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = cultureLinkRegex.Replace(
+            input: tagHandlingOperation.Content,
             replacement: "?culture=");
 
-        return operation;
+        return tagHandlingOperation;
     });
 }

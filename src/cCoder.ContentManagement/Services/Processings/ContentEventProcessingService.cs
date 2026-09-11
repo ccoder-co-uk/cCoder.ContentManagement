@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class ContentEventProcessingService(IContentEventService eventService) : IContentEventProcessingService
 {
-    public ValueTask RaiseContentAddEventAsync(Content entity) =>
+    public ValueTask RaiseContentAddEventAsync(Content content) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseContentAddEventAsync(inputs: [entity]);
-        ValidateContent(content: entity, parameterName: "entity");
+        ValidateRaiseContentAddEventAsync(inputs: [content]);
+        ValidateContent(content: content, parameterName: "entity");
 
-        return eventService.RaiseContentAddEventAsync(entity: entity);
+        return eventService.RaiseContentAddEventAsync(entity: content);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseContentUpdateEventAsync(Content entity) =>
+    public ValueTask RaiseContentUpdateEventAsync(Content content) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseContentUpdateEventAsync(inputs: [entity]);
-        ValidateContent(content: entity, parameterName: "entity");
+        ValidateRaiseContentUpdateEventAsync(inputs: [content]);
+        ValidateContent(content: content, parameterName: "entity");
 
-        return eventService.RaiseContentUpdateEventAsync(entity: entity);
+        return eventService.RaiseContentUpdateEventAsync(entity: content);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseContentDeleteEventAsync(Content entity) =>
+    public ValueTask RaiseContentDeleteEventAsync(Content content) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseContentDeleteEventAsync(inputs: [entity]);
-        ValidateContent(content: entity, parameterName: "entity");
+        ValidateRaiseContentDeleteEventAsync(inputs: [content]);
+        ValidateContent(content: content, parameterName: "entity");
 
-        return eventService.RaiseContentDeleteEventAsync(entity: entity);
+        return eventService.RaiseContentDeleteEventAsync(entity: content);
 
     }, isValueTask: true);
 

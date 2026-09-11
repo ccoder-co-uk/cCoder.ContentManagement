@@ -37,7 +37,7 @@ public partial class CultureEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCultureAddEventAsync(entity: entity);
+        await service.RaiseCultureAddEventAsync(culture: entity);
 
         // Then
 

@@ -47,11 +47,11 @@ public sealed partial class ScriptTagHandlingProcessingServiceTests
         };
 
         // When
-        TagHandlingOperation duplicateResult = service.HandleTagHandlingOperation(operation: operation);
-        TagHandlingOperation nestedResult = service.HandleTagHandlingOperation(operation: duplicateResult);
+        TagHandlingOperation duplicateResult = service.HandleTagHandlingOperation(tagHandlingOperation: operation);
+        TagHandlingOperation nestedResult = service.HandleTagHandlingOperation(tagHandlingOperation: duplicateResult);
 
         TagHandlingOperation repeatedResult = service.HandleTagHandlingOperation(
-            operation: new TagHandlingOperation
+            tagHandlingOperation: new TagHandlingOperation
             {
                 Session = session,
                 Content = "[script[Widgets.Dialog]][script[Widgets.Helper]]"

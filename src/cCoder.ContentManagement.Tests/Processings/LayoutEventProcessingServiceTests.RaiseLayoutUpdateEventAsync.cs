@@ -32,7 +32,7 @@ public partial class LayoutEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseLayoutUpdateEventAsync(entity: entity);
+        await service.RaiseLayoutUpdateEventAsync(layout: entity);
 
         // Then
         layoutEventServiceMock.Verify(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity), times: Times.Once);

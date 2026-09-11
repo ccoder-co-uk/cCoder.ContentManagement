@@ -5,8 +5,6 @@
 using System.Text.RegularExpressions;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.PageRendering;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace cCoder.ContentManagement.Services.Processings.PageRendering;
 
@@ -22,22 +20,22 @@ internal sealed partial class ExecuteTagHandlingProcessingService(
             | RegexOptions.Singleline);
 
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        operation.Content = executeRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = executeRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => Execute(
                 code: match.Groups[1].Value,
-                replacements: operation.Replacements));
+                replacements: tagHandlingOperation.Replacements));
 
-        return operation;
+        return tagHandlingOperation;
     });
 
     private string Execute(
@@ -48,7 +46,7 @@ internal sealed partial class ExecuteTagHandlingProcessingService(
             .FirstOrDefault(predicate: replacement =>
                 replacement.Old == "[model]")?.New ?? "{}";
 
-        string content = SerializeForOData(model: new
+        string content = jsonBroker.SerializeIgnoringReferences(value: new
         {
             Script = code,
             Model = jsonBroker.ParseJson(json: json)
@@ -60,22 +58,4 @@ internal sealed partial class ExecuteTagHandlingProcessingService(
             content: content);
     }
 
-    private static string SerializeForOData(object model) =>
-        JsonConvert.SerializeObject(
-            value: model,
-            formatting: Formatting.None,
-            settings: new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.None,
-                Formatting = Formatting.None,
-                DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                NullValueHandling = NullValueHandling.Ignore,
-                DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-                ContractResolver = new DefaultContractResolver
-                {
-                    IgnoreSerializableAttribute = true
-                },
-                MaxDepth = 4
-            });
 }

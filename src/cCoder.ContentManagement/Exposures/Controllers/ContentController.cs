@@ -6,11 +6,9 @@ using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using cCoder.ContentManagement.Api.OData;
-using cCoder.ContentManagement.Extensions.OData;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -23,34 +21,6 @@ public class ContentController(
     IContentManager contentOrchestrationService,
     ILoggingBroker loggingBroker) : ODataController
 {
-    [HttpGet]
-    public IActionResult GetMetadata()
-    {
-        try
-        {
-            return Ok(value: (base.Request.Query["extend"] == "true") ? new ContentManagementModelBroker().Build()
-            .EDMModel.GetExtendedMetadataForType(context: "ContentManagement", type: typeof(Content)) : typeof(Content).CreateMetadataContainer(isEntity: true, hasEndpoint: true));
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
     [ActionName("Get")]
@@ -160,42 +130,6 @@ public class ContentController(
 
             updatedContent.Id = key;
             return Ok(value: await contentOrchestrationService.UpdateContentAsync(updatedContent: updatedContent));
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [AcceptVerbs(new string[] { "PATCH", "MERGE" })]
-    [ActionName("Patch")]
-    public async Task<IActionResult> PutPatch([FromRoute] int key, Delta<Content> updatedContent)
-    {
-        try
-        {
-            Content originalEntity = contentOrchestrationService.GetContent(contentId: key);
-
-            if (originalEntity == null)
-            {
-                return NotFound();
-            }
-
-            updatedContent.Patch(original: originalEntity);
-            return Ok(value: await contentOrchestrationService.UpdateContentAsync(updatedContent: originalEntity));
         }
         catch (ContentManagementValidationException exception)
         {

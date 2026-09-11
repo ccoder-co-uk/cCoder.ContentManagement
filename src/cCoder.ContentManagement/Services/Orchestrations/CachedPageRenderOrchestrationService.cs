@@ -14,16 +14,16 @@ internal sealed partial class CachedPageRenderOrchestrationService(
         : ICachedPageRenderOrchestrationService
 {
     public HttpPageRenderOperation RenderHttpPageRenderOperation(
-        HttpPageRenderOperation operation) =>
+        HttpPageRenderOperation httpPageRenderOperation) =>
         TryCatch(operation: () =>
         {
-            ValidateHttpPageRenderOperationOnRender(inputs: [operation]);
+            ValidateHttpPageRenderOperationOnRender(inputs: [httpPageRenderOperation]);
 
-            HttpPageRenderContext context = operation.Context;
+            HttpPageRenderContext context = httpPageRenderOperation.Context;
 
             if (context.PageId is null)
             {
-                return operation;
+                return httpPageRenderOperation;
             }
 
             PageRenderCache cache = queryProcessingService.GetPageRenderCache(
@@ -33,14 +33,14 @@ internal sealed partial class CachedPageRenderOrchestrationService(
 
             if (cache is null)
             {
-                return operation;
+                return httpPageRenderOperation;
             }
 
             return renderProcessingService.RenderPageRenderCacheOperation(
                 operation: new PageRenderCacheOperation
                 {
                     Cache = cache,
-                    RenderOperation = operation
+                    RenderOperation = httpPageRenderOperation
                 })
             .RenderOperation;
         });

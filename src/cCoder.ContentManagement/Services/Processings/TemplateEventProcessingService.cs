@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class TemplateEventProcessingService(ITemplateEventService eventService) : ITemplateEventProcessingService
 {
-    public ValueTask RaiseTemplateAddEventAsync(Template entity) =>
+    public ValueTask RaiseTemplateAddEventAsync(Template template) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseTemplateAddEventAsync(inputs: [entity]);
-        ValidateTemplate(template: entity, parameterName: "entity");
+        ValidateRaiseTemplateAddEventAsync(inputs: [template]);
+        ValidateTemplate(template: template, parameterName: "entity");
 
-        return eventService.RaiseTemplateAddEventAsync(entity: entity);
+        return eventService.RaiseTemplateAddEventAsync(entity: template);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseTemplateUpdateEventAsync(Template entity) =>
+    public ValueTask RaiseTemplateUpdateEventAsync(Template template) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseTemplateUpdateEventAsync(inputs: [entity]);
-        ValidateTemplate(template: entity, parameterName: "entity");
+        ValidateRaiseTemplateUpdateEventAsync(inputs: [template]);
+        ValidateTemplate(template: template, parameterName: "entity");
 
-        return eventService.RaiseTemplateUpdateEventAsync(entity: entity);
+        return eventService.RaiseTemplateUpdateEventAsync(entity: template);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseTemplateDeleteEventAsync(Template entity) =>
+    public ValueTask RaiseTemplateDeleteEventAsync(Template template) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseTemplateDeleteEventAsync(inputs: [entity]);
-        ValidateTemplate(template: entity, parameterName: "entity");
+        ValidateRaiseTemplateDeleteEventAsync(inputs: [template]);
+        ValidateTemplate(template: template, parameterName: "entity");
 
-        return eventService.RaiseTemplateDeleteEventAsync(entity: entity);
+        return eventService.RaiseTemplateDeleteEventAsync(entity: template);
 
     }, isValueTask: true);
 

@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class CultureEventProcessingService(ICultureEventService eventService) : ICultureEventProcessingService
 {
-    public ValueTask RaiseCultureAddEventAsync(Culture entity) =>
+    public ValueTask RaiseCultureAddEventAsync(Culture culture) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseCultureAddEventAsync(inputs: [entity]);
-        ValidateCulture(culture: entity, parameterName: "entity");
+        ValidateRaiseCultureAddEventAsync(inputs: [culture]);
+        ValidateCulture(culture: culture, parameterName: "entity");
 
-        return eventService.RaiseCultureAddEventAsync(entity: entity);
+        return eventService.RaiseCultureAddEventAsync(entity: culture);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCultureUpdateEventAsync(Culture entity) =>
+    public ValueTask RaiseCultureUpdateEventAsync(Culture culture) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseCultureUpdateEventAsync(inputs: [entity]);
-        ValidateCulture(culture: entity, parameterName: "entity");
+        ValidateRaiseCultureUpdateEventAsync(inputs: [culture]);
+        ValidateCulture(culture: culture, parameterName: "entity");
 
-        return eventService.RaiseCultureUpdateEventAsync(entity: entity);
+        return eventService.RaiseCultureUpdateEventAsync(entity: culture);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCultureDeleteEventAsync(Culture entity) =>
+    public ValueTask RaiseCultureDeleteEventAsync(Culture culture) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseCultureDeleteEventAsync(inputs: [entity]);
-        ValidateCulture(culture: entity, parameterName: "entity");
+        ValidateRaiseCultureDeleteEventAsync(inputs: [culture]);
+        ValidateCulture(culture: culture, parameterName: "entity");
 
-        return eventService.RaiseCultureDeleteEventAsync(entity: entity);
+        return eventService.RaiseCultureDeleteEventAsync(entity: culture);
 
     }, isValueTask: true);
 

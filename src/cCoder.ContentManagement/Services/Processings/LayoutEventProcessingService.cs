@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class LayoutEventProcessingService(ILayoutEventService eventService) : ILayoutEventProcessingService
 {
-    public ValueTask RaiseLayoutAddEventAsync(Layout entity) =>
+    public ValueTask RaiseLayoutAddEventAsync(Layout layout) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseLayoutAddEventAsync(inputs: [entity]);
-        ValidateLayout(layout: entity, parameterName: "entity");
+        ValidateRaiseLayoutAddEventAsync(inputs: [layout]);
+        ValidateLayout(layout: layout, parameterName: "entity");
 
-        return eventService.RaiseLayoutAddEventAsync(entity: entity);
+        return eventService.RaiseLayoutAddEventAsync(entity: layout);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseLayoutUpdateEventAsync(Layout entity) =>
+    public ValueTask RaiseLayoutUpdateEventAsync(Layout layout) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseLayoutUpdateEventAsync(inputs: [entity]);
-        ValidateLayout(layout: entity, parameterName: "entity");
+        ValidateRaiseLayoutUpdateEventAsync(inputs: [layout]);
+        ValidateLayout(layout: layout, parameterName: "entity");
 
-        return eventService.RaiseLayoutUpdateEventAsync(entity: entity);
+        return eventService.RaiseLayoutUpdateEventAsync(entity: layout);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseLayoutDeleteEventAsync(Layout entity) =>
+    public ValueTask RaiseLayoutDeleteEventAsync(Layout layout) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseLayoutDeleteEventAsync(inputs: [entity]);
-        ValidateLayout(layout: entity, parameterName: "entity");
+        ValidateRaiseLayoutDeleteEventAsync(inputs: [layout]);
+        ValidateLayout(layout: layout, parameterName: "entity");
 
-        return eventService.RaiseLayoutDeleteEventAsync(entity: entity);
+        return eventService.RaiseLayoutDeleteEventAsync(entity: layout);
 
     }, isValueTask: true);
 

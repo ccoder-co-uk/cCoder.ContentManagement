@@ -35,7 +35,7 @@ public partial class CommonObjectEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCommonObjectUpdateEventAsync(entity: entity);
+        await service.RaiseCommonObjectUpdateEventAsync(commonObject: entity);
 
         // Then
 

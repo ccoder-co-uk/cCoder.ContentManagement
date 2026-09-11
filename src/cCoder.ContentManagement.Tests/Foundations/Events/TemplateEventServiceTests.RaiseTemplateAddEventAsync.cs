@@ -37,7 +37,7 @@ public partial class TemplateEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseTemplateAddEventAsync(entity: entity);
+        await service.RaiseTemplateAddEventAsync(template: entity);
 
         // Then
 

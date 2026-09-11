@@ -10,17 +10,17 @@ namespace cCoder.ContentManagement.Rendering.Services.Processings;
 internal sealed partial class CommonObjectCacheProcessingService(
     ICommonObjectCacheService commonObjectCacheService) : ICommonObjectCacheProcessingService
 {
-    public RenderSession PrepareRenderSession(RenderSession session) =>
+    public RenderSession PrepareRenderSession(RenderSession renderSession) =>
         TryCatch(operation: () =>
     {
-        ValidatePrepareRenderSession(inputs: [session]);
+        ValidatePrepareRenderSession(inputs: [renderSession]);
 
         PageCacheSlice pageCacheSlice = commonObjectCacheService.GetPageCacheSlice();
-        session.CommonResourcesByLookup = pageCacheSlice.CommonResourcesByLookup;
-        session.CommonComponentsByName = pageCacheSlice.CommonComponentsByName;
-        session.CommonScriptsByName = pageCacheSlice.CommonScriptsByName;
-        session.CommonStylesByName = pageCacheSlice.CommonStylesByName;
+        renderSession.CommonResourcesByLookup = pageCacheSlice.CommonResourcesByLookup;
+        renderSession.CommonComponentsByName = pageCacheSlice.CommonComponentsByName;
+        renderSession.CommonScriptsByName = pageCacheSlice.CommonScriptsByName;
+        renderSession.CommonStylesByName = pageCacheSlice.CommonStylesByName;
 
-        return session;
+        return renderSession;
     });
 }

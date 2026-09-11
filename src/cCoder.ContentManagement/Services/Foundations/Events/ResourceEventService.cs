@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class ResourceEventService(IResourceEventBroker resourceEventBroker) : IResourceEventService
 {
-    public ValueTask RaiseResourceAddEventAsync(Resource entity) =>
+    public ValueTask RaiseResourceAddEventAsync(Resource resource) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseResourceAddEventAsync(inputs: [entity]);
+        ValidateRaiseResourceAddEventAsync(inputs: [resource]);
 
         EventMessage<Resource> message = new EventMessage<Resource>
         {
@@ -22,17 +22,17 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
             {
                 SSOUserId = resourceEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = resource
         };
 
         await resourceEventBroker.RaiseResourceAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseResourceUpdateEventAsync(Resource entity) =>
+    public ValueTask RaiseResourceUpdateEventAsync(Resource resource) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseResourceUpdateEventAsync(inputs: [entity]);
+        ValidateRaiseResourceUpdateEventAsync(inputs: [resource]);
 
         EventMessage<Resource> message = new EventMessage<Resource>
         {
@@ -40,17 +40,17 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
             {
                 SSOUserId = resourceEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = resource
         };
 
         await resourceEventBroker.RaiseResourceUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseResourceDeleteEventAsync(Resource entity) =>
+    public ValueTask RaiseResourceDeleteEventAsync(Resource resource) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseResourceDeleteEventAsync(inputs: [entity]);
+        ValidateRaiseResourceDeleteEventAsync(inputs: [resource]);
 
         EventMessage<Resource> message = new EventMessage<Resource>
         {
@@ -58,7 +58,7 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
             {
                 SSOUserId = resourceEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = resource
         };
 
         await resourceEventBroker.RaiseResourceDeleteEventAsync(message: message);

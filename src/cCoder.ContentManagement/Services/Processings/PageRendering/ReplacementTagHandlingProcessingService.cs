@@ -11,16 +11,16 @@ internal sealed partial class ReplacementTagHandlingProcessingService
     : IReplacementTagHandlingProcessingService
 {
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        foreach (ReplacementDependency replacement in operation.Replacements)
+        foreach (ReplacementDependency replacement in tagHandlingOperation.Replacements)
         {
             if (string.Equals(
                 a: replacement.Old,
@@ -30,11 +30,11 @@ internal sealed partial class ReplacementTagHandlingProcessingService
                 continue;
             }
 
-            operation.Content = operation.Content.Replace(
+            tagHandlingOperation.Content = tagHandlingOperation.Content.Replace(
                 oldValue: replacement.Old,
                 newValue: replacement.New);
         }
 
-        return operation;
+        return tagHandlingOperation;
     });
 }

@@ -12,10 +12,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PackageItemEventService(IPackageItemEventBroker packageItemEventBroker) : IPackageItemEventService
 {
-    public ValueTask RaisePackageItemAddEventAsync(PackageItem entity) =>
+    public ValueTask RaisePackageItemAddEventAsync(PackageItem packageItem) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePackageItemAddEventAsync(inputs: [entity]);
+        ValidateRaisePackageItemAddEventAsync(inputs: [packageItem]);
 
         EventMessage<DataPackageItem> message = new EventMessage<DataPackageItem>
         {
@@ -23,17 +23,17 @@ internal partial class PackageItemEventService(IPackageItemEventBroker packageIt
             {
                 SSOUserId = packageItemEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = packageItem
         };
 
         await packageItemEventBroker.RaisePackageItemAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePackageItemUpdateEventAsync(PackageItem entity) =>
+    public ValueTask RaisePackageItemUpdateEventAsync(PackageItem packageItem) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePackageItemUpdateEventAsync(inputs: [entity]);
+        ValidateRaisePackageItemUpdateEventAsync(inputs: [packageItem]);
 
         EventMessage<DataPackageItem> message = new EventMessage<DataPackageItem>
         {
@@ -41,17 +41,17 @@ internal partial class PackageItemEventService(IPackageItemEventBroker packageIt
             {
                 SSOUserId = packageItemEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = packageItem
         };
 
         await packageItemEventBroker.RaisePackageItemUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePackageItemDeleteEventAsync(PackageItem entity) =>
+    public ValueTask RaisePackageItemDeleteEventAsync(PackageItem packageItem) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePackageItemDeleteEventAsync(inputs: [entity]);
+        ValidateRaisePackageItemDeleteEventAsync(inputs: [packageItem]);
 
         EventMessage<DataPackageItem> message = new EventMessage<DataPackageItem>
         {
@@ -59,7 +59,7 @@ internal partial class PackageItemEventService(IPackageItemEventBroker packageIt
             {
                 SSOUserId = packageItemEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = packageItem
         };
 
         await packageItemEventBroker.RaisePackageItemDeleteEventAsync(message: message);

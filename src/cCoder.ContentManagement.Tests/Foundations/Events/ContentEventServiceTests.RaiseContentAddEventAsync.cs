@@ -37,7 +37,7 @@ public partial class ContentEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseContentAddEventAsync(entity: entity);
+        await service.RaiseContentAddEventAsync(content: entity);
 
         // Then
 

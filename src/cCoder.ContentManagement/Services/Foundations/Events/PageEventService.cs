@@ -11,11 +11,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PageEventService(IPageEventBroker pageEventBroker) : IPageEventService
 {
-    public ValueTask RaisePageAddEventAsync(Page entity) =>
+    public ValueTask RaisePageAddEventAsync(Page page) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageAddEventAsync(inputs: [entity]);
-        ValidatePage(page: entity, parameterName: "entity");
+        ValidateRaisePageAddEventAsync(inputs: [page]);
+        ValidatePage(page: page, parameterName: "entity");
 
         EventMessage<Page> message = new EventMessage<Page>
         {
@@ -23,18 +23,18 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker) : IPag
             {
                 SSOUserId = pageEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = page
         };
 
         await pageEventBroker.RaisePageAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageUpdateEventAsync(Page entity) =>
+    public ValueTask RaisePageUpdateEventAsync(Page page) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageUpdateEventAsync(inputs: [entity]);
-        ValidatePage(page: entity, parameterName: "entity");
+        ValidateRaisePageUpdateEventAsync(inputs: [page]);
+        ValidatePage(page: page, parameterName: "entity");
 
         EventMessage<Page> message = new EventMessage<Page>
         {
@@ -42,18 +42,18 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker) : IPag
             {
                 SSOUserId = pageEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = page
         };
 
         await pageEventBroker.RaisePageUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageDeleteEventAsync(Page entity) =>
+    public ValueTask RaisePageDeleteEventAsync(Page page) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageDeleteEventAsync(inputs: [entity]);
-        ValidatePage(page: entity, parameterName: "entity");
+        ValidateRaisePageDeleteEventAsync(inputs: [page]);
+        ValidatePage(page: page, parameterName: "entity");
 
         EventMessage<Page> message = new EventMessage<Page>
         {
@@ -61,7 +61,7 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker) : IPag
             {
                 SSOUserId = pageEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = page
         };
 
         await pageEventBroker.RaisePageDeleteEventAsync(message: message);

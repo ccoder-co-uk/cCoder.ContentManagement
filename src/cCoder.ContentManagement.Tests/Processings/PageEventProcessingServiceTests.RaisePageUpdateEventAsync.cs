@@ -32,7 +32,7 @@ public partial class PageEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageUpdateEventAsync(entity: entity);
+        await service.RaisePageUpdateEventAsync(page: entity);
 
         // Then
         pageEventServiceMock.Verify(expression: x => x.RaisePageUpdateEventAsync(entity: entity), times: Times.Once);

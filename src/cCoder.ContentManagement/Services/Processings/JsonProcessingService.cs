@@ -3,11 +3,13 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Services.Foundations.Serialization;
+using cCoder.ContentManagement.Brokers;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class JsonProcessingService(
-    IJsonService jsonService) : IJsonProcessingService
+    IJsonService jsonService,
+    IJsonBroker jsonBroker) : IJsonProcessingService
 {
     public T[] DeserializeItems<T>(string json) =>
         TryCatch<T[]>(operation: () =>
@@ -19,4 +21,64 @@ internal partial class JsonProcessingService(
             : jsonService.Deserialize<T[]>(json: json);
 
     });
+
+    public string RemovePropertiesRecursively(
+        string json,
+        IReadOnlyCollection<string> propertyNames) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateRemovePropertiesRecursively(inputs: [json, propertyNames]);
+
+        if (string.IsNullOrWhiteSpace(value: json))
+        {
+            return json;
+        }
+
+        object value = jsonBroker.ParseJson(json: json);
+
+        RemovePropertiesRecursively(
+            value: value,
+            propertyNames: propertyNames);
+
+        return jsonBroker.Serialize(value: value);
+    });
+
+    private void RemovePropertiesRecursively(
+        object value,
+        IReadOnlyCollection<string> propertyNames)
+    {
+        if (jsonBroker.IsJsonObject(value: value))
+        {
+            KeyValuePair<string, object>[] properties = jsonBroker
+                .GetJsonProperties(value: value)
+                .ToArray();
+
+            foreach (KeyValuePair<string, object> property in properties)
+            {
+                if (propertyNames.Contains(
+                    value: property.Key,
+                    comparer: StringComparer.OrdinalIgnoreCase))
+                {
+                    jsonBroker.RemoveJsonProperty(
+                        value: value,
+                        propertyName: property.Key);
+                }
+                else
+                {
+                    RemovePropertiesRecursively(
+                        value: property.Value,
+                        propertyNames: propertyNames);
+                }
+            }
+        }
+        else if (jsonBroker.IsJsonArray(value: value))
+        {
+            foreach (object item in jsonBroker.GetJsonItems(value: value))
+            {
+                RemovePropertiesRecursively(
+                    value: item,
+                    propertyNames: propertyNames);
+            }
+        }
+    }
 }

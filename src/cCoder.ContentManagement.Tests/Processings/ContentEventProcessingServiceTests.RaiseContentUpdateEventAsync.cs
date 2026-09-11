@@ -32,7 +32,7 @@ public partial class ContentEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseContentUpdateEventAsync(entity: entity);
+        await service.RaiseContentUpdateEventAsync(content: entity);
 
         // Then
         contentEventServiceMock.Verify(expression: x => x.RaiseContentUpdateEventAsync(entity: entity), times: Times.Once);

@@ -32,7 +32,7 @@ public partial class ScriptEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseScriptDeleteEventAsync(entity: entity);
+        await service.RaiseScriptDeleteEventAsync(script: entity);
 
         // Then
         scriptEventServiceMock.Verify(expression: x => x.RaiseScriptDeleteEventAsync(entity: entity), times: Times.Once);

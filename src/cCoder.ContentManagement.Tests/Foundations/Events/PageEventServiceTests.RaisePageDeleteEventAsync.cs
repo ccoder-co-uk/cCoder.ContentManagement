@@ -37,7 +37,7 @@ public partial class PageEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageDeleteEventAsync(entity: entity);
+        await service.RaisePageDeleteEventAsync(page: entity);
 
         // Then
 

@@ -10,33 +10,33 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class ComponentEventProcessingService(IComponentEventService eventService) : IComponentEventProcessingService
 {
-    public ValueTask RaiseComponentAddEventAsync(Component entity) =>
+    public ValueTask RaiseComponentAddEventAsync(Component component) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseComponentAddEventAsync(inputs: [entity]);
-        ValidateComponent(component: entity, parameterName: "entity");
+        ValidateRaiseComponentAddEventAsync(inputs: [component]);
+        ValidateComponent(component: component, parameterName: "entity");
 
-        return eventService.RaiseComponentAddEventAsync(entity: entity);
+        return eventService.RaiseComponentAddEventAsync(entity: component);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseComponentUpdateEventAsync(Component entity) =>
+    public ValueTask RaiseComponentUpdateEventAsync(Component component) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseComponentUpdateEventAsync(inputs: [entity]);
-        ValidateComponent(component: entity, parameterName: "entity");
+        ValidateRaiseComponentUpdateEventAsync(inputs: [component]);
+        ValidateComponent(component: component, parameterName: "entity");
 
-        return eventService.RaiseComponentUpdateEventAsync(entity: entity);
+        return eventService.RaiseComponentUpdateEventAsync(entity: component);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseComponentDeleteEventAsync(Component entity) =>
+    public ValueTask RaiseComponentDeleteEventAsync(Component component) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseComponentDeleteEventAsync(inputs: [entity]);
-        ValidateComponent(component: entity, parameterName: "entity");
+        ValidateRaiseComponentDeleteEventAsync(inputs: [component]);
+        ValidateComponent(component: component, parameterName: "entity");
 
-        return eventService.RaiseComponentDeleteEventAsync(entity: entity);
+        return eventService.RaiseComponentDeleteEventAsync(entity: component);
 
     }, isValueTask: true);
 

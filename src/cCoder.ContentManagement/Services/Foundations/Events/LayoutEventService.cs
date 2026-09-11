@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker) : ILayoutEventService
 {
-    public ValueTask RaiseLayoutAddEventAsync(Layout entity) =>
+    public ValueTask RaiseLayoutAddEventAsync(Layout layout) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseLayoutAddEventAsync(inputs: [entity]);
+        ValidateRaiseLayoutAddEventAsync(inputs: [layout]);
 
         EventMessage<Layout> message = new EventMessage<Layout>
         {
@@ -22,17 +22,17 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker) 
             {
                 SSOUserId = layoutEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = layout
         };
 
         await layoutEventBroker.RaiseLayoutAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseLayoutUpdateEventAsync(Layout entity) =>
+    public ValueTask RaiseLayoutUpdateEventAsync(Layout layout) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseLayoutUpdateEventAsync(inputs: [entity]);
+        ValidateRaiseLayoutUpdateEventAsync(inputs: [layout]);
 
         EventMessage<Layout> message = new EventMessage<Layout>
         {
@@ -40,17 +40,17 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker) 
             {
                 SSOUserId = layoutEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = layout
         };
 
         await layoutEventBroker.RaiseLayoutUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseLayoutDeleteEventAsync(Layout entity) =>
+    public ValueTask RaiseLayoutDeleteEventAsync(Layout layout) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseLayoutDeleteEventAsync(inputs: [entity]);
+        ValidateRaiseLayoutDeleteEventAsync(inputs: [layout]);
 
         EventMessage<Layout> message = new EventMessage<Layout>
         {
@@ -58,7 +58,7 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker) 
             {
                 SSOUserId = layoutEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = layout
         };
 
         await layoutEventBroker.RaiseLayoutDeleteEventAsync(message: message);

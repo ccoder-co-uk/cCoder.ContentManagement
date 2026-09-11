@@ -37,7 +37,7 @@ public partial class ResourceEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseResourceDeleteEventAsync(entity: entity);
+        await service.RaiseResourceDeleteEventAsync(resource: entity);
 
         // Then
 

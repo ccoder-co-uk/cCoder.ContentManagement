@@ -17,23 +17,23 @@ internal sealed partial class StyleTagHandlingProcessingService
             | RegexOptions.Singleline);
 
     public TagHandlingOperation HandleTagHandlingOperation(
-        TagHandlingOperation operation) =>
+        TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>
     {
-        ValidateTagHandlingOperationOnHandle(inputs: [operation]);
+        ValidateTagHandlingOperationOnHandle(inputs: [tagHandlingOperation]);
 
         ValidateTagHandlingOperation(
-            operation: operation,
+            operation: tagHandlingOperation,
             parameterName: "operation");
 
-        operation.Content = styleRegex.Replace(
-            input: operation.Content,
+        tagHandlingOperation.Content = styleRegex.Replace(
+            input: tagHandlingOperation.Content,
             evaluator: match => ResolveStyle(
-                session: operation.Session,
+                session: tagHandlingOperation.Session,
                 name: match.Groups["name"].Value)?.Content
                     ?? string.Empty);
 
-        return operation;
+        return tagHandlingOperation;
     });
 
     private static PageRenderStyle ResolveStyle(

@@ -37,7 +37,7 @@ public partial class PageEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageAddEventAsync(entity: entity);
+        await service.RaisePageAddEventAsync(page: entity);
 
         // Then
 

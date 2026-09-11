@@ -32,7 +32,7 @@ public partial class LayoutEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseLayoutDeleteEventAsync(entity: entity);
+        await service.RaiseLayoutDeleteEventAsync(layout: entity);
 
         // Then
         layoutEventServiceMock.Verify(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entity), times: Times.Once);

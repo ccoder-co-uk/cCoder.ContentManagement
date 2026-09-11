@@ -33,7 +33,7 @@ public partial class PackageItemEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePackageItemDeleteEventAsync(entity: entity);
+        await service.RaisePackageItemDeleteEventAsync(packageItem: entity);
 
         // Then
         packageItemEventServiceMock.Verify(expression: x => x.RaisePackageItemDeleteEventAsync(entity: entity), times: Times.Once);

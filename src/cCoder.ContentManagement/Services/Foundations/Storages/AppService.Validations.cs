@@ -13,6 +13,9 @@ internal partial class AppService
     private static void ValidateAppForRenderOnGet(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
+    private static void ValidateAppForDeleteOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
 

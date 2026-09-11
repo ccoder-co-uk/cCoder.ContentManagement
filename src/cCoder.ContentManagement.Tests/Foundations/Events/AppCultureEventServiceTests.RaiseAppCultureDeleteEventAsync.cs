@@ -37,7 +37,7 @@ public partial class AppCultureEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseAppCultureDeleteEventAsync(entity: entity);
+        await service.RaiseAppCultureDeleteEventAsync(appCulture: entity);
 
         // Then
 

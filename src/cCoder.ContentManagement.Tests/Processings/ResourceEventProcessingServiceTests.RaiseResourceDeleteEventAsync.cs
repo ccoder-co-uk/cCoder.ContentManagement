@@ -32,7 +32,7 @@ public partial class ResourceEventProcessingServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseResourceDeleteEventAsync(entity: entity);
+        await service.RaiseResourceDeleteEventAsync(resource: entity);
 
         // Then
         resourceEventServiceMock.Verify(expression: x => x.RaiseResourceDeleteEventAsync(entity: entity), times: Times.Once);

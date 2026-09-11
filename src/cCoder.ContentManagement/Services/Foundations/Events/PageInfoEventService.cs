@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker) : IPageInfoEventService
 {
-    public ValueTask RaisePageInfoAddEventAsync(PageInfo entity) =>
+    public ValueTask RaisePageInfoAddEventAsync(PageInfo pageInfo) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageInfoAddEventAsync(inputs: [entity]);
+        ValidateRaisePageInfoAddEventAsync(inputs: [pageInfo]);
 
         EventMessage<PageInfo> message = new EventMessage<PageInfo>
         {
@@ -22,17 +22,17 @@ internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBr
             {
                 SSOUserId = pageInfoEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = pageInfo
         };
 
         await pageInfoEventBroker.RaisePageInfoAddEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageInfoUpdateEventAsync(PageInfo entity) =>
+    public ValueTask RaisePageInfoUpdateEventAsync(PageInfo pageInfo) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageInfoUpdateEventAsync(inputs: [entity]);
+        ValidateRaisePageInfoUpdateEventAsync(inputs: [pageInfo]);
 
         EventMessage<PageInfo> message = new EventMessage<PageInfo>
         {
@@ -40,17 +40,17 @@ internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBr
             {
                 SSOUserId = pageInfoEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = pageInfo
         };
 
         await pageInfoEventBroker.RaisePageInfoUpdateEventAsync(message: message);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageInfoDeleteEventAsync(PageInfo entity) =>
+    public ValueTask RaisePageInfoDeleteEventAsync(PageInfo pageInfo) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageInfoDeleteEventAsync(inputs: [entity]);
+        ValidateRaisePageInfoDeleteEventAsync(inputs: [pageInfo]);
 
         EventMessage<PageInfo> message = new EventMessage<PageInfo>
         {
@@ -58,7 +58,7 @@ internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBr
             {
                 SSOUserId = pageInfoEventBroker.GetCurrentUserId()
             },
-            Data = entity
+            Data = pageInfo
         };
 
         await pageInfoEventBroker.RaisePageInfoDeleteEventAsync(message: message);
