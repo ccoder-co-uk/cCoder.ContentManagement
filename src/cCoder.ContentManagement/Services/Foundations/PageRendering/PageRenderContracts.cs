@@ -40,4 +40,12 @@ internal interface IMarkupRenderService
     TagHandlingOperation RenderResourceTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
 
     TagHandlingOperation RenderExecuteTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation SerializeTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+    TagHandlingOperation ParseJsonTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+    TagHandlingOperation NormalizeJsonTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+    TagHandlingOperation IsJsonObjectTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+    TagHandlingOperation IsJsonArrayTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+    TagHandlingOperation IsJsonValueTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+    TagHandlingOperation GetJsonPropertiesTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
 }

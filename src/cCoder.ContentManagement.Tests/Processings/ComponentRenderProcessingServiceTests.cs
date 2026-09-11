@@ -36,7 +36,7 @@ public partial class ComponentRenderProcessingServiceTests
 {
     private readonly Mock<IMetadataCache> metadataCacheMock = new();
     private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
-    private readonly Mock<IComponentRenderService> componentRenderServiceMock = new();
+    private readonly Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new();
 
     private ComponentRenderProcessingService CreateSut(string workflowBaseUrl)
     {
@@ -46,20 +46,23 @@ public partial class ComponentRenderProcessingServiceTests
             WorkflowServiceUrl = workflowBaseUrl,
         };
 
-        return new ComponentRenderProcessingService(
-            metadataCache: metadataCacheMock.Object,
-            objectCache: commonObjectCacheMock.Object,
+        ComponentRenderService componentRenderService = new(
+            metadataReaderBroker: metadataCacheMock.Object,
+            commonObjectReaderBroker: commonObjectCacheMock.Object,
             jsonBroker: new JsonBroker(),
-            config: config,
-            appBroker: Mock.Of<IAppBroker>(),
-            componentBroker: Mock.Of<IComponentBroker>(),
-            resourceBroker: Mock.Of<IResourceBroker>(),
-            scriptBroker: Mock.Of<IScriptBroker>(),
-            componentRenderService: componentRenderServiceMock.Object,
             workflowExecutionBroker: new WorkflowExecutionBroker(
                 workflowExecutionDependency:
                     new WorkflowExecutionDependency()),
-            regularExpressionBroker: new RegularExpressionBroker());
+            regularExpressionBroker: new RegularExpressionBroker(),
+            renderFileContentBroker: renderFileContentBrokerMock.Object,
+            appBroker: Mock.Of<IAppBroker>(),
+            componentBroker: Mock.Of<IComponentBroker>(),
+            resourceBroker: Mock.Of<IResourceBroker>(),
+            scriptBroker: Mock.Of<IScriptBroker>());
+
+        return new ComponentRenderProcessingService(
+            componentRenderService: componentRenderService,
+            config: config);
     }
 
     private static (RenderApp app, RenderUser user, RenderComponent component, RenderComponentParams renderParams) CreateComponentRenderContext()

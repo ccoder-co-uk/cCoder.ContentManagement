@@ -42,12 +42,16 @@ public sealed partial class CombinedRenderingArchitectureTests
             name: "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService");
 
         // When
-        Type actualPageRenderService = pageRenderService;
+        Type[] dependencies = GetConstructorDependencies(type: pageRenderService);
 
         // Then
-        actualPageRenderService.Should()
-            .BeNull(
-            because: "page rendering must use the typed render broker boundary");
+        dependencies.Should()
+            .Contain(predicate: dependency =>
+                dependency.Name == "IRenderBroker");
+
+        dependencies.Should()
+            .NotContain(predicate: dependency =>
+                dependency.Name == "IServiceProviderBroker");
     }
 
     [Fact]

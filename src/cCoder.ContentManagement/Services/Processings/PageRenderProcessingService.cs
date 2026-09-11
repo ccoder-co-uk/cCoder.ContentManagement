@@ -6,27 +6,31 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
-using cCoder.ContentManagement.Rendering.Services.Orchestrations;
-using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
 using cCoder.ContentManagement.Services.Foundations;
-using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Models.Rendering;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class PageRenderProcessingService(
-    IRenderBroker renderBroker,
-    ContentManagementConfiguration config,
-    ISystemTextJsonBroker systemTextJsonBroker = null) : IPageRenderProcessingService
+    IPageRenderService pageRenderService,
+    ContentManagementConfiguration config) : IPageRenderProcessingService
 {
     public string SerializeRuntimeValue(object value) =>
         TryCatch<string>(operation: () =>
     {
         ValidateSerializeRuntimeValue(inputs: [value]);
-        return systemTextJsonBroker.Serialize(value: value);
+
+        return pageRenderService.SerializePageRenderFoundationOperation(
+            pageRenderFoundationOperation: new PageRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Json;
     });
 
     public PageRenderOperation RenderPageRenderOperation(
@@ -73,8 +77,13 @@ internal sealed partial class PageRenderProcessingService(
                 headerOnly: headerOnly,
                 cacheTemplate: cacheTemplate);
 
-        RenderSession renderedSession = renderBroker.RenderRenderSession(
-            renderSession: session);
+        RenderSession renderedSession = pageRenderService
+            .RenderPageRenderFoundationOperation(
+                pageRenderFoundationOperation: new PageRenderFoundationOperation
+                {
+                    RenderSession = session
+                })
+            .RenderSession;
 
         return new PageRenderResult
         {

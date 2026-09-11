@@ -19,4 +19,10 @@ internal sealed class TagHandlingOperation
     public IReadOnlyCollection<MarkupReplacement> Replacements { get; set; }
 
     public ICollection<TagHandlingFragment> Fragments { get; set; }
+
+    public object Value { get; set; }
+
+    public bool Condition { get; set; }
+
+    public IReadOnlyCollection<KeyValuePair<string, object>> JsonProperties { get; set; }
 }

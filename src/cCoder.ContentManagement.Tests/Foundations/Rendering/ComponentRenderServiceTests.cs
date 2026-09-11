@@ -3,7 +3,10 @@
 // ---------------------------------------------------------------
 
 using System.Text;
+using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Models.Rendering;
+using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using FluentAssertions;
 using Moq;
@@ -27,13 +30,28 @@ public sealed partial class ComponentRenderServiceTests
             .Returns(value: Encoding.UTF8.GetBytes(s: expectedContent));
 
         IComponentRenderService componentRenderService = new ComponentRenderService(
-            renderFileContentBroker: renderFileContentBrokerMock.Object);
+            metadataReaderBroker: Mock.Of<IMetadataReaderBroker>(),
+            commonObjectReaderBroker: Mock.Of<ICommonObjectReaderBroker>(),
+            jsonBroker: Mock.Of<IJsonBroker>(),
+            workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
+            regularExpressionBroker: Mock.Of<IRegularExpressionBroker>(),
+            renderFileContentBroker: renderFileContentBrokerMock.Object,
+            appBroker: Mock.Of<IAppBroker>(),
+            componentBroker: Mock.Of<IComponentBroker>(),
+            resourceBroker: Mock.Of<IResourceBroker>(),
+            scriptBroker: Mock.Of<IScriptBroker>());
 
         // When
-        string actualContent = componentRenderService.GetLatestTextContent(appId: appId, path: path);
+        ComponentRenderFoundationOperation operation =
+            componentRenderService.GetLatestTextContentComponentRenderFoundationOperation(
+                componentRenderFoundationOperation: new()
+                {
+                    AppId = appId,
+                    Path = path
+                });
 
         // Then
-        actualContent.Should()
+        operation.Content.Should()
             .Be(expected: expectedContent);
 
         renderFileContentBrokerMock.VerifyAll();

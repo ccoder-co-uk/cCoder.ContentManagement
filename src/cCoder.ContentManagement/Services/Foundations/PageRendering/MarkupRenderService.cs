@@ -16,6 +16,7 @@ internal sealed partial class MarkupRenderService(
     IScriptReaderBroker scriptReaderBroker,
     IRenderFileContentBroker renderFileContentBroker,
     IJsonBroker jsonBroker,
+    ISystemTextJsonBroker systemTextJsonBroker,
     IWorkflowExecutionBroker workflowExecutionBroker,
     IRegularExpressionBroker regularExpressionBroker)
         : IMarkupRenderService

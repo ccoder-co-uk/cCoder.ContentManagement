@@ -3,8 +3,6 @@
 // ---------------------------------------------------------------
 
 using System.Reflection;
-using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using FluentAssertions;
 using Xunit;
@@ -14,7 +12,7 @@ namespace cCoder.ContentManagement.Tests.Architecture;
 public sealed partial class RenderingBoundaryArchitectureTests
 {
     [Fact]
-    public void ComponentRenderingFoundation_WhenComposed_ShouldUseFileContentBrokerOnly()
+    public void ComponentRenderingFoundation_WhenComposed_ShouldOwnBrokerOperations()
     {
         // Given
         Type componentRenderServiceType = typeof(ComponentRenderService)
@@ -31,23 +29,33 @@ public sealed partial class RenderingBoundaryArchitectureTests
 
         // Then
         dependencyTypes.Should()
-            .Equal(elements: typeof(IRenderFileContentBroker));
+            .OnlyContain(predicate: dependencyType =>
+                dependencyType.Name.EndsWith(
+                    value: "Broker",
+                    comparisonType: StringComparison.Ordinal));
     }
 
     [Fact]
-    public void TemplateRenderingProcessing_WhenComposed_ShouldNotUseServiceLocatorFoundation()
+    public void TemplateRenderingProcessing_WhenComposed_ShouldUseMatchingFoundation()
     {
         // Given
         Assembly assembly = typeof(ComponentRenderService)
             .Assembly;
 
         // When
-        Type templateRenderService = assembly.GetType(
-            name: "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService");
+        Type templateRenderProcessingService = assembly.GetType(
+            name: "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService");
+
+        Type[] dependencyTypes = templateRenderProcessingService
+            .GetConstructors(bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+            .Single()
+            .GetParameters()
+            .Select(selector: parameter => parameter.ParameterType)
+            .ToArray();
 
         // Then
-        templateRenderService
-            .Should()
-            .BeNull();
+        dependencyTypes.Should()
+            .ContainSingle(predicate: dependencyType =>
+                dependencyType.Name == "ITemplateRenderService");
     }
 }

@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Models.Serialization;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
@@ -106,5 +107,86 @@ internal sealed partial class MarkupRenderService
 
             return RenderExecuteTagHandlingOperationCore(
                 tagHandlingOperation: tagHandlingOperation);
+        });
+
+    public TagHandlingOperation SerializeTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateTagHandlingOperation(inputs: [tagHandlingOperation]);
+            tagHandlingOperation.Content = jsonBroker.Serialize(value: tagHandlingOperation.Value);
+            return tagHandlingOperation;
+        });
+
+    public TagHandlingOperation ParseJsonTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateTagHandlingOperation(inputs: [tagHandlingOperation]);
+            tagHandlingOperation.Value = jsonBroker.ParseJson(json: tagHandlingOperation.Content);
+            return tagHandlingOperation;
+        });
+
+    public TagHandlingOperation NormalizeJsonTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateTagHandlingOperation(inputs: [tagHandlingOperation]);
+
+            JsonValueDocument jsonValueDocument =
+                systemTextJsonBroker.Normalize(value: tagHandlingOperation.Value);
+
+            if (jsonValueDocument.IsRawJson)
+            {
+                tagHandlingOperation.Value = jsonBroker.ParseJson(
+                    json: jsonValueDocument.RawJson);
+            }
+            else
+            {
+                tagHandlingOperation.Value = jsonValueDocument.Value;
+            }
+
+            return tagHandlingOperation;
+        });
+
+    public TagHandlingOperation IsJsonObjectTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateTagHandlingOperation(inputs: [tagHandlingOperation]);
+            tagHandlingOperation.Condition = jsonBroker.IsJsonObject(value: tagHandlingOperation.Value);
+            return tagHandlingOperation;
+        });
+
+    public TagHandlingOperation IsJsonArrayTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateTagHandlingOperation(inputs: [tagHandlingOperation]);
+            tagHandlingOperation.Condition = jsonBroker.IsJsonArray(value: tagHandlingOperation.Value);
+            return tagHandlingOperation;
+        });
+
+    public TagHandlingOperation IsJsonValueTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateTagHandlingOperation(inputs: [tagHandlingOperation]);
+            tagHandlingOperation.Condition = jsonBroker.IsJsonValue(value: tagHandlingOperation.Value);
+            return tagHandlingOperation;
+        });
+
+    public TagHandlingOperation GetJsonPropertiesTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateJsonPropertiesTagHandlingOperationOnGet(
+                inputs: [tagHandlingOperation]);
+
+            tagHandlingOperation.JsonProperties = jsonBroker
+                .GetJsonProperties(value: tagHandlingOperation.Value)
+                .ToArray();
+
+            return tagHandlingOperation;
         });
 }

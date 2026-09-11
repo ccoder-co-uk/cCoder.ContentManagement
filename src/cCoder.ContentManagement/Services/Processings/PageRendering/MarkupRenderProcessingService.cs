@@ -5,8 +5,6 @@
 using System.Collections;
 using System.Net;
 using System.Reflection;
-using System.Text.Json;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Foundations;
@@ -15,8 +13,7 @@ using cCoder.ContentManagement.Rendering.Services.Foundations;
 namespace cCoder.ContentManagement.Rendering.Services.Processings;
 
 internal sealed partial class MarkupRenderProcessingService(
-    IMarkupRenderService markupRenderService,
-    IJsonBroker jsonBroker) : IMarkupRenderProcessingService
+    IMarkupRenderService markupRenderService) : IMarkupRenderProcessingService
 {
     public RenderSession RenderRenderSession(RenderSession renderSession) =>
         TryCatch<RenderSession>(operation: () =>
@@ -73,7 +70,7 @@ internal sealed partial class MarkupRenderProcessingService(
         [
             new MarkupReplacement { Old = "[[user]]", Value = cacheTemplate
                 ? PageRenderRuntimeTokens.User
-                : jsonBroker.Serialize(value: new
+                : Serialize(value: new
             {
                 Id = isGuest ? "Guest" : user.Id,
                 DefaultCultureId = string.IsNullOrWhiteSpace(value: user.DefaultCultureId) ? culture : user.DefaultCultureId,
@@ -141,7 +138,7 @@ internal sealed partial class MarkupRenderProcessingService(
 
         if (session.Target?.Model != null)
         {
-            replacements.Add(item: new MarkupReplacement { Old = "[model]", Value = jsonBroker.Serialize(value: session.Target.Model) });
+            replacements.Add(item: new MarkupReplacement { Old = "[model]", Value = Serialize(value: session.Target.Model) });
 
             replacements.AddRange(collection: BuildModelReplacements(
                 model: session.Target.Model));
@@ -231,7 +228,7 @@ internal sealed partial class MarkupRenderProcessingService(
     private string RenderTemplate(PageRenderTemplate template, object model, RenderSession session, IReadOnlyCollection<MarkupReplacement> pageReplacements)
     {
         List<MarkupReplacement> replacements = pageReplacements.ToList();
-        replacements.Add(item: new MarkupReplacement { Old = "[model]", Value = jsonBroker.Serialize(value: model) });
+        replacements.Add(item: new MarkupReplacement { Old = "[model]", Value = Serialize(value: model) });
         replacements.AddRange(collection: BuildModelReplacements(model: model));
 
         return RenderMarkup(
@@ -378,19 +375,14 @@ internal sealed partial class MarkupRenderProcessingService(
             return [new MarkupReplacement { Old = "[model[" + prefix + "]]", Value = text }];
         }
 
-        if (model is JsonElement jsonElement)
-        {
-            return BuildModelReplacements(
-                model: jsonBroker.ParseJson(json: jsonElement.GetRawText()),
-                prefix: prefix);
-        }
+        model = NormalizeJson(value: model);
 
-        if (jsonBroker.IsJsonObject(value: model))
+        if (IsJsonObject(value: model))
         {
             return BuildJObjectReplacements(model: model, prefix: prefix);
         }
 
-        if (jsonBroker.IsJsonArray(value: model))
+        if (IsJsonArray(value: model))
         {
             return BuildCollectionReplacements(model: (IEnumerable)model, prefix: prefix);
         }
@@ -445,12 +437,12 @@ internal sealed partial class MarkupRenderProcessingService(
             });
 
     private IEnumerable<MarkupReplacement> BuildJObjectReplacements(object model, string prefix) =>
-        jsonBroker.GetJsonProperties(value: model)
+        GetJsonProperties(value: model)
         .SelectMany(selector: property =>
         {
             string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Key : prefix + "." + property.Key;
 
-            return jsonBroker.IsJsonValue(value: property.Value)
+            return IsJsonValue(value: property.Value)
                 ? [new MarkupReplacement { Old = "[model[" + bindingExpression + "]]", Value = property.Value.ToString() }]
                 : BuildModelReplacements(model: property.Value, prefix: bindingExpression);
         });
@@ -479,7 +471,7 @@ internal sealed partial class MarkupRenderProcessingService(
             return Array.Empty<MarkupReplacement>();
         }
 
-        if (jsonBroker.IsJsonObject(value: model))
+        if (IsJsonObject(value: model))
         {
             return BuildThemeJObjectReplacements(model: model, prefix: prefix);
         }
@@ -544,12 +536,12 @@ internal sealed partial class MarkupRenderProcessingService(
             });
 
     private IEnumerable<MarkupReplacement> BuildThemeJObjectReplacements(object model, string prefix) =>
-        jsonBroker.GetJsonProperties(value: model)
+        GetJsonProperties(value: model)
         .SelectMany(selector: property =>
         {
             string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Key : prefix + "." + property.Key;
 
-            return jsonBroker.IsJsonValue(value: property.Value)
+            return IsJsonValue(value: property.Value)
                 ? [new MarkupReplacement { Old = "[theme[" + bindingExpression + "]]", Value = property.Value.ToString() }]
                 : BuildThemeReplacements(model: property.Value, prefix: bindingExpression);
         });
@@ -614,5 +606,36 @@ internal sealed partial class MarkupRenderProcessingService(
         !string.IsNullOrWhiteSpace(value: session.Request.Culture)
             ? session.Request.Culture
             : session.App?.DefaultCulture ?? string.Empty;
+
+    private string Serialize(object value) =>
+        markupRenderService.SerializeTagHandlingOperation(
+            tagHandlingOperation: new TagHandlingOperation { Value = value })
+        .Content;
+
+    private object NormalizeJson(object value) =>
+        markupRenderService.NormalizeJsonTagHandlingOperation(
+            tagHandlingOperation: new TagHandlingOperation { Value = value })
+        .Value;
+
+    private bool IsJsonObject(object value) =>
+        markupRenderService.IsJsonObjectTagHandlingOperation(
+            tagHandlingOperation: new TagHandlingOperation { Value = value })
+        .Condition;
+
+    private bool IsJsonArray(object value) =>
+        markupRenderService.IsJsonArrayTagHandlingOperation(
+            tagHandlingOperation: new TagHandlingOperation { Value = value })
+        .Condition;
+
+    private bool IsJsonValue(object value) =>
+        markupRenderService.IsJsonValueTagHandlingOperation(
+            tagHandlingOperation: new TagHandlingOperation { Value = value })
+        .Condition;
+
+    private IReadOnlyCollection<KeyValuePair<string, object>> GetJsonProperties(
+        object value) =>
+        markupRenderService.GetJsonPropertiesTagHandlingOperation(
+            tagHandlingOperation: new TagHandlingOperation { Value = value })
+        .JsonProperties;
 
 }

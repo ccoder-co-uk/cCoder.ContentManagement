@@ -64,6 +64,7 @@ public partial class PageRenderProcessingServiceTests
             scriptReaderBroker: scriptReaderBroker,
             renderFileContentBroker: renderFileContentBrokerMock.Object,
             jsonBroker: new JsonBroker(),
+            systemTextJsonBroker: new SystemTextJsonBroker(),
             workflowExecutionBroker:
                 new WorkflowExecutionBroker(
                     workflowExecutionDependency:
@@ -80,8 +81,7 @@ public partial class PageRenderProcessingServiceTests
                         commonObjectCacheService: commonObjectCacheService),
                 markupRenderProcessingService:
                     new MarkupRenderProcessingService(
-                        markupRenderService: markupRenderService,
-                        jsonBroker: Mock.Of<IJsonBroker>()));
+                        markupRenderService: markupRenderService));
 
         RenderSessionManager renderSessionManager = new(
             renderOrchestrationService: executionOrchestrationService);
@@ -89,8 +89,12 @@ public partial class PageRenderProcessingServiceTests
         RenderBroker renderBroker = new(
             renderSessionManager: renderSessionManager);
 
-        return new PageRenderProcessingService(
+        PageRenderService pageRenderService = new(
             renderBroker: renderBroker,
+            systemTextJsonBroker: new SystemTextJsonBroker());
+
+        return new PageRenderProcessingService(
+            pageRenderService: pageRenderService,
             config: config);
     }
 

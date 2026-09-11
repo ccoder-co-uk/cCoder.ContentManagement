@@ -8,31 +8,18 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.Json;
-using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Brokers.Loggings;
-using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Models.RegularExpressions;
+using cCoder.ContentManagement.Models.Rendering;
+using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class TemplateRenderProcessingService(
-    IMetadataReaderBroker metadataCache,
-    ICommonObjectReaderBroker objectCache,
-    IJsonBroker jsonBroker,
-    IAppBroker appBroker,
-    IComponentBroker componentBroker,
-    IResourceBroker resourceBroker,
-    IScriptBroker scriptBroker,
-    ITemplateBroker templateBroker,
-    IWorkflowExecutionBroker workflowExecutionBroker,
-    ILoggingBroker loggingBroker,
-    IRegularExpressionBroker regularExpressionBroker,
+    ITemplateRenderService templateRenderService,
     ContentManagementConfiguration config = null)
         : ITemplateRenderProcessingService
 {
@@ -73,8 +60,7 @@ internal partial class TemplateRenderProcessingService(
         ValidateModel(model: model, parameterName: "model");
         ValidateUser(user: user, parameterName: "user");
 
-        App app = appBroker
-            .GetAllAppsIgnoringFilters()
+        App app = GetApps()
             .Where(predicate: existingApp => existingApp.Id == appId)
             .Select(selector: existingApp => new App
             {
@@ -93,23 +79,19 @@ internal partial class TemplateRenderProcessingService(
             throw new InvalidOperationException(message: $"App '{appId}' was not found.");
         }
 
-        app.Components = componentBroker
-            .GetAllComponentsIgnoringFilters()
+        app.Components = GetComponents()
             .Where(predicate: existingComponent => existingComponent.AppId == appId)
             .ToArray();
 
-        app.Resources = resourceBroker
-            .GetAllResourcesIgnoringFilters()
+        app.Resources = GetResources()
             .Where(predicate: existingResource => existingResource.AppId == appId)
             .ToArray();
 
-        app.Scripts = scriptBroker
-            .GetAllScriptsIgnoringFilters()
+        app.Scripts = GetScripts()
             .Where(predicate: existingScript => existingScript.AppId == appId)
             .ToArray();
 
-        Template template = templateBroker
-            .GetAllTemplatesIgnoringFilters()
+        Template template = GetTemplates()
             .Where(predicate: existingTemplate => existingTemplate.AppId == appId)
             .ToArray()
             .FirstOrDefault(predicate: existingTemplate =>
@@ -145,12 +127,12 @@ internal partial class TemplateRenderProcessingService(
         List<MarkupReplacement> list = DefaultReplacements(renderParams: renderParams, config: config)
             .ToList();
 
-        list.Add(item: new MarkupReplacement { Old = "[model]", Value = jsonBroker.Serialize(value: model) });
+        list.Add(item: new MarkupReplacement { Old = "[model]", Value = Serialize(value: model) });
         list.AddRange(collection: BuildModelReplacements(model: model));
 
-        if (loggingBroker.IsEnabled(logLevel: LogLevel.Debug))
+        if (IsLoggingEnabled(logLevel: LogLevel.Debug))
         {
-            loggingBroker.LogDebug(
+            LogDebug(
                 message: "Rendering template {Template} with {ReplacementCount} replacements.",
                 args: [template.Name, list.Count]);
         }
@@ -181,21 +163,29 @@ internal partial class TemplateRenderProcessingService(
         CollectionsMarshal.SetCount(list: list, count: num);
         Span<MarkupReplacement> span = CollectionsMarshal.AsSpan(list: list);
 
-        span[0] = new MarkupReplacement { Old = "[[user]]", Value = jsonBroker.Serialize(value: new
+        span[0] = new MarkupReplacement
         {
-            Id = renderParams.User?.Id,
-            DefaultCultureId = renderParams.User?.DefaultCultureId,
-            DisplayName = renderParams.User?.DisplayName,
-            Email = renderParams.User?.Email
-        }) };
+            Old = "[[user]]",
+            Value = Serialize(value: new
+            {
+                Id = renderParams.User?.Id,
+                DefaultCultureId = renderParams.User?.DefaultCultureId,
+                DisplayName = renderParams.User?.DisplayName,
+                Email = renderParams.User?.Email
+            })
+        };
 
         span[1] = new MarkupReplacement { Old = "[[displayname]]", Value = renderParams.User?.DisplayName };
         span[2] = new MarkupReplacement { Old = "[[loginlink]]", Value = (renderParams.User?.Id == "Guest") ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>" };
         span[3] = new MarkupReplacement { Old = "[[date]]", Value = DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy") };
         span[4] = new MarkupReplacement { Old = "[[culture]]", Value = text2 };
 
-        span[5] = new MarkupReplacement { Old = "[[lang]]", Value = text2.Split(separator: '-')
-            .First() };
+        span[5] = new MarkupReplacement
+        {
+            Old = "[[lang]]",
+            Value = text2.Split(separator: '-')
+            .First()
+        };
 
         span[6] = new MarkupReplacement { Old = "[app[name]]", Value = renderParams.App?.Name };
         span[7] = new MarkupReplacement { Old = "[app[domain]]", Value = renderParams.App?.Domain };
@@ -303,7 +293,7 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                        .Replace(oldValue: "]]", newValue: "")
                                                                                                                                        .ToLower();
 
-                                                                                                                                   Script script = objectCache.Get<Script>(key: "script|" + name);
+                                                                                                                                   Script script = GetScript(key: "script|" + name);
 
                                                                                                                                    if (script != null)
                                                                                                                                    {
@@ -318,7 +308,7 @@ internal partial class TemplateRenderProcessingService(
         RegexReplace(source: result, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "component"), action: match =>
                                                                                                                                   {
                                                                                                                                       (string _, string name, string[] options) tag = SplitMatch(match: match);
-                                                                                                                                      Component component = renderParams.App?.Components?.FirstOrDefault(predicate: (Component c) => c.Name.Equals(value: tag.name, comparisonType: StringComparison.CurrentCultureIgnoreCase)) ?? objectCache.Get<Component>(key: "component|" + tag.name);
+                                                                                                                                      Component component = renderParams.App?.Components?.FirstOrDefault(predicate: (Component c) => c.Name.Equals(value: tag.name, comparisonType: StringComparison.CurrentCultureIgnoreCase)) ?? GetComponent(key: "component|" + tag.name);
                                                                                                                                       return (component == null) ? ("[[Missing Component:" + tag.name + "]]") : ProcessContentString(key: key, renderParams: renderParams, content: BuildComponentMarkup(component: component, tag: tag, replacements: replacements, renderParams: renderParams), replacements: replacements);
                                                                                                                                   });
 
@@ -337,14 +327,14 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                      {
                                                                                                                                          string value = match.Groups["1"];
 
-                                                                                                                                         string content = jsonBroker.SerializeIgnoringReferences(value: new
+                                                                                                                                         string content = SerializeIgnoringReferences(value: new
                                                                                                                                          {
                                                                                                                                              Script = value,
-                                                                                                                                             Model = jsonBroker.ParseJson(json: replacements.First(predicate: (MarkupReplacement r) => r.Old == "[model]")
+                                                                                                                                             Model = ParseJson(json: replacements.First(predicate: (MarkupReplacement r) => r.Old == "[model]")
                                                                                                                                              .New)
                                                                                                                                          });
 
-                                                                                                                                         string result = workflowExecutionBroker.Execute(
+                                                                                                                                         string result = ExecuteWorkflow(
                                                                                                                                              baseAddress: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]").New,
                                                                                                                                              content: content);
 
@@ -440,7 +430,7 @@ internal partial class TemplateRenderProcessingService(
         string name,
         string culture)
     {
-        Resource resource = objectCache.Get<Resource>(key: $"resource|{key}-{name}-{culture}");
+        Resource resource = GetResource(key: $"resource|{key}-{name}-{culture}");
 
         if (resource != null)
         {
@@ -450,7 +440,7 @@ internal partial class TemplateRenderProcessingService(
         if (culture.Contains(value: '-'))
         {
             string value = culture.Split(separator: "-")[0];
-            Resource resource2 = objectCache.Get<Resource>(key: $"resource|{key}-{name}-{value}");
+            Resource resource2 = GetResource(key: $"resource|{key}-{name}-{value}");
 
             if (resource2 != null)
             {
@@ -458,7 +448,7 @@ internal partial class TemplateRenderProcessingService(
             }
         }
 
-        return objectCache.Get<Resource>(key: $"resource|{key}-{name}-{string.Empty}");
+        return GetResource(key: $"resource|{key}-{name}-{string.Empty}");
     }
 
     private static IEnumerable<Resource> SelectResourcesForCulture(IEnumerable<Resource> potentials, string key, string culture)
@@ -512,7 +502,7 @@ internal partial class TemplateRenderProcessingService(
                                                                    string value = match.Value;
                                                                    string text = value.Substring(startIndex: 6, length: value.Length - 6);
                                                                    string key = text[..text.IndexOf(value: ']')].ToLowerInvariant();
-                                                                   return metadataCache.Get(key: key, culture: culture);
+                                                                   return GetMetadata(key: key, culture: culture);
                                                                });
 
     private static bool TryGetThemeDictionary(dynamic config, out IDictionary<string, object> themeDictionary)
@@ -537,12 +527,12 @@ internal partial class TemplateRenderProcessingService(
     {
         if ((object)model.GetType()
             .GetInterface(name: "IDynamicMetaObjectProvider") != null
-            && !jsonBroker.IsJsonObject(value: model))
+            && !IsJsonObject(value: model))
         {
             return BuildDynamicThemeReplacements(model: model, prefix: prefix);
         }
 
-        if (jsonBroker.IsJsonObject(value: model))
+        if (IsJsonObject(value: model))
         {
             return BuildJObjectThemeReplacements(model: model, prefix: prefix);
         }
@@ -621,13 +611,13 @@ internal partial class TemplateRenderProcessingService(
     private IEnumerable<MarkupReplacement> BuildJObjectThemeReplacements<T>(T model, string prefix)
     {
         IEnumerable<KeyValuePair<string, object>> source =
-            jsonBroker.GetJsonProperties(value: model);
+            GetJsonProperties(value: model);
 
         return source.SelectMany(selector: token =>
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + token.Key) : token.Key);
 
-            if (jsonBroker.IsJsonValue(value: token.Value))
+            if (IsJsonValue(value: token.Value))
             {
                 return new[] { new MarkupReplacement { Old = "[theme[" + text + "]]", Value = token.Value.ToString() ?? string.Empty } };
             }
@@ -673,24 +663,19 @@ internal partial class TemplateRenderProcessingService(
 
     private IEnumerable<MarkupReplacement> BuildModelReplacements(object model, string prefix = "")
     {
-        if (model is JsonElement jsonElement)
-        {
-            return BuildModelReplacements(
-                model: jsonBroker.ParseJson(json: jsonElement.GetRawText()),
-                prefix: prefix);
-        }
+        model = NormalizeJson(value: model);
 
         if (model is string)
         {
             return new[] { new MarkupReplacement { Old = "[theme[" + prefix + "]]", Value = model.ToString() } };
         }
 
-        if (jsonBroker.IsJsonObject(value: model))
+        if (IsJsonObject(value: model))
         {
             return BuildModelReplacementsForJObject(model: model, prefix: prefix);
         }
 
-        if (jsonBroker.IsJsonArray(value: model))
+        if (IsJsonArray(value: model))
         {
             return BuildModelReplacementsForCollection(model: model, prefix: prefix);
         }
@@ -759,13 +744,13 @@ internal partial class TemplateRenderProcessingService(
     private IEnumerable<MarkupReplacement> BuildModelReplacementsForJObject(object model, string prefix)
     {
         IEnumerable<KeyValuePair<string, object>> source =
-            jsonBroker.GetJsonProperties(value: model);
+            GetJsonProperties(value: model);
 
         return source.SelectMany(selector: token =>
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + token.Key) : token.Key);
 
-            if (jsonBroker.IsJsonValue(value: token.Value))
+            if (IsJsonValue(value: token.Value))
             {
                 return new[] { new MarkupReplacement { Old = "[model[" + text + "]]", Value = token.Value.ToString() ?? string.Empty } };
             }
@@ -862,7 +847,7 @@ internal partial class TemplateRenderProcessingService(
         string matchExpression,
         Func<RegularExpressionMatch, string> action)
     {
-        string result = regularExpressionBroker.Replace(
+        string result = ReplaceRegularExpression(
             input: source.ToString(),
             pattern: matchExpression,
             evaluator: (value, groups) => action(
@@ -880,7 +865,7 @@ internal partial class TemplateRenderProcessingService(
         StringBuilder source,
         string matchExpression,
         Action<RegularExpressionMatch> action) =>
-        regularExpressionBroker.ForEachMatch(
+        ForEachRegularExpressionMatch(
             input: source.ToString(),
             pattern: matchExpression,
             action: (value, groups) => action(
@@ -915,16 +900,180 @@ internal partial class TemplateRenderProcessingService(
         List<MarkupReplacement> list = DefaultReplacements(renderParams: renderParams, config: config)
             .ToList();
 
-        list.Add(item: new MarkupReplacement { Old = "[model]", Value = jsonBroker.Serialize(value: model) });
+        list.Add(item: new MarkupReplacement { Old = "[model]", Value = Serialize(value: model) });
         list.AddRange(collection: BuildModelReplacements(model: model));
 
-        if (loggingBroker.IsEnabled(logLevel: LogLevel.Debug))
+        if (IsLoggingEnabled(logLevel: LogLevel.Debug))
         {
-            loggingBroker.LogDebug(
+            LogDebug(
                 message: "Rendering template {Template} with {ReplacementCount} replacements.",
                 args: [template.Name, list.Count]);
         }
 
         return ProcessContentString(key: template.ResourceKey, renderParams: renderParams, content: template.RawString, replacements: list);
     }
+
+    private IReadOnlyCollection<App> GetApps() =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation(),
+            action: templateRenderService.GetAppsTemplateRenderFoundationOperation)
+        .Apps;
+
+    private IReadOnlyCollection<Component> GetComponents() =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation(),
+            action: templateRenderService.GetComponentsTemplateRenderFoundationOperation)
+        .Components;
+
+    private IReadOnlyCollection<Resource> GetResources() =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation(),
+            action: templateRenderService.GetResourcesTemplateRenderFoundationOperation)
+        .Resources;
+
+    private IReadOnlyCollection<Script> GetScripts() =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation(),
+            action: templateRenderService.GetScriptsTemplateRenderFoundationOperation)
+        .Scripts;
+
+    private IReadOnlyCollection<Template> GetTemplates() =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation(),
+            action: templateRenderService.GetTemplatesTemplateRenderFoundationOperation)
+        .Templates;
+
+    private Component GetComponent(string key) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Key = key },
+            action: templateRenderService.GetComponentTemplateRenderFoundationOperation)
+        .Component;
+
+    private Script GetScript(string key) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Key = key },
+            action: templateRenderService.GetScriptTemplateRenderFoundationOperation)
+        .Script;
+
+    private Resource GetResource(string key) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Key = key },
+            action: templateRenderService.GetResourceTemplateRenderFoundationOperation)
+        .Resource;
+
+    private string GetMetadata(string key, string culture) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation
+            {
+                Key = key,
+                Culture = culture
+            },
+            action: templateRenderService.GetMetadataTemplateRenderFoundationOperation)
+        .Content;
+
+    private string Serialize(object value) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Value = value },
+            action: templateRenderService.SerializeTemplateRenderFoundationOperation)
+        .Content;
+
+    private string SerializeIgnoringReferences(object value) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Value = value },
+            action: templateRenderService.SerializeIgnoringReferencesTemplateRenderFoundationOperation)
+        .Content;
+
+    private object ParseJson(string json) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Content = json },
+            action: templateRenderService.ParseJsonTemplateRenderFoundationOperation)
+        .Value;
+
+    private object NormalizeJson(object value) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Value = value },
+            action: templateRenderService.NormalizeJsonTemplateRenderFoundationOperation)
+        .Value;
+
+    private bool IsJsonObject(object value) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Value = value },
+            action: templateRenderService.IsJsonObjectTemplateRenderFoundationOperation)
+        .Condition;
+
+    private bool IsJsonArray(object value) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Value = value },
+            action: templateRenderService.IsJsonArrayTemplateRenderFoundationOperation)
+        .Condition;
+
+    private bool IsJsonValue(object value) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Value = value },
+            action: templateRenderService.IsJsonValueTemplateRenderFoundationOperation)
+        .Condition;
+
+    private IReadOnlyCollection<KeyValuePair<string, object>> GetJsonProperties(
+        object value) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { Value = value },
+            action: templateRenderService.GetJsonPropertiesTemplateRenderFoundationOperation)
+        .JsonProperties;
+
+    private string ExecuteWorkflow(string baseAddress, string content) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation
+            {
+                BaseAddress = baseAddress,
+                Content = content
+            },
+            action: templateRenderService.ExecuteWorkflowTemplateRenderFoundationOperation)
+        .Content;
+
+    private bool IsLoggingEnabled(LogLevel logLevel) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation { LogLevel = logLevel },
+            action: templateRenderService.IsLoggingEnabledTemplateRenderFoundationOperation)
+        .Condition;
+
+    private void LogDebug(string message, params object[] args) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation
+            {
+                Message = message,
+                Arguments = args
+            },
+            action: templateRenderService.LogDebugTemplateRenderFoundationOperation);
+
+    private string ReplaceRegularExpression(
+        string input,
+        string pattern,
+        Func<string, IReadOnlyDictionary<string, string>, string> evaluator) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation
+            {
+                Input = input,
+                Pattern = pattern,
+                Evaluator = evaluator
+            },
+            action: templateRenderService.ReplaceRegularExpressionTemplateRenderFoundationOperation)
+        .Content;
+
+    private void ForEachRegularExpressionMatch(
+        string input,
+        string pattern,
+        Action<string, IReadOnlyDictionary<string, string>> action) =>
+        ExecuteFoundation(
+            operation: new TemplateRenderFoundationOperation
+            {
+                Input = input,
+                Pattern = pattern,
+                MatchAction = action
+            },
+            action: templateRenderService.ForEachRegularExpressionMatchTemplateRenderFoundationOperation);
+
+    private static TemplateRenderFoundationOperation ExecuteFoundation(
+        TemplateRenderFoundationOperation operation,
+        Func<TemplateRenderFoundationOperation, TemplateRenderFoundationOperation> action) =>
+        action(arg: operation);
 }

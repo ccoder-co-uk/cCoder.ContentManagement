@@ -360,6 +360,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentManagementMetadataTypeService, ContentManagementMetadataTypeService>();
         services.AddTransient<IRenderFileContentService, RenderFileContentService>();
         services.AddTransient<IComponentRenderService, ComponentRenderService>();
+        services.AddTransient<ITemplateRenderService, TemplateRenderService>();
+        services.AddTransient<IPageRenderService, PageRenderService>();
         services.AddTransient<IResourceProvider, CoreResourceBroker>();
         services.AddSingleton<ICommonObjectCache, CommonObjectCacheDependency>();
         services.AddSingleton<MetadataCacheDependency>();

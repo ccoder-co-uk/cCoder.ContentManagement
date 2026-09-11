@@ -8,30 +8,19 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Models.RegularExpressions;
+using cCoder.ContentManagement.Models.Rendering;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class ComponentRenderProcessingService(
-    IMetadataReaderBroker metadataCache,
-    ICommonObjectReaderBroker objectCache,
-    IJsonBroker jsonBroker,
-    ContentManagementConfiguration config,
-    IAppBroker appBroker,
-    IComponentBroker componentBroker,
-    IResourceBroker resourceBroker,
-    IScriptBroker scriptBroker,
     IComponentRenderService componentRenderService,
-    IWorkflowExecutionBroker workflowExecutionBroker,
-    IRegularExpressionBroker regularExpressionBroker)
+    ContentManagementConfiguration config)
         : IComponentRenderProcessingService
 {
     private const string TagPattern = "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]";
@@ -66,8 +55,7 @@ internal partial class ComponentRenderProcessingService(
         ValidateUser(user: user, parameterName: "user");
         culture ??= user.DefaultCultureId;
 
-        App app = appBroker
-            .GetAllAppsIgnoringFilters()
+        App app = GetApps()
             .Where(predicate: existingApp => existingApp.Id == appId)
             .Select(selector: existingApp => new App
             {
@@ -83,18 +71,15 @@ internal partial class ComponentRenderProcessingService(
 
         if (app != null)
         {
-            app.Components = componentBroker
-                .GetAllComponentsIgnoringFilters()
+            app.Components = GetComponents()
                 .Where(predicate: existingComponent => existingComponent.AppId == appId)
                 .ToArray();
 
-            app.Resources = resourceBroker
-                .GetAllResourcesIgnoringFilters()
+            app.Resources = GetResources()
                 .Where(predicate: existingResource => existingResource.AppId == appId)
                 .ToArray();
 
-            app.Scripts = scriptBroker
-                .GetAllScriptsIgnoringFilters()
+            app.Scripts = GetScripts()
                 .Where(predicate: existingScript => existingScript.AppId == appId)
                 .ToArray();
         }
@@ -103,7 +88,7 @@ internal partial class ComponentRenderProcessingService(
             .Where(predicate: existingComponent => existingComponent.AppId == appId)
             .FirstOrDefault(predicate: existingComponent =>
                 existingComponent.Name.Equals(value: name, comparisonType: StringComparison.OrdinalIgnoreCase))
-            ?? objectCache.Get<Component>(key: "component|" + name.ToLower())
+            ?? GetComponent(key: "component|" + name.ToLower())
             ?? throw new InvalidOperationException(message: "Component '" + name + "' was not found.");
 
         ComponentRenderParams renderParams = new()
@@ -149,7 +134,7 @@ internal partial class ComponentRenderProcessingService(
         CollectionsMarshal.SetCount(list: list, count: num);
         Span<MarkupReplacement> span = CollectionsMarshal.AsSpan(list: list);
 
-        span[0] = new MarkupReplacement { Old = "[[user]]", Value = jsonBroker.Serialize(value: new
+        span[0] = new MarkupReplacement { Old = "[[user]]", Value = Serialize(value: new
         {
             Id = renderParams.User?.Id,
             DefaultCultureId = renderParams.User?.DefaultCultureId,
@@ -275,7 +260,7 @@ internal partial class ComponentRenderProcessingService(
         RegexReplace(source: result, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "component"), action: match =>
                                                                                                                                   {
                                                                                                                                       (string _, string name, string[] options) tag = SplitMatch(match: match);
-                                                                                                                                      Component component = renderParams.App?.Components?.FirstOrDefault(predicate: (Component c) => c.Name.Equals(value: tag.name, comparisonType: StringComparison.CurrentCultureIgnoreCase)) ?? objectCache.Get<Component>(key: "component|" + tag.name);
+                                                                                                                                      Component component = renderParams.App?.Components?.FirstOrDefault(predicate: (Component c) => c.Name.Equals(value: tag.name, comparisonType: StringComparison.CurrentCultureIgnoreCase)) ?? GetComponent(key: "component|" + tag.name);
                                                                                                                                       return (component == null) ? ("[[Missing Component:" + tag.name + "]]") : ProcessContentString(key: key, renderParams: renderParams, content: BuildComponentMarkup(component: component, tag: tag, replacements: replacements, renderParams: renderParams), replacements: replacements);
                                                                                                                                   });
 
@@ -296,7 +281,7 @@ internal partial class ComponentRenderProcessingService(
                                                                                                                                        .Replace(oldValue: "]]", newValue: "")
                                                                                                                                        .ToLower();
 
-                                                                                                                                   Script script = objectCache.Get<Script>(key: "script|" + name);
+                                                                                                                                   Script script = GetScript(key: "script|" + name);
 
                                                                                                                                    if (script != null)
                                                                                                                                    {
@@ -313,13 +298,13 @@ internal partial class ComponentRenderProcessingService(
                                                                                                                                          string value = match.Groups["1"];
                                                                                                                                          string json = replacements.FirstOrDefault(predicate: (MarkupReplacement r) => r.Old == "[model]")?.New ?? "{}";
 
-                                                                                                                                         string content = jsonBroker.SerializeIgnoringReferences(value: new
+                                                                                                                                         string content = SerializeIgnoringReferences(value: new
                                                                                                                                          {
                                                                                                                                              Script = value,
-                                                                                                                                             Model = jsonBroker.ParseJson(json: json)
+                                                                                                                                             Model = ParseJson(json: json)
                                                                                                                                          });
 
-                                                                                                                                         string result = workflowExecutionBroker.Execute(
+                                                                                                                                         string result = ExecuteWorkflow(
                                                                                                                                              baseAddress: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]").New,
                                                                                                                                              content: content);
 
@@ -333,7 +318,7 @@ internal partial class ComponentRenderProcessingService(
                                                                                                                                              .Replace(oldValue: "]]", newValue: "")
                                                                                                                                              .ToLowerInvariant();
 
-                                                                                                                                         string latestTextContent = componentRenderService.GetLatestTextContent(
+                                                                                                                                         string latestTextContent = GetLatestTextContent(
                                                                                                                                              appId: renderParams.App.Id,
                                                                                                                                              path: path);
 
@@ -416,7 +401,7 @@ internal partial class ComponentRenderProcessingService(
         string name,
         string culture)
     {
-        Resource resource = objectCache.Get<Resource>(key: $"resource|{key}-{name}-{culture}");
+        Resource resource = GetResource(key: $"resource|{key}-{name}-{culture}");
 
         if (resource != null)
         {
@@ -426,7 +411,7 @@ internal partial class ComponentRenderProcessingService(
         if (culture.Contains(value: '-'))
         {
             string value = culture.Split(separator: "-")[0];
-            Resource resource2 = objectCache.Get<Resource>(key: $"resource|{key}-{name}-{value}");
+            Resource resource2 = GetResource(key: $"resource|{key}-{name}-{value}");
 
             if (resource2 != null)
             {
@@ -434,7 +419,7 @@ internal partial class ComponentRenderProcessingService(
             }
         }
 
-        return objectCache.Get<Resource>(key: $"resource|{key}-{name}-{string.Empty}");
+        return GetResource(key: $"resource|{key}-{name}-{string.Empty}");
     }
 
     private void Meta(StringBuilder source, string culture) =>
@@ -443,7 +428,7 @@ internal partial class ComponentRenderProcessingService(
                                                                    string value = match.Value;
                                                                    string text = value.Substring(startIndex: 6, length: value.Length - 6);
                                                                    string key = text[..text.IndexOf(value: ']')].ToLowerInvariant();
-                                                                   return metadataCache.Get(key: key, culture: culture);
+                                                                   return GetMetadata(key: key, culture: culture);
                                                                });
 
     private static bool TryGetThemeDictionary(dynamic config, out IDictionary<string, object> themeDictionary)
@@ -468,12 +453,12 @@ internal partial class ComponentRenderProcessingService(
     {
         if ((object)model.GetType()
             .GetInterface(name: "IDynamicMetaObjectProvider") != null
-            && !jsonBroker.IsJsonObject(value: model))
+            && !IsJsonObject(value: model))
         {
             return BuildDynamicThemeReplacements(model: model, prefix: prefix);
         }
 
-        if (jsonBroker.IsJsonObject(value: model))
+        if (IsJsonObject(value: model))
         {
             return BuildJObjectThemeReplacements(model: model, prefix: prefix);
         }
@@ -552,13 +537,13 @@ internal partial class ComponentRenderProcessingService(
     private IEnumerable<MarkupReplacement> BuildJObjectThemeReplacements<T>(T model, string prefix)
     {
         IEnumerable<KeyValuePair<string, object>> source =
-            jsonBroker.GetJsonProperties(value: model);
+            GetJsonProperties(value: model);
 
         return source.SelectMany(selector: token =>
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + token.Key) : token.Key);
 
-            if (jsonBroker.IsJsonValue(value: token.Value))
+            if (IsJsonValue(value: token.Value))
             {
                 return new[] { new MarkupReplacement { Old = "[theme[" + text + "]]", Value = token.Value.ToString() ?? string.Empty } };
             }
@@ -646,7 +631,7 @@ internal partial class ComponentRenderProcessingService(
         string matchExpression,
         Func<RegularExpressionMatch, string> action)
     {
-        string result = regularExpressionBroker.Replace(
+        string result = ReplaceRegularExpression(
             input: source.ToString(),
             pattern: matchExpression,
             evaluator: (value, groups) => action(
@@ -664,7 +649,7 @@ internal partial class ComponentRenderProcessingService(
         StringBuilder source,
         string matchExpression,
         Action<RegularExpressionMatch> action) =>
-        regularExpressionBroker.ForEachMatch(
+        ForEachRegularExpressionMatch(
             input: source.ToString(),
             pattern: matchExpression,
             action: (value, groups) => action(
@@ -711,6 +696,151 @@ internal partial class ComponentRenderProcessingService(
 
         return resource ?? potentials.FirstOrDefault(predicate: (Resource resource2) => string.IsNullOrEmpty(value: resource2.Culture));
     }
+
+    private IReadOnlyCollection<App> GetApps() =>
+        componentRenderService.GetAppsComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation())
+        .Apps;
+
+    private IReadOnlyCollection<Component> GetComponents() =>
+        componentRenderService.GetComponentsComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation())
+        .Components;
+
+    private IReadOnlyCollection<Resource> GetResources() =>
+        componentRenderService.GetResourcesComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation())
+        .Resources;
+
+    private IReadOnlyCollection<Script> GetScripts() =>
+        componentRenderService.GetScriptsComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation())
+        .Scripts;
+
+    private Component GetComponent(string key) =>
+        componentRenderService.GetComponentComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Key = key
+            })
+        .Component;
+
+    private Script GetScript(string key) =>
+        componentRenderService.GetScriptComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Key = key
+            })
+        .Script;
+
+    private Resource GetResource(string key) =>
+        componentRenderService.GetResourceComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Key = key
+            })
+        .Resource;
+
+    private string GetMetadata(string key, string culture) =>
+        componentRenderService.GetMetadataComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Key = key,
+                Culture = culture
+            })
+        .Content;
+
+    private string GetLatestTextContent(int appId, string path) =>
+        componentRenderService.GetLatestTextContentComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                AppId = appId,
+                Path = path
+            })
+        .Content;
+
+    private string Serialize(object value) =>
+        componentRenderService.SerializeComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Content;
+
+    private string SerializeIgnoringReferences(object value) =>
+        componentRenderService.SerializeIgnoringReferencesComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Content;
+
+    private object ParseJson(string json) =>
+        componentRenderService.ParseJsonComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Content = json
+            })
+        .Value;
+
+    private bool IsJsonObject(object value) =>
+        componentRenderService.IsJsonObjectComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Condition;
+
+    private bool IsJsonValue(object value) =>
+        componentRenderService.IsJsonValueComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Condition;
+
+    private IReadOnlyCollection<KeyValuePair<string, object>> GetJsonProperties(
+        object value) =>
+        componentRenderService.GetJsonPropertiesComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Value = value
+            })
+        .JsonProperties;
+
+    private string ExecuteWorkflow(string baseAddress, string content) =>
+        componentRenderService.ExecuteWorkflowComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                BaseAddress = baseAddress,
+                Content = content
+            })
+        .Content;
+
+    private string ReplaceRegularExpression(
+        string input,
+        string pattern,
+        Func<string, IReadOnlyDictionary<string, string>, string> evaluator) =>
+        componentRenderService.ReplaceRegularExpressionComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Input = input,
+                Pattern = pattern,
+                Evaluator = evaluator
+            })
+        .Content;
+
+    private void ForEachRegularExpressionMatch(
+        string input,
+        string pattern,
+        Action<string, IReadOnlyDictionary<string, string>> action) =>
+        componentRenderService.ForEachRegularExpressionMatchComponentRenderFoundationOperation(
+            componentRenderFoundationOperation: new ComponentRenderFoundationOperation
+            {
+                Input = input,
+                Pattern = pattern,
+                MatchAction = action
+            });
 
     private string ExecuteRenderComponentComponentRenderParams(Component component, ComponentRenderParams renderParams)
     {

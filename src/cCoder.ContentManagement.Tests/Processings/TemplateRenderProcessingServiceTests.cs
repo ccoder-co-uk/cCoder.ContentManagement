@@ -41,20 +41,25 @@ public partial class TemplateRenderProcessingServiceTests
 
     private TemplateRenderProcessingService CreateSut(RenderConfig config)
     {
-        return new TemplateRenderProcessingService(
-            metadataCache: metadataCacheMock.Object,
-            objectCache: commonObjectCacheMock.Object,
+        TemplateRenderService templateRenderService = new(
+            metadataReaderBroker: metadataCacheMock.Object,
+            commonObjectReaderBroker: commonObjectCacheMock.Object,
             jsonBroker: new JsonBroker(),
-            appBroker: Mock.Of<IAppBroker>(),
-            componentBroker: Mock.Of<IComponentBroker>(),
-            resourceBroker: Mock.Of<IResourceBroker>(),
-            scriptBroker: Mock.Of<IScriptBroker>(),
-            templateBroker: Mock.Of<ITemplateBroker>(),
+            systemTextJsonBroker: new SystemTextJsonBroker(),
             workflowExecutionBroker: new WorkflowExecutionBroker(
                 workflowExecutionDependency:
                     new WorkflowExecutionDependency()),
             loggingBroker: Mock.Of<ILoggingBroker>(),
             regularExpressionBroker: new RegularExpressionBroker(),
+            appBroker: Mock.Of<IAppBroker>(),
+            componentBroker: Mock.Of<IComponentBroker>(),
+            resourceBroker: Mock.Of<IResourceBroker>(),
+            scriptBroker: Mock.Of<IScriptBroker>(),
+            templateBroker: Mock.Of<ITemplateBroker>()
+        );
+
+        return new TemplateRenderProcessingService(
+            templateRenderService: templateRenderService,
             config: config);
     }
 

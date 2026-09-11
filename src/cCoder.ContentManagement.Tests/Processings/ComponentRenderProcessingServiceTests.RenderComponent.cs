@@ -42,8 +42,9 @@ public partial class ComponentRenderProcessingServiceTests
             .Setup(expression: x => x.Get<RenderScript>(key: "script|bootstrap"))
             .Returns(value: new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
 
-        componentRenderServiceMock.Setup(expression: x => x.GetLatestTextContent(appId: app.Id, path: "snippets/info"))
-            .Returns(value: "snippet-text");
+        renderFileContentBrokerMock
+            .Setup(expression: broker => broker.GetLatestRawData(app.Id, "snippets/info"))
+            .Returns(value: System.Text.Encoding.UTF8.GetBytes(s: "snippet-text"));
 
         // When
         string result = await RenderTestWorkflowServer.RunStringAsync(

@@ -13,4 +13,7 @@ internal sealed partial class MarkupRenderService
 
     private static void ValidateMarkContentSecurityPolicyNonce(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
+
+    private static void ValidateJsonPropertiesTagHandlingOperationOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
 }
