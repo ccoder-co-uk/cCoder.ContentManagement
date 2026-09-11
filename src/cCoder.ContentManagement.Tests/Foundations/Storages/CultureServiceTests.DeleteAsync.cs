@@ -52,6 +52,7 @@ public partial class CultureServiceTests
 
         // Then
         cultureBrokerMock.Verify(expression: x => x.GetAllCultures(), times: Times.Once);
+
         cultureBrokerMock.Verify(
             expression: x => x.DeleteCultureAsync(
                 deletedCulture: It.Is<Culture>(match: deletedCulture =>
