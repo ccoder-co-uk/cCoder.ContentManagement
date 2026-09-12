@@ -200,6 +200,7 @@ public static partial class IServiceCollectionExtensions
                         .GetRequiredService<IHttpContextAccessor>()
                         .HttpContext));
         services.AddTransient<IPageAuthorizationBroker, PageAuthorizationBroker>();
+        services.AddTransient<IEventRegistrationBroker, EventRegistrationBroker>();
         services.AddTransient<IAuthenticatedEventHub, AuthenticatedEventHubDependency>();
         services.AddTransient<IAppCultureEventBroker, AppCultureEventBroker>();
         services.AddTransient<IAppEventBroker, AppEventBroker>();

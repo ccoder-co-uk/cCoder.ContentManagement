@@ -4,11 +4,11 @@
 
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.Data.Models.CMS;
-using cCoder.Eventing;
+using cCoder.ContentManagement.Brokers.Events;
 
 namespace cCoder.ContentManagement.Exposures.EventHandlers;
 
-internal sealed class AppSupportingResourcesEventHandlers(IEventHub eventHub)
+internal sealed class AppSupportingResourcesEventHandlers(IEventRegistrationBroker eventHub)
     : IContentManagementEventHandlers
 {
     public void ListenToAllEvents()

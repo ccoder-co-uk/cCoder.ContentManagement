@@ -1436,6 +1436,68 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+          "FullName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+          "Name": "IEventRegistrationBroker",
+          "Namespace": "cCoder.ContentManagement.Brokers.Events",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Broker"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+          "Name": "ListenToEvent",
+          "LineNumber": 12,
+          "Inputs": [
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "handler",
+              "Type": "System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E"
+            }
+          ],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.Eventing.IEventHub",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Brokers.Events.LayoutEventBroker",
       "StandardElementType": "Broker",
       "LineNumber": 11,
@@ -24050,6 +24112,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers",
               "MethodName": "DeleteAppAsync",
               "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.DeleteAppAsync(cCoder.Data.Models.CMS.App)",
@@ -24104,13 +24173,6 @@
               "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateAppAsync(cCoder.Data.Models.CMS.Template)",
               "StandardElementType": "Exposure",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -24176,6 +24238,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.IAppPageComponentCoordinationService",
               "MethodName": "HandleAppAddAsync",
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IAppPageComponentCoordinationService.HandleAppAddAsync(cCoder.Data.Models.CMS.App)",
@@ -24195,13 +24264,6 @@
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IAppPageComponentCoordinationService.HandleAppUpdateAsync(cCoder.Data.Models.CMS.App)",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -24333,6 +24395,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.IAppRenderableCoordinationService",
               "MethodName": "HandleAppAddAsync",
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IAppRenderableCoordinationService.HandleAppAddAsync(cCoder.Data.Models.CMS.App)",
@@ -24352,13 +24421,6 @@
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IAppRenderableCoordinationService.HandleAppUpdateAsync(cCoder.Data.Models.CMS.App)",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -24490,6 +24552,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.IAppSupportingResourcesCoordinationService",
               "MethodName": "HandleAppAddAsync",
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IAppSupportingResourcesCoordinationService.HandleAppAddAsync(cCoder.Data.Models.CMS.App)",
@@ -24509,13 +24578,6 @@
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IAppSupportingResourcesCoordinationService.HandleAppUpdateAsync(cCoder.Data.Models.CMS.App)",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -24648,11 +24710,11 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.Eventing.IEventHub",
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
               "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
@@ -24850,6 +24912,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers",
               "MethodName": "InvalidateCommonCacheConsumersAsync",
               "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateCommonCacheConsumersAsync(cCoder.Data.Models.CommonObject)",
@@ -24862,13 +24931,6 @@
               "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidateCommonObjectsAsync(cCoder.Data.Models.CommonObject[])",
               "StandardElementType": "Exposure",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -24934,18 +24996,18 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService",
               "MethodName": "ImportComponentsAsync",
               "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.ImportComponentsAsync(System.Int32,cCoder.Data.Models.CMS.Component[])",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -25099,18 +25161,18 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService",
               "MethodName": "HandleAppDeleteAsync",
               "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.HandleAppDeleteAsync(cCoder.Data.Models.CMS.App)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -25220,18 +25282,18 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Exposures.ILayoutManager",
               "MethodName": "ImportLayoutsAsync",
               "MethodId": "cCoder.ContentManagement.Exposures.ILayoutManager.ImportLayoutsAsync(System.Int32,cCoder.Data.Models.CMS.Layout[])",
               "StandardElementType": "Exposure",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -25429,18 +25491,18 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers",
               "MethodName": "InvalidatePackageAsync",
               "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePackageAsync(System.Int32?)",
               "StandardElementType": "Exposure",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -25506,6 +25568,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.IPageCoordinationService",
               "MethodName": "HandlePageAddAsync",
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IPageCoordinationService.HandlePageAddAsync(cCoder.Data.Models.CMS.Page)",
@@ -25525,13 +25594,6 @@
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IPageCoordinationService.HandlePageUpdateAsync(cCoder.Data.Models.CMS.Page)",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -25729,6 +25791,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers",
               "MethodName": "DeletePageAsync",
               "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.DeletePageAsync(cCoder.Data.Models.CMS.Page)",
@@ -25755,13 +25824,6 @@
               "MethodId": "cCoder.ContentManagement.Exposures.EventHandlers.IPageRenderCacheEventHandlers.InvalidatePageAsync(cCoder.Data.Models.CMS.PageInfo)",
               "StandardElementType": "Exposure",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -25827,18 +25889,18 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.IPagePackageImportCoordinationService",
               "MethodName": "ImportPagesAsync",
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IPagePackageImportCoordinationService.ImportPagesAsync(System.Int32,cCoder.Data.Models.CMS.Page[])",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -26872,6 +26934,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.IPageStructureCoordinationService",
               "MethodName": "HandlePageAddAsync",
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IPageStructureCoordinationService.HandlePageAddAsync(cCoder.Data.Models.CMS.Page)",
@@ -26891,13 +26960,6 @@
               "MethodId": "cCoder.ContentManagement.Services.Coordinations.IPageStructureCoordinationService.HandlePageUpdateAsync(cCoder.Data.Models.CMS.Page)",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -27029,18 +27091,18 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Exposures.IResourceManager",
               "MethodName": "ImportResourcesAsync",
               "MethodId": "cCoder.ContentManagement.Exposures.IResourceManager.ImportResourcesAsync(System.Int32,cCoder.Data.Models.CMS.Resource[])",
               "StandardElementType": "Exposure",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -27172,18 +27234,18 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Exposures.IScriptManager",
               "MethodName": "ImportScriptsAsync",
               "MethodId": "cCoder.ContentManagement.Exposures.IScriptManager.ImportScriptsAsync(System.Int32,cCoder.Data.Models.CMS.Script[])",
               "StandardElementType": "Exposure",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -27315,18 +27377,18 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService",
               "MethodName": "ImportTemplatesAsync",
               "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.ImportTemplatesAsync(System.Int32,cCoder.Data.Models.CMS.Template[])",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.Eventing.IEventHub",
-              "MethodName": "ListenToEvent",
-              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
             }
           ],
           "PossibleExceptionTypes": [
@@ -76182,6 +76244,47 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 7,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Events.IEventRegistrationBroker.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+          "Name": "ListenToEvent",
+          "LineNumber": 9,
+          "Inputs": [
+            {
+              "Name": "name",
+              "Type": "System.String"
+            },
+            {
+              "Name": "handler",
+              "Type": "System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E"
+            }
+          ],
+          "ReturnType": "System.Void",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Brokers.Events.ILayoutEventBroker",
       "StandardElementType": "Broker",
       "LineNumber": 10,
@@ -103181,6 +103284,10 @@
       "ToType": "cCoder.Eventing.IAuthenticatedEventHub"
     },
     {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker",
+      "ToType": "cCoder.Eventing.IEventHub"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Brokers.Events.LayoutEventBroker",
       "ToType": "cCoder.Eventing.IAuthenticatedEventHub"
     },
@@ -103526,55 +103633,55 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.AppOwnedRenderCacheEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.AppPageComponentEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.AppRenderableEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.AppSupportingResourcesEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.CommonObjectPackageImportEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.CommonObjectRenderCacheEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.ComponentPackageImportEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.FinalAppDeleteEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.LayoutPackageImportEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.PackageImportRenderCacheEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.PageCoordinationEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.PageOwnedRenderCacheEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.PagePackageImportEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers",
@@ -103582,19 +103689,19 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.PageStructureEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.ResourcePackageImportEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.ScriptPackageImportEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.TemplatePackageImportEventHandlers",
-      "ToType": "cCoder.Eventing.IEventHub"
+      "ToType": "cCoder.ContentManagement.Brokers.Events.EventRegistrationBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.PageManager",

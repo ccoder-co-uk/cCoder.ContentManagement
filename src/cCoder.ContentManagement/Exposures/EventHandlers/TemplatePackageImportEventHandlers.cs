@@ -5,11 +5,11 @@
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
-using cCoder.Eventing;
+using cCoder.ContentManagement.Brokers.Events;
 
 namespace cCoder.ContentManagement.Exposures.EventHandlers;
 
-internal sealed class TemplatePackageImportEventHandlers(IEventHub eventHub)
+internal sealed class TemplatePackageImportEventHandlers(IEventRegistrationBroker eventHub)
     : IContentManagementEventHandlers
 {
     public void ListenToAllEvents() =>
