@@ -4,6 +4,7 @@
 
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.Data.Models.CMS;
 using Moq;
 
@@ -13,6 +14,7 @@ public partial class PageRenderCacheOrchestrationServiceTests
 {
     private readonly Mock<IPageRenderCacheQueryProcessingService> queryProcessingServiceMock;
     private readonly Mock<IPageRenderCacheProcessingService> processingServiceMock;
+    private readonly Mock<ICommonObjectCacheProcessingService> commonObjectCacheProcessingServiceMock;
     private readonly PageRenderCacheOrchestrationService orchestrationService;
 
     public PageRenderCacheOrchestrationServiceTests()
@@ -23,6 +25,9 @@ public partial class PageRenderCacheOrchestrationServiceTests
         processingServiceMock = new Mock<IPageRenderCacheProcessingService>(
             behavior: MockBehavior.Strict);
 
+        commonObjectCacheProcessingServiceMock = new Mock<ICommonObjectCacheProcessingService>(
+            behavior: MockBehavior.Strict);
+
         IPageRenderCacheQueryProcessingService queryProcessingService =
             queryProcessingServiceMock.Object;
 
@@ -31,7 +36,8 @@ public partial class PageRenderCacheOrchestrationServiceTests
 
         orchestrationService = new PageRenderCacheOrchestrationService(
             queryProcessingService: queryProcessingService,
-            processingService: processingService);
+            processingService: processingService,
+            commonObjectCacheProcessingService: commonObjectCacheProcessingServiceMock.Object);
     }
 
     private static PageRenderCache CreatePageRenderCache(

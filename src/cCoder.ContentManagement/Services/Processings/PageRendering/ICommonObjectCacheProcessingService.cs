@@ -8,5 +8,7 @@ namespace cCoder.ContentManagement.Rendering.Services.Processings;
 
 internal interface ICommonObjectCacheProcessingService
 {
+    void Refresh();
+
     RenderSession PrepareRenderSession(RenderSession session);
 }

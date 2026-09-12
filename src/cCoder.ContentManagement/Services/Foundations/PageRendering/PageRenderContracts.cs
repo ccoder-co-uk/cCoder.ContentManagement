@@ -14,6 +14,8 @@ internal interface IMetadataCacheService
 
 internal interface ICommonObjectCacheService
 {
+    void Refresh();
+
     PageCacheSlice GetPageCacheSlice();
 }
 

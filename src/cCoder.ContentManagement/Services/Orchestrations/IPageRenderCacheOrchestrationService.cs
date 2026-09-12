@@ -8,6 +8,8 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal interface IPageRenderCacheOrchestrationService
 {
+    void RefreshCommonObjectCache();
+
     IQueryable<PageRenderCache> GetAllPageRenderCaches();
 
     PageRenderCache GetPageRenderCache(string pageRenderCacheId);

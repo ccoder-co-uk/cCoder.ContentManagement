@@ -2,8 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies;
-using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 
@@ -11,8 +9,7 @@ namespace cCoder.ContentManagement.Services.Aggregations;
 
 internal sealed partial class PageRenderCacheAggregationService(
     IPageRenderCacheOrchestrationService pageRenderCacheOrchestrationService,
-    PageRenderCacheImportState pageRenderCacheImportState,
-    ICommonObjectCache commonObjectCache)
+    PageRenderCacheImportState pageRenderCacheImportState)
         : IPageRenderCacheAggregationService
 {
     private static readonly HashSet<string> CommonCacheRenderTypes =
@@ -131,7 +128,7 @@ internal sealed partial class PageRenderCacheAggregationService(
     private async ValueTask ExecuteInvalidateCommonCacheAsync(
         bool fromEvent)
     {
-        commonObjectCache.Refresh();
+        pageRenderCacheOrchestrationService.RefreshCommonObjectCache();
 
         int[] appIds =
         [

@@ -32,6 +32,8 @@ internal interface IMetadataReaderBroker
 
 internal interface ICommonObjectReaderBroker
 {
+    void Refresh();
+
     void EnsureAvailable();
 
     T[] GetAll<T>();

@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
 
@@ -9,9 +10,13 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class PageRenderCacheOrchestrationService(
     IPageRenderCacheQueryProcessingService queryProcessingService,
-    IPageRenderCacheProcessingService processingService)
+    IPageRenderCacheProcessingService processingService,
+    ICommonObjectCacheProcessingService commonObjectCacheProcessingService)
         : IPageRenderCacheOrchestrationService
 {
+    public void RefreshCommonObjectCache() =>
+        TryCatch(operation: () => commonObjectCacheProcessingService.Refresh());
+
     public IQueryable<PageRenderCache> GetAllPageRenderCaches() =>
         TryCatch<IQueryable<PageRenderCache>>(operation: () =>
         {
