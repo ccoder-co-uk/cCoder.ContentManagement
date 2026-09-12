@@ -3,12 +3,12 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Exposures.EventHandlers;
+using cCoder.ContentManagement.Brokers.Events;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.Packaging;
-using cCoder.Eventing;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -86,6 +86,22 @@ public sealed partial class ContentManagementEventRegistrationTests
             descriptor.ImplementationType == typeof(AppManagerAggregationService));
     }
 
+    [Fact]
+    public void ContentManagement_WhenConfigured_ShouldRegisterEventRegistrationBroker()
+    {
+        // Given
+        ServiceCollection services = new();
+
+        // When
+        services.AddContentManagementHostedServices();
+
+        // Then
+        services.Should()
+            .ContainSingle(predicate: descriptor =>
+                descriptor.ServiceType == typeof(IEventRegistrationBroker)
+                && descriptor.ImplementationType == typeof(EventRegistrationBroker));
+    }
+
     [Theory]
     [MemberData(nameof(RegistrationCases))]
     public void EntityEventHandlers_WhenListening_ShouldRegisterExpectedBusinessBoundary(
@@ -94,7 +110,7 @@ public sealed partial class ContentManagementEventRegistrationTests
         string[] expectedEventNames)
     {
         // Given
-        Mock<IEventHub> eventHubMock = new();
+        Mock<IEventRegistrationBroker> eventHubMock = new();
 
         IContentManagementEventHandlers eventHandlers =
             (IContentManagementEventHandlers)Activator.CreateInstance(
@@ -120,7 +136,7 @@ public sealed partial class ContentManagementEventRegistrationTests
     public void FinalAppDeleteEventHandlers_WhenListening_ShouldRegisterFinalDeleteBoundary()
     {
         // Given
-        Mock<IEventHub> eventHubMock = new();
+        Mock<IEventRegistrationBroker> eventHubMock = new();
         FinalAppDeleteEventHandlers eventHandlers = new(eventHub: eventHubMock.Object);
 
         // When
@@ -143,7 +159,7 @@ public sealed partial class ContentManagementEventRegistrationTests
     {
         // Given
         const int appId = 23;
-        Mock<IEventHub> eventHubMock = new();
+        Mock<IEventRegistrationBroker> eventHubMock = new();
         PackageImportRenderCacheEventHandlers eventHandlers = new(eventHub: eventHubMock.Object);
         Mock<IPageRenderCacheEventHandlers> cacheHandlersMock = new(MockBehavior.Strict);
 

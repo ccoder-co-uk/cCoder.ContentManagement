@@ -3,11 +3,11 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models;
-using cCoder.Eventing;
+using cCoder.ContentManagement.Brokers.Events;
 
 namespace cCoder.ContentManagement.Exposures.EventHandlers;
 
-internal sealed class CommonObjectRenderCacheEventHandlers(IEventHub eventHub)
+internal sealed class CommonObjectRenderCacheEventHandlers(IEventRegistrationBroker eventHub)
     : IContentManagementEventHandlers
 {
     public void ListenToAllEvents() { }
