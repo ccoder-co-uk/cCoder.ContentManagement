@@ -9,6 +9,4 @@ namespace cCoder.ContentManagement.Services.Aggregations;
 internal interface IContentManagementMigrationAggregationService
 {
     Package[] ExportPackages(int appId, string[] packageNames);
-
-    ValueTask ImportPackageAsync(int? appId, Package package);
 }

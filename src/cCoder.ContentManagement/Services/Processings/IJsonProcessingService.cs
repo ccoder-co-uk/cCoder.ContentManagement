@@ -13,6 +13,8 @@ internal interface IJsonProcessingService
     JsonRecordsDocument ParseJsonRecordsDocument(
         JsonRecordsDocument jsonRecordsDocument);
 
+    string Serialize(object value);
+
     string RemovePropertiesRecursively(
         string json,
         IReadOnlyCollection<string> propertyNames);

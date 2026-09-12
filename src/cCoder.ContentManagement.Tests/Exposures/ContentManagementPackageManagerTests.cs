@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Exposures;
-using cCoder.ContentManagement.Services.Aggregations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.Packaging;
 using Moq;
 using Xunit;
@@ -20,22 +20,22 @@ public sealed partial class ContentManagementPackageManagerTests
         // Given
         Package package = new();
 
-        Mock<IContentManagementMigrationAggregationService> aggregationService =
+        Mock<IContentManagementPackageOrchestrationService> packageOrchestrationService =
             new(behavior: MockBehavior.Strict);
 
-        aggregationService
+        packageOrchestrationService
             .Setup(expression: service => service.ImportPackageAsync(
                 appId: appId,
                 package: package))
             .Returns(value: ValueTask.CompletedTask);
 
         ContentManagementPackageManager manager = new(
-            contentManagementMigrationAggregationService: aggregationService.Object);
+            contentManagementPackageOrchestrationService: packageOrchestrationService.Object);
 
         // When
         await manager.ImportPackageAsync(appId: appId, package: package);
 
         // Then
-        aggregationService.VerifyAll();
+        packageOrchestrationService.VerifyAll();
     }
 }

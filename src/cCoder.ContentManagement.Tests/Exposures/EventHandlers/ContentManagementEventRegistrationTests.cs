@@ -25,6 +25,13 @@ public sealed partial class ContentManagementEventRegistrationTests
         { typeof(AppPageComponentEventHandlers), typeof(IAppPageComponentCoordinationService), ["app_add", "app_update", "app_delete"] },
         { typeof(PageCoordinationEventHandlers), typeof(IPageCoordinationService), ["page_add", "page_update", "page_delete"] },
         { typeof(PageStructureEventHandlers), typeof(IPageStructureCoordinationService), ["page_add", "page_update", "page_delete"] },
+        { typeof(ComponentPackageImportEventHandlers), typeof(IComponentOrchestrationService), ["component_import"] },
+        { typeof(LayoutPackageImportEventHandlers), typeof(ILayoutOrchestrationService), ["layout_import"] },
+        { typeof(PagePackageImportEventHandlers), typeof(IPagePackageImportCoordinationService), ["page_import"] },
+        { typeof(ResourcePackageImportEventHandlers), typeof(IResourceOrchestrationService), ["resource_import"] },
+        { typeof(ScriptPackageImportEventHandlers), typeof(IScriptOrchestrationService), ["script_import"] },
+        { typeof(TemplatePackageImportEventHandlers), typeof(ITemplateOrchestrationService), ["template_import"] },
+        { typeof(CommonObjectPackageImportEventHandlers), typeof(ICommonObjectOrchestrationService), ["common_objects_import"] },
     };
 
     [Fact]
@@ -52,7 +59,14 @@ public sealed partial class ContentManagementEventRegistrationTests
                 typeof(AppOwnedRenderCacheEventHandlers),
                 typeof(PageOwnedRenderCacheEventHandlers),
                 typeof(CommonObjectRenderCacheEventHandlers),
-                typeof(PackageImportRenderCacheEventHandlers)
+                typeof(PackageImportRenderCacheEventHandlers),
+                typeof(ComponentPackageImportEventHandlers),
+                typeof(LayoutPackageImportEventHandlers),
+                typeof(PagePackageImportEventHandlers),
+                typeof(ResourcePackageImportEventHandlers),
+                typeof(ScriptPackageImportEventHandlers),
+                typeof(TemplatePackageImportEventHandlers),
+                typeof(CommonObjectPackageImportEventHandlers)
             ]);
     }
 

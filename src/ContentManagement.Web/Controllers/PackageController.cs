@@ -17,7 +17,9 @@ public sealed class PackageController(
     ILoggingBroker loggingBroker) : ControllerBase
 {
     [HttpPost("Import")]
-    public async Task<IActionResult> PostImportAsync([FromQuery] int appId, [FromBody] Package newPackage)
+    public async Task<IActionResult> PostImportAsync(
+        [FromQuery] int? appId,
+        [FromBody] Package newPackage)
     {
         try
         {
