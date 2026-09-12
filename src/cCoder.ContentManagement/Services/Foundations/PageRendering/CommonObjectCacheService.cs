@@ -9,6 +9,9 @@ namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class CommonObjectCacheService(ICommonObjectReaderBroker broker) : ICommonObjectCacheService
 {
+    public void Refresh() =>
+        TryCatch(operation: () => broker.Refresh());
+
     public PageCacheSlice GetPageCacheSlice() =>
         TryCatch<PageCacheSlice>(operation: () =>
     {

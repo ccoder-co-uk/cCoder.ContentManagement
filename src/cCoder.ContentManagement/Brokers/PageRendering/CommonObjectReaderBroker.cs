@@ -11,6 +11,9 @@ namespace cCoder.ContentManagement.Rendering.Brokers;
 
 internal sealed class CommonObjectReaderBroker(ICommonObjectCache commonObjectCache) : ICommonObjectReaderBroker
 {
+    public void Refresh() =>
+        commonObjectCache.Refresh();
+
     public void EnsureAvailable() =>
         commonObjectCache.EnsureAvailable();
 

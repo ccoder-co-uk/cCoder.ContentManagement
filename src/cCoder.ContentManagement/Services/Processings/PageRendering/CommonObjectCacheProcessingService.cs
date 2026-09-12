@@ -10,6 +10,9 @@ namespace cCoder.ContentManagement.Rendering.Services.Processings;
 internal sealed partial class CommonObjectCacheProcessingService(
     ICommonObjectCacheService commonObjectCacheService) : ICommonObjectCacheProcessingService
 {
+    public void Refresh() =>
+        TryCatch(operation: () => commonObjectCacheService.Refresh());
+
     public RenderSession PrepareRenderSession(RenderSession renderSession) =>
         TryCatch(operation: () =>
     {

@@ -3,7 +3,6 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Dependencies;
-using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
@@ -97,10 +96,9 @@ public sealed partial class PageRenderCacheAggregationServiceTests
     public async Task ShouldInvalidateAllCachedAppsForCommonRenderObjectsAsync()
     {
         // Given
-        Mock<ICommonObjectCache> commonObjectCache = new();
         Mock<IPageRenderCacheOrchestrationService> cacheService = new();
 
-        commonObjectCache.Setup(expression: cache => cache.Refresh());
+        cacheService.Setup(expression: service => service.RefreshCommonObjectCache());
 
         cacheService.Setup(expression: service =>
             service.GetAllPageRenderCaches())
@@ -119,8 +117,7 @@ public sealed partial class PageRenderCacheAggregationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheAggregationService service = CreateService(
-            cacheService: cacheService,
-            commonObjectCache: commonObjectCache);
+            cacheService: cacheService);
 
         // When
         await service.InvalidateCommonObjectConsumersAsync(
@@ -128,7 +125,6 @@ public sealed partial class PageRenderCacheAggregationServiceTests
             fromEvent: true);
 
         // Then
-        commonObjectCache.VerifyAll();
         cacheService.VerifyAll();
     }
 
@@ -157,37 +153,30 @@ public sealed partial class PageRenderCacheAggregationServiceTests
     public async Task ShouldInvalidateAllAppsAfterCommonPackageImportAsync()
     {
         // Given
-        Mock<ICommonObjectCache> commonObjectCache = new();
         Mock<IPageRenderCacheOrchestrationService> cacheService = new();
 
-        commonObjectCache.Setup(expression: cache => cache.Refresh());
+        cacheService.Setup(expression: service => service.RefreshCommonObjectCache());
 
         cacheService.Setup(expression: service => service.GetAllPageRenderCaches())
             .Returns(value: Array.Empty<PageRenderCache>()
                 .AsQueryable());
 
         PageRenderCacheAggregationService service = CreateService(
-            cacheService: cacheService,
-            commonObjectCache: commonObjectCache);
+            cacheService: cacheService);
 
         // When
         await service.InvalidatePackageAsync(appId: null);
 
         // Then
-        commonObjectCache.VerifyAll();
         cacheService.VerifyAll();
     }
 
     private static PageRenderCacheAggregationService CreateService(
-        Mock<IPageRenderCacheOrchestrationService> cacheService = null,
-        Mock<ICommonObjectCache> commonObjectCache = null) =>
+        Mock<IPageRenderCacheOrchestrationService> cacheService = null) =>
         new(
             pageRenderCacheOrchestrationService:
                 (cacheService ??
                     new Mock<IPageRenderCacheOrchestrationService>())
             .Object,
-            pageRenderCacheImportState: new PageRenderCacheImportState(),
-            commonObjectCache:
-                (commonObjectCache ?? new Mock<ICommonObjectCache>())
-            .Object);
+            pageRenderCacheImportState: new PageRenderCacheImportState());
 }
