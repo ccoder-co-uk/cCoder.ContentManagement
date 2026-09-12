@@ -31,6 +31,13 @@ internal partial class JsonProcessingService(
             jsonRecordsDocument: jsonRecordsDocument);
     });
 
+    public string Serialize(object value) =>
+        TryCatch<string>(operation: () =>
+    {
+        ValidateSerialize(inputs: [value]);
+        return jsonService.Serialize(value: value);
+    });
+
     public string RemovePropertiesRecursively(
         string json,
         IReadOnlyCollection<string> propertyNames) =>

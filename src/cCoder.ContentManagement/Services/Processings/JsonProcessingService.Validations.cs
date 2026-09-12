@@ -14,6 +14,9 @@ internal partial class JsonProcessingService
     private static void ValidateParseJsonRecordsDocument(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 
+    private static void ValidateSerialize(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidateRemovePropertiesRecursively(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 }

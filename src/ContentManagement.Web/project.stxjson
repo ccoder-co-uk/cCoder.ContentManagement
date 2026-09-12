@@ -290,13 +290,13 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "ContentManagement.Web.Controllers.PackageController.PostImportAsync(System.Int32,cCoder.Data.Models.Packaging.Package)",
+          "Id": "ContentManagement.Web.Controllers.PackageController.PostImportAsync(System.Int32?,cCoder.Data.Models.Packaging.Package)",
           "Name": "PostImportAsync",
           "LineNumber": 20,
           "Inputs": [
             {
               "Name": "appId",
-              "Type": "System.Int32"
+              "Type": "System.Int32?"
             },
             {
               "Name": "newPackage",

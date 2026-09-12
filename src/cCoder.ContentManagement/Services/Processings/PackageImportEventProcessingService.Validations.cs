@@ -4,10 +4,10 @@
 
 using cCoder.ContentManagement.Dependencies;
 
-namespace cCoder.ContentManagement.Services.Aggregations;
+namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class ContentManagementMigrationAggregationService
+internal sealed partial class PackageImportEventProcessingService
 {
-    private static void ValidateExportPackages(object[] inputs) =>
+    private static void ValidateRaiseImportAsync(object[] inputs) =>
         ValidationRulesEngine.Validate(inputs: inputs);
 }

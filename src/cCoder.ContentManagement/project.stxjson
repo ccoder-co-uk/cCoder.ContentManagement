@@ -1662,6 +1662,69 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Brokers.Events.PackageImportEventBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 11,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": {
+        "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Brokers.Events.AuthenticatedEventBroker",
+        "FullName": "cCoder.ContentManagement.Brokers.Events.AuthenticatedEventBroker",
+        "Name": "AuthenticatedEventBroker",
+        "Namespace": "cCoder.ContentManagement.Brokers.Events",
+        "AssemblyName": "cCoder.ContentManagement",
+        "Kind": "Class",
+        "IsInCurrentProject": true,
+        "StandardElementType": "Broker"
+      },
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Brokers.Events.IPackageImportEventBroker",
+          "FullName": "cCoder.ContentManagement.Brokers.Events.IPackageImportEventBroker",
+          "Name": "IPackageImportEventBroker",
+          "Namespace": "cCoder.ContentManagement.Brokers.Events",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Broker"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Events.PackageImportEventBroker.RaiseImportAsync(System.String,cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E\u003E)",
+          "Name": "RaiseImportAsync",
+          "LineNumber": 14,
+          "Inputs": [
+            {
+              "Name": "eventName",
+              "Type": "System.String"
+            },
+            {
+              "Name": "message",
+              "Type": "cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.Events.IPackageImportEventBroker.RaiseImportAsync(System.String,cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E\u003E)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Brokers.Events.PackageItemEventBroker",
       "StandardElementType": "Broker",
       "LineNumber": 11,
@@ -13495,7 +13558,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.ContentManagementPackageManager.ExportPackage(System.Int32,System.String)",
           "Name": "ExportPackage",
-          "LineNumber": 17,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "appId",
@@ -13512,17 +13575,10 @@
           ],
           "Calls": [
             {
-              "TypeName": "System.Linq.Enumerable",
-              "MethodName": "SingleOrDefault",
-              "MethodId": "System.Linq.Enumerable.SingleOrDefault(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService",
-              "MethodName": "ExportPackages",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService.ExportPackages(System.Int32,System.String[])",
-              "StandardElementType": "AggregationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService",
+              "MethodName": "ExportPackage",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService.ExportPackage(System.Int32,System.String)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
@@ -13574,17 +13630,14 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService",
               "MethodName": "ImportPackageAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32?,cCoder.Data.Models.Packaging.Package)",
-              "StandardElementType": "AggregationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService.ImportPackageAsync(System.Int32?,cCoder.Data.Models.Packaging.Package)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
@@ -24564,6 +24617,142 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Exposures.EventHandlers.CommonObjectPackageImportEventHandlers",
+      "StandardElementType": "Exposure",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "FullName": "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "Name": "IContentManagementEventHandlers",
+          "Namespace": "cCoder.ContentManagement.Exposures.EventHandlers",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Exposure"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.CommonObjectPackageImportEventHandlers.ListenToAllEvents()",
+          "Name": "ListenToAllEvents",
+          "LineNumber": 15,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToAllEvents()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.Eventing.IEventHub",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.CommonObjectPackageImportEventHandlers.ListenToFinalAppDeleteEvent()",
+          "Name": "ListenToFinalAppDeleteEvent",
+          "LineNumber": 28,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToFinalAppDeleteEvent()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.CommonObjectPackageImportEventHandlers.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
+          "LineNumber": 26,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToHostedEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.CommonObjectPackageImportEventHandlers.ListenToWebCacheEvents()",
+          "Name": "ListenToWebCacheEvents",
+          "LineNumber": 24,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToWebCacheEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Exposures.EventHandlers.CommonObjectRenderCacheEventHandlers",
       "StandardElementType": "Exposure",
       "LineNumber": 10,
@@ -24714,6 +24903,149 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Exposures.EventHandlers.ComponentPackageImportEventHandlers",
+      "StandardElementType": "Exposure",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "FullName": "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "Name": "IContentManagementEventHandlers",
+          "Namespace": "cCoder.ContentManagement.Exposures.EventHandlers",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Exposure"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ComponentPackageImportEventHandlers.ListenToAllEvents()",
+          "Name": "ListenToAllEvents",
+          "LineNumber": 15,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToAllEvents()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService",
+              "MethodName": "ImportComponentsAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.ImportComponentsAsync(System.Int32,cCoder.Data.Models.CMS.Component[])",
+              "StandardElementType": "OrchestrationService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.Eventing.IEventHub",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ComponentPackageImportEventHandlers.ListenToFinalAppDeleteEvent()",
+          "Name": "ListenToFinalAppDeleteEvent",
+          "LineNumber": 28,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToFinalAppDeleteEvent()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ComponentPackageImportEventHandlers.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
+          "LineNumber": 26,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToHostedEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ComponentPackageImportEventHandlers.ListenToWebCacheEvents()",
+          "Name": "ListenToWebCacheEvents",
+          "LineNumber": 24,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToWebCacheEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Exposures.EventHandlers.FinalAppDeleteEventHandlers",
       "StandardElementType": "Exposure",
       "LineNumber": 11,
@@ -24836,6 +25168,149 @@
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.FinalAppDeleteEventHandlers.ListenToWebCacheEvents()",
           "Name": "ListenToWebCacheEvents",
           "LineNumber": 16,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToWebCacheEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Exposures.EventHandlers.LayoutPackageImportEventHandlers",
+      "StandardElementType": "Exposure",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "FullName": "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "Name": "IContentManagementEventHandlers",
+          "Namespace": "cCoder.ContentManagement.Exposures.EventHandlers",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Exposure"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.LayoutPackageImportEventHandlers.ListenToAllEvents()",
+          "Name": "ListenToAllEvents",
+          "LineNumber": 15,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToAllEvents()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.ILayoutManager",
+              "MethodName": "ImportLayoutsAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.ILayoutManager.ImportLayoutsAsync(System.Int32,cCoder.Data.Models.CMS.Layout[])",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.Eventing.IEventHub",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.LayoutPackageImportEventHandlers.ListenToFinalAppDeleteEvent()",
+          "Name": "ListenToFinalAppDeleteEvent",
+          "LineNumber": 28,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToFinalAppDeleteEvent()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.LayoutPackageImportEventHandlers.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
+          "LineNumber": 26,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToHostedEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.LayoutPackageImportEventHandlers.ListenToWebCacheEvents()",
+          "Name": "ListenToWebCacheEvents",
+          "LineNumber": 24,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -25309,6 +25784,149 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Exposures.EventHandlers.PagePackageImportEventHandlers",
+      "StandardElementType": "Exposure",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "FullName": "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "Name": "IContentManagementEventHandlers",
+          "Namespace": "cCoder.ContentManagement.Exposures.EventHandlers",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Exposure"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PagePackageImportEventHandlers.ListenToAllEvents()",
+          "Name": "ListenToAllEvents",
+          "LineNumber": 15,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToAllEvents()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Coordinations.IPagePackageImportCoordinationService",
+              "MethodName": "ImportPagesAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Coordinations.IPagePackageImportCoordinationService.ImportPagesAsync(System.Int32,cCoder.Data.Models.CMS.Page[])",
+              "StandardElementType": "CoordinationService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.Eventing.IEventHub",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PagePackageImportEventHandlers.ListenToFinalAppDeleteEvent()",
+          "Name": "ListenToFinalAppDeleteEvent",
+          "LineNumber": 28,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToFinalAppDeleteEvent()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PagePackageImportEventHandlers.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
+          "LineNumber": 26,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToHostedEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PagePackageImportEventHandlers.ListenToWebCacheEvents()",
+          "Name": "ListenToWebCacheEvents",
+          "LineNumber": 24,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToWebCacheEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
           "HttpMethods": [],
           "HttpResponses": [],
           "IsHttpRequestHandler": false,
@@ -26359,6 +26977,435 @@
           "Id": "cCoder.ContentManagement.Exposures.EventHandlers.PageStructureEventHandlers.ListenToWebCacheEvents()",
           "Name": "ListenToWebCacheEvents",
           "LineNumber": 32,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToWebCacheEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Exposures.EventHandlers.ResourcePackageImportEventHandlers",
+      "StandardElementType": "Exposure",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "FullName": "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "Name": "IContentManagementEventHandlers",
+          "Namespace": "cCoder.ContentManagement.Exposures.EventHandlers",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Exposure"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ResourcePackageImportEventHandlers.ListenToAllEvents()",
+          "Name": "ListenToAllEvents",
+          "LineNumber": 15,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToAllEvents()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.IResourceManager",
+              "MethodName": "ImportResourcesAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.IResourceManager.ImportResourcesAsync(System.Int32,cCoder.Data.Models.CMS.Resource[])",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.Eventing.IEventHub",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ResourcePackageImportEventHandlers.ListenToFinalAppDeleteEvent()",
+          "Name": "ListenToFinalAppDeleteEvent",
+          "LineNumber": 28,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToFinalAppDeleteEvent()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ResourcePackageImportEventHandlers.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
+          "LineNumber": 26,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToHostedEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ResourcePackageImportEventHandlers.ListenToWebCacheEvents()",
+          "Name": "ListenToWebCacheEvents",
+          "LineNumber": 24,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToWebCacheEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Exposures.EventHandlers.ScriptPackageImportEventHandlers",
+      "StandardElementType": "Exposure",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "FullName": "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "Name": "IContentManagementEventHandlers",
+          "Namespace": "cCoder.ContentManagement.Exposures.EventHandlers",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Exposure"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ScriptPackageImportEventHandlers.ListenToAllEvents()",
+          "Name": "ListenToAllEvents",
+          "LineNumber": 15,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToAllEvents()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Exposures.IScriptManager",
+              "MethodName": "ImportScriptsAsync",
+              "MethodId": "cCoder.ContentManagement.Exposures.IScriptManager.ImportScriptsAsync(System.Int32,cCoder.Data.Models.CMS.Script[])",
+              "StandardElementType": "Exposure",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.Eventing.IEventHub",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ScriptPackageImportEventHandlers.ListenToFinalAppDeleteEvent()",
+          "Name": "ListenToFinalAppDeleteEvent",
+          "LineNumber": 28,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToFinalAppDeleteEvent()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ScriptPackageImportEventHandlers.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
+          "LineNumber": 26,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToHostedEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.ScriptPackageImportEventHandlers.ListenToWebCacheEvents()",
+          "Name": "ListenToWebCacheEvents",
+          "LineNumber": 24,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToWebCacheEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Exposures.EventHandlers.TemplatePackageImportEventHandlers",
+      "StandardElementType": "Exposure",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "FullName": "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers",
+          "Name": "IContentManagementEventHandlers",
+          "Namespace": "cCoder.ContentManagement.Exposures.EventHandlers",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Exposure"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.TemplatePackageImportEventHandlers.ListenToAllEvents()",
+          "Name": "ListenToAllEvents",
+          "LineNumber": 15,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToAllEvents()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService",
+              "MethodName": "ImportTemplatesAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.ImportTemplatesAsync(System.Int32,cCoder.Data.Models.CMS.Template[])",
+              "StandardElementType": "OrchestrationService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.Eventing.IEventHub",
+              "MethodName": "ListenToEvent",
+              "MethodId": "cCoder.Eventing.IEventHub.ListenToEvent(System.String,System.Func\u003CTService, T, System.Threading.Tasks.ValueTask\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.TemplatePackageImportEventHandlers.ListenToFinalAppDeleteEvent()",
+          "Name": "ListenToFinalAppDeleteEvent",
+          "LineNumber": 28,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToFinalAppDeleteEvent()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.TemplatePackageImportEventHandlers.ListenToHostedEvents()",
+          "Name": "ListenToHostedEvents",
+          "LineNumber": 26,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Exposures.EventHandlers.IContentManagementEventHandlers.ListenToHostedEvents()"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Exposures.EventHandlers.TemplatePackageImportEventHandlers.ListenToWebCacheEvents()",
+          "Name": "ListenToWebCacheEvents",
+          "LineNumber": 24,
           "Inputs": [],
           "ReturnType": "System.Void",
           "Implements": [
@@ -29264,6 +30311,26 @@
         {
           "Name": "Package",
           "Type": "cCoder.Data.Models.Packaging.Package"
+        }
+      ],
+      "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E",
+      "StandardElementType": "Model",
+      "LineNumber": 7,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [
+        {
+          "Name": "AppId",
+          "Type": "System.Int32?"
+        },
+        {
+          "Name": "Items",
+          "Type": "T[]"
         }
       ],
       "Methods": []
@@ -33657,7 +34724,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
       "StandardElementType": "AggregationService",
-      "LineNumber": 16,
+      "LineNumber": 11,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -33678,7 +34745,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService.ExportPackages(System.Int32,System.String[])",
           "Name": "ExportPackages",
-          "LineNumber": 38,
+          "LineNumber": 15,
           "Inputs": [
             {
               "Name": "appId",
@@ -33703,55 +34770,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32?,cCoder.Data.Models.Packaging.Package)",
-          "Name": "ImportPackageAsync",
-          "LineNumber": 52,
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32?"
-            },
-            {
-              "Name": "package",
-              "Type": "cCoder.Data.Models.Packaging.Package"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32?,cCoder.Data.Models.Packaging.Package)"
-          ],
-          "Calls": [],
-          "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
@@ -35340,6 +36358,92 @@
           ],
           "IncomingExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Coordinations.PagePackageImportCoordinationService",
+      "StandardElementType": "CoordinationService",
+      "LineNumber": 10,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Coordinations.IPagePackageImportCoordinationService",
+          "FullName": "cCoder.ContentManagement.Services.Coordinations.IPagePackageImportCoordinationService",
+          "Name": "IPagePackageImportCoordinationService",
+          "Namespace": "cCoder.ContentManagement.Services.Coordinations",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "CoordinationService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Coordinations.PagePackageImportCoordinationService.ImportPagesAsync(System.Int32,cCoder.Data.Models.CMS.Page[])",
+          "Name": "ImportPagesAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "pages",
+              "Type": "cCoder.Data.Models.CMS.Page[]"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Coordinations.IPagePackageImportCoordinationService.ImportPagesAsync(System.Int32,cCoder.Data.Models.CMS.Page[])"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageImportOrchestrationService",
+              "MethodName": "HandlePageImportAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageImportOrchestrationService.HandlePageImportAsync(cCoder.Data.Models.CMS.Page)",
+              "StandardElementType": "OrchestrationService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService",
+              "MethodName": "ImportPagesAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.ImportPagesAsync(System.Int32,cCoder.Data.Models.CMS.Page[])",
+              "StandardElementType": "OrchestrationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
@@ -37934,6 +39038,103 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker",
               "MethodName": "RaisePackageUpdateEventAsync",
               "MethodId": "cCoder.ContentManagement.Brokers.Events.IPackageEventBroker.RaisePackageUpdateEventAsync(cCoder.Eventing.Models.EventMessage\u003CcCoder.Data.Models.Packaging.Package\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.Eventing.Models.EventAuthInfo",
+              "MethodName": ".ctor",
+              "MethodId": "cCoder.Eventing.Models.EventAuthInfo..ctor()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.Eventing.Models.EventMessage\u003CT\u003E",
+              "MethodName": ".ctor",
+              "MethodId": "cCoder.Eventing.Models.EventMessage\u003CT\u003E..ctor()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Events.PackageImportEventService",
+      "StandardElementType": "FoundationService",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Foundations.Events.IPackageImportEventService",
+          "FullName": "cCoder.ContentManagement.Services.Foundations.Events.IPackageImportEventService",
+          "Name": "IPackageImportEventService",
+          "Namespace": "cCoder.ContentManagement.Services.Foundations.Events",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "FoundationService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.PackageImportEventService.RaiseImportAsync(System.String,cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E)",
+          "Name": "RaiseImportAsync",
+          "LineNumber": 16,
+          "Inputs": [
+            {
+              "Name": "eventName",
+              "Type": "System.String"
+            },
+            {
+              "Name": "import",
+              "Type": "cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Foundations.Events.IPackageImportEventService.RaiseImportAsync(System.String,cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IAuthenticatedEventBroker",
+              "MethodName": "GetCurrentUserId",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IAuthenticatedEventBroker.GetCurrentUserId()",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IPackageImportEventBroker",
+              "MethodName": "RaiseImportAsync",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IPackageImportEventBroker.RaiseImportAsync(System.String,cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -53679,6 +54880,129 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Orchestrations.ContentManagementPackageOrchestrationService",
+      "StandardElementType": "OrchestrationService",
+      "LineNumber": 13,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService",
+          "FullName": "cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService",
+          "Name": "IContentManagementPackageOrchestrationService",
+          "Namespace": "cCoder.ContentManagement.Services.Orchestrations",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "OrchestrationService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ContentManagementPackageOrchestrationService.ExportPackage(System.Int32,System.String)",
+          "Name": "ExportPackage",
+          "LineNumber": 45,
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "packageName",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "cCoder.Data.Models.Packaging.Package",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService.ExportPackage(System.Int32,System.String)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IPackageExportProcessingService",
+              "MethodName": "ExportPackage",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPackageExportProcessingService.ExportPackage(System.Int32,System.String)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ContentManagementPackageOrchestrationService.ImportPackageAsync(System.Int32?,cCoder.Data.Models.Packaging.Package)",
+          "Name": "ImportPackageAsync",
+          "LineNumber": 28,
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32?"
+            },
+            {
+              "Name": "package",
+              "Type": "cCoder.Data.Models.Packaging.Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService.ImportPackageAsync(System.Int32?,cCoder.Data.Models.Packaging.Package)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.ContentOrchestrationService",
       "StandardElementType": "OrchestrationService",
       "LineNumber": 13,
@@ -66356,7 +67680,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.JsonProcessingService.RemovePropertiesRecursively(System.String,System.Collections.Generic.IReadOnlyCollection\u003CSystem.String\u003E)",
           "Name": "RemovePropertiesRecursively",
-          "LineNumber": 34,
+          "LineNumber": 41,
           "Inputs": [
             {
               "Name": "json",
@@ -66386,6 +67710,53 @@
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Serialization.IJsonService",
+              "MethodName": "Serialize",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Serialization.IJsonService.Serialize(System.Object)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.JsonProcessingService.Serialize(System.Object)",
+          "Name": "Serialize",
+          "LineNumber": 34,
+          "Inputs": [
+            {
+              "Name": "value",
+              "Type": "System.Object"
+            }
+          ],
+          "ReturnType": "System.String",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.IJsonProcessingService.Serialize(System.Object)"
+          ],
+          "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Serialization.IJsonService",
               "MethodName": "Serialize",
@@ -67276,6 +68647,82 @@
           "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Processings.PackageImportEventProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 10,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Processings.IPackageImportEventProcessingService",
+          "FullName": "cCoder.ContentManagement.Services.Processings.IPackageImportEventProcessingService",
+          "Name": "IPackageImportEventProcessingService",
+          "Namespace": "cCoder.ContentManagement.Services.Processings",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "ProcessingService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.PackageImportEventProcessingService.RaiseImportAsync(System.String,cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E)",
+          "Name": "RaiseImportAsync",
+          "LineNumber": 14,
+          "Inputs": [
+            {
+              "Name": "eventName",
+              "Type": "System.String"
+            },
+            {
+              "Name": "import",
+              "Type": "cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.IPackageImportEventProcessingService.RaiseImportAsync(System.String,cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Events.IPackageImportEventService",
+              "MethodName": "RaiseImportAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Events.IPackageImportEventService.RaiseImportAsync(System.String,cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
@@ -74911,6 +76358,58 @@
             {
               "Name": "message",
               "Type": "cCoder.Eventing.Models.EventMessage\u003CcCoder.Data.Models.Packaging.Package\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Brokers.Events.IPackageImportEventBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 10,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Brokers.Events.IAuthenticatedEventBroker",
+          "FullName": "cCoder.ContentManagement.Brokers.Events.IAuthenticatedEventBroker",
+          "Name": "IAuthenticatedEventBroker",
+          "Namespace": "cCoder.ContentManagement.Brokers.Events",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Broker"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Events.IPackageImportEventBroker.RaiseImportAsync(System.String,cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E\u003E)",
+          "Name": "RaiseImportAsync",
+          "LineNumber": 12,
+          "Inputs": [
+            {
+              "Name": "eventName",
+              "Type": "System.String"
+            },
+            {
+              "Name": "message",
+              "Type": "cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
@@ -85717,35 +87216,6 @@
           "HasKeyParameter": false,
           "HandlesNullWithNotFound": false,
           "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.IContentManagementMigrationAggregationService.ImportPackageAsync(System.Int32?,cCoder.Data.Models.Packaging.Package)",
-          "Name": "ImportPackageAsync",
-          "LineNumber": 13,
-          "Inputs": [
-            {
-              "Name": "appId",
-              "Type": "System.Int32?"
-            },
-            {
-              "Name": "package",
-              "Type": "cCoder.Data.Models.Packaging.Package"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
         }
       ]
     },
@@ -86390,6 +87860,47 @@
             {
               "Name": "page",
               "Type": "cCoder.Data.Models.CMS.Page"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Coordinations.IPagePackageImportCoordinationService",
+      "StandardElementType": "CoordinationService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Coordinations.IPagePackageImportCoordinationService.ImportPagesAsync(System.Int32,cCoder.Data.Models.CMS.Page[])",
+          "Name": "ImportPagesAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "pages",
+              "Type": "cCoder.Data.Models.CMS.Page[]"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
@@ -87347,6 +88858,47 @@
             {
               "Name": "entity",
               "Type": "cCoder.Data.Models.Packaging.Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Events.IPackageImportEventService",
+      "StandardElementType": "FoundationService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.IPackageImportEventService.RaiseImportAsync(System.String,cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E)",
+          "Name": "RaiseImportAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "eventName",
+              "Type": "System.String"
+            },
+            {
+              "Name": "import",
+              "Type": "cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
@@ -93958,6 +95510,76 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService",
+      "StandardElementType": "OrchestrationService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService.ExportPackage(System.Int32,System.String)",
+          "Name": "ExportPackage",
+          "LineNumber": 13,
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32"
+            },
+            {
+              "Name": "packageName",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "cCoder.Data.Models.Packaging.Package",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IContentManagementPackageOrchestrationService.ImportPackageAsync(System.Int32?,cCoder.Data.Models.Packaging.Package)",
+          "Name": "ImportPackageAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "appId",
+              "Type": "System.Int32?"
+            },
+            {
+              "Name": "package",
+              "Type": "cCoder.Data.Models.Packaging.Package"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService",
       "StandardElementType": "OrchestrationService",
       "LineNumber": 12,
@@ -98063,7 +99685,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IJsonProcessingService.RemovePropertiesRecursively(System.String,System.Collections.Generic.IReadOnlyCollection\u003CSystem.String\u003E)",
           "Name": "RemovePropertiesRecursively",
-          "LineNumber": 16,
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "json",
@@ -98072,6 +99694,31 @@
             {
               "Name": "propertyNames",
               "Type": "System.Collections.Generic.IReadOnlyCollection\u003CSystem.String\u003E"
+            }
+          ],
+          "ReturnType": "System.String",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.IJsonProcessingService.Serialize(System.Object)",
+          "Name": "Serialize",
+          "LineNumber": 16,
+          "Inputs": [
+            {
+              "Name": "value",
+              "Type": "System.Object"
             }
           ],
           "ReturnType": "System.String",
@@ -98477,6 +100124,47 @@
             }
           ],
           "ReturnType": "cCoder.Data.Models.Packaging.Package",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Processings.IPackageImportEventProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.IPackageImportEventProcessingService.RaiseImportAsync(System.String,cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E)",
+          "Name": "RaiseImportAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "eventName",
+              "Type": "System.String"
+            },
+            {
+              "Name": "import",
+              "Type": "cCoder.ContentManagement.Models.PackageItemImportEvent\u003CT\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -101501,6 +103189,10 @@
       "ToType": "cCoder.Eventing.IAuthenticatedEventHub"
     },
     {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.PackageImportEventBroker",
+      "ToType": "cCoder.Eventing.IAuthenticatedEventHub"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Brokers.Events.PackageItemEventBroker",
       "ToType": "cCoder.Eventing.IAuthenticatedEventHub"
     },
@@ -101698,7 +103390,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.ContentManagementPackageManager",
-      "ToType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService"
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ContentManagementPackageOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.AppController",
@@ -101849,11 +103541,23 @@
       "ToType": "cCoder.Eventing.IEventHub"
     },
     {
+      "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.CommonObjectPackageImportEventHandlers",
+      "ToType": "cCoder.Eventing.IEventHub"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.CommonObjectRenderCacheEventHandlers",
       "ToType": "cCoder.Eventing.IEventHub"
     },
     {
+      "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.ComponentPackageImportEventHandlers",
+      "ToType": "cCoder.Eventing.IEventHub"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.FinalAppDeleteEventHandlers",
+      "ToType": "cCoder.Eventing.IEventHub"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.LayoutPackageImportEventHandlers",
       "ToType": "cCoder.Eventing.IEventHub"
     },
     {
@@ -101869,11 +103573,27 @@
       "ToType": "cCoder.Eventing.IEventHub"
     },
     {
+      "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.PagePackageImportEventHandlers",
+      "ToType": "cCoder.Eventing.IEventHub"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.PageRenderCacheEventHandlers",
       "ToType": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.PageStructureEventHandlers",
+      "ToType": "cCoder.Eventing.IEventHub"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.ResourcePackageImportEventHandlers",
+      "ToType": "cCoder.Eventing.IEventHub"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.ScriptPackageImportEventHandlers",
+      "ToType": "cCoder.Eventing.IEventHub"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.EventHandlers.TemplatePackageImportEventHandlers",
       "ToType": "cCoder.Eventing.IEventHub"
     },
     {
@@ -102014,47 +103734,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Models.PageRenderCacheImportState"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.JsonOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.MigrationSupportOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageImportOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Aggregations.ContentManagementMigrationAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.PageRenderCacheAggregationService",
@@ -102129,6 +103809,14 @@
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageInfoOrchestrationService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Coordinations.PagePackageImportCoordinationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageImportOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Coordinations.PagePackageImportCoordinationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Coordinations.PageStructureCoordinationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService"
     },
@@ -102175,6 +103863,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Events.PackageEventService",
       "ToType": "cCoder.ContentManagement.Brokers.Events.PackageEventBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Events.PackageImportEventService",
+      "ToType": "cCoder.ContentManagement.Brokers.Events.PackageImportEventBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Events.PackageItemEventService",
@@ -102609,6 +104301,18 @@
       "ToType": "cCoder.ContentManagement.Services.Processings.ComponentRenderProcessingService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.ContentManagementPackageOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.JsonProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.ContentManagementPackageOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.PackageExportProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.ContentManagementPackageOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.PackageImportEventProcessingService"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.ContentOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.ContentEventProcessingService"
     },
@@ -102879,6 +104583,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PackageExportProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.Exports.PackageExportService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.PackageImportEventProcessingService",
+      "ToType": "cCoder.ContentManagement.Services.Foundations.Events.PackageImportEventService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PackageItemEventProcessingService",
