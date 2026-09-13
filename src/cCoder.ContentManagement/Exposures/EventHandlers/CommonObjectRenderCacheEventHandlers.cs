@@ -4,6 +4,7 @@
 
 using cCoder.Data.Models;
 using cCoder.ContentManagement.Brokers.Events;
+using cCoder.ContentManagement.Services.Aggregations;
 
 namespace cCoder.ContentManagement.Exposures.EventHandlers;
 
@@ -16,23 +17,29 @@ internal sealed class CommonObjectRenderCacheEventHandlers(IEventRegistrationBro
     {
         eventHub.ListenToEvent(
             name: "common_object_add",
-            handler: (IPageRenderCacheEventHandlers service, CommonObject commonObject) =>
-                service.InvalidateCommonCacheConsumersAsync(commonObject: commonObject));
+            handler: (IPageRenderCacheAggregationService service, CommonObject commonObject) =>
+                service.InvalidateCommonObjectConsumersAsync(
+                    commonObjectType: commonObject.Type,
+                    fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "common_object_update",
-            handler: (IPageRenderCacheEventHandlers service, CommonObject commonObject) =>
-                service.InvalidateCommonCacheConsumersAsync(commonObject: commonObject));
+            handler: (IPageRenderCacheAggregationService service, CommonObject commonObject) =>
+                service.InvalidateCommonObjectConsumersAsync(
+                    commonObjectType: commonObject.Type,
+                    fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "common_object_delete",
-            handler: (IPageRenderCacheEventHandlers service, CommonObject commonObject) =>
-                service.InvalidateCommonCacheConsumersAsync(commonObject: commonObject));
+            handler: (IPageRenderCacheAggregationService service, CommonObject commonObject) =>
+                service.InvalidateCommonObjectConsumersAsync(
+                    commonObjectType: commonObject.Type,
+                    fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "common_objects_imported",
-            handler: (IPageRenderCacheEventHandlers service, CommonObject[] commonObjects) =>
-                service.InvalidateCommonObjectsAsync(commonObjects: commonObjects));
+            handler: (IPageRenderCacheAggregationService service, CommonObject[] commonObjects) =>
+                service.InvalidateCommonCacheAsync(fromEvent: true));
     }
 
     public void ListenToHostedEvents() { }

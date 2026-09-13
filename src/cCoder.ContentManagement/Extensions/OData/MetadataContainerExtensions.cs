@@ -39,11 +39,42 @@ internal static class MetadataContainerExtensions
             DisplayName = resource?.DisplayName ?? metadataContainer.DisplayName,
             Description = resource?.Description ?? metadataContainer.Description,
             Properties = metadataContainer.Properties
-                .Select(selector: property => property.Resource(
+                .Select(selector: property => ResourceProperty(
+                    propertyContainer: property,
                     keyContext: cacheKey,
                     culture: culture,
                     resources: resources))
                 .ToArray()
+        };
+    }
+
+    private static PropertyContainer ResourceProperty(
+        PropertyContainer propertyContainer,
+        string keyContext,
+        string culture,
+        IEnumerable<Resource> resources)
+    {
+        Resource resource = ForKeyAndCulture(
+            resources: resources,
+            key: $"{keyContext}.{propertyContainer.Name}",
+            culture: culture);
+
+        return new PropertyContainer
+        {
+            Name = propertyContainer.Name,
+            Type = propertyContainer.Type,
+            ServerType = propertyContainer.ServerType,
+            ServerTypeName = propertyContainer.ServerTypeName,
+            Template = propertyContainer.Template,
+            DisplayName = resource?.DisplayName ?? propertyContainer.DisplayName,
+            ShortDisplayName =
+                resource?.ShortDisplayName ?? propertyContainer.ShortDisplayName,
+            Description = resource?.Description ?? propertyContainer.Description,
+            IsGeneric = propertyContainer.IsGeneric,
+            IsValueType = propertyContainer.IsValueType,
+            IsReadOnly = propertyContainer.IsReadOnly,
+            IsRequired = propertyContainer.IsRequired,
+            IsSystemManaged = propertyContainer.IsSystemManaged
         };
     }
 

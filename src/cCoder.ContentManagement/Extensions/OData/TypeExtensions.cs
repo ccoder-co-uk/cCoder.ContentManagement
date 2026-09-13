@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using cCoder.ContentManagement.Dependencies.OData;
+using cCoder.ContentManagement.Models.OData;
 
 namespace cCoder.ContentManagement.Extensions.OData;
 
@@ -60,6 +61,34 @@ internal static class TypeExtensions
         return $"{type.Name.Split(separator: '`')[0]}<{string.Join(separator: ",", values: genericNames)}>"
             .Replace(oldValue: "System.Object", newValue: "dynamic");
     }
+
+    private static PropertyContainer CreatePropertyContainer(
+        PropertyInfo property) =>
+        new()
+        {
+            Name = property.Name,
+            Type = property.PropertyType.GetMetadataTypeName(),
+            ServerType = property.PropertyType.ToString(),
+            ServerTypeName = property.PropertyType.GetCSharpTypeName(),
+            IsValueType = property.PropertyType.IsValueType
+                || property.PropertyType == typeof(string),
+            DisplayName = property.Name,
+            ShortDisplayName = property.Name,
+            Description = property.Name,
+            IsReadOnly = !property.CanWrite,
+            Template =
+                property.GetCustomAttribute<KeyAttribute>() is not null
+                || property.Name == "Id"
+                    ? "key"
+                    : property.Name,
+            IsRequired =
+                (!(property.PropertyType.IsGenericType
+                    && property.PropertyType.GetGenericTypeDefinition()
+                        == typeof(Nullable<>))
+                    && property.PropertyType.IsValueType)
+                || property.GetCustomAttribute<RequiredAttribute>()
+                    is not null
+        };
 
     internal static bool IsJoinType(this Type type)
     {
@@ -140,7 +169,8 @@ internal static class TypeExtensions
             Properties = isValueType
                 ? []
                 : type.GetProperties()
-                    .Select(selector: property => property.CreatePropertyContainer())
+                    .Select(selector: property => CreatePropertyContainer(
+                        property: property))
                     .ToArray(),
             IsEntity = isEntity,
             IsJoinEntity = isEntity && type.IsJoinType(),

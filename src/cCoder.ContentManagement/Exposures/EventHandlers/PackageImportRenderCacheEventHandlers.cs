@@ -4,6 +4,7 @@
 
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Brokers.Events;
+using cCoder.ContentManagement.Services.Aggregations;
 
 namespace cCoder.ContentManagement.Exposures.EventHandlers;
 
@@ -15,7 +16,7 @@ internal sealed class PackageImportRenderCacheEventHandlers(IEventRegistrationBr
     public void ListenToWebCacheEvents() =>
         eventHub.ListenToEvent(
             name: "package_import_complete",
-            handler: (IPageRenderCacheEventHandlers service, PackageImportEvent args) =>
+            handler: (IPageRenderCacheAggregationService service, PackageImportEvent args) =>
                 service.InvalidatePackageAsync(appId: args.AppId));
 
     public void ListenToHostedEvents() { }

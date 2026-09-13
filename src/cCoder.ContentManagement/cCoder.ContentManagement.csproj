@@ -26,7 +26,7 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.12.1836" PrivateAssets="all" />
+    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.13.1130" PrivateAssets="all" />
     <PackageReference Include="cCoder.Data" Version="2026.8.28.1700" />
     <PackageReference Include="cCoder.Eventing" Version="2026.8.27.1708" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />

@@ -122,6 +122,8 @@ data: scriptBroker.GetAllScriptsIgnoringFilters()
             .Select(selector: script => new
             {
                 script.Name,
+                script.Description,
+                script.Key,
                 script.Content,
                 script.LastUpdated
             })
