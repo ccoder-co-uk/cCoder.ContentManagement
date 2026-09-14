@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Rendering.Brokers;
@@ -118,8 +117,11 @@ internal sealed partial class ComponentRenderService(
         ValidateLatestTextContentComponentRenderFoundationOperationOnGet(inputs: [componentRenderFoundationOperation]);
         ValidateAppId(appId: componentRenderFoundationOperation.AppId, parameterName: "componentRenderFoundationOperation.AppId");
         ValidatePath(path: componentRenderFoundationOperation.Path, parameterName: "componentRenderFoundationOperation.Path");
-        byte[] latestRawData = renderFileContentBroker.GetLatestRawData(appId: componentRenderFoundationOperation.AppId, path: componentRenderFoundationOperation.Path);
-        componentRenderFoundationOperation.Content = latestRawData is { Length: > 0 } ? Encoding.UTF8.GetString(bytes: latestRawData) : string.Empty;
+
+        componentRenderFoundationOperation.Content =
+            renderFileContentBroker.GetLatestTextContent(
+                appId: componentRenderFoundationOperation.AppId,
+                path: componentRenderFoundationOperation.Path) ?? string.Empty;
         return componentRenderFoundationOperation;
     });
 

@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models.Rendering;
@@ -26,8 +25,8 @@ public sealed partial class ComponentRenderServiceTests
         Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new(MockBehavior.Strict);
 
         renderFileContentBrokerMock.Setup(expression: broker =>
-            broker.GetLatestRawData(appId: appId, path: path))
-            .Returns(value: Encoding.UTF8.GetBytes(s: expectedContent));
+            broker.GetLatestTextContent(appId: appId, path: path))
+            .Returns(value: expectedContent);
 
         IComponentRenderService componentRenderService = new ComponentRenderService(
             metadataReaderBroker: Mock.Of<IMetadataReaderBroker>(),

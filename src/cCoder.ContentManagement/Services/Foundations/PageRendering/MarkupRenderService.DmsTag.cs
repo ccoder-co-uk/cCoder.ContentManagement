@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models.PageRendering;
@@ -30,12 +29,8 @@ internal sealed partial class MarkupRenderService
 
     private string ResolveContent(int appId, string path)
     {
-        byte[] latestRawData = renderFileContentBroker.GetLatestRawData(
+        return renderFileContentBroker.GetLatestTextContent(
             appId: appId,
-            path: path);
-
-        return latestRawData?.Length > 0
-            ? Encoding.UTF8.GetString(bytes: latestRawData)
-            : string.Empty;
+            path: path) ?? string.Empty;
     }
 }
