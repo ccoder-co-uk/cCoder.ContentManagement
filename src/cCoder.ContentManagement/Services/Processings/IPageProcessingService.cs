@@ -34,4 +34,6 @@ internal interface IPageProcessingService
     IEnumerable<Page> GetChildrenPage(int pageId);
 
     string MenuFor(int pageId, string culture);
+
+    bool LayoutExistsForApp(int appId, string layoutName);
 }

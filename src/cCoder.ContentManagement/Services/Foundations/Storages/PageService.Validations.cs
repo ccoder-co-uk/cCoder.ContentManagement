@@ -9,16 +9,7 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class PageService
 {
-    private static void ValidateCurrentUserRoleIdsOnGet(object[] inputs) =>
-        Validate(inputs: inputs);
-
-    private static void ValidateAppAdministration(object[] inputs) =>
-        Validate(inputs: inputs);
-
-    private static void ValidateAuthorization(object[] inputs) =>
-        Validate(inputs: inputs);
-
-    private static void ValidatePageAuthorization(object[] inputs) =>
+    private static void ValidateLayoutExistsForAppOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateId(int pageId, string parameterName) =>

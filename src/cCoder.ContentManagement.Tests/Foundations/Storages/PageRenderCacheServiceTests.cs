@@ -41,8 +41,7 @@ public partial class PageRenderCacheServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheService service = new(
-            broker: brokerMock.Object,
-            authorizationManager: Mock.Of<IAuthorizationManager>());
+            broker: brokerMock.Object);
 
         // When
         PageRenderCache[] all = [.. service.GetAllPageRenderCaches()];

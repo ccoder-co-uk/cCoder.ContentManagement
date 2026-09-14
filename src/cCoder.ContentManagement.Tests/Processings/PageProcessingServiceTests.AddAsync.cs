@@ -367,7 +367,7 @@ times: Times.Once);
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
             .WithMessage(expectedWildcardPattern: "A page already exists for app 1 with path 'parent/Child'.");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Exactly(callCount: 2));
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
         VerifyNoOtherPageServiceCalls();
     }

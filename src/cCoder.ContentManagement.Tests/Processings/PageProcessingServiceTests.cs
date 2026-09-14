@@ -27,20 +27,11 @@ public partial class PageProcessingServiceTests
 {
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPageService> pageServiceMock = new();
-    private Mock<IPageService> authorizationManagerMock => pageServiceMock;
+    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
     private readonly PageProcessingService pageProcessingService;
 
     public PageProcessingServiceTests()
     {
-        pageServiceMock
-            .Setup(expression: manager => manager.GetCurrentUserRoleIds(
-                appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) =>
-                (currentUser?.Roles ?? [])
-                    .Where(predicate: userRole => userRole.Role?.AppId == appId)
-                    .Select(selector: userRole => userRole.RoleId)
-                    .ToArray());
-
         authorizationManagerMock
             .Setup(expression: manager => manager.IsAdminOfApp(
                 appId: It.IsAny<int>()))
@@ -48,15 +39,14 @@ public partial class PageProcessingServiceTests
                 currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
         authorizationManagerMock
-            .Setup(expression: manager => manager.UserCanPage(
-                page: It.IsAny<Page>(),
-                privilege: It.IsAny<string>()))
-            .Returns(valueFunction: (Page page, string privilege) =>
+            .Setup(expression: manager => manager.UserCanPageAuthorization(
+                pageAuthorization: It.IsAny<PageAuthorization>()))
+            .Returns(valueFunction: (PageAuthorization authorization) =>
                 TestUsers.UserCanPage(authorization: new PageAuthorization
                 {
-                    Page = page,
+                    Page = authorization.Page,
                     User = currentUser,
-                    Privilege = privilege
+                    Privilege = authorization.Privilege
                 }));
 
         pageProcessingService = new PageProcessingService(
@@ -112,20 +102,6 @@ service: pageServiceMock.Object
 
     private void VerifyNoOtherPageServiceCalls()
     {
-        pageServiceMock.Verify(
-            expression: service => service.GetCurrentUserRoleIds(appId: It.IsAny<int>()),
-            times: Times.AtMostOnce());
-
-        pageServiceMock.Verify(
-            expression: service => service.IsAdminOfApp(appId: It.IsAny<int>()),
-            times: Times.AtMostOnce());
-
-        pageServiceMock.Verify(
-            expression: service => service.UserCanPage(
-                page: It.IsAny<Page>(),
-                privilege: It.IsAny<string>()),
-            times: Times.AtMostOnce());
-
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

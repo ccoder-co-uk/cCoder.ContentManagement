@@ -24,6 +24,17 @@ internal sealed class PageBroker(ICoreContextFactory coreContextFactory) : IPage
         return coreDataContext.Pages.IgnoreQueryFilters();
     }
 
+    public bool LayoutExistsForApp(int appId, string layoutName)
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Layouts
+            .IgnoreQueryFilters()
+            .Any(predicate: layout =>
+                layout.AppId == appId &&
+                layout.Name == layoutName);
+    }
+
     public async ValueTask<Page> GetPageForRenderAsync(int pageId)
     {
         await using CoreDataContext coreDataContext =

@@ -56,44 +56,7 @@ public partial class PageProcessingServiceTests
         await pageProcessingService.DeleteAsync(pageId: page.Id);
 
         // Then
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.DeleteAsync(pageId: page.Id), times: Times.Once);
-        VerifyNoOtherPageServiceCalls();
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
-    {
-        // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
-
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
-
-
-        Page page = CreateRandomPage();
-        currentUser = TestUsers.WithoutPrivileges();
-
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
-            .Returns(value: new[] { page }.AsQueryable());
-
-        // When
-        Func<Task> act = async () => await pageProcessingService.DeleteAsync(pageId: page.Id);
-
-        // Then
-        await act.Should()
-            .ThrowAsync<SecurityException>();
-
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         VerifyNoOtherPageServiceCalls();
     }
 }

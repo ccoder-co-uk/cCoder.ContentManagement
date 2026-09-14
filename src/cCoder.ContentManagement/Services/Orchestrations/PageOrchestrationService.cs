@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
 using System.Security;
 using cCoder.ContentManagement.Services.Processings;
@@ -13,7 +14,6 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 internal partial class PageOrchestrationService(
     IPageProcessingService processingService,
     IPageEventProcessingService eventService,
-    ILayoutProcessingService layoutProcessingService,
     IAuthorizationProcessingService authorizationProcessingService)
         : IPageOrchestrationService
 {
@@ -51,6 +51,8 @@ internal partial class PageOrchestrationService(
         ValidateSinglePage(page: newPage, parameterName: "entity");
         ValidatePageCollections(page: newPage, parameterName: "entity");
         ValidateLayoutExistsForApp(page: newPage);
+        Authorize(appId: newPage.AppId, privilege: "Page_create");
+        PreparePageForAdd(page: newPage);
 
         Page result = await processingService.AddPageAsync(newPage: newPage);
 
@@ -69,6 +71,13 @@ internal partial class PageOrchestrationService(
         ValidatePage(page: updatedPage, parameterName: "entity");
         ValidatePageLayout(page: updatedPage);
         ValidateLayoutExistsForApp(page: updatedPage);
+
+        Page authorizationPage = GetPageForAuthorization(
+            pageId: updatedPage.Id);
+
+        AuthorizePage(page: authorizationPage, privilege: "page_update");
+        Authorize(appId: updatedPage.AppId, privilege: "Page_update");
+        PreparePageForUpdate(page: updatedPage);
 
         Page result = await processingService.UpdatePageAsync(updatedPage: updatedPage);
         updatedPage.Id = result.Id;
@@ -116,6 +125,8 @@ internal partial class PageOrchestrationService(
             return;
         }
 
+        AuthorizePage(page: entity, privilege: "page_delete");
+        Authorize(appId: entity.AppId, privilege: "Page_delete");
 
         await eventService.RaisePageDeleteEventAsync(
             entity: entity,
@@ -224,6 +235,19 @@ comparison: (left, right) => left.Path.Split(separator: '/')
                 existing.Path.Equals(value: page.Path.TrimStart(trimChar: '/'), comparisonType: StringComparison.OrdinalIgnoreCase)
                 && existing.AppId == appId)?.Id ?? 0;
 
+            Authorize(
+                appId: appId,
+                privilege: page.Id <= 0 ? "Page_create" : "Page_update");
+
+            if (page.Id <= 0)
+            {
+                PreparePageForAdd(page: page);
+            }
+            else
+            {
+                PreparePageForUpdate(page: page);
+            }
+
             Page result = await processingService.ImportPageAsync(page: page);
 
             if (!allPages.Contains(item: result))
@@ -257,7 +281,14 @@ comparison: (left, right) => left.Path.Split(separator: '/')
         TryCatch(operation: () =>
     {
         ValidateRecomputeAllForAppAsync(inputs: [appId]);
-        return processingService.RecomputeAllForAppAsync(appId: ValidateAppId(appId: appId, parameterName: "appId"));
+        int validatedAppId = ValidateAppId(appId: appId, parameterName: "appId");
+
+        if (!IsAdminOfApp(appId: validatedAppId))
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        return processingService.RecomputeAllForAppAsync(appId: validatedAppId);
     }, isValueTask: true);
 
     public Page GetRootPage(int pageId) =>
@@ -359,10 +390,9 @@ comparison: (left, right) => left.Path.Split(separator: '/')
 
     private void ValidateLayoutExistsForApp(Page page)
     {
-        bool layoutExists = layoutProcessingService.GetAllLayout(ignoreFilters: true)
-            .Any(predicate: layout =>
-                layout.AppId == page.AppId &&
-                layout.Name == page.Layout);
+        bool layoutExists = processingService.LayoutExistsForApp(
+            appId: page.AppId,
+            layoutName: page.Layout);
 
         if (!layoutExists)
         {
@@ -424,6 +454,8 @@ comparison: (left, right) => left.Path.Split(separator: '/')
         ValidateSinglePage(page: newPage, parameterName: "entity");
         ValidatePageCollections(page: newPage, parameterName: "entity");
         ValidateLayoutExistsForApp(page: newPage);
+        Authorize(appId: newPage.AppId, privilege: "Page_create");
+        PreparePageForAdd(page: newPage);
 
         Page result = await processingService.AddPageAsync(newPage: newPage);
 
@@ -466,6 +498,8 @@ comparison: (left, right) => left.Path.Split(separator: '/')
             return;
         }
 
+        AuthorizePage(page: entity, privilege: "page_delete");
+        Authorize(appId: entity.AppId, privilege: "Page_delete");
 
         await eventService.RaisePageDeleteEventAsync(
             entity: entity,
@@ -482,6 +516,13 @@ comparison: (left, right) => left.Path.Split(separator: '/')
         ValidatePage(page: updatedPage, parameterName: "entity");
         ValidatePageLayout(page: updatedPage);
         ValidateLayoutExistsForApp(page: updatedPage);
+
+        Page authorizationPage = GetPageForAuthorization(
+            pageId: updatedPage.Id);
+
+        AuthorizePage(page: authorizationPage, privilege: "page_update");
+        Authorize(appId: updatedPage.AppId, privilege: "Page_update");
+        PreparePageForUpdate(page: updatedPage);
 
         Page result = await processingService.UpdatePageAsync(updatedPage: updatedPage);
         updatedPage.Id = result.Id;
@@ -504,4 +545,78 @@ comparison: (left, right) => left.Path.Split(separator: '/')
 
         return result;
     }
+
+    private void Authorize(int appId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = appId,
+                    Privilege = privilege
+                }
+            });
+
+    private void AuthorizePage(Page page, string privilege)
+    {
+        AuthorizationContext currentContext = ResolveCurrentAuthorizationContext();
+
+        bool isAuthorized = authorizationProcessingService
+            .UserCanPageAuthorizationContext(
+                context: new AuthorizationContext
+                {
+                    PageAuthorization = new PageAuthorization
+                    {
+                        Page = page,
+                        User = currentContext.User,
+                        Privilege = privilege
+                    }
+                });
+
+        if (!isAuthorized)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+    }
+
+    private bool IsAdminOfApp(int appId) =>
+        authorizationProcessingService.IsAdminOfAppAuthorizationContext(
+            context: new AuthorizationContext { AppId = appId });
+
+    private Page GetPageForAuthorization(int pageId) =>
+        processingService.GetAllPage(ignoreFilters: true)
+            .FirstOrDefault(predicate: page => page.Id == pageId)
+        ?? throw new SecurityException(message: "Access Denied!");
+
+    private void PreparePageForAdd(Page page)
+    {
+        AuthorizationContext context = ResolveCurrentAuthorizationContext();
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        page.CreatedOn = now;
+        page.CreatedBy = context.UserId;
+        page.LastUpdated = now;
+        page.LastUpdatedBy = context.UserId;
+
+        if (!(page.Roles ?? []).Any() && !page.ParentId.HasValue)
+        {
+            page.Roles = (context.User?.Roles ?? [])
+                .Where(predicate: userRole => userRole.Role?.AppId == page.AppId)
+                .Select(selector: userRole => new PageRole
+                {
+                    RoleId = userRole.RoleId
+                })
+                .ToList();
+        }
+    }
+
+    private void PreparePageForUpdate(Page page)
+    {
+        AuthorizationContext context = ResolveCurrentAuthorizationContext();
+        page.LastUpdated = DateTimeOffset.UtcNow;
+        page.LastUpdatedBy = context.UserId;
+    }
+
+    private AuthorizationContext ResolveCurrentAuthorizationContext() =>
+        authorizationProcessingService.ResolveCurrentAuthorizationContext(
+            context: new AuthorizationContext());
 }

@@ -3,23 +3,13 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Exposures;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal sealed partial class PageRenderCacheService(
-    IPageRenderCacheBroker broker,
-    IAuthorizationManager authorizationManager) : IPageRenderCacheService
+    IPageRenderCacheBroker broker) : IPageRenderCacheService
 {
-    public void Authorize(int? appId, string privilege) =>
-        TryCatch<object>(operation: () =>
-    {
-        ValidateAuthorization(inputs: [appId, privilege]);
-        authorizationManager.Authorize(appId: appId, privilege: privilege);
-        return null;
-    });
-
     public IQueryable<PageRenderCache> GetAllPageRenderCaches() =>
         TryCatch<IQueryable<PageRenderCache>>(operation: () =>
         {

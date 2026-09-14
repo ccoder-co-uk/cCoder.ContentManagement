@@ -5,13 +5,14 @@
 using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class PageRenderCacheOrchestrationService(
-    IPageRenderCacheQueryProcessingService queryProcessingService,
     IPageRenderCacheProcessingService processingService,
-    ICommonObjectCacheProcessingService commonObjectCacheProcessingService)
+    ICommonObjectCacheProcessingService commonObjectCacheProcessingService,
+    IAuthorizationProcessingService authorizationProcessingService)
         : IPageRenderCacheOrchestrationService
 {
     public void RefreshCommonObjectCache() =>
@@ -21,7 +22,7 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         TryCatch<IQueryable<PageRenderCache>>(operation: () =>
         {
 
-            return queryProcessingService.GetAllPageRenderCaches();
+            return processingService.GetAllPageRenderCaches();
         });
 
     public PageRenderCache GetPageRenderCache(string pageRenderCacheId) =>
@@ -29,7 +30,7 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         {
             ValidatePageRenderCacheOnGet(inputs: [pageRenderCacheId]);
 
-            return queryProcessingService.GetPageRenderCache(
+            return processingService.GetPageRenderCache(
                 pageRenderCacheId: pageRenderCacheId);
         });
 
@@ -38,6 +39,10 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         TryCatch<PageRenderCache>(operation: () =>
         {
             ValidatePageRenderCacheOnAdd(inputs: [newPageRenderCache]);
+
+            Authorize(
+                appId: newPageRenderCache.AppId,
+                privilege: "pagerendercache_create");
 
             return processingService.AddPageRenderCacheAsync(
                 newPageRenderCache: newPageRenderCache);
@@ -49,6 +54,10 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         {
             ValidatePageRenderCacheOnUpdate(inputs: [updatedPageRenderCache]);
 
+            Authorize(
+                appId: updatedPageRenderCache.AppId,
+                privilege: "pagerendercache_update");
+
             return processingService.UpdatePageRenderCacheAsync(
                 updatedPageRenderCache: updatedPageRenderCache);
         }, isValueTask: true);
@@ -58,6 +67,18 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         {
             ValidatePageRenderCacheOnDelete(inputs: [pageRenderCacheId]);
 
+            PageRenderCache cache = processingService.GetPageRenderCache(
+                pageRenderCacheId: pageRenderCacheId);
+
+            if (cache is null)
+            {
+                return ValueTask.CompletedTask;
+            }
+
+            Authorize(
+                appId: cache.AppId,
+                privilege: "pagerendercache_delete");
+
             return processingService.DeletePageRenderCacheAsync(
                 pageRenderCacheId: pageRenderCacheId);
         }, isValueTask: true);
@@ -66,6 +87,10 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         TryCatch(operation: () =>
         {
             ValidateAppPageRenderCachesOnDelete(inputs: [appId]);
+
+            Authorize(
+                appId: appId,
+                privilege: "pagerendercache_rebuild");
 
             return DeleteAppPageRenderCaches(
                 appId: appId,
@@ -86,7 +111,7 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         int appId,
         bool fromEvent)
     {
-        int[] pageIds = queryProcessingService.GetAllPageRenderCaches()
+        int[] pageIds = processingService.GetAllPageRenderCaches()
             .Where(predicate: cache => cache.AppId == appId)
             .Select(selector: cache => cache.PageId)
             .Distinct()
@@ -135,20 +160,30 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         int pageId,
         bool fromEvent)
     {
-        PageRenderCache cache = queryProcessingService.GetAllPageRenderCaches()
+        PageRenderCache cache = processingService.GetAllPageRenderCaches()
             .FirstOrDefault(predicate: item => item.PageId == pageId);
 
-        return cache is null
-            ? ValueTask.CompletedTask
-            : fromEvent
-                ? processingService.ReplacePageRenderCachesFromEventAsync(
-                    appId: cache.AppId,
-                    pageIds: [pageId],
-                    replacements: [])
-                : processingService.ReplacePageRenderCachesAsync(
-                    appId: cache.AppId,
-                    pageIds: [pageId],
-                    replacements: []);
+        if (cache is null)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        if (fromEvent)
+        {
+            return processingService.ReplacePageRenderCachesFromEventAsync(
+                appId: cache.AppId,
+                pageIds: [pageId],
+                replacements: []);
+        }
+
+        Authorize(
+            appId: cache.AppId,
+            privilege: "pagerendercache_rebuild");
+
+        return processingService.ReplacePageRenderCachesAsync(
+            appId: cache.AppId,
+            pageIds: [pageId],
+            replacements: []);
     }
 
     public ValueTask ReplacePageRenderCachesAsync(
@@ -159,6 +194,10 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         {
             ValidatePageRenderCachesOnReplace(
                 inputs: [appId, pageIds, replacements]);
+
+            Authorize(
+                appId: appId,
+                privilege: "pagerendercache_rebuild");
 
             return processingService.ReplacePageRenderCachesAsync(
                 appId: appId,
@@ -180,4 +219,15 @@ internal sealed partial class PageRenderCacheOrchestrationService(
                 pageIds: pageIds,
                 replacements: replacements);
         }, isValueTask: true);
+
+    private void Authorize(int appId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = appId,
+                    Privilege = privilege
+                }
+            });
 }

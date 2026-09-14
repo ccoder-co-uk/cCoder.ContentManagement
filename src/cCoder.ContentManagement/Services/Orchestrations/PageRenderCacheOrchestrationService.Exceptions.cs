@@ -17,6 +17,7 @@ internal sealed partial class PageRenderCacheOrchestrationService
         catch (ArgumentException exception) { throw new ContentManagementValidationException(innerException: exception); }
         catch (KeyNotFoundException exception) { throw new ContentManagementValidationException(innerException: exception); }
         catch (InvalidOperationException exception) { throw new ContentManagementDependencyException(innerException: exception); }
+        catch (System.Security.SecurityException exception) { throw new ContentManagementSecurityException(innerException: exception); }
         catch (TaskCanceledException exception) { throw new ContentManagementTaskCanceledException(innerException: exception); }
         catch (Exception exception) { throw new ContentManagementServiceException(innerException: exception); }
     }
@@ -30,6 +31,7 @@ internal sealed partial class PageRenderCacheOrchestrationService
         catch (ArgumentException exception) { throw new ContentManagementValidationException(innerException: exception); }
         catch (KeyNotFoundException exception) { throw new ContentManagementValidationException(innerException: exception); }
         catch (InvalidOperationException exception) { throw new ContentManagementDependencyException(innerException: exception); }
+        catch (System.Security.SecurityException exception) { throw new ContentManagementSecurityException(innerException: exception); }
         catch (TaskCanceledException exception) { throw new ContentManagementTaskCanceledException(innerException: exception); }
         catch (Exception exception) { throw new ContentManagementServiceException(innerException: exception); }
     }
@@ -43,6 +45,7 @@ internal sealed partial class PageRenderCacheOrchestrationService
         catch (ArgumentException exception) { throw new ContentManagementValidationException(innerException: exception); }
         catch (KeyNotFoundException exception) { throw new ContentManagementValidationException(innerException: exception); }
         catch (InvalidOperationException exception) { throw new ContentManagementDependencyException(innerException: exception); }
+        catch (System.Security.SecurityException exception) { throw new ContentManagementSecurityException(innerException: exception); }
         catch (TaskCanceledException exception) { throw new ContentManagementTaskCanceledException(innerException: exception); }
         catch (Exception exception) { throw new ContentManagementServiceException(innerException: exception); }
     }
@@ -56,6 +59,7 @@ internal sealed partial class PageRenderCacheOrchestrationService
         catch (ArgumentException exception) { throw new ContentManagementValidationException(innerException: exception); }
         catch (KeyNotFoundException exception) { throw new ContentManagementValidationException(innerException: exception); }
         catch (InvalidOperationException exception) { throw new ContentManagementDependencyException(innerException: exception); }
+        catch (System.Security.SecurityException exception) { throw new ContentManagementSecurityException(innerException: exception); }
         catch (TaskCanceledException exception) { throw new ContentManagementTaskCanceledException(innerException: exception); }
         catch (Exception exception) { throw new ContentManagementServiceException(innerException: exception); }
     }

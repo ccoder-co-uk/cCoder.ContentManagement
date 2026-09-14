@@ -27,7 +27,6 @@ public partial class PageOrchestrationServiceTests
 
         Mock<IPageProcessingService> processingServiceMock = new();
         Mock<IPageEventProcessingService> eventServiceMock = new();
-        Mock<ILayoutProcessingService> layoutServiceMock = new();
         Mock<IAuthorizationProcessingService> authorizationServiceMock = new();
 
         processingServiceMock.SetReturnsDefault(
@@ -51,7 +50,6 @@ public partial class PageOrchestrationServiceTests
         PageOrchestrationService service = new(
             processingService: processingServiceMock.Object,
             eventService: eventServiceMock.Object,
-            layoutProcessingService: layoutServiceMock.Object,
             authorizationProcessingService: authorizationServiceMock.Object);
 
         // When
@@ -106,6 +104,5 @@ public partial class PageOrchestrationServiceTests
 
         pageProcessingServiceMock.VerifyAll();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
-        layoutProcessingServiceMock.VerifyNoOtherCalls();
     }
 }

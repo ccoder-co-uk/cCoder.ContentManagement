@@ -3,24 +3,26 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using cCoder.ContentManagement.Services.Foundations.Authorization;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models;
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Extensions;
-
-using cCoder.ContentManagement.Services.Foundations;
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class PageProcessingService(
     IPageService service) : IPageProcessingService
 {
+    public bool LayoutExistsForApp(int appId, string layoutName) =>
+        TryCatch<bool>(operation: () =>
+        {
+            ValidateLayoutExistsForAppOnGet(inputs: [appId, layoutName]);
+            ValidateAppId(appId: appId, parameterName: "appId");
+            ArgumentException.ThrowIfNullOrWhiteSpace(argument: layoutName);
+            return service.LayoutExistsForApp(appId: appId, layoutName: layoutName);
+        });
+
     public ValueTask<Page> GetPageForRenderAsync(int pageId) =>
         TryCatch<Page>(operation: async () =>
     {
@@ -98,11 +100,6 @@ internal partial class PageProcessingService(
         ValidateDeleteAsync(inputs: [pageId]);
         ValidateId(pageId: pageId, parameterName: "id");
 
-        if (!UserCan(privKey: "page_delete", pageId: pageId))
-        {
-            throw new SecurityException(message: "Access Denied!");
-        }
-
         return service.DeleteAsync(pageId: pageId);
 
     }, isValueTask: true);
@@ -117,7 +114,7 @@ internal partial class PageProcessingService(
             .Where(predicate: existingPage => existingPage.Id == updatedPage.Id)
             .FirstOrDefault();
 
-        if (dbVersion == null || !UserCan(privKey: "page_update", pageId: dbVersion.Id))
+        if (dbVersion == null)
         {
             throw new SecurityException(message: "Access Denied!");
         }
@@ -151,11 +148,6 @@ internal partial class PageProcessingService(
     {
         ValidatePageOnAdd(inputs: [newPage]);
         ValidatePage(page: newPage, parameterName: "page");
-
-        if (!service.IsAdminOfApp(appId: newPage.AppId) && newPage.ParentId.HasValue)
-        {
-            UserCan(privKey: "page_create", pageId: newPage.ParentId.Value);
-        }
 
         Page parent = null;
 
@@ -196,6 +188,7 @@ internal partial class PageProcessingService(
             LastUpdated = newPage.LastUpdated,
             LastUpdatedBy = newPage.LastUpdatedBy,
             CreatedBy = newPage.CreatedBy,
+            CreatedOn = newPage.CreatedOn,
             Path = newPage.Path,
             ResourceKey = newPage.ResourceKey,
             Layout = newPage.Layout
@@ -303,11 +296,6 @@ internal partial class PageProcessingService(
         ValidateRecomputeAllForAppAsync(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        if (!service.IsAdminOfApp(appId: appId))
-        {
-            throw new SecurityException(message: "Access Denied!");
-        }
-
         await RecomputePathsAsync(appId: appId);
 
     }, isValueTask: true);
@@ -357,23 +345,7 @@ internal partial class PageProcessingService(
                     RoleId = role.RoleId
                 })
             .ToArray()
-            : service.GetCurrentUserRoleIds(appId: page.AppId)
-            .Select(selector: roleId => new PageRole
-            {
-                RoleId = roleId
-            })
-                .ToArray();
-    }
-
-    private bool UserCan(string privKey, int pageId)
-    {
-        Page page = service.GetAllPage(ignoreFilters: false)
-            .Where(predicate: existingPage => existingPage.Id == pageId)
-            .FirstOrDefault();
-
-        return page != null && service.UserCanPage(
-            page: page,
-            privilege: privKey);
+            : [];
     }
 
     private static string BuildPath(string pageName, string parentPath)
@@ -425,11 +397,6 @@ internal partial class PageProcessingService(
     {
         ValidatePage(page: page, parameterName: "page");
 
-        if (!service.IsAdminOfApp(appId: page.AppId) && page.ParentId.HasValue)
-        {
-            UserCan(privKey: "page_create", pageId: page.ParentId.Value);
-        }
-
         Page parent = null;
 
         if (page.ParentId.HasValue)
@@ -469,6 +436,7 @@ internal partial class PageProcessingService(
             LastUpdated = page.LastUpdated,
             LastUpdatedBy = page.LastUpdatedBy,
             CreatedBy = page.CreatedBy,
+            CreatedOn = page.CreatedOn,
             Path = page.Path,
             ResourceKey = page.ResourceKey,
             Layout = page.Layout
@@ -510,11 +478,6 @@ internal partial class PageProcessingService(
     {
         ValidateId(pageId: pageId, parameterName: "id");
 
-        if (!UserCan(privKey: "page_delete", pageId: pageId))
-        {
-            throw new SecurityException(message: "Access Denied!");
-        }
-
         return service.DeleteAsync(pageId: pageId);
     }
 
@@ -535,7 +498,7 @@ internal partial class PageProcessingService(
             .Where(predicate: existingPage => existingPage.Id == updatedPage.Id)
             .FirstOrDefault();
 
-        if (dbVersion == null || !UserCan(privKey: "page_update", pageId: dbVersion.Id))
+        if (dbVersion == null)
         {
             throw new SecurityException(message: "Access Denied!");
         }

@@ -12,6 +12,9 @@ internal sealed partial class PageRenderCacheProcessingService
     private static void ValidatePageRenderCacheOnAdd(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidatePageRenderCacheOnGet(object[] inputs) =>
+        ValidationRulesEngine.Validate(inputs: inputs);
+
     private static void ValidatePageRenderCacheOnUpdate(object[] inputs) =>
         Validate(inputs: inputs);
 

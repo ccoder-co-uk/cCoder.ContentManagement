@@ -39,7 +39,6 @@ public partial class PageProcessingServiceTests
         await pageProcessingService.DeleteAllPageAsync(deletedPage: new[] { page });
 
         // Then
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.DeleteAsync(pageId: page.Id), times: Times.Once);
         VerifyNoOtherPageServiceCalls();
     }
