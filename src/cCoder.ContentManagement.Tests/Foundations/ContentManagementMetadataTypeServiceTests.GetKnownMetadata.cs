@@ -80,4 +80,22 @@ public partial class ContentManagementMetadataTypeServiceTests
             .HasEndpoint.Should()
             .BeFalse();
     }
+
+    [Fact]
+    public void GetKnownMetadataPayloads_WhenRequested_ReturnsSerializedMetadataSets()
+    {
+        // Given
+        // When
+        string[] result = service.GetKnownMetadataPayloads()
+            .ToArray();
+
+        // Then
+        result.Should()
+            .HaveCount(expected: 2);
+
+        result.Should()
+            .Contain(predicate: payload => payload.Contains(
+                value: "\"Name\":\"ContentManagement\"",
+                comparisonType: StringComparison.Ordinal));
+    }
 }

@@ -10,7 +10,7 @@ namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class PageRenderService(
     IRenderBroker renderBroker,
-    ISystemTextJsonBroker systemTextJsonBroker)
+    IJsonBroker jsonBroker)
         : IPageRenderService
 {
     public PageRenderFoundationOperation SerializePageRenderFoundationOperation(
@@ -18,7 +18,7 @@ internal sealed partial class PageRenderService(
         TryCatch(operation: () =>
     {
         ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
-        pageRenderFoundationOperation.Json = systemTextJsonBroker.Serialize(value: pageRenderFoundationOperation.Value);
+        pageRenderFoundationOperation.Json = jsonBroker.Serialize(value: pageRenderFoundationOperation.Value);
         return pageRenderFoundationOperation;
     });
 

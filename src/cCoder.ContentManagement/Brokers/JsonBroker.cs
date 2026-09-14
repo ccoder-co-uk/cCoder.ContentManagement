@@ -2,65 +2,54 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+using cCoder.ContentManagement.Dependencies;
+using cCoder.ContentManagement.Models.Serialization;
 
 namespace cCoder.ContentManagement.Brokers;
 
-internal sealed class JsonBroker : IJsonBroker
+internal sealed class JsonBroker(
+    SystemTextJsonDependency dependency = null) : IJsonBroker
 {
+    private readonly SystemTextJsonDependency dependency =
+        dependency ?? new SystemTextJsonDependency();
+
     public object ParseJson(string json) =>
-        JsonConvert.DeserializeObject(value: json);
+        dependency.ParseJson(json: json);
 
     public T ParseJson<T>(string json) =>
-        JsonConvert.DeserializeObject<T>(value: json);
+        dependency.Deserialize<T>(json: json);
 
     public string Serialize(object value) =>
-        JsonConvert.SerializeObject(value: value);
+        dependency.Serialize(value: value);
 
     public string SerializeIgnoringReferences(object value) =>
-        JsonConvert.SerializeObject(
-            value: value,
-            formatting: Formatting.None,
-            settings: new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.None,
-                Formatting = Formatting.None,
-                DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                NullValueHandling = NullValueHandling.Ignore,
-                DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-                ContractResolver = new DefaultContractResolver
-                {
-                    IgnoreSerializableAttribute = true
-                },
-                MaxDepth = 4
-            });
+        dependency.SerializeIgnoringReferences(value: value);
+
+    public JsonRecordsDocument ParseRecords(string json) =>
+        dependency.ParseRecords(json: json);
+
+    public JsonRecordsDocument ParseRecords(object payload) =>
+        dependency.ParseRecords(payload: payload);
+
+    public JsonValueDocument Normalize(object value) =>
+        dependency.Normalize(value: value);
 
     public bool IsJsonObject(object value) =>
-        value is JObject;
+        dependency.IsJsonObject(value: value);
 
     public bool IsJsonArray(object value) =>
-        value is JArray;
+        dependency.IsJsonArray(value: value);
 
     public bool IsJsonValue(object value) =>
-        value is JValue;
+        dependency.IsJsonValue(value: value);
 
     public IEnumerable<KeyValuePair<string, object>> GetJsonProperties(
         object value) =>
-        ((JObject)value)
-            .Properties()
-            .Select(selector: property =>
-                new KeyValuePair<string, object>(
-                    key: property.Name,
-                    value: property.Value));
+        dependency.GetJsonProperties(value: value);
 
     public IEnumerable<object> GetJsonItems(object value) =>
-        ((JArray)value).Cast<object>();
+        dependency.GetJsonItems(value: value);
 
     public void RemoveJsonProperty(object value, string propertyName) =>
-        ((JObject)value)
-            .Property(name: propertyName, comparison: StringComparison.OrdinalIgnoreCase)
-            .Remove();
+        dependency.RemoveJsonProperty(value: value, propertyName: propertyName);
 }

@@ -19,18 +19,17 @@ internal partial class CommonObjectService(
     ICommonObjectBroker commonObjectBroker,
     IAuthorizationManager authorizationManager,
     ICommonObjectReaderBroker cache,
-    IJsonBroker jsonBroker,
-    ISystemTextJsonBroker systemTextJsonBroker = null) : ICommonObjectService
+    IJsonBroker jsonBroker) : ICommonObjectService
 {
     public CommonObject[] DeserializeCommonObjects(object payload) =>
         TryCatch<CommonObject[]>(operation: () =>
     {
         ValidateCommonObjectsOnDeserialize(inputs: [payload]);
-        JsonRecordsDocument document = systemTextJsonBroker.ParseRecords(payload: payload);
+        JsonRecordsDocument document = jsonBroker.ParseRecords(payload: payload);
 
         return document?.Records
             .Select(selector: record =>
-                systemTextJsonBroker.Deserialize<CommonObject>(json: record.RawText))
+                jsonBroker.ParseJson<CommonObject>(json: record.RawText))
             .ToArray();
     });
 

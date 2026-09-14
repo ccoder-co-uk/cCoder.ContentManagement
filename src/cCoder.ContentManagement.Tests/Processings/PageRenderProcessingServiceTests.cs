@@ -64,7 +64,6 @@ public partial class PageRenderProcessingServiceTests
             scriptReaderBroker: scriptReaderBroker,
             renderFileContentBroker: renderFileContentBrokerMock.Object,
             jsonBroker: new JsonBroker(),
-            systemTextJsonBroker: new SystemTextJsonBroker(),
             workflowExecutionBroker:
                 new WorkflowExecutionBroker(
                     workflowExecutionDependency:
@@ -91,7 +90,7 @@ public partial class PageRenderProcessingServiceTests
 
         PageRenderService pageRenderService = new(
             renderBroker: renderBroker,
-            systemTextJsonBroker: new SystemTextJsonBroker());
+            jsonBroker: new JsonBroker());
 
         return new PageRenderProcessingService(
             pageRenderService: pageRenderService,

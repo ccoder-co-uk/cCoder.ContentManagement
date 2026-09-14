@@ -41,8 +41,7 @@ public partial class CommonObjectServiceTests
 commonObjectBroker: commonObjectBrokerMock.Object,
 authorizationManager: authorizationManagerMock.Object,
 cache: Mock.Of<ICommonObjectReaderBroker>(),
-jsonBroker: Mock.Of<IJsonBroker>(),
-systemTextJsonBroker: Mock.Of<ISystemTextJsonBroker>()
+jsonBroker: Mock.Of<IJsonBroker>()
         );
     }
 

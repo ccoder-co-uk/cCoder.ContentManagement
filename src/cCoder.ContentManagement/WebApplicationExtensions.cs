@@ -3,7 +3,6 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using System.Text.Json;
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Services.Foundations;
@@ -160,8 +159,7 @@ public static partial class WebApplicationExtensions
             requiredService.Set(
 scope: "ContentManagement",
 typeSetPayloads: app.Services.GetRequiredService<IContentManagementMetadataTypeService>()
-                .GetKnownMetadata()
-                .Select(selector: static metadata => JsonSerializer.Serialize(value: metadata)));
+                .GetKnownMetadataPayloads());
         }
     }
 

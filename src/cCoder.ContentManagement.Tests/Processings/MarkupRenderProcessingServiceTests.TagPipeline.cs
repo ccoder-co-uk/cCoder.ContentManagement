@@ -168,7 +168,6 @@ public sealed partial class MarkupRenderProcessingServiceTagPipelineTests
                 scriptReaderBroker: Mock.Of<IScriptReaderBroker>(),
                 renderFileContentBroker: Mock.Of<IRenderFileContentBroker>(),
                 jsonBroker: new JsonBroker(),
-                systemTextJsonBroker: new SystemTextJsonBroker(),
                 workflowExecutionBroker:
                     workflowExecutionBroker ?? Mock.Of<IWorkflowExecutionBroker>(),
                 regularExpressionBroker: regularExpressionBroker));

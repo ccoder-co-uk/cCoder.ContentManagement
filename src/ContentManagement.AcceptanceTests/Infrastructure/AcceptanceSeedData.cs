@@ -7,20 +7,26 @@ using cCoder.Data;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Web.AcceptanceTests.Infrastructure;
 
 internal static class AcceptanceSeedData
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
+    };
+
     public static Package[] LoadExportPackages()
     {
         using JsonDocument json = AcceptanceAssetLoader.LoadJson(fileName: "App.1.Export.json");
         JsonElement value = json.RootElement.GetProperty(propertyName: "value");
 
-        Package[] packages = JsonConvert.DeserializeObject<Package[]>(
-value: value.GetRawText(),
-settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
+        Package[] packages = JsonSerializer.Deserialize<Package[]>(
+            json: value.GetRawText(),
+            options: JsonOptions);
 
         foreach (PackageItem item in packages.SelectMany(selector: package => package.Items))
         {
@@ -92,9 +98,9 @@ settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
                 ? json.RootElement.GetProperty(propertyName: "value")
                 : json.RootElement;
 
-        CommonObject[] commonObjects = JsonConvert.DeserializeObject<CommonObject[]>(
-value: value.GetRawText(),
-settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
+        CommonObject[] commonObjects = JsonSerializer.Deserialize<CommonObject[]>(
+            json: value.GetRawText(),
+            options: JsonOptions);
 
         foreach (CommonObject commonObject in commonObjects)
         {
@@ -121,18 +127,18 @@ settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
 
         if (trimmed.StartsWith(value: "[", comparisonType: StringComparison.Ordinal))
         {
-            Array items = (Array)JsonConvert.DeserializeObject(
-                value: trimmed,
-                type: itemTypeContract.MakeArrayType(),
-                settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
+            Array items = (Array)JsonSerializer.Deserialize(
+                json: trimmed,
+                returnType: itemTypeContract.MakeArrayType(),
+                options: JsonOptions);
 
             return items.Cast<object>();
         }
 
-        object item = JsonConvert.DeserializeObject(
-            value: trimmed,
-            type: itemTypeContract,
-            settings: cCoder.Data.Extensions.ObjectExtensions.GetJSONSettings());
+        object item = JsonSerializer.Deserialize(
+            json: trimmed,
+            returnType: itemTypeContract,
+            options: JsonOptions);
 
         return [item];
     }

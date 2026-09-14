@@ -15,7 +15,6 @@ internal sealed partial class TemplateRenderService(
     IMetadataReaderBroker metadataReaderBroker,
     ICommonObjectReaderBroker commonObjectReaderBroker,
     IJsonBroker jsonBroker,
-    ISystemTextJsonBroker systemTextJsonBroker,
     IWorkflowExecutionBroker workflowExecutionBroker,
     ILoggingBroker loggingBroker,
     IRegularExpressionBroker regularExpressionBroker,
@@ -186,7 +185,7 @@ internal sealed partial class TemplateRenderService(
         ValidateTemplateRenderFoundationOperation(inputs: [templateRenderFoundationOperation]);
 
         JsonValueDocument jsonValueDocument =
-            systemTextJsonBroker.Normalize(value: templateRenderFoundationOperation.Value);
+            jsonBroker.Normalize(value: templateRenderFoundationOperation.Value);
 
         templateRenderFoundationOperation.Value = jsonValueDocument.IsRawJson
             ? jsonBroker.ParseJson(json: jsonValueDocument.RawJson)

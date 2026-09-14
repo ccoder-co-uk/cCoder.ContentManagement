@@ -2,13 +2,13 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace cCoder.ContentManagement.Models;
 
 public class ODataCollection<TCollectionType>
 {
-    [JsonProperty("@odata.context")]
+    [JsonPropertyName("@odata.context")]
     public string ODataContext { get; set; }
 
     public IEnumerable<TCollectionType> Value { get; set; }

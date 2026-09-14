@@ -14,6 +14,7 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Foundations;
+using cCoder.ContentManagement.Brokers;
 
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations;
@@ -23,5 +24,6 @@ public partial class ContentManagementMetadataTypeServiceTests
     private readonly IContentManagementMetadataTypeService service;
 
     public ContentManagementMetadataTypeServiceTests() =>
-        service = new ContentManagementMetadataTypeService();
+        service = new ContentManagementMetadataTypeService(
+            jsonBroker: new JsonBroker());
 }

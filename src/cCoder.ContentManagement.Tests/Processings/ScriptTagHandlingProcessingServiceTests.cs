@@ -54,7 +54,6 @@ public sealed partial class ScriptTagHandlingProcessingServiceTests
                 scriptReaderBroker: Mock.Of<IScriptReaderBroker>(),
                 renderFileContentBroker: Mock.Of<IRenderFileContentBroker>(),
                 jsonBroker: Mock.Of<IJsonBroker>(),
-                systemTextJsonBroker: new SystemTextJsonBroker(),
                 workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
                 regularExpressionBroker: new RegularExpressionBroker()));
 

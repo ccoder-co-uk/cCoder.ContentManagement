@@ -8,23 +8,30 @@ using Microsoft.AspNetCore.Mvc;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Brokers;
 
 namespace cCoder.ContentManagement.Services.Foundations;
 
-internal sealed partial class ContentManagementMetadataTypeService : IContentManagementMetadataTypeService
+internal sealed partial class ContentManagementMetadataTypeService(
+    IJsonBroker jsonBroker) : IContentManagementMetadataTypeService
 {
     public IEnumerable<MetadataContainerSet> GetKnownMetadata() =>
         TryCatch<IEnumerable<MetadataContainerSet>>(operation: () =>
-    {
+            GetKnownMetadataCore());
 
-        return new MetadataContainerSet[2]
+    public IEnumerable<string> GetKnownMetadataPayloads() =>
+        TryCatch<IEnumerable<string>>(operation: () =>
+            GetKnownMetadataCore()
+                .Select(selector: jsonBroker.Serialize)
+                .ToArray());
+
+    private static IEnumerable<MetadataContainerSet> GetKnownMetadataCore() =>
+        new MetadataContainerSet[2]
         {
             ContentManagementTypes(),
             SystemTypes()
         }.OrderBy(keySelector: (MetadataContainerSet set) => set.Name)
             .ToArray();
-
-    });
 
     private static MetadataContainerSet ContentManagementTypes()
     {

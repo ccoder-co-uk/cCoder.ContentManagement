@@ -239,7 +239,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateBroker, TemplateBroker>();
         services.AddTransient<IAuthorizationBroker, AuthorizationBroker>();
         services.AddTransient<IJsonBroker, JsonBroker>();
-        services.AddTransient<ISystemTextJsonBroker, SystemTextJsonBroker>();
         services.AddTransient<IRegularExpressionBroker, RegularExpressionBroker>();
         services.AddTransient<
             ITemplateContentBroker,

@@ -9,4 +9,6 @@ namespace cCoder.ContentManagement.Services.Foundations;
 internal interface IContentManagementMetadataTypeService
 {
     IEnumerable<MetadataContainerSet> GetKnownMetadata();
+
+    IEnumerable<string> GetKnownMetadataPayloads();
 }

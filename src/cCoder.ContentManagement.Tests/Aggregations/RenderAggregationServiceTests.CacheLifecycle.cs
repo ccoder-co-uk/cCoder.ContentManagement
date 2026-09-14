@@ -106,7 +106,7 @@ public sealed partial class RenderAggregationServiceTests
         json.Setup(expression: service =>
             service.SerializeRuntimeValue(value: It.IsAny<object>()))
             .Returns(valueFunction: (object value) =>
-                new SystemTextJsonBroker().Serialize(value: value));
+                new JsonBroker().Serialize(value: value));
 
         Mock<IPageContextOrchestrationService> pageContext = new();
 

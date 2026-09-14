@@ -45,7 +45,6 @@ public partial class TemplateRenderProcessingServiceTests
             metadataReaderBroker: metadataCacheMock.Object,
             commonObjectReaderBroker: commonObjectCacheMock.Object,
             jsonBroker: new JsonBroker(),
-            systemTextJsonBroker: new SystemTextJsonBroker(),
             workflowExecutionBroker: new WorkflowExecutionBroker(
                 workflowExecutionDependency:
                     new WorkflowExecutionDependency()),
