@@ -120,19 +120,21 @@ internal partial class PackageOrchestrationService(
 
     public ValueTask DeleteAllPackageAsync(IEnumerable<Package> deletedPackage) =>
         TryCatch(operation: () =>
-    {
-        ValidateAllPackageOnDelete(inputs: [deletedPackage]);
-        Package[] packages = ValidatePackages(
-            packages: deletedPackage,
-            parameterName: "items").ToArray();
-
-        foreach (Package package in packages)
         {
-            Authorize(privilege: "Package_delete");
-        }
+            ValidateAllPackageOnDelete(inputs: [deletedPackage]);
 
-        return processingService.DeleteAllPackageAsync(deletedPackage: packages);
-    }, isValueTask: true);
+            Package[] packages = ValidatePackages(
+                    packages: deletedPackage,
+                    parameterName: "items")
+                .ToArray();
+
+            foreach (Package package in packages)
+            {
+                Authorize(privilege: "Package_delete");
+            }
+
+            return processingService.DeleteAllPackageAsync(deletedPackage: packages);
+        }, isValueTask: true);
 
     private static int ValidateAppId(int appId, string parameterName)
     {
