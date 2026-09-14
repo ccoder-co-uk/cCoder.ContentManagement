@@ -10,7 +10,7 @@ namespace cCoder.ContentManagement.Services.Processings;
 internal partial class PageProcessingService
 {
     private static void ValidateLayoutExistsForAppOnGet(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateId(int pageId, string parameterName) =>
         ThrowIf(condition: pageId < 1, message: parameterName + " must be greater than 0.");
