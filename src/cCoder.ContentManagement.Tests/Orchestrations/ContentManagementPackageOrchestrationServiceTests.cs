@@ -18,6 +18,8 @@ namespace cCoder.ContentManagement.Tests.Orchestrations;
 
 public sealed partial class ContentManagementPackageOrchestrationServiceTests
 {
+    private const string CurrentUserId = "test-user";
+
     [Fact]
     public async Task ImportPackageAsync_WhenAppComponentItemProvided_RaisesTypedBatchEventAsync()
     {
@@ -32,7 +34,8 @@ public sealed partial class ContentManagementPackageOrchestrationServiceTests
                 import: It.Is<PackageItemImportEvent<Component>>(match: match =>
                     match.AppId == appId
                     && match.Items.Length == 1
-                    && match.Items[0].Name == "Navigation")))
+                    && match.Items[0].Name == "Navigation"),
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         ContentManagementPackageOrchestrationService service =
@@ -79,7 +82,8 @@ public sealed partial class ContentManagementPackageOrchestrationServiceTests
                     && match.Items.Length == 1
                     && match.Items[0].Name == "Navigation"
                     && match.Items[0].Key == "Core"
-                    && match.Items[0].Type == "Core/Component")))
+                    && match.Items[0].Type == "Core/Component"),
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         ContentManagementPackageOrchestrationService service =
@@ -115,11 +119,16 @@ public sealed partial class ContentManagementPackageOrchestrationServiceTests
         IPackageImportEventProcessingService eventService)
     {
         JsonBroker jsonBroker = new();
+        Mock<IAuthorizationProcessingService> authorizationService = new();
+        authorizationService
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
 
         return new ContentManagementPackageOrchestrationService(
             jsonProcessingService: new JsonProcessingService(
                 jsonService: new JsonService(jsonBroker: jsonBroker)),
             packageImportEventProcessingService: eventService,
-            packageExportProcessingService: Mock.Of<IPackageExportProcessingService>());
+            packageExportProcessingService: Mock.Of<IPackageExportProcessingService>(),
+            authorizationProcessingService: authorizationService.Object);
     }
 }

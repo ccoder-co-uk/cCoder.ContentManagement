@@ -11,7 +11,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class CultureOrchestrationService(
     ICultureProcessingService processingService,
-    ICultureEventProcessingService eventService) : ICultureOrchestrationService
+    ICultureEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : ICultureOrchestrationService
 {
     public Culture GetCulture(string cultureId) =>
         TryCatch<Culture>(operation: () =>
@@ -34,7 +36,11 @@ internal partial class CultureOrchestrationService(
         ValidateCulture(culture: newCulture, parameterName: "entity");
 
         Culture result = await processingService.AddCultureAsync(newCulture: newCulture);
-        await eventService.RaiseCultureAddEventAsync(entity: result);
+
+        await eventService.RaiseCultureAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -46,7 +52,11 @@ internal partial class CultureOrchestrationService(
         ValidateCulture(culture: updatedCulture, parameterName: "entity");
 
         Culture result = await processingService.UpdateCultureAsync(updatedCulture: updatedCulture);
-        await eventService.RaiseCultureUpdateEventAsync(entity: result);
+
+        await eventService.RaiseCultureUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -58,7 +68,11 @@ internal partial class CultureOrchestrationService(
         ValidateId(cultureId: cultureId, parameterName: "id");
 
         Culture entity = processingService.GetCulture(cultureId: cultureId);
-        await eventService.RaiseCultureDeleteEventAsync(entity: entity);
+
+        await eventService.RaiseCultureDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(cultureId: cultureId);
 
     }, isValueTask: true);

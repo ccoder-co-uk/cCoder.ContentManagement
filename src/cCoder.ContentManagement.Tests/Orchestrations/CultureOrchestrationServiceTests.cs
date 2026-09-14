@@ -25,16 +25,23 @@ public partial class CultureOrchestrationServiceTests
 {
     private readonly Mock<ICultureProcessingService> cultureProcessingServiceMock;
     private readonly Mock<ICultureEventProcessingService> cultureEventProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly CultureOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
 
     public CultureOrchestrationServiceTests()
     {
         cultureProcessingServiceMock = new Mock<ICultureProcessingService>(behavior: MockBehavior.Strict);
         cultureEventProcessingServiceMock = new Mock<ICultureEventProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
 
         orchestrationService = new CultureOrchestrationService(
 processingService: cultureProcessingServiceMock.Object,
-eventService: cultureEventProcessingServiceMock.Object
+eventService: cultureEventProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 

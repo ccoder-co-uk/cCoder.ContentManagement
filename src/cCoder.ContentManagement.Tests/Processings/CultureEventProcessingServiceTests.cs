@@ -25,11 +25,13 @@ public partial class CultureEventProcessingServiceTests
 {
     private readonly Mock<ICultureEventService> cultureEventServiceMock;
     private readonly CultureEventProcessingService service;
+    private const string CurrentUserId = "test-user";
 
     public CultureEventProcessingServiceTests()
     {
         cultureEventServiceMock = new Mock<ICultureEventService>(behavior: MockBehavior.Strict);
-        service = new CultureEventProcessingService(eventService: cultureEventServiceMock.Object);
+        service = new CultureEventProcessingService(
+            eventService: cultureEventServiceMock.Object);
     }
 
     private static Culture CreateRandomCulture() =>

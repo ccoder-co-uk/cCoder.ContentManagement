@@ -26,11 +26,13 @@ public partial class PackageEventProcessingServiceTests
 {
     private readonly Mock<IPackageEventService> packageEventServiceMock;
     private readonly PackageEventProcessingService service;
+    private const string CurrentUserId = "test-user";
 
     public PackageEventProcessingServiceTests()
     {
         packageEventServiceMock = new Mock<IPackageEventService>(behavior: MockBehavior.Strict);
-        service = new PackageEventProcessingService(eventService: packageEventServiceMock.Object);
+        service = new PackageEventProcessingService(
+            eventService: packageEventServiceMock.Object);
     }
 
     private static Package CreateRandomPackage() =>

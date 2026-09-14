@@ -13,10 +13,6 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using System.Security;
-
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -28,17 +24,12 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class ContentServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
+    public async Task ShouldDelegateToBrokerWhenUpdateAsync()
     {
         // Given
         Content content = CreateRandomContent(id: 7);
 
         CmsDataModels.Content submitted = null;
-
-        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
-            .Returns(value: new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_update"));
 
         contentBrokerMock
             .Setup(expression: x => x.UpdateContentAsync(updatedContent: It.IsAny<CmsDataModels.Content>()))
@@ -70,39 +61,6 @@ public partial class ContentServiceTests
 
         contentBrokerMock.Verify(expression: x => x.UpdateContentAsync(updatedContent: It.IsAny<CmsDataModels.Content>()), times: Times.Once);
         contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(expression: x => x.GetAllPagesIgnoringFilters(), times: Times.Once);
-        pageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_update"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
-    {
-        // Given
-        Content content = CreateRandomContent(id: 7);
-
-        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
-            .Returns(value: new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_update"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await contentService.UpdateContentAsync(updatedContent: content);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(expression: x => x.GetAllPagesIgnoringFilters(), times: Times.Once);
-        pageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_update"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

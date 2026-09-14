@@ -45,7 +45,8 @@ public partial class CommonObjectOrchestrationServiceTests
         commonObjectEventProcessingServiceMock
             .Setup(expression: x => x.RaiseCommonObjectsImportedEventAsync(
                 commonObjects: It.Is<CommonObject[]>(
-                    match: objects => objects.SequenceEqual(second: commonObjects))))
+                    match: objects => objects.SequenceEqual(second: commonObjects)),
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When

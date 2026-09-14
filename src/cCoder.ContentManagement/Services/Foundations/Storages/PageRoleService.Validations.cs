@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies;
 using cCoder.Data.Models.Security;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,22 +10,22 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 internal partial class PageRoleService
 {
     private static void ValidatePageRoleForImportOnAdd(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateAllPageRolesIgnoringFiltersOnGet(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRoleAuthorization(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRoleExistence(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRoleOnResolve(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateAllPageRolesOnDelete(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageId(int pageId, string parameterName) =>
         ThrowIf(condition: pageId < 1, message: parameterName + " must be greater than 0.");
@@ -61,11 +60,14 @@ internal partial class PageRoleService
     }
 
     private static void ValidateAllPageRoleOnGet(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRoleOnAdd(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRoleOnDelete(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
+
+    private static void Validate(params object[] inputs) =>
+        _ = inputs;
 }

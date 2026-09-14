@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies;
 using System.ComponentModel.DataAnnotations;
 
 namespace cCoder.ContentManagement.Services.Foundations;
@@ -30,5 +29,8 @@ internal partial class RenderFileContentService
     }
 
     private static void ValidateLatestTextContentOnGet(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
+
+    private static void Validate(params object[] inputs) =>
+        _ = inputs;
 }

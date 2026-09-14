@@ -51,7 +51,6 @@ public partial class SubmissionServiceTests
 
         submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(), times: Times.Once);
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
+}
 
 }

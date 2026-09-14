@@ -37,7 +37,9 @@ public partial class ResourceEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseResourceDeleteEventAsync(resource: entity);
+        await service.RaiseResourceDeleteEventAsync(
+            resource: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class ResourceEventServiceTests
 expression: x => x.RaiseResourceDeleteEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Resource>>()),
 times: Times.Once
         );
-
-        resourceEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         resourceEventBrokerMock.VerifyNoOtherCalls();
     }

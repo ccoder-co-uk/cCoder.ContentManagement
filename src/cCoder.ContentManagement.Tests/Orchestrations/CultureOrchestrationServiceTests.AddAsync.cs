@@ -32,7 +32,7 @@ public partial class CultureOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         cultureEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseCultureAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseCultureAddEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +44,7 @@ public partial class CultureOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         cultureProcessingServiceMock.Verify(expression: x => x.AddCultureAsync(newCulture: entity), times: Times.Once);
-        cultureEventProcessingServiceMock.Verify(expression: x => x.RaiseCultureAddEventAsync(entity: entity), times: Times.Once);
+        cultureEventProcessingServiceMock.Verify(expression: x => x.RaiseCultureAddEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
 }

@@ -33,7 +33,7 @@ public partial class PackageOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         packageEventProcessingServiceMock
-            .Setup(expression: x => x.RaisePackageUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePackageUpdateEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -45,7 +45,7 @@ public partial class PackageOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         packageProcessingServiceMock.Verify(expression: x => x.UpdatePackageAsync(updatedPackage: entity), times: Times.Once);
-        packageEventProcessingServiceMock.Verify(expression: x => x.RaisePackageUpdateEventAsync(entity: entity), times: Times.Once);
+        packageEventProcessingServiceMock.Verify(expression: x => x.RaisePackageUpdateEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public partial class PackageOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         packageEventProcessingServiceMock
-            .Setup(expression: service => service.RaisePackageUpdateEventAsync(entity: entity))
+            .Setup(expression: service => service.RaisePackageUpdateEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When

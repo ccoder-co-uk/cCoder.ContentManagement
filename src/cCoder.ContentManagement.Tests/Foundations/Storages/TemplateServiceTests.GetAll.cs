@@ -46,7 +46,6 @@ public partial class TemplateServiceTests
 
         templateBrokerMock.Verify(expression: x => x.GetAllTemplates(), times: Times.Once);
         templateBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

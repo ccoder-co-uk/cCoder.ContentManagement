@@ -8,7 +8,7 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal interface IAppCultureEventService
 {
-    ValueTask RaiseAppCultureAddEventAsync(AppCulture entity);
+    ValueTask RaiseAppCultureAddEventAsync(AppCulture entity, string userId);
 
-    ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity);
+    ValueTask RaiseAppCultureDeleteEventAsync(AppCulture entity, string userId);
 }

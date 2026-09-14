@@ -31,7 +31,7 @@ public partial class CommonObjectOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         commonObjectEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseCommonObjectUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseCommonObjectUpdateEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -43,7 +43,7 @@ public partial class CommonObjectOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         commonObjectProcessingServiceMock.Verify(expression: x => x.UpdateCommonObjectAsync(updatedCommonObject: entity), times: Times.Once);
-        commonObjectEventProcessingServiceMock.Verify(expression: x => x.RaiseCommonObjectUpdateEventAsync(entity: entity), times: Times.Once);
+        commonObjectEventProcessingServiceMock.Verify(expression: x => x.RaiseCommonObjectUpdateEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
 }

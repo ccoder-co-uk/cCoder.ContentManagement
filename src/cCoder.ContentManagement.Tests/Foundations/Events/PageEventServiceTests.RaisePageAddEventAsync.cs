@@ -37,7 +37,9 @@ public partial class PageEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageAddEventAsync(page: entity);
+        await service.RaisePageAddEventAsync(
+            page: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class PageEventServiceTests
 expression: x => x.RaisePageAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Page>>()),
 times: Times.Once
         );
-
-        pageEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         pageEventBrokerMock.VerifyNoOtherCalls();
     }

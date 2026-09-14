@@ -37,7 +37,9 @@ public partial class ContentEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseContentDeleteEventAsync(content: entity);
+        await service.RaiseContentDeleteEventAsync(
+            content: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class ContentEventServiceTests
 expression: x => x.RaiseContentDeleteEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Content>>()),
 times: Times.Once
         );
-
-        contentEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         contentEventBrokerMock.VerifyNoOtherCalls();
     }

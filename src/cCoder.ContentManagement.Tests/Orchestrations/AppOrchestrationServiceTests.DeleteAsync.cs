@@ -42,7 +42,7 @@ public partial class AppOrchestrationServiceTests
             .Returns(value: app);
 
         appEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseAppDeleteEventAsync(app: app))
+            .Setup(expression: x => x.RaiseAppDeleteEventAsync(app: app, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -57,7 +57,7 @@ public partial class AppOrchestrationServiceTests
             times: Times.Once);
 
         appProcessingServiceMock.Verify(expression: x => x.GetAppForDelete(appId: id), times: Times.Once);
-        appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppDeleteEventAsync(app: app), times: Times.Once);
+        appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppDeleteEventAsync(app: app, userId: CurrentUserId), times: Times.Once);
     }
 
     [Fact]

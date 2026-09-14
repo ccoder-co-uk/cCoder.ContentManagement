@@ -46,7 +46,6 @@ public partial class PackageServiceTests
 
         packageBrokerMock.Verify(expression: x => x.GetAllPackages(), times: Times.Once);
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

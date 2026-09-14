@@ -7,7 +7,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface IPageInfoEventBroker : IAuthenticatedEventBroker
+public interface IPageInfoEventBroker
 {
     ValueTask RaisePageInfoAddEventAsync(EventMessage<PageInfo> message);
 

@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Exposures;
 using cCoder.Data.Models.CMS;
 using System.ComponentModel.DataAnnotations;
@@ -12,35 +11,35 @@ namespace cCoder.ContentManagement.Services.Aggregations;
 internal sealed partial class PageRenderCacheAggregationService
 {
     private static void ValidatePackageImportOnComplete(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCacheOnGet(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCacheOnAdd(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCacheOnUpdate(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCacheOnDelete(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
-    private static void ValidateAppPageRenderCachesOnDelete(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+    private static void ValidateAppOnDelete(object[] inputs) =>
+        Validate(inputs: inputs);
 
-    private static void ValidatePagePageRenderCachesOnDelete(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+    private static void ValidatePageOnDelete(object[] inputs) =>
+        Validate(inputs: inputs);
 
     private static void ValidateCommonObjectPageRenderCachesOnRebuild(
         object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateAppPageRenderCachesOnRebuild(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePagePageRenderCachesOnRebuild(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateRequest(PageRenderRequest request, string parameterName) =>
         ThrowIf(condition: request == null, message: parameterName + " is required.");
@@ -69,33 +68,36 @@ internal sealed partial class PageRenderCacheAggregationService
     }
 
     private static void ValidatePageRenderCacheByAppIdOnDelete(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCacheByPageIdOnDelete(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateAllPageRenderCachesOnRebuild(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateCommonObjectPageRenderOperationOnRebuild(
         object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateRenderPageRenderOperation(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateRender(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateRenderError(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateRenderRenderResult(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCachesByAppIdOnRebuild(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCachesByPageIdOnRebuild(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
+
+    private static void Validate(params object[] inputs) =>
+        _ = inputs;
 }

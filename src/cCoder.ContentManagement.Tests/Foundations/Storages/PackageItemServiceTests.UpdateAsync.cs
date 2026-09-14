@@ -13,7 +13,6 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using System.Security;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -25,17 +24,12 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class PackageItemServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
+    public async Task ShouldDelegateToBrokerWhenUpdateAsync()
     {
         // Given
         PackageItem packageItem = CreateRandomPackageItem();
 
         cCoder.Data.Models.Packaging.PackageItem submitted = null;
-
-        packageItemBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()))
-            .Returns(value: (int?)7);
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"));
 
         packageItemBrokerMock
             .Setup(expression: x => x.UpdatePackageItemAsync(updatedPackageItem: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()))
@@ -70,38 +64,7 @@ expression: x => x.UpdatePackageItemAsync(updatedPackageItem: It.IsAny<cCoder.Da
 times: Times.Once
         );
 
-        packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
         packageItemBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
-    {
-        // Given
-        PackageItem packageItem = CreateRandomPackageItem();
-
-        packageItemBrokerMock.Setup(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()))
-            .Returns(value: (int?)7);
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await packageItemService.UpdatePackageItemAsync(updatedPackageItem: packageItem);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
-        packageItemBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "PackageItem_update"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

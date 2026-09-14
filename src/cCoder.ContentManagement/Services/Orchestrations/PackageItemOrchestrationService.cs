@@ -10,7 +10,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class PackageItemOrchestrationService(
     IPackageItemProcessingService processingService,
-    IPackageItemEventProcessingService eventService) : IPackageItemOrchestrationService
+    IPackageItemEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IPackageItemOrchestrationService
 {
     public PackageItem GetPackageItem(Guid packageItemId) =>
         TryCatch<PackageItem>(operation: () =>
@@ -30,8 +32,13 @@ internal partial class PackageItemOrchestrationService(
         TryCatch<PackageItem>(operation: async () =>
     {
         ValidatePackageItemOnAdd(inputs: [newPackageItem]);
+        Authorize(privilege: "PackageItem_create");
         PackageItem result = await processingService.AddPackageItemAsync(newPackageItem: newPackageItem);
-        await eventService.RaisePackageItemAddEventAsync(entity: result);
+
+        await eventService.RaisePackageItemAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -40,8 +47,13 @@ internal partial class PackageItemOrchestrationService(
         TryCatch<PackageItem>(operation: async () =>
     {
         ValidatePackageItemOnUpdate(inputs: [updatedPackageItem]);
+        Authorize(privilege: "PackageItem_update");
         PackageItem result = await processingService.UpdatePackageItemAsync(updatedPackageItem: updatedPackageItem);
-        await eventService.RaisePackageItemUpdateEventAsync(entity: result);
+
+        await eventService.RaisePackageItemUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -51,7 +63,12 @@ internal partial class PackageItemOrchestrationService(
     {
         ValidateDeleteAsync(inputs: [packageItemId]);
         PackageItem entity = processingService.GetPackageItem(packageItemId: packageItemId);
-        await eventService.RaisePackageItemDeleteEventAsync(entity: entity);
+        Authorize(privilege: "PackageItem_delete");
+
+        await eventService.RaisePackageItemDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(packageItemId: packageItemId);
 
     }, isValueTask: true);
@@ -60,13 +77,40 @@ internal partial class PackageItemOrchestrationService(
         TryCatch<IEnumerable<OperationResult<PackageItem>>>(operation: () =>
     {
         ValidateOrUpdatePackageItemResultOnAdd(inputs: [newPackageItem]);
-        return processingService.AddOrUpdatePackageItemResult(newPackageItem: newPackageItem);
+        PackageItem[] packageItems = newPackageItem.ToArray();
+
+        foreach (PackageItem packageItem in packageItems)
+        {
+            Authorize(privilege: packageItem.Id == Guid.Empty
+                ? "PackageItem_create"
+                : "PackageItem_update");
+        }
+
+        return processingService.AddOrUpdatePackageItemResult(newPackageItem: packageItems);
     }, isValueTask: true);
 
     public ValueTask DeleteAllPackageItemAsync(IEnumerable<PackageItem> deletedPackageItem) =>
         TryCatch(operation: () =>
     {
         ValidateAllPackageItemOnDelete(inputs: [deletedPackageItem]);
-        return processingService.DeleteAllPackageItemAsync(deletedPackageItem: deletedPackageItem);
+        PackageItem[] packageItems = deletedPackageItem.ToArray();
+
+        foreach (PackageItem packageItem in packageItems)
+        {
+            Authorize(privilege: "PackageItem_delete");
+        }
+
+        return processingService.DeleteAllPackageItemAsync(deletedPackageItem: packageItems);
     }, isValueTask: true);
+
+    private void Authorize(string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = null,
+                    Privilege = privilege
+                }
+            });
 }

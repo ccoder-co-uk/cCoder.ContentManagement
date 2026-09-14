@@ -28,14 +28,20 @@ public partial class AppEventProcessingServiceTests
         App app = CreateRandomApp();
 
         appEventServiceMock
-            .Setup(expression: x => x.RaiseAppDeleteEventAsync(app: app))
+            .Setup(expression: x => x.RaiseAppDeleteEventAsync(
+                app: app,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseAppDeleteEventAsync(app: app);
+        await service.RaiseAppDeleteEventAsync(
+            app: app,
+            userId: CurrentUserId);
 
         // Then
-        appEventServiceMock.Verify(expression: x => x.RaiseAppDeleteEventAsync(app: app), times: Times.Once);
+        appEventServiceMock.Verify(expression: x => x.RaiseAppDeleteEventAsync(
+            app: app,
+            userId: CurrentUserId), times: Times.Once);
         appEventServiceMock.VerifyNoOtherCalls();
     }
 

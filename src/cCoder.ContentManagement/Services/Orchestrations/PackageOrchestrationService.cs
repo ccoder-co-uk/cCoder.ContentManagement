@@ -12,7 +12,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 internal partial class PackageOrchestrationService(
     IPackageProcessingService processingService,
     IPackageItemProcessingService packageItemProcessingService,
-    IPackageEventProcessingService eventService) : IPackageOrchestrationService
+    IPackageEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IPackageOrchestrationService
 {
     public Package GetPackage(Guid packageId) =>
         TryCatch<Package>(operation: () =>
@@ -33,9 +35,14 @@ internal partial class PackageOrchestrationService(
     {
         ValidatePackageOnAdd(inputs: [newPackage]);
         ValidatePackage(package: newPackage, parameterName: "entity");
+        Authorize(privilege: "Package_create");
 
         Package result = await processingService.AddPackageAsync(newPackage: newPackage);
-        await eventService.RaisePackageAddEventAsync(entity: result);
+
+        await eventService.RaisePackageAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -45,10 +52,15 @@ internal partial class PackageOrchestrationService(
     {
         ValidatePackageOnUpdate(inputs: [updatedPackage]);
         ValidatePackage(package: updatedPackage, parameterName: "entity");
+        Authorize(privilege: "Package_update");
 
         Package result = await processingService.UpdatePackageAsync(updatedPackage: updatedPackage);
         await SynchronizePackageItemsAsync(updatedPackage: updatedPackage, packageId: result.Id);
-        await eventService.RaisePackageUpdateEventAsync(entity: result);
+
+        await eventService.RaisePackageUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -60,7 +72,12 @@ internal partial class PackageOrchestrationService(
         ValidateId(packageId: packageId, parameterName: "id");
 
         Package entity = processingService.GetPackage(packageId: packageId);
-        await eventService.RaisePackageDeleteEventAsync(entity: entity);
+        Authorize(privilege: "Package_delete");
+
+        await eventService.RaisePackageDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(packageId: packageId);
 
     }, isValueTask: true);
@@ -76,6 +93,13 @@ internal partial class PackageOrchestrationService(
         bool[] existingPackages = packages
             .Select(selector: package => package.Id != Guid.Empty)
             .ToArray();
+
+        foreach (bool existingPackage in existingPackages)
+        {
+            Authorize(privilege: existingPackage
+                ? "Package_update"
+                : "Package_create");
+        }
 
         OperationResult<Package>[] results = (
             await processingService.AddOrUpdatePackageResult(newPackage: packages))
@@ -98,7 +122,16 @@ internal partial class PackageOrchestrationService(
         TryCatch(operation: () =>
     {
         ValidateAllPackageOnDelete(inputs: [deletedPackage]);
-        return processingService.DeleteAllPackageAsync(deletedPackage: ValidatePackages(packages: deletedPackage, parameterName: "items"));
+        Package[] packages = ValidatePackages(
+            packages: deletedPackage,
+            parameterName: "items").ToArray();
+
+        foreach (Package package in packages)
+        {
+            Authorize(privilege: "Package_delete");
+        }
+
+        return processingService.DeleteAllPackageAsync(deletedPackage: packages);
     }, isValueTask: true);
 
     private static int ValidateAppId(int appId, string parameterName)
@@ -140,6 +173,17 @@ internal partial class PackageOrchestrationService(
 
         return packages;
     }
+
+    private void Authorize(string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = null,
+                    Privilege = privilege
+                }
+            });
 
     private async ValueTask SynchronizePackageItemsAsync(
         Package updatedPackage,

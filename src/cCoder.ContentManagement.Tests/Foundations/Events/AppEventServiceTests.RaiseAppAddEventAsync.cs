@@ -37,7 +37,9 @@ public partial class AppEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseAppAddEventAsync(app: entity);
+        await service.RaiseAppAddEventAsync(
+            app: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class AppEventServiceTests
 expression: x => x.RaiseAppAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.App>>()),
 times: Times.Once
         );
-
-        appEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         appEventBrokerMock.VerifyNoOtherCalls();
     }

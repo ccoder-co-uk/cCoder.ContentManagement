@@ -13,10 +13,6 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using System.Security;
-
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -28,15 +24,13 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class ComponentServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForDeleteAsync()
+    public async Task ShouldDelegateToBrokerWhenDeleteAsync()
     {
         // Given
         Component component = CreateRandomComponent(id: 9, appId: 7);
 
         componentBrokerMock.Setup(expression: x => x.GetAllComponents())
             .Returns(value: new[] { component }.AsQueryable());
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"));
 
         componentBrokerMock.Setup(expression: x => x.DeleteComponentAsync(deletedComponent: It.IsAny<CmsDataModels.Component>()))
             .ReturnsAsync(value: 1);
@@ -48,36 +42,6 @@ public partial class ComponentServiceTests
         componentBrokerMock.Verify(expression: x => x.GetAllComponents(), times: Times.Once);
         componentBrokerMock.Verify(expression: x => x.DeleteComponentAsync(deletedComponent: It.Is<CmsDataModels.Component>(match: actual => actual.Id == component.Id)), times: Times.Once);
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
-    {
-        // Given
-        Component component = CreateRandomComponent(id: 9, appId: 7);
-
-        componentBrokerMock.Setup(expression: x => x.GetAllComponents())
-            .Returns(value: new[] { component }.AsQueryable());
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await componentService.DeleteAsync(componentId: 9);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        componentBrokerMock.Verify(expression: x => x.GetAllComponents(), times: Times.Once);
-        componentBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_delete"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

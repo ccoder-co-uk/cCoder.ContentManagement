@@ -28,14 +28,20 @@ public partial class LayoutEventProcessingServiceTests
         Layout entity = CreateRandomLayout();
 
         layoutEventServiceMock
-            .Setup(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseLayoutUpdateEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseLayoutUpdateEventAsync(layout: entity);
+        await service.RaiseLayoutUpdateEventAsync(
+            layout: entity,
+            userId: CurrentUserId);
 
         // Then
-        layoutEventServiceMock.Verify(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity), times: Times.Once);
+        layoutEventServiceMock.Verify(expression: x => x.RaiseLayoutUpdateEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
         layoutEventServiceMock.VerifyNoOtherCalls();
     }
 

@@ -34,7 +34,7 @@ public partial class PackageItemOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         packageItemEventProcessingServiceMock
-            .Setup(expression: x => x.RaisePackageItemDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePackageItemDeleteEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +44,7 @@ public partial class PackageItemOrchestrationServiceTests
         packageItemProcessingServiceMock.Verify(expression: x => x.GetPackageItem(packageItemId: id), times: Times.Once);
         packageItemProcessingServiceMock.Verify(expression: x => x.DeleteAsync(packageItemId: id), times: Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
-        packageItemEventProcessingServiceMock.Verify(expression: x => x.RaisePackageItemDeleteEventAsync(entity: entity), times: Times.Once);
+        packageItemEventProcessingServiceMock.Verify(expression: x => x.RaisePackageItemDeleteEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 

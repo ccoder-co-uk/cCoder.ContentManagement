@@ -25,11 +25,13 @@ public partial class ComponentEventProcessingServiceTests
 {
     private readonly Mock<IComponentEventService> componentEventServiceMock;
     private readonly ComponentEventProcessingService service;
+    private const string CurrentUserId = "test-user";
 
     public ComponentEventProcessingServiceTests()
     {
         componentEventServiceMock = new Mock<IComponentEventService>(behavior: MockBehavior.Strict);
-        service = new ComponentEventProcessingService(eventService: componentEventServiceMock.Object);
+        service = new ComponentEventProcessingService(
+            eventService: componentEventServiceMock.Object);
     }
 
     private static Component CreateRandomComponent() =>

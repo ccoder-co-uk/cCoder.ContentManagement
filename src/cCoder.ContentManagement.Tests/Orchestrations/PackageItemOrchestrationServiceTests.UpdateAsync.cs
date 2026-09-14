@@ -31,7 +31,7 @@ public partial class PackageItemOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         packageItemEventProcessingServiceMock
-            .Setup(expression: x => x.RaisePackageItemUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePackageItemUpdateEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -43,7 +43,7 @@ public partial class PackageItemOrchestrationServiceTests
 
         packageItemProcessingServiceMock.Verify(expression: x => x.UpdatePackageItemAsync(updatedPackageItem: entity), times: Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
-        packageItemEventProcessingServiceMock.Verify(expression: x => x.RaisePackageItemUpdateEventAsync(entity: entity), times: Times.Once);
+        packageItemEventProcessingServiceMock.Verify(expression: x => x.RaisePackageItemUpdateEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 

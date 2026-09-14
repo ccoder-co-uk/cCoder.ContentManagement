@@ -13,10 +13,6 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using System.Security;
-
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -28,18 +24,13 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class ContentServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForDeleteAsync()
+    public async Task ShouldDelegateToBrokerWhenDeleteAsync()
     {
         // Given
         Content content = CreateRandomContent(id: 9);
 
         contentBrokerMock.Setup(expression: x => x.GetAllContents())
             .Returns(value: new[] { content }.AsQueryable());
-
-        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
-            .Returns(value: new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"));
 
         contentBrokerMock
             .Setup(
@@ -62,43 +53,6 @@ times: Times.Once
         );
 
         contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(expression: x => x.GetAllPagesIgnoringFilters(), times: Times.Once);
-        pageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
-    {
-        // Given
-        Content content = CreateRandomContent(id: 9);
-
-        contentBrokerMock.Setup(expression: x => x.GetAllContents())
-            .Returns(value: new[] { content }.AsQueryable());
-
-        pageBrokerMock.Setup(expression: x => x.GetAllPagesIgnoringFilters())
-            .Returns(value: new[] { new CmsDataModels.Page { Id = content.PageId, AppId = 7 } }.AsQueryable());
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await contentService.DeleteAsync(contentId: 9);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        contentBrokerMock.Verify(expression: x => x.GetAllContents(), times: Times.Once);
-        contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.Verify(expression: x => x.GetAllPagesIgnoringFilters(), times: Times.Once);
-        pageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Content_delete"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

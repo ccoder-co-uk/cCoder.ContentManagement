@@ -55,7 +55,7 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
         CommonObject[] newCommonObjects) =>
         TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: async () =>
     {
-        ValidateImportCommonObjectResultAsync(inputs: [newCommonObjects]);
+        ValidateAllCommonObjectsOnAdd(inputs: [newCommonObjects]);
 
         ValidateCommonObjects(
             commonObjects: newCommonObjects,

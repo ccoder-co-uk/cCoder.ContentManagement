@@ -7,7 +7,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface IPackageItemEventBroker : IAuthenticatedEventBroker
+public interface IPackageItemEventBroker
 {
     ValueTask RaisePackageItemAddEventAsync(EventMessage<PackageItem> message);
 

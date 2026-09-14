@@ -75,7 +75,11 @@ internal partial class AppOrchestrationService(
         ValidateAppOnAdd(inputs: [newApp]);
         ValidateApp(app: newApp, parameterName: "entity");
         App result = await processingService.AddAppAsync(newApp: newApp);
-        await eventService.RaiseAppAddEventAsync(app: result);
+
+        await eventService.RaiseAppAddEventAsync(
+            app: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -86,7 +90,11 @@ internal partial class AppOrchestrationService(
         ValidateAppOnUpdate(inputs: [updatedApp]);
         ValidateApp(app: updatedApp, parameterName: "entity");
         App result = await processingService.UpdateAppAsync(updatedApp: updatedApp);
-        await eventService.RaiseAppUpdateEventAsync(app: updatedApp);
+
+        await eventService.RaiseAppUpdateEventAsync(
+            app: updatedApp,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -115,7 +123,11 @@ internal partial class AppOrchestrationService(
 
         if (app != null)
         {
-            await eventService.RaiseAppDeleteEventAsync(app: app);
+
+            await eventService.RaiseAppDeleteEventAsync(
+                app: app,
+                userId: authorizationProcessingService.GetCurrentUserId());
+
         }
 
     }, isValueTask: true);

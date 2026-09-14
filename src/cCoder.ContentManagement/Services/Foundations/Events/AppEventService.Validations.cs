@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies;
 using cCoder.Data.Models.CMS;
 using System.ComponentModel.DataAnnotations;
 
@@ -21,11 +20,14 @@ internal partial class AppEventService
     }
 
     private static void ValidateRaiseAppAddEventAsync(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateRaiseAppUpdateEventAsync(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateRaiseAppDeleteEventAsync(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
+
+    private static void Validate(params object[] inputs) =>
+        _ = inputs;
 }

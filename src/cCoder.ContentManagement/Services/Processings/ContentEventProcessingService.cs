@@ -8,35 +8,45 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class ContentEventProcessingService(IContentEventService eventService) : IContentEventProcessingService
+internal partial class ContentEventProcessingService(IContentEventService eventService)
+    : IContentEventProcessingService
 {
-    public ValueTask RaiseContentAddEventAsync(Content content) =>
+    public ValueTask RaiseContentAddEventAsync(Content content, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseContentAddEventAsync(inputs: [content]);
+        ValidateRaiseContentAddEventAsync(inputs: [content, userId]);
         ValidateContent(content: content, parameterName: "entity");
 
-        return eventService.RaiseContentAddEventAsync(entity: content);
+
+        return eventService.RaiseContentAddEventAsync(
+            entity: content,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseContentUpdateEventAsync(Content content) =>
+    public ValueTask RaiseContentUpdateEventAsync(Content content, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseContentUpdateEventAsync(inputs: [content]);
+        ValidateRaiseContentUpdateEventAsync(inputs: [content, userId]);
         ValidateContent(content: content, parameterName: "entity");
 
-        return eventService.RaiseContentUpdateEventAsync(entity: content);
+
+        return eventService.RaiseContentUpdateEventAsync(
+            entity: content,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseContentDeleteEventAsync(Content content) =>
+    public ValueTask RaiseContentDeleteEventAsync(Content content, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseContentDeleteEventAsync(inputs: [content]);
+        ValidateRaiseContentDeleteEventAsync(inputs: [content, userId]);
         ValidateContent(content: content, parameterName: "entity");
 
-        return eventService.RaiseContentDeleteEventAsync(entity: content);
+
+        return eventService.RaiseContentDeleteEventAsync(
+            entity: content,
+            userId: userId);
 
     }, isValueTask: true);
 

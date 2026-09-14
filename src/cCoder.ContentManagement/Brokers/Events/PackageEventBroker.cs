@@ -8,15 +8,15 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class PackageEventBroker(IAuthenticatedEventHub eventHub)
-    : AuthenticatedEventBroker(eventHub), IPackageEventBroker
+internal sealed class PackageEventBroker(IEventHub eventHub)
+    : IPackageEventBroker
 {
     public ValueTask RaisePackageAddEventAsync(EventMessage<Package> message) =>
-        RaiseEventAsync(name: "package_add", message: message);
+        eventHub.RaiseEventAsync(name: "package_add", message: message);
 
     public ValueTask RaisePackageUpdateEventAsync(EventMessage<Package> message) =>
-        RaiseEventAsync(name: "package_update", message: message);
+        eventHub.RaiseEventAsync(name: "package_update", message: message);
 
     public ValueTask RaisePackageDeleteEventAsync(EventMessage<Package> message) =>
-        RaiseEventAsync(name: "package_delete", message: message);
+        eventHub.RaiseEventAsync(name: "package_delete", message: message);
 }

@@ -13,13 +13,16 @@ internal sealed partial class PackageImportEventProcessingService(
 {
     public ValueTask RaiseImportAsync<T>(
         string eventName,
-        PackageItemImportEvent<T> import) =>
+        PackageItemImportEvent<T> import,
+        string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseImportAsync(inputs: [eventName, import]);
+        ValidateRaiseImportAsync(inputs: [eventName, import, userId]);
 
         return packageImportEventService.RaiseImportAsync(
             eventName: eventName,
-            import: import);
+            import: import,
+            userId: userId);
+
     }, isValueTask: true);
 }

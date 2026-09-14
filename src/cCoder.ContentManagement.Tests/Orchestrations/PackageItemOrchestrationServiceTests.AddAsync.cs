@@ -13,6 +13,9 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using System.Security;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -31,7 +34,7 @@ public partial class PackageItemOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         packageItemEventProcessingServiceMock
-            .Setup(expression: x => x.RaisePackageItemAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePackageItemAddEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -43,7 +46,32 @@ public partial class PackageItemOrchestrationServiceTests
 
         packageItemProcessingServiceMock.Verify(expression: x => x.AddPackageItemAsync(newPackageItem: entity), times: Times.Once);
         packageItemProcessingServiceMock.VerifyNoOtherCalls();
-        packageItemEventProcessingServiceMock.Verify(expression: x => x.RaisePackageItemAddEventAsync(entity: entity), times: Times.Once);
+        packageItemEventProcessingServiceMock.Verify(expression: x => x.RaisePackageItemAddEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
+        packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task PackageItem_WhenUserLacksCreatePrivilege_IsNotPersisted()
+    {
+        // Given
+        PackageItem entity = CreateRandomPackageItem();
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                It.Is<AuthorizationContext>(context =>
+                    context.Request.AppId == null
+                    && context.Request.Privilege == "PackageItem_create")))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
+
+        // When
+        Func<Task> action = async () =>
+            await orchestrationService.AddPackageItemAsync(newPackageItem: entity);
+
+        // Then
+        await action.Should()
+            .ThrowAsync<ContentManagementSecurityException>();
+
+        packageItemProcessingServiceMock.VerifyNoOtherCalls();
         packageItemEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 

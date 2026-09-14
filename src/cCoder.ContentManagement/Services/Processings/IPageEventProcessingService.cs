@@ -9,10 +9,10 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface IPageEventProcessingService
 {
-    ValueTask RaisePageAddEventAsync(Page entity);
+    ValueTask RaisePageAddEventAsync(Page entity, string userId);
 
-    ValueTask RaisePageUpdateEventAsync(Page entity);
+    ValueTask RaisePageUpdateEventAsync(Page entity, string userId);
 
-    ValueTask RaisePageDeleteEventAsync(Page entity);
+    ValueTask RaisePageDeleteEventAsync(Page entity, string userId);
 
 }

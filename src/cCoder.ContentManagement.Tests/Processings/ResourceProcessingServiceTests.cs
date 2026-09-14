@@ -16,24 +16,16 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class ResourceProcessingServiceTests
 {
     private readonly Mock<IResourceService> resourceServiceMock = new();
-    private Mock<IResourceService> authorizationManagerMock => resourceServiceMock;
     private readonly ResourceProcessingService resourceProcessingService;
 
     public ResourceProcessingServiceTests()
     {
-        resourceServiceMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: TestUsers.WithoutPrivileges().Id);
-
         resourceProcessingService = new ResourceProcessingService(
 service: resourceServiceMock.Object
         );

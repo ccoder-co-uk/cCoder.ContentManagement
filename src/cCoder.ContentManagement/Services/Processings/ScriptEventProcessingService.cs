@@ -8,35 +8,45 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class ScriptEventProcessingService(IScriptEventService eventService) : IScriptEventProcessingService
+internal partial class ScriptEventProcessingService(IScriptEventService eventService)
+    : IScriptEventProcessingService
 {
-    public ValueTask RaiseScriptAddEventAsync(Script script) =>
+    public ValueTask RaiseScriptAddEventAsync(Script script, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseScriptAddEventAsync(inputs: [script]);
+        ValidateRaiseScriptAddEventAsync(inputs: [script, userId]);
         ValidateScript(script: script, parameterName: "entity");
 
-        return eventService.RaiseScriptAddEventAsync(entity: script);
+
+        return eventService.RaiseScriptAddEventAsync(
+            entity: script,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseScriptUpdateEventAsync(Script script) =>
+    public ValueTask RaiseScriptUpdateEventAsync(Script script, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseScriptUpdateEventAsync(inputs: [script]);
+        ValidateRaiseScriptUpdateEventAsync(inputs: [script, userId]);
         ValidateScript(script: script, parameterName: "entity");
 
-        return eventService.RaiseScriptUpdateEventAsync(entity: script);
+
+        return eventService.RaiseScriptUpdateEventAsync(
+            entity: script,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseScriptDeleteEventAsync(Script script) =>
+    public ValueTask RaiseScriptDeleteEventAsync(Script script, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseScriptDeleteEventAsync(inputs: [script]);
+        ValidateRaiseScriptDeleteEventAsync(inputs: [script, userId]);
         ValidateScript(script: script, parameterName: "entity");
 
-        return eventService.RaiseScriptDeleteEventAsync(entity: script);
+
+        return eventService.RaiseScriptDeleteEventAsync(
+            entity: script,
+            userId: userId);
 
     }, isValueTask: true);
 

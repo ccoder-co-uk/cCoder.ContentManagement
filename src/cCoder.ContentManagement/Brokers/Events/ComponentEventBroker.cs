@@ -8,15 +8,15 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class ComponentEventBroker(IAuthenticatedEventHub eventHub)
-    : AuthenticatedEventBroker(eventHub), IComponentEventBroker
+internal sealed class ComponentEventBroker(IEventHub eventHub)
+    : IComponentEventBroker
 {
     public ValueTask RaiseComponentAddEventAsync(EventMessage<Component> message) =>
-        RaiseEventAsync(name: "component_add", message: message);
+        eventHub.RaiseEventAsync(name: "component_add", message: message);
 
     public ValueTask RaiseComponentUpdateEventAsync(EventMessage<Component> message) =>
-        RaiseEventAsync(name: "component_update", message: message);
+        eventHub.RaiseEventAsync(name: "component_update", message: message);
 
     public ValueTask RaiseComponentDeleteEventAsync(EventMessage<Component> message) =>
-        RaiseEventAsync(name: "component_delete", message: message);
+        eventHub.RaiseEventAsync(name: "component_delete", message: message);
 }

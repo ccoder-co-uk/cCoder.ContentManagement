@@ -11,16 +11,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBroker) : IPageRoleEventService
 {
-    public ValueTask RaisePageRoleAddEventAsync(PageRole pageRole) =>
+    public ValueTask RaisePageRoleAddEventAsync(PageRole pageRole, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageRoleAddEventAsync(inputs: [pageRole]);
+        ValidateRaisePageRoleAddEventAsync(inputs: [pageRole, userId]);
 
         EventMessage<PageRole> message = new EventMessage<PageRole>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = pageRoleEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = pageRole
         };
@@ -29,16 +29,16 @@ internal partial class PageRoleEventService(IPageRoleEventBroker pageRoleEventBr
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageRoleDeleteEventAsync(PageRole pageRole) =>
+    public ValueTask RaisePageRoleDeleteEventAsync(PageRole pageRole, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageRoleDeleteEventAsync(inputs: [pageRole]);
+        ValidateRaisePageRoleDeleteEventAsync(inputs: [pageRole, userId]);
 
         EventMessage<PageRole> message = new EventMessage<PageRole>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = pageRoleEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = pageRole
         };

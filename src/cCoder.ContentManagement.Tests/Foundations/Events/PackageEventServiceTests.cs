@@ -31,9 +31,6 @@ public partial class PackageEventServiceTests
         packageEventBrokerMock = new Mock<IPackageEventBroker>(behavior: MockBehavior.Strict);
         packageEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        packageEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.PackageEventService(
 packageEventBroker: packageEventBrokerMock.Object
         );

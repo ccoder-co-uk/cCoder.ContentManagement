@@ -11,17 +11,17 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PageEventService(IPageEventBroker pageEventBroker) : IPageEventService
 {
-    public ValueTask RaisePageAddEventAsync(Page page) =>
+    public ValueTask RaisePageAddEventAsync(Page page, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageAddEventAsync(inputs: [page]);
+        ValidateRaisePageAddEventAsync(inputs: [page, userId]);
         ValidatePage(page: page, parameterName: "entity");
 
         EventMessage<Page> message = new EventMessage<Page>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = pageEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = page
         };
@@ -30,17 +30,17 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker) : IPag
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageUpdateEventAsync(Page page) =>
+    public ValueTask RaisePageUpdateEventAsync(Page page, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageUpdateEventAsync(inputs: [page]);
+        ValidateRaisePageUpdateEventAsync(inputs: [page, userId]);
         ValidatePage(page: page, parameterName: "entity");
 
         EventMessage<Page> message = new EventMessage<Page>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = pageEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = page
         };
@@ -49,17 +49,17 @@ internal partial class PageEventService(IPageEventBroker pageEventBroker) : IPag
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageDeleteEventAsync(Page page) =>
+    public ValueTask RaisePageDeleteEventAsync(Page page, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageDeleteEventAsync(inputs: [page]);
+        ValidateRaisePageDeleteEventAsync(inputs: [page, userId]);
         ValidatePage(page: page, parameterName: "entity");
 
         EventMessage<Page> message = new EventMessage<Page>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = pageEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = page
         };

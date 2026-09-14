@@ -13,7 +13,6 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using System.Security;
 
 
 
@@ -28,7 +27,7 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class PackageServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForDeleteAsync()
+    public async Task ShouldDelegateToBrokerWhenDeleteAsync()
     {
         // Given
         Guid packageId = Guid.NewGuid();
@@ -36,8 +35,6 @@ public partial class PackageServiceTests
 
         packageBrokerMock.Setup(expression: x => x.GetAllPackages())
             .Returns(value: new[] { package }.AsQueryable());
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_delete"));
 
         packageBrokerMock
             .Setup(
@@ -63,37 +60,6 @@ times: Times.Once
         );
 
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_delete"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
-    {
-        // Given
-        Guid packageId = Guid.NewGuid();
-        Package package = CreateRandomPackage(id: packageId);
-
-        packageBrokerMock.Setup(expression: x => x.GetAllPackages())
-            .Returns(value: new[] { package }.AsQueryable());
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: null, privilege: "Package_delete"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await packageService.DeleteAsync(packageId: packageId);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        packageBrokerMock.Verify(expression: x => x.GetAllPackages(), times: Times.Once);
-        packageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_delete"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

@@ -41,7 +41,6 @@ public partial class ScriptServiceTests
 
         scriptBrokerMock.Verify(expression: x => x.GetAllScripts(), times: Times.Once);
         scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
+}
 
 }

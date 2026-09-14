@@ -18,7 +18,7 @@ internal sealed partial class AppManagerAggregationService(
         AppManagerContext appManagerContext) =>
         TryCatch(operation: () =>
     {
-        ValidateGetAppManagerContext(inputs: [appManagerContext]);
+        ValidateAppManagerContextOnGet(inputs: [appManagerContext]);
         ValidateAppManagerContext(appManagerContext: appManagerContext);
 
         appManagerContext.App = appOrchestrationService.GetApp(
@@ -31,7 +31,7 @@ internal sealed partial class AppManagerAggregationService(
         AppManagerContext appManagerContext) =>
         TryCatch(operation: () =>
     {
-        ValidateGetByDomainAppManagerContext(inputs: [appManagerContext]);
+        ValidateByDomainAppManagerContextOnGet(inputs: [appManagerContext]);
         ValidateAppManagerContext(appManagerContext: appManagerContext);
 
         appManagerContext.App = appOrchestrationService.GetByDomainApp(
@@ -45,7 +45,7 @@ internal sealed partial class AppManagerAggregationService(
         AppManagerContext appManagerContext) =>
         TryCatch(operation: () =>
     {
-        ValidateGetAllAppManagerContext(inputs: [appManagerContext]);
+        ValidateAllAppManagerContextOnGet(inputs: [appManagerContext]);
         ValidateAppManagerContext(appManagerContext: appManagerContext);
 
         appManagerContext.Apps = appOrchestrationService.GetAllApp(
@@ -58,7 +58,7 @@ internal sealed partial class AppManagerAggregationService(
         AppManagerContext newAppManagerContext) =>
         TryCatch(operation: async () =>
     {
-        ValidateAddAppManagerContextAsync(inputs: [newAppManagerContext]);
+        ValidateAppManagerContextOnAdd(inputs: [newAppManagerContext]);
         ValidateAppManagerContext(appManagerContext: newAppManagerContext);
 
         newAppManagerContext.App = await appOrchestrationService.AddAppAsync(
@@ -71,7 +71,7 @@ internal sealed partial class AppManagerAggregationService(
         AppManagerContext updatedAppManagerContext) =>
         TryCatch(operation: async () =>
     {
-        ValidateUpdateAppManagerContextAsync(inputs: [updatedAppManagerContext]);
+        ValidateAppManagerContextOnUpdate(inputs: [updatedAppManagerContext]);
         ValidateAppManagerContext(appManagerContext: updatedAppManagerContext);
 
         updatedAppManagerContext.App = await appOrchestrationService.UpdateAppAsync(
@@ -84,7 +84,7 @@ internal sealed partial class AppManagerAggregationService(
         AppManagerContext deletedAppManagerContext) =>
         TryCatch(operation: async () =>
     {
-        ValidateDeleteAppManagerContextAsync(inputs: [deletedAppManagerContext]);
+        ValidateAppManagerContextOnDelete(inputs: [deletedAppManagerContext]);
         ValidateAppManagerContext(appManagerContext: deletedAppManagerContext);
 
         await appOrchestrationService.DeleteAsync(
@@ -95,7 +95,7 @@ internal sealed partial class AppManagerAggregationService(
         AppManagerContext appManagerContext) =>
         TryCatch(operation: () =>
     {
-        ValidateGetAdminAppManagerContext(inputs: [appManagerContext]);
+        ValidateAdminAppManagerContextOnGet(inputs: [appManagerContext]);
         ValidateAppManagerContext(appManagerContext: appManagerContext);
 
         appManagerContext.IsAdmin = appOrchestrationService.IsAdminApp(
@@ -109,7 +109,7 @@ internal sealed partial class AppManagerAggregationService(
         AppManagerContext appManagerContext) =>
         TryCatch(operation: () =>
     {
-        ValidateGetUsersAppManagerContext(inputs: [appManagerContext]);
+        ValidateUsersAppManagerContextOnGet(inputs: [appManagerContext]);
         ValidateAppManagerContext(appManagerContext: appManagerContext);
 
         App app = appOrchestrationService.GetApp(
@@ -128,7 +128,7 @@ internal sealed partial class AppManagerAggregationService(
         AppManagerContext updatedAppManagerContext) =>
         TryCatch(operation: async () =>
     {
-        ValidateUpdatePageOrderAppManagerContextAsync(inputs: [updatedAppManagerContext]);
+        ValidatePageOrderAppManagerContextOnUpdate(inputs: [updatedAppManagerContext]);
         ValidateAppManagerContext(appManagerContext: updatedAppManagerContext);
 
         await appOrchestrationService.UpdatePageOrderAppAsync(

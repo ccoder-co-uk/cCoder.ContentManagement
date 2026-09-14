@@ -29,14 +29,20 @@ public partial class CommonObjectEventProcessingServiceTests
         CommonObject entity = CreateRandomCommonObject();
 
         commonObjectEventServiceMock
-            .Setup(expression: x => x.RaiseCommonObjectAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseCommonObjectAddEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCommonObjectAddEventAsync(commonObject: entity);
+        await service.RaiseCommonObjectAddEventAsync(
+            commonObject: entity,
+            userId: CurrentUserId);
 
         // Then
-        commonObjectEventServiceMock.Verify(expression: x => x.RaiseCommonObjectAddEventAsync(entity: entity), times: Times.Once);
+        commonObjectEventServiceMock.Verify(expression: x => x.RaiseCommonObjectAddEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
         commonObjectEventServiceMock.VerifyNoOtherCalls();
     }
 

@@ -13,6 +13,9 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using System.Security;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -32,7 +35,7 @@ public partial class LayoutOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         layoutEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +47,41 @@ public partial class LayoutOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         layoutProcessingServiceMock.Verify(expression: x => x.UpdateLayoutAsync(updatedLayout: entity), times: Times.Once);
-        layoutEventProcessingServiceMock.Verify(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity), times: Times.Once);
+        layoutEventProcessingServiceMock.Verify(expression: x => x.RaiseLayoutUpdateEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+                It.Is<AuthorizationContext>(context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Layout_update")),
+            times: Times.Once);
+
+        entity.LastUpdatedBy.Should().Be(CurrentUserId);
+    }
+
+    [Fact]
+    public async Task Layout_WhenUserLacksUpdatePrivilege_IsNotPersisted()
+    {
+        // Given
+        Layout entity = CreateRandomLayout();
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                It.Is<AuthorizationContext>(context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Layout_update")))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
+
+        // When
+        Func<Task> action = async () =>
+            await orchestrationService.UpdateLayoutAsync(updatedLayout: entity);
+
+        // Then
+        await action.Should()
+            .ThrowAsync<ContentManagementSecurityException>();
+
+        layoutProcessingServiceMock.VerifyNoOtherCalls();
+        layoutEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

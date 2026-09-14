@@ -7,7 +7,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface IResourceEventBroker : IAuthenticatedEventBroker
+public interface IResourceEventBroker
 {
     ValueTask RaiseResourceAddEventAsync(EventMessage<Resource> message);
 

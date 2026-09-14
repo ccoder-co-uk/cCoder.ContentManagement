@@ -30,7 +30,7 @@ public partial class ContentOrchestrationServiceTests
         contentProcessingServiceMock.Setup(expression: x => x.GetContent(contentId: entities[0].Id))
             .Returns(value: entities[0]);
 
-        contentEventProcessingServiceMock.Setup(expression: x => x.RaiseContentDeleteEventAsync(entity: entities[0]))
+        contentEventProcessingServiceMock.Setup(expression: x => x.RaiseContentDeleteEventAsync(entity: entities[0], userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         contentProcessingServiceMock.Setup(expression: x => x.DeleteAsync(contentId: entities[0].Id))
@@ -41,7 +41,7 @@ public partial class ContentOrchestrationServiceTests
 
         // Then
         contentProcessingServiceMock.Verify(expression: x => x.GetContent(contentId: entities[0].Id), times: Times.Once);
-        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentDeleteEventAsync(entity: entities[0], userId: CurrentUserId), times: Times.Once);
         contentProcessingServiceMock.Verify(expression: x => x.DeleteAsync(contentId: entities[0].Id), times: Times.Once);
     }
 

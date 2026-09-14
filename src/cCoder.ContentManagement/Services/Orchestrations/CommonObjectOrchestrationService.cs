@@ -9,7 +9,11 @@ using cCoder.ContentManagement.Services.Processings;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingService processingService, ICommonObjectEventProcessingService eventService) : ICommonObjectOrchestrationService
+internal partial class CommonObjectOrchestrationService(
+    ICommonObjectProcessingService processingService,
+    ICommonObjectEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : ICommonObjectOrchestrationService
 {
     public CommonObject[] DeserializeCommonObjects(object payload) =>
         TryCatch<CommonObject[]>(operation: () =>
@@ -41,7 +45,7 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
         CommonObject[] newCommonObjects) =>
         TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: async () =>
     {
-        ValidateImportCommonObjectResultAsync(inputs: [newCommonObjects]);
+        ValidateAllCommonObjectsOnAdd(inputs: [newCommonObjects]);
 
         CommonObject[] validatedCommonObjects =
         [
@@ -64,8 +68,11 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
 
         if (importedObjects.Length > 0)
         {
+
             await eventService.RaiseCommonObjectsImportedEventAsync(
-                commonObjects: importedObjects);
+                commonObjects: importedObjects,
+                userId: authorizationProcessingService.GetCurrentUserId());
+
         }
 
         return results;
@@ -78,7 +85,11 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
         ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject]);
         ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "entity");
         CommonObject result = await processingService.UpdateCommonObjectAsync(updatedCommonObject: updatedCommonObject);
-        await eventService.RaiseCommonObjectUpdateEventAsync(entity: result);
+
+        await eventService.RaiseCommonObjectUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -89,7 +100,11 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
         ValidateDeleteAsync(inputs: [commonObjectId]);
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
         CommonObject entity = processingService.GetCommonObject(commonObjectId: commonObjectId);
-        await eventService.RaiseCommonObjectDeleteEventAsync(entity: entity);
+
+        await eventService.RaiseCommonObjectDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(commonObjectId: commonObjectId);
 
     }, isValueTask: true);

@@ -33,7 +33,7 @@ public partial class AppOrchestrationServiceTests
             .ReturnsAsync(valueFunction: (App app) => app);
 
         appEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseAppAddEventAsync(app: entity))
+            .Setup(expression: x => x.RaiseAppAddEventAsync(app: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -49,7 +49,7 @@ public partial class AppOrchestrationServiceTests
             times: Times.Once);
 
         appEventProcessingServiceMock.Verify(
-            expression: x => x.RaiseAppAddEventAsync(app: entity),
+            expression: x => x.RaiseAppAddEventAsync(app: entity, userId: CurrentUserId),
             times: Times.Once);
 
         appProcessingServiceMock.VerifyNoOtherCalls();

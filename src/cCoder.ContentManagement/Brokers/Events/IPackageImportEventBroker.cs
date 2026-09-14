@@ -7,7 +7,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal interface IPackageImportEventBroker : IAuthenticatedEventBroker
+internal interface IPackageImportEventBroker
 {
     ValueTask RaiseImportAsync<T>(
         string eventName,

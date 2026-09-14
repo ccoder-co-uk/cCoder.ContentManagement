@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Models.PageRendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Processings;
@@ -10,7 +9,7 @@ namespace cCoder.ContentManagement.Rendering.Services.Processings;
 internal sealed partial class MarkupRenderProcessingService
 {
     private static void ValidateRenderRenderSession(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateRenderSession(RenderSession session)
     {
@@ -33,4 +32,7 @@ internal sealed partial class MarkupRenderProcessingService
                 message: "Page rendering requires Page and Layout context.");
         }
     }
+
+    private static void Validate(params object[] inputs) =>
+        _ = inputs;
 }

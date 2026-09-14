@@ -13,7 +13,6 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using System.Security;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -25,14 +24,12 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class PackageServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
+    public async Task ShouldDelegateToBrokerWhenUpdateAsync()
     {
         // Given
         Package package = CreateRandomPackage();
 
         cCoder.Data.Models.Packaging.Package submitted = null;
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: null, privilege: "Package_update"));
 
         packageBrokerMock
             .Setup(expression: x => x.UpdatePackageAsync(updatedPackage: It.IsAny<cCoder.Data.Models.Packaging.Package>()))
@@ -84,32 +81,6 @@ public partial class PackageServiceTests
 
         packageBrokerMock.Verify(expression: x => x.UpdatePackageAsync(updatedPackage: It.IsAny<cCoder.Data.Models.Packaging.Package>()), times: Times.Once);
         packageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_update"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
-    {
-        // Given
-        Package package = CreateRandomPackage();
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: null, privilege: "Package_update"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await packageService.UpdatePackageAsync(updatedPackage: package);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        packageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: null, privilege: "Package_update"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

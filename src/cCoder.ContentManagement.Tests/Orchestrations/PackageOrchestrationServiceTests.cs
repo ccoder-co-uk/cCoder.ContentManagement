@@ -27,18 +27,29 @@ public partial class PackageOrchestrationServiceTests
     private readonly Mock<IPackageProcessingService> packageProcessingServiceMock;
     private readonly Mock<IPackageItemProcessingService> packageItemProcessingServiceMock;
     private readonly Mock<IPackageEventProcessingService> packageEventProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly PackageOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
 
     public PackageOrchestrationServiceTests()
     {
         packageProcessingServiceMock = new Mock<IPackageProcessingService>(behavior: MockBehavior.Strict);
         packageItemProcessingServiceMock = new Mock<IPackageItemProcessingService>(behavior: MockBehavior.Strict);
         packageEventProcessingServiceMock = new Mock<IPackageEventProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                It.IsAny<cCoder.ContentManagement.Models.AuthorizationContext>()));
 
         orchestrationService = new PackageOrchestrationService(
 processingService: packageProcessingServiceMock.Object,
 packageItemProcessingService: packageItemProcessingServiceMock.Object,
-eventService: packageEventProcessingServiceMock.Object
+eventService: packageEventProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 

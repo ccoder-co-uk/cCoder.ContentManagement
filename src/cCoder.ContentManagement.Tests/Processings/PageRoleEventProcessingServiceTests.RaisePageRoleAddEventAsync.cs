@@ -28,14 +28,20 @@ public partial class PageRoleEventProcessingServiceTests
         PageRole entity = CreateRandomPageRole();
 
         pageRoleEventServiceMock
-            .Setup(expression: x => x.RaisePageRoleAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePageRoleAddEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageRoleAddEventAsync(pageRole: entity);
+        await service.RaisePageRoleAddEventAsync(
+            pageRole: entity,
+            userId: CurrentUserId);
 
         // Then
-        pageRoleEventServiceMock.Verify(expression: x => x.RaisePageRoleAddEventAsync(entity: entity), times: Times.Once);
+        pageRoleEventServiceMock.Verify(expression: x => x.RaisePageRoleAddEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
         pageRoleEventServiceMock.VerifyNoOtherCalls();
     }
 

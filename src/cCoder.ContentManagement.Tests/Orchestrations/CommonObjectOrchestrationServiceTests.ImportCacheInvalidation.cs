@@ -34,6 +34,10 @@ public partial class CommonObjectOrchestrationServiceTests
             new(behavior: MockBehavior.Strict);
 
         Mock<ICommonObjectEventProcessingService> eventService = new();
+        Mock<IAuthorizationProcessingService> authorizationService = new();
+        authorizationService
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
 
         processingService
             .Setup(expression: service =>
@@ -43,7 +47,8 @@ public partial class CommonObjectOrchestrationServiceTests
 
         CommonObjectOrchestrationService service = new(
             processingService: processingService.Object,
-            eventService: eventService.Object);
+            eventService: eventService.Object,
+            authorizationProcessingService: authorizationService.Object);
 
         // When
         IEnumerable<OperationResult<CommonObject>> results =
@@ -60,7 +65,8 @@ public partial class CommonObjectOrchestrationServiceTests
                     items.Length == 1
                     && ReferenceEquals(
                         objA: items[0],
-                        objB: importedObject))),
+                        objB: importedObject)),
+                userId: CurrentUserId),
             times: Times.Once());
 
         processingService.VerifyAll();

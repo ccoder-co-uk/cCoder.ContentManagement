@@ -45,9 +45,7 @@ public partial class PackageItemServiceTests
             .BeEquivalentTo(expectation: expectedItems);
 
         packageItemBrokerMock.Verify(expression: x => x.GetAllPackageItems(), times: Times.Once);
-        packageItemBrokerMock.Verify(expression: x => x.GetAppId(entity: It.IsAny<cCoder.Data.Models.Packaging.PackageItem>()), times: Times.AtMostOnce());
         packageItemBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

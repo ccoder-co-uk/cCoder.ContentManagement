@@ -13,15 +13,10 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using System.Security;
-
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
 using CmsDataModels = cCoder.Data.Models.CMS;
-using SecurityDataModels = cCoder.Data.Models.Security;
 
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
@@ -29,18 +24,13 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class TemplateServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForAddAsync()
+    public async Task ShouldDelegateToBrokerWhenAddAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
         Template template = CreateRandomTemplate(id: 0);
 
         CmsDataModels.Template submitted = null;
 
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Template_create"));
 
         templateBrokerMock
             .Setup(expression: x =>
@@ -151,33 +141,6 @@ times: Times.Once
         );
 
         templateBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Template_create"), times: Times.Once);
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
-    {
-        // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
-        Template template = CreateRandomTemplate(id: 0);
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Template_create"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await templateService.AddTemplateAsync(newTemplate: template);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        templateBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Template_create"), times: Times.Once);
     }
 
 }

@@ -37,7 +37,9 @@ public partial class SubmissionEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseSubmissionUpdateEventAsync(submission: entity);
+        await service.RaiseSubmissionUpdateEventAsync(
+            submission: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class SubmissionEventServiceTests
 expression: x => x.RaiseSubmissionUpdateEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Submission>>()),
 times: Times.Once
         );
-
-        submissionEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         submissionEventBrokerMock.VerifyNoOtherCalls();
     }

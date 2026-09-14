@@ -37,7 +37,9 @@ public partial class PackageEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePackageDeleteEventAsync(package: entity);
+        await service.RaisePackageDeleteEventAsync(
+            package: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class PackageEventServiceTests
 expression: x => x.RaisePackageDeleteEventAsync(message: It.IsAny<EventMessage<cCoder.Data.Models.Packaging.Package>>()),
 times: Times.Once
         );
-
-        packageEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         packageEventBrokerMock.VerifyNoOtherCalls();
     }

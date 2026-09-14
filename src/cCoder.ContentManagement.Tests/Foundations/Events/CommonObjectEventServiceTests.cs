@@ -30,9 +30,6 @@ public partial class CommonObjectEventServiceTests
         commonObjectEventBrokerMock = new Mock<ICommonObjectEventBroker>(behavior: MockBehavior.Strict);
         commonObjectEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        commonObjectEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.CommonObjectEventService(
 commonObjectEventBroker: commonObjectEventBrokerMock.Object
         );

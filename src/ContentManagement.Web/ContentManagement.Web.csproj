@@ -7,7 +7,7 @@
     <WarningsNotAsErrors>NETSDK1233</WarningsNotAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.13.1130" PrivateAssets="all" />
+    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.14.1549" PrivateAssets="all" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="10.0.11" />
@@ -15,9 +15,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
     <PackageReference Include="cCoder.AppSecurity" Version="2026.8.28.1718" />
-    <PackageReference Include="cCoder.Eventing" Version="2026.8.27.1708" />
-    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.8.27.1708" />
-    <PackageReference Include="cCoder.Eventing.Http" Version="2026.8.27.1708" />
+    <PackageReference Include="cCoder.Eventing" Version="2026.9.14.1140" />
+    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.9.14.1140" />
+    <PackageReference Include="cCoder.Eventing.Http" Version="2026.9.14.1140" />
     <PackageReference Include="cCoder.Security" Version="2026.8.28.1335" />
     <PackageReference Include="cCoder.Security.Data" Version="2026.8.28.1335" />
   </ItemGroup>

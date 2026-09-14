@@ -12,7 +12,10 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class ContentOrchestrationService(
     IContentProcessingService processingService,
-    IContentEventProcessingService eventService) : IContentOrchestrationService
+    IPageProcessingService pageProcessingService,
+    IContentEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IContentOrchestrationService
 {
     public Content GetContent(int contentId) =>
         TryCatch<Content>(operation: () =>
@@ -33,9 +36,14 @@ internal partial class ContentOrchestrationService(
     {
         ValidateContentOnAdd(inputs: [newContent]);
         ValidateContent(content: newContent, parameterName: "entity");
+        Authorize(content: newContent, privilege: "Content_create");
 
         Content result = await processingService.AddContentAsync(newContent: newContent);
-        await eventService.RaiseContentAddEventAsync(entity: result);
+
+        await eventService.RaiseContentAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -45,9 +53,14 @@ internal partial class ContentOrchestrationService(
     {
         ValidateContentOnUpdate(inputs: [updatedContent]);
         ValidateContent(content: updatedContent, parameterName: "entity");
+        Authorize(content: updatedContent, privilege: "Content_update");
 
         Content result = await processingService.UpdateContentAsync(updatedContent: updatedContent);
-        await eventService.RaiseContentUpdateEventAsync(entity: result);
+
+        await eventService.RaiseContentUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -75,7 +88,12 @@ internal partial class ContentOrchestrationService(
             return;
         }
 
-        await eventService.RaiseContentDeleteEventAsync(entity: entity);
+        Authorize(content: entity, privilege: "Content_delete");
+
+        await eventService.RaiseContentDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(contentId: contentId);
 
     }, isValueTask: true);
@@ -168,9 +186,14 @@ internal partial class ContentOrchestrationService(
     private async ValueTask<Content> ExecuteAddContentAsync(Content newContent)
     {
         ValidateContent(content: newContent, parameterName: "entity");
+        Authorize(content: newContent, privilege: "Content_create");
 
         Content result = await processingService.AddContentAsync(newContent: newContent);
-        await eventService.RaiseContentAddEventAsync(entity: result);
+
+        await eventService.RaiseContentAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
@@ -195,16 +218,44 @@ internal partial class ContentOrchestrationService(
             return;
         }
 
-        await eventService.RaiseContentDeleteEventAsync(entity: entity);
+        Authorize(content: entity, privilege: "Content_delete");
+
+        await eventService.RaiseContentDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(contentId: contentId);
     }
 
     private async ValueTask<Content> ExecuteUpdateContentAsync(Content updatedContent)
     {
         ValidateContent(content: updatedContent, parameterName: "entity");
+        Authorize(content: updatedContent, privilege: "Content_update");
 
         Content result = await processingService.UpdateContentAsync(updatedContent: updatedContent);
-        await eventService.RaiseContentUpdateEventAsync(entity: result);
+
+        await eventService.RaiseContentUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
+
+    private void Authorize(Content content, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = ResolveAppId(content: content),
+                    Privilege = privilege
+                }
+            });
+
+    private int? ResolveAppId(Content content) =>
+        content.Page?.AppId
+        ?? pageProcessingService.GetAllPage(ignoreFilters: true)
+            .Where(predicate: page => page.Id == content.PageId)
+            .Select(selector: page => (int?)page.AppId)
+            .FirstOrDefault();
 }

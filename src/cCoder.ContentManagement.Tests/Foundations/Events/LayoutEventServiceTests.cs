@@ -31,9 +31,6 @@ public partial class LayoutEventServiceTests
         layoutEventBrokerMock = new Mock<ILayoutEventBroker>(behavior: MockBehavior.Strict);
         layoutEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        layoutEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.LayoutEventService(
 layoutEventBroker: layoutEventBrokerMock.Object
         );

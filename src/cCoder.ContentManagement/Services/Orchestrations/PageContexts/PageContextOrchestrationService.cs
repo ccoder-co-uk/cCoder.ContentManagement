@@ -5,14 +5,14 @@
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Foundations.Authorizations;
 using cCoder.ContentManagement.Services.Foundations.HttpContexts;
-using cCoder.ContentManagement.Services.Foundations.Authorization;
+using cCoder.ContentManagement.Services.Processings;
 
 namespace cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 
 internal sealed partial class PageContextOrchestrationService(
     IHttpContextService httpContextService,
     IPageAuthorizationService pageAuthorizationService,
-    IAuthorizationService authorizationService)
+    IAuthorizationProcessingService authorizationProcessingService)
         : IPageContextOrchestrationService
 {
     public ValueTask<HttpPageRenderContext>
@@ -29,7 +29,7 @@ internal sealed partial class PageContextOrchestrationService(
             .AuthorizeHttpPageRenderContextAsync(
                 pageRenderContext: context);
 
-        context.User = authorizationService
+        context.User = authorizationProcessingService
             .ResolveCurrentAuthorizationContext(
                 context: new AuthorizationContext
                 {

@@ -9,7 +9,11 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal partial class PageRoleOrchestrationService(IPageRoleProcessingService processingService, IPageRoleEventProcessingService eventService) : IPageRoleOrchestrationService
+internal partial class PageRoleOrchestrationService(
+    IPageRoleProcessingService processingService,
+    IPageRoleEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IPageRoleOrchestrationService
 {
     public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageRole>>(operation: () =>
@@ -24,7 +28,11 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
         ValidatePageRoleOnAdd(inputs: [newPageRole]);
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
         PageRole result = await processingService.AddPageRoleAsync(newPageRole: newPageRole);
-        await eventService.RaisePageRoleAddEventAsync(entity: result);
+
+        await eventService.RaisePageRoleAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -34,7 +42,11 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
     {
         ValidatePageRoleOnDelete(inputs: [deletedPageRole]);
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "entity");
-        await eventService.RaisePageRoleDeleteEventAsync(entity: deletedPageRole);
+
+        await eventService.RaisePageRoleDeleteEventAsync(
+            entity: deletedPageRole,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeletePageRoleAsync(deletedPageRole: deletedPageRole);
 
     }, isValueTask: true);
@@ -146,14 +158,22 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
     {
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
         PageRole result = await processingService.AddPageRoleAsync(newPageRole: newPageRole);
-        await eventService.RaisePageRoleAddEventAsync(entity: result);
+
+        await eventService.RaisePageRoleAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
     private async ValueTask ExecuteDeletePageRoleAsync(PageRole deletedPageRole)
     {
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "entity");
-        await eventService.RaisePageRoleDeleteEventAsync(entity: deletedPageRole);
+
+        await eventService.RaisePageRoleDeleteEventAsync(
+            entity: deletedPageRole,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeletePageRoleAsync(deletedPageRole: deletedPageRole);
     }
 }

@@ -32,7 +32,7 @@ public partial class PageRoleOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         pageRoleEventProcessingServiceMock
-            .Setup(expression: x => x.RaisePageRoleAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePageRoleAddEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +44,7 @@ public partial class PageRoleOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         pageRoleProcessingServiceMock.Verify(expression: x => x.AddPageRoleAsync(newPageRole: entity), times: Times.Once);
-        pageRoleEventProcessingServiceMock.Verify(expression: x => x.RaisePageRoleAddEventAsync(entity: entity), times: Times.Once);
+        pageRoleEventProcessingServiceMock.Verify(expression: x => x.RaisePageRoleAddEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
 }

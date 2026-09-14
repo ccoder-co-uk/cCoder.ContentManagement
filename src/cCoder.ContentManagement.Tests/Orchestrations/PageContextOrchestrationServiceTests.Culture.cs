@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Services.Foundations.Authorization;
+using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Services.Foundations.Authorizations;
 using cCoder.ContentManagement.Services.Foundations.HttpContexts;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
@@ -33,7 +33,7 @@ public sealed partial class PageContextOrchestrationServiceTests
 
         Mock<IHttpContextService> httpContextService = new();
         Mock<IPageAuthorizationService> pageAuthorizationService = new();
-        Mock<IAuthorizationService> authorizationService = new();
+        Mock<IAuthorizationProcessingService> authorizationProcessingService = new();
 
         httpContextService.Setup(expression: service =>
             service.GetPageRenderContext())
@@ -44,7 +44,7 @@ public sealed partial class PageContextOrchestrationServiceTests
                 pageRenderContext: context))
             .ReturnsAsync(value: context);
 
-        authorizationService.Setup(expression: service =>
+        authorizationProcessingService.Setup(expression: service =>
             service.ResolveCurrentAuthorizationContext(
                 context: It.Is<AuthorizationContext>(match: item =>
                     item.Culture == "fr-FR")))
@@ -53,7 +53,7 @@ public sealed partial class PageContextOrchestrationServiceTests
         PageContextOrchestrationService service = new(
             httpContextService: httpContextService.Object,
             pageAuthorizationService: pageAuthorizationService.Object,
-            authorizationService: authorizationService.Object);
+            authorizationProcessingService: authorizationProcessingService.Object);
 
         // When
         HttpPageRenderContext result =
@@ -63,7 +63,7 @@ public sealed partial class PageContextOrchestrationServiceTests
         Assert.Equal(expected: "en-GB", actual: result.Culture);
         httpContextService.VerifyAll();
         pageAuthorizationService.VerifyAll();
-        authorizationService.VerifyAll();
+        authorizationProcessingService.VerifyAll();
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public sealed partial class PageContextOrchestrationServiceTests
 
         Mock<IHttpContextService> httpContextService = new();
         Mock<IPageAuthorizationService> pageAuthorizationService = new();
-        Mock<IAuthorizationService> authorizationService = new();
+        Mock<IAuthorizationProcessingService> authorizationProcessingService = new();
 
         httpContextService.Setup(expression: service =>
             service.GetPageRenderContext())
@@ -92,7 +92,7 @@ public sealed partial class PageContextOrchestrationServiceTests
             .Callback(action: () => context.Culture = "en-GB")
             .ReturnsAsync(value: context);
 
-        authorizationService.Setup(expression: service =>
+        authorizationProcessingService.Setup(expression: service =>
             service.ResolveCurrentAuthorizationContext(
                 context: It.Is<AuthorizationContext>(match: item =>
                     item.Culture == "en-GB")))
@@ -101,7 +101,7 @@ public sealed partial class PageContextOrchestrationServiceTests
         PageContextOrchestrationService service = new(
             httpContextService: httpContextService.Object,
             pageAuthorizationService: pageAuthorizationService.Object,
-            authorizationService: authorizationService.Object);
+            authorizationProcessingService: authorizationProcessingService.Object);
 
         // When
         HttpPageRenderContext result =
@@ -111,6 +111,6 @@ public sealed partial class PageContextOrchestrationServiceTests
         Assert.Equal(expected: "fr-FR", actual: result.Culture);
         httpContextService.VerifyAll();
         pageAuthorizationService.VerifyAll();
-        authorizationService.VerifyAll();
+        authorizationProcessingService.VerifyAll();
     }
 }

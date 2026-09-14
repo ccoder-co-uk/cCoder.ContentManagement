@@ -28,14 +28,20 @@ public partial class ContentEventProcessingServiceTests
         Content entity = CreateRandomContent();
 
         contentEventServiceMock
-            .Setup(expression: x => x.RaiseContentUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseContentUpdateEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseContentUpdateEventAsync(content: entity);
+        await service.RaiseContentUpdateEventAsync(
+            content: entity,
+            userId: CurrentUserId);
 
         // Then
-        contentEventServiceMock.Verify(expression: x => x.RaiseContentUpdateEventAsync(entity: entity), times: Times.Once);
+        contentEventServiceMock.Verify(expression: x => x.RaiseContentUpdateEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
         contentEventServiceMock.VerifyNoOtherCalls();
     }
 

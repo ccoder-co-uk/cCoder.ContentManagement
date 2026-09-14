@@ -11,16 +11,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class CultureEventService(ICultureEventBroker cultureEventBroker) : ICultureEventService
 {
-    public ValueTask RaiseCultureAddEventAsync(Culture culture) =>
+    public ValueTask RaiseCultureAddEventAsync(Culture culture, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCultureAddEventAsync(inputs: [culture]);
+        ValidateRaiseCultureAddEventAsync(inputs: [culture, userId]);
 
         EventMessage<Culture> message = new EventMessage<Culture>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = cultureEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = culture
         };
@@ -29,16 +29,16 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCultureUpdateEventAsync(Culture culture) =>
+    public ValueTask RaiseCultureUpdateEventAsync(Culture culture, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCultureUpdateEventAsync(inputs: [culture]);
+        ValidateRaiseCultureUpdateEventAsync(inputs: [culture, userId]);
 
         EventMessage<Culture> message = new EventMessage<Culture>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = cultureEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = culture
         };
@@ -47,16 +47,16 @@ internal partial class CultureEventService(ICultureEventBroker cultureEventBroke
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCultureDeleteEventAsync(Culture culture) =>
+    public ValueTask RaiseCultureDeleteEventAsync(Culture culture, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCultureDeleteEventAsync(inputs: [culture]);
+        ValidateRaiseCultureDeleteEventAsync(inputs: [culture, userId]);
 
         EventMessage<Culture> message = new EventMessage<Culture>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = cultureEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = culture
         };

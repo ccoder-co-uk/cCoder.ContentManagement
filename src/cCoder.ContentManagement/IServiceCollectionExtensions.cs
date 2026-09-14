@@ -13,7 +13,6 @@ using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Dependencies.Caching;
-using cCoder.ContentManagement.Dependencies.Events;
 using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Models;
@@ -201,7 +200,6 @@ public static partial class IServiceCollectionExtensions
                         .HttpContext));
         services.AddTransient<IPageAuthorizationBroker, PageAuthorizationBroker>();
         services.AddTransient<IEventRegistrationBroker, EventRegistrationBroker>();
-        services.AddTransient<IAuthenticatedEventHub, AuthenticatedEventHubDependency>();
         services.AddTransient<IAppCultureEventBroker, AppCultureEventBroker>();
         services.AddTransient<IAppEventBroker, AppEventBroker>();
         services.AddTransient<ICommonObjectEventBroker, CommonObjectEventBroker>();
@@ -396,7 +394,6 @@ public static partial class IServiceCollectionExtensions
             IPageContextOrchestrationService,
             PageContextOrchestrationService>();
         services.AddSingleton<PageRenderCacheImportState>();
-        services.AddTransient<IContentManagementMigrationAggregationService, ContentManagementMigrationAggregationService>();
         services.AddTransient<
             IContentManagementPackageOrchestrationService,
             ContentManagementPackageOrchestrationService>();
@@ -413,7 +410,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ICultureManager, CultureOrchestrationService>();
         services.AddTransient<ILayoutOrchestrationService, LayoutOrchestrationService>();
         services.AddTransient<ILayoutManager, LayoutOrchestrationService>();
-        services.AddTransient<IMigrationSupportOrchestrationService, MigrationSupportOrchestrationService>();
         services.AddTransient<IJsonOrchestrationService, JsonOrchestrationService>();
         services.AddTransient<IPackageItemOrchestrationService, PackageItemOrchestrationService>();
         services.AddTransient<IPackageOrchestrationService, PackageOrchestrationService>();

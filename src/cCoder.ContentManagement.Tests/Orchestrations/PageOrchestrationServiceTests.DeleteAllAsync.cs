@@ -30,7 +30,7 @@ public partial class PageOrchestrationServiceTests
         pageProcessingServiceMock.Setup(expression: x => x.GetPage(pageId: entities[0].Id))
             .Returns(value: entities[0]);
 
-        pageEventProcessingServiceMock.Setup(expression: x => x.RaisePageDeleteEventAsync(entity: entities[0]))
+        pageEventProcessingServiceMock.Setup(expression: x => x.RaisePageDeleteEventAsync(entity: entities[0], userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         pageProcessingServiceMock.Setup(expression: x => x.DeleteAsync(pageId: entities[0].Id))
@@ -41,7 +41,7 @@ public partial class PageOrchestrationServiceTests
 
         // Then
         pageProcessingServiceMock.Verify(expression: x => x.GetPage(pageId: entities[0].Id), times: Times.Once);
-        pageEventProcessingServiceMock.Verify(expression: x => x.RaisePageDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        pageEventProcessingServiceMock.Verify(expression: x => x.RaisePageDeleteEventAsync(entity: entities[0], userId: CurrentUserId), times: Times.Once);
         pageProcessingServiceMock.Verify(expression: x => x.DeleteAsync(pageId: entities[0].Id), times: Times.Once);
     }
 

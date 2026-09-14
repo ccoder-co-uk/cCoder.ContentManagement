@@ -26,15 +26,26 @@ public partial class PackageItemOrchestrationServiceTests
 {
     private readonly Mock<IPackageItemProcessingService> packageItemProcessingServiceMock;
     private readonly Mock<IPackageItemEventProcessingService> packageItemEventProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly PackageItemOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
     public PackageItemOrchestrationServiceTests()
     {
         packageItemProcessingServiceMock = new Mock<IPackageItemProcessingService>(behavior: MockBehavior.Strict);
         packageItemEventProcessingServiceMock = new Mock<IPackageItemEventProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                It.IsAny<cCoder.ContentManagement.Models.AuthorizationContext>()));
 
         orchestrationService = new PackageItemOrchestrationService(
 processingService: packageItemProcessingServiceMock.Object,
-eventService: packageItemEventProcessingServiceMock.Object
+eventService: packageItemEventProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
     private static PackageItem CreateRandomPackageItem() =>

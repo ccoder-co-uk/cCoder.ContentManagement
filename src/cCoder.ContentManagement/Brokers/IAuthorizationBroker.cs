@@ -4,10 +4,11 @@
 
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
+using cCoder.CodeAnalysis.Exposures;
 
 namespace cCoder.ContentManagement.Brokers;
 
-public interface IAuthorizationBroker
+public interface IAuthorizationBroker : IUtilityBroker
 {
     User GetCurrentUser();
 

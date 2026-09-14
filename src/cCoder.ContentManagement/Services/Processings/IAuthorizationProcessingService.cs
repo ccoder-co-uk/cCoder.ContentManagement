@@ -10,6 +10,8 @@ internal interface IAuthorizationProcessingService
 {
     void AuthorizeAuthorizationContext(AuthorizationContext context);
 
+    string GetCurrentUserId();
+
     AuthorizationContext ResolveCurrentAuthorizationContext(
         AuthorizationContext context);
 

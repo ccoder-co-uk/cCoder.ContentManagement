@@ -20,27 +20,20 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class SubmissionServiceTests
 {
     private readonly Mock<ISubmissionBroker> submissionBrokerMock;
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly SubmissionService submissionService;
 
     public SubmissionServiceTests()
     {
         submissionBrokerMock = new Mock<ISubmissionBroker>(behavior: MockBehavior.Strict);
-        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
 
         submissionService = new SubmissionService(
-submissionBroker: submissionBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object
+submissionBroker: submissionBrokerMock.Object
         );
     }
 

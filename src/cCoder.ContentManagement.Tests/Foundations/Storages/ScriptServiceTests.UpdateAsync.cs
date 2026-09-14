@@ -29,20 +29,13 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class ScriptServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
+    public async Task ShouldDelegateToBrokerWhenUpdateAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
-        Script script = CreateRandomScript(id: 7);
+Script script = CreateRandomScript(id: 7);
 
         CmsDataModels.Script submitted = null;
-
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"));
-
-        scriptBrokerMock
+scriptBrokerMock
             .Setup(expression: x => x.UpdateScriptAsync(updatedScript: It.IsAny<CmsDataModels.Script>()))
             .Callback<CmsDataModels.Script>(action: candidate => submitted = candidate)
             .ReturnsAsync(valueFunction: (CmsDataModels.Script value) => value);
@@ -138,33 +131,5 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
 
         scriptBrokerMock.Verify(expression: x => x.UpdateScriptAsync(updatedScript: It.IsAny<CmsDataModels.Script>()), times: Times.Once);
         scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"), times: Times.Once);
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
-    {
-        // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
-        Script script = CreateRandomScript(id: 7);
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await scriptService.UpdateScriptAsync(updatedScript: script);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        scriptBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Script_update"), times: Times.Once);
-    }
-
+}
 }

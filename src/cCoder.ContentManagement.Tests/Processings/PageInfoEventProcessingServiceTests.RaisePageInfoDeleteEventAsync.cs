@@ -28,14 +28,20 @@ public partial class PageInfoEventProcessingServiceTests
         PageInfo entity = CreateRandomPageInfo();
 
         pageInfoEventServiceMock
-            .Setup(expression: x => x.RaisePageInfoDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePageInfoDeleteEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageInfoDeleteEventAsync(pageInfo: entity);
+        await service.RaisePageInfoDeleteEventAsync(
+            pageInfo: entity,
+            userId: CurrentUserId);
 
         // Then
-        pageInfoEventServiceMock.Verify(expression: x => x.RaisePageInfoDeleteEventAsync(entity: entity), times: Times.Once);
+        pageInfoEventServiceMock.Verify(expression: x => x.RaisePageInfoDeleteEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
         pageInfoEventServiceMock.VerifyNoOtherCalls();
     }
 

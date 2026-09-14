@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface ILayoutEventProcessingService
 {
-    ValueTask RaiseLayoutAddEventAsync(Layout entity);
+    ValueTask RaiseLayoutAddEventAsync(Layout entity, string userId);
 
-    ValueTask RaiseLayoutUpdateEventAsync(Layout entity);
+    ValueTask RaiseLayoutUpdateEventAsync(Layout entity, string userId);
 
-    ValueTask RaiseLayoutDeleteEventAsync(Layout entity);
+    ValueTask RaiseLayoutDeleteEventAsync(Layout entity, string userId);
 }

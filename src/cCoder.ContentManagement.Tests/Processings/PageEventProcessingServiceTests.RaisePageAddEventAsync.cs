@@ -28,14 +28,20 @@ public partial class PageEventProcessingServiceTests
         Page entity = CreateRandomPage();
 
         pageEventServiceMock
-            .Setup(expression: x => x.RaisePageAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePageAddEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageAddEventAsync(page: entity);
+        await service.RaisePageAddEventAsync(
+            page: entity,
+            userId: CurrentUserId);
 
         // Then
-        pageEventServiceMock.Verify(expression: x => x.RaisePageAddEventAsync(entity: entity), times: Times.Once);
+        pageEventServiceMock.Verify(expression: x => x.RaisePageAddEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
         pageEventServiceMock.VerifyNoOtherCalls();
     }
 

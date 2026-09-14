@@ -11,16 +11,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class ResourceEventService(IResourceEventBroker resourceEventBroker) : IResourceEventService
 {
-    public ValueTask RaiseResourceAddEventAsync(Resource resource) =>
+    public ValueTask RaiseResourceAddEventAsync(Resource resource, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseResourceAddEventAsync(inputs: [resource]);
+        ValidateRaiseResourceAddEventAsync(inputs: [resource, userId]);
 
         EventMessage<Resource> message = new EventMessage<Resource>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = resourceEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = resource
         };
@@ -29,16 +29,16 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
 
     }, isValueTask: true);
 
-    public ValueTask RaiseResourceUpdateEventAsync(Resource resource) =>
+    public ValueTask RaiseResourceUpdateEventAsync(Resource resource, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseResourceUpdateEventAsync(inputs: [resource]);
+        ValidateRaiseResourceUpdateEventAsync(inputs: [resource, userId]);
 
         EventMessage<Resource> message = new EventMessage<Resource>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = resourceEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = resource
         };
@@ -47,16 +47,16 @@ internal partial class ResourceEventService(IResourceEventBroker resourceEventBr
 
     }, isValueTask: true);
 
-    public ValueTask RaiseResourceDeleteEventAsync(Resource resource) =>
+    public ValueTask RaiseResourceDeleteEventAsync(Resource resource, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseResourceDeleteEventAsync(inputs: [resource]);
+        ValidateRaiseResourceDeleteEventAsync(inputs: [resource, userId]);
 
         EventMessage<Resource> message = new EventMessage<Resource>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = resourceEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = resource
         };

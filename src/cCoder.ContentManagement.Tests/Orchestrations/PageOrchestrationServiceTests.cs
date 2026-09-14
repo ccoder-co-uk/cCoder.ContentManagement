@@ -26,18 +26,25 @@ public partial class PageOrchestrationServiceTests
     private readonly Mock<IPageProcessingService> pageProcessingServiceMock;
     private readonly Mock<IPageEventProcessingService> pageEventProcessingServiceMock;
     private readonly Mock<ILayoutProcessingService> layoutProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly PageOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
 
     public PageOrchestrationServiceTests()
     {
         pageProcessingServiceMock = new Mock<IPageProcessingService>(behavior: MockBehavior.Strict);
         pageEventProcessingServiceMock = new Mock<IPageEventProcessingService>(behavior: MockBehavior.Strict);
         layoutProcessingServiceMock = new Mock<ILayoutProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
 
         orchestrationService = new PageOrchestrationService(
 processingService: pageProcessingServiceMock.Object,
 eventService: pageEventProcessingServiceMock.Object,
-layoutProcessingService: layoutProcessingServiceMock.Object
+layoutProcessingService: layoutProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 

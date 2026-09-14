@@ -31,7 +31,7 @@ public partial class PageRoleOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         pageRoleEventProcessingServiceMock
-            .Setup(expression: x => x.RaisePageRoleDeleteEventAsync(entity: pageRole))
+            .Setup(expression: x => x.RaisePageRoleDeleteEventAsync(entity: pageRole, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -39,7 +39,7 @@ public partial class PageRoleOrchestrationServiceTests
 
         // Then
         pageRoleProcessingServiceMock.Verify(expression: x => x.DeletePageRoleAsync(deletedPageRole: pageRole), times: Times.Once);
-        pageRoleEventProcessingServiceMock.Verify(expression: x => x.RaisePageRoleDeleteEventAsync(entity: pageRole), times: Times.Once);
+        pageRoleEventProcessingServiceMock.Verify(expression: x => x.RaisePageRoleDeleteEventAsync(entity: pageRole, userId: CurrentUserId), times: Times.Once);
     }
 
 }

@@ -8,15 +8,15 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class SubmissionEventBroker(IAuthenticatedEventHub eventHub)
-    : AuthenticatedEventBroker(eventHub), ISubmissionEventBroker
+internal sealed class SubmissionEventBroker(IEventHub eventHub)
+    : ISubmissionEventBroker
 {
     public ValueTask RaiseSubmissionAddEventAsync(EventMessage<Submission> message) =>
-        RaiseEventAsync(name: "submission_add", message: message);
+        eventHub.RaiseEventAsync(name: "submission_add", message: message);
 
     public ValueTask RaiseSubmissionUpdateEventAsync(EventMessage<Submission> message) =>
-        RaiseEventAsync(name: "submission_update", message: message);
+        eventHub.RaiseEventAsync(name: "submission_update", message: message);
 
     public ValueTask RaiseSubmissionDeleteEventAsync(EventMessage<Submission> message) =>
-        RaiseEventAsync(name: "submission_delete", message: message);
+        eventHub.RaiseEventAsync(name: "submission_delete", message: message);
 }

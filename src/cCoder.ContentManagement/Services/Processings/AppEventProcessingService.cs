@@ -8,35 +8,45 @@ using cCoder.ContentManagement.Services.Foundations.Events;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class AppEventProcessingService(IAppEventService eventService) : IAppEventProcessingService
+internal partial class AppEventProcessingService(IAppEventService eventService)
+    : IAppEventProcessingService
 {
-    public ValueTask RaiseAppAddEventAsync(App app) =>
+    public ValueTask RaiseAppAddEventAsync(App app, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseAppAddEventAsync(inputs: [app]);
+        ValidateRaiseAppAddEventAsync(inputs: [app, userId]);
         ValidateApp(app: app, parameterName: "app");
 
-        return eventService.RaiseAppAddEventAsync(app: app);
+
+        return eventService.RaiseAppAddEventAsync(
+            app: app,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseAppDeleteEventAsync(App app) =>
+    public ValueTask RaiseAppDeleteEventAsync(App app, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseAppDeleteEventAsync(inputs: [app]);
+        ValidateRaiseAppDeleteEventAsync(inputs: [app, userId]);
         ValidateApp(app: app, parameterName: "app");
 
-        return eventService.RaiseAppDeleteEventAsync(app: app);
+
+        return eventService.RaiseAppDeleteEventAsync(
+            app: app,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseAppUpdateEventAsync(App app) =>
+    public ValueTask RaiseAppUpdateEventAsync(App app, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseAppUpdateEventAsync(inputs: [app]);
+        ValidateRaiseAppUpdateEventAsync(inputs: [app, userId]);
         ValidateApp(app: app, parameterName: "app");
 
-        return eventService.RaiseAppUpdateEventAsync(app: app);
+
+        return eventService.RaiseAppUpdateEventAsync(
+            app: app,
+            userId: userId);
 
     }, isValueTask: true);
 

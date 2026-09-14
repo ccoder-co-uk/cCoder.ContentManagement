@@ -12,7 +12,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class LayoutOrchestrationService(
     ILayoutProcessingService processingService,
-    ILayoutEventProcessingService eventService) : ILayoutOrchestrationService
+    ILayoutEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : ILayoutOrchestrationService
 {
     public Layout GetLayout(int layoutId) =>
         TryCatch<Layout>(operation: () =>
@@ -33,9 +35,15 @@ internal partial class LayoutOrchestrationService(
     {
         ValidateLayoutOnAdd(inputs: [newLayout]);
         ValidateLayout(layout: newLayout, parameterName: "entity");
+        Authorize(appId: newLayout.AppId, privilege: "Layout_create");
+        StampForAdd(layout: newLayout);
 
         Layout result = await processingService.AddLayoutAsync(newLayout: newLayout);
-        await eventService.RaiseLayoutAddEventAsync(entity: result);
+
+        await eventService.RaiseLayoutAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -45,9 +53,15 @@ internal partial class LayoutOrchestrationService(
     {
         ValidateLayoutOnUpdate(inputs: [updatedLayout]);
         ValidateLayout(layout: updatedLayout, parameterName: "entity");
+        Authorize(appId: updatedLayout.AppId, privilege: "Layout_update");
+        StampForUpdate(layout: updatedLayout);
 
         Layout result = await processingService.UpdateLayoutAsync(updatedLayout: updatedLayout);
-        await eventService.RaiseLayoutUpdateEventAsync(entity: result);
+
+        await eventService.RaiseLayoutUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -75,7 +89,12 @@ internal partial class LayoutOrchestrationService(
             return;
         }
 
-        await eventService.RaiseLayoutDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Layout_delete");
+
+        await eventService.RaiseLayoutDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(layoutId: layoutId);
 
     }, isValueTask: true);
@@ -224,9 +243,15 @@ internal partial class LayoutOrchestrationService(
     private async ValueTask<Layout> ExecuteAddLayoutAsync(Layout newLayout)
     {
         ValidateLayout(layout: newLayout, parameterName: "entity");
+        Authorize(appId: newLayout.AppId, privilege: "Layout_create");
+        StampForAdd(layout: newLayout);
 
         Layout result = await processingService.AddLayoutAsync(newLayout: newLayout);
-        await eventService.RaiseLayoutAddEventAsync(entity: result);
+
+        await eventService.RaiseLayoutAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
@@ -298,7 +323,12 @@ internal partial class LayoutOrchestrationService(
             return;
         }
 
-        await eventService.RaiseLayoutDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Layout_delete");
+
+        await eventService.RaiseLayoutDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(layoutId: layoutId);
     }
 
@@ -308,9 +338,36 @@ internal partial class LayoutOrchestrationService(
     private async ValueTask<Layout> ExecuteUpdateLayoutAsync(Layout updatedLayout)
     {
         ValidateLayout(layout: updatedLayout, parameterName: "entity");
+        Authorize(appId: updatedLayout.AppId, privilege: "Layout_update");
+        StampForUpdate(layout: updatedLayout);
 
         Layout result = await processingService.UpdateLayoutAsync(updatedLayout: updatedLayout);
-        await eventService.RaiseLayoutUpdateEventAsync(entity: result);
+
+        await eventService.RaiseLayoutUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
+
+    private void Authorize(int? appId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = appId,
+                    Privilege = privilege
+                }
+            });
+
+    private void StampForAdd(Layout layout)
+    {
+        string userId = authorizationProcessingService.GetCurrentUserId();
+        layout.CreatedBy = userId;
+        layout.LastUpdatedBy = userId;
+    }
+
+    private void StampForUpdate(Layout layout) =>
+        layout.LastUpdatedBy = authorizationProcessingService.GetCurrentUserId();
 }

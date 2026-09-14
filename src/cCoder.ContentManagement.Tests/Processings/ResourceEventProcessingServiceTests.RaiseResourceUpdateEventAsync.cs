@@ -28,14 +28,20 @@ public partial class ResourceEventProcessingServiceTests
         Resource entity = CreateRandomResource();
 
         resourceEventServiceMock
-            .Setup(expression: x => x.RaiseResourceUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseResourceUpdateEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseResourceUpdateEventAsync(resource: entity);
+        await service.RaiseResourceUpdateEventAsync(
+            resource: entity,
+            userId: CurrentUserId);
 
         // Then
-        resourceEventServiceMock.Verify(expression: x => x.RaiseResourceUpdateEventAsync(entity: entity), times: Times.Once);
+        resourceEventServiceMock.Verify(expression: x => x.RaiseResourceUpdateEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
         resourceEventServiceMock.VerifyNoOtherCalls();
     }
 

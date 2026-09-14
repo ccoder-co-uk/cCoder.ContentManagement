@@ -12,16 +12,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PackageEventService(IPackageEventBroker packageEventBroker) : IPackageEventService
 {
-    public ValueTask RaisePackageAddEventAsync(Package package) =>
+    public ValueTask RaisePackageAddEventAsync(Package package, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePackageAddEventAsync(inputs: [package]);
+        ValidateRaisePackageAddEventAsync(inputs: [package, userId]);
 
         EventMessage<DataPackage> message = new EventMessage<DataPackage>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = packageEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = package
         };
@@ -30,16 +30,16 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
 
     }, isValueTask: true);
 
-    public ValueTask RaisePackageUpdateEventAsync(Package package) =>
+    public ValueTask RaisePackageUpdateEventAsync(Package package, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePackageUpdateEventAsync(inputs: [package]);
+        ValidateRaisePackageUpdateEventAsync(inputs: [package, userId]);
 
         EventMessage<DataPackage> message = new EventMessage<DataPackage>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = packageEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = package
         };
@@ -48,16 +48,16 @@ internal partial class PackageEventService(IPackageEventBroker packageEventBroke
 
     }, isValueTask: true);
 
-    public ValueTask RaisePackageDeleteEventAsync(Package package) =>
+    public ValueTask RaisePackageDeleteEventAsync(Package package, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePackageDeleteEventAsync(inputs: [package]);
+        ValidateRaisePackageDeleteEventAsync(inputs: [package, userId]);
 
         EventMessage<DataPackage> message = new EventMessage<DataPackage>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = packageEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = package
         };

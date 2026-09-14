@@ -13,10 +13,6 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using System.Security;
-
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -28,16 +24,12 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class AppCultureServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForAddAsync()
+    public async Task ShouldDelegateToBrokerWhenAddAsync()
     {
         // Given
         AppCulture appCulture = CreateRandomAppCulture();
 
         CmsDataModels.AppCulture submitted = null;
-
-        authorizationManagerMock.Setup(expression: x =>
-            x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create")
-        );
 
         appCultureBrokerMock
             .Setup(expression: x =>
@@ -80,43 +72,6 @@ times: Times.Once
         );
 
         appCultureBrokerMock.VerifyNoOtherCalls();
-
-        authorizationManagerMock.Verify(
-expression: x => x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create"),
-times: Times.Once
-        );
-
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
-    {
-        // Given
-        AppCulture appCulture = CreateRandomAppCulture();
-
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await appCultureService.AddAppCultureAsync(newAppCulture: appCulture);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        appCultureBrokerMock.VerifyNoOtherCalls();
-
-        authorizationManagerMock.Verify(
-expression: x => x.Authorize(appId: (int?)appCulture.AppId, privilege: "AppCulture_create"),
-times: Times.Once
-        );
-
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

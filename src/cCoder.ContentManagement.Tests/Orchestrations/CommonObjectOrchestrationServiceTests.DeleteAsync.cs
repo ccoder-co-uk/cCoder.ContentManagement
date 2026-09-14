@@ -34,7 +34,7 @@ public partial class CommonObjectOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         commonObjectEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseCommonObjectDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseCommonObjectDeleteEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -43,7 +43,7 @@ public partial class CommonObjectOrchestrationServiceTests
         // Then
         commonObjectProcessingServiceMock.Verify(expression: x => x.GetCommonObject(commonObjectId: id), times: Times.Once);
         commonObjectProcessingServiceMock.Verify(expression: x => x.DeleteAsync(commonObjectId: id), times: Times.Once);
-        commonObjectEventProcessingServiceMock.Verify(expression: x => x.RaiseCommonObjectDeleteEventAsync(entity: entity), times: Times.Once);
+        commonObjectEventProcessingServiceMock.Verify(expression: x => x.RaiseCommonObjectDeleteEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
 }

@@ -25,11 +25,13 @@ public partial class LayoutEventProcessingServiceTests
 {
     private readonly Mock<ILayoutEventService> layoutEventServiceMock;
     private readonly LayoutEventProcessingService service;
+    private const string CurrentUserId = "test-user";
 
     public LayoutEventProcessingServiceTests()
     {
         layoutEventServiceMock = new Mock<ILayoutEventService>(behavior: MockBehavior.Strict);
-        service = new LayoutEventProcessingService(eventService: layoutEventServiceMock.Object);
+        service = new LayoutEventProcessingService(
+            eventService: layoutEventServiceMock.Object);
     }
 
     private static Layout CreateRandomLayout() =>

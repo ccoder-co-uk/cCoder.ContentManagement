@@ -30,7 +30,7 @@ public partial class ScriptOrchestrationServiceTests
         scriptProcessingServiceMock.Setup(expression: x => x.GetScript(scriptId: entities[0].Id))
             .Returns(value: entities[0]);
 
-        scriptEventProcessingServiceMock.Setup(expression: x => x.RaiseScriptDeleteEventAsync(entity: entities[0]))
+        scriptEventProcessingServiceMock.Setup(expression: x => x.RaiseScriptDeleteEventAsync(entity: entities[0], userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         scriptProcessingServiceMock.Setup(expression: x => x.DeleteAsync(scriptId: entities[0].Id))
@@ -41,7 +41,7 @@ public partial class ScriptOrchestrationServiceTests
 
         // Then
         scriptProcessingServiceMock.Verify(expression: x => x.GetScript(scriptId: entities[0].Id), times: Times.Once);
-        scriptEventProcessingServiceMock.Verify(expression: x => x.RaiseScriptDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        scriptEventProcessingServiceMock.Verify(expression: x => x.RaiseScriptDeleteEventAsync(entity: entities[0], userId: CurrentUserId), times: Times.Once);
         scriptProcessingServiceMock.Verify(expression: x => x.DeleteAsync(scriptId: entities[0].Id), times: Times.Once);
     }
 

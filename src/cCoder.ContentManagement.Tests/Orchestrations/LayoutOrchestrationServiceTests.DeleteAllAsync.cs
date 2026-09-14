@@ -30,7 +30,7 @@ public partial class LayoutOrchestrationServiceTests
         layoutProcessingServiceMock.Setup(expression: x => x.GetLayout(layoutId: entities[0].Id))
             .Returns(value: entities[0]);
 
-        layoutEventProcessingServiceMock.Setup(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entities[0]))
+        layoutEventProcessingServiceMock.Setup(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entities[0], userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         layoutProcessingServiceMock.Setup(expression: x => x.DeleteAsync(layoutId: entities[0].Id))
@@ -41,7 +41,7 @@ public partial class LayoutOrchestrationServiceTests
 
         // Then
         layoutProcessingServiceMock.Verify(expression: x => x.GetLayout(layoutId: entities[0].Id), times: Times.Once);
-        layoutEventProcessingServiceMock.Verify(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        layoutEventProcessingServiceMock.Verify(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entities[0], userId: CurrentUserId), times: Times.Once);
         layoutProcessingServiceMock.Verify(expression: x => x.DeleteAsync(layoutId: entities[0].Id), times: Times.Once);
     }
 

@@ -3,15 +3,12 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class ComponentService(IComponentBroker componentBroker, IAuthorizationManager authorizationManager) : IComponentService
+internal partial class ComponentService(IComponentBroker componentBroker) : IComponentService
 {
     public Component GetComponent(int componentId, bool ignoreFilters = false) =>
         TryCatch<Component>(operation: () =>
@@ -60,16 +57,10 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
     {
         ValidateComponentOnAdd(inputs: [newComponent]);
         ValidateComponent(component: newComponent, parameterName: "component");
-        authorizationManager.Authorize(appId: newComponent.AppId, privilege: "Component_create");
         Component storageComponent = CreateStorageComponent(newComponent: newComponent);
 
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
-
         DateTimeOffset now = (storageComponent.CreatedOn = DateTimeOffset.UtcNow);
-        storageComponent.CreatedBy = currentUserId;
         storageComponent.LastUpdated = now;
-        storageComponent.LastUpdatedBy = currentUserId;
         Component result = await componentBroker.AddComponentAsync(newComponent: storageComponent);
         newComponent.Id = result.Id;
         newComponent.Name = result.Name;
@@ -92,15 +83,10 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
     {
         ValidateComponentOnUpdate(inputs: [updatedComponent]);
         ValidateComponent(component: updatedComponent, parameterName: "component");
-        authorizationManager.Authorize(appId: updatedComponent.AppId, privilege: "Component_update");
         Component updateComponent = CreateStorageComponent(newComponent: updatedComponent);
-
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateComponent.LastUpdated = now;
-        updateComponent.LastUpdatedBy = currentUserId;
         Component result = await componentBroker.UpdateComponentAsync(updatedComponent: updateComponent);
         updatedComponent.Id = result.Id;
         updatedComponent.Name = result.Name;
@@ -139,7 +125,6 @@ internal partial class ComponentService(IComponentBroker componentBroker, IAutho
             return;
         }
 
-        authorizationManager.Authorize(appId: component.AppId, privilege: "Component_delete");
         await componentBroker.DeleteComponentAsync(deletedComponent: CreateStorageComponent(newComponent: component));
 
     }, isValueTask: true);

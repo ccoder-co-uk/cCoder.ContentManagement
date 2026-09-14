@@ -43,7 +43,7 @@ public partial class PageOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         pageEventProcessingServiceMock
-            .Setup(expression: x => x.RaisePageAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePageAddEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -54,7 +54,7 @@ public partial class PageOrchestrationServiceTests
 
         layoutProcessingServiceMock.Verify(expression: x => x.GetAllLayout(ignoreFilters: true), times: Times.Once);
         pageProcessingServiceMock.Verify(expression: x => x.AddPageAsync(newPage: entity), times: Times.Once);
-        pageEventProcessingServiceMock.Verify(expression: x => x.RaisePageAddEventAsync(entity: entity), times: Times.Once);
+        pageEventProcessingServiceMock.Verify(expression: x => x.RaisePageAddEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
     [Fact]

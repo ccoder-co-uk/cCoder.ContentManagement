@@ -30,7 +30,7 @@ public partial class ComponentOrchestrationServiceTests
         componentProcessingServiceMock.Setup(expression: x => x.GetComponent(componentId: entities[0].Id))
             .Returns(value: entities[0]);
 
-        componentEventProcessingServiceMock.Setup(expression: x => x.RaiseComponentDeleteEventAsync(entity: entities[0]))
+        componentEventProcessingServiceMock.Setup(expression: x => x.RaiseComponentDeleteEventAsync(entity: entities[0], userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         componentProcessingServiceMock.Setup(expression: x => x.DeleteAsync(componentId: entities[0].Id))
@@ -41,7 +41,7 @@ public partial class ComponentOrchestrationServiceTests
 
         // Then
         componentProcessingServiceMock.Verify(expression: x => x.GetComponent(componentId: entities[0].Id), times: Times.Once);
-        componentEventProcessingServiceMock.Verify(expression: x => x.RaiseComponentDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        componentEventProcessingServiceMock.Verify(expression: x => x.RaiseComponentDeleteEventAsync(entity: entities[0], userId: CurrentUserId), times: Times.Once);
         componentProcessingServiceMock.Verify(expression: x => x.DeleteAsync(componentId: entities[0].Id), times: Times.Once);
     }
 

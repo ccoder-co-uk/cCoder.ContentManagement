@@ -21,10 +21,6 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
@@ -32,19 +28,16 @@ public partial class TemplateServiceTests
 {
     private readonly Mock<ITemplateBroker> templateBrokerMock;
     private readonly Mock<ITemplateContentBroker> templateContentBrokerMock;
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly TemplateService templateService;
 
     public TemplateServiceTests()
     {
         templateBrokerMock = new Mock<ITemplateBroker>(behavior: MockBehavior.Strict);
         templateContentBrokerMock = new Mock<ITemplateContentBroker>(behavior: MockBehavior.Strict);
-        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
 
         templateService = new TemplateService(
 templateBroker: templateBrokerMock.Object,
-templateContentBroker: templateContentBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object
+templateContentBroker: templateContentBrokerMock.Object
         );
     }
 

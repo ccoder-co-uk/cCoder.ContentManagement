@@ -32,7 +32,7 @@ public partial class AppOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         appEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseAppUpdateEventAsync(app: entity))
+            .Setup(expression: x => x.RaiseAppUpdateEventAsync(app: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +44,7 @@ public partial class AppOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         appProcessingServiceMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: entity), times: Times.Once);
-        appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppUpdateEventAsync(app: entity), times: Times.Once);
+        appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppUpdateEventAsync(app: entity, userId: CurrentUserId), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
@@ -61,7 +61,7 @@ public partial class AppOrchestrationServiceTests
             .ReturnsAsync(value: storedApp);
 
         appEventProcessingServiceMock
-            .Setup(expression: service => service.RaiseAppUpdateEventAsync(app: postedApp))
+            .Setup(expression: service => service.RaiseAppUpdateEventAsync(app: postedApp, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -73,7 +73,7 @@ public partial class AppOrchestrationServiceTests
             .BeSameAs(expected: storedApp);
 
         appEventProcessingServiceMock.Verify(
-            expression: service => service.RaiseAppUpdateEventAsync(app: postedApp),
+            expression: service => service.RaiseAppUpdateEventAsync(app: postedApp, userId: CurrentUserId),
             times: Times.Once);
 
         appProcessingServiceMock.Verify(

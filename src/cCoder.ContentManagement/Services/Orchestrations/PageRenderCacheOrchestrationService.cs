@@ -65,7 +65,7 @@ internal sealed partial class PageRenderCacheOrchestrationService(
     public ValueTask DeleteAppPageRenderCachesAsync(int appId) =>
         TryCatch(operation: () =>
         {
-            ValidatePageRenderCacheOnDelete(inputs: [appId]);
+            ValidateAppPageRenderCachesOnDelete(inputs: [appId]);
 
             return DeleteAppPageRenderCaches(
                 appId: appId,
@@ -75,7 +75,7 @@ internal sealed partial class PageRenderCacheOrchestrationService(
     public ValueTask DeleteAppPageRenderCachesFromEventAsync(int appId) =>
         TryCatch(operation: () =>
         {
-            ValidatePageRenderCacheOnDelete(inputs: [appId]);
+            ValidateAppPageRenderCachesFromEventOnDelete(inputs: [appId]);
 
             return DeleteAppPageRenderCaches(
                 appId: appId,
@@ -114,7 +114,7 @@ internal sealed partial class PageRenderCacheOrchestrationService(
     public ValueTask DeletePagePageRenderCachesAsync(int pageId) =>
         TryCatch(operation: () =>
         {
-            ValidatePageRenderCacheOnDelete(inputs: [pageId]);
+            ValidatePagePageRenderCachesOnDelete(inputs: [pageId]);
 
             return DeletePagePageRenderCaches(
                 pageId: pageId,
@@ -124,7 +124,7 @@ internal sealed partial class PageRenderCacheOrchestrationService(
     public ValueTask DeletePagePageRenderCachesFromEventAsync(int pageId) =>
         TryCatch(operation: () =>
         {
-            ValidatePageRenderCacheOnDelete(inputs: [pageId]);
+            ValidatePagePageRenderCachesFromEventOnDelete(inputs: [pageId]);
 
             return DeletePagePageRenderCaches(
                 pageId: pageId,

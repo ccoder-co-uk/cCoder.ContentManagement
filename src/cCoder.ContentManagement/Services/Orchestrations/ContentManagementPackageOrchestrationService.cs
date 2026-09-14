@@ -13,7 +13,8 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 internal sealed partial class ContentManagementPackageOrchestrationService(
     IJsonProcessingService jsonProcessingService,
     IPackageImportEventProcessingService packageImportEventProcessingService,
-    IPackageExportProcessingService packageExportProcessingService)
+    IPackageExportProcessingService packageExportProcessingService,
+    IAuthorizationProcessingService authorizationProcessingService)
     : IContentManagementPackageOrchestrationService
 {
     private static readonly HashSet<string> ComputedImportFields =
@@ -129,7 +130,8 @@ internal sealed partial class ContentManagementPackageOrchestrationService(
             {
                 AppId = appId,
                 Items = items
-            });
+            },
+            userId: authorizationProcessingService.GetCurrentUserId());
 
     private async ValueTask RaiseCommonObjectImportAsync(Package package)
     {
@@ -149,7 +151,9 @@ internal sealed partial class ContentManagementPackageOrchestrationService(
                 {
                     AppId = null,
                     Items = commonObjects
-                });
+                },
+                userId: authorizationProcessingService.GetCurrentUserId());
+
         }
     }
 

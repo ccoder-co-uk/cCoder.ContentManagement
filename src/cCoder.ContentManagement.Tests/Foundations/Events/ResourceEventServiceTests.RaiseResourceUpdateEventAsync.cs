@@ -37,7 +37,9 @@ public partial class ResourceEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseResourceUpdateEventAsync(resource: entity);
+        await service.RaiseResourceUpdateEventAsync(
+            resource: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class ResourceEventServiceTests
 expression: x => x.RaiseResourceUpdateEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Resource>>()),
 times: Times.Once
         );
-
-        resourceEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         resourceEventBrokerMock.VerifyNoOtherCalls();
     }

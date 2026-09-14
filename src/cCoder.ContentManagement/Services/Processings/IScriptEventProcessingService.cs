@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface IScriptEventProcessingService
 {
-    ValueTask RaiseScriptAddEventAsync(Script entity);
+    ValueTask RaiseScriptAddEventAsync(Script entity, string userId);
 
-    ValueTask RaiseScriptUpdateEventAsync(Script entity);
+    ValueTask RaiseScriptUpdateEventAsync(Script entity, string userId);
 
-    ValueTask RaiseScriptDeleteEventAsync(Script entity);
+    ValueTask RaiseScriptDeleteEventAsync(Script entity, string userId);
 }

@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal interface IContentEventService
 {
-    ValueTask RaiseContentAddEventAsync(Content entity);
+    ValueTask RaiseContentAddEventAsync(Content entity, string userId);
 
-    ValueTask RaiseContentUpdateEventAsync(Content entity);
+    ValueTask RaiseContentUpdateEventAsync(Content entity, string userId);
 
-    ValueTask RaiseContentDeleteEventAsync(Content entity);
+    ValueTask RaiseContentDeleteEventAsync(Content entity, string userId);
 }

@@ -32,7 +32,7 @@ public partial class PageInfoOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         pageInfoEventProcessingServiceMock
-            .Setup(expression: x => x.RaisePageInfoAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePageInfoAddEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +44,7 @@ public partial class PageInfoOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         pageInfoProcessingServiceMock.Verify(expression: x => x.AddPageInfoAsync(newPageInfo: entity), times: Times.Once);
-        pageInfoEventProcessingServiceMock.Verify(expression: x => x.RaisePageInfoAddEventAsync(entity: entity), times: Times.Once);
+        pageInfoEventProcessingServiceMock.Verify(expression: x => x.RaisePageInfoAddEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
 }

@@ -15,10 +15,11 @@ internal sealed partial class PackageImportEventService(
 {
     public ValueTask RaiseImportAsync<T>(
         string eventName,
-        PackageItemImportEvent<T> import) =>
+        PackageItemImportEvent<T> import,
+        string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseImportAsync(inputs: [eventName, import]);
+        ValidateRaiseImportAsync(inputs: [eventName, import, userId]);
 
         return packageImportEventBroker.RaiseImportAsync(
             eventName: eventName,
@@ -26,7 +27,7 @@ internal sealed partial class PackageImportEventService(
             {
                 AuthInfo = new EventAuthInfo
                 {
-                    SSOUserId = packageImportEventBroker.GetCurrentUserId()
+                    SSOUserId = userId
                 },
                 Data = import
             });

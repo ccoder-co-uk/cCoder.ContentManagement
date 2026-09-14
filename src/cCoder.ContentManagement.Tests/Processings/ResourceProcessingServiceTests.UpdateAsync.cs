@@ -22,12 +22,10 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class ResourceProcessingServiceTests
 {
     [Fact]
-    public async Task ShouldStampLastUpdatedFields_AndDelegateToFoundationServiceWhenUpdateAsync()
+    public async Task ShouldDelegateToFoundationServiceWhenUpdateAsync()
     {
         // Given
         Resource resource = CreateRandomResource(id: 7);
-        User currentUser = TestUsers.WithPrivilege(privilege: "resource_update");
-
         resourceServiceMock.Setup(expression: x => x.UpdateResourceAsync(updatedResource: resource))
             .ReturnsAsync(value: resource);
 
@@ -36,7 +34,6 @@ public partial class ResourceProcessingServiceTests
 
         // Then
         Assert.Same(expected: resource, actual: result);
-        Assert.Equal(expected: "test-user", actual: resource.LastUpdatedBy);
         resourceServiceMock.Verify(expression: x => x.UpdateResourceAsync(updatedResource: resource), times: Times.Once);
     }
 

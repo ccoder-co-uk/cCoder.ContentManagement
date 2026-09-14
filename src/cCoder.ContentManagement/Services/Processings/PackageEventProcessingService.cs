@@ -7,26 +7,39 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class PackageEventProcessingService(IPackageEventService eventService) : IPackageEventProcessingService
+internal partial class PackageEventProcessingService(IPackageEventService eventService)
+    : IPackageEventProcessingService
 {
-    public ValueTask RaisePackageAddEventAsync(Package package) =>
+    public ValueTask RaisePackageAddEventAsync(Package package, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePackageAddEventAsync(inputs: [package]);
-        return eventService.RaisePackageAddEventAsync(entity: package);
+        ValidateRaisePackageAddEventAsync(inputs: [package, userId]);
+
+        return eventService.RaisePackageAddEventAsync(
+            entity: package,
+            userId: userId);
+
     }, isValueTask: true);
 
-    public ValueTask RaisePackageUpdateEventAsync(Package package) =>
+    public ValueTask RaisePackageUpdateEventAsync(Package package, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePackageUpdateEventAsync(inputs: [package]);
-        return eventService.RaisePackageUpdateEventAsync(entity: package);
+        ValidateRaisePackageUpdateEventAsync(inputs: [package, userId]);
+
+        return eventService.RaisePackageUpdateEventAsync(
+            entity: package,
+            userId: userId);
+
     }, isValueTask: true);
 
-    public ValueTask RaisePackageDeleteEventAsync(Package package) =>
+    public ValueTask RaisePackageDeleteEventAsync(Package package, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePackageDeleteEventAsync(inputs: [package]);
-        return eventService.RaisePackageDeleteEventAsync(entity: package);
+        ValidateRaisePackageDeleteEventAsync(inputs: [package, userId]);
+
+        return eventService.RaisePackageDeleteEventAsync(
+            entity: package,
+            userId: userId);
+
     }, isValueTask: true);
 }

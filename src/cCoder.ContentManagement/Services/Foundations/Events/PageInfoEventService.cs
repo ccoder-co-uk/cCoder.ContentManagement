@@ -11,16 +11,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBroker) : IPageInfoEventService
 {
-    public ValueTask RaisePageInfoAddEventAsync(PageInfo pageInfo) =>
+    public ValueTask RaisePageInfoAddEventAsync(PageInfo pageInfo, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageInfoAddEventAsync(inputs: [pageInfo]);
+        ValidateRaisePageInfoAddEventAsync(inputs: [pageInfo, userId]);
 
         EventMessage<PageInfo> message = new EventMessage<PageInfo>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = pageInfoEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = pageInfo
         };
@@ -29,16 +29,16 @@ internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBr
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageInfoUpdateEventAsync(PageInfo pageInfo) =>
+    public ValueTask RaisePageInfoUpdateEventAsync(PageInfo pageInfo, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageInfoUpdateEventAsync(inputs: [pageInfo]);
+        ValidateRaisePageInfoUpdateEventAsync(inputs: [pageInfo, userId]);
 
         EventMessage<PageInfo> message = new EventMessage<PageInfo>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = pageInfoEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = pageInfo
         };
@@ -47,16 +47,16 @@ internal partial class PageInfoEventService(IPageInfoEventBroker pageInfoEventBr
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageInfoDeleteEventAsync(PageInfo pageInfo) =>
+    public ValueTask RaisePageInfoDeleteEventAsync(PageInfo pageInfo, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePageInfoDeleteEventAsync(inputs: [pageInfo]);
+        ValidateRaisePageInfoDeleteEventAsync(inputs: [pageInfo, userId]);
 
         EventMessage<PageInfo> message = new EventMessage<PageInfo>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = pageInfoEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = pageInfo
         };

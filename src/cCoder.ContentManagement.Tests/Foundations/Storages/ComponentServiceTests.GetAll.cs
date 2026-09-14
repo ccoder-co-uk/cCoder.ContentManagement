@@ -46,7 +46,6 @@ public partial class ComponentServiceTests
 
         componentBrokerMock.Verify(expression: x => x.GetAllComponents(), times: Times.Once);
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

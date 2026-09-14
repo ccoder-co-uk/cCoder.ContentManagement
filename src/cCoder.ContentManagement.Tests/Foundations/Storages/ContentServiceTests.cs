@@ -20,31 +20,18 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class ContentServiceTests
 {
     private readonly Mock<IContentBroker> contentBrokerMock;
-    private readonly Mock<IPageBroker> pageBrokerMock;
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly ContentService contentService;
 
     public ContentServiceTests()
     {
         contentBrokerMock = new Mock<IContentBroker>(behavior: MockBehavior.Strict);
-        pageBrokerMock = new Mock<IPageBroker>(behavior: MockBehavior.Strict);
-        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
-
-        contentService = new ContentService(
-contentBroker: contentBrokerMock.Object,
-pageBroker: pageBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object
-        );
+        contentService = new ContentService(contentBroker: contentBrokerMock.Object);
     }
 
     private static Content CreateRandomContent(int id = 42, int pageId = 7)

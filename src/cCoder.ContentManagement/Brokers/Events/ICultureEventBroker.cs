@@ -7,7 +7,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface ICultureEventBroker : IAuthenticatedEventBroker
+public interface ICultureEventBroker
 {
     ValueTask RaiseCultureAddEventAsync(EventMessage<Culture> message);
 

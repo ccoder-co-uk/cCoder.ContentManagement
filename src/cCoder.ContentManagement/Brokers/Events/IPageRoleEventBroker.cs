@@ -7,7 +7,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface IPageRoleEventBroker : IAuthenticatedEventBroker
+public interface IPageRoleEventBroker
 {
     ValueTask RaisePageRoleAddEventAsync(EventMessage<PageRole> message);
 

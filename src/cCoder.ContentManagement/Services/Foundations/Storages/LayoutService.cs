@@ -3,15 +3,12 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationManager authorizationManager) : ILayoutService
+internal partial class LayoutService(ILayoutBroker layoutBroker) : ILayoutService
 {
     public Layout GetLayout(int layoutId, bool ignoreFilters = false) =>
         TryCatch<Layout>(operation: () =>
@@ -60,16 +57,10 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationM
     {
         ValidateLayoutOnAdd(inputs: [newLayout]);
         ValidateLayout(layout: newLayout, parameterName: "layout");
-        authorizationManager.Authorize(appId: newLayout.AppId, privilege: "Layout_create");
         Layout storageLayout = CreateStorageLayout(newLayout: newLayout);
 
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
-
         DateTimeOffset now = (storageLayout.CreatedOn = DateTimeOffset.UtcNow);
-        storageLayout.CreatedBy = currentUserId;
         storageLayout.LastUpdated = now;
-        storageLayout.LastUpdatedBy = currentUserId;
         Layout result = await layoutBroker.AddLayoutAsync(newLayout: storageLayout);
         newLayout.Id = result.Id;
         newLayout.Name = result.Name;
@@ -91,15 +82,10 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationM
     {
         ValidateLayoutOnUpdate(inputs: [updatedLayout]);
         ValidateLayout(layout: updatedLayout, parameterName: "layout");
-        authorizationManager.Authorize(appId: updatedLayout.AppId, privilege: "Layout_update");
         Layout updateLayout = CreateStorageLayout(newLayout: updatedLayout);
-
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateLayout.LastUpdated = now;
-        updateLayout.LastUpdatedBy = currentUserId;
         Layout result = await layoutBroker.UpdateLayoutAsync(updatedLayout: updateLayout);
         updatedLayout.Id = result.Id;
         updatedLayout.Name = result.Name;
@@ -137,7 +123,6 @@ internal partial class LayoutService(ILayoutBroker layoutBroker, IAuthorizationM
             return;
         }
 
-        authorizationManager.Authorize(appId: layout.AppId, privilege: "Layout_delete");
         await layoutBroker.DeleteLayoutAsync(deletedLayout: CreateStorageLayout(newLayout: layout));
 
     }, isValueTask: true);

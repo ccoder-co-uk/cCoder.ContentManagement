@@ -25,16 +25,23 @@ public partial class CommonObjectOrchestrationServiceTests
 {
     private readonly Mock<ICommonObjectProcessingService> commonObjectProcessingServiceMock;
     private readonly Mock<ICommonObjectEventProcessingService> commonObjectEventProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly CommonObjectOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
 
     public CommonObjectOrchestrationServiceTests()
     {
         commonObjectProcessingServiceMock = new Mock<ICommonObjectProcessingService>(behavior: MockBehavior.Strict);
         commonObjectEventProcessingServiceMock = new Mock<ICommonObjectEventProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
 
         orchestrationService = new CommonObjectOrchestrationService(
 processingService: commonObjectProcessingServiceMock.Object,
-eventService: commonObjectEventProcessingServiceMock.Object
+eventService: commonObjectEventProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 

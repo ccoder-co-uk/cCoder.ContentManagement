@@ -29,14 +29,20 @@ public partial class PackageEventProcessingServiceTests
         Package entity = CreateRandomPackage();
 
         packageEventServiceMock
-            .Setup(expression: x => x.RaisePackageDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePackageDeleteEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePackageDeleteEventAsync(package: entity);
+        await service.RaisePackageDeleteEventAsync(
+            package: entity,
+            userId: CurrentUserId);
 
         // Then
-        packageEventServiceMock.Verify(expression: x => x.RaisePackageDeleteEventAsync(entity: entity), times: Times.Once);
+        packageEventServiceMock.Verify(expression: x => x.RaisePackageDeleteEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
         packageEventServiceMock.VerifyNoOtherCalls();
     }
 

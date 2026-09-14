@@ -2,15 +2,12 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAuthorizationManager authorizationManager) : IAppCultureService
+internal partial class AppCultureService(IAppCultureBroker appCultureBroker) : IAppCultureService
 {
     public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
         TryCatch<IQueryable<AppCulture>>(operation: () =>
@@ -41,7 +38,6 @@ internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAu
     {
         ValidateAppCultureOnAdd(inputs: [newAppCulture]);
         ValidateAppCulture(appCulture: newAppCulture, parameterName: "appCulture");
-        authorizationManager.Authorize(appId: newAppCulture.AppId, privilege: "AppCulture_create");
         AppCulture result = await appCultureBroker.AddAppCultureAsync(newAppCulture: CreateStorageAppCulture(newAppCulture: newAppCulture));
         newAppCulture.AppId = result.AppId;
         newAppCulture.CultureId = result.CultureId;
@@ -54,7 +50,6 @@ internal partial class AppCultureService(IAppCultureBroker appCultureBroker, IAu
     {
         ValidateAppCultureOnDelete(inputs: [deletedAppCulture]);
         ValidateAppCulture(appCulture: deletedAppCulture, parameterName: "appCulture");
-        authorizationManager.Authorize(appId: deletedAppCulture.AppId, privilege: "AppCulture_delete");
         await appCultureBroker.DeleteAppCultureAsync(deletedAppCulture: CreateStorageAppCulture(newAppCulture: deletedAppCulture));
 
     }, isValueTask: true);

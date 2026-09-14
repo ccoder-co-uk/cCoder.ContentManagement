@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface IPackageItemEventProcessingService
 {
-    ValueTask RaisePackageItemAddEventAsync(PackageItem entity);
+    ValueTask RaisePackageItemAddEventAsync(PackageItem entity, string userId);
 
-    ValueTask RaisePackageItemUpdateEventAsync(PackageItem entity);
+    ValueTask RaisePackageItemUpdateEventAsync(PackageItem entity, string userId);
 
-    ValueTask RaisePackageItemDeleteEventAsync(PackageItem entity);
+    ValueTask RaisePackageItemDeleteEventAsync(PackageItem entity, string userId);
 }

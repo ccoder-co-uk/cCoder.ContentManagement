@@ -8,35 +8,45 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class ComponentEventProcessingService(IComponentEventService eventService) : IComponentEventProcessingService
+internal partial class ComponentEventProcessingService(IComponentEventService eventService)
+    : IComponentEventProcessingService
 {
-    public ValueTask RaiseComponentAddEventAsync(Component component) =>
+    public ValueTask RaiseComponentAddEventAsync(Component component, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseComponentAddEventAsync(inputs: [component]);
+        ValidateRaiseComponentAddEventAsync(inputs: [component, userId]);
         ValidateComponent(component: component, parameterName: "entity");
 
-        return eventService.RaiseComponentAddEventAsync(entity: component);
+
+        return eventService.RaiseComponentAddEventAsync(
+            entity: component,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseComponentUpdateEventAsync(Component component) =>
+    public ValueTask RaiseComponentUpdateEventAsync(Component component, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseComponentUpdateEventAsync(inputs: [component]);
+        ValidateRaiseComponentUpdateEventAsync(inputs: [component, userId]);
         ValidateComponent(component: component, parameterName: "entity");
 
-        return eventService.RaiseComponentUpdateEventAsync(entity: component);
+
+        return eventService.RaiseComponentUpdateEventAsync(
+            entity: component,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseComponentDeleteEventAsync(Component component) =>
+    public ValueTask RaiseComponentDeleteEventAsync(Component component, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseComponentDeleteEventAsync(inputs: [component]);
+        ValidateRaiseComponentDeleteEventAsync(inputs: [component, userId]);
         ValidateComponent(component: component, parameterName: "entity");
 
-        return eventService.RaiseComponentDeleteEventAsync(entity: component);
+
+        return eventService.RaiseComponentDeleteEventAsync(
+            entity: component,
+            userId: userId);
 
     }, isValueTask: true);
 

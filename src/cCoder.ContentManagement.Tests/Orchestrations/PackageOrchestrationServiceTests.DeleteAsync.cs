@@ -36,7 +36,7 @@ public partial class PackageOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         packageEventProcessingServiceMock
-            .Setup(expression: x => x.RaisePackageDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaisePackageDeleteEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -45,7 +45,7 @@ public partial class PackageOrchestrationServiceTests
         // Then
         packageProcessingServiceMock.Verify(expression: x => x.GetPackage(packageId: id), times: Times.Once);
         packageProcessingServiceMock.Verify(expression: x => x.DeleteAsync(packageId: id), times: Times.Once);
-        packageEventProcessingServiceMock.Verify(expression: x => x.RaisePackageDeleteEventAsync(entity: entity), times: Times.Once);
+        packageEventProcessingServiceMock.Verify(expression: x => x.RaisePackageDeleteEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
 }

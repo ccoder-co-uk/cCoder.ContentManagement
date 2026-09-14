@@ -36,7 +36,9 @@ public partial class PageRoleEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageRoleAddEventAsync(pageRole: entity);
+        await service.RaisePageRoleAddEventAsync(
+            pageRole: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -56,9 +58,6 @@ public partial class PageRoleEventServiceTests
 expression: x => x.RaisePageRoleAddEventAsync(message: It.IsAny<EventMessage<PageRole>>()),
 times: Times.Once
         );
-
-        pageRoleEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         pageRoleEventBrokerMock.VerifyNoOtherCalls();
     }

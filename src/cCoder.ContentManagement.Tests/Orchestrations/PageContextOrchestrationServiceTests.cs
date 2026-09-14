@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Services.Foundations.Authorization;
+using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Services.Foundations.Authorizations;
 using cCoder.ContentManagement.Services.Foundations.HttpContexts;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
@@ -23,7 +23,7 @@ public sealed partial class PageContextOrchestrationServiceTests
         User user = new() { Id = "Paul" };
         Mock<IHttpContextService> httpContextService = new();
         Mock<IPageAuthorizationService> pageAuthorizationService = new();
-        Mock<IAuthorizationService> authorizationService = new();
+        Mock<IAuthorizationProcessingService> authorizationProcessingService = new();
 
         httpContextService.Setup(expression: service =>
             service.GetPageRenderContext())
@@ -34,7 +34,7 @@ public sealed partial class PageContextOrchestrationServiceTests
                 pageRenderContext: context))
             .ReturnsAsync(value: context);
 
-        authorizationService.Setup(expression: service =>
+        authorizationProcessingService.Setup(expression: service =>
             service.ResolveCurrentAuthorizationContext(
                 context: It.Is<AuthorizationContext>(match: item =>
                     item.Culture == context.Culture)))
@@ -43,7 +43,7 @@ public sealed partial class PageContextOrchestrationServiceTests
         PageContextOrchestrationService service = new(
             httpContextService: httpContextService.Object,
             pageAuthorizationService: pageAuthorizationService.Object,
-            authorizationService: authorizationService.Object);
+            authorizationProcessingService: authorizationProcessingService.Object);
 
         // When
         HttpPageRenderContext result =
@@ -54,6 +54,6 @@ public sealed partial class PageContextOrchestrationServiceTests
         Assert.Same(expected: user, actual: result.User);
         httpContextService.VerifyAll();
         pageAuthorizationService.VerifyAll();
-        authorizationService.VerifyAll();
+        authorizationProcessingService.VerifyAll();
     }
 }

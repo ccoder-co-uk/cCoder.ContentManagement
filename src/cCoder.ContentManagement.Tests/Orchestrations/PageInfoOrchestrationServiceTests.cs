@@ -24,16 +24,23 @@ public partial class PageInfoOrchestrationServiceTests
 {
     private readonly Mock<IPageInfoProcessingService> pageInfoProcessingServiceMock;
     private readonly Mock<IPageInfoEventProcessingService> pageInfoEventProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly PageInfoOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
 
     public PageInfoOrchestrationServiceTests()
     {
         pageInfoProcessingServiceMock = new Mock<IPageInfoProcessingService>(behavior: MockBehavior.Strict);
         pageInfoEventProcessingServiceMock = new Mock<IPageInfoEventProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
 
         orchestrationService = new PageInfoOrchestrationService(
 processingService: pageInfoProcessingServiceMock.Object,
-eventService: pageInfoEventProcessingServiceMock.Object
+eventService: pageInfoEventProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 

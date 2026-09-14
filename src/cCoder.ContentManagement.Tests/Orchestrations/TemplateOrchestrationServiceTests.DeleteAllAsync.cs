@@ -30,7 +30,7 @@ public partial class TemplateOrchestrationServiceTests
         templateProcessingServiceMock.Setup(expression: x => x.GetTemplate(templateId: entities[0].Id))
             .Returns(value: entities[0]);
 
-        templateEventProcessingServiceMock.Setup(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entities[0]))
+        templateEventProcessingServiceMock.Setup(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entities[0], userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         templateProcessingServiceMock.Setup(expression: x => x.DeleteAsync(templateId: entities[0].Id))
@@ -41,7 +41,7 @@ public partial class TemplateOrchestrationServiceTests
 
         // Then
         templateProcessingServiceMock.Verify(expression: x => x.GetTemplate(templateId: entities[0].Id), times: Times.Once);
-        templateEventProcessingServiceMock.Verify(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entities[0]), times: Times.Once);
+        templateEventProcessingServiceMock.Verify(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entities[0], userId: CurrentUserId), times: Times.Once);
         templateProcessingServiceMock.Verify(expression: x => x.DeleteAsync(templateId: entities[0].Id), times: Times.Once);
     }
 

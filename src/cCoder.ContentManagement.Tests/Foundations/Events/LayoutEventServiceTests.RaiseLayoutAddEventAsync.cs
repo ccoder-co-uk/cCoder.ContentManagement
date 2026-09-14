@@ -37,7 +37,9 @@ public partial class LayoutEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseLayoutAddEventAsync(layout: entity);
+        await service.RaiseLayoutAddEventAsync(
+            layout: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class LayoutEventServiceTests
 expression: x => x.RaiseLayoutAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Layout>>()),
 times: Times.Once
         );
-
-        layoutEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         layoutEventBrokerMock.VerifyNoOtherCalls();
     }

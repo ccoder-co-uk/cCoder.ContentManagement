@@ -13,7 +13,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 internal partial class PageOrchestrationService(
     IPageProcessingService processingService,
     IPageEventProcessingService eventService,
-    ILayoutProcessingService layoutProcessingService) : IPageOrchestrationService
+    ILayoutProcessingService layoutProcessingService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IPageOrchestrationService
 {
     public ValueTask<Page> GetPageForRenderAsync(int pageId) =>
         TryCatch<Page>(operation: async () =>
@@ -51,7 +53,11 @@ internal partial class PageOrchestrationService(
         ValidateLayoutExistsForApp(page: newPage);
 
         Page result = await processingService.AddPageAsync(newPage: newPage);
-        await eventService.RaisePageAddEventAsync(entity: result);
+
+        await eventService.RaisePageAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -78,7 +84,11 @@ internal partial class PageOrchestrationService(
         updatedPage.CreatedOn = result.CreatedOn;
         updatedPage.LastUpdated = result.LastUpdated;
         updatedPage.LastUpdatedBy = result.LastUpdatedBy;
-        await eventService.RaisePageUpdateEventAsync(entity: updatedPage);
+
+        await eventService.RaisePageUpdateEventAsync(
+            entity: updatedPage,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -106,7 +116,11 @@ internal partial class PageOrchestrationService(
             return;
         }
 
-        await eventService.RaisePageDeleteEventAsync(entity: entity);
+
+        await eventService.RaisePageDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(pageId: pageId);
 
     }, isValueTask: true);
@@ -412,7 +426,11 @@ comparison: (left, right) => left.Path.Split(separator: '/')
         ValidateLayoutExistsForApp(page: newPage);
 
         Page result = await processingService.AddPageAsync(newPage: newPage);
-        await eventService.RaisePageAddEventAsync(entity: result);
+
+        await eventService.RaisePageAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
@@ -448,7 +466,11 @@ comparison: (left, right) => left.Path.Split(separator: '/')
             return;
         }
 
-        await eventService.RaisePageDeleteEventAsync(entity: entity);
+
+        await eventService.RaisePageDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(pageId: pageId);
     }
 
@@ -475,7 +497,11 @@ comparison: (left, right) => left.Path.Split(separator: '/')
         updatedPage.CreatedOn = result.CreatedOn;
         updatedPage.LastUpdated = result.LastUpdated;
         updatedPage.LastUpdatedBy = result.LastUpdatedBy;
-        await eventService.RaisePageUpdateEventAsync(entity: updatedPage);
+
+        await eventService.RaisePageUpdateEventAsync(
+            entity: updatedPage,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 }

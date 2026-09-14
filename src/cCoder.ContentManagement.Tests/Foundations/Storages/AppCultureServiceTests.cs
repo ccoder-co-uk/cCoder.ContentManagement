@@ -19,27 +19,20 @@ using cCoder.ContentManagement.Brokers.Storages;
 
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class AppCultureServiceTests
 {
     private readonly Mock<IAppCultureBroker> appCultureBrokerMock;
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly AppCultureService appCultureService;
 
     public AppCultureServiceTests()
     {
         appCultureBrokerMock = new Mock<IAppCultureBroker>(behavior: MockBehavior.Strict);
-        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
 
         appCultureService = new AppCultureService(
-appCultureBroker: appCultureBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object
+appCultureBroker: appCultureBrokerMock.Object
         );
     }
 

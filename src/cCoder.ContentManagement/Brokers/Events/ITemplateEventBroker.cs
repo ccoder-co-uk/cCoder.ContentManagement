@@ -7,7 +7,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface ITemplateEventBroker : IAuthenticatedEventBroker
+public interface ITemplateEventBroker
 {
     ValueTask RaiseTemplateAddEventAsync(EventMessage<Template> message);
 

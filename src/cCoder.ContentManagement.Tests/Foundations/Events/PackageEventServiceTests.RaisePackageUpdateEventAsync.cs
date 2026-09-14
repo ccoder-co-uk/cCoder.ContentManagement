@@ -37,7 +37,9 @@ public partial class PackageEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePackageUpdateEventAsync(package: entity);
+        await service.RaisePackageUpdateEventAsync(
+            package: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class PackageEventServiceTests
 expression: x => x.RaisePackageUpdateEventAsync(message: It.IsAny<EventMessage<cCoder.Data.Models.Packaging.Package>>()),
 times: Times.Once
         );
-
-        packageEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         packageEventBrokerMock.VerifyNoOtherCalls();
     }

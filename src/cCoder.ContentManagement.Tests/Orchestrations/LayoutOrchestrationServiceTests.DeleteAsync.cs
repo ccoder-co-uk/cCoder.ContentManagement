@@ -13,6 +13,10 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using System.Security;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
+using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -35,7 +39,7 @@ public partial class LayoutOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         layoutEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +48,48 @@ public partial class LayoutOrchestrationServiceTests
         // Then
         layoutProcessingServiceMock.Verify(expression: x => x.GetLayout(layoutId: id), times: Times.Once);
         layoutProcessingServiceMock.Verify(expression: x => x.DeleteAsync(layoutId: id), times: Times.Once);
-        layoutEventProcessingServiceMock.Verify(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entity), times: Times.Once);
+        layoutEventProcessingServiceMock.Verify(expression: x => x.RaiseLayoutDeleteEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+                It.Is<AuthorizationContext>(context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Layout_delete")),
+            times: Times.Once);
+    }
+
+    [Fact]
+    public async Task Layout_WhenUserLacksDeletePrivilege_IsNotDeleted()
+    {
+        // Given
+        int id = 1;
+        Layout entity = CreateRandomLayout();
+
+        layoutProcessingServiceMock
+            .Setup(expression: service => service.GetLayout(layoutId: id))
+            .Returns(value: entity);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                It.Is<AuthorizationContext>(context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Layout_delete")))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
+
+        // When
+        Func<Task> action = async () =>
+            await orchestrationService.DeleteAsync(layoutId: id);
+
+        // Then
+        await action.Should()
+            .ThrowAsync<ContentManagementSecurityException>();
+
+        layoutProcessingServiceMock.Verify(
+            expression: service => service.GetLayout(layoutId: id),
+            times: Times.Once);
+
+        layoutProcessingServiceMock.VerifyNoOtherCalls();
+        layoutEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

@@ -25,11 +25,13 @@ public partial class AppEventProcessingServiceTests
 {
     private readonly Mock<IAppEventService> appEventServiceMock;
     private readonly AppEventProcessingService service;
+    private const string CurrentUserId = "test-user";
 
     public AppEventProcessingServiceTests()
     {
         appEventServiceMock = new Mock<IAppEventService>(behavior: MockBehavior.Strict);
-        service = new AppEventProcessingService(eventService: appEventServiceMock.Object);
+        service = new AppEventProcessingService(
+            eventService: appEventServiceMock.Object);
     }
 
     private static App CreateRandomApp() =>

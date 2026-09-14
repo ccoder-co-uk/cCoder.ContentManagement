@@ -28,14 +28,20 @@ public partial class ComponentEventProcessingServiceTests
         Component entity = CreateRandomComponent();
 
         componentEventServiceMock
-            .Setup(expression: x => x.RaiseComponentDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseComponentDeleteEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseComponentDeleteEventAsync(component: entity);
+        await service.RaiseComponentDeleteEventAsync(
+            component: entity,
+            userId: CurrentUserId);
 
         // Then
-        componentEventServiceMock.Verify(expression: x => x.RaiseComponentDeleteEventAsync(entity: entity), times: Times.Once);
+        componentEventServiceMock.Verify(expression: x => x.RaiseComponentDeleteEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
         componentEventServiceMock.VerifyNoOtherCalls();
     }
 

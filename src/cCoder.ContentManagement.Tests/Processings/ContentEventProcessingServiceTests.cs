@@ -25,11 +25,13 @@ public partial class ContentEventProcessingServiceTests
 {
     private readonly Mock<IContentEventService> contentEventServiceMock;
     private readonly ContentEventProcessingService service;
+    private const string CurrentUserId = "test-user";
 
     public ContentEventProcessingServiceTests()
     {
         contentEventServiceMock = new Mock<IContentEventService>(behavior: MockBehavior.Strict);
-        service = new ContentEventProcessingService(eventService: contentEventServiceMock.Object);
+        service = new ContentEventProcessingService(
+            eventService: contentEventServiceMock.Object);
     }
 
     private static Content CreateRandomContent() =>

@@ -29,20 +29,13 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class LayoutServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
+    public async Task ShouldDelegateToBrokerWhenUpdateAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
-        Layout layout = CreateRandomLayout(id: 7);
+Layout layout = CreateRandomLayout(id: 7);
 
         CmsDataModels.Layout submitted = null;
-
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_update"));
-
-        layoutBrokerMock
+layoutBrokerMock
             .Setup(expression: x => x.UpdateLayoutAsync(updatedLayout: It.IsAny<CmsDataModels.Layout>()))
             .Callback<CmsDataModels.Layout>(action: candidate => submitted = candidate)
             .ReturnsAsync(valueFunction: (CmsDataModels.Layout value) => value);
@@ -138,33 +131,5 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
 
         layoutBrokerMock.Verify(expression: x => x.UpdateLayoutAsync(updatedLayout: It.IsAny<CmsDataModels.Layout>()), times: Times.Once);
         layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_update"), times: Times.Once);
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
-    {
-        // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
-        Layout layout = CreateRandomLayout(id: 7);
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_update"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await layoutService.UpdateLayoutAsync(updatedLayout: layout);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_update"), times: Times.Once);
-    }
-
+}
 }

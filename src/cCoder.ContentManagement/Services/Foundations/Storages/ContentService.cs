@@ -3,18 +3,12 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class ContentService(
-    IContentBroker contentBroker,
-    IPageBroker pageBroker,
-    IAuthorizationManager authorizationManager) : IContentService
+internal partial class ContentService(IContentBroker contentBroker) : IContentService
 {
     public Content GetContent(int contentId, bool ignoreFilters = false) =>
         TryCatch<Content>(operation: () =>
@@ -63,7 +57,6 @@ internal partial class ContentService(
     {
         ValidateContentOnAdd(inputs: [newContent]);
         ValidateContent(content: newContent, parameterName: "content");
-        authorizationManager.Authorize(appId: GetAppId(pageId: newContent.PageId), privilege: "Content_create");
         Content result = await contentBroker.AddContentAsync(newContent: CreateStorageContent(newContent: newContent));
         newContent.Id = result.Id;
         newContent.PageId = result.PageId;
@@ -79,7 +72,6 @@ internal partial class ContentService(
     {
         ValidateContentOnUpdate(inputs: [updatedContent]);
         ValidateContent(content: updatedContent, parameterName: "content");
-        authorizationManager.Authorize(appId: GetAppId(pageId: updatedContent.PageId), privilege: "Content_update");
         Content result = await contentBroker.UpdateContentAsync(updatedContent: CreateStorageContent(newContent: updatedContent));
         updatedContent.Id = result.Id;
         updatedContent.PageId = result.PageId;
@@ -111,7 +103,6 @@ internal partial class ContentService(
             return;
         }
 
-        authorizationManager.Authorize(appId: GetAppId(pageId: content.PageId), privilege: "Content_delete");
         await contentBroker.DeleteContentAsync(deletedContent: CreateStorageContent(newContent: content));
 
     }, isValueTask: true);
@@ -132,12 +123,6 @@ internal partial class ContentService(
             Html = newContent.Html
         };
     }
-
-    private int? GetAppId(int pageId) =>
-        pageBroker.GetAllPagesIgnoringFilters()
-        .Where(predicate: page => page.Id == pageId)
-        .Select(selector: page => (int?)page.AppId)
-        .FirstOrDefault();
 
     private IQueryable<Content> ExecuteGetAllContent(bool ignoreFilters = false) =>
         (ignoreFilters

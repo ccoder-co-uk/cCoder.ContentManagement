@@ -28,6 +28,7 @@ public partial class PageOrchestrationServiceTests
         Mock<IPageProcessingService> processingServiceMock = new();
         Mock<IPageEventProcessingService> eventServiceMock = new();
         Mock<ILayoutProcessingService> layoutServiceMock = new();
+        Mock<IAuthorizationProcessingService> authorizationServiceMock = new();
 
         processingServiceMock.SetReturnsDefault(
             value: new ValueTask<Page>(result: page));
@@ -50,7 +51,8 @@ public partial class PageOrchestrationServiceTests
         PageOrchestrationService service = new(
             processingService: processingServiceMock.Object,
             eventService: eventServiceMock.Object,
-            layoutProcessingService: layoutServiceMock.Object);
+            layoutProcessingService: layoutServiceMock.Object,
+            authorizationProcessingService: authorizationServiceMock.Object);
 
         // When
         Page[] importedPages = await service.ImportPagesAsync(

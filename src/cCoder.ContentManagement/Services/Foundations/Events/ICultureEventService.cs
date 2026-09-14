@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal interface ICultureEventService
 {
-    ValueTask RaiseCultureAddEventAsync(Culture entity);
+    ValueTask RaiseCultureAddEventAsync(Culture entity, string userId);
 
-    ValueTask RaiseCultureUpdateEventAsync(Culture entity);
+    ValueTask RaiseCultureUpdateEventAsync(Culture entity, string userId);
 
-    ValueTask RaiseCultureDeleteEventAsync(Culture entity);
+    ValueTask RaiseCultureDeleteEventAsync(Culture entity, string userId);
 }

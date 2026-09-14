@@ -41,7 +41,6 @@ public partial class LayoutServiceTests
 
         layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(), times: Times.Once);
         layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

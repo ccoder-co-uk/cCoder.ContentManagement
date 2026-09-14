@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface IResourceEventProcessingService
 {
-    ValueTask RaiseResourceAddEventAsync(Resource entity);
+    ValueTask RaiseResourceAddEventAsync(Resource entity, string userId);
 
-    ValueTask RaiseResourceUpdateEventAsync(Resource entity);
+    ValueTask RaiseResourceUpdateEventAsync(Resource entity, string userId);
 
-    ValueTask RaiseResourceDeleteEventAsync(Resource entity);
+    ValueTask RaiseResourceDeleteEventAsync(Resource entity, string userId);
 }

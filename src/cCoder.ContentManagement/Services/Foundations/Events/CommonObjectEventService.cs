@@ -11,16 +11,18 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class CommonObjectEventService(ICommonObjectEventBroker commonObjectEventBroker) : ICommonObjectEventService
 {
-    public ValueTask RaiseCommonObjectAddEventAsync(CommonObject commonObject) =>
+    public ValueTask RaiseCommonObjectAddEventAsync(
+        CommonObject commonObject,
+        string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCommonObjectAddEventAsync(inputs: [commonObject]);
+        ValidateRaiseCommonObjectAddEventAsync(inputs: [commonObject, userId]);
 
         EventMessage<CommonObject> message = new EventMessage<CommonObject>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = commonObjectEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = commonObject
         };
@@ -29,16 +31,18 @@ internal partial class CommonObjectEventService(ICommonObjectEventBroker commonO
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCommonObjectUpdateEventAsync(CommonObject commonObject) =>
+    public ValueTask RaiseCommonObjectUpdateEventAsync(
+        CommonObject commonObject,
+        string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCommonObjectUpdateEventAsync(inputs: [commonObject]);
+        ValidateRaiseCommonObjectUpdateEventAsync(inputs: [commonObject, userId]);
 
         EventMessage<CommonObject> message = new EventMessage<CommonObject>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = commonObjectEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = commonObject
         };
@@ -47,16 +51,18 @@ internal partial class CommonObjectEventService(ICommonObjectEventBroker commonO
 
     }, isValueTask: true);
 
-    public ValueTask RaiseCommonObjectDeleteEventAsync(CommonObject commonObject) =>
+    public ValueTask RaiseCommonObjectDeleteEventAsync(
+        CommonObject commonObject,
+        string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseCommonObjectDeleteEventAsync(inputs: [commonObject]);
+        ValidateRaiseCommonObjectDeleteEventAsync(inputs: [commonObject, userId]);
 
         EventMessage<CommonObject> message = new EventMessage<CommonObject>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = commonObjectEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = commonObject
         };
@@ -66,17 +72,18 @@ internal partial class CommonObjectEventService(ICommonObjectEventBroker commonO
     }, isValueTask: true);
 
     public ValueTask RaiseCommonObjectsImportedEventAsync(
-        CommonObject[] commonObjects) =>
+        CommonObject[] commonObjects,
+        string userId) =>
         TryCatch(operation: async () =>
     {
         ValidateRaiseCommonObjectsImportedEventAsync(
-            inputs: [commonObjects]);
+            inputs: [commonObjects, userId]);
 
         EventMessage<CommonObject[]> message = new EventMessage<CommonObject[]>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = commonObjectEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = commonObjects
         };

@@ -12,7 +12,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class TemplateOrchestrationService(
     ITemplateProcessingService processingService,
-    ITemplateEventProcessingService eventService) : ITemplateOrchestrationService
+    ITemplateEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : ITemplateOrchestrationService
 {
 
     public ValueTask<string> ReadContentAsync(Stream source) =>
@@ -48,9 +50,15 @@ internal partial class TemplateOrchestrationService(
     {
         ValidateTemplateOnAdd(inputs: [newTemplate]);
         ValidateTemplate(template: newTemplate, parameterName: "entity");
+        Authorize(appId: newTemplate.AppId, privilege: "Template_create");
+        StampForAdd(template: newTemplate);
 
         Template result = await processingService.AddTemplateAsync(newTemplate: newTemplate);
-        await eventService.RaiseTemplateAddEventAsync(entity: result);
+
+        await eventService.RaiseTemplateAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -60,9 +68,15 @@ internal partial class TemplateOrchestrationService(
     {
         ValidateTemplateOnUpdate(inputs: [updatedTemplate]);
         ValidateTemplate(template: updatedTemplate, parameterName: "entity");
+        Authorize(appId: updatedTemplate.AppId, privilege: "Template_update");
+        StampForUpdate(template: updatedTemplate);
 
         Template result = await processingService.UpdateTemplateAsync(updatedTemplate: updatedTemplate);
-        await eventService.RaiseTemplateUpdateEventAsync(entity: result);
+
+        await eventService.RaiseTemplateUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -88,7 +102,12 @@ internal partial class TemplateOrchestrationService(
             return;
         }
 
-        await eventService.RaiseTemplateDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Template_delete");
+
+        await eventService.RaiseTemplateDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(templateId: templateId);
 
     }, isValueTask: true);
@@ -230,9 +249,15 @@ internal partial class TemplateOrchestrationService(
     private async ValueTask<Template> ExecuteAddTemplateAsync(Template newTemplate)
     {
         ValidateTemplate(template: newTemplate, parameterName: "entity");
+        Authorize(appId: newTemplate.AppId, privilege: "Template_create");
+        StampForAdd(template: newTemplate);
 
         Template result = await processingService.AddTemplateAsync(newTemplate: newTemplate);
-        await eventService.RaiseTemplateAddEventAsync(entity: result);
+
+        await eventService.RaiseTemplateAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
@@ -265,7 +290,12 @@ internal partial class TemplateOrchestrationService(
             return;
         }
 
-        await eventService.RaiseTemplateDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Template_delete");
+
+        await eventService.RaiseTemplateDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(templateId: templateId);
     }
 
@@ -275,9 +305,42 @@ internal partial class TemplateOrchestrationService(
     private async ValueTask<Template> ExecuteUpdateTemplateAsync(Template updatedTemplate)
     {
         ValidateTemplate(template: updatedTemplate, parameterName: "entity");
+        Authorize(appId: updatedTemplate.AppId, privilege: "Template_update");
+        StampForUpdate(template: updatedTemplate);
 
         Template result = await processingService.UpdateTemplateAsync(updatedTemplate: updatedTemplate);
-        await eventService.RaiseTemplateUpdateEventAsync(entity: result);
+
+        await eventService.RaiseTemplateUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
+    }
+
+    private void Authorize(int? appId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = appId,
+                    Privilege = privilege
+                }
+            });
+
+    private void StampForAdd(Template template)
+    {
+        string currentUserId = authorizationProcessingService.GetCurrentUserId();
+        DateTimeOffset now = DateTimeOffset.Now;
+        template.CreatedOn = now;
+        template.CreatedBy = currentUserId;
+        template.LastUpdated = now;
+        template.LastUpdatedBy = currentUserId;
+    }
+
+    private void StampForUpdate(Template template)
+    {
+        template.LastUpdated = DateTimeOffset.Now;
+        template.LastUpdatedBy = authorizationProcessingService.GetCurrentUserId();
     }
 }

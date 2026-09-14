@@ -37,7 +37,9 @@ public partial class TemplateEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseTemplateUpdateEventAsync(template: entity);
+        await service.RaiseTemplateUpdateEventAsync(
+            template: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class TemplateEventServiceTests
 expression: x => x.RaiseTemplateUpdateEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Template>>()),
 times: Times.Once
         );
-
-        templateEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         templateEventBrokerMock.VerifyNoOtherCalls();
     }

@@ -13,6 +13,9 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using System.Security;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -32,7 +35,7 @@ public partial class TemplateOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         templateEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseTemplateAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseTemplateAddEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +47,39 @@ public partial class TemplateOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         templateProcessingServiceMock.Verify(expression: x => x.AddTemplateAsync(newTemplate: entity), times: Times.Once);
-        templateEventProcessingServiceMock.Verify(expression: x => x.RaiseTemplateAddEventAsync(entity: entity), times: Times.Once);
+        templateEventProcessingServiceMock.Verify(expression: x => x.RaiseTemplateAddEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+                It.Is<AuthorizationContext>(context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Template_create")),
+            times: Times.Once);
+
+        entity.CreatedBy.Should().Be(CurrentUserId);
+        entity.LastUpdatedBy.Should().Be(CurrentUserId);
+    }
+
+    [Fact]
+    public async Task Template_WhenUserLacksCreatePrivilege_IsNotPersisted()
+    {
+        Template entity = CreateRandomTemplate();
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                It.Is<AuthorizationContext>(context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Template_create")))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
+
+        Func<Task> action = async () =>
+            await orchestrationService.AddTemplateAsync(newTemplate: entity);
+
+        await action.Should()
+            .ThrowAsync<ContentManagementSecurityException>();
+
+        templateProcessingServiceMock.VerifyNoOtherCalls();
+        templateEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

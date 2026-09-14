@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface ITemplateEventProcessingService
 {
-    ValueTask RaiseTemplateAddEventAsync(Template entity);
+    ValueTask RaiseTemplateAddEventAsync(Template entity, string userId);
 
-    ValueTask RaiseTemplateUpdateEventAsync(Template entity);
+    ValueTask RaiseTemplateUpdateEventAsync(Template entity, string userId);
 
-    ValueTask RaiseTemplateDeleteEventAsync(Template entity);
+    ValueTask RaiseTemplateDeleteEventAsync(Template entity, string userId);
 }

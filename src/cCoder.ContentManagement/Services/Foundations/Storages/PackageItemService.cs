@@ -3,15 +3,12 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.Packaging;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class PackageItemService(IPackageItemBroker packageItemBroker, IAuthorizationManager authorizationManager) : IPackageItemService
+internal partial class PackageItemService(IPackageItemBroker packageItemBroker) : IPackageItemService
 {
     public PackageItem GetPackageItem(Guid packageItemId, bool ignoreFilters = false) =>
         TryCatch<PackageItem>(operation: () =>
@@ -59,7 +56,6 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
     {
         ValidatePackageItemOnAdd(inputs: [newPackageItem]);
         PackageItem dataPackageItem = CreateStoragePackageItem(newPackageItem: newPackageItem);
-        authorizationManager.Authorize(appId: packageItemBroker.GetAppId(entity: dataPackageItem), privilege: "PackageItem_create");
         PackageItem result = await packageItemBroker.AddPackageItemAsync(newPackageItem: dataPackageItem);
         newPackageItem.Id = result.Id;
         newPackageItem.PackageId = result.PackageId;
@@ -74,7 +70,6 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
     {
         ValidatePackageItemOnUpdate(inputs: [updatedPackageItem]);
         PackageItem dataPackageItem = CreateStoragePackageItem(newPackageItem: updatedPackageItem);
-        authorizationManager.Authorize(appId: packageItemBroker.GetAppId(entity: dataPackageItem), privilege: "PackageItem_update");
         PackageItem result = await packageItemBroker.UpdatePackageItemAsync(updatedPackageItem: dataPackageItem);
         updatedPackageItem.Id = result.Id;
         updatedPackageItem.PackageId = result.PackageId;
@@ -90,7 +85,6 @@ internal partial class PackageItemService(IPackageItemBroker packageItemBroker, 
         ValidateDeleteAsync(inputs: [packageItemId]);
         PackageItem packageItem = ExecuteGetPackageItem(packageItemId: packageItemId);
         PackageItem dataPackageItem = CreateStoragePackageItem(newPackageItem: packageItem);
-        authorizationManager.Authorize(appId: packageItemBroker.GetAppId(entity: dataPackageItem), privilege: "PackageItem_delete");
         await packageItemBroker.DeletePackageItemAsync(deletedPackageItem: dataPackageItem);
 
     }, isValueTask: true);
