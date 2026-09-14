@@ -470,9 +470,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageRoleEventProcessingService, PageRoleEventProcessingService>();
         services.AddTransient<IPageRoleProcessingService, PageRoleProcessingService>();
         services.AddTransient<
-            IPageRoleImportLookupProcessingService,
-            PageRoleImportLookupProcessingService>();
-        services.AddTransient<
             IPageRoleImportPersistenceProcessingService,
             PageRoleImportPersistenceProcessingService>();
         services.AddTransient<IResourceEventProcessingService, ResourceEventProcessingService>();

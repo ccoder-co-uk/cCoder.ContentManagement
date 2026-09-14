@@ -18,4 +18,8 @@ internal interface IPageRoleProcessingService
     ValueTask<IEnumerable<OperationResult<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole);
 
     ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole);
+
+    PageRole ResolvePageRole(int appId, string path, string roleName);
+
+    PageRole ResolvePageRole(PageRole pageRole);
 }

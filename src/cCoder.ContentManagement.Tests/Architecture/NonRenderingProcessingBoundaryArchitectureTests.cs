@@ -21,7 +21,6 @@ public sealed partial class NonRenderingProcessingBoundaryArchitectureTests
     [InlineData("PageProcessingService", "IPageService")]
     [InlineData("PageRenderCacheProcessingService", "IPageRenderCacheService")]
     [InlineData("PageRoleProcessingService", "IPageRoleService")]
-    [InlineData("PageRoleImportLookupProcessingService", "IPageRoleService")]
     [InlineData("PageRoleImportPersistenceProcessingService", "IPageRoleService")]
     [InlineData("ResourceProcessingService", "IResourceService")]
     [InlineData("CurrentAppProcessingService", "IAppService")]

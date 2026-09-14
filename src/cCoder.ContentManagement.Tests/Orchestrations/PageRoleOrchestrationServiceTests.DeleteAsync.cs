@@ -27,6 +27,11 @@ public partial class PageRoleOrchestrationServiceTests
         // Given
         PageRole pageRole = CreateRandomPageRole();
 
+        SetupAuthorization(
+            pageRole: pageRole,
+            privilege: "pagerole_delete",
+            allowed: true);
+
         pageRoleProcessingServiceMock.Setup(expression: x => x.DeletePageRoleAsync(deletedPageRole: pageRole))
             .Returns(value: ValueTask.CompletedTask);
 

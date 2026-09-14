@@ -28,6 +28,12 @@ public partial class PageRoleOrchestrationServiceTests
         // Given
         PageRole entity = CreateRandomPageRole();
 
+        SetupAuthorization(
+            pageRole: entity,
+            privilege: "pagerole_create",
+            allowed: true,
+            requireRole: true);
+
         pageRoleProcessingServiceMock.Setup(expression: x => x.AddPageRoleAsync(newPageRole: entity))
             .ReturnsAsync(value: entity);
 

@@ -5,6 +5,7 @@
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.Data.Models.Security;
+using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -34,13 +35,12 @@ public partial class PageRoleImportOrchestrationServiceTests
             pageRoleInfo
         ];
 
-        lookupProcessingServiceMock
-            .Setup(
-                expression: service =>
-                    service.ResolvePageRole(
-                        appId: appId,
-                        path: pageRoleInfo.Path,
-                        roleName: pageRoleInfo.Role))
+        pageRoleProcessingServiceMock
+            .Setup(expression: service =>
+                service.ResolvePageRole(
+                    appId: appId,
+                    path: pageRoleInfo.Path,
+                    roleName: pageRoleInfo.Role))
             .Returns(value: resolvedPageRole);
 
         persistenceProcessingServiceMock
@@ -50,7 +50,10 @@ public partial class PageRoleImportOrchestrationServiceTests
                         pageRoles: It.Is<PageRole[]>(
                             match: pageRoles =>
                                 pageRoles.Length == 1
-                                && pageRoles[0] == resolvedPageRole)))
+                                && pageRoles[0].PageId
+                                    == resolvedPageRole.PageId
+                                && pageRoles[0].RoleId
+                                    == resolvedPageRole.RoleId)))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -59,7 +62,7 @@ public partial class PageRoleImportOrchestrationServiceTests
             pageRoleInfos: pageRoleInfos);
 
         // Then
-        lookupProcessingServiceMock.Verify(
+        pageRoleProcessingServiceMock.Verify(
             expression: service =>
                 service.ResolvePageRole(
                     appId: appId,
@@ -84,13 +87,12 @@ public partial class PageRoleImportOrchestrationServiceTests
             pageId: 123,
             roleId: Guid.Empty);
 
-        lookupProcessingServiceMock
-            .Setup(
-                expression: service =>
-                    service.ResolvePageRole(
-                        appId: appId,
-                        path: pageRoleInfo.Path,
-                        roleName: pageRoleInfo.Role))
+        pageRoleProcessingServiceMock
+            .Setup(expression: service =>
+                service.ResolvePageRole(
+                    appId: appId,
+                    path: pageRoleInfo.Path,
+                    roleName: pageRoleInfo.Role))
             .Returns(value: unresolvedPageRole);
 
         // When
@@ -103,13 +105,7 @@ public partial class PageRoleImportOrchestrationServiceTests
         await action.Should()
             .ThrowAsync<ContentManagementValidationException>();
 
-        lookupProcessingServiceMock.Verify(
-            expression: service =>
-                service.ResolvePageRole(
-                    appId: appId,
-                    path: pageRoleInfo.Path,
-                    roleName: pageRoleInfo.Role),
-            times: Times.Once);
+        pageRoleProcessingServiceMock.VerifyAll();
 
         persistenceProcessingServiceMock.VerifyNoOtherCalls();
     }
@@ -130,7 +126,7 @@ public partial class PageRoleImportOrchestrationServiceTests
         await action.Should()
             .ThrowAsync<ContentManagementValidationException>();
 
-        lookupProcessingServiceMock.VerifyNoOtherCalls();
+        pageRoleProcessingServiceMock.VerifyNoOtherCalls();
         persistenceProcessingServiceMock.VerifyNoOtherCalls();
     }
 
@@ -146,13 +142,12 @@ public partial class PageRoleImportOrchestrationServiceTests
             innerException: new InvalidOperationException(
                 message: "Lookup failed."));
 
-        lookupProcessingServiceMock
-            .Setup(
-                expression: service =>
-                    service.ResolvePageRole(
-                        appId: 42,
-                        path: pageRoleInfo.Path,
-                        roleName: pageRoleInfo.Role))
+        pageRoleProcessingServiceMock
+            .Setup(expression: service =>
+                service.ResolvePageRole(
+                    appId: 42,
+                    path: pageRoleInfo.Path,
+                    roleName: pageRoleInfo.Role))
             .Throws(exception: dependencyException);
 
         // When
@@ -165,7 +160,7 @@ public partial class PageRoleImportOrchestrationServiceTests
         await action.Should()
             .ThrowAsync<ContentManagementDependencyException>();
 
-        lookupProcessingServiceMock.VerifyAll();
+        pageRoleProcessingServiceMock.VerifyAll();
         persistenceProcessingServiceMock.VerifyNoOtherCalls();
     }
 
@@ -180,13 +175,12 @@ public partial class PageRoleImportOrchestrationServiceTests
         Exception serviceException = new(
             message: "Unexpected lookup failure.");
 
-        lookupProcessingServiceMock
-            .Setup(
-                expression: service =>
-                    service.ResolvePageRole(
-                        appId: 42,
-                        path: pageRoleInfo.Path,
-                        roleName: pageRoleInfo.Role))
+        pageRoleProcessingServiceMock
+            .Setup(expression: service =>
+                service.ResolvePageRole(
+                    appId: 42,
+                    path: pageRoleInfo.Path,
+                    roleName: pageRoleInfo.Role))
             .Throws(exception: serviceException);
 
         // When
@@ -199,7 +193,7 @@ public partial class PageRoleImportOrchestrationServiceTests
         await action.Should()
             .ThrowAsync<ContentManagementServiceException>();
 
-        lookupProcessingServiceMock.VerifyAll();
+        pageRoleProcessingServiceMock.VerifyAll();
         persistenceProcessingServiceMock.VerifyNoOtherCalls();
     }
 }
