@@ -3,18 +3,12 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class CultureService(
-    ICultureBroker cultureBroker,
-    IAppCultureBroker appCultureBroker,
-    IAuthorizationManager authorizationManager) : ICultureService
+internal partial class CultureService(ICultureBroker cultureBroker) : ICultureService
 {
     public Culture GetCulture(string cultureId, bool ignoreFilters = false) =>
         TryCatch<Culture>(operation: () =>
@@ -58,12 +52,19 @@ internal partial class CultureService(
             : cultureBroker.GetAllCultures();
     });
 
+    public int? GetOwningAppId(string cultureId) =>
+        TryCatch<int?>(operation: () =>
+    {
+        ValidateOwningAppIdOnGet(inputs: [cultureId]);
+        ValidateId(cultureId: cultureId, parameterName: "id");
+        return cultureBroker.GetOwningAppId(cultureId: cultureId);
+    });
+
     public ValueTask<Culture> AddCultureAsync(Culture newCulture) =>
         TryCatch<Culture>(operation: async () =>
     {
         ValidateCultureOnAdd(inputs: [newCulture]);
         ValidateCulture(culture: newCulture, parameterName: "culture");
-        authorizationManager.Authorize(appId: GetAppId(cultureId: newCulture.Id), privilege: "Culture_create");
         Culture result = await cultureBroker.AddCultureAsync(newCulture: CreateStorageCulture(newCulture: newCulture));
         newCulture.Id = result.Id;
         newCulture.Name = result.Name;
@@ -76,7 +77,6 @@ internal partial class CultureService(
     {
         ValidateCultureOnUpdate(inputs: [updatedCulture]);
         ValidateCulture(culture: updatedCulture, parameterName: "culture");
-        authorizationManager.Authorize(appId: GetAppId(cultureId: updatedCulture.Id), privilege: "Culture_update");
         Culture result = await cultureBroker.UpdateCultureAsync(updatedCulture: CreateStorageCulture(newCulture: updatedCulture));
         updatedCulture.Id = result.Id;
         updatedCulture.Name = result.Name;
@@ -90,7 +90,6 @@ internal partial class CultureService(
         ValidateDeleteAsync(inputs: [cultureId]);
         ValidateId(cultureId: cultureId, parameterName: "id");
         Culture culture = ExecuteGetCulture(cultureId: cultureId);
-        authorizationManager.Authorize(appId: GetAppId(cultureId: culture.Id), privilege: "Culture_delete");
         await cultureBroker.DeleteCultureAsync(deletedCulture: CreateStorageCulture(newCulture: culture));
 
     }, isValueTask: true);
@@ -108,12 +107,6 @@ internal partial class CultureService(
             Name = newCulture.Name
         };
     }
-
-    private int? GetAppId(string cultureId) =>
-        appCultureBroker.GetAllAppCulturesIgnoringFilters()
-        .Where(predicate: appCulture => appCulture.CultureId == cultureId)
-        .Select(selector: appCulture => (int?)appCulture.AppId)
-        .FirstOrDefault();
 
     private IQueryable<Culture> ExecuteGetAllCulture(bool ignoreFilters = false) =>
         (ignoreFilters

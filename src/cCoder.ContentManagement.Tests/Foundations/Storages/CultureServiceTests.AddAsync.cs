@@ -37,12 +37,6 @@ public partial class CultureServiceTests
 
         CmsDataModels.Culture submitted = null;
 
-        appCultureBrokerMock.Setup(expression: x => x.GetAllAppCulturesIgnoringFilters())
-            .Returns(value: new[] { new CmsDataModels.AppCulture { AppId = 7, CultureId = culture.Id } }
-                .AsQueryable());
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_create"));
-
         cultureBrokerMock.Setup(expression: x => x.AddCultureAsync(newCulture: It.IsAny<CmsDataModels.Culture>()))
             .Callback<CmsDataModels.Culture>(action: candidate => submitted = candidate)
             .ReturnsAsync(valueFunction: (CmsDataModels.Culture value) => value);
@@ -75,39 +69,6 @@ public partial class CultureServiceTests
             newCulture: It.IsAny<CmsDataModels.Culture>()), times: Times.Once);
 
         cultureBrokerMock.VerifyNoOtherCalls();
-        appCultureBrokerMock.Verify(expression: x => x.GetAllAppCulturesIgnoringFilters(), times: Times.Once);
-        appCultureBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_create"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
-    {
-        // Given
-        Culture culture = CreateRandomCulture();
-
-        appCultureBrokerMock.Setup(expression: x => x.GetAllAppCulturesIgnoringFilters())
-            .Returns(value: new[] { new CmsDataModels.AppCulture { AppId = 7, CultureId = culture.Id } }.AsQueryable());
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_create"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await cultureService.AddCultureAsync(newCulture: culture);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        cultureBrokerMock.VerifyNoOtherCalls();
-        appCultureBrokerMock.Verify(expression: x => x.GetAllAppCulturesIgnoringFilters(), times: Times.Once);
-        appCultureBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Culture_create"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

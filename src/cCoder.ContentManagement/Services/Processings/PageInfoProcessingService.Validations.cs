@@ -13,6 +13,9 @@ internal partial class PageInfoProcessingService
     private static void ValidateAllPageInfoOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidateOwningAppIdOnGet(object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void ValidatePageInfoOnAdd(object[] inputs) =>
         Validate(inputs: inputs);
 

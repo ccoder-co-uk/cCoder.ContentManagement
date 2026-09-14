@@ -24,6 +24,18 @@ internal sealed class CultureBroker(ICoreContextFactory coreContextFactory) : IC
         return coreDataContext.Cultures.IgnoreQueryFilters();
     }
 
+    public int? GetOwningAppId(string cultureId)
+    {
+        using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.AppCultures
+            .IgnoreQueryFilters()
+            .Where(predicate: appCulture =>
+                appCulture.CultureId == cultureId)
+            .Select(selector: appCulture => (int?)appCulture.AppId)
+            .FirstOrDefault();
+    }
+
     public async ValueTask<Culture> AddCultureAsync(Culture newCulture)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();

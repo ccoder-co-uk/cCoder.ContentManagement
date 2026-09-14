@@ -24,6 +24,17 @@ internal sealed class PageInfoBroker(ICoreContextFactory coreContextFactory) : I
         return coreDataContext.PageInfo.IgnoreQueryFilters();
     }
 
+    public int? GetOwningAppId(int pageId)
+    {
+        using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Pages
+            .IgnoreQueryFilters()
+            .Where(predicate: page => page.Id == pageId)
+            .Select(selector: page => (int?)page.AppId)
+            .FirstOrDefault();
+    }
+
     public async ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();

@@ -34,6 +34,7 @@ internal partial class CultureOrchestrationService(
     {
         ValidateCultureOnAdd(inputs: [newCulture]);
         ValidateCulture(culture: newCulture, parameterName: "entity");
+        Authorize(cultureId: newCulture.Id, privilege: "Culture_create");
 
         Culture result = await processingService.AddCultureAsync(newCulture: newCulture);
 
@@ -50,6 +51,7 @@ internal partial class CultureOrchestrationService(
     {
         ValidateCultureOnUpdate(inputs: [updatedCulture]);
         ValidateCulture(culture: updatedCulture, parameterName: "entity");
+        Authorize(cultureId: updatedCulture.Id, privilege: "Culture_update");
 
         Culture result = await processingService.UpdateCultureAsync(updatedCulture: updatedCulture);
 
@@ -68,6 +70,7 @@ internal partial class CultureOrchestrationService(
         ValidateId(cultureId: cultureId, parameterName: "id");
 
         Culture entity = processingService.GetCulture(cultureId: cultureId);
+        Authorize(cultureId: entity.Id, privilege: "Culture_delete");
 
         await eventService.RaiseCultureDeleteEventAsync(
             entity: entity,
@@ -81,14 +84,42 @@ internal partial class CultureOrchestrationService(
         TryCatch<IEnumerable<OperationResult<Culture>>>(operation: () =>
     {
         ValidateOrUpdateCultureResultOnAdd(inputs: [newCulture]);
-        return processingService.AddOrUpdateCultureResult(newCulture: ValidateCultures(cultures: newCulture, parameterName: "items"));
+
+        Culture[] cultures = ValidateCultures(
+            cultures: newCulture,
+            parameterName: "items")
+            .ToArray();
+
+        foreach (Culture culture in cultures)
+        {
+            Authorize(
+                cultureId: culture.Id,
+                privilege: string.IsNullOrWhiteSpace(value: culture.Id)
+                    ? "Culture_create"
+                    : "Culture_update");
+        }
+
+        return processingService.AddOrUpdateCultureResult(
+            newCulture: cultures);
     }, isValueTask: true);
 
     public ValueTask DeleteAllCultureAsync(IEnumerable<Culture> deletedCulture) =>
         TryCatch(operation: () =>
     {
         ValidateAllCultureOnDelete(inputs: [deletedCulture]);
-        return processingService.DeleteAllCultureAsync(deletedCulture: ValidateCultures(cultures: deletedCulture, parameterName: "items"));
+
+        Culture[] cultures = ValidateCultures(
+            cultures: deletedCulture,
+            parameterName: "items")
+            .ToArray();
+
+        foreach (Culture culture in cultures)
+        {
+            Authorize(cultureId: culture.Id, privilege: "Culture_delete");
+        }
+
+        return processingService.DeleteAllCultureAsync(
+            deletedCulture: cultures);
     }, isValueTask: true);
 
     private static string ValidateId(string cultureId, string parameterName)
@@ -120,4 +151,17 @@ internal partial class CultureOrchestrationService(
 
         return cultures;
     }
+
+    private void Authorize(string cultureId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = processingService.GetOwningAppId(
+                        cultureId: cultureId),
+                    Privilege = privilege
+                }
+            });
+
 }

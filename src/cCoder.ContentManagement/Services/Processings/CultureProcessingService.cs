@@ -9,7 +9,8 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class CultureProcessingService(ICultureService service) : ICultureProcessingService
+internal partial class CultureProcessingService(ICultureService service)
+    : ICultureProcessingService
 {
     public Culture GetCulture(string cultureId) =>
         TryCatch<Culture>(operation: () =>
@@ -25,6 +26,15 @@ internal partial class CultureProcessingService(ICultureService service) : ICult
     {
         ValidateAllCultureOnGet(inputs: [ignoreFilters]);
         return service.GetAllCulture(ignoreFilters: ignoreFilters);
+    });
+
+    public int? GetOwningAppId(string cultureId) =>
+        TryCatch<int?>(operation: () =>
+    {
+        ValidateOwningAppIdOnGet(inputs: [cultureId]);
+        ValidateId(cultureId: cultureId, parameterName: "id");
+
+        return service.GetOwningAppId(cultureId: cultureId);
     });
 
     public ValueTask<Culture> AddCultureAsync(Culture newCulture) =>

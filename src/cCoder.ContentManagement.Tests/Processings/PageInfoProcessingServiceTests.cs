@@ -31,7 +31,8 @@ public partial class PageInfoProcessingServiceTests
 
     public PageInfoProcessingServiceTests()
     {
-        pageInfoProcessingService = new PageInfoProcessingService(service: pageInfoServiceMock.Object);
+        pageInfoProcessingService = new PageInfoProcessingService(
+            service: pageInfoServiceMock.Object);
     }
 
     private static PageInfo CreateRandomPageInfo() =>

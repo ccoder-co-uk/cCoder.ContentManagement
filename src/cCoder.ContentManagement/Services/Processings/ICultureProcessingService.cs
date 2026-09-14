@@ -13,6 +13,8 @@ internal interface ICultureProcessingService
 
     IQueryable<Culture> GetAllCulture(bool ignoreFilters = false);
 
+    int? GetOwningAppId(string cultureId);
+
     ValueTask<Culture> AddCultureAsync(Culture newCulture);
 
     ValueTask<Culture> UpdateCultureAsync(Culture updatedCulture);
