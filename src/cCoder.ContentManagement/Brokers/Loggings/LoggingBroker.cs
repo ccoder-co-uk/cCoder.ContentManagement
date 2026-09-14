@@ -2,11 +2,13 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.CodeAnalysis.Exposures;
 using Microsoft.Extensions.Logging;
 
 namespace cCoder.ContentManagement.Brokers.Loggings;
 
-internal sealed class LoggingBroker(ILogger<LoggingBroker> logger) : ILoggingBroker
+internal sealed class LoggingBroker(ILogger<LoggingBroker> logger)
+    : ILoggingBroker, IUtilityBroker
 {
     public bool IsEnabled(LogLevel logLevel) =>
         logger.IsEnabled(logLevel: logLevel);
