@@ -37,6 +37,8 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Services.Processings.HttpContexts;
+using cCoder.ContentManagement.Services.Processings.PageContexts;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -462,6 +464,12 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageInfoEventProcessingService, PageInfoEventProcessingService>();
         services.AddTransient<IPageInfoProcessingService, PageInfoProcessingService>();
         services.AddTransient<IPageProcessingService, PageProcessingService>();
+        services.AddTransient<
+            IHttpContextProcessingService,
+            HttpContextProcessingService>();
+        services.AddTransient<
+            IPageAuthorizationProcessingService,
+            PageAuthorizationProcessingService>();
         services.AddTransient<IPageRenderCacheProcessingService, PageRenderCacheProcessingService>();
         services.AddTransient<IPageRenderCacheQueryProcessingService, PageRenderCacheQueryProcessingService>();
         services.AddTransient<
