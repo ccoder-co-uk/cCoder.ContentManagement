@@ -36,7 +36,9 @@ public partial class PageRoleOrchestrationServiceTests
 
         pageRoleEventProcessingServiceMock.Verify(
             expression: service =>
-                service.RaisePageRoleAddEventAsync(entity: pageRole),
+                service.RaisePageRoleAddEventAsync(
+                    entity: pageRole,
+                    userId: It.IsAny<string>()),
             times: Times.Never);
 
         pageRoleProcessingServiceMock.Verify(
@@ -67,7 +69,9 @@ public partial class PageRoleOrchestrationServiceTests
 
         pageRoleEventProcessingServiceMock.Verify(
             expression: service =>
-                service.RaisePageRoleDeleteEventAsync(entity: pageRole),
+                service.RaisePageRoleDeleteEventAsync(
+                    entity: pageRole,
+                    userId: It.IsAny<string>()),
             times: Times.Never);
 
         pageRoleProcessingServiceMock.Verify(
