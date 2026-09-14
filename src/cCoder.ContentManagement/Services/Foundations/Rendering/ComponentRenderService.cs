@@ -122,6 +122,7 @@ internal sealed partial class ComponentRenderService(
             renderFileContentBroker.GetLatestTextContent(
                 appId: componentRenderFoundationOperation.AppId,
                 path: componentRenderFoundationOperation.Path) ?? string.Empty;
+
         return componentRenderFoundationOperation;
     });
 
