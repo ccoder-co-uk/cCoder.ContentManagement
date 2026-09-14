@@ -4,9 +4,9 @@
 
 using cCoder.ContentManagement.Models.Exceptions;
 
-namespace cCoder.ContentManagement.Services.Processings;
+namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal sealed partial class CurrentAppProcessingService
+internal sealed partial class CurrentAppOrchestrationService
 {
     private static TResult TryCatch<TResult>(Func<TResult> operation)
     {

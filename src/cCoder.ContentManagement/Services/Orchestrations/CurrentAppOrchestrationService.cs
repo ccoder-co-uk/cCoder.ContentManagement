@@ -3,20 +3,21 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Foundations.HttpContexts;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 using System.Security;
 
-namespace cCoder.ContentManagement.Services.Processings;
+namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal sealed partial class CurrentAppProcessingService(
-    IAppService service) : ICurrentAppProcessingService
+internal sealed partial class CurrentAppOrchestrationService(
+    IAppService appService,
+    IHttpContextService httpContextService) : ICurrentAppOrchestrationService
 {
     public App ResolveCurrentApp() =>
         TryCatch<App>(operation: () =>
     {
-        string text = service.GetRequestPathAppOperation(
-            appOperation: new AppOperation()).Text;
+        string text = httpContextService.GetRequestPath();
 
         if (text.Contains(value: "/webdav", comparisonType: StringComparison.OrdinalIgnoreCase) && text.Contains(value: "Core/App(", comparisonType: StringComparison.OrdinalIgnoreCase))
         {
@@ -29,7 +30,7 @@ internal sealed partial class CurrentAppProcessingService(
 
                 if (int.TryParse(s: text.Substring(startIndex: num3, length: num2 - num3), result: out var result))
                 {
-                    App app = service.GetVisibleAppAppOperation(
+                    App app = appService.GetVisibleAppAppOperation(
                         appOperation: new AppOperation { AppId = result }).App;
 
                     if (app != null)
@@ -37,7 +38,7 @@ internal sealed partial class CurrentAppProcessingService(
                         return app;
                     }
 
-                    bool exists = service.GetUnfilteredAppAppOperation(
+                    bool exists = appService.GetUnfilteredAppAppOperation(
                         appOperation: new AppOperation { AppId = result }).App != null;
 
                     return exists
@@ -47,10 +48,9 @@ internal sealed partial class CurrentAppProcessingService(
             }
         }
 
-        string host = service.GetRequestHostAppOperation(
-            appOperation: new AppOperation()).Text;
+        string host = httpContextService.GetRequestHost();
 
-        return service.GetVisibleAppsAppOperation(
+        return appService.GetVisibleAppsAppOperation(
             appOperation: new AppOperation()).Apps
             .FirstOrDefault(predicate: (App app) => app.Domain == host);
     });

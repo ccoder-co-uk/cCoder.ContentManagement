@@ -23,18 +23,20 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class AppOrchestrationServiceTests
 {
     [Fact]
-    public async Task ShouldCallProcessingThenRaiseAddEventAsyncWhenAddAsync()
+    public async Task ShouldAuthorizeThenCallProcessingWhenAddAsync()
     {
         // Given
         App entity = CreateRandomApp();
 
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                context: It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == null
+                    && context.Request.Privilege == "app_create")));
+
         appProcessingServiceMock
             .Setup(expression: x => x.AddAppAsync(newApp: entity))
             .ReturnsAsync(valueFunction: (App app) => app);
-
-        appEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseAppAddEventAsync(app: entity, userId: CurrentUserId))
-            .Returns(value: ValueTask.CompletedTask);
 
         // When
         App result = await orchestrationService.AddAppAsync(newApp: entity);
@@ -48,11 +50,6 @@ public partial class AppOrchestrationServiceTests
             expression: x => x.AddAppAsync(newApp: It.IsAny<App>()),
             times: Times.Once);
 
-        appEventProcessingServiceMock.Verify(
-            expression: x => x.RaiseAppAddEventAsync(app: entity, userId: CurrentUserId),
-            times: Times.Once);
-
         appProcessingServiceMock.VerifyNoOtherCalls();
-        appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 }

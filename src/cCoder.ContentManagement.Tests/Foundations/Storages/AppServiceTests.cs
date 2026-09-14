@@ -15,45 +15,28 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.HttpContexts;
+using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
 
 
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class AppServiceTests
 {
     private readonly Mock<IAppBroker> appBrokerMock;
-    private readonly Mock<ICultureBroker> cultureBrokerMock;
-    private readonly Mock<IPrivilegeBroker> privilegeBrokerMock;
     private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly AppService appService;
 
     public AppServiceTests()
     {
         appBrokerMock = new Mock<IAppBroker>(behavior: MockBehavior.Strict);
-        cultureBrokerMock = new Mock<ICultureBroker>(behavior: MockBehavior.Strict);
-        privilegeBrokerMock = new Mock<IPrivilegeBroker>(behavior: MockBehavior.Strict);
         authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
-
         appService = new AppService(
-appBroker: appBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object,
-cultureBroker: cultureBrokerMock.Object,
-privilegeBroker: privilegeBrokerMock.Object,
-roleBroker: Mock.Of<IRoleBroker>(),
-userRoleBroker: Mock.Of<IUserRoleBroker>(),
-pageBroker: Mock.Of<IPageBroker>(),
-httpContextBroker: Mock.Of<IHttpContextBroker>());
+            appBroker: appBrokerMock.Object);
     }
 
     private static App CreateRandomApp(int id = 42)

@@ -5,13 +5,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security;
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
 internal sealed partial class AppManagerAggregationService(
-    IAppOrchestrationService appOrchestrationService)
+    IAppManagerCoordinationService appManagerCoordinationService,
+    IAppLifecycleCoordinationService appLifecycleCoordinationService)
         : IAppManagerAggregationService
 {
     public AppManagerContext GetAppManagerContext(
@@ -21,7 +23,7 @@ internal sealed partial class AppManagerAggregationService(
         ValidateAppManagerContextOnGet(inputs: [appManagerContext]);
         ValidateAppManagerContext(appManagerContext: appManagerContext);
 
-        appManagerContext.App = appOrchestrationService.GetApp(
+        appManagerContext.App = appManagerCoordinationService.GetApp(
             appId: appManagerContext.AppId);
 
         return appManagerContext;
@@ -34,7 +36,7 @@ internal sealed partial class AppManagerAggregationService(
         ValidateByDomainAppManagerContextOnGet(inputs: [appManagerContext]);
         ValidateAppManagerContext(appManagerContext: appManagerContext);
 
-        appManagerContext.App = appOrchestrationService.GetByDomainApp(
+        appManagerContext.App = appManagerCoordinationService.GetByDomainApp(
             domain: appManagerContext.Domain,
             ignoreFilters: appManagerContext.IgnoreFilters);
 
@@ -48,7 +50,7 @@ internal sealed partial class AppManagerAggregationService(
         ValidateAllAppManagerContextOnGet(inputs: [appManagerContext]);
         ValidateAppManagerContext(appManagerContext: appManagerContext);
 
-        appManagerContext.Apps = appOrchestrationService.GetAllApp(
+        appManagerContext.Apps = appManagerCoordinationService.GetAllApp(
             ignoreFilters: appManagerContext.IgnoreFilters);
 
         return appManagerContext;
@@ -61,8 +63,8 @@ internal sealed partial class AppManagerAggregationService(
         ValidateAppManagerContextOnAdd(inputs: [newAppManagerContext]);
         ValidateAppManagerContext(appManagerContext: newAppManagerContext);
 
-        newAppManagerContext.App = await appOrchestrationService.AddAppAsync(
-            newApp: newAppManagerContext.App);
+        newAppManagerContext.App = await appLifecycleCoordinationService
+            .AddAppAsync(newApp: newAppManagerContext.App);
 
         return newAppManagerContext;
     }, isValueTask: true);
@@ -74,8 +76,8 @@ internal sealed partial class AppManagerAggregationService(
         ValidateAppManagerContextOnUpdate(inputs: [updatedAppManagerContext]);
         ValidateAppManagerContext(appManagerContext: updatedAppManagerContext);
 
-        updatedAppManagerContext.App = await appOrchestrationService.UpdateAppAsync(
-            updatedApp: updatedAppManagerContext.App);
+        updatedAppManagerContext.App = await appLifecycleCoordinationService
+            .UpdateAppAsync(updatedApp: updatedAppManagerContext.App);
 
         return updatedAppManagerContext;
     }, isValueTask: true);
@@ -87,7 +89,7 @@ internal sealed partial class AppManagerAggregationService(
         ValidateAppManagerContextOnDelete(inputs: [deletedAppManagerContext]);
         ValidateAppManagerContext(appManagerContext: deletedAppManagerContext);
 
-        await appOrchestrationService.DeleteAsync(
+        await appLifecycleCoordinationService.DeleteAppAsync(
             appId: deletedAppManagerContext.AppId);
     }, isValueTask: true);
 
@@ -98,7 +100,7 @@ internal sealed partial class AppManagerAggregationService(
         ValidateAdminAppManagerContextOnGet(inputs: [appManagerContext]);
         ValidateAppManagerContext(appManagerContext: appManagerContext);
 
-        appManagerContext.IsAdmin = appOrchestrationService.IsAdminApp(
+        appManagerContext.IsAdmin = appManagerCoordinationService.IsAdminApp(
             appId: appManagerContext.AppId,
             userName: appManagerContext.UserName);
 
@@ -112,9 +114,8 @@ internal sealed partial class AppManagerAggregationService(
         ValidateUsersAppManagerContextOnGet(inputs: [appManagerContext]);
         ValidateAppManagerContext(appManagerContext: appManagerContext);
 
-        App app = appOrchestrationService.GetApp(
-            appId: appManagerContext.AppId)
-                ?? throw new SecurityException(message: "Access Denied!");
+        App app = appManagerCoordinationService.GetAppWithUsers(
+            appId: appManagerContext.AppId);
 
         appManagerContext.Users = app.Roles
             .SelectMany(selector: role => role.Users
@@ -131,8 +132,8 @@ internal sealed partial class AppManagerAggregationService(
         ValidatePageOrderAppManagerContextOnUpdate(inputs: [updatedAppManagerContext]);
         ValidateAppManagerContext(appManagerContext: updatedAppManagerContext);
 
-        await appOrchestrationService.UpdatePageOrderAppAsync(
-            key: updatedAppManagerContext.AppId,
+        await appManagerCoordinationService.UpdatePageOrderAppAsync(
+            appId: updatedAppManagerContext.AppId,
             updatedApp: updatedAppManagerContext.App);
     }, isValueTask: true);
 

@@ -257,6 +257,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppRenderableCoordinationService, AppRenderableCoordinationService>();
         services.AddTransient<IAppPageComponentCoordinationService, AppPageComponentCoordinationService>();
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
+        services.AddTransient<IAppLifecycleCoordinationService, AppLifecycleCoordinationService>();
+        services.AddTransient<IAppManagerCoordinationService, AppManagerCoordinationService>();
         services.AddTransient<IPageCoordinationService, PageCoordinationService>();
         services.AddTransient<IPageImportOrchestrationService, PageImportOrchestrationService>();
         services.AddTransient<
@@ -356,6 +358,9 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPackageExportService, PackageExportService>();
         services.AddTransient<IAppCultureService, AppCultureService>();
         services.AddTransient<IAppService, AppService>();
+        services.AddTransient<IPrivilegeService, PrivilegeService>();
+        services.AddTransient<IRoleService, RoleService>();
+        services.AddTransient<IUserRoleService, UserRoleService>();
         services.AddTransient<ICommonObjectService, CommonObjectService>();
         services.AddTransient<IComponentService, ComponentService>();
         services.AddTransient<IContentService, ContentService>();
@@ -371,9 +376,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IScriptService, ScriptService>();
         services.AddTransient<ISubmissionService, SubmissionService>();
         services.AddTransient<ITemplateService, TemplateService>();
-        services.AddTransient<
-            ICurrentAppProcessingService,
-            CurrentAppProcessingService>();
 
         services.AddTransient<ICurrentAppResolver, CurrentAppManager>();
         services.AddTransient<IContentManagementMetadataTypeService, ContentManagementMetadataTypeService>();
@@ -401,6 +403,10 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppCultureOrchestrationService, AppCultureOrchestrationService>();
         services.AddTransient<IAppCultureManager, AppCultureOrchestrationService>();
         services.AddTransient<IAppOrchestrationService, AppOrchestrationService>();
+        services.AddTransient<IAppBootstrapOrchestrationService, AppBootstrapOrchestrationService>();
+        services.AddTransient<IAppRoleOrchestrationService, AppRoleOrchestrationService>();
+        services.AddTransient<IAppPageOrderOrchestrationService, AppPageOrderOrchestrationService>();
+        services.AddTransient<ICurrentAppOrchestrationService, CurrentAppOrchestrationService>();
         services.AddTransient<ICommonObjectOrchestrationService, CommonObjectOrchestrationService>();
         services.AddTransient<ICommonObjectManager, CommonObjectOrchestrationService>();
         services.AddTransient<IComponentOrchestrationService, ComponentOrchestrationService>();

@@ -4,9 +4,9 @@
 
 using cCoder.Data.Models.CMS;
 
-namespace cCoder.ContentManagement.Services.Processings;
+namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface ICurrentAppProcessingService
+internal interface IAppRoleOrchestrationService
 {
-    App ResolveCurrentApp();
+    ValueTask PersistNewAppRolesAsync(App app);
 }

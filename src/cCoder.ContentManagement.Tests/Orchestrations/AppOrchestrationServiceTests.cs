@@ -39,10 +39,9 @@ public partial class AppOrchestrationServiceTests
             .Returns(value: CurrentUserId);
 
         orchestrationService = new AppOrchestrationService(
-processingService: appProcessingServiceMock.Object,
-eventService: appEventProcessingServiceMock.Object,
-authorizationProcessingService: authorizationProcessingServiceMock.Object
-        );
+            processingService: appProcessingServiceMock.Object,
+            authorizationProcessingService: authorizationProcessingServiceMock.Object,
+            eventProcessingService: appEventProcessingServiceMock.Object);
     }
 
     private static App CreateRandomApp() =>

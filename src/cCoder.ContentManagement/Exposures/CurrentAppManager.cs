@@ -3,15 +3,15 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Services;
-using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class CurrentAppManager(
-    ICurrentAppProcessingService currentAppProcessingService)
+    ICurrentAppOrchestrationService currentAppOrchestrationService)
     : ICurrentAppResolver
 {
     public App ResolveCurrentApp() =>
-        currentAppProcessingService.ResolveCurrentApp();
+        currentAppOrchestrationService.ResolveCurrentApp();
 }

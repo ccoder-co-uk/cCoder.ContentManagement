@@ -23,17 +23,19 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class AppOrchestrationServiceTests
 {
     [Fact]
-    public async Task ShouldCallProcessingThenRaiseUpdateEventAsyncWhenUpdateAsync()
+    public async Task ShouldAuthorizeThenCallProcessingWhenUpdateAsync()
     {
         // Given
         App entity = CreateRandomApp();
 
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                context: It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.Id
+                    && context.Request.Privilege == "app_update")));
+
         appProcessingServiceMock.Setup(expression: x => x.UpdateAppAsync(updatedApp: entity))
             .ReturnsAsync(value: entity);
-
-        appEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseAppUpdateEventAsync(app: entity, userId: CurrentUserId))
-            .Returns(value: ValueTask.CompletedTask);
 
         // When
         App result = await orchestrationService.UpdateAppAsync(updatedApp: entity);
@@ -44,9 +46,7 @@ public partial class AppOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         appProcessingServiceMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: entity), times: Times.Once);
-        appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppUpdateEventAsync(app: entity, userId: CurrentUserId), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
-        appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -56,13 +56,15 @@ public partial class AppOrchestrationServiceTests
         App postedApp = CreateRandomApp();
         App storedApp = new() { Id = postedApp.Id, Name = postedApp.Name, Domain = postedApp.Domain };
 
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                context: It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == postedApp.Id
+                    && context.Request.Privilege == "app_update")));
+
         appProcessingServiceMock
             .Setup(expression: service => service.UpdateAppAsync(updatedApp: postedApp))
             .ReturnsAsync(value: storedApp);
-
-        appEventProcessingServiceMock
-            .Setup(expression: service => service.RaiseAppUpdateEventAsync(app: postedApp, userId: CurrentUserId))
-            .Returns(value: ValueTask.CompletedTask);
 
         // When
         App result = await orchestrationService
@@ -72,15 +74,10 @@ public partial class AppOrchestrationServiceTests
         result.Should()
             .BeSameAs(expected: storedApp);
 
-        appEventProcessingServiceMock.Verify(
-            expression: service => service.RaiseAppUpdateEventAsync(app: postedApp, userId: CurrentUserId),
-            times: Times.Once);
-
         appProcessingServiceMock.Verify(
             expression: service => service.UpdateAppAsync(updatedApp: postedApp),
             times: Times.Once);
 
         appProcessingServiceMock.VerifyNoOtherCalls();
-        appEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 }

@@ -2,12 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-namespace cCoder.ContentManagement.Services.Processings;
-
-internal sealed partial class CurrentAppProcessingService
+internal sealed partial class PrivilegeService
 {
-    private static void ValidateResolveCurrentApp(object[] inputs) =>
+    private static void ValidateAllPrivilegesOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void Validate(params object[] inputs) =>

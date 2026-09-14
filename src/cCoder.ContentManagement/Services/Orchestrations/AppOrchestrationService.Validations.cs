@@ -10,6 +10,9 @@ internal partial class AppOrchestrationService
     private static void ValidateAppForRenderOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidateAppForDeleteOnGet(object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void ValidateAppOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
@@ -26,6 +29,9 @@ internal partial class AppOrchestrationService
         Validate(inputs: inputs);
 
     private static void ValidateAppOnUpdate(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidateAppEventOnRaise(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateDeleteAsync(object[] inputs) =>

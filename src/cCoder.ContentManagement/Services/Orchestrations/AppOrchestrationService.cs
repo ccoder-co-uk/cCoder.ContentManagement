@@ -3,17 +3,16 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
-using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Processings;
-using cCoder.Data.Models.Security;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class AppOrchestrationService(
     IAppProcessingService processingService,
-    IAppEventProcessingService eventService,
-    IAuthorizationProcessingService authorizationProcessingService)
+    IAuthorizationProcessingService authorizationProcessingService,
+    IAppEventProcessingService eventProcessingService)
         : IAppOrchestrationService
 {
     public ValueTask<App> GetAppForRenderAsync(int appId) =>
@@ -31,7 +30,21 @@ internal partial class AppOrchestrationService(
         ValidateAppOnGet(inputs: [appId]);
         ValidateId(appId: appId, parameterName: "id");
         return processingService.GetApp(appId: appId);
+    });
 
+    public App GetAppForDelete(int appId) =>
+        TryCatch<App>(operation: () =>
+    {
+        ValidateAppForDeleteOnGet(inputs: [appId]);
+        ValidateId(appId: appId, parameterName: "id");
+        App app = processingService.GetAppForDelete(appId: appId);
+
+        if (app?.Roles?.Any() == true)
+        {
+            Authorize(appId: appId, privilege: "app_delete");
+        }
+
+        return app;
     });
 
     public bool IsAdminApp(int appId, string userName) =>
@@ -41,16 +54,15 @@ internal partial class AppOrchestrationService(
         ValidateId(appId: appId, parameterName: "appId");
         ValidateUserName(userName: userName, parameterName: "userName");
 
-        return authorizationProcessingService
-            .IsAdminAuthorizationContext(
-                context: new AuthorizationContext
+        return authorizationProcessingService.IsAdminAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
                 {
-                    Request = new AuthorizationRequest
-                    {
-                        AppId = appId,
-                        UserName = userName
-                    }
-                });
+                    AppId = appId,
+                    UserName = userName
+                }
+            });
     });
 
     public App GetByDomainApp(string domain, bool ignoreFilters = false) =>
@@ -58,8 +70,10 @@ internal partial class AppOrchestrationService(
     {
         ValidateByDomainAppOnGet(inputs: [domain, ignoreFilters]);
         ValidateDomain(domain: domain, parameterName: "domain");
-        return processingService.GetByDomainApp(domain: domain, ignoreFilters: ignoreFilters);
 
+        return processingService.GetByDomainApp(
+            domain: domain,
+            ignoreFilters: ignoreFilters);
     });
 
     public IQueryable<App> GetAllApp(bool ignoreFilters = false) =>
@@ -74,14 +88,9 @@ internal partial class AppOrchestrationService(
     {
         ValidateAppOnAdd(inputs: [newApp]);
         ValidateApp(app: newApp, parameterName: "entity");
-        App result = await processingService.AddAppAsync(newApp: newApp);
+        Authorize(appId: null, privilege: "app_create");
 
-        await eventService.RaiseAppAddEventAsync(
-            app: result,
-            userId: authorizationProcessingService.GetCurrentUserId());
-
-        return result;
-
+        return await processingService.AddAppAsync(newApp: newApp);
     }, isValueTask: true);
 
     public ValueTask<App> UpdateAppAsync(App updatedApp) =>
@@ -89,85 +98,75 @@ internal partial class AppOrchestrationService(
     {
         ValidateAppOnUpdate(inputs: [updatedApp]);
         ValidateApp(app: updatedApp, parameterName: "entity");
-        App result = await processingService.UpdateAppAsync(updatedApp: updatedApp);
+        Authorize(appId: updatedApp.Id, privilege: "app_update");
 
-        await eventService.RaiseAppUpdateEventAsync(
-            app: updatedApp,
-            userId: authorizationProcessingService.GetCurrentUserId());
-
-        return result;
-
+        return await processingService.UpdateAppAsync(updatedApp: updatedApp);
     }, isValueTask: true);
 
-    public ValueTask DeleteAsync(int appId) =>
-        TryCatch(operation: async () =>
+    public ValueTask RaiseAppAddEventAsync(App app) =>
+        TryCatch(operation: () =>
     {
-        ValidateDeleteAsync(inputs: [appId]);
-        ValidateId(appId: appId, parameterName: "id");
+        ValidateAppEventOnRaise(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
 
-        App app = processingService.GetAppForDelete(appId: appId);
+        return eventProcessingService.RaiseAppAddEventAsync(
+            app: app,
+            userId: authorizationProcessingService.GetCurrentUserId());
+    }, isValueTask: true);
 
-        if (app?.Roles?.Any() == true)
-        {
-            authorizationProcessingService
-                .AuthorizeAuthorizationContext(
-                    context: new AuthorizationContext
-                    {
-                        Request = new AuthorizationRequest
-                        {
-                            AppId = appId,
-                            Privilege = "app_delete"
-                        }
-                    });
-        }
+    public ValueTask RaiseAppUpdateEventAsync(App app) =>
+        TryCatch(operation: () =>
+    {
+        ValidateAppEventOnRaise(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
 
-        if (app != null)
-        {
+        return eventProcessingService.RaiseAppUpdateEventAsync(
+            app: app,
+            userId: authorizationProcessingService.GetCurrentUserId());
+    }, isValueTask: true);
 
-            await eventService.RaiseAppDeleteEventAsync(
-                app: app,
-                userId: authorizationProcessingService.GetCurrentUserId());
+    public ValueTask RaiseAppDeleteEventAsync(App app) =>
+        TryCatch(operation: () =>
+    {
+        ValidateAppEventOnRaise(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
 
-        }
-
+        return eventProcessingService.RaiseAppDeleteEventAsync(
+            app: app,
+            userId: authorizationProcessingService.GetCurrentUserId());
     }, isValueTask: true);
 
     public ValueTask HandleAppDeleteAsync(App app) =>
         TryCatch(operation: () =>
     {
+        ValidateDeleteAsync(inputs: [app]);
         ValidateApp(app: app, parameterName: "app");
         return processingService.DeleteAsync(appId: app.Id);
-    }, isValueTask: true);
-
-    public ValueTask<IEnumerable<OperationResult<App>>> AddOrUpdateAppResult(IEnumerable<App> newApp) =>
-        TryCatch<IEnumerable<OperationResult<App>>>(operation: () =>
-    {
-        ValidateOrUpdateAppResultOnAdd(inputs: [newApp]);
-        return processingService.AddOrUpdateAppResult(newApp: ValidateApps(apps: newApp, parameterName: "items"));
     }, isValueTask: true);
 
     public ValueTask DeleteAllAppAsync(IEnumerable<App> deletedApp) =>
         TryCatch(operation: () =>
     {
         ValidateAllAppOnDelete(inputs: [deletedApp]);
-        return processingService.DeleteAllAppAsync(deletedApp: ValidateApps(apps: deletedApp, parameterName: "items"));
+        ArgumentNullException.ThrowIfNull(argument: deletedApp);
+        return processingService.DeleteAllAppAsync(deletedApp: deletedApp);
     }, isValueTask: true);
 
-    public ValueTask UpdatePageOrderAppAsync(int key, App updatedApp) =>
-        TryCatch(operation: () =>
-    {
-        ValidatePageOrderAppOnUpdate(inputs: [key, updatedApp]);
-        return processingService.UpdatePageOrderAppAsync(key: key, updatedApp: ValidateApp(app: updatedApp, parameterName: "app"));
-    }, isValueTask: true);
-
-    public App ResolveCurrentApp() =>
-        TryCatch<App>(operation: () =>
-    {
-        return processingService.ResolveCurrentApp();
-    });
+    private void Authorize(int? appId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = appId,
+                    Privilege = privilege
+                }
+            });
 
     private static void ValidateId(int appId, string parameterName) =>
-        ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
+        ThrowIf(
+            condition: appId < 1,
+            message: parameterName + " must be greater than 0.");
 
     private static App ValidateApp(App app, string parameterName)
     {
@@ -180,20 +179,14 @@ internal partial class AppOrchestrationService(
     }
 
     private static void ValidateDomain(string domain, string parameterName) =>
-        ThrowIf(condition: string.IsNullOrWhiteSpace(value: domain), message: parameterName + " is required.");
+        ThrowIf(
+            condition: string.IsNullOrWhiteSpace(value: domain),
+            message: parameterName + " is required.");
 
     private static void ValidateUserName(string userName, string parameterName) =>
-        ThrowIf(condition: string.IsNullOrWhiteSpace(value: userName), message: parameterName + " is required.");
-
-    private static IEnumerable<App> ValidateApps(IEnumerable<App> apps, string parameterName)
-    {
-        if (apps == null)
-        {
-            throw new ValidationException(message: parameterName + " is required.");
-        }
-
-        return apps;
-    }
+        ThrowIf(
+            condition: string.IsNullOrWhiteSpace(value: userName),
+            message: parameterName + " is required.");
 
     private static void ThrowIf(bool condition, string message)
     {

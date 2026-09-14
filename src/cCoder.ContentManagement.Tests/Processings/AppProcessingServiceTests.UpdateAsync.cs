@@ -27,35 +27,15 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class AppProcessingServiceTests
 {
     [Fact]
-    public async Task ShouldUpdateAppWhenUserIsAppAdminForUpdateAsync()
+    public async Task ShouldUpdateAppWhenStoredAppExistsForUpdateAsync()
     {
         // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
-
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
-
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
-
-        User admin = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
         App dbApp = CreateRandomApp();
         dbApp.Id = 1;
         dbApp.Cultures = null!;
         App app = CreateRandomApp();
         app.Id = dbApp.Id;
         app.Cultures = null!;
-
-        currentUser = admin;
 
         appServiceMock.Setup(expression: x => x.GetApp(appId: dbApp.Id, ignoreFilters: true))
             .Returns(value: dbApp);
@@ -77,58 +57,9 @@ public partial class AppProcessingServiceTests
     }
 
     [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserIsNotAppAdminForUpdateAsync()
-    {
-        // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
-
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
-
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(valueFunction: () => currentUser);
-
-        User actor = TestUsers.WithoutPrivileges();
-        App app = CreateRandomApp();
-        app.Id = 1;
-
-        currentUser = actor;
-
-        appServiceMock.Setup(expression: x => x.GetApp(appId: app.Id, ignoreFilters: true))
-            .Returns(value: app);
-
-        appServiceMock
-            .Setup(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<App>()))
-            .ThrowsAsync(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> act = async () => await appProcessingService.UpdateAppAsync(updatedApp: app);
-
-        // Then
-
-        await act.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        appServiceMock.Verify(expression: x => x.GetApp(appId: app.Id, ignoreFilters: true), times: Times.Once);
-        appServiceMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<App>()), times: Times.Never);
-        VerifyNoOtherAppServiceCalls();
-    }
-
-    [Fact]
     public async Task ShouldUpdateOnlyAppRowAndLeavePostedChildrenForEventHandlersAsync()
     {
         // Given
-        User admin = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
         App dbApp = CreateRandomApp();
         dbApp.Id = 1;
         dbApp.Cultures = null!;
@@ -136,11 +67,6 @@ public partial class AppProcessingServiceTests
         dbApp.Roles = null!;
         App postedApp = CreateRandomApp();
         postedApp.Id = dbApp.Id;
-        currentUser = admin;
-
-        authorizationManagerMock
-            .Setup(expression: manager => manager.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()));
-
         appServiceMock
             .Setup(expression: service => service.GetApp(appId: dbApp.Id, ignoreFilters: true))
             .Returns(value: dbApp);
