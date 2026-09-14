@@ -13,6 +13,9 @@ internal partial class ContentProcessingService
     private static void ValidateAllContentOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidateAppIdByPageIdOnGet(object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void ValidateContentOnAdd(object[] inputs) =>
         Validate(inputs: inputs);
 

@@ -24,6 +24,17 @@ internal sealed class ContentBroker(ICoreContextFactory coreContextFactory) : IC
         return coreDataContext.Contents.IgnoreQueryFilters();
     }
 
+    public int? GetAppIdByPageId(int pageId)
+    {
+        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.Pages
+            .IgnoreQueryFilters()
+            .Where(predicate: page => page.Id == pageId)
+            .Select(selector: page => (int?)page.AppId)
+            .FirstOrDefault();
+    }
+
     public async ValueTask<Content> AddContentAsync(Content newContent)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();

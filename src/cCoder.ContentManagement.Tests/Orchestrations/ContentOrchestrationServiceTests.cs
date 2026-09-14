@@ -24,7 +24,6 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class ContentOrchestrationServiceTests
 {
     private readonly Mock<IContentProcessingService> contentProcessingServiceMock;
-    private readonly Mock<IPageProcessingService> pageProcessingServiceMock;
     private readonly Mock<IContentEventProcessingService> contentEventProcessingServiceMock;
     private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly ContentOrchestrationService orchestrationService;
@@ -33,7 +32,6 @@ public partial class ContentOrchestrationServiceTests
     public ContentOrchestrationServiceTests()
     {
         contentProcessingServiceMock = new Mock<IContentProcessingService>(behavior: MockBehavior.Strict);
-        pageProcessingServiceMock = new Mock<IPageProcessingService>(behavior: MockBehavior.Strict);
         contentEventProcessingServiceMock = new Mock<IContentEventProcessingService>(behavior: MockBehavior.Strict);
         authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
         authorizationProcessingServiceMock
@@ -46,7 +44,6 @@ public partial class ContentOrchestrationServiceTests
 
         orchestrationService = new ContentOrchestrationService(
 processingService: contentProcessingServiceMock.Object,
-pageProcessingService: pageProcessingServiceMock.Object,
 eventService: contentEventProcessingServiceMock.Object,
 authorizationProcessingService: authorizationProcessingServiceMock.Object
         );

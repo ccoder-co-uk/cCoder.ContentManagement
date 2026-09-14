@@ -13,6 +13,8 @@ internal interface IContentProcessingService
 
     IQueryable<Content> GetAllContent(bool ignoreFilters = false);
 
+    int? GetAppIdByPageId(int pageId);
+
     ValueTask<Content> AddContentAsync(Content newContent);
 
     ValueTask<Content> UpdateContentAsync(Content updatedContent);

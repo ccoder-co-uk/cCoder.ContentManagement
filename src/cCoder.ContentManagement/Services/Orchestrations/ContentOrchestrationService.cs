@@ -12,7 +12,6 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class ContentOrchestrationService(
     IContentProcessingService processingService,
-    IPageProcessingService pageProcessingService,
     IContentEventProcessingService eventService,
     IAuthorizationProcessingService authorizationProcessingService)
         : IContentOrchestrationService
@@ -254,8 +253,5 @@ internal partial class ContentOrchestrationService(
 
     private int? ResolveAppId(Content content) =>
         content.Page?.AppId
-        ?? pageProcessingService.GetAllPage(ignoreFilters: true)
-            .Where(predicate: page => page.Id == content.PageId)
-            .Select(selector: page => (int?)page.AppId)
-            .FirstOrDefault();
+        ?? processingService.GetAppIdByPageId(pageId: content.PageId);
 }

@@ -76,4 +76,47 @@ public partial class ContentOrchestrationServiceTests
         contentEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
+    [Fact]
+    public async Task Content_WhenPageNavigationIsAbsent_UsesOwningPageAppForAuthorization()
+    {
+        // Given
+        Content entity = CreateRandomContent();
+        int appId = entity.Page.AppId;
+        entity.Page = null;
+
+        contentProcessingServiceMock
+            .Setup(expression: service => service.GetAppIdByPageId(entity.PageId))
+            .Returns(value: appId);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                It.Is<AuthorizationContext>(context =>
+                    context.Request.AppId == appId
+                    && context.Request.Privilege == "Content_create")));
+
+        contentProcessingServiceMock
+            .Setup(expression: service => service.AddContentAsync(entity))
+            .ReturnsAsync(value: entity);
+
+        contentEventProcessingServiceMock
+            .Setup(expression: service => service.RaiseContentAddEventAsync(entity, CurrentUserId))
+            .Returns(value: ValueTask.CompletedTask);
+
+        // When
+        Content result = await orchestrationService.AddContentAsync(entity);
+
+        // Then
+        result.Should().BeSameAs(entity);
+        contentProcessingServiceMock.Verify(
+            expression: service => service.GetAppIdByPageId(entity.PageId),
+            times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+                It.Is<AuthorizationContext>(context =>
+                    context.Request.AppId == appId
+                    && context.Request.Privilege == "Content_create")),
+            times: Times.Once);
+    }
+
 }

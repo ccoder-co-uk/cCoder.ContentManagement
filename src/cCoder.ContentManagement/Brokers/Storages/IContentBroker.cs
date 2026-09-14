@@ -12,6 +12,8 @@ public interface IContentBroker
 
     IQueryable<Content> GetAllContentsIgnoringFilters();
 
+    int? GetAppIdByPageId(int pageId);
+
     ValueTask<Content> AddContentAsync(Content newContent);
 
     ValueTask<Content> UpdateContentAsync(Content updatedContent);

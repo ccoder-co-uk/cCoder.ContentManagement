@@ -27,6 +27,14 @@ internal partial class ContentProcessingService(IContentService service) : ICont
         return service.GetAllContent(ignoreFilters: ignoreFilters);
     });
 
+    public int? GetAppIdByPageId(int pageId) =>
+        TryCatch<int?>(operation: () =>
+    {
+        ValidateAppIdByPageIdOnGet(inputs: [pageId]);
+        ValidateId(contentId: pageId, parameterName: "pageId");
+        return service.GetAppIdByPageId(pageId: pageId);
+    });
+
     public ValueTask<Content> AddContentAsync(Content newContent) =>
         TryCatch<Content>(operation: () =>
     {

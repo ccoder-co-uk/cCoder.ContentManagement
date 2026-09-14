@@ -52,6 +52,14 @@ internal partial class ContentService(IContentBroker contentBroker) : IContentSe
             : contentBroker.GetAllContents();
     });
 
+    public int? GetAppIdByPageId(int pageId) =>
+        TryCatch<int?>(operation: () =>
+    {
+        ValidateAppIdByPageIdOnGet(inputs: [pageId]);
+        ValidateId(contentId: pageId, parameterName: "pageId");
+        return contentBroker.GetAppIdByPageId(pageId: pageId);
+    });
+
     public ValueTask<Content> AddContentAsync(Content newContent) =>
         TryCatch<Content>(operation: async () =>
     {
