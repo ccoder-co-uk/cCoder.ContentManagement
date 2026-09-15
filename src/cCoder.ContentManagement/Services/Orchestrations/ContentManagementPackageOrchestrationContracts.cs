@@ -6,9 +6,14 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface IContentManagementPackageOrchestrationService
+internal interface IContentManagementPackageImportOrchestrationService
 {
-    ValueTask ImportPackageAsync(int? appId, Package package);
+    ValueTask ImportCommonCachePackageAsync(Package package);
 
+    ValueTask ImportAppPackageAsync(int appId, Package package);
+}
+
+internal interface IContentManagementPackageExportOrchestrationService
+{
     Package ExportPackage(int appId, string packageName);
 }

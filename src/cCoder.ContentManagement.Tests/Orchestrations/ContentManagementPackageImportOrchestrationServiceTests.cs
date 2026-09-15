@@ -16,7 +16,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Orchestrations;
 
-public sealed partial class ContentManagementPackageOrchestrationServiceTests
+public sealed partial class ContentManagementPackageImportOrchestrationServiceTests
 {
     private const string CurrentUserId = "test-user";
 
@@ -38,7 +38,7 @@ public sealed partial class ContentManagementPackageOrchestrationServiceTests
                 userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
-        ContentManagementPackageOrchestrationService service =
+        ContentManagementPackageImportOrchestrationService service =
             CreateService(eventService: eventService.Object);
 
         Package package = new()
@@ -62,7 +62,7 @@ public sealed partial class ContentManagementPackageOrchestrationServiceTests
         };
 
         // When
-        await service.ImportPackageAsync(appId: appId, package: package);
+        await service.ImportAppPackageAsync(appId: appId, package: package);
 
         // Then
         eventService.VerifyAll();
@@ -86,7 +86,7 @@ public sealed partial class ContentManagementPackageOrchestrationServiceTests
                 userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
-        ContentManagementPackageOrchestrationService service =
+        ContentManagementPackageImportOrchestrationService service =
             CreateService(eventService: eventService.Object);
 
         Package package = new()
@@ -109,13 +109,13 @@ public sealed partial class ContentManagementPackageOrchestrationServiceTests
         };
 
         // When
-        await service.ImportPackageAsync(appId: null, package: package);
+        await service.ImportCommonCachePackageAsync(package: package);
 
         // Then
         eventService.VerifyAll();
     }
 
-    private static ContentManagementPackageOrchestrationService CreateService(
+    private static ContentManagementPackageImportOrchestrationService CreateService(
         IPackageImportEventProcessingService eventService)
     {
         JsonBroker jsonBroker = new();
@@ -124,11 +124,10 @@ public sealed partial class ContentManagementPackageOrchestrationServiceTests
             .Setup(expression: service => service.GetCurrentUserId())
             .Returns(value: CurrentUserId);
 
-        return new ContentManagementPackageOrchestrationService(
+        return new ContentManagementPackageImportOrchestrationService(
             jsonProcessingService: new JsonProcessingService(
                 jsonService: new JsonService(jsonBroker: jsonBroker)),
             packageImportEventProcessingService: eventService,
-            packageExportProcessingService: Mock.Of<IPackageExportProcessingService>(),
             authorizationProcessingService: authorizationService.Object);
     }
 }

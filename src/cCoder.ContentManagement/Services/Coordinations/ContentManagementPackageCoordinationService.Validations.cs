@@ -2,12 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+namespace cCoder.ContentManagement.Services.Coordinations;
 
-namespace cCoder.ContentManagement.Services.Orchestrations;
-
-internal sealed partial class ContentManagementPackageOrchestrationService
+internal sealed partial class ContentManagementPackageCoordinationService
 {
-    private static void ValidateImportPackageAsync(object[] inputs) =>
+    private static void ValidateImportPackage(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateExportPackage(object[] inputs) =>

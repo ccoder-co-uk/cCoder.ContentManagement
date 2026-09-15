@@ -266,6 +266,9 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
         services.AddTransient<IAppLifecycleCoordinationService, AppLifecycleCoordinationService>();
         services.AddTransient<IAppManagerCoordinationService, AppManagerCoordinationService>();
+        services.AddTransient<
+            IContentManagementPackageCoordinationService,
+            ContentManagementPackageCoordinationService>();
         services.AddTransient<IPageCoordinationService, PageCoordinationService>();
         services.AddTransient<IPageImportOrchestrationService, PageImportOrchestrationService>();
         services.AddTransient<
@@ -405,8 +408,11 @@ public static partial class IServiceCollectionExtensions
             PageContextOrchestrationService>();
         services.AddSingleton<PageRenderCacheImportState>();
         services.AddTransient<
-            IContentManagementPackageOrchestrationService,
-            ContentManagementPackageOrchestrationService>();
+            IContentManagementPackageImportOrchestrationService,
+            ContentManagementPackageImportOrchestrationService>();
+        services.AddTransient<
+            IContentManagementPackageExportOrchestrationService,
+            ContentManagementPackageExportOrchestrationService>();
         services.AddTransient<IAppCultureOrchestrationService, AppCultureOrchestrationService>();
         services.AddTransient<IAppCultureManager, AppCultureOrchestrationService>();
         services.AddTransient<IAppOrchestrationService, AppOrchestrationService>();

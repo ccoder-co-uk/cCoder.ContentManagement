@@ -10,12 +10,11 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal sealed partial class ContentManagementPackageOrchestrationService(
+internal sealed partial class ContentManagementPackageImportOrchestrationService(
     IJsonProcessingService jsonProcessingService,
     IPackageImportEventProcessingService packageImportEventProcessingService,
-    IPackageExportProcessingService packageExportProcessingService,
     IAuthorizationProcessingService authorizationProcessingService)
-    : IContentManagementPackageOrchestrationService
+    : IContentManagementPackageImportOrchestrationService
 {
     private static readonly HashSet<string> ComputedImportFields =
         new(comparer: StringComparer.OrdinalIgnoreCase)
@@ -26,32 +25,23 @@ internal sealed partial class ContentManagementPackageOrchestrationService(
             "CreatedBy"
         };
 
-    public ValueTask ImportPackageAsync(int? appId, Package package) =>
+    public ValueTask ImportCommonCachePackageAsync(Package package) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateImportPackageAsync(inputs: [package]);
+        await RaiseCommonObjectImportAsync(package: package);
+    }, isValueTask: true);
+
+    public ValueTask ImportAppPackageAsync(int appId, Package package) =>
         TryCatch(operation: async () =>
     {
         ValidateImportPackageAsync(inputs: [appId, package]);
 
-        if (appId is null)
-        {
-            await RaiseCommonObjectImportAsync(package: package);
-            return;
-        }
-
         foreach (PackageItem item in package.Items ?? [])
         {
-            await RaiseAppImportAsync(appId: appId.Value, item: item);
+            await RaiseAppImportAsync(appId: appId, item: item);
         }
     }, isValueTask: true);
-
-    public Package ExportPackage(int appId, string packageName) =>
-        TryCatch<Package>(operation: () =>
-    {
-        ValidateExportPackage(inputs: [appId, packageName]);
-
-        return packageExportProcessingService.ExportPackage(
-            appId: appId,
-            packageName: packageName);
-    });
 
     private async ValueTask RaiseAppImportAsync(int appId, PackageItem item)
     {

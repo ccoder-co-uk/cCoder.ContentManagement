@@ -6,7 +6,7 @@ using cCoder.ContentManagement.Models.Exceptions;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal sealed partial class ContentManagementPackageOrchestrationService
+internal sealed partial class ContentManagementPackageImportOrchestrationService
 {
     private static TResult TryCatch<TResult>(Func<TResult> operation)
     {
