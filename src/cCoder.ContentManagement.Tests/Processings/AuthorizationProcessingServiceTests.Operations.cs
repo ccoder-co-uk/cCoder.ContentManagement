@@ -22,7 +22,9 @@ public partial class AuthorizationProcessingServiceTests
         const int appId = 7;
         const string userId = "test-user";
         User user = TestUsers.WithPrivilege(privilege: "page_read", appId: appId);
-        Role[] roles = user.Roles.Select(selector: link => link.Role).ToArray();
+
+        Role[] roles = user.Roles.Select(selector: link => link.Role)
+            .ToArray();
 
         AuthorizationContext context = new()
         {
@@ -38,11 +40,11 @@ public partial class AuthorizationProcessingServiceTests
             .Returns(value: userId);
 
         authorizationServiceMock
-            .Setup(expression: service => service.GetRolesForUser(userId))
+            .Setup(expression: service => service.GetRolesForUser(userId: userId))
             .Returns(value: new AuthorizationData { Roles = roles });
 
         authorizationServiceMock
-            .Setup(expression: service => service.GetRolesForUser("Guest"))
+            .Setup(expression: service => service.GetRolesForUser(userId: "Guest"))
             .Returns(value: new AuthorizationData { Roles = [] });
 
         authorizationServiceMock
@@ -54,7 +56,9 @@ public partial class AuthorizationProcessingServiceTests
             .AuthorizeAuthorizationContext(authorizationContext: context);
 
         // Then
-        authorize.Should().NotThrow();
+        authorize.Should()
+            .NotThrow();
+
         authorizationServiceMock.VerifyAll();
     }
 
@@ -76,11 +80,11 @@ public partial class AuthorizationProcessingServiceTests
             .Returns(value: "test-user");
 
         authorizationServiceMock
-            .Setup(expression: service => service.GetRolesForUser("test-user"))
+            .Setup(expression: service => service.GetRolesForUser(userId: "test-user"))
             .Returns(value: new AuthorizationData { Roles = [] });
 
         authorizationServiceMock
-            .Setup(expression: service => service.GetRolesForUser("Guest"))
+            .Setup(expression: service => service.GetRolesForUser(userId: "Guest"))
             .Returns(value: new AuthorizationData { Roles = [] });
 
         authorizationServiceMock
@@ -94,7 +98,7 @@ public partial class AuthorizationProcessingServiceTests
         // Then
         authorize.Should()
             .Throw<ContentManagementServiceException>()
-            .Where(exception =>
+            .Where(exceptionExpression: exception =>
                 exception.InnerException is SecurityException
                 && exception.InnerException.Message == "Access Denied!");
 
@@ -121,9 +125,15 @@ public partial class AuthorizationProcessingServiceTests
             .ResolveCurrentAuthorizationContext(authorizationContext: context);
 
         // Then
-        result.Should().BeSameAs(expected: context);
-        result.User.Should().BeSameAs(expected: user);
-        result.UserId.Should().Be(user.Id);
+        result.Should()
+            .BeSameAs(expected: context);
+
+        result.User.Should()
+            .BeSameAs(expected: user);
+
+        result.UserId.Should()
+            .Be(expected: user.Id);
+
         authorizationServiceMock.VerifyAll();
     }
 
@@ -160,9 +170,15 @@ public partial class AuthorizationProcessingServiceTests
             .ResolveRenderAuthorizationContext(authorizationContext: context);
 
         // Then
-        result.Should().BeSameAs(expected: context);
-        result.RenderAuthorization.Culture.Should().Be(expected: expectedCulture);
-        result.RenderAuthorization.User.Should().BeSameAs(expected: user);
+        result.Should()
+            .BeSameAs(expected: context);
+
+        result.RenderAuthorization.Culture.Should()
+            .Be(expected: expectedCulture);
+
+        result.RenderAuthorization.User.Should()
+            .BeSameAs(expected: user);
+
         authorizationServiceMock.VerifyAll();
     }
 }

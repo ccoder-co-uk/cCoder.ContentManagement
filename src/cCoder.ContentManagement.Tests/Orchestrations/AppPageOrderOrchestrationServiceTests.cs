@@ -13,13 +13,14 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Orchestrations;
 
-public sealed class AppPageOrderOrchestrationServiceTests
+public sealed partial class AppPageOrderOrchestrationServiceTests
 {
     [Fact]
     public async Task UpdatePageOrder_WhenAuthorized_UpdatesMatchingPages()
     {
         // Given
         Page existingPage = new() { Id = 5, AppId = 42 };
+
         App app = new()
         {
             Id = 42,
@@ -31,14 +32,14 @@ public sealed class AppPageOrderOrchestrationServiceTests
 
         authorizationService.Setup(expression: service =>
             service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == 42
                     && context.Request.Privilege == "app_update")));
 
-        pageService.Setup(expression: service => service.GetAllPage(true))
+        pageService.Setup(expression: service => service.GetAllPage(ignoreFilters: true))
             .Returns(value: new[] { existingPage }.AsQueryable());
 
-        pageService.Setup(expression: service => service.UpdatePageAsync(existingPage))
+        pageService.Setup(expression: service => service.UpdatePageAsync(updatedPage: existingPage))
             .ReturnsAsync(value: existingPage);
 
         AppPageOrderOrchestrationService service = new(
@@ -49,8 +50,12 @@ public sealed class AppPageOrderOrchestrationServiceTests
         await service.UpdatePageOrderAppAsync(appId: 42, updatedApp: app);
 
         // Then
-        existingPage.Order.Should().Be(expected: 7);
-        existingPage.ParentId.Should().Be(expected: 3);
+        existingPage.Order.Should()
+            .Be(expected: 7);
+
+        existingPage.ParentId.Should()
+            .Be(expected: 3);
+
         authorizationService.VerifyAll();
         pageService.VerifyAll();
     }
@@ -63,7 +68,7 @@ public sealed class AppPageOrderOrchestrationServiceTests
         Mock<IAuthorizationProcessingService> authorizationService = new(MockBehavior.Strict);
 
         authorizationService.Setup(expression: service =>
-            service.AuthorizeAuthorizationContext(It.IsAny<AuthorizationContext>()))
+            service.AuthorizeAuthorizationContext(context: It.IsAny<AuthorizationContext>()))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
         AppPageOrderOrchestrationService service = new(
@@ -77,7 +82,9 @@ public sealed class AppPageOrderOrchestrationServiceTests
                 updatedApp: new App { Id = 42, Pages = [] });
 
         // Then
-        await action.Should().ThrowAsync<SecurityException>();
+        await action.Should()
+            .ThrowAsync<SecurityException>();
+
         pageService.VerifyNoOtherCalls();
     }
 }

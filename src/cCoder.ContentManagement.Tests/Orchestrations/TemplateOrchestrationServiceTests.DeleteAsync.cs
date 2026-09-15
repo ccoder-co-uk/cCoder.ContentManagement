@@ -52,7 +52,7 @@ public partial class TemplateOrchestrationServiceTests
 
         authorizationProcessingServiceMock.Verify(
             expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+                context: It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Template_delete")),
             times: Times.Once);
@@ -61,6 +61,7 @@ public partial class TemplateOrchestrationServiceTests
     [Fact]
     public async Task Template_WhenUserLacksDeletePrivilege_IsNotDeleted()
     {
+        // Given
         int id = 1;
         Template entity = CreateRandomTemplate();
 
@@ -70,15 +71,18 @@ public partial class TemplateOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+                context: It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Template_delete")))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
+        // When
         Func<Task> action = async () =>
             await orchestrationService.DeleteAsync(templateId: id);
 
-        await action.Should()
+        // Then
+        await action
+            .Should()
             .ThrowAsync<ContentManagementSecurityException>();
 
         templateProcessingServiceMock.Verify(

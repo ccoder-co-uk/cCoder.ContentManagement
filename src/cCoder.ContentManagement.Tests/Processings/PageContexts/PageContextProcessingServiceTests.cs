@@ -11,7 +11,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Processings.PageContexts;
 
-public sealed class HttpContextProcessingServiceTests
+public sealed partial class HttpContextProcessingServiceTests
 {
     [Fact]
     public void PageContext_WhenRequested_IsReturnedFromHttpContextService()

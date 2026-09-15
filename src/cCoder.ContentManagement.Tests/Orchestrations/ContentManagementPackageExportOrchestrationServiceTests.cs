@@ -11,7 +11,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Orchestrations;
 
-public sealed class ContentManagementPackageExportOrchestrationServiceTests
+public sealed partial class ContentManagementPackageExportOrchestrationServiceTests
 {
     [Fact]
     public void ExportPackage_WhenUserIsAppAdmin_DelegatesToExportProcessing()
@@ -25,7 +25,7 @@ public sealed class ContentManagementPackageExportOrchestrationServiceTests
 
         authorizationService.Setup(expression: service =>
                 service.IsAdminOfAppAuthorizationContext(
-                    It.Is<AuthorizationContext>(context => context.AppId == appId)))
+context:                     It.Is<AuthorizationContext>(match: context => context.AppId == appId)))
             .Returns(value: true);
 
         exportService.Setup(expression: service => service.ExportPackage(

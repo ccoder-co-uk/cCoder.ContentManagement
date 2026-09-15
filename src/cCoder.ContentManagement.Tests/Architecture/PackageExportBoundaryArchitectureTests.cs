@@ -9,23 +9,27 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Architecture;
 
-public sealed class PackageExportBoundaryArchitectureTests
+public sealed partial class PackageExportBoundaryArchitectureTests
 {
     [Fact]
     public void PackageExportFoundation_WhenComposed_HasOneDataBroker()
     {
-        // Given / When
-        string[] brokerContracts = typeof(PackageExportService)
+        // Given
+        Type packageExportServiceType = typeof(PackageExportService);
+
+        // When
+        string[] brokerContracts = packageExportServiceType
             .GetConstructors(
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+                bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
             .Single()
             .GetParameters()
-            .Select(parameter => parameter.ParameterType.Name)
-            .Where(name => name.EndsWith("Broker", StringComparison.Ordinal))
-            .Where(name => name != "IJsonBroker")
+            .Select(selector: parameter => parameter.ParameterType.Name)
+            .Where(predicate: name => name.EndsWith(value: "Broker", comparisonType: StringComparison.Ordinal))
+            .Where(predicate: name => name != "IJsonBroker")
             .ToArray();
 
         // Then
-        brokerContracts.Should().Equal("IPackageExportBroker");
+        brokerContracts.Should()
+            .Equal(expected: "IPackageExportBroker");
     }
 }

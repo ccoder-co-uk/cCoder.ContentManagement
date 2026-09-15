@@ -67,6 +67,7 @@ public partial class AppProcessingServiceTests
         dbApp.Roles = null!;
         App postedApp = CreateRandomApp();
         postedApp.Id = dbApp.Id;
+
         appServiceMock
             .Setup(expression: service => service.GetApp(appId: dbApp.Id, ignoreFilters: true))
             .Returns(value: dbApp);

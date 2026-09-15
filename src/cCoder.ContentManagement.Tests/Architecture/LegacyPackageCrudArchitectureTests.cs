@@ -8,7 +8,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Architecture;
 
-public sealed class LegacyPackageCrudArchitectureTests
+public sealed partial class LegacyPackageCrudArchitectureTests
 {
     [Theory]
     [InlineData("cCoder.ContentManagement.Services.Orchestrations.PackageOrchestrationService")]
@@ -16,12 +16,16 @@ public sealed class LegacyPackageCrudArchitectureTests
     public void ContentManagementAssembly_WhenInspected_DoesNotOwnPackagingCrud(
         string typeName)
     {
-        // Given / When
-        Type legacyType = typeof(IContentManagementPackageManager)
-            .Assembly
+        // Given
+        System.Reflection.Assembly contentManagementAssembly =
+            typeof(IContentManagementPackageManager).Assembly;
+
+        // When
+        Type legacyType = contentManagementAssembly
             .GetType(name: typeName);
 
         // Then
-        legacyType.Should().BeNull();
+        legacyType.Should()
+            .BeNull();
     }
 }

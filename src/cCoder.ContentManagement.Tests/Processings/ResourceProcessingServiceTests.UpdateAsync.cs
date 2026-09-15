@@ -26,6 +26,7 @@ public partial class ResourceProcessingServiceTests
     {
         // Given
         Resource resource = CreateRandomResource(id: 7);
+
         resourceServiceMock.Setup(expression: x => x.UpdateResourceAsync(updatedResource: resource))
             .ReturnsAsync(value: resource);
 

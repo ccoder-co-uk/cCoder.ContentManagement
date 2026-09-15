@@ -42,6 +42,7 @@ public partial class PageEventProcessingServiceTests
         pageEventServiceMock.Verify(expression: x => x.RaisePageAddEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         pageEventServiceMock.VerifyNoOtherCalls();
     }
 

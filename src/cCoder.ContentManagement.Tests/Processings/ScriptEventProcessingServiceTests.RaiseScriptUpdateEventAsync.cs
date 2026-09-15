@@ -42,6 +42,7 @@ public partial class ScriptEventProcessingServiceTests
         scriptEventServiceMock.Verify(expression: x => x.RaiseScriptUpdateEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         scriptEventServiceMock.VerifyNoOtherCalls();
     }
 

@@ -10,7 +10,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Processings.PageContexts;
 
-public sealed class PageAuthorizationProcessingServiceTests
+public sealed partial class PageAuthorizationProcessingServiceTests
 {
     [Fact]
     public async Task PageContext_WhenAuthorized_IsReturnedFromAuthorizationService()
@@ -20,7 +20,7 @@ public sealed class PageAuthorizationProcessingServiceTests
         Mock<IPageAuthorizationService> pageAuthorizationService = new(MockBehavior.Strict);
 
         pageAuthorizationService
-            .Setup(expression: service => service.AuthorizeHttpPageRenderContextAsync(context))
+            .Setup(expression: service => service.AuthorizeHttpPageRenderContextAsync(pageRenderContext: context))
             .ReturnsAsync(value: context);
 
         PageAuthorizationProcessingService service = new(
@@ -28,7 +28,7 @@ public sealed class PageAuthorizationProcessingServiceTests
 
         // When
         HttpPageRenderContext result =
-            await service.AuthorizeHttpPageRenderContextAsync(context);
+            await service.AuthorizeHttpPageRenderContextAsync(httpPageRenderContext: context);
 
         // Then
         Assert.Same(expected: context, actual: result);

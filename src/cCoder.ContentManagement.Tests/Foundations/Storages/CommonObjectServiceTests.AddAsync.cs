@@ -14,27 +14,49 @@ public partial class CommonObjectServiceTests
     [Fact]
     public async Task ShouldStampAuditFieldsAndDelegateToBrokerWhenAddAsync()
     {
+        // Given
         const string userId = "test-user";
         CommonObject commonObject = CreateRandomCommonObject(id: 0);
         CommonObject submitted = null;
 
         commonObjectBrokerMock
-            .Setup(broker => broker.AddCommonObjectAsync(It.IsAny<CommonObject>()))
-            .Callback<CommonObject>(item => submitted = item)
-            .ReturnsAsync((CommonObject item) => item);
+            .Setup(expression: broker => broker.AddCommonObjectAsync(
+                newCommonObject: It.IsAny<CommonObject>()))
+            .Callback<CommonObject>(action: item => submitted = item)
+            .ReturnsAsync(valueFunction: (CommonObject item) => item);
 
+        // When
         CommonObject result = await commonObjectService.AddCommonObjectAsync(
             newCommonObject: commonObject,
             userId: userId);
 
-        result.Should().BeSameAs(commonObject);
-        submitted.Should().NotBeSameAs(commonObject);
-        submitted.CreatedBy.Should().Be(userId);
-        submitted.LastUpdatedBy.Should().Be(userId);
-        submitted.CreatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
-        submitted.LastUpdated.Should().Be(submitted.CreatedOn);
-        commonObject.CreatedBy.Should().Be(userId);
-        commonObject.LastUpdatedBy.Should().Be(userId);
+        // Then
+        result.Should()
+            .BeSameAs(expected: commonObject);
+
+        submitted.Should()
+            .NotBeSameAs(unexpected: commonObject);
+
+        submitted.CreatedBy.Should()
+            .Be(expected: userId);
+
+        submitted.LastUpdatedBy.Should()
+            .Be(expected: userId);
+
+        submitted.CreatedOn.Should()
+            .BeCloseTo(
+                nearbyTime: DateTimeOffset.UtcNow,
+                precision: TimeSpan.FromSeconds(value: 5));
+
+        submitted.LastUpdated.Should()
+            .Be(expected: submitted.CreatedOn);
+
+        commonObject.CreatedBy.Should()
+            .Be(expected: userId);
+
+        commonObject.LastUpdatedBy.Should()
+            .Be(expected: userId);
+
         commonObjectBrokerMock.VerifyAll();
         commonObjectBrokerMock.VerifyNoOtherCalls();
     }

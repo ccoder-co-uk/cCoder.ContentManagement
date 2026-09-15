@@ -43,6 +43,7 @@ public partial class PackageItemEventProcessingServiceTests
         packageItemEventServiceMock.Verify(expression: x => x.RaisePackageItemDeleteEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         packageItemEventServiceMock.VerifyNoOtherCalls();
     }
 

@@ -42,6 +42,7 @@ public partial class ResourceEventProcessingServiceTests
         resourceEventServiceMock.Verify(expression: x => x.RaiseResourceAddEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         resourceEventServiceMock.VerifyNoOtherCalls();
     }
 

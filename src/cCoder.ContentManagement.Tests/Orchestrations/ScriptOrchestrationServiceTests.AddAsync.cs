@@ -51,13 +51,16 @@ public partial class ScriptOrchestrationServiceTests
 
         authorizationProcessingServiceMock.Verify(
             expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Script_create")),
             times: Times.Once);
 
-        entity.CreatedBy.Should().Be(CurrentUserId);
-        entity.LastUpdatedBy.Should().Be(CurrentUserId);
+        entity.CreatedBy.Should()
+            .Be(expected: CurrentUserId);
+
+        entity.LastUpdatedBy.Should()
+            .Be(expected: CurrentUserId);
     }
 
     [Fact]
@@ -68,7 +71,7 @@ public partial class ScriptOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Script_create")))
             .Throws(exception: new SecurityException(message: "Access Denied!"));

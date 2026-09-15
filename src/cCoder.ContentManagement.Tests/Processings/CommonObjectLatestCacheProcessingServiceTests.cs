@@ -11,19 +11,29 @@ using Xunit;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
-public sealed class CommonObjectLatestCacheProcessingServiceTests
+public sealed partial class CommonObjectLatestCacheProcessingServiceTests
 {
     [Fact]
     public void ShouldDelegateWhenGetLatestCommonObjects()
     {
+        // Given
         CommonObject[] items = [new() { Id = 42 }];
-        Mock<ICommonObjectLatestCacheService> foundationService = new(MockBehavior.Strict);
-        foundationService.Setup(service => service.GetLatestCommonObjects()).Returns(items);
-        CommonObjectLatestCacheProcessingService service = new(foundationService.Object);
+        Mock<ICommonObjectLatestCacheService> foundationService = new(behavior: MockBehavior.Strict);
 
+        foundationService
+            .Setup(expression: service => service.GetLatestCommonObjects())
+            .Returns(value: items);
+
+        CommonObjectLatestCacheProcessingService service = new(
+            commonObjectLatestCacheService: foundationService.Object);
+
+        // When
         IEnumerable<CommonObject> actual = service.GetLatestCommonObjects();
 
-        actual.Should().BeSameAs(items);
+        // Then
+        actual.Should()
+            .BeSameAs(expected: items);
+
         foundationService.VerifyAll();
         foundationService.VerifyNoOtherCalls();
     }
@@ -31,12 +41,19 @@ public sealed class CommonObjectLatestCacheProcessingServiceTests
     [Fact]
     public void ShouldRefreshFoundationWhenChangedCountIsPositive()
     {
-        Mock<ICommonObjectLatestCacheService> foundationService = new(MockBehavior.Strict);
-        foundationService.Setup(service => service.RefreshCommonObjects());
-        CommonObjectLatestCacheProcessingService service = new(foundationService.Object);
+        // Given
+        Mock<ICommonObjectLatestCacheService> foundationService = new(behavior: MockBehavior.Strict);
 
+        foundationService.Setup(
+            expression: service => service.RefreshCommonObjects());
+
+        CommonObjectLatestCacheProcessingService service = new(
+            commonObjectLatestCacheService: foundationService.Object);
+
+        // When
         service.RefreshCommonObjects(changedCommonObjectCount: 2);
 
+        // Then
         foundationService.VerifyAll();
         foundationService.VerifyNoOtherCalls();
     }
@@ -44,11 +61,16 @@ public sealed class CommonObjectLatestCacheProcessingServiceTests
     [Fact]
     public void ShouldNotRefreshFoundationWhenChangedCountIsZero()
     {
-        Mock<ICommonObjectLatestCacheService> foundationService = new(MockBehavior.Strict);
-        CommonObjectLatestCacheProcessingService service = new(foundationService.Object);
+        // Given
+        Mock<ICommonObjectLatestCacheService> foundationService = new(behavior: MockBehavior.Strict);
 
+        CommonObjectLatestCacheProcessingService service = new(
+            commonObjectLatestCacheService: foundationService.Object);
+
+        // When
         service.RefreshCommonObjects(changedCommonObjectCount: 0);
 
+        // Then
         foundationService.VerifyNoOtherCalls();
     }
 }

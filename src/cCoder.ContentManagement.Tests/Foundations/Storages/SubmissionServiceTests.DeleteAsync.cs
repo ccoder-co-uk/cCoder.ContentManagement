@@ -36,8 +36,9 @@ public partial class SubmissionServiceTests
 
         submissionBrokerMock.Setup(expression: x => x.GetAllSubmissions())
             .Returns(value: new[] { submission }.AsQueryable());
-submissionBrokerMock.Setup(expression: x => x.DeleteSubmissionAsync(deletedSubmission: It.IsAny<CmsDataModels.Submission>()))
-            .ReturnsAsync(value: 1);
+
+        submissionBrokerMock.Setup(expression: x => x.DeleteSubmissionAsync(deletedSubmission: It.IsAny<CmsDataModels.Submission>()))
+                    .ReturnsAsync(value: 1);
 
         // When
         await submissionService.DeleteAsync(submissionId: submissionId);
@@ -46,5 +47,5 @@ submissionBrokerMock.Setup(expression: x => x.DeleteSubmissionAsync(deletedSubmi
         submissionBrokerMock.Verify(expression: x => x.GetAllSubmissions(), times: Times.Once);
         submissionBrokerMock.Verify(expression: x => x.DeleteSubmissionAsync(deletedSubmission: It.Is<CmsDataModels.Submission>(match: actual => actual.Id == submission.Id)), times: Times.Once);
         submissionBrokerMock.VerifyNoOtherCalls();
-}
+    }
 }

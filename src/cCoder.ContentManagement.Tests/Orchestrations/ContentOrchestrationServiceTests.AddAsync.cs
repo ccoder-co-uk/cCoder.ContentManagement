@@ -59,7 +59,7 @@ public partial class ContentOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.Page.AppId
                     && context.Request.Privilege == "Content_create")))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
@@ -85,35 +85,37 @@ public partial class ContentOrchestrationServiceTests
         entity.Page = null;
 
         contentProcessingServiceMock
-            .Setup(expression: service => service.GetAppIdByPageId(entity.PageId))
+            .Setup(expression: service => service.GetAppIdByPageId(pageId: entity.PageId))
             .Returns(value: appId);
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == appId
                     && context.Request.Privilege == "Content_create")));
 
         contentProcessingServiceMock
-            .Setup(expression: service => service.AddContentAsync(entity))
+            .Setup(expression: service => service.AddContentAsync(newContent: entity))
             .ReturnsAsync(value: entity);
 
         contentEventProcessingServiceMock
-            .Setup(expression: service => service.RaiseContentAddEventAsync(entity, CurrentUserId))
+            .Setup(expression: service => service.RaiseContentAddEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        Content result = await orchestrationService.AddContentAsync(entity);
+        Content result = await orchestrationService.AddContentAsync(newContent: entity);
 
         // Then
-        result.Should().BeSameAs(entity);
+        result.Should()
+            .BeSameAs(expected: entity);
+
         contentProcessingServiceMock.Verify(
-            expression: service => service.GetAppIdByPageId(entity.PageId),
+            expression: service => service.GetAppIdByPageId(pageId: entity.PageId),
             times: Times.Once);
 
         authorizationProcessingServiceMock.Verify(
             expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == appId
                     && context.Request.Privilege == "Content_create")),
             times: Times.Once);

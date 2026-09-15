@@ -10,6 +10,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Tests.Brokers.Rendering;
 
+#pragma warning disable STXTEST001
 internal sealed class TestContentRenderBroker(
     IMetadataReaderBroker metadataReaderBroker = null,
     ICommonObjectReaderBroker commonObjectReaderBroker = null,
@@ -25,19 +26,24 @@ internal sealed class TestContentRenderBroker(
         : IContentRenderBroker
 {
     public App[] GetApps() =>
-        appBroker?.GetAllAppsIgnoringFilters().ToArray() ?? [];
+        appBroker?.GetAllAppsIgnoringFilters()
+            .ToArray() ?? [];
 
     public Component[] GetComponents() =>
-        componentBroker?.GetAllComponentsIgnoringFilters().ToArray() ?? [];
+        componentBroker?.GetAllComponentsIgnoringFilters()
+            .ToArray() ?? [];
 
     public Resource[] GetResources() =>
-        resourceBroker?.GetAllResourcesIgnoringFilters().ToArray() ?? [];
+        resourceBroker?.GetAllResourcesIgnoringFilters()
+            .ToArray() ?? [];
 
     public Script[] GetScripts() =>
-        scriptBroker?.GetAllScriptsIgnoringFilters().ToArray() ?? [];
+        scriptBroker?.GetAllScriptsIgnoringFilters()
+            .ToArray() ?? [];
 
     public Template[] GetTemplates() =>
-        templateBroker?.GetAllTemplatesIgnoringFilters().ToArray() ?? [];
+        templateBroker?.GetAllTemplatesIgnoringFilters()
+            .ToArray() ?? [];
 
     public Component GetComponent(int appId, string name) =>
         componentReaderBroker?.GetComponent(
@@ -69,3 +75,4 @@ internal sealed class TestContentRenderBroker(
             baseAddress: baseAddress,
             content: content);
 }
+#pragma warning restore STXTEST001

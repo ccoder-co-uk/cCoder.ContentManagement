@@ -18,14 +18,16 @@ public partial class ContentProcessingServiceTests
         int appId = Random.Shared.Next(minValue: 1, maxValue: int.MaxValue);
 
         contentServiceMock
-            .Setup(expression: service => service.GetAppIdByPageId(pageId))
+            .Setup(expression: service => service.GetAppIdByPageId(pageId: pageId))
             .Returns(value: appId);
 
         // When
-        int? result = contentProcessingService.GetAppIdByPageId(pageId);
+        int? result = contentProcessingService.GetAppIdByPageId(pageId: pageId);
 
         // Then
-        result.Should().Be(appId);
+        result.Should()
+            .Be(expected: appId);
+
         contentServiceMock.VerifyAll();
     }
 }

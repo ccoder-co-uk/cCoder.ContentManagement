@@ -52,7 +52,7 @@ public partial class SubmissionOrchestrationServiceTests
 
         authorizationProcessingServiceMock.Verify(
             expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Submission_delete")),
             times: Times.Once);
@@ -71,7 +71,7 @@ public partial class SubmissionOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Submission_delete")))
             .Throws(exception: new SecurityException(message: "Access Denied!"));

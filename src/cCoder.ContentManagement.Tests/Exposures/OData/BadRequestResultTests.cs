@@ -10,7 +10,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Exposures.OData;
 
-public sealed class BadRequestResultTests
+public sealed partial class BadRequestResultTests
 {
     [Fact]
     public void BadRequestResult_WhenModelStateIsInvalid_ReturnsStructuredErrors()

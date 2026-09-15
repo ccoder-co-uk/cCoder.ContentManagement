@@ -42,6 +42,7 @@ public partial class ComponentEventProcessingServiceTests
         componentEventServiceMock.Verify(expression: x => x.RaiseComponentAddEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         componentEventServiceMock.VerifyNoOtherCalls();
     }
 

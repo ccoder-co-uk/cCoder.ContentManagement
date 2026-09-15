@@ -13,16 +13,23 @@ public partial class CommonObjectProcessingServiceTests
     [Fact]
     public async Task ShouldDeleteEachItemWhenDeleteAllAsync()
     {
+        // Given
         CommonObject first = CreateRandomCommonObject();
         CommonObject second = CreateRandomCommonObject();
 
-        commonObjectServiceMock.Setup(service => service.DeleteAsync(first.Id))
-            .Returns(ValueTask.CompletedTask);
-        commonObjectServiceMock.Setup(service => service.DeleteAsync(second.Id))
-            .Returns(ValueTask.CompletedTask);
+        commonObjectServiceMock
+            .Setup(expression: service => service.DeleteAsync(commonObjectId: first.Id))
+            .Returns(value: ValueTask.CompletedTask);
 
-        await commonObjectProcessingService.DeleteAllCommonObjectAsync([first, second]);
+        commonObjectServiceMock
+            .Setup(expression: service => service.DeleteAsync(commonObjectId: second.Id))
+            .Returns(value: ValueTask.CompletedTask);
 
+        // When
+        await commonObjectProcessingService.DeleteAllCommonObjectAsync(
+            deletedCommonObject: [first, second]);
+
+        // Then
         commonObjectServiceMock.VerifyAll();
         VerifyNoOtherCommonObjectServiceCalls();
     }

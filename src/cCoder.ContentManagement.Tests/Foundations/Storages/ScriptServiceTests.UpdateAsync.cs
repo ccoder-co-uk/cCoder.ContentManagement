@@ -32,13 +32,14 @@ public partial class ScriptServiceTests
     public async Task ShouldDelegateToBrokerWhenUpdateAsync()
     {
         // Given
-Script script = CreateRandomScript(id: 7);
+        Script script = CreateRandomScript(id: 7);
 
         CmsDataModels.Script submitted = null;
-scriptBrokerMock
-            .Setup(expression: x => x.UpdateScriptAsync(updatedScript: It.IsAny<CmsDataModels.Script>()))
-            .Callback<CmsDataModels.Script>(action: candidate => submitted = candidate)
-            .ReturnsAsync(valueFunction: (CmsDataModels.Script value) => value);
+
+        scriptBrokerMock
+                    .Setup(expression: x => x.UpdateScriptAsync(updatedScript: It.IsAny<CmsDataModels.Script>()))
+                    .Callback<CmsDataModels.Script>(action: candidate => submitted = candidate)
+                    .ReturnsAsync(valueFunction: (CmsDataModels.Script value) => value);
 
         // When
         Script result = await scriptService.UpdateScriptAsync(updatedScript: script);
@@ -131,5 +132,5 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
 
         scriptBrokerMock.Verify(expression: x => x.UpdateScriptAsync(updatedScript: It.IsAny<CmsDataModels.Script>()), times: Times.Once);
         scriptBrokerMock.VerifyNoOtherCalls();
-}
+    }
 }

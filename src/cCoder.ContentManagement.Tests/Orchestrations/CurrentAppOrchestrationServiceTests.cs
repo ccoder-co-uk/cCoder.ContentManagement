@@ -13,7 +13,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Orchestrations;
 
-public sealed class CurrentAppOrchestrationServiceTests
+public sealed partial class CurrentAppOrchestrationServiceTests
 {
     [Fact]
     public void ResolveCurrentApp_WhenWebDavPathContainsAppId_ReturnsVisibleApp()
@@ -27,7 +27,7 @@ public sealed class CurrentAppOrchestrationServiceTests
             .Returns(value: "/api/webdav/Core/App(7)/DAV/file.txt");
 
         appService.Setup(expression: service =>
-            service.GetVisibleAppAppOperation(It.Is<AppOperation>(operation => operation.AppId == 7)))
+            service.GetVisibleAppAppOperation(appOperation: It.Is<AppOperation>(match: operation => operation.AppId == 7)))
             .Returns(valueFunction: (AppOperation operation) =>
             {
                 operation.App = app;
@@ -42,7 +42,9 @@ public sealed class CurrentAppOrchestrationServiceTests
         App result = service.ResolveCurrentApp();
 
         // Then
-        result.Should().BeSameAs(expected: app);
+        result.Should()
+            .BeSameAs(expected: app);
+
         appService.VerifyAll();
         httpContextService.VerifyAll();
     }
@@ -62,7 +64,7 @@ public sealed class CurrentAppOrchestrationServiceTests
             .Returns(value: "tenant.test");
 
         appService.Setup(expression: service =>
-            service.GetVisibleAppsAppOperation(It.IsAny<AppOperation>()))
+            service.GetVisibleAppsAppOperation(appOperation: It.IsAny<AppOperation>()))
             .Returns(valueFunction: (AppOperation operation) =>
             {
                 operation.Apps = new[] { app }.AsQueryable();
@@ -77,7 +79,9 @@ public sealed class CurrentAppOrchestrationServiceTests
         App result = service.ResolveCurrentApp();
 
         // Then
-        result.Should().BeSameAs(expected: app);
+        result.Should()
+            .BeSameAs(expected: app);
+
         appService.VerifyAll();
         httpContextService.VerifyAll();
     }

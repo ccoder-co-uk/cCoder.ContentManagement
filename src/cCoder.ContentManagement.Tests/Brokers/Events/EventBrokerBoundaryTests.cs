@@ -9,7 +9,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Brokers.Events;
 
-public sealed class EventBrokerBoundaryTests
+public sealed partial class EventBrokerBoundaryTests
 {
     [Fact]
     public void EventBrokers_WhenConstructed_ShouldConsumeEventHubDirectly()
@@ -20,7 +20,7 @@ public sealed class EventBrokerBoundaryTests
         Type[] concreteEventBrokerTypes = eventBrokerType
             .Assembly
             .GetTypes()
-            .Where(type =>
+            .Where(predicate: type =>
                 type.IsClass
                 && !type.IsAbstract
                 && type.Namespace == eventBrokerType.Namespace
@@ -31,18 +31,20 @@ public sealed class EventBrokerBoundaryTests
 
         // When
         Type[][] constructorParameterTypes = concreteEventBrokerTypes
-            .Select(type => type
+            .Select(selector: type => type
                 .GetConstructors()
                 .Single()
                 .GetParameters()
-                .Select(parameter => parameter.ParameterType)
+                .Select(selector: parameter => parameter.ParameterType)
                 .ToArray())
             .ToArray();
 
         // Then
-        concreteEventBrokerTypes.Should().NotBeEmpty();
+        concreteEventBrokerTypes.Should()
+            .NotBeEmpty();
 
-        constructorParameterTypes.Should().OnlyContain(parameterTypes =>
+        constructorParameterTypes.Should()
+            .OnlyContain(predicate: parameterTypes =>
             parameterTypes.Contains(value: typeof(IEventHub))
             && !parameterTypes.Contains(value: typeof(IAuthenticatedEventHub)));
     }

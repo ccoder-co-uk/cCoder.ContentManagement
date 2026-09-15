@@ -42,6 +42,7 @@ public partial class PageRoleEventProcessingServiceTests
         pageRoleEventServiceMock.Verify(expression: x => x.RaisePageRoleDeleteEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         pageRoleEventServiceMock.VerifyNoOtherCalls();
     }
 

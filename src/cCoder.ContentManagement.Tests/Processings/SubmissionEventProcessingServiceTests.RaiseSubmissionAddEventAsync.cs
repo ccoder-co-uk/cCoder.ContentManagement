@@ -42,6 +42,7 @@ public partial class SubmissionEventProcessingServiceTests
         submissionEventServiceMock.Verify(expression: x => x.RaiseSubmissionAddEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         submissionEventServiceMock.VerifyNoOtherCalls();
     }
 

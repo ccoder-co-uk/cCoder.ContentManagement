@@ -35,8 +35,9 @@ public partial class ScriptServiceTests
 
         scriptBrokerMock.Setup(expression: x => x.GetAllScripts())
             .Returns(value: new[] { script }.AsQueryable());
-scriptBrokerMock.Setup(expression: x => x.DeleteScriptAsync(deletedScript: It.IsAny<CmsDataModels.Script>()))
-            .ReturnsAsync(value: 1);
+
+        scriptBrokerMock.Setup(expression: x => x.DeleteScriptAsync(deletedScript: It.IsAny<CmsDataModels.Script>()))
+                    .ReturnsAsync(value: 1);
 
         // When
         await scriptService.DeleteAsync(scriptId: 9);
@@ -45,5 +46,5 @@ scriptBrokerMock.Setup(expression: x => x.DeleteScriptAsync(deletedScript: It.Is
         scriptBrokerMock.Verify(expression: x => x.GetAllScripts(), times: Times.Once);
         scriptBrokerMock.Verify(expression: x => x.DeleteScriptAsync(deletedScript: It.Is<CmsDataModels.Script>(match: actual => actual.Id == script.Id)), times: Times.Once);
         scriptBrokerMock.VerifyNoOtherCalls();
-}
+    }
 }

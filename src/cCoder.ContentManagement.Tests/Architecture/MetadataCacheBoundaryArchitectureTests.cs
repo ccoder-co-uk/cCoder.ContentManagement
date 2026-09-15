@@ -31,10 +31,11 @@ public sealed partial class MetadataCacheBoundaryArchitectureTests
 
         // Then
         dependencyTypes.Should()
-            .Contain(dependencyType => dependencyType == typeof(ICommonObjectCache));
+            .Contain(predicate: dependencyType =>
+                dependencyType == typeof(ICommonObjectCache));
 
         dependencyTypes.Should()
-            .NotContain(dependencyType =>
+            .NotContain(predicate: dependencyType =>
                 dependencyType.Name.EndsWith(
                     value: "Broker",
                     comparisonType: StringComparison.Ordinal));

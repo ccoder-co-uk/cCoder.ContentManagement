@@ -41,7 +41,7 @@ public partial class LayoutOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.IsAny<AuthorizationContext>()));
+context:                 It.IsAny<AuthorizationContext>()));
 
         orchestrationService = new LayoutOrchestrationService(
 processingService: layoutProcessingServiceMock.Object,

@@ -30,7 +30,7 @@ public sealed partial class PageContextOrchestrationServiceTests
             .Returns(value: context);
 
         pageAuthorizationProcessingService.Setup(expression: service =>
-            service.AuthorizeHttpPageRenderContextAsync(context))
+            service.AuthorizeHttpPageRenderContextAsync(httpPageRenderContext: context))
             .ReturnsAsync(value: context);
 
         authorizationProcessingService.Setup(expression: service =>

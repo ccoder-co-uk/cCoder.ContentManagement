@@ -41,7 +41,7 @@ public partial class ComponentOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.IsAny<AuthorizationContext>()));
+context:                 It.IsAny<AuthorizationContext>()));
 
         orchestrationService = new ComponentOrchestrationService(
 processingService: componentProcessingServiceMock.Object,

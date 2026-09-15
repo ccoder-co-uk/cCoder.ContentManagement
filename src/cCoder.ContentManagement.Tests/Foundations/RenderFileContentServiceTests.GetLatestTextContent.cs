@@ -76,6 +76,7 @@ public partial class RenderFileContentServiceTests
     {
         // Given
         string expected = "rendered file content";
+
         renderFileContentBrokerMock
             .Setup(expression: broker => broker.GetLatestTextContent(appId: 7, path: "/assets/content.txt"))
             .Returns(value: expected);

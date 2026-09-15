@@ -13,19 +13,22 @@ public partial class CommonObjectServiceTests
     [Fact]
     public async Task ShouldLoadAndDelegateToBrokerWhenDeleteAsync()
     {
+        // Given
         CommonObject commonObject = CreateRandomCommonObject(id: 9);
 
         commonObjectBrokerMock
-            .Setup(broker => broker.GetAllCommonObjects())
-            .Returns(new[] { commonObject }.AsQueryable());
+            .Setup(expression: broker => broker.GetAllCommonObjects())
+            .Returns(value: new[] { commonObject }.AsQueryable());
 
         commonObjectBrokerMock
-            .Setup(broker => broker.DeleteCommonObjectAsync(
-                It.Is<CommonObject>(item => item.Id == commonObject.Id)))
-            .ReturnsAsync(1);
+            .Setup(expression: broker => broker.DeleteCommonObjectAsync(
+                deletedCommonObject: It.Is<CommonObject>(match: item => item.Id == commonObject.Id)))
+            .ReturnsAsync(value: 1);
 
+        // When
         await commonObjectService.DeleteAsync(commonObjectId: commonObject.Id);
 
+        // Then
         commonObjectBrokerMock.VerifyAll();
         commonObjectBrokerMock.VerifyNoOtherCalls();
     }

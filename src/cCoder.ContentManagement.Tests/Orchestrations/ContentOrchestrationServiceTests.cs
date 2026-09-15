@@ -40,7 +40,7 @@ public partial class ContentOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.IsAny<cCoder.ContentManagement.Models.AuthorizationContext>()));
+context:                 It.IsAny<cCoder.ContentManagement.Models.AuthorizationContext>()));
 
         orchestrationService = new ContentOrchestrationService(
 processingService: contentProcessingServiceMock.Object,
@@ -51,7 +51,9 @@ authorizationProcessingService: authorizationProcessingServiceMock.Object
 
     private static Content CreateRandomContent()
     {
-        Content content = Builder<Content>.CreateNew().Build();
+        Content content = Builder<Content>.CreateNew()
+            .Build();
+
         content.Page = new Page
         {
             Id = content.PageId,

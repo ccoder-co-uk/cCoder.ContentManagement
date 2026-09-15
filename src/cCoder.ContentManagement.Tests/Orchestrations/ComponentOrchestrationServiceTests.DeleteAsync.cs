@@ -52,7 +52,7 @@ public partial class ComponentOrchestrationServiceTests
 
         authorizationProcessingServiceMock.Verify(
             expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Component_delete")),
             times: Times.Once);
@@ -71,7 +71,7 @@ public partial class ComponentOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Component_delete")))
             .Throws(exception: new SecurityException(message: "Access Denied!"));

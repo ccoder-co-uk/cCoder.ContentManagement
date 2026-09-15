@@ -42,6 +42,7 @@ public partial class AppEventProcessingServiceTests
         appEventServiceMock.Verify(expression: x => x.RaiseAppAddEventAsync(
             app: app,
             userId: CurrentUserId), times: Times.Once);
+
         appEventServiceMock.VerifyNoOtherCalls();
     }
 

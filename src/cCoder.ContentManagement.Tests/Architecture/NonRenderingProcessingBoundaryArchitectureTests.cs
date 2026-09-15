@@ -72,7 +72,7 @@ public sealed partial class NonRenderingProcessingBoundaryArchitectureTests
 
         // Then
         dependencyNames.Should()
-            .BeEquivalentTo(["IAppService", "IHttpContextService"]);
+            .BeEquivalentTo(expectation: ["IAppService", "IHttpContextService"]);
     }
 
     [Fact]

@@ -14,7 +14,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Orchestrations;
 
-public sealed class AppBootstrapOrchestrationServiceTests
+public sealed partial class AppBootstrapOrchestrationServiceTests
 {
     [Fact]
     public void PrepareNewApp_WhenFirstApp_DefaultsThemeCulturesAndRoles()
@@ -23,6 +23,7 @@ public sealed class AppBootstrapOrchestrationServiceTests
         Mock<ICultureService> cultureService = new(MockBehavior.Strict);
         Mock<IPrivilegeService> privilegeService = new(MockBehavior.Strict);
         Mock<IAuthorizationService> authorizationService = new(MockBehavior.Strict);
+
         App app = new()
         {
             Name = "App",
@@ -32,7 +33,7 @@ public sealed class AppBootstrapOrchestrationServiceTests
             Roles = []
         };
 
-        cultureService.Setup(expression: service => service.GetAllCulture(false))
+        cultureService.Setup(expression: service => service.GetAllCulture(ignoreFilters: false))
             .Returns(value: new[] { new Culture { Id = string.Empty } }.AsQueryable());
 
         privilegeService.Setup(expression: service => service.GetAllPrivileges())
@@ -57,13 +58,19 @@ public sealed class AppBootstrapOrchestrationServiceTests
         App result = service.PrepareNewApp(app: app, isFirstApp: true);
 
         // Then
-        result.DefaultTheme.Should().Be(expected: "Default");
-        result.Cultures.Should().ContainSingle();
-        result.Roles.Select(selector: role => role.Name).Should()
-            .BeEquivalentTo("Administrators", "Users", "Guests", "System Admins");
+        result.DefaultTheme.Should()
+            .Be(expected: "Default");
+
+        result.Cultures.Should()
+            .ContainSingle();
+
+        result.Roles.Select(selector: role => role.Name)
+            .Should()
+            .BeEquivalentTo(expectation: ["Administrators", "Users", "Guests", "System Admins"]);
 
         result.Roles.Single(predicate: role => role.Name == "System Admins")
-            .Users.Should().ContainSingle(predicate: userRole => userRole.UserId == "admin");
+            .Users.Should()
+            .ContainSingle(predicate: userRole => userRole.UserId == "admin");
 
         cultureService.VerifyAll();
         privilegeService.VerifyAll();
@@ -82,6 +89,7 @@ public sealed class AppBootstrapOrchestrationServiceTests
         };
 
         App app = new() { Id = 42, Roles = [role] };
+
         AppBootstrapOrchestrationService service = new(
             cultureService: Mock.Of<ICultureService>(),
             privilegeService: Mock.Of<IPrivilegeService>(),
@@ -91,9 +99,16 @@ public sealed class AppBootstrapOrchestrationServiceTests
         service.StampAppChildren(app: app);
 
         // Then
-        role.AppId.Should().Be(expected: 42);
-        role.App.Should().BeNull();
-        role.Users.Single().RoleId.Should().Be(expected: role.Id);
-        role.Users.Single().Role.Should().BeNull();
+        role.AppId.Should()
+            .Be(expected: 42);
+
+        role.App.Should()
+            .BeNull();
+
+        role.Users.Single().RoleId.Should()
+            .Be(expected: role.Id);
+
+        role.Users.Single().Role.Should()
+            .BeNull();
     }
 }

@@ -54,7 +54,9 @@ public partial class AppOrchestrationServiceTests
             times: Times.Once);
 
         appProcessingServiceMock.Verify(expression: x => x.GetAppForDelete(appId: id), times: Times.Once);
-        result.Should().BeSameAs(expected: app);
+
+        result.Should()
+            .BeSameAs(expected: app);
     }
 
     [Fact]

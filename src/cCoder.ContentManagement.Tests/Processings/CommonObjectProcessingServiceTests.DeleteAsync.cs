@@ -12,12 +12,15 @@ public partial class CommonObjectProcessingServiceTests
     [Fact]
     public async Task ShouldDelegateToFoundationWhenDeleteAsync()
     {
+        // Given
         commonObjectServiceMock
-            .Setup(service => service.DeleteAsync(42))
-            .Returns(ValueTask.CompletedTask);
+            .Setup(expression: service => service.DeleteAsync(commonObjectId: 42))
+            .Returns(value: ValueTask.CompletedTask);
 
+        // When
         await commonObjectProcessingService.DeleteAsync(commonObjectId: 42);
 
+        // Then
         commonObjectServiceMock.VerifyAll();
         VerifyNoOtherCommonObjectServiceCalls();
     }

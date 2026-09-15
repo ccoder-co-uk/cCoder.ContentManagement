@@ -43,6 +43,7 @@ public partial class CommonObjectEventProcessingServiceTests
         commonObjectEventServiceMock.Verify(expression: x => x.RaiseCommonObjectUpdateEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         commonObjectEventServiceMock.VerifyNoOtherCalls();
     }
 

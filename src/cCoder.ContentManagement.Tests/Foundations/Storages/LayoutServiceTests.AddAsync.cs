@@ -32,15 +32,16 @@ public partial class LayoutServiceTests
     public async Task ShouldDelegateToBrokerWhenAddAsync()
     {
         // Given
-Layout layout = CreateRandomLayout(id: 7);
+        Layout layout = CreateRandomLayout(id: 7);
 
         CmsDataModels.Layout submitted = null;
-layoutBrokerMock
-            .Setup(expression: x =>
-                x.AddLayoutAsync(newLayout: It.Is<CmsDataModels.Layout>(match: candidate => !ReferenceEquals(objA: candidate, objB: layout)))
-            )
-            .Callback<CmsDataModels.Layout>(action: candidate => submitted = candidate)
-            .ReturnsAsync(valueFunction: (CmsDataModels.Layout value) => value);
+
+        layoutBrokerMock
+                    .Setup(expression: x =>
+                        x.AddLayoutAsync(newLayout: It.Is<CmsDataModels.Layout>(match: candidate => !ReferenceEquals(objA: candidate, objB: layout)))
+                    )
+                    .Callback<CmsDataModels.Layout>(action: candidate => submitted = candidate)
+                    .ReturnsAsync(valueFunction: (CmsDataModels.Layout value) => value);
 
         // When
         Layout result = await layoutService.AddLayoutAsync(newLayout: layout);
@@ -139,5 +140,5 @@ times: Times.Once
         );
 
         layoutBrokerMock.VerifyNoOtherCalls();
-}
+    }
 }

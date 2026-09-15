@@ -40,7 +40,7 @@ public partial class TemplateOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.IsAny<cCoder.ContentManagement.Models.AuthorizationContext>()));
+                context: It.IsAny<cCoder.ContentManagement.Models.AuthorizationContext>()));
 
         orchestrationService = new TemplateOrchestrationService(
 processingService: templateProcessingServiceMock.Object,

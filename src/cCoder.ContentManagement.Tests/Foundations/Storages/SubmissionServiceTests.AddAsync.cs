@@ -32,17 +32,18 @@ public partial class SubmissionServiceTests
     public async Task ShouldDelegateToBrokerWhenAddAsync()
     {
         // Given
-Submission submission = CreateRandomSubmission(id: Guid.Empty);
+        Submission submission = CreateRandomSubmission(id: Guid.Empty);
 
         CmsDataModels.Submission submitted = null;
-submissionBrokerMock
-            .Setup(expression: x =>
-                x.AddSubmissionAsync(
-newSubmission: It.Is<CmsDataModels.Submission>(match: candidate => !ReferenceEquals(objA: candidate, objB: submission))
-                )
-            )
-            .Callback<CmsDataModels.Submission>(action: candidate => submitted = candidate)
-            .ReturnsAsync(valueFunction: (CmsDataModels.Submission value) => value);
+
+        submissionBrokerMock
+                    .Setup(expression: x =>
+                        x.AddSubmissionAsync(
+        newSubmission: It.Is<CmsDataModels.Submission>(match: candidate => !ReferenceEquals(objA: candidate, objB: submission))
+                        )
+                    )
+                    .Callback<CmsDataModels.Submission>(action: candidate => submitted = candidate)
+                    .ReturnsAsync(valueFunction: (CmsDataModels.Submission value) => value);
 
         // When
         Submission result = await submissionService.AddSubmissionAsync(newSubmission: submission);
@@ -144,5 +145,5 @@ times: Times.Once
         );
 
         submissionBrokerMock.VerifyNoOtherCalls();
-}
+    }
 }

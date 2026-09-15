@@ -42,6 +42,7 @@ public partial class ContentEventProcessingServiceTests
         contentEventServiceMock.Verify(expression: x => x.RaiseContentDeleteEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         contentEventServiceMock.VerifyNoOtherCalls();
     }
 

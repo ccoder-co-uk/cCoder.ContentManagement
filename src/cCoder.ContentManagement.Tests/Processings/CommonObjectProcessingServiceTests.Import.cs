@@ -15,20 +15,35 @@ public partial class CommonObjectProcessingServiceTests
     [Fact]
     public async Task ShouldResetIdentityAndAddWhenImportItemIsNew()
     {
+        // Given
         CommonObject incoming = CreateRandomCommonObject(type: "Core/Other");
         incoming.Id = 99;
         incoming.Version = 9;
 
         commonObjectServiceMock
-            .Setup(service => service.AddCommonObjectAsync(incoming, CurrentUserId))
-            .ReturnsAsync(incoming);
+            .Setup(expression: service => service.AddCommonObjectAsync(
+                newCommonObject: incoming,
+                userId: CurrentUserId))
+            .ReturnsAsync(value: incoming);
 
+        // When
         OperationResult<CommonObject>[] results = (await commonObjectProcessingService
-            .AddAllCommonObjectsAsync([incoming], [], CurrentUserId)).ToArray();
+            .AddAllCommonObjectsAsync(
+                newCommonObjects: [incoming],
+                latestCommonObjects: [],
+                userId: CurrentUserId))
+            .ToArray();
 
-        results.Should().ContainSingle(result => result.Success && result.Item == incoming);
-        incoming.Id.Should().Be(0);
-        incoming.Version.Should().Be(1);
+        // Then
+        results.Should()
+            .ContainSingle(predicate: result => result.Success && result.Item == incoming);
+
+        incoming.Id.Should()
+            .Be(expected: 0);
+
+        incoming.Version.Should()
+            .Be(expected: 1);
+
         commonObjectServiceMock.VerifyAll();
         VerifyNoOtherCommonObjectServiceCalls();
     }
@@ -36,9 +51,10 @@ public partial class CommonObjectProcessingServiceTests
     [Fact]
     public async Task ShouldPromoteVersionAndAddWhenImportItemIsNewer()
     {
+        // Given
         CommonObject existing = CreateRandomCommonObject(type: "Core/Other");
         existing.Version = 4;
-        existing.CreatedOn = DateTimeOffset.UtcNow.AddHours(-2);
+        existing.CreatedOn = DateTimeOffset.UtcNow.AddHours(hours: -2);
         existing.LastUpdated = existing.CreatedOn;
         CommonObject incoming = CreateRandomCommonObject(type: existing.Type);
         incoming.Name = existing.Name;
@@ -47,19 +63,38 @@ public partial class CommonObjectProcessingServiceTests
         incoming.CreatedOn = DateTimeOffset.UtcNow;
         incoming.LastUpdated = incoming.CreatedOn;
 
-        commonObjectServiceMock.Setup(service => service.GetAllCommonObject(false))
-            .Returns(new[] { existing }.AsQueryable());
         commonObjectServiceMock
-            .Setup(service => service.AddCommonObjectAsync(incoming, CurrentUserId))
-            .ReturnsAsync(incoming);
+            .Setup(expression: service => service.GetAllCommonObject(ignoreFilters: false))
+            .Returns(value: new[] { existing }.AsQueryable());
 
+        commonObjectServiceMock
+            .Setup(expression: service => service.AddCommonObjectAsync(
+                newCommonObject: incoming,
+                userId: CurrentUserId))
+            .ReturnsAsync(value: incoming);
+
+        // When
         OperationResult<CommonObject>[] results = (await commonObjectProcessingService
-            .AddAllCommonObjectsAsync([incoming], [existing], CurrentUserId)).ToArray();
+            .AddAllCommonObjectsAsync(
+                newCommonObjects: [incoming],
+                latestCommonObjects: [existing],
+                userId: CurrentUserId))
+            .ToArray();
 
-        results.Should().ContainSingle(result => result.Success);
-        incoming.Id.Should().Be(0);
-        incoming.Version.Should().Be(5);
-        commonObjectServiceMock.Verify(service => service.GetAllCommonObject(false), Times.Exactly(2));
+        // Then
+        results.Should()
+            .ContainSingle(predicate: result => result.Success);
+
+        incoming.Id.Should()
+            .Be(expected: 0);
+
+        incoming.Version.Should()
+            .Be(expected: 5);
+
+        commonObjectServiceMock.Verify(
+            expression: service => service.GetAllCommonObject(ignoreFilters: false),
+            times: Times.Exactly(callCount: 2));
+
         commonObjectServiceMock.VerifyAll();
         VerifyNoOtherCommonObjectServiceCalls();
     }
@@ -67,6 +102,7 @@ public partial class CommonObjectProcessingServiceTests
     [Fact]
     public async Task ShouldReturnNoResultsWhenImportItemIsNotNewer()
     {
+        // Given
         CommonObject existing = CreateRandomCommonObject(type: "Core/Other");
         CommonObject incoming = CreateRandomCommonObject(type: existing.Type);
         incoming.Name = existing.Name;
@@ -75,10 +111,18 @@ public partial class CommonObjectProcessingServiceTests
         incoming.CreatedOn = existing.CreatedOn;
         incoming.LastUpdated = existing.LastUpdated;
 
+        // When
         OperationResult<CommonObject>[] results = (await commonObjectProcessingService
-            .AddAllCommonObjectsAsync([incoming], [existing], CurrentUserId)).ToArray();
+            .AddAllCommonObjectsAsync(
+                newCommonObjects: [incoming],
+                latestCommonObjects: [existing],
+                userId: CurrentUserId))
+            .ToArray();
 
-        results.Should().BeEmpty();
+        // Then
+        results.Should()
+            .BeEmpty();
+
         VerifyNoOtherCommonObjectServiceCalls();
     }
 }

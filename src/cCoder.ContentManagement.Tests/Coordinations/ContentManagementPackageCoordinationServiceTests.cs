@@ -10,7 +10,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Coordinations;
 
-public sealed class ContentManagementPackageCoordinationServiceTests
+public sealed partial class ContentManagementPackageCoordinationServiceTests
 {
     [Fact]
     public async Task ImportPackageAsync_WhenAppIdIsProvided_RoutesToAppImport()
@@ -18,6 +18,7 @@ public sealed class ContentManagementPackageCoordinationServiceTests
         // Given
         const int appId = 17;
         Package package = new();
+
         Mock<IContentManagementPackageImportOrchestrationService> importService =
             new(MockBehavior.Strict);
 
@@ -41,11 +42,12 @@ public sealed class ContentManagementPackageCoordinationServiceTests
     {
         // Given
         Package package = new();
+
         Mock<IContentManagementPackageImportOrchestrationService> importService =
             new(MockBehavior.Strict);
 
         importService.Setup(expression: service =>
-                service.ImportCommonCachePackageAsync(package))
+                service.ImportCommonCachePackageAsync(package: package))
             .Returns(value: ValueTask.CompletedTask);
 
         ContentManagementPackageCoordinationService service = CreateService(

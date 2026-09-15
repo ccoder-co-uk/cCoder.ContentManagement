@@ -42,6 +42,7 @@ public partial class ComponentEventProcessingServiceTests
         componentEventServiceMock.Verify(expression: x => x.RaiseComponentDeleteEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         componentEventServiceMock.VerifyNoOtherCalls();
     }
 

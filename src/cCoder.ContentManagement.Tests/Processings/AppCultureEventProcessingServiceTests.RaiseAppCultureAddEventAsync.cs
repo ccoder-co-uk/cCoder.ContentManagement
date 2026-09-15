@@ -42,6 +42,7 @@ public partial class AppCultureEventProcessingServiceTests
         appCultureEventServiceMock.Verify(expression: x => x.RaiseAppCultureAddEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         appCultureEventServiceMock.VerifyNoOtherCalls();
     }
 

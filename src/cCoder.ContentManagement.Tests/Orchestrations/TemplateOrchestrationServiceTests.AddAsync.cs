@@ -51,31 +51,40 @@ public partial class TemplateOrchestrationServiceTests
 
         authorizationProcessingServiceMock.Verify(
             expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+                context: It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Template_create")),
             times: Times.Once);
 
-        entity.CreatedBy.Should().Be(CurrentUserId);
-        entity.LastUpdatedBy.Should().Be(CurrentUserId);
+        entity.CreatedBy
+            .Should()
+            .Be(expected: CurrentUserId);
+
+        entity.LastUpdatedBy
+            .Should()
+            .Be(expected: CurrentUserId);
     }
 
     [Fact]
     public async Task Template_WhenUserLacksCreatePrivilege_IsNotPersisted()
     {
+        // Given
         Template entity = CreateRandomTemplate();
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+                context: It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Template_create")))
             .Throws(exception: new SecurityException(message: "Access Denied!"));
 
+        // When
         Func<Task> action = async () =>
             await orchestrationService.AddTemplateAsync(newTemplate: entity);
 
-        await action.Should()
+        // Then
+        await action
+            .Should()
             .ThrowAsync<ContentManagementSecurityException>();
 
         templateProcessingServiceMock.VerifyNoOtherCalls();

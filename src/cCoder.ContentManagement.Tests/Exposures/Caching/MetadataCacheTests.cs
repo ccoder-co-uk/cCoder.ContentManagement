@@ -83,7 +83,8 @@ public partial class MetadataCacheTests
                 IsReadOnly = property.IsReadOnly,
                 Template = property.IsKey ? "key" : property.Name,
                 IsRequired = property.IsRequired
-            }).ToArray(),
+            })
+                .ToArray(),
             Category = category
         };
     }

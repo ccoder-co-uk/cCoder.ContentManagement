@@ -9,7 +9,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Architecture;
 
-public sealed class UtilityBrokerArchitectureTests
+public sealed partial class UtilityBrokerArchitectureTests
 {
     [Theory]
     [InlineData(typeof(JsonBroker))]
@@ -17,12 +17,16 @@ public sealed class UtilityBrokerArchitectureTests
     public void StatelessCrossCuttingBroker_WhenDeclared_ImplementsUtilityMarkerDirectly(
         Type brokerType)
     {
-        // Given / When
+        // Given
+        Type brokerBaseType = brokerType.BaseType;
+
+        // When
         Type[] directContracts = brokerType.GetInterfaces()
-            .Except(brokerType.BaseType?.GetInterfaces() ?? [])
+            .Except(second: brokerBaseType?.GetInterfaces() ?? [])
             .ToArray();
 
         // Then
-        directContracts.Should().Contain(typeof(IUtilityBroker));
+        directContracts.Should()
+            .Contain(expected: typeof(IUtilityBroker));
     }
 }

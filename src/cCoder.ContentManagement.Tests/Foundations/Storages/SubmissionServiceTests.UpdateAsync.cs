@@ -32,14 +32,15 @@ public partial class SubmissionServiceTests
     public async Task ShouldDelegateToBrokerWhenUpdateAsync()
     {
         // Given
-Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
+        Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
         Submission submission = CreateRandomSubmission(id: submissionId);
 
         CmsDataModels.Submission submitted = null;
-submissionBrokerMock
-            .Setup(expression: x => x.UpdateSubmissionAsync(updatedSubmission: It.IsAny<CmsDataModels.Submission>()))
-            .Callback<CmsDataModels.Submission>(action: candidate => submitted = candidate)
-            .ReturnsAsync(valueFunction: (CmsDataModels.Submission value) => value);
+
+        submissionBrokerMock
+                    .Setup(expression: x => x.UpdateSubmissionAsync(updatedSubmission: It.IsAny<CmsDataModels.Submission>()))
+                    .Callback<CmsDataModels.Submission>(action: candidate => submitted = candidate)
+                    .ReturnsAsync(valueFunction: (CmsDataModels.Submission value) => value);
 
         // When
         Submission result = await submissionService.UpdateSubmissionAsync(updatedSubmission: submission);
@@ -136,5 +137,5 @@ times: Times.Once
         );
 
         submissionBrokerMock.VerifyNoOtherCalls();
-}
+    }
 }

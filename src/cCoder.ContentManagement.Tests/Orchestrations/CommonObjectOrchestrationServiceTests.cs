@@ -18,6 +18,7 @@ using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Rendering.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
+using System.Linq.Expressions;
 
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
@@ -32,6 +33,7 @@ public partial class CommonObjectOrchestrationServiceTests
 
     public CommonObjectOrchestrationServiceTests()
     {
+        // Given
         commonObjectProcessingServiceMock = new Mock<ICommonObjectProcessingService>(behavior: MockBehavior.Strict);
         cacheProcessingServiceMock = new Mock<ICommonObjectLatestCacheProcessingService>(behavior: MockBehavior.Strict);
         authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
@@ -39,21 +41,41 @@ public partial class CommonObjectOrchestrationServiceTests
             .Setup(expression: service => service.GetCurrentUserId())
             .Returns(value: CurrentUserId);
 
+        // When
         orchestrationService = new CommonObjectOrchestrationService(
-processingService: commonObjectProcessingServiceMock.Object,
-latestCacheProcessingService: cacheProcessingServiceMock.Object,
-authorizationProcessingService: authorizationProcessingServiceMock.Object
-        );
+            processingService: commonObjectProcessingServiceMock.Object,
+            latestCacheProcessingService: cacheProcessingServiceMock.Object,
+            authorizationProcessingService: authorizationProcessingServiceMock.Object);
+
+        // Then
     }
 
-    private static CommonObject CreateRandomCommonObject() =>
-        Builder<CommonObject>.CreateNew()
-        .Build();
+    private static CommonObject CreateRandomCommonObject()
+    {
+        // Given
 
-    private void SetupAuthorization(string privilege) =>
-        authorizationProcessingServiceMock
-            .Setup(service => service.AuthorizeAuthorizationContext(
-                It.Is<cCoder.ContentManagement.Models.AuthorizationContext>(context =>
+        // When
+        CommonObject commonObject = Builder<CommonObject>
+            .CreateNew()
+            .Build();
+
+        // Then
+        return commonObject;
+    }
+
+    private void ShouldSetupAuthorization(string privilege)
+    {
+        // Given
+        Expression<Action<IAuthorizationProcessingService>> authorizationExpression =
+            service => service.AuthorizeAuthorizationContext(
+                context: It.Is<cCoder.ContentManagement.Models.AuthorizationContext>(match: context =>
                     context.Request.AppId == null
-                    && context.Request.Privilege == privilege)));
+                    && context.Request.Privilege == privilege));
+
+        // When
+        authorizationProcessingServiceMock
+            .Setup(expression: authorizationExpression);
+
+        // Then
+    }
 }

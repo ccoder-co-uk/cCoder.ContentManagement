@@ -42,6 +42,7 @@ public partial class LayoutEventProcessingServiceTests
         layoutEventServiceMock.Verify(expression: x => x.RaiseLayoutDeleteEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         layoutEventServiceMock.VerifyNoOtherCalls();
     }
 

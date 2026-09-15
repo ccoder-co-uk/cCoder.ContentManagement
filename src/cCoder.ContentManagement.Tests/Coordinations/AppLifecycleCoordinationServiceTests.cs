@@ -11,7 +11,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Coordinations;
 
-public sealed class AppLifecycleCoordinationServiceTests
+public sealed partial class AppLifecycleCoordinationServiceTests
 {
     [Fact]
     public async Task AddApp_WhenCalled_PersistsParentThenRolesThenRaisesEvent()
@@ -23,28 +23,29 @@ public sealed class AppLifecycleCoordinationServiceTests
         Mock<IAppBootstrapOrchestrationService> bootstrapService = new(MockBehavior.Strict);
         Mock<IAppRoleOrchestrationService> roleService = new(MockBehavior.Strict);
 
-        appService.Setup(expression: service => service.GetAllApp(true))
-            .Returns(value: Array.Empty<App>().AsQueryable());
+        appService.Setup(expression: service => service.GetAllApp(ignoreFilters: true))
+            .Returns(value: Array.Empty<App>()
+                .AsQueryable());
 
         bootstrapService
-            .Setup(expression: service => service.PrepareNewApp(app, true))
+            .Setup(expression: service => service.PrepareNewApp(app: app, isFirstApp: true))
             .Callback(action: () => calls.Add(item: "prepare"))
             .Returns(value: app);
 
-        appService.Setup(expression: service => service.AddAppAsync(app))
+        appService.Setup(expression: service => service.AddAppAsync(newApp: app))
             .Callback(action: () => calls.Add(item: "parent"))
             .ReturnsAsync(value: app);
 
         bootstrapService
-            .Setup(expression: service => service.StampAppChildren(app))
+            .Setup(expression: service => service.StampAppChildren(app: app))
             .Callback(action: () => calls.Add(item: "stamp"));
 
         roleService
-            .Setup(expression: service => service.PersistNewAppRolesAsync(app))
+            .Setup(expression: service => service.PersistNewAppRolesAsync(app: app))
             .Callback(action: () => calls.Add(item: "roles"))
             .Returns(value: ValueTask.CompletedTask);
 
-        appService.Setup(expression: service => service.RaiseAppAddEventAsync(app))
+        appService.Setup(expression: service => service.RaiseAppAddEventAsync(app: app))
             .Callback(action: () => calls.Add(item: "event"))
             .Returns(value: ValueTask.CompletedTask);
 
@@ -57,8 +58,12 @@ public sealed class AppLifecycleCoordinationServiceTests
         App result = await service.AddAppAsync(newApp: app);
 
         // Then
-        result.Should().BeSameAs(expected: app);
-        calls.Should().Equal("prepare", "parent", "stamp", "roles", "event");
+        result.Should()
+            .BeSameAs(expected: app);
+
+        calls.Should()
+            .Equal(expected: ["prepare", "parent", "stamp", "roles", "event"]);
+
         appService.VerifyAll();
         bootstrapService.VerifyAll();
         roleService.VerifyAll();
@@ -73,10 +78,10 @@ public sealed class AppLifecycleCoordinationServiceTests
         Mock<IAppBootstrapOrchestrationService> bootstrapService = new(MockBehavior.Strict);
         Mock<IAppRoleOrchestrationService> roleService = new(MockBehavior.Strict);
 
-        appService.Setup(expression: service => service.GetAppForDelete(42))
+        appService.Setup(expression: service => service.GetAppForDelete(appId: 42))
             .Returns(value: app);
 
-        appService.Setup(expression: service => service.RaiseAppDeleteEventAsync(app))
+        appService.Setup(expression: service => service.RaiseAppDeleteEventAsync(app: app))
             .Returns(value: ValueTask.CompletedTask);
 
         AppLifecycleCoordinationService service = new(

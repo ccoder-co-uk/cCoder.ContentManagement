@@ -41,7 +41,7 @@ public partial class ScriptOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.IsAny<AuthorizationContext>()));
+context:                 It.IsAny<AuthorizationContext>()));
 
         orchestrationService = new ScriptOrchestrationService(
 processingService: scriptProcessingServiceMock.Object,

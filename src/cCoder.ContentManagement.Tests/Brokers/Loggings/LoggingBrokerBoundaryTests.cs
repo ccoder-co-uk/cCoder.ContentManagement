@@ -9,7 +9,7 @@ using Xunit;
 
 namespace cCoder.Core.Services.Tests.CMS.Brokers.Loggings;
 
-public sealed class LoggingBrokerBoundaryTests
+public sealed partial class LoggingBrokerBoundaryTests
 {
     [Fact]
     public void LoggingBroker_WhenClassifiedAsUtility_ShouldCarryMarkerDirectly()
@@ -21,11 +21,15 @@ public sealed class LoggingBrokerBoundaryTests
         // When
         Type[] directImplementationInterfaces = implementation
             .GetInterfaces()
-            .Except(contract.GetInterfaces())
+            .Except(second: contract.GetInterfaces())
             .ToArray();
 
         // Then
-        directImplementationInterfaces.Should().Contain(typeof(IUtilityBroker));
-        contract.GetInterfaces().Should().NotContain(typeof(IUtilityBroker));
+        directImplementationInterfaces.Should()
+            .Contain(expected: typeof(IUtilityBroker));
+
+        contract.GetInterfaces()
+            .Should()
+            .NotContain(unexpected: typeof(IUtilityBroker));
     }
 }

@@ -10,7 +10,7 @@ using Xunit;
 
 namespace cCoder.ContentManagement.Tests.Orchestrations;
 
-public sealed class AppEventOrchestrationServiceTests
+public sealed partial class AppEventOrchestrationServiceTests
 {
     [Fact]
     public async Task RaiseUpdate_WhenCalled_UsesCurrentAuditIdentity()
@@ -24,7 +24,7 @@ public sealed class AppEventOrchestrationServiceTests
             .Returns(value: "user-id");
 
         eventService.Setup(expression: service =>
-            service.RaiseAppUpdateEventAsync(app, "user-id"))
+            service.RaiseAppUpdateEventAsync(app: app, userId: "user-id"))
             .Returns(value: ValueTask.CompletedTask);
 
         AppOrchestrationService service = new(

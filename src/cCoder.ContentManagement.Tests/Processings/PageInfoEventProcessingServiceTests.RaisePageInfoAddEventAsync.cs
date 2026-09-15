@@ -42,6 +42,7 @@ public partial class PageInfoEventProcessingServiceTests
         pageInfoEventServiceMock.Verify(expression: x => x.RaisePageInfoAddEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         pageInfoEventServiceMock.VerifyNoOtherCalls();
     }
 

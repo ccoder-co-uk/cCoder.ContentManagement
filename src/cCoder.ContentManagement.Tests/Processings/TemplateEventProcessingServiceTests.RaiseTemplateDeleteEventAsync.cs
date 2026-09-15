@@ -42,6 +42,7 @@ public partial class TemplateEventProcessingServiceTests
         templateEventServiceMock.Verify(expression: x => x.RaiseTemplateDeleteEventAsync(
             entity: entity,
             userId: CurrentUserId), times: Times.Once);
+
         templateEventServiceMock.VerifyNoOtherCalls();
     }
 

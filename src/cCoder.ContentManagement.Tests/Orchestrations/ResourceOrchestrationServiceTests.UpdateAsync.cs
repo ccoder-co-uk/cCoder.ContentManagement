@@ -51,12 +51,13 @@ public partial class ResourceOrchestrationServiceTests
 
         authorizationProcessingServiceMock.Verify(
             expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Resource_update")),
             times: Times.Once);
 
-        entity.LastUpdatedBy.Should().Be(CurrentUserId);
+        entity.LastUpdatedBy.Should()
+            .Be(expected: CurrentUserId);
     }
 
     [Fact]
@@ -67,7 +68,7 @@ public partial class ResourceOrchestrationServiceTests
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
-                It.Is<AuthorizationContext>(context =>
+context:                 It.Is<AuthorizationContext>(match: context =>
                     context.Request.AppId == entity.AppId
                     && context.Request.Privilege == "Resource_update")))
             .Throws(exception: new SecurityException(message: "Access Denied!"));

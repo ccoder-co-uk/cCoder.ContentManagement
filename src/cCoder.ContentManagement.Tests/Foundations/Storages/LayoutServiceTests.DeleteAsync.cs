@@ -35,8 +35,9 @@ public partial class LayoutServiceTests
 
         layoutBrokerMock.Setup(expression: x => x.GetAllLayouts())
             .Returns(value: new[] { layout }.AsQueryable());
-layoutBrokerMock.Setup(expression: x => x.DeleteLayoutAsync(deletedLayout: It.IsAny<CmsDataModels.Layout>()))
-            .ReturnsAsync(value: 1);
+
+        layoutBrokerMock.Setup(expression: x => x.DeleteLayoutAsync(deletedLayout: It.IsAny<CmsDataModels.Layout>()))
+                    .ReturnsAsync(value: 1);
 
         // When
         await layoutService.DeleteAsync(layoutId: 9);
@@ -45,5 +46,5 @@ layoutBrokerMock.Setup(expression: x => x.DeleteLayoutAsync(deletedLayout: It.Is
         layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(), times: Times.Once);
         layoutBrokerMock.Verify(expression: x => x.DeleteLayoutAsync(deletedLayout: It.Is<CmsDataModels.Layout>(match: actual => actual.Id == layout.Id)), times: Times.Once);
         layoutBrokerMock.VerifyNoOtherCalls();
-}
+    }
 }

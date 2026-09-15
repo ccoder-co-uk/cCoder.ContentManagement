@@ -120,6 +120,7 @@ public sealed partial class ContentManagementPackageImportOrchestrationServiceTe
     {
         JsonBroker jsonBroker = new();
         Mock<IAuthorizationProcessingService> authorizationService = new();
+
         authorizationService
             .Setup(expression: service => service.GetCurrentUserId())
             .Returns(value: CurrentUserId);

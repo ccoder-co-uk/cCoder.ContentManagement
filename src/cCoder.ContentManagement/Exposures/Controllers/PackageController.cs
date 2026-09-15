@@ -3,12 +3,11 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Brokers.Loggings;
-using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.Data.Models.Packaging;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ContentManagement.Web.Controllers;
+namespace cCoder.ContentManagement.Exposures.Controllers;
 
 [ApiController]
 [Route("Api/ContentManagement/Package")]
