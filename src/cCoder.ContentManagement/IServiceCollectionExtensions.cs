@@ -215,7 +215,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentEventBroker, ContentEventBroker>();
         services.AddTransient<ICultureEventBroker, CultureEventBroker>();
         services.AddTransient<ILayoutEventBroker, LayoutEventBroker>();
-        services.AddTransient<IPackageEventBroker, PackageEventBroker>();
         services.AddTransient<IPackageItemEventBroker, PackageItemEventBroker>();
         services.AddTransient<IPackageImportEventBroker, PackageImportEventBroker>();
         services.AddTransient<IPageEventBroker, PageEventBroker>();
@@ -232,8 +231,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentBroker, ContentBroker>();
         services.AddTransient<ICultureBroker, CultureBroker>();
         services.AddTransient<ILayoutBroker, LayoutBroker>();
-        services.AddTransient<IPackageBroker, PackageBroker>();
-        services.AddTransient<IPackageItemBroker, PackageItemBroker>();
         services.AddTransient<IPageBroker, PageBroker>();
         services.AddTransient<IPageInfoBroker, PageInfoBroker>();
         services.AddTransient<IPageRoleBroker, PageRoleBroker>();
@@ -355,7 +352,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentEventService, ContentEventService>();
         services.AddTransient<ICultureEventService, CultureEventService>();
         services.AddTransient<ILayoutEventService, LayoutEventService>();
-        services.AddTransient<IPackageEventService, PackageEventService>();
         services.AddTransient<IPackageItemEventService, PackageItemEventService>();
         services.AddTransient<IPackageImportEventService, PackageImportEventService>();
         services.AddTransient<IPageEventService, PageEventService>();
@@ -376,8 +372,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IContentService, ContentService>();
         services.AddTransient<ICultureService, CultureService>();
         services.AddTransient<ILayoutService, LayoutService>();
-        services.AddTransient<IPackageItemService, PackageItemService>();
-        services.AddTransient<IPackageService, PackageService>();
         services.AddTransient<IPageInfoService, PageInfoService>();
         services.AddTransient<IPageRoleService, PageRoleService>();
         services.AddTransient<IPageService, PageService>();
@@ -431,8 +425,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ILayoutOrchestrationService, LayoutOrchestrationService>();
         services.AddTransient<ILayoutManager, LayoutOrchestrationService>();
         services.AddTransient<IJsonOrchestrationService, JsonOrchestrationService>();
-        services.AddTransient<IPackageItemOrchestrationService, PackageItemOrchestrationService>();
-        services.AddTransient<IPackageOrchestrationService, PackageOrchestrationService>();
         services.AddTransient<IPageInfoOrchestrationService, PageInfoOrchestrationService>();
         services.AddTransient<IPageInfoManager, PageInfoOrchestrationService>();
         services.AddTransient<IPageOrchestrationService, PageOrchestrationService>();
@@ -471,14 +463,11 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ILayoutEventProcessingService, LayoutEventProcessingService>();
         services.AddTransient<ILayoutProcessingService, LayoutProcessingService>();
         services.AddTransient<IJsonProcessingService, JsonProcessingService>();
-        services.AddTransient<IPackageEventProcessingService, PackageEventProcessingService>();
         services.AddTransient<IPackageExportProcessingService, PackageExportProcessingService>();
         services.AddTransient<IPackageItemEventProcessingService, PackageItemEventProcessingService>();
         services.AddTransient<
             IPackageImportEventProcessingService,
             PackageImportEventProcessingService>();
-        services.AddTransient<IPackageItemProcessingService, PackageItemProcessingService>();
-        services.AddTransient<IPackageProcessingService, PackageProcessingService>();
         services.AddTransient<IPageEventProcessingService, PageEventProcessingService>();
         services.AddTransient<IPageInfoEventProcessingService, PageInfoEventProcessingService>();
         services.AddTransient<IPageInfoProcessingService, PageInfoProcessingService>();
