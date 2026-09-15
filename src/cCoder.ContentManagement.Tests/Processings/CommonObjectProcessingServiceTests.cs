@@ -3,42 +3,23 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models;
-using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Packaging;
-using cCoder.Data.Models.Security;
-using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
-using Config = cCoder.ContentManagement.Models.ContentManagementConfiguration;
-using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
-using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
-using RenderParams = cCoder.ContentManagement.Models.RenderParams;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
-using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
 
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
-
-
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class CommonObjectProcessingServiceTests
 {
-    private Mock<ICommonObjectService> commonObjectCacheMock => commonObjectServiceMock;
-    private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<ICommonObjectService> commonObjectServiceMock = new();
-    private Mock<ICommonObjectService> authorizationManagerMock => commonObjectServiceMock;
     private readonly CommonObjectProcessingService commonObjectProcessingService;
+    private const string CurrentUserId = "test-user";
 
     public CommonObjectProcessingServiceTests()
     {
         commonObjectProcessingService = new CommonObjectProcessingService(
-service: commonObjectServiceMock.Object
-        );
+            service: commonObjectServiceMock.Object);
     }
 
     private static CommonObject CreateRandomCommonObject(
@@ -61,20 +42,6 @@ service: commonObjectServiceMock.Object
 
     private void VerifyNoOtherCommonObjectServiceCalls()
     {
-        commonObjectServiceMock.Verify(
-            expression: service => service.GetCurrentUserId(),
-            times: Times.AtMost(callCount: 2));
-
-        commonObjectServiceMock.Verify(
-            expression: service => service.Authorize(
-                appId: It.IsAny<int?>(),
-                privilege: It.IsAny<string>()),
-            times: Times.AtMost(callCount: 2));
-
-        commonObjectServiceMock.Verify(
-            expression: service => service.GetLatestSet(),
-            times: Times.AtMost(callCount: 3));
-
         commonObjectServiceMock.VerifyNoOtherCalls();
     }
 }

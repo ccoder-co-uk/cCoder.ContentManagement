@@ -42,7 +42,7 @@ public partial class CommonObjectOrchestrationServiceTests
 
         commonObjectProcessingServiceMock.Verify(expression: x => x.GetAllCommonObject(ignoreFilters: true), times: Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
-        commonObjectEventProcessingServiceMock.VerifyNoOtherCalls();
+        authorizationProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

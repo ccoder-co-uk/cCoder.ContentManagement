@@ -48,7 +48,6 @@ times: Times.AtMostOnce()
         );
 
         commonObjectBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

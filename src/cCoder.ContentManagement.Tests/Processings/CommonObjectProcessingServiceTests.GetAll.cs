@@ -47,7 +47,6 @@ public partial class CommonObjectProcessingServiceTests
 
         commonObjectServiceMock.Verify(expression: x => x.GetAllCommonObject(), times: Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
-        commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
 }

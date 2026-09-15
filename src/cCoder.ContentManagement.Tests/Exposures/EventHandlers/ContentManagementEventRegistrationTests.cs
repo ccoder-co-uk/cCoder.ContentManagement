@@ -31,7 +31,7 @@ public sealed partial class ContentManagementEventRegistrationTests
         { typeof(ResourcePackageImportEventHandlers), typeof(IResourceOrchestrationService), ["resource_import"] },
         { typeof(ScriptPackageImportEventHandlers), typeof(IScriptOrchestrationService), ["script_import"] },
         { typeof(TemplatePackageImportEventHandlers), typeof(ITemplateOrchestrationService), ["template_import"] },
-        { typeof(CommonObjectPackageImportEventHandlers), typeof(ICommonObjectOrchestrationService), ["common_objects_import"] },
+        { typeof(CommonObjectPackageImportEventHandlers), typeof(ICommonObjectCoordinationService), ["common_objects_import"] },
     };
 
     [Fact]

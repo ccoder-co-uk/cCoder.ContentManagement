@@ -24,7 +24,6 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class CommonObjectOrchestrationServiceTests
 {
     private readonly Mock<ICommonObjectProcessingService> commonObjectProcessingServiceMock;
-    private readonly Mock<ICommonObjectEventProcessingService> commonObjectEventProcessingServiceMock;
     private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly CommonObjectOrchestrationService orchestrationService;
     private const string CurrentUserId = "test-user";
@@ -32,7 +31,6 @@ public partial class CommonObjectOrchestrationServiceTests
     public CommonObjectOrchestrationServiceTests()
     {
         commonObjectProcessingServiceMock = new Mock<ICommonObjectProcessingService>(behavior: MockBehavior.Strict);
-        commonObjectEventProcessingServiceMock = new Mock<ICommonObjectEventProcessingService>(behavior: MockBehavior.Strict);
         authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
         authorizationProcessingServiceMock
             .Setup(expression: service => service.GetCurrentUserId())
@@ -40,7 +38,6 @@ public partial class CommonObjectOrchestrationServiceTests
 
         orchestrationService = new CommonObjectOrchestrationService(
 processingService: commonObjectProcessingServiceMock.Object,
-eventService: commonObjectEventProcessingServiceMock.Object,
 authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
@@ -48,4 +45,11 @@ authorizationProcessingService: authorizationProcessingServiceMock.Object
     private static CommonObject CreateRandomCommonObject() =>
         Builder<CommonObject>.CreateNew()
         .Build();
+
+    private void SetupAuthorization(string privilege) =>
+        authorizationProcessingServiceMock
+            .Setup(service => service.AuthorizeAuthorizationContext(
+                It.Is<cCoder.ContentManagement.Models.AuthorizationContext>(context =>
+                    context.Request.AppId == null
+                    && context.Request.Privilege == privilege)));
 }
