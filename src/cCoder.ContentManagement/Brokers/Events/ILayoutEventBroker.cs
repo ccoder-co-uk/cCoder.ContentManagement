@@ -7,7 +7,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface ILayoutEventBroker : IAuthenticatedEventBroker
+public interface ILayoutEventBroker
 {
     ValueTask RaiseLayoutAddEventAsync(EventMessage<Layout> message);
 

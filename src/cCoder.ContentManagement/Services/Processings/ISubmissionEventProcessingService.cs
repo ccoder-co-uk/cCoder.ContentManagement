@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface ISubmissionEventProcessingService
 {
-    ValueTask RaiseSubmissionAddEventAsync(Submission entity);
+    ValueTask RaiseSubmissionAddEventAsync(Submission entity, string userId);
 
-    ValueTask RaiseSubmissionUpdateEventAsync(Submission entity);
+    ValueTask RaiseSubmissionUpdateEventAsync(Submission entity, string userId);
 
-    ValueTask RaiseSubmissionDeleteEventAsync(Submission entity);
+    ValueTask RaiseSubmissionDeleteEventAsync(Submission entity, string userId);
 }

@@ -2,25 +2,43 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class PageRenderService(
     IRenderBroker renderBroker,
-    ISystemTextJsonBroker systemTextJsonBroker)
+    IRenderingUtilityBroker renderingUtilityBroker = null)
         : IPageRenderService
 {
+    private readonly IRenderingUtilityBroker renderingUtilityBroker =
+        renderingUtilityBroker ?? new RenderingUtilityBroker();
+
+    public PageRenderFoundationOperation ComputeFingerprintPageRenderFoundationOperation(
+        PageRenderFoundationOperation pageRenderFoundationOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
+
+            pageRenderFoundationOperation.Json = renderingUtilityBroker
+                .ComputeFingerprint(value: pageRenderFoundationOperation.Value);
+
+            return pageRenderFoundationOperation;
+        });
+
     public PageRenderFoundationOperation SerializePageRenderFoundationOperation(
         PageRenderFoundationOperation pageRenderFoundationOperation) =>
         TryCatch(operation: () =>
-    {
-        ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
-        pageRenderFoundationOperation.Json = systemTextJsonBroker.Serialize(value: pageRenderFoundationOperation.Value);
-        return pageRenderFoundationOperation;
-    });
+        {
+            ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
+
+            pageRenderFoundationOperation.Json = renderingUtilityBroker
+                .Serialize(value: pageRenderFoundationOperation.Value);
+
+            return pageRenderFoundationOperation;
+        });
 
     public PageRenderFoundationOperation RenderPageRenderFoundationOperation(
         PageRenderFoundationOperation pageRenderFoundationOperation) =>

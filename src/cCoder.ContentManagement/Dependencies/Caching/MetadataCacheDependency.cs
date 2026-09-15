@@ -4,26 +4,32 @@
 
 using cCoder.ContentManagement.Extensions.OData;
 using cCoder.ContentManagement.Exposures.Caching;
-using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Models;
 using cCoder.Data;
 using cCoder.Data.Exposures;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using cCoder.Data.Models.CMS;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace cCoder.ContentManagement.Dependencies.Caching;
 
 internal class MetadataCacheDependency : IMetadataCache
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNameCaseInsensitive = true,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
+    };
+
     private readonly IDictionary<string, IDictionary<string, string>> metaSerialized;
     private readonly IMetadataTypeCache metadataTypeCache;
-    private readonly ICommonObjectReaderBroker resourceCache;
+    private readonly ICommonObjectCache resourceCache;
     private string metadataSignature;
 
     public MetadataCacheDependency(
         IMetadataTypeCache metadataTypeCache,
-        ICommonObjectReaderBroker resourceCache)
+        ICommonObjectCache resourceCache)
     {
         metaSerialized = new Dictionary<string, IDictionary<string, string>>(
             comparer: StringComparer.OrdinalIgnoreCase);
@@ -57,7 +63,9 @@ internal class MetadataCacheDependency : IMetadataCache
 
             foreach (MetadataContainerSet metadataContainerSet in typeSets)
             {
-                MetadataContainerSet metadataContainerSet2 = metadataContainerSet.Resource(culture: culture.Id, resources: resources);
+                MetadataContainerSet metadataContainerSet2 = metadataContainerSet.Resource(
+                    culture: culture.Id,
+                    resources: resources);
                 ExtendedMetadataContainer[] types = metadataContainerSet2.Types;
 
                 foreach (ExtendedMetadataContainer extendedMetadataContainer in types)
@@ -106,7 +114,9 @@ internal class MetadataCacheDependency : IMetadataCache
 
     private MetadataContainerSet[] GetTypeSets() =>
         metadataTypeCache.GetAll()
-        .Select(selector: payload => JsonConvert.DeserializeObject<MetadataContainerSet>(value: payload))
+        .Select(selector: payload => JsonSerializer.Deserialize<MetadataContainerSet>(
+            json: payload,
+            options: JsonOptions))
         .GroupBy(keySelector: typeSet => typeSet.Name, comparer: StringComparer.OrdinalIgnoreCase)
         .Select(selector: MergeTypeSetGroup)
         .OrderBy(keySelector: typeSet => typeSet.Name)
@@ -141,20 +151,7 @@ values: metadataTypeCache
         .OrderBy(keySelector: payload => payload, comparer: StringComparer.Ordinal));
 
     private static string ToJsonForOData(object model) =>
-        JsonConvert.SerializeObject(value: model, formatting: Formatting.None, settings: new JsonSerializerSettings
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.None,
-            Formatting = Formatting.None,
-            DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            NullValueHandling = NullValueHandling.Ignore,
-            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-            ContractResolver = new DefaultContractResolver
-            {
-                IgnoreSerializableAttribute = true
-            },
-            MaxDepth = 4
-        });
+        JsonSerializer.Serialize(value: model, options: JsonOptions);
 
     public void Dispose()
     {

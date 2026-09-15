@@ -8,6 +8,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal interface ITemplateRenderService
 {
+    TemplateRenderFoundationOperation GetPropertyValuesTemplateRenderFoundationOperation(
+        TemplateRenderFoundationOperation templateRenderFoundationOperation);
     TemplateRenderFoundationOperation GetAppsTemplateRenderFoundationOperation(TemplateRenderFoundationOperation templateRenderFoundationOperation);
     TemplateRenderFoundationOperation GetComponentsTemplateRenderFoundationOperation(TemplateRenderFoundationOperation templateRenderFoundationOperation);
     TemplateRenderFoundationOperation GetResourcesTemplateRenderFoundationOperation(TemplateRenderFoundationOperation templateRenderFoundationOperation);

@@ -11,6 +11,7 @@ using cCoder.ContentManagement.Rendering.Services.Processings;
 using FluentAssertions;
 using Moq;
 using Xunit;
+using cCoder.ContentManagement.Tests.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Tests.Processings;
 
@@ -50,12 +51,8 @@ public sealed partial class ScriptTagHandlingProcessingServiceTests
 
         MarkupRenderProcessingService service = new(
             markupRenderService: new MarkupRenderService(
-                componentReaderBroker: Mock.Of<IComponentReaderBroker>(),
-                scriptReaderBroker: Mock.Of<IScriptReaderBroker>(),
-                renderFileContentBroker: Mock.Of<IRenderFileContentBroker>(),
+                contentRenderBroker: new TestContentRenderBroker(),
                 jsonBroker: Mock.Of<IJsonBroker>(),
-                systemTextJsonBroker: new SystemTextJsonBroker(),
-                workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
                 regularExpressionBroker: new RegularExpressionBroker()));
 
         // When

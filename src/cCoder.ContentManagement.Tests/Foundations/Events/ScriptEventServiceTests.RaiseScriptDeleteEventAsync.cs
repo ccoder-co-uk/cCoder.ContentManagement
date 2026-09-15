@@ -37,7 +37,9 @@ public partial class ScriptEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseScriptDeleteEventAsync(script: entity);
+        await service.RaiseScriptDeleteEventAsync(
+            script: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class ScriptEventServiceTests
 expression: x => x.RaiseScriptDeleteEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Script>>()),
 times: Times.Once
         );
-
-        scriptEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         scriptEventBrokerMock.VerifyNoOtherCalls();
     }

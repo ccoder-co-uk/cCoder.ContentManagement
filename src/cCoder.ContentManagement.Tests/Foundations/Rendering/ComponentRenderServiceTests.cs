@@ -2,12 +2,12 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
+using cCoder.ContentManagement.Tests.Brokers.Rendering;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -26,20 +26,14 @@ public sealed partial class ComponentRenderServiceTests
         Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new(MockBehavior.Strict);
 
         renderFileContentBrokerMock.Setup(expression: broker =>
-            broker.GetLatestRawData(appId: appId, path: path))
-            .Returns(value: Encoding.UTF8.GetBytes(s: expectedContent));
+            broker.GetLatestTextContent(appId: appId, path: path))
+            .Returns(value: expectedContent);
 
         IComponentRenderService componentRenderService = new ComponentRenderService(
-            metadataReaderBroker: Mock.Of<IMetadataReaderBroker>(),
-            commonObjectReaderBroker: Mock.Of<ICommonObjectReaderBroker>(),
+            contentRenderBroker: new TestContentRenderBroker(
+                renderFileContentBroker: renderFileContentBrokerMock.Object),
             jsonBroker: Mock.Of<IJsonBroker>(),
-            workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
-            regularExpressionBroker: Mock.Of<IRegularExpressionBroker>(),
-            renderFileContentBroker: renderFileContentBrokerMock.Object,
-            appBroker: Mock.Of<IAppBroker>(),
-            componentBroker: Mock.Of<IComponentBroker>(),
-            resourceBroker: Mock.Of<IResourceBroker>(),
-            scriptBroker: Mock.Of<IScriptBroker>());
+            regularExpressionBroker: Mock.Of<IRegularExpressionBroker>());
 
         // When
         ComponentRenderFoundationOperation operation =

@@ -17,8 +17,6 @@ using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Models;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
@@ -27,38 +25,10 @@ public partial class PageProcessingServiceTests
 {
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPageService> pageServiceMock = new();
-    private Mock<IPageService> authorizationManagerMock => pageServiceMock;
     private readonly PageProcessingService pageProcessingService;
 
     public PageProcessingServiceTests()
     {
-        pageServiceMock
-            .Setup(expression: manager => manager.GetCurrentUserRoleIds(
-                appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) =>
-                (currentUser?.Roles ?? [])
-                    .Where(predicate: userRole => userRole.Role?.AppId == appId)
-                    .Select(selector: userRole => userRole.RoleId)
-                    .ToArray());
-
-        authorizationManagerMock
-            .Setup(expression: manager => manager.IsAdminOfApp(
-                appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) =>
-                currentUser?.IsAdminOfApp(appId: appId) ?? false);
-
-        authorizationManagerMock
-            .Setup(expression: manager => manager.UserCanPage(
-                page: It.IsAny<Page>(),
-                privilege: It.IsAny<string>()))
-            .Returns(valueFunction: (Page page, string privilege) =>
-                TestUsers.UserCanPage(authorization: new PageAuthorization
-                {
-                    Page = page,
-                    User = currentUser,
-                    Privilege = privilege
-                }));
-
         pageProcessingService = new PageProcessingService(
 service: pageServiceMock.Object
         );
@@ -112,20 +82,6 @@ service: pageServiceMock.Object
 
     private void VerifyNoOtherPageServiceCalls()
     {
-        pageServiceMock.Verify(
-            expression: service => service.GetCurrentUserRoleIds(appId: It.IsAny<int>()),
-            times: Times.AtMostOnce());
-
-        pageServiceMock.Verify(
-            expression: service => service.IsAdminOfApp(appId: It.IsAny<int>()),
-            times: Times.AtMostOnce());
-
-        pageServiceMock.Verify(
-            expression: service => service.UserCanPage(
-                page: It.IsAny<Page>(),
-                privilege: It.IsAny<string>()),
-            times: Times.AtMostOnce());
-
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

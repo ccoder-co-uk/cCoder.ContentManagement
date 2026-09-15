@@ -8,7 +8,7 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface IPageRoleEventProcessingService
 {
-    ValueTask RaisePageRoleAddEventAsync(PageRole entity);
+    ValueTask RaisePageRoleAddEventAsync(PageRole entity, string userId);
 
-    ValueTask RaisePageRoleDeleteEventAsync(PageRole entity);
+    ValueTask RaisePageRoleDeleteEventAsync(PageRole entity, string userId);
 }

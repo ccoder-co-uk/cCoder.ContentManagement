@@ -31,9 +31,6 @@ public partial class PageInfoEventServiceTests
         pageInfoEventBrokerMock = new Mock<IPageInfoEventBroker>(behavior: MockBehavior.Strict);
         pageInfoEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        pageInfoEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.PageInfoEventService(
 pageInfoEventBroker: pageInfoEventBrokerMock.Object
         );

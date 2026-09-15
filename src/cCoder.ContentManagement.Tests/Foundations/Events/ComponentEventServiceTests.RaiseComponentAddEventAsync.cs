@@ -37,7 +37,9 @@ public partial class ComponentEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseComponentAddEventAsync(component: entity);
+        await service.RaiseComponentAddEventAsync(
+            component: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class ComponentEventServiceTests
 expression: x => x.RaiseComponentAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Component>>()),
 times: Times.Once
         );
-
-        componentEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         componentEventBrokerMock.VerifyNoOtherCalls();
     }

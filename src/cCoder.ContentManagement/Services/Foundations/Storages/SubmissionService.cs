@@ -3,15 +3,12 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAuthorizationManager authorizationManager) : ISubmissionService
+internal partial class SubmissionService(ISubmissionBroker submissionBroker) : ISubmissionService
 {
     public Submission GetSubmission(Guid submissionId, bool ignoreFilters = false) =>
         TryCatch<Submission>(operation: () =>
@@ -60,17 +57,11 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
     {
         ValidateSubmissionOnAdd(inputs: [newSubmission]);
         ValidateSubmission(submission: newSubmission, parameterName: "submission");
-        authorizationManager.Authorize(appId: newSubmission.AppId, privilege: "Submission_create");
         Submission storageSubmission = CreateStorageSubmission(newSubmission: newSubmission);
         storageSubmission.Id = ((newSubmission.Id == Guid.Empty) ? Guid.NewGuid() : newSubmission.Id);
 
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
-
         DateTimeOffset now = (storageSubmission.CreatedOn = DateTimeOffset.UtcNow);
-        storageSubmission.CreatedBy = currentUserId;
         storageSubmission.LastUpdatedOn = now;
-        storageSubmission.LastUpdatedBy = currentUserId;
         Submission result = await submissionBroker.AddSubmissionAsync(newSubmission: storageSubmission);
         newSubmission.Id = result.Id;
         newSubmission.AppId = result.AppId;
@@ -90,15 +81,10 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
     {
         ValidateSubmissionOnUpdate(inputs: [updatedSubmission]);
         ValidateSubmission(submission: updatedSubmission, parameterName: "submission");
-        authorizationManager.Authorize(appId: updatedSubmission.AppId, privilege: "Submission_update");
         Submission updateSubmission = CreateStorageSubmission(newSubmission: updatedSubmission);
-
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateSubmission.LastUpdatedOn = now;
-        updateSubmission.LastUpdatedBy = currentUserId;
         Submission result = await submissionBroker.UpdateSubmissionAsync(updatedSubmission: updateSubmission);
         updatedSubmission.Id = result.Id;
         updatedSubmission.AppId = result.AppId;
@@ -119,7 +105,6 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker, IAu
         ValidateDeleteAsync(inputs: [submissionId]);
         ValidateId(submissionId: submissionId, parameterName: "id");
         Submission submission = ExecuteGetSubmission(submissionId: submissionId);
-        authorizationManager.Authorize(appId: submission.AppId, privilege: "Submission_delete");
         await submissionBroker.DeleteSubmissionAsync(deletedSubmission: CreateStorageSubmission(newSubmission: submission));
 
     }, isValueTask: true);

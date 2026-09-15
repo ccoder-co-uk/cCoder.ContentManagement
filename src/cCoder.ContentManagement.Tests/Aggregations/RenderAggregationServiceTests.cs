@@ -56,7 +56,7 @@ public sealed partial class RenderAggregationServiceTests
         jsonService.Setup(expression: service =>
             service.SerializeRuntimeValue(value: It.IsAny<object>()))
             .Returns(valueFunction: (object value) =>
-                new SystemTextJsonBroker().Serialize(value: value));
+                new JsonBroker().Serialize(value: value));
 
         contextService.Setup(expression: service =>
                 service.ResolvePageRenderContextAsync())
@@ -154,7 +154,7 @@ public sealed partial class RenderAggregationServiceTests
         jsonService.Setup(expression: service =>
             service.SerializeRuntimeValue(value: It.IsAny<object>()))
             .Returns(valueFunction: (object value) =>
-                new SystemTextJsonBroker().Serialize(value: value));
+                new JsonBroker().Serialize(value: value));
 
         contextService.Setup(expression: service =>
                 service.ResolvePageRenderContextAsync())

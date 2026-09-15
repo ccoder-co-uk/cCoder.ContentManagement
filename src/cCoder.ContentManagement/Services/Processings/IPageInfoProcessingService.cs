@@ -13,6 +13,8 @@ internal interface IPageInfoProcessingService
 
     IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false);
 
+    int? GetOwningAppId(int pageId);
+
     ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo);
 
     ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo);

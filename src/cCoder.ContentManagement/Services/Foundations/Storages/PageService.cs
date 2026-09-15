@@ -3,56 +3,22 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Security;
-using cCoder.ContentManagement.Models;
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class PageService(IPageBroker pageBroker, IAuthorizationManager authorizationManager) : IPageService
+internal partial class PageService(IPageBroker pageBroker) : IPageService
 {
-    public Guid[] GetCurrentUserRoleIds(int appId) =>
-        TryCatch<Guid[]>(operation: () =>
-    {
-        ValidateCurrentUserRoleIdsOnGet(inputs: [appId]);
-
-        return (authorizationManager.GetCurrentUser()?.Roles ?? [])
-            .Where(predicate: userRole => userRole.Role?.AppId == appId)
-            .Select(selector: userRole => userRole.RoleId)
-            .ToArray();
-    });
-
-    public bool IsAdminOfApp(int appId) =>
+    public bool LayoutExistsForApp(int appId, string layoutName) =>
         TryCatch<bool>(operation: () =>
-    {
-        ValidateAppAdministration(inputs: [appId]);
-        return authorizationManager.IsAdminOfApp(appId: appId);
-    });
+        {
+            ValidateLayoutExistsForAppOnGet(inputs: [appId, layoutName]);
 
-    public void Authorize(int? appId, string privilege) =>
-        TryCatch(operation: () =>
-    {
-        ValidateAuthorization(inputs: [appId, privilege]);
-        authorizationManager.Authorize(appId: appId, privilege: privilege);
-    });
-
-    public bool UserCanPage(Page page, string privilege) =>
-        TryCatch<bool>(operation: () =>
-    {
-        ValidatePageAuthorization(inputs: [page, privilege]);
-
-        return authorizationManager.UserCanPageAuthorization(
-            pageAuthorization: new PageAuthorization
-            {
-                Page = page,
-                User = authorizationManager.GetCurrentUser(),
-                Privilege = privilege
-            });
-    });
+            return pageBroker.LayoutExistsForApp(
+                appId: appId,
+                layoutName: layoutName);
+        });
 
     public ValueTask<Page> GetPageForRenderAsync(int pageId) =>
         TryCatch<Page>(operation: async () =>
@@ -111,16 +77,7 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationManager
     {
         ValidatePageOnAdd(inputs: [newPage]);
         ValidatePage(page: newPage, parameterName: "page");
-        authorizationManager.Authorize(appId: newPage.AppId, privilege: "Page_create");
         Page storagePage = CreateStoragePage(newPage: newPage);
-
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
-
-        DateTimeOffset now = (storagePage.CreatedOn = DateTimeOffset.UtcNow);
-        storagePage.CreatedBy = currentUserId;
-        storagePage.LastUpdated = now;
-        storagePage.LastUpdatedBy = currentUserId;
         Page result = await pageBroker.AddPageAsync(newPage: storagePage);
         newPage.Id = result.Id;
         newPage.ParentId = result.ParentId;
@@ -144,15 +101,7 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationManager
     {
         ValidatePageOnUpdate(inputs: [updatedPage]);
         ValidatePage(page: updatedPage, parameterName: "page");
-        authorizationManager.Authorize(appId: updatedPage.AppId, privilege: "Page_update");
         Page updatePage = CreateStoragePage(newPage: updatedPage);
-
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
-
-        DateTimeOffset now = DateTimeOffset.UtcNow;
-        updatePage.LastUpdated = now;
-        updatePage.LastUpdatedBy = currentUserId;
         Page result = await pageBroker.UpdatePageAsync(updatedPage: updatePage);
         updatedPage.Id = result.Id;
         updatedPage.ParentId = result.ParentId;
@@ -192,7 +141,6 @@ internal partial class PageService(IPageBroker pageBroker, IAuthorizationManager
             return;
         }
 
-        authorizationManager.Authorize(appId: page.AppId, privilege: "Page_delete");
         await pageBroker.DeletePageAsync(deletedPage: CreateStoragePage(newPage: page));
 
     }, isValueTask: true);

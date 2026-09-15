@@ -8,35 +8,45 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class PageEventProcessingService(IPageEventService eventService) : IPageEventProcessingService
+internal partial class PageEventProcessingService(IPageEventService eventService)
+    : IPageEventProcessingService
 {
-    public ValueTask RaisePageAddEventAsync(Page page) =>
+    public ValueTask RaisePageAddEventAsync(Page page, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageAddEventAsync(inputs: [page]);
+        ValidateRaisePageAddEventAsync(inputs: [page, userId]);
         ValidatePage(page: page, parameterName: "entity");
 
-        return eventService.RaisePageAddEventAsync(entity: page);
+
+        return eventService.RaisePageAddEventAsync(
+            entity: page,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageUpdateEventAsync(Page page) =>
+    public ValueTask RaisePageUpdateEventAsync(Page page, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageUpdateEventAsync(inputs: [page]);
+        ValidateRaisePageUpdateEventAsync(inputs: [page, userId]);
         ValidatePage(page: page, parameterName: "entity");
 
-        return eventService.RaisePageUpdateEventAsync(entity: page);
+
+        return eventService.RaisePageUpdateEventAsync(
+            entity: page,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageDeleteEventAsync(Page page) =>
+    public ValueTask RaisePageDeleteEventAsync(Page page, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageDeleteEventAsync(inputs: [page]);
+        ValidateRaisePageDeleteEventAsync(inputs: [page, userId]);
         ValidatePage(page: page, parameterName: "entity");
 
-        return eventService.RaisePageDeleteEventAsync(entity: page);
+
+        return eventService.RaisePageDeleteEventAsync(
+            entity: page,
+            userId: userId);
 
     }, isValueTask: true);
 

@@ -37,7 +37,9 @@ public partial class CultureEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCultureUpdateEventAsync(culture: entity);
+        await service.RaiseCultureUpdateEventAsync(
+            culture: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class CultureEventServiceTests
 expression: x => x.RaiseCultureUpdateEventAsync(message: It.IsAny<EventMessage<CmsDataModels.Culture>>()),
 times: Times.Once
         );
-
-        cultureEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         cultureEventBrokerMock.VerifyNoOtherCalls();
     }

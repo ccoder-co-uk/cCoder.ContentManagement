@@ -14,14 +14,16 @@ using cCoder.Data.Models.Security;
 namespace cCoder.ContentManagement.Brokers.OData;
 
 internal class ContentManagementModelBroker
-    : ODataModelBroker, IContentManagementModelBroker
+    : IContentManagementModelBroker
 {
+    private readonly ODataConventionModelBuilder builder;
+
     public ContentManagementModelBroker(ODataConventionModelBuilder builder = null)
-        : base(builder)
     {
+        this.builder = builder ?? new ODataConventionModelBuilder();
     }
 
-    public override ODataModel Build() =>
+    public ODataModel Build() =>
         new ODataModel
         {
             Context = "Core",
@@ -122,5 +124,34 @@ internal class ContentManagementModelBroker
         builder.EntityType<CommonObject>()
             .Collection.Action(name: "Import")
             .ReturnsCollectionFromEntitySet<Result<CommonObject>>(entitySetName: "ImportCommonObjectResults");
+    }
+
+    private EntitySetConfiguration<T> AddSet<T, TKey>(string setName = null)
+        where T : class
+    {
+        setName ??= typeof(T).Name;
+        return builder.EntitySet<T>(name: setName);
+    }
+
+    private EntitySetConfiguration<T> AddJoinSet<T, TKey>(
+        Expression<Func<T, TKey>> key)
+        where T : class
+    {
+        string name = typeof(T).Name;
+        EntitySetConfiguration<T> result = builder.EntitySet<T>(name: name);
+
+        builder.EntityType<T>()
+            .HasKey(keyDefinitionExpression: key);
+
+        return result;
+    }
+
+    private void AddCommonComplextypes()
+    {
+        builder.ComplexType<MetadataContainerSet>();
+        builder.ComplexType<MetadataContainer>();
+        builder.ComplexType<PropertyContainer>();
+        builder.ComplexType<AuditResultsByUser>();
+        builder.ComplexType<AuditResultByProperty>();
     }
 }

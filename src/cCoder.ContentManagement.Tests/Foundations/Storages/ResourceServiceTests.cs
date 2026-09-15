@@ -20,35 +20,18 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-using SecurityDataModels = cCoder.Data.Models.Security;
-
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class ResourceServiceTests
 {
     private readonly Mock<IResourceBroker> resourceBrokerMock;
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly ResourceService resourceService;
 
     public ResourceServiceTests()
     {
         resourceBrokerMock = new Mock<IResourceBroker>(behavior: MockBehavior.Strict);
-        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
-        resourceBrokerMock = new();
-        authorizationManagerMock = new(behavior: MockBehavior.Strict);
-
-        authorizationManagerMock
-            .Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
-        resourceService = new ResourceService(
-resourceBroker: resourceBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object
-        );
+        resourceService = new ResourceService(resourceBroker: resourceBrokerMock.Object);
     }
 
     private static Resource CreateRandomResource(int id = 42, int appId = 1, string key = null) =>

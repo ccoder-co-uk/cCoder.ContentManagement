@@ -27,7 +27,8 @@ public partial class TemplateProcessingServiceTests
 
     public TemplateProcessingServiceTests()
     {
-        templateProcessingService = new TemplateProcessingService(service: templateServiceMock.Object);
+        templateProcessingService = new TemplateProcessingService(
+            service: templateServiceMock.Object);
     }
 
     private static Template CreateRandomTemplate() =>

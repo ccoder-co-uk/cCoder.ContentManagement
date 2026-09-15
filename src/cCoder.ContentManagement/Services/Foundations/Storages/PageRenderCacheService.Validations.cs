@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies;
 using cCoder.Data.Models.CMS;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,7 +10,7 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 internal sealed partial class PageRenderCacheService
 {
     private static void ValidateAuthorization(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateId(string pageRenderCacheId, string parameterName) =>
         ThrowIf(
@@ -57,20 +56,23 @@ internal sealed partial class PageRenderCacheService
     }
 
     private static void ValidateAllPageRenderCachesOnGet(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCacheOnGet(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCacheOnAdd(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCacheOnUpdate(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCacheOnDelete(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidatePageRenderCachesOnReplace(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
+
+    private static void Validate(params object[] inputs) =>
+        _ = inputs;
 }

@@ -4,28 +4,36 @@
 
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Loggings;
-using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Models.Serialization;
-using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class TemplateRenderService(
-    IMetadataReaderBroker metadataReaderBroker,
-    ICommonObjectReaderBroker commonObjectReaderBroker,
+    IContentRenderBroker contentRenderBroker,
     IJsonBroker jsonBroker,
-    ISystemTextJsonBroker systemTextJsonBroker,
-    IWorkflowExecutionBroker workflowExecutionBroker,
     ILoggingBroker loggingBroker,
     IRegularExpressionBroker regularExpressionBroker,
-    IAppBroker appBroker,
-    IComponentBroker componentBroker,
-    IResourceBroker resourceBroker,
-    IScriptBroker scriptBroker,
-    ITemplateBroker templateBroker)
+    IRenderingUtilityBroker renderingUtilityBroker = null)
         : ITemplateRenderService
 {
+    private readonly IRenderingUtilityBroker renderingUtilityBroker =
+        renderingUtilityBroker ?? new RenderingUtilityBroker();
+
+    public TemplateRenderFoundationOperation GetPropertyValuesTemplateRenderFoundationOperation(
+        TemplateRenderFoundationOperation templateRenderFoundationOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidatePropertyValuesTemplateRenderFoundationOperationOnGet(
+                inputs: [templateRenderFoundationOperation]);
+
+            templateRenderFoundationOperation.RuntimeProperties = renderingUtilityBroker
+                .GetPropertyValues(value: templateRenderFoundationOperation.Value);
+
+            return templateRenderFoundationOperation;
+        });
+
     public TemplateRenderFoundationOperation GetAppsTemplateRenderFoundationOperation(
         TemplateRenderFoundationOperation templateRenderFoundationOperation) =>
         TryCatch(operation: () =>
@@ -33,9 +41,8 @@ internal sealed partial class TemplateRenderService(
         ValidateAppsTemplateRenderFoundationOperationOnGet(
             inputs: [templateRenderFoundationOperation]);
 
-        templateRenderFoundationOperation.Apps = appBroker
-            .GetAllAppsIgnoringFilters()
-            .ToArray();
+        templateRenderFoundationOperation.Apps = contentRenderBroker
+            .GetApps();
 
         return templateRenderFoundationOperation;
     });
@@ -47,9 +54,8 @@ internal sealed partial class TemplateRenderService(
         ValidateComponentsTemplateRenderFoundationOperationOnGet(
             inputs: [templateRenderFoundationOperation]);
 
-        templateRenderFoundationOperation.Components = componentBroker
-            .GetAllComponentsIgnoringFilters()
-            .ToArray();
+        templateRenderFoundationOperation.Components = contentRenderBroker
+            .GetComponents();
 
         return templateRenderFoundationOperation;
     });
@@ -61,9 +67,8 @@ internal sealed partial class TemplateRenderService(
         ValidateResourcesTemplateRenderFoundationOperationOnGet(
             inputs: [templateRenderFoundationOperation]);
 
-        templateRenderFoundationOperation.Resources = resourceBroker
-            .GetAllResourcesIgnoringFilters()
-            .ToArray();
+        templateRenderFoundationOperation.Resources = contentRenderBroker
+            .GetResources();
 
         return templateRenderFoundationOperation;
     });
@@ -75,9 +80,8 @@ internal sealed partial class TemplateRenderService(
         ValidateScriptsTemplateRenderFoundationOperationOnGet(
             inputs: [templateRenderFoundationOperation]);
 
-        templateRenderFoundationOperation.Scripts = scriptBroker
-            .GetAllScriptsIgnoringFilters()
-            .ToArray();
+        templateRenderFoundationOperation.Scripts = contentRenderBroker
+            .GetScripts();
 
         return templateRenderFoundationOperation;
     });
@@ -89,9 +93,8 @@ internal sealed partial class TemplateRenderService(
         ValidateTemplatesTemplateRenderFoundationOperationOnGet(
             inputs: [templateRenderFoundationOperation]);
 
-        templateRenderFoundationOperation.Templates = templateBroker
-            .GetAllTemplatesIgnoringFilters()
-            .ToArray();
+        templateRenderFoundationOperation.Templates = contentRenderBroker
+            .GetTemplates();
 
         return templateRenderFoundationOperation;
     });
@@ -104,7 +107,7 @@ internal sealed partial class TemplateRenderService(
             inputs: [templateRenderFoundationOperation]);
 
         templateRenderFoundationOperation.Component =
-            commonObjectReaderBroker.Get<cCoder.Data.Models.CMS.Component>(
+            contentRenderBroker.GetCommonObject<cCoder.Data.Models.CMS.Component>(
                 key: templateRenderFoundationOperation.Key);
 
         return templateRenderFoundationOperation;
@@ -118,7 +121,7 @@ internal sealed partial class TemplateRenderService(
             inputs: [templateRenderFoundationOperation]);
 
         templateRenderFoundationOperation.Script =
-            commonObjectReaderBroker.Get<cCoder.Data.Models.CMS.Script>(
+            contentRenderBroker.GetCommonObject<cCoder.Data.Models.CMS.Script>(
                 key: templateRenderFoundationOperation.Key);
 
         return templateRenderFoundationOperation;
@@ -132,7 +135,7 @@ internal sealed partial class TemplateRenderService(
             inputs: [templateRenderFoundationOperation]);
 
         templateRenderFoundationOperation.Resource =
-            commonObjectReaderBroker.Get<cCoder.Data.Models.CMS.Resource>(
+            contentRenderBroker.GetCommonObject<cCoder.Data.Models.CMS.Resource>(
                 key: templateRenderFoundationOperation.Key);
 
         return templateRenderFoundationOperation;
@@ -145,7 +148,7 @@ internal sealed partial class TemplateRenderService(
         ValidateMetadataTemplateRenderFoundationOperationOnGet(
             inputs: [templateRenderFoundationOperation]);
 
-        templateRenderFoundationOperation.Content = metadataReaderBroker.Get(
+        templateRenderFoundationOperation.Content = contentRenderBroker.GetMetadata(
             key: templateRenderFoundationOperation.Key,
             culture: templateRenderFoundationOperation.Culture);
 
@@ -186,7 +189,7 @@ internal sealed partial class TemplateRenderService(
         ValidateTemplateRenderFoundationOperation(inputs: [templateRenderFoundationOperation]);
 
         JsonValueDocument jsonValueDocument =
-            systemTextJsonBroker.Normalize(value: templateRenderFoundationOperation.Value);
+            jsonBroker.Normalize(value: templateRenderFoundationOperation.Value);
 
         templateRenderFoundationOperation.Value = jsonValueDocument.IsRawJson
             ? jsonBroker.ParseJson(json: jsonValueDocument.RawJson)
@@ -242,7 +245,7 @@ internal sealed partial class TemplateRenderService(
     {
         ValidateTemplateRenderFoundationOperation(inputs: [templateRenderFoundationOperation]);
 
-        templateRenderFoundationOperation.Content = workflowExecutionBroker.Execute(
+        templateRenderFoundationOperation.Content = contentRenderBroker.ExecuteWorkflow(
             baseAddress: templateRenderFoundationOperation.BaseAddress,
             content: templateRenderFoundationOperation.Content);
 

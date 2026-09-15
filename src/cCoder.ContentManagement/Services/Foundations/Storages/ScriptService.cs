@@ -3,15 +3,12 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationManager authorizationManager) : IScriptService
+internal partial class ScriptService(IScriptBroker scriptBroker) : IScriptService
 {
     public Script GetScript(int scriptId, bool ignoreFilters = false) =>
         TryCatch<Script>(operation: () =>
@@ -60,16 +57,10 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationM
     {
         ValidateScriptOnAdd(inputs: [newScript]);
         ValidateScript(script: newScript, parameterName: "script");
-        authorizationManager.Authorize(appId: newScript.AppId, privilege: "Script_create");
         Script storageScript = CreateStorageScript(newScript: newScript);
 
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
-
         DateTimeOffset now = (storageScript.CreatedOn = DateTimeOffset.UtcNow);
-        storageScript.CreatedBy = currentUserId;
         storageScript.LastUpdated = now;
-        storageScript.LastUpdatedBy = currentUserId;
         Script result = await scriptBroker.AddScriptAsync(newScript: storageScript);
         newScript.Id = result.Id;
         newScript.Name = result.Name;
@@ -90,15 +81,10 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationM
     {
         ValidateScriptOnUpdate(inputs: [updatedScript]);
         ValidateScript(script: updatedScript, parameterName: "script");
-        authorizationManager.Authorize(appId: updatedScript.AppId, privilege: "Script_update");
         Script updateScript = CreateStorageScript(newScript: updatedScript);
-
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateScript.LastUpdated = now;
-        updateScript.LastUpdatedBy = currentUserId;
         Script result = await scriptBroker.UpdateScriptAsync(updatedScript: updateScript);
         updatedScript.Id = result.Id;
         updatedScript.Name = result.Name;
@@ -135,7 +121,6 @@ internal partial class ScriptService(IScriptBroker scriptBroker, IAuthorizationM
             return;
         }
 
-        authorizationManager.Authorize(appId: script.AppId, privilege: "Script_delete");
         await scriptBroker.DeleteScriptAsync(deletedScript: CreateStorageScript(newScript: script));
 
     }, isValueTask: true);

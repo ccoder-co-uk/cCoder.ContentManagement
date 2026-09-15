@@ -13,6 +13,9 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using System.Security;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -32,7 +35,7 @@ public partial class ContentOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         contentEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseContentAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseContentAddEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +47,78 @@ public partial class ContentOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         contentProcessingServiceMock.Verify(expression: x => x.AddContentAsync(newContent: entity), times: Times.Once);
-        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentAddEventAsync(entity: entity), times: Times.Once);
+        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentAddEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
+    }
+
+    [Fact]
+    public async Task Content_WhenUserLacksCreatePrivilege_IsNotPersisted()
+    {
+        // Given
+        Content entity = CreateRandomContent();
+        entity.Page = new Page { AppId = 73 };
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.Page.AppId
+                    && context.Request.Privilege == "Content_create")))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
+
+        // When
+        Func<Task> action = async () =>
+            await orchestrationService.AddContentAsync(newContent: entity);
+
+        // Then
+        await action.Should()
+            .ThrowAsync<ContentManagementSecurityException>();
+
+        contentProcessingServiceMock.VerifyNoOtherCalls();
+        contentEventProcessingServiceMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task Content_WhenPageNavigationIsAbsent_UsesOwningPageAppForAuthorization()
+    {
+        // Given
+        Content entity = CreateRandomContent();
+        int appId = entity.Page.AppId;
+        entity.Page = null;
+
+        contentProcessingServiceMock
+            .Setup(expression: service => service.GetAppIdByPageId(pageId: entity.PageId))
+            .Returns(value: appId);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == appId
+                    && context.Request.Privilege == "Content_create")));
+
+        contentProcessingServiceMock
+            .Setup(expression: service => service.AddContentAsync(newContent: entity))
+            .ReturnsAsync(value: entity);
+
+        contentEventProcessingServiceMock
+            .Setup(expression: service => service.RaiseContentAddEventAsync(entity: entity, userId: CurrentUserId))
+            .Returns(value: ValueTask.CompletedTask);
+
+        // When
+        Content result = await orchestrationService.AddContentAsync(newContent: entity);
+
+        // Then
+        result.Should()
+            .BeSameAs(expected: entity);
+
+        contentProcessingServiceMock.Verify(
+            expression: service => service.GetAppIdByPageId(pageId: entity.PageId),
+            times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == appId
+                    && context.Request.Privilege == "Content_create")),
+            times: Times.Once);
     }
 
 }

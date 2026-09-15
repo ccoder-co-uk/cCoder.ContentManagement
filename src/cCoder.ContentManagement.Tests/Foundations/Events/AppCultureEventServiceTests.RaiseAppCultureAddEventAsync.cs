@@ -37,7 +37,9 @@ public partial class AppCultureEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseAppCultureAddEventAsync(appCulture: entity);
+        await service.RaiseAppCultureAddEventAsync(
+            appCulture: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -57,9 +59,6 @@ public partial class AppCultureEventServiceTests
 expression: x => x.RaiseAppCultureAddEventAsync(message: It.IsAny<EventMessage<CmsDataModels.AppCulture>>()),
 times: Times.Once
         );
-
-        appCultureEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         appCultureEventBrokerMock.VerifyNoOtherCalls();
     }

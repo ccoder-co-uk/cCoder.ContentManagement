@@ -9,22 +9,9 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class TemplateProcessingService(ITemplateService service) : ITemplateProcessingService
+internal partial class TemplateProcessingService(
+    ITemplateService service) : ITemplateProcessingService
 {
-    public ValueTask<string> ReadContentAsync(Stream source) =>
-        TryCatch<string>(operation: () =>
-        {
-            ValidateTemplateContentOnRead(inputs: [source]);
-            return service.ReadContentAsync(source: source);
-        }, isValueTask: true);
-
-    public byte[] ConvertHtmlToPdf(string html) =>
-        TryCatch(operation: () =>
-        {
-            ValidateTemplateContentOnConvert(inputs: [html]);
-            return service.ConvertHtmlToPdf(html: html);
-        });
-
     public Template GetTemplate(int templateId) =>
         TryCatch<Template>(operation: () =>
     {

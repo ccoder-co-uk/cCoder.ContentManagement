@@ -25,11 +25,13 @@ public partial class PageEventProcessingServiceTests
 {
     private readonly Mock<IPageEventService> pageEventServiceMock;
     private readonly PageEventProcessingService service;
+    private const string CurrentUserId = "test-user";
 
     public PageEventProcessingServiceTests()
     {
         pageEventServiceMock = new Mock<IPageEventService>(behavior: MockBehavior.Strict);
-        service = new PageEventProcessingService(eventService: pageEventServiceMock.Object);
+        service = new PageEventProcessingService(
+            eventService: pageEventServiceMock.Object);
     }
 
     private static Page CreateRandomPage() =>

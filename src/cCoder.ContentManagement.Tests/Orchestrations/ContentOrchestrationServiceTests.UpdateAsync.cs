@@ -32,7 +32,7 @@ public partial class ContentOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         contentEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseContentUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseContentUpdateEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +44,7 @@ public partial class ContentOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         contentProcessingServiceMock.Verify(expression: x => x.UpdateContentAsync(updatedContent: entity), times: Times.Once);
-        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentUpdateEventAsync(entity: entity), times: Times.Once);
+        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentUpdateEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
 }

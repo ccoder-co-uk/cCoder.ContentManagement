@@ -28,14 +28,21 @@ public partial class CultureEventProcessingServiceTests
         Culture entity = CreateRandomCulture();
 
         cultureEventServiceMock
-            .Setup(expression: x => x.RaiseCultureUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseCultureUpdateEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCultureUpdateEventAsync(culture: entity);
+        await service.RaiseCultureUpdateEventAsync(
+            culture: entity,
+            userId: CurrentUserId);
 
         // Then
-        cultureEventServiceMock.Verify(expression: x => x.RaiseCultureUpdateEventAsync(entity: entity), times: Times.Once);
+        cultureEventServiceMock.Verify(expression: x => x.RaiseCultureUpdateEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
+
         cultureEventServiceMock.VerifyNoOtherCalls();
     }
 

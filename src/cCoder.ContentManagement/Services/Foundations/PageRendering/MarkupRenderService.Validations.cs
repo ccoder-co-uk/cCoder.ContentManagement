@@ -2,18 +2,26 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class MarkupRenderService
 {
     private static void ValidateTagHandlingOperation(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
+
+    private static void ValidateHtmlEncodeTagHandlingOperation(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidatePropertyValuesTagHandlingOperationOnGet(object[] inputs) =>
+        Validate(inputs: inputs);
 
     private static void ValidateMarkContentSecurityPolicyNonce(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
 
     private static void ValidateJsonPropertiesTagHandlingOperationOnGet(object[] inputs) =>
-        ValidationRulesEngine.Validate(inputs: inputs);
+        Validate(inputs: inputs);
+
+    private static void Validate(params object[] inputs) =>
+        _ = inputs;
 }

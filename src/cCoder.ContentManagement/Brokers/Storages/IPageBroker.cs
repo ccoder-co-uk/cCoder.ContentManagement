@@ -12,6 +12,8 @@ public interface IPageBroker
 
     IQueryable<Page> GetAllPagesIgnoringFilters();
 
+    bool LayoutExistsForApp(int appId, string layoutName);
+
     ValueTask<Page> GetPageForRenderAsync(int pageId);
 
     ValueTask<Page> AddPageAsync(Page newPage);

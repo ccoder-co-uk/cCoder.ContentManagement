@@ -4,6 +4,8 @@
 
 namespace cCoder.ContentManagement.Models.PageRendering;
 
+using cCoder.ContentManagement.Models.Rendering;
+
 internal sealed class TagHandlingOperation
 {
     public RenderSession Session { get; set; }
@@ -25,4 +27,6 @@ internal sealed class TagHandlingOperation
     public bool Condition { get; set; }
 
     public IReadOnlyCollection<KeyValuePair<string, object>> JsonProperties { get; set; }
+
+    public RuntimePropertyValue[] RuntimeProperties { get; set; }
 }

@@ -41,8 +41,6 @@ public partial class ContentServiceTests
 
         contentBrokerMock.Verify(expression: x => x.GetAllContents(), times: Times.Once);
         contentBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

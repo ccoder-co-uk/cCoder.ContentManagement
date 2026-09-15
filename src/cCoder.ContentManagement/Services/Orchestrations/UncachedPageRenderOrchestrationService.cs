@@ -6,8 +6,6 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
@@ -86,9 +84,6 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
     {
         PageRenderResult result = response.Page;
 
-        string fingerprintSource = pageRenderProcessingService
-            .SerializeRuntimeValue(value: result);
-
         return new PageRenderCache
         {
             AppId = result.AppId,
@@ -103,9 +98,8 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
             ShowOnMenus = result.ShowOnMenus,
             Header = result.HeaderHtml,
             Body = result.BodyHtml,
-            SourceFingerprint = Convert.ToHexString(
-                inArray: SHA256.HashData(
-                    source: Encoding.UTF8.GetBytes(s: fingerprintSource))),
+            SourceFingerprint = pageRenderProcessingService.ComputeFingerprint(
+                value: result),
             RenderedOn = DateTimeOffset.UtcNow
         };
     }

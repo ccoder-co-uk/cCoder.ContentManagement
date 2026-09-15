@@ -28,7 +28,7 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class LayoutServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForDeleteAsync()
+    public async Task ShouldDelegateToBrokerWhenDeleteAsync()
     {
         // Given
         Layout layout = CreateRandomLayout(id: 9, appId: 7);
@@ -36,10 +36,8 @@ public partial class LayoutServiceTests
         layoutBrokerMock.Setup(expression: x => x.GetAllLayouts())
             .Returns(value: new[] { layout }.AsQueryable());
 
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"));
-
         layoutBrokerMock.Setup(expression: x => x.DeleteLayoutAsync(deletedLayout: It.IsAny<CmsDataModels.Layout>()))
-            .ReturnsAsync(value: 1);
+                    .ReturnsAsync(value: 1);
 
         // When
         await layoutService.DeleteAsync(layoutId: 9);
@@ -48,36 +46,5 @@ public partial class LayoutServiceTests
         layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(), times: Times.Once);
         layoutBrokerMock.Verify(expression: x => x.DeleteLayoutAsync(deletedLayout: It.Is<CmsDataModels.Layout>(match: actual => actual.Id == layout.Id)), times: Times.Once);
         layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksDeletePrivilegeForDeleteAsync()
-    {
-        // Given
-        Layout layout = CreateRandomLayout(id: 9, appId: 7);
-
-        layoutBrokerMock.Setup(expression: x => x.GetAllLayouts())
-            .Returns(value: new[] { layout }.AsQueryable());
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await layoutService.DeleteAsync(layoutId: 9);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        layoutBrokerMock.Verify(expression: x => x.GetAllLayouts(), times: Times.Once);
-        layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_delete"), times: Times.Once);
-        authorizationManagerMock.VerifyNoOtherCalls();
-    }
-
 }

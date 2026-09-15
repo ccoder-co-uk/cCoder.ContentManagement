@@ -12,6 +12,8 @@ public interface ICultureBroker
 
     IQueryable<Culture> GetAllCulturesIgnoringFilters();
 
+    int? GetOwningAppId(string cultureId);
+
     ValueTask<Culture> AddCultureAsync(Culture newCulture);
 
     ValueTask<Culture> UpdateCultureAsync(Culture updatedCulture);

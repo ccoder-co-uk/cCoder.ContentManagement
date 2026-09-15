@@ -31,9 +31,6 @@ public partial class SubmissionEventServiceTests
         submissionEventBrokerMock = new Mock<ISubmissionEventBroker>(behavior: MockBehavior.Strict);
         submissionEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        submissionEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.SubmissionEventService(
 submissionEventBroker: submissionEventBrokerMock.Object
         );

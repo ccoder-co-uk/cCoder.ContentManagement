@@ -27,19 +27,7 @@ public partial class PageProcessingServiceTests
     public async Task ShouldDelegateToFoundationServiceWhenAddAsync()
     {
         // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
 
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
 
         User actor = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
@@ -100,19 +88,7 @@ times: Times.Once
     public async Task ShouldUseParentPathWhenAddAsync()
     {
         // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
 
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
 
         User actor = TestUsers.WithPrivilege(privilege: "app_admin", appId: 1);
@@ -178,19 +154,7 @@ times: Times.Once
     public async Task ShouldThrowValidationExceptionWhenComputedPathAlreadyExistsForSameAppOnAddAsync()
     {
         // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
 
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
 
         currentUser = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
@@ -230,19 +194,7 @@ times: Times.Once
     public async Task ShouldAllowComputedPathWhenItOnlyExistsForAnotherAppOnAddAsync()
     {
         // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
 
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
 
         currentUser = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
@@ -298,19 +250,7 @@ times: Times.Once);
     public async Task ShouldThrowValidationExceptionWhenComputedPathExistsOnPageUserCannotSeeForSameAppOnAddAsync()
     {
         // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
 
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
 
         currentUser = TestUsers.WithPrivilege(privilege: "page_create", appId: 1);
@@ -367,7 +307,7 @@ times: Times.Once);
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
             .WithMessage(expectedWildcardPattern: "A page already exists for app 1 with path 'parent/Child'.");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Exactly(callCount: 2));
+        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
         VerifyNoOtherPageServiceCalls();
     }

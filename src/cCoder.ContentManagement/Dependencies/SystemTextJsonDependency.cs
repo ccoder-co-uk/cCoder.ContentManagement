@@ -3,12 +3,23 @@
 // ---------------------------------------------------------------
 
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using cCoder.ContentManagement.Models.Serialization;
 
 namespace cCoder.ContentManagement.Dependencies;
 
 internal sealed class SystemTextJsonDependency
 {
+    private static readonly JsonSerializerOptions IgnoreReferencesOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
+    };
+
+    public object ParseJson(string json) =>
+        (object)JsonNode.Parse(json: json) ?? ParseNullElement();
+
     public T Deserialize<T>(string json) =>
         JsonSerializer.Deserialize<T>(
             json: json,
@@ -19,6 +30,9 @@ internal sealed class SystemTextJsonDependency
 
     public string Serialize(object value) =>
         JsonSerializer.Serialize(value: value);
+
+    public string SerializeIgnoringReferences(object value) =>
+        JsonSerializer.Serialize(value: value, options: IgnoreReferencesOptions);
 
     public JsonRecordsDocument ParseRecords(string json) =>
         ParseRecordsDocument(json: json);
@@ -48,6 +62,48 @@ internal sealed class SystemTextJsonDependency
             {
                 Value = value
             };
+
+    public bool IsJsonObject(object value) =>
+        value is JsonObject ||
+        value is JsonElement { ValueKind: JsonValueKind.Object };
+
+    public bool IsJsonArray(object value) =>
+        value is JsonArray ||
+        value is JsonElement { ValueKind: JsonValueKind.Array };
+
+    public bool IsJsonValue(object value) =>
+        value is JsonValue ||
+        value is JsonElement element &&
+        element.ValueKind is not JsonValueKind.Object and not JsonValueKind.Array;
+
+    public IEnumerable<KeyValuePair<string, object>> GetJsonProperties(
+        object value) =>
+        ((JsonObject)value)
+            .Select(selector: property =>
+                new KeyValuePair<string, object>(
+                    key: property.Key,
+                    value: (object)property.Value ?? ParseNullElement()));
+
+    public IEnumerable<object> GetJsonItems(object value) =>
+        ((JsonArray)value)
+            .Select(selector: item => (object)item ?? ParseNullElement());
+
+    public void RemoveJsonProperty(object value, string propertyName)
+    {
+        JsonObject jsonObject = (JsonObject)value;
+
+        string matchingPropertyName = jsonObject
+            .Select(selector: property => property.Key)
+            .FirstOrDefault(predicate: name => string.Equals(
+                a: name,
+                b: propertyName,
+                comparisonType: StringComparison.OrdinalIgnoreCase));
+
+        if (matchingPropertyName is not null)
+        {
+            jsonObject.Remove(propertyName: matchingPropertyName);
+        }
+    }
 
     private static JsonRecordsDocument ParseRecordsDocument(string json)
     {
@@ -110,4 +166,11 @@ internal sealed class SystemTextJsonDependency
                         comparer: StringComparer.Ordinal)
                 : new Dictionary<string, DateTimeOffset>()
         };
+
+    private static JsonElement ParseNullElement()
+    {
+        using JsonDocument document = JsonDocument.Parse(json: "null");
+
+        return document.RootElement.Clone();
+    }
 }

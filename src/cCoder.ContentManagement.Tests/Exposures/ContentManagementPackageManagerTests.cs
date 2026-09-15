@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Exposures;
-using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.Data.Models.Packaging;
 using Moq;
 using Xunit;
@@ -20,7 +20,7 @@ public sealed partial class ContentManagementPackageManagerTests
         // Given
         Package package = new();
 
-        Mock<IContentManagementPackageOrchestrationService> packageOrchestrationService =
+        Mock<IContentManagementPackageCoordinationService> packageOrchestrationService =
             new(behavior: MockBehavior.Strict);
 
         packageOrchestrationService
@@ -30,12 +30,41 @@ public sealed partial class ContentManagementPackageManagerTests
             .Returns(value: ValueTask.CompletedTask);
 
         ContentManagementPackageManager manager = new(
-            contentManagementPackageOrchestrationService: packageOrchestrationService.Object);
+            packageCoordinationService: packageOrchestrationService.Object);
 
         // When
         await manager.ImportPackageAsync(appId: appId, package: package);
 
         // Then
         packageOrchestrationService.VerifyAll();
+    }
+
+    [Fact]
+    public void ShouldDelegatePackageExport()
+    {
+        // Given
+        const int appId = 17;
+        const string packageName = "Pages";
+        Package expectedPackage = new();
+
+        Mock<IContentManagementPackageCoordinationService> exportService =
+            new(behavior: MockBehavior.Strict);
+
+        exportService.Setup(expression: service => service.ExportPackage(
+                appId: appId,
+                packageName: packageName))
+            .Returns(value: expectedPackage);
+
+        ContentManagementPackageManager manager = new(
+            packageCoordinationService: exportService.Object);
+
+        // When
+        Package actualPackage = manager.ExportPackage(
+            appId: appId,
+            packageName: packageName);
+
+        // Then
+        Assert.Same(expected: expectedPackage, actual: actualPackage);
+        exportService.VerifyAll();
     }
 }

@@ -6,5 +6,5 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IRenderFileContentBroker
 {
-    byte[] GetLatestRawData(int appId, string path);
+    string GetLatestTextContent(int appId, string path);
 }

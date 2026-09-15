@@ -6,14 +6,15 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.Security;
+using cCoder.Data.Models.CMS;
 using Moq;
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 
 public partial class PageRoleImportOrchestrationServiceTests
 {
-    private readonly Mock<IPageRoleImportLookupProcessingService>
-        lookupProcessingServiceMock = new(
+    private readonly Mock<IPageRoleProcessingService>
+        pageRoleProcessingServiceMock = new(
             behavior: MockBehavior.Strict);
 
     private readonly Mock<IPageRoleImportPersistenceProcessingService>
@@ -25,7 +26,7 @@ public partial class PageRoleImportOrchestrationServiceTests
     public PageRoleImportOrchestrationServiceTests()
     {
         orchestrationService = new PageRoleImportOrchestrationService(
-            lookupProcessingService: lookupProcessingServiceMock.Object,
+            pageRoleProcessingService: pageRoleProcessingServiceMock.Object,
             persistenceProcessingService:
                 persistenceProcessingServiceMock.Object);
     }

@@ -6,10 +6,15 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingService processingService, ICommonObjectEventProcessingService eventService) : ICommonObjectOrchestrationService
+internal partial class CommonObjectOrchestrationService(
+    ICommonObjectProcessingService processingService,
+    ICommonObjectLatestCacheProcessingService latestCacheProcessingService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : ICommonObjectOrchestrationService
 {
     public CommonObject[] DeserializeCommonObjects(object payload) =>
         TryCatch<CommonObject[]>(operation: () =>
@@ -41,7 +46,7 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
         CommonObject[] newCommonObjects) =>
         TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: async () =>
     {
-        ValidateImportCommonObjectResultAsync(inputs: [newCommonObjects]);
+        ValidateAllCommonObjectsOnAdd(inputs: [newCommonObjects]);
 
         CommonObject[] validatedCommonObjects =
         [
@@ -50,23 +55,25 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
                 parameterName: "newCommonObjects")
         ];
 
+        CommonObject[] latestCommonObjects = latestCacheProcessingService
+            .GetLatestCommonObjects()
+            .ToArray();
+
+        AuthorizeImport(
+            commonObjects: validatedCommonObjects,
+            latestCommonObjects: latestCommonObjects);
+
+        string userId = authorizationProcessingService.GetCurrentUserId();
+
         IEnumerable<OperationResult<CommonObject>> results =
             await processingService.AddAllCommonObjectsAsync(
-                newCommonObjects: validatedCommonObjects);
+                newCommonObjects: validatedCommonObjects,
+                latestCommonObjects: latestCommonObjects,
+                userId: userId);
 
-        CommonObject[] importedObjects =
-        [
-            .. results
-                .Where(predicate: result =>
-                    result.Success && result.Item is not null)
-                .Select(selector: result => result.Item)
-        ];
-
-        if (importedObjects.Length > 0)
-        {
-            await eventService.RaiseCommonObjectsImportedEventAsync(
-                commonObjects: importedObjects);
-        }
+        latestCacheProcessingService.RefreshCommonObjects(
+            changedCommonObjectCount: results.Count(
+                predicate: result => result.Success));
 
         return results;
 
@@ -77,8 +84,16 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
     {
         ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject]);
         ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "entity");
-        CommonObject result = await processingService.UpdateCommonObjectAsync(updatedCommonObject: updatedCommonObject);
-        await eventService.RaiseCommonObjectUpdateEventAsync(entity: result);
+        Authorize(privilege: "commonobject_create");
+        Authorize(privilege: "commonobject_update");
+
+        CommonObject result = await processingService.UpdateCommonObjectAsync(
+            updatedCommonObject: updatedCommonObject,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
+        latestCacheProcessingService.RefreshCommonObjects(
+            changedCommonObjectCount: 1);
+
         return result;
 
     }, isValueTask: true);
@@ -88,9 +103,12 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
     {
         ValidateDeleteAsync(inputs: [commonObjectId]);
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
-        CommonObject entity = processingService.GetCommonObject(commonObjectId: commonObjectId);
-        await eventService.RaiseCommonObjectDeleteEventAsync(entity: entity);
+        Authorize(privilege: "commonobject_delete");
+
         await processingService.DeleteAsync(commonObjectId: commonObjectId);
+
+        latestCacheProcessingService.RefreshCommonObjects(
+            changedCommonObjectCount: 1);
 
     }, isValueTask: true);
 
@@ -98,14 +116,42 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
         TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: () =>
     {
         ValidateOrUpdateCommonObjectResultOnAdd(inputs: [newCommonObject]);
-        return processingService.AddOrUpdateCommonObjectResult(newCommonObject: ValidateCommonObjects(commonObjects: newCommonObject, parameterName: "items"));
+
+        CommonObject[] commonObjects = ValidateCommonObjects(
+            commonObjects: newCommonObject,
+            parameterName: "items")
+            .ToArray();
+
+        if (commonObjects.Any(predicate: item => item.Id < 1))
+        {
+            Authorize(privilege: "commonobject_create");
+        }
+
+        if (commonObjects.Any(predicate: item => item.Id >= 1))
+        {
+            Authorize(privilege: "commonobject_create");
+            Authorize(privilege: "commonobject_update");
+        }
+
+        return ExecuteAddOrUpdateCommonObjectResult(
+            commonObjects: commonObjects,
+            userId: authorizationProcessingService.GetCurrentUserId());
     }, isValueTask: true);
 
     public ValueTask DeleteAllCommonObjectAsync(IEnumerable<CommonObject> deletedCommonObject) =>
         TryCatch(operation: () =>
     {
         ValidateAllCommonObjectOnDelete(inputs: [deletedCommonObject]);
-        return processingService.DeleteAllCommonObjectAsync(deletedCommonObject: ValidateCommonObjects(commonObjects: deletedCommonObject, parameterName: "items"));
+
+        CommonObject[] commonObjects = ValidateCommonObjects(
+            commonObjects: deletedCommonObject,
+            parameterName: "items")
+            .ToArray();
+
+        Authorize(privilege: "commonobject_delete");
+
+        return ExecuteDeleteAllCommonObjectAsync(
+            commonObjects: commonObjects);
     }, isValueTask: true);
 
     public IEnumerable<CommonObject> LatestCommonObject(string type) =>
@@ -113,9 +159,84 @@ internal partial class CommonObjectOrchestrationService(ICommonObjectProcessingS
     {
         ValidateLatestCommonObject(inputs: [type]);
         ValidateType(type: type, parameterName: "type");
-        return processingService.LatestCommonObject(type: type);
+
+        return latestCacheProcessingService.GetLatestCommonObjects()
+            .Where(predicate: item => item.Type == type);
 
     });
+
+    private void Authorize(string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = null,
+                    Privilege = privilege
+                }
+            });
+
+    private async ValueTask<IEnumerable<OperationResult<CommonObject>>>
+        ExecuteAddOrUpdateCommonObjectResult(
+            CommonObject[] commonObjects,
+            string userId)
+    {
+        IEnumerable<OperationResult<CommonObject>> results =
+            await processingService.AddOrUpdateCommonObjectResult(
+                newCommonObject: commonObjects,
+                userId: userId);
+
+        latestCacheProcessingService.RefreshCommonObjects(
+            changedCommonObjectCount: results.Count(
+                predicate: result => result.Success));
+
+        return results;
+    }
+
+    private async ValueTask ExecuteDeleteAllCommonObjectAsync(
+        CommonObject[] commonObjects)
+    {
+        await processingService.DeleteAllCommonObjectAsync(
+            deletedCommonObject: commonObjects);
+
+        latestCacheProcessingService.RefreshCommonObjects(
+            changedCommonObjectCount: commonObjects.Length);
+    }
+
+    private void AuthorizeImport(
+        IEnumerable<CommonObject> commonObjects,
+        IEnumerable<CommonObject> latestCommonObjects)
+    {
+        CommonObject[] latest = latestCommonObjects.ToArray();
+        bool hasAdds = false;
+        bool hasUpdates = false;
+
+        foreach (CommonObject item in commonObjects)
+        {
+            CommonObject existing = latest.FirstOrDefault(
+                predicate: candidate =>
+                    candidate.Type == item.Type
+                    && candidate.Culture == (item.Culture ?? string.Empty)
+                    && candidate.Name == item.Name
+                    && candidate.Key == item.Key);
+
+            hasAdds |= existing is null;
+
+            hasUpdates |= existing is not null
+                && (item.CreatedOn > existing.CreatedOn
+                    || item.LastUpdated > existing.LastUpdated);
+        }
+
+        if (hasAdds || hasUpdates)
+        {
+            Authorize(privilege: "commonobject_create");
+        }
+
+        if (hasUpdates)
+        {
+            Authorize(privilege: "commonobject_update");
+        }
+    }
 
     private static void ValidateId(int commonObjectId, string parameterName) =>
         ThrowIf(condition: commonObjectId < 1, message: parameterName + " must be greater than 0.");

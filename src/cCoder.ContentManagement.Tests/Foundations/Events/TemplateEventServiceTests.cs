@@ -31,9 +31,6 @@ public partial class TemplateEventServiceTests
         templateEventBrokerMock = new Mock<ITemplateEventBroker>(behavior: MockBehavior.Strict);
         templateEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        templateEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.TemplateEventService(
 templateEventBroker: templateEventBrokerMock.Object
         );

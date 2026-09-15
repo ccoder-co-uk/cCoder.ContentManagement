@@ -15,18 +15,20 @@ internal interface ICommonObjectProcessingService
 
     CommonObject[] DeserializeCommonObjects(object payload);
 
-    ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject);
+    ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject, string userId);
 
-    ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);
+    ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject, string userId);
 
     ValueTask DeleteAsync(int commonObjectId);
 
-    ValueTask<IEnumerable<OperationResult<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject);
+    ValueTask<IEnumerable<OperationResult<CommonObject>>> AddOrUpdateCommonObjectResult(
+        IEnumerable<CommonObject> newCommonObject,
+        string userId);
 
     ValueTask DeleteAllCommonObjectAsync(IEnumerable<CommonObject> deletedCommonObject);
 
-    IEnumerable<CommonObject> LatestCommonObject(string type);
-
     ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
-        CommonObject[] newCommonObjects);
+        CommonObject[] newCommonObjects,
+        IEnumerable<CommonObject> latestCommonObjects,
+        string userId);
 }

@@ -21,7 +21,6 @@ using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Models;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
 
 using cCoder.ContentManagement.Exposures;

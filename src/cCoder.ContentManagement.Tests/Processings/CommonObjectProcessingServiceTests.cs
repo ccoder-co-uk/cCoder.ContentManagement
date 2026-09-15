@@ -3,78 +3,63 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models;
-using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Packaging;
-using cCoder.Data.Models.Security;
-using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
-using Config = cCoder.ContentManagement.Models.ContentManagementConfiguration;
-using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
-using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
-using RenderParams = cCoder.ContentManagement.Models.RenderParams;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
-using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
 
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
-
-
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class CommonObjectProcessingServiceTests
 {
-    private Mock<ICommonObjectService> commonObjectCacheMock => commonObjectServiceMock;
-    private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<ICommonObjectService> commonObjectServiceMock = new();
-    private Mock<ICommonObjectService> authorizationManagerMock => commonObjectServiceMock;
     private readonly CommonObjectProcessingService commonObjectProcessingService;
+    private const string CurrentUserId = "test-user";
 
     public CommonObjectProcessingServiceTests()
     {
+        // Given
+
+        // When
         commonObjectProcessingService = new CommonObjectProcessingService(
-service: commonObjectServiceMock.Object
-        );
+            service: commonObjectServiceMock.Object);
+
+        // Then
     }
 
     private static CommonObject CreateRandomCommonObject(
         string type = "ContentManagement/Resource"
-    ) =>
-        Builder<CommonObject>
+    )
+    {
+        // Given
+
+        // When
+        CommonObject commonObject = Builder<CommonObject>
             .CreateNew()
-        .With(func: x => x.Id = Random.Shared.Next(minValue: 1, maxValue: 10000))
-        .With(func: x => x.Name = $"CommonObject-{Guid.NewGuid():N}")
-        .With(func: x => x.Key = $"key-{Guid.NewGuid():N}")
-        .With(func: x => x.Culture = "en-GB")
-        .With(func: x => x.Type = type)
-        .With(func: x => x.Json = "{}")
-        .With(func: x => x.Version = 1)
-        .With(func: x => x.CreatedBy = "seed-user")
-        .With(func: x => x.LastUpdatedBy = "seed-user")
-        .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
-        .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
-        .Build();
+            .With(func: x => x.Id = Random.Shared.Next(minValue: 1, maxValue: 10000))
+            .With(func: x => x.Name = $"CommonObject-{Guid.NewGuid():N}")
+            .With(func: x => x.Key = $"key-{Guid.NewGuid():N}")
+            .With(func: x => x.Culture = "en-GB")
+            .With(func: x => x.Type = type)
+            .With(func: x => x.Json = "{}")
+            .With(func: x => x.Version = 1)
+            .With(func: x => x.CreatedBy = "seed-user")
+            .With(func: x => x.LastUpdatedBy = "seed-user")
+            .With(func: x => x.CreatedOn = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
+            .With(func: x => x.LastUpdated = DateTimeOffset.UtcNow.AddMinutes(minutes: -5))
+            .Build();
+
+        // Then
+        return commonObject;
+    }
 
     private void VerifyNoOtherCommonObjectServiceCalls()
     {
-        commonObjectServiceMock.Verify(
-            expression: service => service.GetCurrentUserId(),
-            times: Times.AtMost(callCount: 2));
+        // Given
 
-        commonObjectServiceMock.Verify(
-            expression: service => service.Authorize(
-                appId: It.IsAny<int?>(),
-                privilege: It.IsAny<string>()),
-            times: Times.AtMost(callCount: 2));
-
-        commonObjectServiceMock.Verify(
-            expression: service => service.GetLatestSet(),
-            times: Times.AtMost(callCount: 3));
-
+        // When
         commonObjectServiceMock.VerifyNoOtherCalls();
+
+        // Then
     }
 }

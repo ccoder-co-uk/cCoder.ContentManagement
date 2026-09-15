@@ -43,8 +43,6 @@ public partial class PageInfoServiceTests
 
         pageInfoBrokerMock.Verify(expression: x => x.GetAllPageInfo(), times: Times.Once);
         pageInfoBrokerMock.VerifyNoOtherCalls();
-        pageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

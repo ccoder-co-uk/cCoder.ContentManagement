@@ -28,14 +28,21 @@ public partial class ScriptEventProcessingServiceTests
         Script entity = CreateRandomScript();
 
         scriptEventServiceMock
-            .Setup(expression: x => x.RaiseScriptAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseScriptAddEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseScriptAddEventAsync(script: entity);
+        await service.RaiseScriptAddEventAsync(
+            script: entity,
+            userId: CurrentUserId);
 
         // Then
-        scriptEventServiceMock.Verify(expression: x => x.RaiseScriptAddEventAsync(entity: entity), times: Times.Once);
+        scriptEventServiceMock.Verify(expression: x => x.RaiseScriptAddEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
+
         scriptEventServiceMock.VerifyNoOtherCalls();
     }
 

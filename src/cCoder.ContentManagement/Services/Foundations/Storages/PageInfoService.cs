@@ -3,18 +3,12 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal partial class PageInfoService(
-    IPageInfoBroker pageInfoBroker,
-    IPageBroker pageBroker,
-    IAuthorizationManager authorizationManager) : IPageInfoService
+internal partial class PageInfoService(IPageInfoBroker pageInfoBroker) : IPageInfoService
 {
     public PageInfo GetPageInfo(int pageInfoId, bool ignoreFilters = false) =>
         TryCatch<PageInfo>(operation: () =>
@@ -58,12 +52,19 @@ internal partial class PageInfoService(
             : pageInfoBroker.GetAllPageInfo();
     });
 
+    public int? GetOwningAppId(int pageId) =>
+        TryCatch<int?>(operation: () =>
+    {
+        ValidateOwningAppIdOnGet(inputs: [pageId]);
+        ValidateId(pageInfoId: pageId, parameterName: "pageId");
+        return pageInfoBroker.GetOwningAppId(pageId: pageId);
+    });
+
     public ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo) =>
         TryCatch<PageInfo>(operation: async () =>
     {
         ValidatePageInfoOnAdd(inputs: [newPageInfo]);
         ValidatePageInfo(pageInfo: newPageInfo, parameterName: "pageInfo");
-        authorizationManager.Authorize(appId: GetAppId(pageId: newPageInfo.PageId), privilege: "PageInfo_create");
         PageInfo result = await pageInfoBroker.AddPageInfoAsync(newPageInfo: CreateStoragePageInfo(newPageInfo: newPageInfo));
         newPageInfo.Id = result.Id;
         newPageInfo.PageId = result.PageId;
@@ -80,7 +81,6 @@ internal partial class PageInfoService(
     {
         ValidatePageInfoOnUpdate(inputs: [updatedPageInfo]);
         ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "pageInfo");
-        authorizationManager.Authorize(appId: GetAppId(pageId: updatedPageInfo.PageId), privilege: "PageInfo_update");
         PageInfo result = await pageInfoBroker.UpdatePageInfoAsync(updatedPageInfo: CreateStoragePageInfo(newPageInfo: updatedPageInfo));
         updatedPageInfo.Id = result.Id;
         updatedPageInfo.PageId = result.PageId;
@@ -113,7 +113,6 @@ internal partial class PageInfoService(
             return;
         }
 
-        authorizationManager.Authorize(appId: GetAppId(pageId: pageInfo.PageId), privilege: "PageInfo_delete");
         await pageInfoBroker.DeletePageInfoAsync(deletedPageInfo: CreateStoragePageInfo(newPageInfo: pageInfo));
 
     }, isValueTask: true);
@@ -135,12 +134,6 @@ internal partial class PageInfoService(
             Keywords = newPageInfo.Keywords
         };
     }
-
-    private int? GetAppId(int pageId) =>
-        pageBroker.GetAllPagesIgnoringFilters()
-        .Where(predicate: page => page.Id == pageId)
-        .Select(selector: page => (int?)page.AppId)
-        .FirstOrDefault();
 
     private IQueryable<PageInfo> ExecuteGetAllPageInfo(bool ignoreFilters = false) =>
         (ignoreFilters

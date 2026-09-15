@@ -18,7 +18,7 @@ public partial class PageRenderCacheOrchestrationServiceTests
         PageRenderCache cache = CreatePageRenderCache();
         IQueryable<PageRenderCache> caches = new[] { cache }.AsQueryable();
 
-        queryProcessingServiceMock
+        processingServiceMock
             .Setup(expression: service => service.GetAllPageRenderCaches())
             .Returns(value: caches);
 
@@ -37,7 +37,7 @@ public partial class PageRenderCacheOrchestrationServiceTests
         // Given
         PageRenderCache cache = CreatePageRenderCache();
 
-        queryProcessingServiceMock
+        processingServiceMock
             .Setup(expression: service => service.GetPageRenderCache(
                 pageRenderCacheId: cache.Id))
             .Returns(value: cache);
@@ -71,6 +71,11 @@ public partial class PageRenderCacheOrchestrationServiceTests
             .Setup(expression: service => service.DeletePageRenderCacheAsync(
                 pageRenderCacheId: cache.Id))
             .Returns(value: ValueTask.CompletedTask);
+
+        processingServiceMock
+            .Setup(expression: service => service.GetPageRenderCache(
+                pageRenderCacheId: cache.Id))
+            .Returns(value: cache);
 
         // When
         PageRenderCache added = await orchestrationService
@@ -107,7 +112,7 @@ public partial class PageRenderCacheOrchestrationServiceTests
             CreatePageRenderCache(appId: 11, pageId: 22)
         ];
 
-        queryProcessingServiceMock
+        processingServiceMock
             .Setup(expression: service => service.GetAllPageRenderCaches())
             .Returns(value: caches.AsQueryable());
 
@@ -164,7 +169,7 @@ public partial class PageRenderCacheOrchestrationServiceTests
         // Given
         PageRenderCache cache = CreatePageRenderCache(appId: 10, pageId: 20);
 
-        queryProcessingServiceMock
+        processingServiceMock
             .Setup(expression: service => service.GetAllPageRenderCaches())
             .Returns(value: new[] { cache }.AsQueryable());
 
@@ -213,7 +218,7 @@ public partial class PageRenderCacheOrchestrationServiceTests
     public async Task ShouldNotReplaceWhenDeletedPageIsNotCachedAsync(bool fromEvent)
     {
         // Given
-        queryProcessingServiceMock
+        processingServiceMock
             .Setup(expression: service => service.GetAllPageRenderCaches())
             .Returns(value: Array.Empty<PageRenderCache>()
                 .AsQueryable());
@@ -231,6 +236,9 @@ public partial class PageRenderCacheOrchestrationServiceTests
         }
 
         // Then
+        processingServiceMock.Verify(expression: service =>
+            service.GetAllPageRenderCaches(), times: Times.Once);
+
         processingServiceMock.VerifyNoOtherCalls();
     }
 

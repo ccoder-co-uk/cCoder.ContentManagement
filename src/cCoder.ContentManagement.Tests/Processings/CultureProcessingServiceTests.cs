@@ -29,7 +29,8 @@ public partial class CultureProcessingServiceTests
 
     public CultureProcessingServiceTests()
     {
-        cultureProcessingService = new CultureProcessingService(service: cultureServiceMock.Object);
+        cultureProcessingService = new CultureProcessingService(
+            service: cultureServiceMock.Object);
     }
 
     private static Culture CreateRandomCulture() =>

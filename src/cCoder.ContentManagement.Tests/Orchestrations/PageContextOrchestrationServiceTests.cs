@@ -3,9 +3,9 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Services.Foundations.Authorization;
-using cCoder.ContentManagement.Services.Foundations.Authorizations;
-using cCoder.ContentManagement.Services.Foundations.HttpContexts;
+using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Services.Processings.HttpContexts;
+using cCoder.ContentManagement.Services.Processings.PageContexts;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 using cCoder.Data.Models.Security;
 using Moq;
@@ -21,29 +21,28 @@ public sealed partial class PageContextOrchestrationServiceTests
         // Given
         HttpPageRenderContext context = new() { Culture = "en-GB" };
         User user = new() { Id = "Paul" };
-        Mock<IHttpContextService> httpContextService = new();
-        Mock<IPageAuthorizationService> pageAuthorizationService = new();
-        Mock<IAuthorizationService> authorizationService = new();
+        Mock<IHttpContextProcessingService> httpContextProcessingService = new();
+        Mock<IPageAuthorizationProcessingService> pageAuthorizationProcessingService = new();
+        Mock<IAuthorizationProcessingService> authorizationProcessingService = new();
 
-        httpContextService.Setup(expression: service =>
+        httpContextProcessingService.Setup(expression: service =>
             service.GetPageRenderContext())
             .Returns(value: context);
 
-        pageAuthorizationService.Setup(expression: service =>
-            service.AuthorizeHttpPageRenderContextAsync(
-                pageRenderContext: context))
+        pageAuthorizationProcessingService.Setup(expression: service =>
+            service.AuthorizeHttpPageRenderContextAsync(httpPageRenderContext: context))
             .ReturnsAsync(value: context);
 
-        authorizationService.Setup(expression: service =>
+        authorizationProcessingService.Setup(expression: service =>
             service.ResolveCurrentAuthorizationContext(
                 context: It.Is<AuthorizationContext>(match: item =>
                     item.Culture == context.Culture)))
             .Returns(value: new AuthorizationContext { User = user });
 
         PageContextOrchestrationService service = new(
-            httpContextService: httpContextService.Object,
-            pageAuthorizationService: pageAuthorizationService.Object,
-            authorizationService: authorizationService.Object);
+            httpContextProcessingService: httpContextProcessingService.Object,
+            pageAuthorizationProcessingService: pageAuthorizationProcessingService.Object,
+            authorizationProcessingService: authorizationProcessingService.Object);
 
         // When
         HttpPageRenderContext result =
@@ -52,8 +51,8 @@ public sealed partial class PageContextOrchestrationServiceTests
         // Then
         Assert.Same(expected: context, actual: result);
         Assert.Same(expected: user, actual: result.User);
-        httpContextService.VerifyAll();
-        pageAuthorizationService.VerifyAll();
-        authorizationService.VerifyAll();
+        httpContextProcessingService.VerifyAll();
+        pageAuthorizationProcessingService.VerifyAll();
+        authorizationProcessingService.VerifyAll();
     }
 }

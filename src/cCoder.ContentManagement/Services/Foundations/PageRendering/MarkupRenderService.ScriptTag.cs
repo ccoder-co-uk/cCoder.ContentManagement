@@ -49,7 +49,7 @@ internal sealed partial class MarkupRenderService
             return script;
         }
 
-        Script dataScript = scriptReaderBroker.GetScript(
+        Script dataScript = contentRenderBroker.GetScript(
             appId: session.Request.AppId,
             name: name);
 

@@ -17,8 +17,7 @@ public sealed partial class JsonServiceRecordTests
     {
         // Given
         JsonService service = new(
-            jsonBroker: new JsonBroker(),
-            systemTextJsonBroker: new SystemTextJsonBroker());
+            jsonBroker: new JsonBroker());
 
         // When
         JsonRecordsDocument document = service.ParseJsonRecordsDocument(

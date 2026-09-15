@@ -13,6 +13,9 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using System.Security;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -32,7 +35,7 @@ public partial class ScriptOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         scriptEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseScriptAddEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseScriptAddEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +47,45 @@ public partial class ScriptOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         scriptProcessingServiceMock.Verify(expression: x => x.AddScriptAsync(newScript: entity), times: Times.Once);
-        scriptEventProcessingServiceMock.Verify(expression: x => x.RaiseScriptAddEventAsync(entity: entity), times: Times.Once);
+        scriptEventProcessingServiceMock.Verify(expression: x => x.RaiseScriptAddEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Script_create")),
+            times: Times.Once);
+
+        entity.CreatedBy.Should()
+            .Be(expected: CurrentUserId);
+
+        entity.LastUpdatedBy.Should()
+            .Be(expected: CurrentUserId);
+    }
+
+    [Fact]
+    public async Task Script_WhenUserLacksCreatePrivilege_IsNotPersisted()
+    {
+        // Given
+        Script entity = CreateRandomScript();
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Script_create")))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
+
+        // When
+        Func<Task> action = async () =>
+            await orchestrationService.AddScriptAsync(newScript: entity);
+
+        // Then
+        await action.Should()
+            .ThrowAsync<ContentManagementSecurityException>();
+
+        scriptProcessingServiceMock.VerifyNoOtherCalls();
+        scriptEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

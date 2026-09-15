@@ -11,16 +11,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class ContentEventService(IContentEventBroker contentEventBroker) : IContentEventService
 {
-    public ValueTask RaiseContentAddEventAsync(Content content) =>
+    public ValueTask RaiseContentAddEventAsync(Content content, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseContentAddEventAsync(inputs: [content]);
+        ValidateRaiseContentAddEventAsync(inputs: [content, userId]);
 
         EventMessage<Content> message = new EventMessage<Content>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = contentEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = content
         };
@@ -29,16 +29,16 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
 
     }, isValueTask: true);
 
-    public ValueTask RaiseContentUpdateEventAsync(Content content) =>
+    public ValueTask RaiseContentUpdateEventAsync(Content content, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseContentUpdateEventAsync(inputs: [content]);
+        ValidateRaiseContentUpdateEventAsync(inputs: [content, userId]);
 
         EventMessage<Content> message = new EventMessage<Content>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = contentEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = content
         };
@@ -47,16 +47,16 @@ internal partial class ContentEventService(IContentEventBroker contentEventBroke
 
     }, isValueTask: true);
 
-    public ValueTask RaiseContentDeleteEventAsync(Content content) =>
+    public ValueTask RaiseContentDeleteEventAsync(Content content, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseContentDeleteEventAsync(inputs: [content]);
+        ValidateRaiseContentDeleteEventAsync(inputs: [content, userId]);
 
         EventMessage<Content> message = new EventMessage<Content>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = contentEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = content
         };

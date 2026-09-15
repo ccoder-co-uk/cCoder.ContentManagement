@@ -8,25 +8,32 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class PageRoleEventProcessingService(IPageRoleEventService eventService) : IPageRoleEventProcessingService
+internal partial class PageRoleEventProcessingService(IPageRoleEventService eventService)
+    : IPageRoleEventProcessingService
 {
-    public ValueTask RaisePageRoleAddEventAsync(PageRole pageRole) =>
+    public ValueTask RaisePageRoleAddEventAsync(PageRole pageRole, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageRoleAddEventAsync(inputs: [pageRole]);
+        ValidateRaisePageRoleAddEventAsync(inputs: [pageRole, userId]);
         ValidatePageRole(pageRole: pageRole, parameterName: "entity");
 
-        return eventService.RaisePageRoleAddEventAsync(entity: pageRole);
+
+        return eventService.RaisePageRoleAddEventAsync(
+            entity: pageRole,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaisePageRoleDeleteEventAsync(PageRole pageRole) =>
+    public ValueTask RaisePageRoleDeleteEventAsync(PageRole pageRole, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePageRoleDeleteEventAsync(inputs: [pageRole]);
+        ValidateRaisePageRoleDeleteEventAsync(inputs: [pageRole, userId]);
         ValidatePageRole(pageRole: pageRole, parameterName: "entity");
 
-        return eventService.RaisePageRoleDeleteEventAsync(entity: pageRole);
+
+        return eventService.RaisePageRoleDeleteEventAsync(
+            entity: pageRole,
+            userId: userId);
 
     }, isValueTask: true);
 

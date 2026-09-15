@@ -17,6 +17,7 @@ using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
+using cCoder.ContentManagement.Models;
 
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
@@ -25,16 +26,27 @@ public partial class LayoutOrchestrationServiceTests
 {
     private readonly Mock<ILayoutProcessingService> layoutProcessingServiceMock;
     private readonly Mock<ILayoutEventProcessingService> layoutEventProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly LayoutOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
 
     public LayoutOrchestrationServiceTests()
     {
         layoutProcessingServiceMock = new Mock<ILayoutProcessingService>(behavior: MockBehavior.Strict);
         layoutEventProcessingServiceMock = new Mock<ILayoutEventProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.IsAny<AuthorizationContext>()));
 
         orchestrationService = new LayoutOrchestrationService(
 processingService: layoutProcessingServiceMock.Object,
-eventService: layoutEventProcessingServiceMock.Object
+eventService: layoutEventProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 

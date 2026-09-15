@@ -35,6 +35,12 @@ public partial class CultureOrchestrationServiceTests
 
         // Then
         cultureProcessingServiceMock.Verify(expression: x => x.DeleteAllCultureAsync(deletedCulture: entities), times: Times.Once);
+
+        cultureProcessingServiceMock.Verify(
+            expression: x => x.GetOwningAppId(
+                cultureId: entities[0].Id),
+            times: Times.Once);
+
         cultureProcessingServiceMock.VerifyNoOtherCalls();
         cultureEventProcessingServiceMock.VerifyNoOtherCalls();
     }

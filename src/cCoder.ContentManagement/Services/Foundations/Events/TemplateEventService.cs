@@ -11,16 +11,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class TemplateEventService(ITemplateEventBroker templateEventBroker) : ITemplateEventService
 {
-    public ValueTask RaiseTemplateAddEventAsync(Template template) =>
+    public ValueTask RaiseTemplateAddEventAsync(Template template, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseTemplateAddEventAsync(inputs: [template]);
+        ValidateRaiseTemplateAddEventAsync(inputs: [template, userId]);
 
         EventMessage<Template> message = new EventMessage<Template>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = templateEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = template
         };
@@ -29,16 +29,16 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
 
     }, isValueTask: true);
 
-    public ValueTask RaiseTemplateUpdateEventAsync(Template template) =>
+    public ValueTask RaiseTemplateUpdateEventAsync(Template template, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseTemplateUpdateEventAsync(inputs: [template]);
+        ValidateRaiseTemplateUpdateEventAsync(inputs: [template, userId]);
 
         EventMessage<Template> message = new EventMessage<Template>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = templateEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = template
         };
@@ -47,16 +47,16 @@ internal partial class TemplateEventService(ITemplateEventBroker templateEventBr
 
     }, isValueTask: true);
 
-    public ValueTask RaiseTemplateDeleteEventAsync(Template template) =>
+    public ValueTask RaiseTemplateDeleteEventAsync(Template template, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseTemplateDeleteEventAsync(inputs: [template]);
+        ValidateRaiseTemplateDeleteEventAsync(inputs: [template, userId]);
 
         EventMessage<Template> message = new EventMessage<Template>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = templateEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = template
         };

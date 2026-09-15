@@ -12,7 +12,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class ComponentOrchestrationService(
     IComponentProcessingService processingService,
-    IComponentEventProcessingService eventService) : IComponentOrchestrationService
+    IComponentEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IComponentOrchestrationService
 {
     public Component GetComponent(int componentId) =>
         TryCatch<Component>(operation: () =>
@@ -36,8 +38,15 @@ internal partial class ComponentOrchestrationService(
         ValidateComponentOnAdd(inputs: [newComponent]);
         ValidateComponent(component: newComponent, parameterName: "entity");
 
+        Authorize(appId: newComponent.AppId, privilege: "Component_create");
+        StampForAdd(component: newComponent);
+
         Component result = await processingService.AddComponentAsync(newComponent: newComponent);
-        await eventService.RaiseComponentAddEventAsync(entity: result);
+
+        await eventService.RaiseComponentAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -48,8 +57,15 @@ internal partial class ComponentOrchestrationService(
         ValidateComponentOnUpdate(inputs: [updatedComponent]);
         ValidateComponent(component: updatedComponent, parameterName: "entity");
 
+        Authorize(appId: updatedComponent.AppId, privilege: "Component_update");
+        StampForUpdate(component: updatedComponent);
+
         Component result = await processingService.UpdateComponentAsync(updatedComponent: updatedComponent);
-        await eventService.RaiseComponentUpdateEventAsync(entity: result);
+
+        await eventService.RaiseComponentUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -77,7 +93,12 @@ internal partial class ComponentOrchestrationService(
             return;
         }
 
-        await eventService.RaiseComponentDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Component_delete");
+
+        await eventService.RaiseComponentDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(componentId: componentId);
 
     }, isValueTask: true);
@@ -220,9 +241,15 @@ internal partial class ComponentOrchestrationService(
     private async ValueTask<Component> ExecuteAddComponentAsync(Component newComponent)
     {
         ValidateComponent(component: newComponent, parameterName: "entity");
+        Authorize(appId: newComponent.AppId, privilege: "Component_create");
+        StampForAdd(component: newComponent);
 
         Component result = await processingService.AddComponentAsync(newComponent: newComponent);
-        await eventService.RaiseComponentAddEventAsync(entity: result);
+
+        await eventService.RaiseComponentAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
@@ -283,7 +310,12 @@ internal partial class ComponentOrchestrationService(
             return;
         }
 
-        await eventService.RaiseComponentDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Component_delete");
+
+        await eventService.RaiseComponentDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(componentId: componentId);
     }
 
@@ -293,9 +325,36 @@ internal partial class ComponentOrchestrationService(
     private async ValueTask<Component> ExecuteUpdateComponentAsync(Component updatedComponent)
     {
         ValidateComponent(component: updatedComponent, parameterName: "entity");
+        Authorize(appId: updatedComponent.AppId, privilege: "Component_update");
+        StampForUpdate(component: updatedComponent);
 
         Component result = await processingService.UpdateComponentAsync(updatedComponent: updatedComponent);
-        await eventService.RaiseComponentUpdateEventAsync(entity: result);
+
+        await eventService.RaiseComponentUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
+
+    private void Authorize(int? appId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = appId,
+                    Privilege = privilege
+                }
+            });
+
+    private void StampForAdd(Component component)
+    {
+        string userId = authorizationProcessingService.GetCurrentUserId();
+        component.CreatedBy = userId;
+        component.LastUpdatedBy = userId;
+    }
+
+    private void StampForUpdate(Component component) =>
+        component.LastUpdatedBy = authorizationProcessingService.GetCurrentUserId();
 }

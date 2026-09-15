@@ -36,7 +36,9 @@ public partial class PageRoleEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageRoleDeleteEventAsync(pageRole: entity);
+        await service.RaisePageRoleDeleteEventAsync(
+            pageRole: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -56,9 +58,6 @@ public partial class PageRoleEventServiceTests
 expression: x => x.RaisePageRoleDeleteEventAsync(message: It.IsAny<EventMessage<PageRole>>()),
 times: Times.Once
         );
-
-        pageRoleEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         pageRoleEventBrokerMock.VerifyNoOtherCalls();
     }

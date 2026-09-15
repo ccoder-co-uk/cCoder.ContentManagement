@@ -10,7 +10,11 @@ using cCoder.ContentManagement.Services.Processings;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal partial class PageInfoOrchestrationService(IPageInfoProcessingService processingService, IPageInfoEventProcessingService eventService) : IPageInfoOrchestrationService
+internal partial class PageInfoOrchestrationService(
+    IPageInfoProcessingService processingService,
+    IPageInfoEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IPageInfoOrchestrationService
 {
     public PageInfo GetPageInfo(int pageInfoId) =>
         TryCatch<PageInfo>(operation: () =>
@@ -31,8 +35,13 @@ internal partial class PageInfoOrchestrationService(IPageInfoProcessingService p
     {
         ValidatePageInfoOnAdd(inputs: [newPageInfo]);
         ValidatePageInfo(pageInfo: newPageInfo, parameterName: "entity");
+        Authorize(pageId: newPageInfo.PageId, privilege: "PageInfo_create");
         PageInfo result = await processingService.AddPageInfoAsync(newPageInfo: newPageInfo);
-        await eventService.RaisePageInfoAddEventAsync(entity: result);
+
+        await eventService.RaisePageInfoAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -42,8 +51,13 @@ internal partial class PageInfoOrchestrationService(IPageInfoProcessingService p
     {
         ValidatePageInfoOnUpdate(inputs: [updatedPageInfo]);
         ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "entity");
+        Authorize(pageId: updatedPageInfo.PageId, privilege: "PageInfo_update");
         PageInfo result = await processingService.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo);
-        await eventService.RaisePageInfoUpdateEventAsync(entity: result);
+
+        await eventService.RaisePageInfoUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -71,7 +85,12 @@ internal partial class PageInfoOrchestrationService(IPageInfoProcessingService p
             return;
         }
 
-        await eventService.RaisePageInfoDeleteEventAsync(entity: entity);
+        Authorize(pageId: entity.PageId, privilege: "PageInfo_delete");
+
+        await eventService.RaisePageInfoDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(pageInfoId: pageInfoId);
 
     }, isValueTask: true);
@@ -161,11 +180,27 @@ internal partial class PageInfoOrchestrationService(IPageInfoProcessingService p
         return pageInfos;
     }
 
+    private void Authorize(int pageId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = processingService.GetOwningAppId(pageId: pageId),
+                    Privilege = privilege
+                }
+            });
+
     private async ValueTask<PageInfo> ExecuteAddPageInfoAsync(PageInfo newPageInfo)
     {
         ValidatePageInfo(pageInfo: newPageInfo, parameterName: "entity");
+        Authorize(pageId: newPageInfo.PageId, privilege: "PageInfo_create");
         PageInfo result = await processingService.AddPageInfoAsync(newPageInfo: newPageInfo);
-        await eventService.RaisePageInfoAddEventAsync(entity: result);
+
+        await eventService.RaisePageInfoAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
@@ -190,15 +225,25 @@ internal partial class PageInfoOrchestrationService(IPageInfoProcessingService p
             return;
         }
 
-        await eventService.RaisePageInfoDeleteEventAsync(entity: entity);
+        Authorize(pageId: entity.PageId, privilege: "PageInfo_delete");
+
+        await eventService.RaisePageInfoDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(pageInfoId: pageInfoId);
     }
 
     private async ValueTask<PageInfo> ExecuteUpdatePageInfoAsync(PageInfo updatedPageInfo)
     {
         ValidatePageInfo(pageInfo: updatedPageInfo, parameterName: "entity");
+        Authorize(pageId: updatedPageInfo.PageId, privilege: "PageInfo_update");
         PageInfo result = await processingService.UpdatePageInfoAsync(updatedPageInfo: updatedPageInfo);
-        await eventService.RaisePageInfoUpdateEventAsync(entity: result);
+
+        await eventService.RaisePageInfoUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 }

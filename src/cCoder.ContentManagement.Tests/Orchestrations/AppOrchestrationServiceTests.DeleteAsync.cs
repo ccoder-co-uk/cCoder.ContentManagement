@@ -17,6 +17,7 @@ using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParam
 using Moq;
 using Xunit;
 using cCoder.ContentManagement.Models;
+using FluentAssertions;
 
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
@@ -24,7 +25,7 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class AppOrchestrationServiceTests
 {
     [Fact]
-    public async Task ShouldGetThenDeleteThenRaiseDeleteEventAsyncWhenDeleteAsync()
+    public void ShouldGetAndAuthorizeWhenGetAppForDelete()
     {
         // Given
         int id = 1;
@@ -41,12 +42,8 @@ public partial class AppOrchestrationServiceTests
         appProcessingServiceMock.Setup(expression: x => x.GetAppForDelete(appId: id))
             .Returns(value: app);
 
-        appEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseAppDeleteEventAsync(app: app))
-            .Returns(value: ValueTask.CompletedTask);
-
         // When
-        await orchestrationService.DeleteAsync(appId: id);
+        App result = orchestrationService.GetAppForDelete(appId: id);
 
         // Then
         authorizationProcessingServiceMock.Verify(
@@ -57,7 +54,9 @@ public partial class AppOrchestrationServiceTests
             times: Times.Once);
 
         appProcessingServiceMock.Verify(expression: x => x.GetAppForDelete(appId: id), times: Times.Once);
-        appEventProcessingServiceMock.Verify(expression: x => x.RaiseAppDeleteEventAsync(app: app), times: Times.Once);
+
+        result.Should()
+            .BeSameAs(expected: app);
     }
 
     [Fact]

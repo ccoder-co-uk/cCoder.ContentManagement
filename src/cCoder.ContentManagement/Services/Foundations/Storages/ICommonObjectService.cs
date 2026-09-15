@@ -12,25 +12,16 @@ internal interface ICommonObjectService
 
     IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false);
 
-    ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject);
+    ValueTask<CommonObject> AddCommonObjectAsync(
+        CommonObject newCommonObject,
+        string userId);
 
-    ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);
+    ValueTask<CommonObject> UpdateCommonObjectAsync(
+        CommonObject updatedCommonObject,
+        string userId);
 
     ValueTask DeleteAsync(int commonObjectId);
 
     CommonObject[] DeserializeCommonObjects(object payload);
 
-    string GetCurrentUserId();
-
-    void Authorize(int? appId, string privilege);
-
-    bool IsAdminOfApp(int appId);
-
-    IEnumerable<CommonObject> GetLatestSet();
-
-    void CacheCommonObjectComponent(CommonObject commonObject);
-
-    void CacheCommonObjectResource(CommonObject commonObject);
-
-    void CacheCommonObjectScript(CommonObject commonObject);
 }

@@ -7,26 +7,39 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class PackageItemEventProcessingService(IPackageItemEventService eventService) : IPackageItemEventProcessingService
+internal partial class PackageItemEventProcessingService(IPackageItemEventService eventService)
+    : IPackageItemEventProcessingService
 {
-    public ValueTask RaisePackageItemAddEventAsync(PackageItem packageItem) =>
+    public ValueTask RaisePackageItemAddEventAsync(PackageItem packageItem, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePackageItemAddEventAsync(inputs: [packageItem]);
-        return eventService.RaisePackageItemAddEventAsync(entity: packageItem);
+        ValidateRaisePackageItemAddEventAsync(inputs: [packageItem, userId]);
+
+        return eventService.RaisePackageItemAddEventAsync(
+            entity: packageItem,
+            userId: userId);
+
     }, isValueTask: true);
 
-    public ValueTask RaisePackageItemUpdateEventAsync(PackageItem packageItem) =>
+    public ValueTask RaisePackageItemUpdateEventAsync(PackageItem packageItem, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePackageItemUpdateEventAsync(inputs: [packageItem]);
-        return eventService.RaisePackageItemUpdateEventAsync(entity: packageItem);
+        ValidateRaisePackageItemUpdateEventAsync(inputs: [packageItem, userId]);
+
+        return eventService.RaisePackageItemUpdateEventAsync(
+            entity: packageItem,
+            userId: userId);
+
     }, isValueTask: true);
 
-    public ValueTask RaisePackageItemDeleteEventAsync(PackageItem packageItem) =>
+    public ValueTask RaisePackageItemDeleteEventAsync(PackageItem packageItem, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaisePackageItemDeleteEventAsync(inputs: [packageItem]);
-        return eventService.RaisePackageItemDeleteEventAsync(entity: packageItem);
+        ValidateRaisePackageItemDeleteEventAsync(inputs: [packageItem, userId]);
+
+        return eventService.RaisePackageItemDeleteEventAsync(
+            entity: packageItem,
+            userId: userId);
+
     }, isValueTask: true);
 }

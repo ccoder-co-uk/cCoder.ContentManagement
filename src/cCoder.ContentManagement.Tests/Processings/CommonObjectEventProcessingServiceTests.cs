@@ -25,11 +25,13 @@ public partial class CommonObjectEventProcessingServiceTests
 {
     private readonly Mock<ICommonObjectEventService> commonObjectEventServiceMock;
     private readonly CommonObjectEventProcessingService service;
+    private const string CurrentUserId = "test-user";
 
     public CommonObjectEventProcessingServiceTests()
     {
         commonObjectEventServiceMock = new Mock<ICommonObjectEventService>(behavior: MockBehavior.Strict);
-        service = new CommonObjectEventProcessingService(eventService: commonObjectEventServiceMock.Object);
+        service = new CommonObjectEventProcessingService(
+            eventService: commonObjectEventServiceMock.Object);
     }
 
     private static CommonObject CreateRandomCommonObject() =>

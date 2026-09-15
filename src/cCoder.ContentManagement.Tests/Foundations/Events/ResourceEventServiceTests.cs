@@ -31,9 +31,6 @@ public partial class ResourceEventServiceTests
         resourceEventBrokerMock = new Mock<IResourceEventBroker>(behavior: MockBehavior.Strict);
         resourceEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        resourceEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.ResourceEventService(
 resourceEventBroker: resourceEventBrokerMock.Object
         );

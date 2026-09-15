@@ -37,7 +37,7 @@ public partial class CultureOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         cultureEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseCultureDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseCultureDeleteEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -46,7 +46,7 @@ public partial class CultureOrchestrationServiceTests
         // Then
         cultureProcessingServiceMock.Verify(expression: x => x.GetCulture(cultureId: id), times: Times.Once);
         cultureProcessingServiceMock.Verify(expression: x => x.DeleteAsync(cultureId: id), times: Times.Once);
-        cultureEventProcessingServiceMock.Verify(expression: x => x.RaiseCultureDeleteEventAsync(entity: entity), times: Times.Once);
+        cultureEventProcessingServiceMock.Verify(expression: x => x.RaiseCultureDeleteEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
 }

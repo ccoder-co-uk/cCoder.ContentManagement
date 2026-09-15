@@ -25,11 +25,13 @@ public partial class AppCultureEventProcessingServiceTests
 {
     private readonly Mock<IAppCultureEventService> appCultureEventServiceMock;
     private readonly AppCultureEventProcessingService service;
+    private const string CurrentUserId = "test-user";
 
     public AppCultureEventProcessingServiceTests()
     {
         appCultureEventServiceMock = new Mock<IAppCultureEventService>(behavior: MockBehavior.Strict);
-        service = new AppCultureEventProcessingService(eventService: appCultureEventServiceMock.Object);
+        service = new AppCultureEventProcessingService(
+            eventService: appCultureEventServiceMock.Object);
     }
 
     private static AppCulture CreateRandomAppCulture() =>

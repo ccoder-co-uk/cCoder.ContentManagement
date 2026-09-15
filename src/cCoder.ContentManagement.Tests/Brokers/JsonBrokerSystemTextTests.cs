@@ -4,6 +4,7 @@
 
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.Serialization;
+using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using System.Text.Json;
 using Xunit;
@@ -16,10 +17,10 @@ public sealed partial class JsonBrokerSystemTextTests
     public void DeserializeSystemText_WhenPropertyCaseDiffers_IsCaseInsensitive()
     {
         // Given
-        SystemTextJsonBroker broker = new();
+        JsonBroker broker = new();
 
         // When
-        TestPayload result = broker.Deserialize<TestPayload>(
+        TestPayload result = broker.ParseJson<TestPayload>(
             json: "{\"name\":\"Example\"}");
 
         // Then
@@ -31,7 +32,7 @@ public sealed partial class JsonBrokerSystemTextTests
     public void SerializeSystemText_WhenMarkupIsPresent_PreservesSystemTextEscaping()
     {
         // Given
-        SystemTextJsonBroker broker = new();
+        JsonBroker broker = new();
 
         // When
         string result = broker.Serialize(
@@ -46,7 +47,7 @@ public sealed partial class JsonBrokerSystemTextTests
     public void ParseRecords_WhenPayloadIsSingleObject_ReturnsOneRecord()
     {
         // Given
-        SystemTextJsonBroker broker = new();
+        JsonBroker broker = new();
         JsonElement payload = ParseElement(json: "{\"name\":\"single\"}");
 
         // When
@@ -66,7 +67,7 @@ public sealed partial class JsonBrokerSystemTextTests
     public void ParseRecords_WhenPayloadIsArray_ReturnsEveryRecord()
     {
         // Given
-        SystemTextJsonBroker broker = new();
+        JsonBroker broker = new();
 
         JsonElement payload = ParseElement(
             json: "[{\"name\":\"first\"},{\"name\":\"second\"}]");
@@ -85,7 +86,7 @@ public sealed partial class JsonBrokerSystemTextTests
     public void ParseRecords_WhenPayloadHasValueWrapper_ReturnsWrappedRecords()
     {
         // Given
-        SystemTextJsonBroker broker = new();
+        JsonBroker broker = new();
 
         JsonElement payload = ParseElement(
             json: "{\"value\":[{\"name\":\"wrapped\"}]}");
@@ -107,7 +108,7 @@ public sealed partial class JsonBrokerSystemTextTests
     public void ParseRecords_WhenPayloadIsNull_ReturnsNull()
     {
         // Given
-        SystemTextJsonBroker broker = new();
+        JsonBroker broker = new();
         JsonElement payload = ParseElement(json: "null");
 
         // When
@@ -122,7 +123,7 @@ public sealed partial class JsonBrokerSystemTextTests
     public void Normalize_WhenValueIsNotJsonElement_PreservesOriginalValue()
     {
         // Given
-        SystemTextJsonBroker broker = new();
+        JsonBroker broker = new();
         TestPayload payload = new() { Name = "unchanged" };
 
         // When
@@ -140,7 +141,7 @@ public sealed partial class JsonBrokerSystemTextTests
     public void Normalize_WhenValueIsJsonElement_ReturnsRawJsonWithoutLeakingElement()
     {
         // Given
-        SystemTextJsonBroker broker = new();
+        JsonBroker broker = new();
         JsonElement payload = ParseElement(json: "{\"name\":\"json\"}");
 
         // When
@@ -155,6 +156,54 @@ public sealed partial class JsonBrokerSystemTextTests
 
         result.Value.Should()
             .BeNull();
+    }
+
+    [Fact]
+    public void SerializeIgnoringReferences_WhenPackageComponentPayloadProvided_RoundTripsPayload()
+    {
+        // Given
+        JsonBroker broker = new();
+
+        Component[] payload =
+        [
+            new Component
+            {
+                Name = "Navigation",
+                Key = "Core",
+                Content = "<nav></nav>",
+                Script = ""
+            }
+        ];
+
+        // When
+        string json = broker.SerializeIgnoringReferences(value: payload);
+        Component[] result = broker.ParseJson<Component[]>(json: json);
+
+        // Then
+        result.Should()
+            .ContainSingle()
+            .Which.Name.Should()
+            .Be(expected: "Navigation");
+
+        result.Single()
+            .Content.Should()
+            .Be(expected: "<nav></nav>");
+    }
+
+    [Fact]
+    public void RemoveJsonProperty_WhenNestedCachePayloadUsesDifferentCase_RemovesProperty()
+    {
+        // Given
+        JsonBroker broker = new();
+        object payload = broker.ParseJson(json: "{\"Name\":\"Navigation\",\"Children\":[]}");
+
+        // When
+        broker.RemoveJsonProperty(value: payload, propertyName: "name");
+        string result = broker.Serialize(value: payload);
+
+        // Then
+        result.Should()
+            .Be(expected: "{\"Children\":[]}");
     }
 
     private static JsonElement ParseElement(string json)

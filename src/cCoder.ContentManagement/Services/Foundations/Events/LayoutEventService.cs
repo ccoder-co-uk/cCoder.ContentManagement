@@ -11,16 +11,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker) : ILayoutEventService
 {
-    public ValueTask RaiseLayoutAddEventAsync(Layout layout) =>
+    public ValueTask RaiseLayoutAddEventAsync(Layout layout, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseLayoutAddEventAsync(inputs: [layout]);
+        ValidateRaiseLayoutAddEventAsync(inputs: [layout, userId]);
 
         EventMessage<Layout> message = new EventMessage<Layout>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = layoutEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = layout
         };
@@ -29,16 +29,16 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker) 
 
     }, isValueTask: true);
 
-    public ValueTask RaiseLayoutUpdateEventAsync(Layout layout) =>
+    public ValueTask RaiseLayoutUpdateEventAsync(Layout layout, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseLayoutUpdateEventAsync(inputs: [layout]);
+        ValidateRaiseLayoutUpdateEventAsync(inputs: [layout, userId]);
 
         EventMessage<Layout> message = new EventMessage<Layout>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = layoutEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = layout
         };
@@ -47,16 +47,16 @@ internal partial class LayoutEventService(ILayoutEventBroker layoutEventBroker) 
 
     }, isValueTask: true);
 
-    public ValueTask RaiseLayoutDeleteEventAsync(Layout layout) =>
+    public ValueTask RaiseLayoutDeleteEventAsync(Layout layout, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseLayoutDeleteEventAsync(inputs: [layout]);
+        ValidateRaiseLayoutDeleteEventAsync(inputs: [layout, userId]);
 
         EventMessage<Layout> message = new EventMessage<Layout>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = layoutEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = layout
         };

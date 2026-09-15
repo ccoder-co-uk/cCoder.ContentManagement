@@ -28,14 +28,21 @@ public partial class TemplateEventProcessingServiceTests
         Template entity = CreateRandomTemplate();
 
         templateEventServiceMock
-            .Setup(expression: x => x.RaiseTemplateUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseTemplateUpdateEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseTemplateUpdateEventAsync(template: entity);
+        await service.RaiseTemplateUpdateEventAsync(
+            template: entity,
+            userId: CurrentUserId);
 
         // Then
-        templateEventServiceMock.Verify(expression: x => x.RaiseTemplateUpdateEventAsync(entity: entity), times: Times.Once);
+        templateEventServiceMock.Verify(expression: x => x.RaiseTemplateUpdateEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
+
         templateEventServiceMock.VerifyNoOtherCalls();
     }
 

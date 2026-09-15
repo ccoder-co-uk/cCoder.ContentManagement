@@ -13,15 +13,10 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using System.Security;
-
-
-
 using FluentAssertions;
 using Moq;
 using Xunit;
 using CmsDataModels = cCoder.Data.Models.CMS;
-using SecurityDataModels = cCoder.Data.Models.Security;
 
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
@@ -29,18 +24,13 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class ComponentServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
+    public async Task ShouldDelegateToBrokerWhenUpdateAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
         Component component = CreateRandomComponent(id: 7, appId: 7);
 
         CmsDataModels.Component submitted = null;
 
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"));
 
         componentBrokerMock
             .Setup(expression: x => x.UpdateComponentAsync(updatedComponent: It.IsAny<CmsDataModels.Component>()))
@@ -138,33 +128,6 @@ predicate: (FluentAssertions.Equivalency.IMemberInfo info) =>
 
         componentBrokerMock.Verify(expression: x => x.UpdateComponentAsync(updatedComponent: It.IsAny<CmsDataModels.Component>()), times: Times.Once);
         componentBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"), times: Times.Once);
-    }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
-    {
-        // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
-        Component component = CreateRandomComponent(id: 7, appId: 7);
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await componentService.UpdateComponentAsync(updatedComponent: component);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        componentBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Component_update"), times: Times.Once);
     }
 
 }

@@ -28,14 +28,21 @@ public partial class AppCultureEventProcessingServiceTests
         AppCulture entity = CreateRandomAppCulture();
 
         appCultureEventServiceMock
-            .Setup(expression: x => x.RaiseAppCultureDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseAppCultureDeleteEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseAppCultureDeleteEventAsync(appCulture: entity);
+        await service.RaiseAppCultureDeleteEventAsync(
+            appCulture: entity,
+            userId: CurrentUserId);
 
         // Then
-        appCultureEventServiceMock.Verify(expression: x => x.RaiseAppCultureDeleteEventAsync(entity: entity), times: Times.Once);
+        appCultureEventServiceMock.Verify(expression: x => x.RaiseAppCultureDeleteEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
+
         appCultureEventServiceMock.VerifyNoOtherCalls();
     }
 

@@ -17,7 +17,7 @@ public sealed partial class ExposureBoundaryArchitectureTests
     [InlineData("cCoder.ContentManagement.Exposures.AppManager", typeof(IAppManagerAggregationService))]
     [InlineData("cCoder.ContentManagement.Exposures.ComponentManager", typeof(IComponentOrchestrationService))]
     [InlineData("cCoder.ContentManagement.Exposures.PageManager", typeof(IPageOrchestrationService))]
-    [InlineData("cCoder.ContentManagement.Exposures.TemplateManager", typeof(ITemplateOrchestrationService))]
+    [InlineData("cCoder.ContentManagement.Exposures.TemplateManager", typeof(ITemplateManagerAggregationService))]
     public void Manager_WhenComposed_ShouldUseOnlyItsOrchestration(
         string managerTypeName,
         Type expectedDependencyType)

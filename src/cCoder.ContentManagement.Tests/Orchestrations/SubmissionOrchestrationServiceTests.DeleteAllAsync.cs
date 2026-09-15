@@ -27,16 +27,30 @@ public partial class SubmissionOrchestrationServiceTests
         // Given
         Submission[] entities = [CreateRandomSubmission()];
 
-        submissionProcessingServiceMock.Setup(expression: x => x.DeleteAllSubmissionAsync(deletedSubmission: entities))
+        submissionProcessingServiceMock.Setup(expression: x => x.DeleteAsync(submissionId: entities[0].Id))
+            .Returns(value: ValueTask.CompletedTask);
+
+        submissionEventProcessingServiceMock
+            .Setup(expression: service => service.RaiseSubmissionDeleteEventAsync(
+                entity: entities[0],
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
         await orchestrationService.DeleteAllSubmissionAsync(deletedSubmission: entities);
 
         // Then
-        submissionProcessingServiceMock.Verify(expression: x => x.DeleteAllSubmissionAsync(deletedSubmission: entities), times: Times.Once);
+        submissionProcessingServiceMock.Verify(
+            expression: x => x.DeleteAsync(submissionId: entities[0].Id),
+            times: Times.Once);
+
         submissionProcessingServiceMock.VerifyNoOtherCalls();
-        submissionEventProcessingServiceMock.VerifyNoOtherCalls();
+
+        submissionEventProcessingServiceMock.Verify(
+            expression: service => service.RaiseSubmissionDeleteEventAsync(
+                entity: entities[0],
+                userId: CurrentUserId),
+            times: Times.Once);
     }
 
 }

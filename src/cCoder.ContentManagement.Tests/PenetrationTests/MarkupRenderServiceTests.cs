@@ -7,6 +7,7 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Processings;
+using cCoder.ContentManagement.Tests.Brokers.Rendering;
 using Moq;
 
 namespace cCoder.ContentManagement.Tests.PenetrationTests;
@@ -19,12 +20,8 @@ public partial class MarkupRenderServiceTests
 
         return new(
             markupRenderService: new MarkupRenderService(
-                componentReaderBroker: Mock.Of<IComponentReaderBroker>(),
-                scriptReaderBroker: Mock.Of<IScriptReaderBroker>(),
-                renderFileContentBroker: Mock.Of<IRenderFileContentBroker>(),
+                contentRenderBroker: new TestContentRenderBroker(),
                 jsonBroker: Mock.Of<IJsonBroker>(),
-                systemTextJsonBroker: new SystemTextJsonBroker(),
-                workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
                 regularExpressionBroker: regularExpressionBroker));
     }
 }

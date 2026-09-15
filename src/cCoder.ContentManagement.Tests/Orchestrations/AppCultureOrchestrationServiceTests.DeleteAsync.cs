@@ -13,6 +13,7 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using cCoder.ContentManagement.Models;
 using Moq;
 using Xunit;
 
@@ -31,7 +32,7 @@ public partial class AppCultureOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         appCultureEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseAppCultureDeleteEventAsync(entity: appCulture))
+            .Setup(expression: x => x.RaiseAppCultureDeleteEventAsync(entity: appCulture, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -39,7 +40,14 @@ public partial class AppCultureOrchestrationServiceTests
 
         // Then
         appCultureProcessingServiceMock.Verify(expression: x => x.DeleteAppCultureAsync(deletedAppCulture: appCulture), times: Times.Once);
-        appCultureEventProcessingServiceMock.Verify(expression: x => x.RaiseAppCultureDeleteEventAsync(entity: appCulture), times: Times.Once);
+        appCultureEventProcessingServiceMock.Verify(expression: x => x.RaiseAppCultureDeleteEventAsync(entity: appCulture, userId: CurrentUserId), times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == appCulture.AppId
+                    && context.Request.Privilege == "AppCulture_delete")),
+            times: Times.Once);
     }
 
 }

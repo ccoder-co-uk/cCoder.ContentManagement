@@ -31,9 +31,6 @@ public partial class ScriptEventServiceTests
         scriptEventBrokerMock = new Mock<IScriptEventBroker>(behavior: MockBehavior.Strict);
         scriptEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        scriptEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.ScriptEventService(
 scriptEventBroker: scriptEventBrokerMock.Object
         );

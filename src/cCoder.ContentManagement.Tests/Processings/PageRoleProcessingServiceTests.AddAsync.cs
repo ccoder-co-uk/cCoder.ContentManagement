@@ -28,7 +28,7 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class PageRoleProcessingServiceTests
 {
     [Fact]
-    public async Task ShouldUseDataContextWhenUserCanCreatePageRoleForAddAsync()
+    public async Task AddPageRole_WhenPageRoleDoesNotExist_ShouldPersistAsync()
     {
         // Given
         User user = TestUsers.WithPrivilege(privilege: "pagerole_create", appId: 1);
@@ -62,9 +62,6 @@ public partial class PageRoleProcessingServiceTests
 
         LocalPageRole link = new() { PageId = page.Id, RoleId = roleToAdd.Id };
 
-        pageRoleServiceMock.Setup(expression: x => x.UserCanAddPageRole(pageRole: link))
-            .Returns(value: true);
-
         pageRoleServiceMock.Setup(expression: x => x.PageRoleExists(pageRole: link))
             .Returns(value: false);
 
@@ -80,7 +77,7 @@ public partial class PageRoleProcessingServiceTests
     }
 
     [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
+    public async Task ShouldReturnPageRoleWithoutPersistenceWhenPageRoleAlreadyExistsAsync()
     {
         // Given
         SecurityDataModels.Role roleToAdd = new()
@@ -101,19 +98,30 @@ public partial class PageRoleProcessingServiceTests
             Roles = [],
         };
 
-        pageRoleServiceMock.Setup(expression: x => x.UserCanAddPageRole(
-                pageRole: It.IsAny<LocalPageRole>()))
-            .Returns(value: false);
+        LocalPageRole link = new()
+        {
+            PageId = page.Id,
+            RoleId = roleToAdd.Id
+        };
+
+        pageRoleServiceMock
+            .Setup(expression: service =>
+                service.PageRoleExists(pageRole: link))
+            .Returns(value: true);
 
         // When
 
-        await Assert.ThrowsAsync<cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException>(testCode: async () =>
-            await pageRoleProcessingService.AddPageRoleAsync(
-newPageRole: new LocalPageRole { PageId = page.Id, RoleId = roleToAdd.Id }
-            )
-        );
+        LocalPageRole result = await pageRoleProcessingService
+            .AddPageRoleAsync(newPageRole: link);
 
         // Then
+        Assert.Same(expected: link, actual: result);
+
+        pageRoleServiceMock.Verify(
+            expression: service =>
+                service.AddPageRoleAsync(
+                    newPageRole: It.IsAny<LocalPageRole>()),
+            times: Times.Never);
     }
 
 }

@@ -11,16 +11,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class SubmissionEventService(ISubmissionEventBroker submissionEventBroker) : ISubmissionEventService
 {
-    public ValueTask RaiseSubmissionAddEventAsync(Submission submission) =>
+    public ValueTask RaiseSubmissionAddEventAsync(Submission submission, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseSubmissionAddEventAsync(inputs: [submission]);
+        ValidateRaiseSubmissionAddEventAsync(inputs: [submission, userId]);
 
         EventMessage<Submission> message = new EventMessage<Submission>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = submissionEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = submission
         };
@@ -29,16 +29,16 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
 
     }, isValueTask: true);
 
-    public ValueTask RaiseSubmissionUpdateEventAsync(Submission submission) =>
+    public ValueTask RaiseSubmissionUpdateEventAsync(Submission submission, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseSubmissionUpdateEventAsync(inputs: [submission]);
+        ValidateRaiseSubmissionUpdateEventAsync(inputs: [submission, userId]);
 
         EventMessage<Submission> message = new EventMessage<Submission>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = submissionEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = submission
         };
@@ -47,16 +47,16 @@ internal partial class SubmissionEventService(ISubmissionEventBroker submissionE
 
     }, isValueTask: true);
 
-    public ValueTask RaiseSubmissionDeleteEventAsync(Submission submission) =>
+    public ValueTask RaiseSubmissionDeleteEventAsync(Submission submission, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseSubmissionDeleteEventAsync(inputs: [submission]);
+        ValidateRaiseSubmissionDeleteEventAsync(inputs: [submission, userId]);
 
         EventMessage<Submission> message = new EventMessage<Submission>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = submissionEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = submission
         };

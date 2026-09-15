@@ -10,5 +10,6 @@ internal interface IPackageImportEventService
 {
     ValueTask RaiseImportAsync<T>(
         string eventName,
-        PackageItemImportEvent<T> import);
+        PackageItemImportEvent<T> import,
+        string userId);
 }

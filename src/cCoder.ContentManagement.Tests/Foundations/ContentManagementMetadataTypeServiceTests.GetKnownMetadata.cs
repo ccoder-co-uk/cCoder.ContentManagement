@@ -15,7 +15,6 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using Style = cCoder.ContentManagement.Models.Style;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using cCoder.ContentManagement.Extensions.OData;
 using FluentAssertions;
 using Xunit;
 
@@ -79,5 +78,23 @@ public partial class ContentManagementMetadataTypeServiceTests
         result.Types.Single(predicate: type => type.Name == nameof(RenderResult))
             .HasEndpoint.Should()
             .BeFalse();
+    }
+
+    [Fact]
+    public void GetKnownMetadataPayloads_WhenRequested_ReturnsSerializedMetadataSets()
+    {
+        // Given
+        // When
+        string[] result = service.GetKnownMetadataPayloads()
+            .ToArray();
+
+        // Then
+        result.Should()
+            .HaveCount(expected: 2);
+
+        result.Should()
+            .Contain(predicate: payload => payload.Contains(
+                value: "\"Name\":\"ContentManagement\"",
+                comparisonType: StringComparison.Ordinal));
     }
 }

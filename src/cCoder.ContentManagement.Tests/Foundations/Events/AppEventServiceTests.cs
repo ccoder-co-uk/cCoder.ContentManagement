@@ -31,9 +31,6 @@ public partial class AppEventServiceTests
         appEventBrokerMock = new Mock<IAppEventBroker>(behavior: MockBehavior.Strict);
         appEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        appEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.AppEventService(
 appEventBroker: appEventBrokerMock.Object
         );

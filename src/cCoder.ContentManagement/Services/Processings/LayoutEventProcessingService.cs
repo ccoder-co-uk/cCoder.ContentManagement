@@ -8,35 +8,45 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class LayoutEventProcessingService(ILayoutEventService eventService) : ILayoutEventProcessingService
+internal partial class LayoutEventProcessingService(ILayoutEventService eventService)
+    : ILayoutEventProcessingService
 {
-    public ValueTask RaiseLayoutAddEventAsync(Layout layout) =>
+    public ValueTask RaiseLayoutAddEventAsync(Layout layout, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseLayoutAddEventAsync(inputs: [layout]);
+        ValidateRaiseLayoutAddEventAsync(inputs: [layout, userId]);
         ValidateLayout(layout: layout, parameterName: "entity");
 
-        return eventService.RaiseLayoutAddEventAsync(entity: layout);
+
+        return eventService.RaiseLayoutAddEventAsync(
+            entity: layout,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseLayoutUpdateEventAsync(Layout layout) =>
+    public ValueTask RaiseLayoutUpdateEventAsync(Layout layout, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseLayoutUpdateEventAsync(inputs: [layout]);
+        ValidateRaiseLayoutUpdateEventAsync(inputs: [layout, userId]);
         ValidateLayout(layout: layout, parameterName: "entity");
 
-        return eventService.RaiseLayoutUpdateEventAsync(entity: layout);
+
+        return eventService.RaiseLayoutUpdateEventAsync(
+            entity: layout,
+            userId: userId);
 
     }, isValueTask: true);
 
-    public ValueTask RaiseLayoutDeleteEventAsync(Layout layout) =>
+    public ValueTask RaiseLayoutDeleteEventAsync(Layout layout, string userId) =>
         TryCatch(operation: () =>
     {
-        ValidateRaiseLayoutDeleteEventAsync(inputs: [layout]);
+        ValidateRaiseLayoutDeleteEventAsync(inputs: [layout, userId]);
         ValidateLayout(layout: layout, parameterName: "entity");
 
-        return eventService.RaiseLayoutDeleteEventAsync(entity: layout);
+
+        return eventService.RaiseLayoutDeleteEventAsync(
+            entity: layout,
+            userId: userId);
 
     }, isValueTask: true);
 

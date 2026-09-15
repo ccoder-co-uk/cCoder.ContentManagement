@@ -46,7 +46,6 @@ public partial class AppCultureServiceTests
 
         appCultureBrokerMock.Verify(expression: x => x.GetAllAppCultures(), times: Times.Once);
         appCultureBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

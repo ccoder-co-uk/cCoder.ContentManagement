@@ -11,17 +11,17 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class AppEventService(IAppEventBroker appEventBroker) : IAppEventService
 {
-    public ValueTask RaiseAppAddEventAsync(App app) =>
+    public ValueTask RaiseAppAddEventAsync(App app, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseAppAddEventAsync(inputs: [app]);
+        ValidateRaiseAppAddEventAsync(inputs: [app, userId]);
         ValidateApp(app: app, parameterName: "app");
 
         EventMessage<App> message = new EventMessage<App>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = appEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = app
         };
@@ -30,17 +30,17 @@ internal partial class AppEventService(IAppEventBroker appEventBroker) : IAppEve
 
     }, isValueTask: true);
 
-    public ValueTask RaiseAppUpdateEventAsync(App app) =>
+    public ValueTask RaiseAppUpdateEventAsync(App app, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseAppUpdateEventAsync(inputs: [app]);
+        ValidateRaiseAppUpdateEventAsync(inputs: [app, userId]);
         ValidateApp(app: app, parameterName: "app");
 
         EventMessage<App> message = new EventMessage<App>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = appEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = app
         };
@@ -49,17 +49,17 @@ internal partial class AppEventService(IAppEventBroker appEventBroker) : IAppEve
 
     }, isValueTask: true);
 
-    public ValueTask RaiseAppDeleteEventAsync(App app) =>
+    public ValueTask RaiseAppDeleteEventAsync(App app, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseAppDeleteEventAsync(inputs: [app]);
+        ValidateRaiseAppDeleteEventAsync(inputs: [app, userId]);
         ValidateApp(app: app, parameterName: "app");
 
         EventMessage<App> message = new EventMessage<App>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = appEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = app
         };

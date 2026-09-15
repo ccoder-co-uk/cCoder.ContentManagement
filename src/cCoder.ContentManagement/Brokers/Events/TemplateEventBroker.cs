@@ -8,15 +8,15 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-internal sealed class TemplateEventBroker(IAuthenticatedEventHub eventHub)
-    : AuthenticatedEventBroker(eventHub), ITemplateEventBroker
+internal sealed class TemplateEventBroker(IEventHub eventHub)
+    : ITemplateEventBroker
 {
     public ValueTask RaiseTemplateAddEventAsync(EventMessage<Template> message) =>
-        RaiseEventAsync(name: "template_add", message: message);
+        eventHub.RaiseEventAsync(name: "template_add", message: message);
 
     public ValueTask RaiseTemplateUpdateEventAsync(EventMessage<Template> message) =>
-        RaiseEventAsync(name: "template_update", message: message);
+        eventHub.RaiseEventAsync(name: "template_update", message: message);
 
     public ValueTask RaiseTemplateDeleteEventAsync(EventMessage<Template> message) =>
-        RaiseEventAsync(name: "template_delete", message: message);
+        eventHub.RaiseEventAsync(name: "template_delete", message: message);
 }

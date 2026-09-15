@@ -13,6 +13,10 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using cCoder.ContentManagement.Models;
+using System.Security;
+using cCoder.ContentManagement.Models.Exceptions;
+using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -35,7 +39,7 @@ public partial class ResourceOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         resourceEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseResourceDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseResourceDeleteEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +48,48 @@ public partial class ResourceOrchestrationServiceTests
         // Then
         resourceProcessingServiceMock.Verify(expression: x => x.GetResource(resourceId: id), times: Times.Once);
         resourceProcessingServiceMock.Verify(expression: x => x.DeleteAsync(resourceId: id), times: Times.Once);
-        resourceEventProcessingServiceMock.Verify(expression: x => x.RaiseResourceDeleteEventAsync(entity: entity), times: Times.Once);
+        resourceEventProcessingServiceMock.Verify(expression: x => x.RaiseResourceDeleteEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Resource_delete")),
+            times: Times.Once);
+    }
+
+    [Fact]
+    public async Task Resource_WhenUserLacksDeletePrivilege_IsNotDeleted()
+    {
+        // Given
+        int id = 1;
+        Resource entity = CreateRandomResource();
+
+        resourceProcessingServiceMock
+            .Setup(expression: service => service.GetResource(resourceId: id))
+            .Returns(value: entity);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Resource_delete")))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
+
+        // When
+        Func<Task> action = async () =>
+            await orchestrationService.DeleteAsync(resourceId: id);
+
+        // Then
+        await action.Should()
+            .ThrowAsync<ContentManagementSecurityException>();
+
+        resourceProcessingServiceMock.Verify(
+            expression: service => service.GetResource(resourceId: id),
+            times: Times.Once);
+
+        resourceProcessingServiceMock.VerifyNoOtherCalls();
+        resourceEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

@@ -11,7 +11,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class AppCultureOrchestrationService(
     IAppCultureProcessingService processingService,
-    IAppCultureEventProcessingService eventService) : IAppCultureOrchestrationService
+    IAppCultureEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IAppCultureOrchestrationService
 {
     public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
         TryCatch<IQueryable<AppCulture>>(operation: () =>
@@ -25,9 +27,14 @@ internal partial class AppCultureOrchestrationService(
     {
         ValidateAppCultureOnAdd(inputs: [newAppCulture]);
         ValidateAppCulture(appCulture: newAppCulture, parameterName: "entity");
+        Authorize(appId: newAppCulture.AppId, privilege: "AppCulture_create");
 
         AppCulture result = await processingService.AddAppCultureAsync(newAppCulture: newAppCulture);
-        await eventService.RaiseAppCultureAddEventAsync(entity: result);
+
+        await eventService.RaiseAppCultureAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -37,8 +44,12 @@ internal partial class AppCultureOrchestrationService(
     {
         ValidateAppCultureOnDelete(inputs: [deletedAppCulture]);
         ValidateAppCulture(appCulture: deletedAppCulture, parameterName: "entity");
+        Authorize(appId: deletedAppCulture.AppId, privilege: "AppCulture_delete");
 
-        await eventService.RaiseAppCultureDeleteEventAsync(entity: deletedAppCulture);
+        await eventService.RaiseAppCultureDeleteEventAsync(
+            entity: deletedAppCulture,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAppCultureAsync(deletedAppCulture: deletedAppCulture);
 
     }, isValueTask: true);
@@ -155,20 +166,40 @@ internal partial class AppCultureOrchestrationService(
     private async ValueTask<AppCulture> ExecuteAddAppCultureAsync(AppCulture newAppCulture)
     {
         ValidateAppCulture(appCulture: newAppCulture, parameterName: "entity");
+        Authorize(appId: newAppCulture.AppId, privilege: "AppCulture_create");
 
         AppCulture result = await processingService.AddAppCultureAsync(newAppCulture: newAppCulture);
-        await eventService.RaiseAppCultureAddEventAsync(entity: result);
+
+        await eventService.RaiseAppCultureAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
     private async ValueTask ExecuteDeleteAppCultureAsync(AppCulture deletedAppCulture)
     {
         ValidateAppCulture(appCulture: deletedAppCulture, parameterName: "entity");
+        Authorize(appId: deletedAppCulture.AppId, privilege: "AppCulture_delete");
 
-        await eventService.RaiseAppCultureDeleteEventAsync(entity: deletedAppCulture);
+        await eventService.RaiseAppCultureDeleteEventAsync(
+            entity: deletedAppCulture,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAppCultureAsync(deletedAppCulture: deletedAppCulture);
     }
 
     private IQueryable<AppCulture> ExecuteGetAllAppCulture(bool ignoreFilters = false) =>
         processingService.GetAllAppCulture(ignoreFilters: ignoreFilters);
+
+    private void Authorize(int? appId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = appId,
+                    Privilege = privilege
+                }
+            });
 }

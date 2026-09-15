@@ -8,14 +8,15 @@ namespace cCoder.ContentManagement.Services.Foundations.Authorization;
 
 internal interface IAuthorizationService
 {
-    void AuthorizeAuthorizationContext(AuthorizationContext context);
+    AuthorizationData GetAppWithRoles(int appId);
 
-    AuthorizationContext ResolveCurrentAuthorizationContext(
-        AuthorizationContext context);
+    AuthorizationData GetCurrentUser();
 
-    bool IsAdminAuthorizationContext(AuthorizationContext context);
+    string GetCurrentUserId();
 
-    bool IsAdminOfAppAuthorizationContext(AuthorizationContext context);
+    AuthorizationData GetRolesForUser(string userId);
 
-    bool UserCanPageAuthorizationContext(AuthorizationContext context);
+    AuthorizationData GetUserWithRoles(string userId);
+
+    bool HasApps();
 }

@@ -21,10 +21,8 @@ public sealed partial class NonRenderingProcessingBoundaryArchitectureTests
     [InlineData("PageProcessingService", "IPageService")]
     [InlineData("PageRenderCacheProcessingService", "IPageRenderCacheService")]
     [InlineData("PageRoleProcessingService", "IPageRoleService")]
-    [InlineData("PageRoleImportLookupProcessingService", "IPageRoleService")]
     [InlineData("PageRoleImportPersistenceProcessingService", "IPageRoleService")]
     [InlineData("ResourceProcessingService", "IResourceService")]
-    [InlineData("CurrentAppProcessingService", "IAppService")]
     public void ProcessingService_WhenComposed_UsesOnlyItsMatchingFoundation(
         string processingServiceName,
         string foundationServiceName)
@@ -55,6 +53,29 @@ public sealed partial class NonRenderingProcessingBoundaryArchitectureTests
     }
 
     [Fact]
+    public void CurrentAppOrchestration_WhenComposed_UsesAppAndHttpContextFoundations()
+    {
+        // Given
+        Type processingService = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Services.Orchestrations.CurrentAppOrchestrationService");
+
+        // When
+        string[] dependencyNames = processingService
+            .GetConstructors(
+                bindingAttr: BindingFlags.Instance
+                    | BindingFlags.NonPublic
+                    | BindingFlags.Public)
+            .Single()
+            .GetParameters()
+            .Select(selector: parameter => parameter.ParameterType.Name)
+            .ToArray();
+
+        // Then
+        dependencyNames.Should()
+            .BeEquivalentTo(expectation: ["IAppService", "IHttpContextService"]);
+    }
+
+    [Fact]
     public void AppFoundation_WhenExposed_UsesOnlyAppOperationContract()
     {
         // Given
@@ -80,7 +101,7 @@ public sealed partial class NonRenderingProcessingBoundaryArchitectureTests
     }
 
     [Fact]
-    public void AppFoundation_WhenComposed_UsesHttpContextBrokerInsteadOfHttpContext()
+    public void AppFoundation_WhenComposed_UsesOnlyItsAppBroker()
     {
         // Given
         Type appService = ContentManagementAssembly.GetType(
@@ -99,9 +120,9 @@ public sealed partial class NonRenderingProcessingBoundaryArchitectureTests
 
         // Then
         dependencies.Should()
-            .ContainSingle(predicate: type => type.Name == "IHttpContextBroker");
+            .ContainSingle();
 
-        dependencies.Should()
-            .NotContain(predicate: type => type.Name == "HttpContext");
+        dependencies.Single().Name.Should()
+            .Be(expected: "IAppBroker");
     }
 }

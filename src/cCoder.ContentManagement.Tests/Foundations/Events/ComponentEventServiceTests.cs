@@ -31,9 +31,6 @@ public partial class ComponentEventServiceTests
         componentEventBrokerMock = new Mock<IComponentEventBroker>(behavior: MockBehavior.Strict);
         componentEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        componentEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.ComponentEventService(
 componentEventBroker: componentEventBrokerMock.Object
         );

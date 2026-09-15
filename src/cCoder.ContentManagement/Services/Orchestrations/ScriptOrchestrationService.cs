@@ -12,7 +12,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class ScriptOrchestrationService(
     IScriptProcessingService processingService,
-    IScriptEventProcessingService eventService) : IScriptOrchestrationService
+    IScriptEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IScriptOrchestrationService
 {
     public Script GetScript(int scriptId) =>
         TryCatch<Script>(operation: () =>
@@ -33,9 +35,15 @@ internal partial class ScriptOrchestrationService(
     {
         ValidateScriptOnAdd(inputs: [newScript]);
         ValidateScript(script: newScript, parameterName: "entity");
+        Authorize(appId: newScript.AppId, privilege: "Script_create");
+        StampForAdd(script: newScript);
 
         Script result = await processingService.AddScriptAsync(newScript: newScript);
-        await eventService.RaiseScriptAddEventAsync(entity: result);
+
+        await eventService.RaiseScriptAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -45,9 +53,15 @@ internal partial class ScriptOrchestrationService(
     {
         ValidateScriptOnUpdate(inputs: [updatedScript]);
         ValidateScript(script: updatedScript, parameterName: "entity");
+        Authorize(appId: updatedScript.AppId, privilege: "Script_update");
+        StampForUpdate(script: updatedScript);
 
         Script result = await processingService.UpdateScriptAsync(updatedScript: updatedScript);
-        await eventService.RaiseScriptUpdateEventAsync(entity: result);
+
+        await eventService.RaiseScriptUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -75,7 +89,12 @@ internal partial class ScriptOrchestrationService(
             return;
         }
 
-        await eventService.RaiseScriptDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Script_delete");
+
+        await eventService.RaiseScriptDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(scriptId: scriptId);
 
     }, isValueTask: true);
@@ -260,9 +279,15 @@ internal partial class ScriptOrchestrationService(
     private async ValueTask<Script> ExecuteAddScriptAsync(Script newScript)
     {
         ValidateScript(script: newScript, parameterName: "entity");
+        Authorize(appId: newScript.AppId, privilege: "Script_create");
+        StampForAdd(script: newScript);
 
         Script result = await processingService.AddScriptAsync(newScript: newScript);
-        await eventService.RaiseScriptAddEventAsync(entity: result);
+
+        await eventService.RaiseScriptAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
@@ -298,7 +323,12 @@ internal partial class ScriptOrchestrationService(
             return;
         }
 
-        await eventService.RaiseScriptDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Script_delete");
+
+        await eventService.RaiseScriptDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(scriptId: scriptId);
     }
 
@@ -308,9 +338,36 @@ internal partial class ScriptOrchestrationService(
     private async ValueTask<Script> ExecuteUpdateScriptAsync(Script updatedScript)
     {
         ValidateScript(script: updatedScript, parameterName: "entity");
+        Authorize(appId: updatedScript.AppId, privilege: "Script_update");
+        StampForUpdate(script: updatedScript);
 
         Script result = await processingService.UpdateScriptAsync(updatedScript: updatedScript);
-        await eventService.RaiseScriptUpdateEventAsync(entity: result);
+
+        await eventService.RaiseScriptUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
+
+    private void Authorize(int? appId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = appId,
+                    Privilege = privilege
+                }
+            });
+
+    private void StampForAdd(Script script)
+    {
+        string userId = authorizationProcessingService.GetCurrentUserId();
+        script.CreatedBy = userId;
+        script.LastUpdatedBy = userId;
+    }
+
+    private void StampForUpdate(Script script) =>
+        script.LastUpdatedBy = authorizationProcessingService.GetCurrentUserId();
 }

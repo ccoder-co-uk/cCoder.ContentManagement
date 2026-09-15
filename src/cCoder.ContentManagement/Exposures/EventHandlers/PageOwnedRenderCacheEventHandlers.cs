@@ -4,6 +4,7 @@
 
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Brokers.Events;
+using cCoder.ContentManagement.Services.Aggregations;
 
 namespace cCoder.ContentManagement.Exposures.EventHandlers;
 
@@ -16,48 +17,48 @@ internal sealed class PageOwnedRenderCacheEventHandlers(IEventRegistrationBroker
     {
         eventHub.ListenToEvent(
             name: "page_add",
-            handler: (IPageRenderCacheEventHandlers service, Page page) =>
-                service.InvalidatePageAsync(page: page));
+            handler: (IPageRenderCacheAggregationService service, Page page) =>
+                service.DeletePageAsync(pageId: page.Id, fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "page_update",
-            handler: (IPageRenderCacheEventHandlers service, Page page) =>
-                service.InvalidatePageAsync(page: page));
+            handler: (IPageRenderCacheAggregationService service, Page page) =>
+                service.DeletePageAsync(pageId: page.Id, fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "page_delete",
-            handler: (IPageRenderCacheEventHandlers service, Page page) =>
-                service.DeletePageAsync(deletedPage: page));
+            handler: (IPageRenderCacheAggregationService service, Page page) =>
+                service.DeletePageAsync(pageId: page.Id, fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "content_add",
-            handler: (IPageRenderCacheEventHandlers service, Content content) =>
-                service.InvalidatePageAsync(content: content));
+            handler: (IPageRenderCacheAggregationService service, Content content) =>
+                service.DeletePageAsync(pageId: content.PageId, fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "content_update",
-            handler: (IPageRenderCacheEventHandlers service, Content content) =>
-                service.InvalidatePageAsync(content: content));
+            handler: (IPageRenderCacheAggregationService service, Content content) =>
+                service.DeletePageAsync(pageId: content.PageId, fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "content_delete",
-            handler: (IPageRenderCacheEventHandlers service, Content content) =>
-                service.InvalidatePageAsync(content: content));
+            handler: (IPageRenderCacheAggregationService service, Content content) =>
+                service.DeletePageAsync(pageId: content.PageId, fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "page_info_add",
-            handler: (IPageRenderCacheEventHandlers service, PageInfo pageInfo) =>
-                service.InvalidatePageAsync(pageInfo: pageInfo));
+            handler: (IPageRenderCacheAggregationService service, PageInfo pageInfo) =>
+                service.DeletePageAsync(pageId: pageInfo.PageId, fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "page_info_update",
-            handler: (IPageRenderCacheEventHandlers service, PageInfo pageInfo) =>
-                service.InvalidatePageAsync(pageInfo: pageInfo));
+            handler: (IPageRenderCacheAggregationService service, PageInfo pageInfo) =>
+                service.DeletePageAsync(pageId: pageInfo.PageId, fromEvent: true));
 
         eventHub.ListenToEvent(
             name: "page_info_delete",
-            handler: (IPageRenderCacheEventHandlers service, PageInfo pageInfo) =>
-                service.InvalidatePageAsync(pageInfo: pageInfo));
+            handler: (IPageRenderCacheAggregationService service, PageInfo pageInfo) =>
+                service.DeletePageAsync(pageId: pageInfo.PageId, fromEvent: true));
     }
 
     public void ListenToHostedEvents() { }

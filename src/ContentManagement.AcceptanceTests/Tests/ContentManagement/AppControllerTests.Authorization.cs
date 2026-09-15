@@ -6,6 +6,8 @@ using cCoder.ContentManagement.Exposures;
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Services.Processings;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -38,8 +40,8 @@ payload: new
             .GetRequiredService<cCoder.Data.ICoreContextFactory>()
             .CreateCoreContext();
 
-        IAuthorizationManager authorizationManager =
-            scope.ServiceProvider.GetRequiredService<IAuthorizationManager>();
+        IAuthorizationProcessingService authorizationProcessingService =
+            scope.ServiceProvider.GetRequiredService<IAuthorizationProcessingService>();
 
         Role[] roles = [.. core.Set<Role>()
             .IgnoreQueryFilters()
@@ -60,7 +62,11 @@ payload: new
         userRoles.Should()
             .Contain(predicate: userRole => userRole.UserId == "Guest");
 
-        authorizationManager.IsAdminOfApp(appId: createdApp.Id)
+        authorizationProcessingService.IsAdminOfAppAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                AppId = createdApp.Id
+            })
             .Should()
             .BeTrue();
 

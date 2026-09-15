@@ -106,7 +106,6 @@ times: Times.Once
         );
 
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -133,7 +132,6 @@ times: Times.Once
             times: Times.Once);
 
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -154,7 +152,6 @@ times: Times.Once
             .BeSameAs(expected: app);
 
         appBrokerMock.VerifyAll();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

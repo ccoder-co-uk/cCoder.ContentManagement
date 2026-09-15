@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Exposures;
-using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Services.Aggregations;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -18,14 +18,14 @@ public sealed partial class TemplateManagerTests
         // Given
         const string expectedContent = "template-content";
         using MemoryStream source = new();
-        Mock<ITemplateOrchestrationService> templateOrchestrationServiceMock = new();
+        Mock<ITemplateManagerAggregationService> aggregationServiceMock = new();
 
-        templateOrchestrationServiceMock.Setup(
+        aggregationServiceMock.Setup(
             expression: service => service.ReadContentAsync(source: source))
             .ReturnsAsync(value: expectedContent);
 
         TemplateManager templateManager = new(
-            templateOrchestrationService: templateOrchestrationServiceMock.Object);
+            templateManagerAggregationService: aggregationServiceMock.Object);
 
         // When
         string actualContent = await templateManager.ReadContentAsync(source: source);
@@ -34,7 +34,7 @@ public sealed partial class TemplateManagerTests
         actualContent.Should()
             .Be(expected: expectedContent);
 
-        templateOrchestrationServiceMock.VerifyAll();
+        aggregationServiceMock.VerifyAll();
     }
 
     [Fact]
@@ -43,14 +43,14 @@ public sealed partial class TemplateManagerTests
         // Given
         const string html = "<html></html>";
         byte[] expectedPdf = [1, 2, 3];
-        Mock<ITemplateOrchestrationService> templateOrchestrationServiceMock = new();
+        Mock<ITemplateManagerAggregationService> aggregationServiceMock = new();
 
-        templateOrchestrationServiceMock.Setup(
+        aggregationServiceMock.Setup(
             expression: service => service.ConvertHtmlToPdf(html: html))
             .Returns(value: expectedPdf);
 
         TemplateManager templateManager = new(
-            templateOrchestrationService: templateOrchestrationServiceMock.Object);
+            templateManagerAggregationService: aggregationServiceMock.Object);
 
         // When
         byte[] actualPdf = templateManager.ConvertHtmlToPdf(html: html);
@@ -59,6 +59,6 @@ public sealed partial class TemplateManagerTests
         actualPdf.Should()
             .Equal(expected: expectedPdf);
 
-        templateOrchestrationServiceMock.VerifyAll();
+        aggregationServiceMock.VerifyAll();
     }
 }

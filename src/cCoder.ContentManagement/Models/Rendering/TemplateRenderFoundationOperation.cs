@@ -47,6 +47,8 @@ internal sealed class TemplateRenderFoundationOperation
 
     public IReadOnlyCollection<KeyValuePair<string, object>> JsonProperties { get; set; }
 
+    public RuntimePropertyValue[] RuntimeProperties { get; set; }
+
     public Func<string, IReadOnlyDictionary<string, string>, string> Evaluator { get; set; }
 
     public Action<string, IReadOnlyDictionary<string, string>> MatchAction { get; set; }

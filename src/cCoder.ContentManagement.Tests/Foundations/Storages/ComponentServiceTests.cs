@@ -20,27 +20,20 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class ComponentServiceTests
 {
     private readonly Mock<IComponentBroker> componentBrokerMock;
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly ComponentService componentService;
 
     public ComponentServiceTests()
     {
         componentBrokerMock = new Mock<IComponentBroker>(behavior: MockBehavior.Strict);
-        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
 
         componentService = new ComponentService(
-componentBroker: componentBrokerMock.Object,
-authorizationManager: authorizationManagerMock.Object
+componentBroker: componentBrokerMock.Object
         );
     }
 

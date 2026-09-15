@@ -28,14 +28,21 @@ public partial class ResourceEventProcessingServiceTests
         Resource entity = CreateRandomResource();
 
         resourceEventServiceMock
-            .Setup(expression: x => x.RaiseResourceDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseResourceDeleteEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseResourceDeleteEventAsync(resource: entity);
+        await service.RaiseResourceDeleteEventAsync(
+            resource: entity,
+            userId: CurrentUserId);
 
         // Then
-        resourceEventServiceMock.Verify(expression: x => x.RaiseResourceDeleteEventAsync(entity: entity), times: Times.Once);
+        resourceEventServiceMock.Verify(expression: x => x.RaiseResourceDeleteEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
+
         resourceEventServiceMock.VerifyNoOtherCalls();
     }
 

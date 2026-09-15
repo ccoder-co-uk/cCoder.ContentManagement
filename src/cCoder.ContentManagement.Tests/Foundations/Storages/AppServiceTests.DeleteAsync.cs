@@ -44,7 +44,6 @@ public partial class AppServiceTests
         // Then
         appBrokerMock.Verify(expression: x => x.DeleteAppAggregateAsync(deletedApp: It.Is<CmsDataModels.App>(match: actual => actual.Id == app.Id)), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -72,7 +71,6 @@ public partial class AppServiceTests
             times: Times.Once);
 
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

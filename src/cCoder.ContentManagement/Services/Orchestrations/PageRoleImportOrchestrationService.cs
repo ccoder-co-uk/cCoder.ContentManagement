@@ -18,7 +18,7 @@ internal interface IPageRoleImportOrchestrationService
 }
 
 internal sealed partial class PageRoleImportOrchestrationService(
-    IPageRoleImportLookupProcessingService lookupProcessingService,
+    IPageRoleProcessingService pageRoleProcessingService,
     IPageRoleImportPersistenceProcessingService persistenceProcessingService)
         : IPageRoleImportOrchestrationService
 {
@@ -37,7 +37,7 @@ internal sealed partial class PageRoleImportOrchestrationService(
         PageRole[] pageRoles = pageRoleInfos
             .Select(
                 selector: pageRoleInfo =>
-                    lookupProcessingService.ResolvePageRole(
+                    pageRoleProcessingService.ResolvePageRole(
                         appId: appId,
                         path: pageRoleInfo.Path,
                         roleName: pageRoleInfo.Role))

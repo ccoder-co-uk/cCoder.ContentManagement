@@ -9,7 +9,8 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class PageInfoProcessingService(IPageInfoService service) : IPageInfoProcessingService
+internal partial class PageInfoProcessingService(IPageInfoService service)
+    : IPageInfoProcessingService
 {
     public PageInfo GetPageInfo(int pageInfoId) =>
         TryCatch<PageInfo>(operation: () =>
@@ -25,6 +26,15 @@ internal partial class PageInfoProcessingService(IPageInfoService service) : IPa
     {
         ValidateAllPageInfoOnGet(inputs: [ignoreFilters]);
         return service.GetAllPageInfo(ignoreFilters: ignoreFilters);
+    });
+
+    public int? GetOwningAppId(int pageId) =>
+        TryCatch<int?>(operation: () =>
+    {
+        ValidateOwningAppIdOnGet(inputs: [pageId]);
+        ValidateId(pageInfoId: pageId, parameterName: "pageId");
+
+        return service.GetOwningAppId(pageId: pageId);
     });
 
     public ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo) =>

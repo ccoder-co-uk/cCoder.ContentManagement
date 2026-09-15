@@ -45,7 +45,6 @@ commonObjectId: commonObject.Id
 
         commonObjectServiceMock.Verify(expression: x => x.GetCommonObject(commonObjectId: commonObject.Id), times: Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
-        commonObjectCacheMock.VerifyNoOtherCalls();
     }
 
 }

@@ -3,68 +3,41 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models;
-using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Packaging;
-using cCoder.Data.Models.Security;
-using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
-using Config = cCoder.ContentManagement.Models.ContentManagementConfiguration;
-using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
-using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
-using RenderParams = cCoder.ContentManagement.Models.RenderParams;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
-using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using FluentAssertions;
 using Moq;
 using Xunit;
-
-
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class CommonObjectProcessingServiceTests
 {
     [Fact]
-    public async Task ShouldCreateNewVersionAndAddItWhenUserHasPrivilegesForUpdateAsync()
+    public async Task ShouldCreateNextVersionAndAddItWhenUpdateAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(valueFunction: () => currentUser?.Id);
-
-        User actor = TestUsers.WithPrivileges(
-privileges: new[] { "commonobject_create", "commonobject_update" }
-        );
-
-        CommonObject commonObject = CreateRandomCommonObject(
-type: "Core/Other"
-        );
-
-        CommonObject existingVersion = CreateRandomCommonObject(
-type: "Core/Other"
-        );
-
+        CommonObject commonObject = CreateRandomCommonObject(type: "Core/Other");
+        CommonObject existingVersion = CreateRandomCommonObject(type: commonObject.Type);
         existingVersion.Name = commonObject.Name;
-        existingVersion.Type = commonObject.Type;
         existingVersion.Culture = commonObject.Culture;
         existingVersion.Key = commonObject.Key;
         existingVersion.Version = 2;
 
-        currentUser = actor;
-
         commonObjectServiceMock
-            .Setup(expression: x => x.GetAllCommonObject())
+            .Setup(expression: service => service.GetAllCommonObject(ignoreFilters: false))
             .Returns(value: new[] { existingVersion }.AsQueryable());
 
         commonObjectServiceMock
-            .Setup(expression: x => x.AddCommonObjectAsync(newCommonObject: It.IsAny<CommonObject>()))
-            .ReturnsAsync(valueFunction: (CommonObject item) => item);
+            .Setup(expression: service => service.AddCommonObjectAsync(
+                newCommonObject: commonObject,
+                userId: CurrentUserId))
+            .ReturnsAsync(value: commonObject);
 
         // When
-
-        CommonObject result =
-            await commonObjectProcessingService.UpdateCommonObjectAsync(updatedCommonObject: commonObject);
+        CommonObject result = await commonObjectProcessingService.UpdateCommonObjectAsync(
+            updatedCommonObject: commonObject,
+            userId: CurrentUserId);
 
         // Then
-
         result.Id.Should()
             .Be(expected: 0);
 
@@ -72,24 +45,16 @@ type: "Core/Other"
             .Be(expected: 3);
 
         result.CreatedBy.Should()
-            .Be(expected: actor.Id);
+            .Be(expected: CurrentUserId);
 
         result.LastUpdatedBy.Should()
-            .Be(expected: actor.Id);
-
-        commonObjectServiceMock.Verify(expression: x => x.GetAllCommonObject(), times: Times.Exactly(callCount: 2));
+            .Be(expected: CurrentUserId);
 
         commonObjectServiceMock.Verify(
-expression: x =>
-                x.AddCommonObjectAsync(
-newCommonObject: It.Is<CommonObject>(match: item =>
-                        item.Id == 0 && item.Version == 3
-                    )
-                ),
-times: Times.Once
-        );
+            expression: service => service.GetAllCommonObject(ignoreFilters: false),
+            times: Times.Exactly(callCount: 2));
 
+        commonObjectServiceMock.VerifyAll();
         VerifyNoOtherCommonObjectServiceCalls();
     }
-
 }

@@ -31,9 +31,6 @@ public partial class ContentEventServiceTests
         contentEventBrokerMock = new Mock<IContentEventBroker>(behavior: MockBehavior.Strict);
         contentEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        contentEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.ContentEventService(
 contentEventBroker: contentEventBrokerMock.Object
         );

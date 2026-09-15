@@ -6,10 +6,9 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Extensions;
 using System.Security;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using cCoder.ContentManagement.Services.Foundations.Authorization;
 using cCoder.ContentManagement.Models;
-using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
+using cCoder.Data.Models.CMS;
 
 using cCoder.ContentManagement.Services.Foundations;
 
@@ -18,6 +17,37 @@ namespace cCoder.ContentManagement.Services.Processings;
 internal partial class PageRoleProcessingService(
     IPageRoleService service) : IPageRoleProcessingService
 {
+    public PageRole ResolvePageRole(int appId, string path, string roleName) =>
+        TryCatch<PageRole>(operation: () =>
+    {
+        ValidatePageRoleOnResolve(inputs: [appId, path, roleName]);
+        ValidateAppId(appId: appId, parameterName: "appId");
+        ValidatePath(value: path, parameterName: "path");
+        ValidateText(value: roleName, parameterName: "roleName");
+
+        return service.ResolvePageRoleByNames(pageRole: new PageRole
+        {
+            Page = new Page
+            {
+                AppId = appId,
+                Path = path
+            },
+            Role = new Role
+            {
+                AppId = appId,
+                Name = roleName
+            }
+        });
+    });
+
+    public PageRole ResolvePageRole(PageRole pageRole) =>
+        TryCatch<PageRole>(operation: () =>
+    {
+        ValidatePageRoleOnResolve(inputs: [pageRole]);
+        ValidatePageRole(pageRole: pageRole, parameterName: "pageRole");
+        return service.ResolvePageRoleByIds(pageRole: pageRole);
+    });
+
     public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageRole>>(operation: () =>
     {
@@ -31,14 +61,9 @@ internal partial class PageRoleProcessingService(
         ValidatePageRoleOnAdd(inputs: [newPageRole]);
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
 
-        if (service.UserCanAddPageRole(pageRole: newPageRole))
-        {
-            return !service.PageRoleExists(pageRole: newPageRole)
-                ? service.AddPageRoleAsync(newPageRole: newPageRole)
-                : ValueTask.FromResult(result: newPageRole);
-        }
-
-        throw new SecurityException(message: "Access Denied!");
+        return !service.PageRoleExists(pageRole: newPageRole)
+            ? service.AddPageRoleAsync(newPageRole: newPageRole)
+            : ValueTask.FromResult(result: newPageRole);
 
     }, isValueTask: true);
 
@@ -51,7 +76,7 @@ internal partial class PageRoleProcessingService(
         PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)
             .FirstOrDefault(predicate: pageRole => pageRole.RoleId == deletedPageRole.RoleId && pageRole.PageId == deletedPageRole.PageId);
 
-        if (dbVersion == null || !service.UserCanDeletePageRole(pageRole: deletedPageRole))
+        if (dbVersion == null)
         {
             throw new SecurityException(message: "Access Denied!");
         }
@@ -133,6 +158,17 @@ internal partial class PageRoleProcessingService(
     private static void ValidateAppId(int appId, string parameterName) =>
         ThrowIf(condition: appId < 1, message: parameterName + " must be greater than 0.");
 
+    private static void ValidateText(string value, string parameterName) =>
+        ThrowIf(
+            condition: string.IsNullOrWhiteSpace(value: value),
+            message: parameterName + " is required.");
+
+    private static void ValidatePath(string value, string parameterName) =>
+        ThrowIf(
+            condition: value is null
+                || (value.Length > 0 && string.IsNullOrWhiteSpace(value: value)),
+            message: parameterName + " is required.");
+
     private static void ValidatePageRole(PageRole pageRole, string parameterName)
     {
         if (pageRole == null)
@@ -176,14 +212,9 @@ internal partial class PageRoleProcessingService(
     {
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
 
-        if (service.UserCanAddPageRole(pageRole: newPageRole))
-        {
-            return !service.PageRoleExists(pageRole: newPageRole)
-                ? service.AddPageRoleAsync(newPageRole: newPageRole)
-                : ValueTask.FromResult(result: newPageRole);
-        }
-
-        throw new SecurityException(message: "Access Denied!");
+        return !service.PageRoleExists(pageRole: newPageRole)
+            ? service.AddPageRoleAsync(newPageRole: newPageRole)
+            : ValueTask.FromResult(result: newPageRole);
     }
 
     private async ValueTask ExecuteDeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole)
@@ -203,7 +234,7 @@ internal partial class PageRoleProcessingService(
         PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)
             .FirstOrDefault(predicate: pageRole => pageRole.RoleId == deletedPageRole.RoleId && pageRole.PageId == deletedPageRole.PageId);
 
-        if (dbVersion == null || !service.UserCanDeletePageRole(pageRole: deletedPageRole))
+        if (dbVersion == null)
         {
             throw new SecurityException(message: "Access Denied!");
         }

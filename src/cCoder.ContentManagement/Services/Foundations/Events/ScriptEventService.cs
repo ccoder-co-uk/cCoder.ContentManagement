@@ -11,16 +11,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker) : IScriptEventService
 {
-    public ValueTask RaiseScriptAddEventAsync(Script script) =>
+    public ValueTask RaiseScriptAddEventAsync(Script script, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseScriptAddEventAsync(inputs: [script]);
+        ValidateRaiseScriptAddEventAsync(inputs: [script, userId]);
 
         EventMessage<Script> message = new EventMessage<Script>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = scriptEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = script
         };
@@ -29,16 +29,16 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker) 
 
     }, isValueTask: true);
 
-    public ValueTask RaiseScriptUpdateEventAsync(Script script) =>
+    public ValueTask RaiseScriptUpdateEventAsync(Script script, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseScriptUpdateEventAsync(inputs: [script]);
+        ValidateRaiseScriptUpdateEventAsync(inputs: [script, userId]);
 
         EventMessage<Script> message = new EventMessage<Script>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = scriptEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = script
         };
@@ -47,16 +47,16 @@ internal partial class ScriptEventService(IScriptEventBroker scriptEventBroker) 
 
     }, isValueTask: true);
 
-    public ValueTask RaiseScriptDeleteEventAsync(Script script) =>
+    public ValueTask RaiseScriptDeleteEventAsync(Script script, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaiseScriptDeleteEventAsync(inputs: [script]);
+        ValidateRaiseScriptDeleteEventAsync(inputs: [script, userId]);
 
         EventMessage<Script> message = new EventMessage<Script>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = scriptEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = script
         };

@@ -3,33 +3,14 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class TemplateService(
-    ITemplateBroker templateBroker,
-    ITemplateContentBroker templateContentBroker,
-    IAuthorizationManager authorizationManager) : ITemplateService
+    ITemplateBroker templateBroker) : ITemplateService
 {
-    public ValueTask<string> ReadContentAsync(Stream source) =>
-        TryCatch<string>(operation: () =>
-        {
-            ValidateTemplateContentOnRead(inputs: [source]);
-            return templateContentBroker.ReadAsync(source: source);
-        }, isValueTask: true);
-
-    public byte[] ConvertHtmlToPdf(string html) =>
-        TryCatch(operation: () =>
-        {
-            ValidateTemplateContentOnConvert(inputs: [html]);
-            return templateContentBroker.ConvertHtmlToPdf(html: html);
-        });
-
     public Template GetTemplate(int templateId, bool ignoreFilters = false) =>
         TryCatch<Template>(operation: () =>
     {
@@ -77,16 +58,10 @@ internal partial class TemplateService(
     {
         ValidateTemplateOnAdd(inputs: [newTemplate]);
         ValidateTemplate(template: newTemplate, parameterName: "template");
-        authorizationManager.Authorize(appId: newTemplate.AppId, privilege: "Template_create");
         Template storageTemplate = CreateStorageTemplate(newTemplate: newTemplate);
 
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
-
         DateTimeOffset now = (storageTemplate.CreatedOn = DateTimeOffset.UtcNow);
-        storageTemplate.CreatedBy = currentUserId;
         storageTemplate.LastUpdated = now;
-        storageTemplate.LastUpdatedBy = currentUserId;
         Template result = await templateBroker.AddTemplateAsync(newTemplate: storageTemplate);
         newTemplate.Id = result.Id;
         newTemplate.Name = result.Name;
@@ -107,15 +82,10 @@ internal partial class TemplateService(
     {
         ValidateTemplateOnUpdate(inputs: [updatedTemplate]);
         ValidateTemplate(template: updatedTemplate, parameterName: "template");
-        authorizationManager.Authorize(appId: updatedTemplate.AppId, privilege: "Template_update");
         Template updateTemplate = CreateStorageTemplate(newTemplate: updatedTemplate);
-
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateTemplate.LastUpdated = now;
-        updateTemplate.LastUpdatedBy = currentUserId;
         Template result = await templateBroker.UpdateTemplateAsync(updatedTemplate: updateTemplate);
         updatedTemplate.Id = result.Id;
         updatedTemplate.Name = result.Name;
@@ -152,7 +122,6 @@ internal partial class TemplateService(
             return;
         }
 
-        authorizationManager.Authorize(appId: template.AppId, privilege: "Template_delete");
         await templateBroker.DeleteTemplateAsync(deletedTemplate: CreateStorageTemplate(newTemplate: template));
 
     }, isValueTask: true);

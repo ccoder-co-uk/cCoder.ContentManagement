@@ -41,7 +41,6 @@ public partial class PageServiceTests
 
         pageBrokerMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
         pageBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

@@ -15,6 +15,7 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Models;
 using FizzWare.NBuilder;
 using Moq;
 
@@ -25,16 +26,33 @@ public partial class CultureOrchestrationServiceTests
 {
     private readonly Mock<ICultureProcessingService> cultureProcessingServiceMock;
     private readonly Mock<ICultureEventProcessingService> cultureEventProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly CultureOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
 
     public CultureOrchestrationServiceTests()
     {
         cultureProcessingServiceMock = new Mock<ICultureProcessingService>(behavior: MockBehavior.Strict);
         cultureEventProcessingServiceMock = new Mock<ICultureEventProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
+
+        cultureProcessingServiceMock
+            .Setup(expression: service => service.GetOwningAppId(
+                cultureId: It.IsAny<string>()))
+            .Returns(value: null);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                context: It.IsAny<AuthorizationContext>()));
 
         orchestrationService = new CultureOrchestrationService(
 processingService: cultureProcessingServiceMock.Object,
-eventService: cultureEventProcessingServiceMock.Object
+eventService: cultureEventProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 

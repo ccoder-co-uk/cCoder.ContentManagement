@@ -29,24 +29,18 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class SubmissionServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForUpdateAsync()
+    public async Task ShouldDelegateToBrokerWhenUpdateAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
         Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
         Submission submission = CreateRandomSubmission(id: submissionId);
 
         CmsDataModels.Submission submitted = null;
 
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"));
-
         submissionBrokerMock
-            .Setup(expression: x => x.UpdateSubmissionAsync(updatedSubmission: It.IsAny<CmsDataModels.Submission>()))
-            .Callback<CmsDataModels.Submission>(action: candidate => submitted = candidate)
-            .ReturnsAsync(valueFunction: (CmsDataModels.Submission value) => value);
+                    .Setup(expression: x => x.UpdateSubmissionAsync(updatedSubmission: It.IsAny<CmsDataModels.Submission>()))
+                    .Callback<CmsDataModels.Submission>(action: candidate => submitted = candidate)
+                    .ReturnsAsync(valueFunction: (CmsDataModels.Submission value) => value);
 
         // When
         Submission result = await submissionService.UpdateSubmissionAsync(updatedSubmission: submission);
@@ -143,34 +137,5 @@ times: Times.Once
         );
 
         submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"), times: Times.Once);
     }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksUpdatePrivilegeForUpdateAsync()
-    {
-        // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
-        Guid submissionId = new Guid(g: "11111111-1111-1111-1111-111111111111");
-        Submission submission = CreateRandomSubmission(id: submissionId);
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await submissionService.UpdateSubmissionAsync(updatedSubmission: submission);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        submissionBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Submission_update"), times: Times.Once);
-    }
-
 }

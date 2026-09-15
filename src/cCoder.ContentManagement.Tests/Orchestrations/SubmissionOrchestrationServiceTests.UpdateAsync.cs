@@ -13,6 +13,9 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using System.Security;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -32,7 +35,7 @@ public partial class SubmissionOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         submissionEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +47,42 @@ public partial class SubmissionOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         submissionProcessingServiceMock.Verify(expression: x => x.UpdateSubmissionAsync(updatedSubmission: entity), times: Times.Once);
-        submissionEventProcessingServiceMock.Verify(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity), times: Times.Once);
+        submissionEventProcessingServiceMock.Verify(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Submission_update")),
+            times: Times.Once);
+
+        entity.LastUpdatedBy.Should()
+            .Be(expected: CurrentUserId);
+    }
+
+    [Fact]
+    public async Task Submission_WhenUserLacksUpdatePrivilege_IsNotPersisted()
+    {
+        // Given
+        Submission entity = CreateRandomSubmission();
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Submission_update")))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
+
+        // When
+        Func<Task> action = async () =>
+            await orchestrationService.UpdateSubmissionAsync(updatedSubmission: entity);
+
+        // Then
+        await action.Should()
+            .ThrowAsync<ContentManagementSecurityException>();
+
+        submissionProcessingServiceMock.VerifyNoOtherCalls();
+        submissionEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

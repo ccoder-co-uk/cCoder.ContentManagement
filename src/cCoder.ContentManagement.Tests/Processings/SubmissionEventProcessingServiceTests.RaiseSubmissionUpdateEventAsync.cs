@@ -28,14 +28,21 @@ public partial class SubmissionEventProcessingServiceTests
         Submission entity = CreateRandomSubmission();
 
         submissionEventServiceMock
-            .Setup(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseSubmissionUpdateEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseSubmissionUpdateEventAsync(submission: entity);
+        await service.RaiseSubmissionUpdateEventAsync(
+            submission: entity,
+            userId: CurrentUserId);
 
         // Then
-        submissionEventServiceMock.Verify(expression: x => x.RaiseSubmissionUpdateEventAsync(entity: entity), times: Times.Once);
+        submissionEventServiceMock.Verify(expression: x => x.RaiseSubmissionUpdateEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
+
         submissionEventServiceMock.VerifyNoOtherCalls();
     }
 

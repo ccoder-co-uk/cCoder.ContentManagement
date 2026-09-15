@@ -13,6 +13,9 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using System.Security;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -32,7 +35,7 @@ public partial class ComponentOrchestrationServiceTests
             .ReturnsAsync(value: entity);
 
         componentEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseComponentUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseComponentUpdateEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +47,42 @@ public partial class ComponentOrchestrationServiceTests
             .BeSameAs(expected: entity);
 
         componentProcessingServiceMock.Verify(expression: x => x.UpdateComponentAsync(updatedComponent: entity), times: Times.Once);
-        componentEventProcessingServiceMock.Verify(expression: x => x.RaiseComponentUpdateEventAsync(entity: entity), times: Times.Once);
+        componentEventProcessingServiceMock.Verify(expression: x => x.RaiseComponentUpdateEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Component_update")),
+            times: Times.Once);
+
+        entity.LastUpdatedBy.Should()
+            .Be(expected: CurrentUserId);
+    }
+
+    [Fact]
+    public async Task Component_WhenUserLacksUpdatePrivilege_IsNotPersisted()
+    {
+        // Given
+        Component entity = CreateRandomComponent();
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Component_update")))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
+
+        // When
+        Func<Task> action = async () =>
+            await orchestrationService.UpdateComponentAsync(updatedComponent: entity);
+
+        // Then
+        await action.Should()
+            .ThrowAsync<ContentManagementSecurityException>();
+
+        componentProcessingServiceMock.VerifyNoOtherCalls();
+        componentEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

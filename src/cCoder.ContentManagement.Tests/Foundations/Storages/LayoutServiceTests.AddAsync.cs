@@ -29,25 +29,19 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class LayoutServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToBrokerWhenUserIsAuthorizedForAddAsync()
+    public async Task ShouldDelegateToBrokerWhenAddAsync()
     {
         // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
         Layout layout = CreateRandomLayout(id: 7);
 
         CmsDataModels.Layout submitted = null;
 
-
-        authorizationManagerMock.Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_create"));
-
         layoutBrokerMock
-            .Setup(expression: x =>
-                x.AddLayoutAsync(newLayout: It.Is<CmsDataModels.Layout>(match: candidate => !ReferenceEquals(objA: candidate, objB: layout)))
-            )
-            .Callback<CmsDataModels.Layout>(action: candidate => submitted = candidate)
-            .ReturnsAsync(valueFunction: (CmsDataModels.Layout value) => value);
+                    .Setup(expression: x =>
+                        x.AddLayoutAsync(newLayout: It.Is<CmsDataModels.Layout>(match: candidate => !ReferenceEquals(objA: candidate, objB: layout)))
+                    )
+                    .Callback<CmsDataModels.Layout>(action: candidate => submitted = candidate)
+                    .ReturnsAsync(valueFunction: (CmsDataModels.Layout value) => value);
 
         // When
         Layout result = await layoutService.AddLayoutAsync(newLayout: layout);
@@ -146,33 +140,5 @@ times: Times.Once
         );
 
         layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_create"), times: Times.Once);
     }
-
-    [Fact]
-    public async Task ShouldThrowSecurityExceptionWhenUserLacksCreatePrivilegeForAddAsync()
-    {
-        // Given
-        authorizationManagerMock.Setup(expression: x => x.GetCurrentUser())
-            .Returns(value: new SecurityDataModels.User { Id = "test-user" });
-
-        Layout layout = CreateRandomLayout(id: 7);
-
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_create"))
-            .Throws(exception: new SecurityException(message: "Access Denied!"));
-
-        // When
-        Func<Task> action = async () => await layoutService.AddLayoutAsync(newLayout: layout);
-
-        // Then
-
-        await action.Should()
-            .ThrowAsync<SecurityException>()
-            .WithMessage(expectedWildcardPattern: "Access Denied!");
-
-        layoutBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.Verify(expression: x => x.Authorize(appId: (int?)7, privilege: "Layout_create"), times: Times.Once);
-    }
-
 }

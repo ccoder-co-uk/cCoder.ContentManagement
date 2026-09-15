@@ -90,7 +90,6 @@ public partial class AppServiceTests
 
         appBrokerMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: It.IsAny<CmsDataModels.App>()), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -117,7 +116,6 @@ public partial class AppServiceTests
             times: Times.Once);
 
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

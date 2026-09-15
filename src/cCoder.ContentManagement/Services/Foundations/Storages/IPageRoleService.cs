@@ -15,13 +15,11 @@ internal interface IPageRoleService
 
     ValueTask DeletePageRoleAsync(PageRole deletedPageRole);
 
-    bool UserCanAddPageRole(PageRole pageRole);
-
-    bool UserCanDeletePageRole(PageRole pageRole);
-
     bool PageRoleExists(PageRole pageRole);
 
-    PageRole ResolvePageRole(int appId, string path, string roleName);
+    PageRole ResolvePageRoleByIds(PageRole pageRole);
+
+    PageRole ResolvePageRoleByNames(PageRole pageRole);
 
     ValueTask<PageRole> AddPageRoleForImportAsync(PageRole newPageRole);
 

@@ -39,7 +39,7 @@ internal sealed partial class MarkupRenderService
             Model = jsonBroker.ParseJson(json: json)
         });
 
-        return workflowExecutionBroker.Execute(
+        return contentRenderBroker.ExecuteWorkflow(
             baseAddress: replacements.First(predicate: replacement =>
                 replacement.Old == "[api[workflow]]").New,
             content: content);

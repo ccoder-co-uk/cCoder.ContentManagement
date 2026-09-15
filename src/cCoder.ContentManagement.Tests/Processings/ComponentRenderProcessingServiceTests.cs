@@ -19,6 +19,7 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Tests.Brokers.Rendering;
 using Moq;
 using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
@@ -47,18 +48,15 @@ public partial class ComponentRenderProcessingServiceTests
         };
 
         ComponentRenderService componentRenderService = new(
-            metadataReaderBroker: metadataCacheMock.Object,
-            commonObjectReaderBroker: commonObjectCacheMock.Object,
+            contentRenderBroker: new TestContentRenderBroker(
+                metadataReaderBroker: metadataCacheMock.Object,
+                commonObjectReaderBroker: commonObjectCacheMock.Object,
+                workflowExecutionBroker: new WorkflowExecutionBroker(
+                    workflowExecutionDependency:
+                        new WorkflowExecutionDependency()),
+                renderFileContentBroker: renderFileContentBrokerMock.Object),
             jsonBroker: new JsonBroker(),
-            workflowExecutionBroker: new WorkflowExecutionBroker(
-                workflowExecutionDependency:
-                    new WorkflowExecutionDependency()),
-            regularExpressionBroker: new RegularExpressionBroker(),
-            renderFileContentBroker: renderFileContentBrokerMock.Object,
-            appBroker: Mock.Of<IAppBroker>(),
-            componentBroker: Mock.Of<IComponentBroker>(),
-            resourceBroker: Mock.Of<IResourceBroker>(),
-            scriptBroker: Mock.Of<IScriptBroker>());
+            regularExpressionBroker: new RegularExpressionBroker());
 
         return new ComponentRenderProcessingService(
             componentRenderService: componentRenderService,

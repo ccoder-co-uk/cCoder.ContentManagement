@@ -2,37 +2,27 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Security;
 using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Brokers.Exports;
 using cCoder.ContentManagement.Models.Exports;
 using cCoder.Data.Models.Packaging;
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.ContentManagement.Services.Foundations.Exports;
 
 internal partial class PackageExportService(
-    IAuthorizationManager authorizationManager,
-    IRoleBroker roleBroker,
-    ILayoutBroker layoutBroker,
-    ITemplateBroker templateBroker,
-    IComponentBroker componentBroker,
-    IScriptBroker scriptBroker,
-    IResourceBroker resourceBroker,
-    IPageBroker pageBroker,
+    IPackageExportBroker packageExportBroker,
     IJsonBroker jsonBroker) : IPackageExportService
 {
     public Package ExportRolesPackage(int appId) =>
         TryCatch<Package>(operation: () =>
     {
         ValidateExportRolesPackage(inputs: [appId]);
-        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
+        ValidateAppId(appId: appId, parameterName: "appId");
 
         return CreatePackage(
 name: "Roles",
 itemType: "Core/Role",
-data: roleBroker.GetAllRolesIgnoringFilters()
+data: packageExportBroker.GetRoles()
             .Where(predicate: role => role.AppId == appId)
             .Select(selector: role => new { role.Name, role.Privs })
             .ToArray());
@@ -43,12 +33,12 @@ data: roleBroker.GetAllRolesIgnoringFilters()
         TryCatch<Package>(operation: () =>
     {
         ValidateExportLayoutsPackage(inputs: [appId]);
-        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
+        ValidateAppId(appId: appId, parameterName: "appId");
 
         return CreatePackage(
 name: "Layouts",
 itemType: "ContentManagement/Layout",
-data: layoutBroker.GetAllLayoutsIgnoringFilters()
+data: packageExportBroker.GetLayouts()
             .Where(predicate: layout => layout.AppId == appId)
             .Select(selector: layout => new
             {
@@ -66,12 +56,12 @@ data: layoutBroker.GetAllLayoutsIgnoringFilters()
         TryCatch<Package>(operation: () =>
     {
         ValidateExportTemplatesPackage(inputs: [appId]);
-        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
+        ValidateAppId(appId: appId, parameterName: "appId");
 
         return CreatePackage(
 name: "Templates",
 itemType: "ContentManagement/Template",
-data: templateBroker.GetAllTemplatesIgnoringFilters()
+data: packageExportBroker.GetTemplates()
             .Where(predicate: template => template.AppId == appId)
             .Select(selector: template => new
             {
@@ -88,12 +78,12 @@ data: templateBroker.GetAllTemplatesIgnoringFilters()
         TryCatch<Package>(operation: () =>
     {
         ValidateExportComponentsPackage(inputs: [appId]);
-        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
+        ValidateAppId(appId: appId, parameterName: "appId");
 
         return CreatePackage(
 name: "Components",
 itemType: "ContentManagement/Component",
-data: componentBroker.GetAllComponentsIgnoringFilters()
+data: packageExportBroker.GetComponents()
             .Where(predicate: component => component.AppId == appId)
             .Select(selector: component => new
             {
@@ -112,16 +102,18 @@ data: componentBroker.GetAllComponentsIgnoringFilters()
         TryCatch<Package>(operation: () =>
     {
         ValidateExportScriptsPackage(inputs: [appId]);
-        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
+        ValidateAppId(appId: appId, parameterName: "appId");
 
         return CreatePackage(
 name: "Scripts",
 itemType: "ContentManagement/Script",
-data: scriptBroker.GetAllScriptsIgnoringFilters()
+data: packageExportBroker.GetScripts()
             .Where(predicate: script => script.AppId == appId)
             .Select(selector: script => new
             {
                 script.Name,
+                script.Description,
+                script.Key,
                 script.Content,
                 script.LastUpdated
             })
@@ -133,12 +125,12 @@ data: scriptBroker.GetAllScriptsIgnoringFilters()
         TryCatch<Package>(operation: () =>
     {
         ValidateExportResourcesPackage(inputs: [appId]);
-        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
+        ValidateAppId(appId: appId, parameterName: "appId");
 
         return CreatePackage(
 name: "Resources",
 itemType: "ContentManagement/Resource",
-data: resourceBroker.GetAllResourcesIgnoringFilters()
+data: packageExportBroker.GetResources()
             .Where(predicate: resource => resource.AppId == appId)
             .Select(selector: resource => new
             {
@@ -158,9 +150,9 @@ data: resourceBroker.GetAllResourcesIgnoringFilters()
         TryCatch<Package>(operation: () =>
     {
         ValidateExportPagesPackage(inputs: [appId]);
-        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
+        ValidateAppId(appId: appId, parameterName: "appId");
 
-        List<ExportPage> pages = pageBroker.GetAllPagesIgnoringFilters()
+        List<ExportPage> pages = packageExportBroker.GetPages()
             .Where(predicate: page => page.AppId == appId)
             .Select(selector: page => new ExportPage
             {
@@ -233,12 +225,12 @@ data: pages.Select(selector: page => new
         TryCatch<Package>(operation: () =>
     {
         ValidateExportPageRolesPackage(inputs: [appId]);
-        EnsureAdmin(appId: ValidateAppId(appId: appId, parameterName: "appId"));
+        ValidateAppId(appId: appId, parameterName: "appId");
 
         return CreatePackage(
 name: "PageRoles",
 itemType: "ContentManagement/PageRole",
-data: pageBroker.GetAllPagesIgnoringFilters()
+data: packageExportBroker.GetPages()
             .Where(predicate: page => page.AppId == appId)
             .SelectMany(selector: page => page.Roles.Select(selector: role => new
             {
@@ -263,13 +255,5 @@ data: pageBroker.GetAllPagesIgnoringFilters()
                 }
             ]
         };
-
-    private void EnsureAdmin(int appId)
-    {
-        if (!authorizationManager.IsAdminOfApp(appId: appId))
-        {
-            throw new SecurityException(message: "Access Denied!");
-        }
-    }
 
 }

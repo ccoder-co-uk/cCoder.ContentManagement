@@ -37,6 +37,7 @@ using RenderPageInfo = cCoder.Data.Models.CMS.PageInfo;
 using RenderResource = cCoder.Data.Models.CMS.Resource;
 using RenderScript = cCoder.Data.Models.CMS.Script;
 using RenderUser = cCoder.Data.Models.Security.User;
+using cCoder.ContentManagement.Tests.Brokers.Rendering;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
@@ -60,15 +61,15 @@ public partial class PageRenderProcessingServiceTests
             broker: commonObjectReaderBrokerMock.Object);
 
         MarkupRenderService markupRenderService = new(
-            componentReaderBroker: componentReaderBroker,
-            scriptReaderBroker: scriptReaderBroker,
-            renderFileContentBroker: renderFileContentBrokerMock.Object,
+            contentRenderBroker: new TestContentRenderBroker(
+                workflowExecutionBroker:
+                    new WorkflowExecutionBroker(
+                        workflowExecutionDependency:
+                            new WorkflowExecutionDependency()),
+                renderFileContentBroker: renderFileContentBrokerMock.Object,
+                componentReaderBroker: componentReaderBroker,
+                scriptReaderBroker: scriptReaderBroker),
             jsonBroker: new JsonBroker(),
-            systemTextJsonBroker: new SystemTextJsonBroker(),
-            workflowExecutionBroker:
-                new WorkflowExecutionBroker(
-                    workflowExecutionDependency:
-                        new WorkflowExecutionDependency()),
             regularExpressionBroker: regularExpressionBroker);
 
         RenderOrchestrationService executionOrchestrationService =
@@ -90,8 +91,7 @@ public partial class PageRenderProcessingServiceTests
             renderSessionManager: renderSessionManager);
 
         PageRenderService pageRenderService = new(
-            renderBroker: renderBroker,
-            systemTextJsonBroker: new SystemTextJsonBroker());
+            renderBroker: renderBroker);
 
         return new PageRenderProcessingService(
             pageRenderService: pageRenderService,

@@ -20,24 +20,18 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-
-
-using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 
 public partial class ScriptServiceTests
 {
     private readonly Mock<IScriptBroker> scriptBrokerMock;
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly ScriptService scriptService;
 
     public ScriptServiceTests()
     {
         scriptBrokerMock = new Mock<IScriptBroker>(behavior: MockBehavior.Strict);
-        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
-        scriptService = new ScriptService(scriptBroker: scriptBrokerMock.Object, authorizationManager: authorizationManagerMock.Object);
+        scriptService = new ScriptService(scriptBroker: scriptBrokerMock.Object);
     }
 
     private static Script CreateRandomScript(int id = 42, int appId = 7)

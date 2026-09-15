@@ -17,6 +17,7 @@ using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
+using cCoder.ContentManagement.Models;
 
 
 namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
@@ -25,16 +26,27 @@ public partial class ScriptOrchestrationServiceTests
 {
     private readonly Mock<IScriptProcessingService> scriptProcessingServiceMock;
     private readonly Mock<IScriptEventProcessingService> scriptEventProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly ScriptOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
 
     public ScriptOrchestrationServiceTests()
     {
         scriptProcessingServiceMock = new Mock<IScriptProcessingService>(behavior: MockBehavior.Strict);
         scriptEventProcessingServiceMock = new Mock<IScriptEventProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+context:                 It.IsAny<AuthorizationContext>()));
 
         orchestrationService = new ScriptOrchestrationService(
 processingService: scriptProcessingServiceMock.Object,
-eventService: scriptEventProcessingServiceMock.Object
+eventService: scriptEventProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 

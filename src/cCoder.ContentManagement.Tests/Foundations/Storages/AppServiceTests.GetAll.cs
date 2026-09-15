@@ -46,7 +46,6 @@ public partial class AppServiceTests
 
         appBrokerMock.Verify(expression: x => x.GetAllApps(), times: Times.Once);
         appBrokerMock.VerifyNoOtherCalls();
-        authorizationManagerMock.VerifyNoOtherCalls();
     }
 
 }

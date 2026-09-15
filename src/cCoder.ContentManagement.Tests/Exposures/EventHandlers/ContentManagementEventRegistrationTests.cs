@@ -31,7 +31,7 @@ public sealed partial class ContentManagementEventRegistrationTests
         { typeof(ResourcePackageImportEventHandlers), typeof(IResourceOrchestrationService), ["resource_import"] },
         { typeof(ScriptPackageImportEventHandlers), typeof(IScriptOrchestrationService), ["script_import"] },
         { typeof(TemplatePackageImportEventHandlers), typeof(ITemplateOrchestrationService), ["template_import"] },
-        { typeof(CommonObjectPackageImportEventHandlers), typeof(ICommonObjectOrchestrationService), ["common_objects_import"] },
+        { typeof(CommonObjectPackageImportEventHandlers), typeof(ICommonObjectCoordinationService), ["common_objects_import"] },
     };
 
     [Fact]
@@ -161,7 +161,7 @@ public sealed partial class ContentManagementEventRegistrationTests
         const int appId = 23;
         Mock<IEventRegistrationBroker> eventHubMock = new();
         PackageImportRenderCacheEventHandlers eventHandlers = new(eventHub: eventHubMock.Object);
-        Mock<IPageRenderCacheEventHandlers> cacheHandlersMock = new(MockBehavior.Strict);
+        Mock<IPageRenderCacheAggregationService> cacheHandlersMock = new(MockBehavior.Strict);
 
         cacheHandlersMock.Setup(
             expression: service => service.InvalidatePackageAsync(appId: appId))
@@ -173,8 +173,8 @@ public sealed partial class ContentManagementEventRegistrationTests
 
         eventHandlers.ListenToWebCacheEvents();
 
-        Func<IPageRenderCacheEventHandlers, PackageImportEvent, ValueTask> packageHandler =
-            (Func<IPageRenderCacheEventHandlers, PackageImportEvent, ValueTask>)eventHubMock
+        Func<IPageRenderCacheAggregationService, PackageImportEvent, ValueTask> packageHandler =
+            (Func<IPageRenderCacheAggregationService, PackageImportEvent, ValueTask>)eventHubMock
                 .Invocations.Single(predicate: invocation =>
                     invocation.Arguments[0] as string == "package_import_complete")
                 .Arguments[1];

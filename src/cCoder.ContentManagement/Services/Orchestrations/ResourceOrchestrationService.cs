@@ -12,7 +12,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class ResourceOrchestrationService(
     IResourceProcessingService processingService,
-    IResourceEventProcessingService eventService) : IResourceOrchestrationService
+    IResourceEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IResourceOrchestrationService
 {
     public Resource GetResource(int resourceId) =>
         TryCatch<Resource>(operation: () =>
@@ -33,9 +35,15 @@ internal partial class ResourceOrchestrationService(
     {
         ValidateResourceOnAdd(inputs: [newResource]);
         ValidateResource(resource: newResource, parameterName: "entity");
+        Authorize(appId: newResource.AppId, privilege: "Resource_create");
+        StampForAdd(resource: newResource);
 
         Resource result = await processingService.AddResourceAsync(newResource: newResource);
-        await eventService.RaiseResourceAddEventAsync(entity: result);
+
+        await eventService.RaiseResourceAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -45,9 +53,15 @@ internal partial class ResourceOrchestrationService(
     {
         ValidateResourceOnUpdate(inputs: [updatedResource]);
         ValidateResource(resource: updatedResource, parameterName: "entity");
+        Authorize(appId: updatedResource.AppId, privilege: "Resource_update");
+        StampForUpdate(resource: updatedResource);
 
         Resource result = await processingService.UpdateResourceAsync(updatedResource: updatedResource);
-        await eventService.RaiseResourceUpdateEventAsync(entity: result);
+
+        await eventService.RaiseResourceUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -75,7 +89,12 @@ internal partial class ResourceOrchestrationService(
             return;
         }
 
-        await eventService.RaiseResourceDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Resource_delete");
+
+        await eventService.RaiseResourceDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(resourceId: resourceId);
 
     }, isValueTask: true);
@@ -261,9 +280,15 @@ internal partial class ResourceOrchestrationService(
     private async ValueTask<Resource> ExecuteAddResourceAsync(Resource newResource)
     {
         ValidateResource(resource: newResource, parameterName: "entity");
+        Authorize(appId: newResource.AppId, privilege: "Resource_create");
+        StampForAdd(resource: newResource);
 
         Resource result = await processingService.AddResourceAsync(newResource: newResource);
-        await eventService.RaiseResourceAddEventAsync(entity: result);
+
+        await eventService.RaiseResourceAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
@@ -299,7 +324,12 @@ internal partial class ResourceOrchestrationService(
             return;
         }
 
-        await eventService.RaiseResourceDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Resource_delete");
+
+        await eventService.RaiseResourceDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(resourceId: resourceId);
     }
 
@@ -309,9 +339,42 @@ internal partial class ResourceOrchestrationService(
     private async ValueTask<Resource> ExecuteUpdateResourceAsync(Resource updatedResource)
     {
         ValidateResource(resource: updatedResource, parameterName: "entity");
+        Authorize(appId: updatedResource.AppId, privilege: "Resource_update");
+        StampForUpdate(resource: updatedResource);
 
         Resource result = await processingService.UpdateResourceAsync(updatedResource: updatedResource);
-        await eventService.RaiseResourceUpdateEventAsync(entity: result);
+
+        await eventService.RaiseResourceUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
+    }
+
+    private void Authorize(int? appId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = appId,
+                    Privilege = privilege
+                }
+            });
+
+    private void StampForAdd(Resource resource)
+    {
+        string currentUserId = authorizationProcessingService.GetCurrentUserId();
+        DateTimeOffset now = DateTimeOffset.Now;
+        resource.CreatedOn = now;
+        resource.CreatedBy = currentUserId;
+        resource.LastUpdated = now;
+        resource.LastUpdatedBy = currentUserId;
+    }
+
+    private void StampForUpdate(Resource resource)
+    {
+        resource.LastUpdated = DateTimeOffset.Now;
+        resource.LastUpdatedBy = authorizationProcessingService.GetCurrentUserId();
     }
 }

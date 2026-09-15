@@ -14,17 +14,12 @@ internal interface IPageService
 
     IQueryable<Page> GetAllPage(bool ignoreFilters = false);
 
+    bool LayoutExistsForApp(int appId, string layoutName);
+
     ValueTask<Page> AddPageAsync(Page newPage);
 
     ValueTask<Page> UpdatePageAsync(Page updatedPage);
 
     ValueTask DeleteAsync(int pageId);
 
-    Guid[] GetCurrentUserRoleIds(int appId);
-
-    bool IsAdminOfApp(int appId);
-
-    void Authorize(int? appId, string privilege);
-
-    bool UserCanPage(Page page, string privilege);
 }

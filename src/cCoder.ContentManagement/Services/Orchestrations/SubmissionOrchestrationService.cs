@@ -11,7 +11,9 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class SubmissionOrchestrationService(
     ISubmissionProcessingService processingService,
-    ISubmissionEventProcessingService eventService) : ISubmissionOrchestrationService
+    ISubmissionEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : ISubmissionOrchestrationService
 {
     public Submission GetSubmission(Guid submissionId) =>
         TryCatch<Submission>(operation: () =>
@@ -32,9 +34,15 @@ internal partial class SubmissionOrchestrationService(
     {
         ValidateSubmissionOnAdd(inputs: [newSubmission]);
         ValidateSubmission(submission: newSubmission, parameterName: "entity");
+        Authorize(appId: newSubmission.AppId, privilege: "Submission_create");
+        StampForAdd(submission: newSubmission);
 
         Submission result = await processingService.AddSubmissionAsync(newSubmission: newSubmission);
-        await eventService.RaiseSubmissionAddEventAsync(entity: result);
+
+        await eventService.RaiseSubmissionAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -44,9 +52,15 @@ internal partial class SubmissionOrchestrationService(
     {
         ValidateSubmissionOnUpdate(inputs: [updatedSubmission]);
         ValidateSubmission(submission: updatedSubmission, parameterName: "entity");
+        Authorize(appId: updatedSubmission.AppId, privilege: "Submission_update");
+        StampForUpdate(submission: updatedSubmission);
 
         Submission result = await processingService.UpdateSubmissionAsync(updatedSubmission: updatedSubmission);
-        await eventService.RaiseSubmissionUpdateEventAsync(entity: result);
+
+        await eventService.RaiseSubmissionUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -58,23 +72,75 @@ internal partial class SubmissionOrchestrationService(
         ValidateId(submissionId: submissionId, parameterName: "id");
 
         Submission entity = processingService.GetSubmission(submissionId: submissionId);
-        await eventService.RaiseSubmissionDeleteEventAsync(entity: entity);
+        Authorize(appId: entity.AppId, privilege: "Submission_delete");
+
+        await eventService.RaiseSubmissionDeleteEventAsync(
+            entity: entity,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeleteAsync(submissionId: submissionId);
 
     }, isValueTask: true);
 
     public ValueTask<IEnumerable<OperationResult<Submission>>> AddOrUpdateSubmissionResult(IEnumerable<Submission> newSubmission) =>
-        TryCatch<IEnumerable<OperationResult<Submission>>>(operation: () =>
+        TryCatch<IEnumerable<OperationResult<Submission>>>(operation: async () =>
     {
         ValidateOrUpdateSubmissionResultOnAdd(inputs: [newSubmission]);
-        return processingService.AddOrUpdateSubmissionResult(newSubmission: ValidateSubmissions(submissions: newSubmission, parameterName: "items"));
+
+        Submission[] submissions = ValidateSubmissions(
+            submissions: newSubmission,
+            parameterName: "items")
+            .ToArray();
+
+        List<OperationResult<Submission>> results = new();
+
+        foreach (Submission submission in submissions)
+        {
+            try
+            {
+                bool isNew = submission.Id == Guid.Empty;
+
+                Submission result = isNew
+                    ? await ExecuteAddSubmissionAsync(newSubmission: submission)
+                    : await ExecuteUpdateSubmissionAsync(updatedSubmission: submission);
+
+                results.Add(item: new OperationResult<Submission>
+                {
+                    Success = true,
+                    Item = result,
+                    Message = isNew
+                        ? "Added Successfully"
+                        : "Updated Successfully"
+                });
+            }
+            catch (Exception exception)
+            {
+                results.Add(item: new OperationResult<Submission>
+                {
+                    Success = false,
+                    Item = submission,
+                    Message = exception.Message
+                });
+            }
+        }
+
+        return results;
     }, isValueTask: true);
 
     public ValueTask DeleteAllSubmissionAsync(IEnumerable<Submission> deletedSubmission) =>
-        TryCatch(operation: () =>
+        TryCatch(operation: async () =>
     {
         ValidateAllSubmissionOnDelete(inputs: [deletedSubmission]);
-        return processingService.DeleteAllSubmissionAsync(deletedSubmission: ValidateSubmissions(submissions: deletedSubmission, parameterName: "items"));
+
+        Submission[] submissions = ValidateSubmissions(
+            submissions: deletedSubmission,
+            parameterName: "items")
+            .ToArray();
+
+        foreach (Submission submission in submissions)
+        {
+            await ExecuteDeleteSubmissionAsync(submission: submission);
+        }
     }, isValueTask: true);
 
     private static Guid ValidateId(Guid submissionId, string parameterName)
@@ -106,4 +172,68 @@ internal partial class SubmissionOrchestrationService(
 
         return submissions;
     }
+
+    private void Authorize(int? appId, string privilege) =>
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = appId,
+                    Privilege = privilege
+                }
+            });
+
+    private async ValueTask<Submission> ExecuteAddSubmissionAsync(
+        Submission newSubmission)
+    {
+        Authorize(appId: newSubmission.AppId, privilege: "Submission_create");
+        StampForAdd(submission: newSubmission);
+
+        Submission result = await processingService.AddSubmissionAsync(
+            newSubmission: newSubmission);
+
+        await eventService.RaiseSubmissionAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
+        return result;
+    }
+
+    private async ValueTask ExecuteDeleteSubmissionAsync(Submission submission)
+    {
+        Authorize(appId: submission.AppId, privilege: "Submission_delete");
+
+        await eventService.RaiseSubmissionDeleteEventAsync(
+            entity: submission,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
+        await processingService.DeleteAsync(submissionId: submission.Id);
+    }
+
+    private async ValueTask<Submission> ExecuteUpdateSubmissionAsync(
+        Submission updatedSubmission)
+    {
+        Authorize(appId: updatedSubmission.AppId, privilege: "Submission_update");
+        StampForUpdate(submission: updatedSubmission);
+
+        Submission result = await processingService.UpdateSubmissionAsync(
+            updatedSubmission: updatedSubmission);
+
+        await eventService.RaiseSubmissionUpdateEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
+        return result;
+    }
+
+    private void StampForAdd(Submission submission)
+    {
+        string userId = authorizationProcessingService.GetCurrentUserId();
+        submission.CreatedBy = userId;
+        submission.LastUpdatedBy = userId;
+    }
+
+    private void StampForUpdate(Submission submission) =>
+        submission.LastUpdatedBy = authorizationProcessingService.GetCurrentUserId();
 }

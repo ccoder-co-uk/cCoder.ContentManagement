@@ -35,7 +35,7 @@ public partial class ContentOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         contentEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseContentDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseContentDeleteEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +44,7 @@ public partial class ContentOrchestrationServiceTests
         // Then
         contentProcessingServiceMock.Verify(expression: x => x.GetContent(contentId: id), times: Times.Once);
         contentProcessingServiceMock.Verify(expression: x => x.DeleteAsync(contentId: id), times: Times.Once);
-        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentDeleteEventAsync(entity: entity), times: Times.Once);
+        contentEventProcessingServiceMock.Verify(expression: x => x.RaiseContentDeleteEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
     }
 
 }

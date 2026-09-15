@@ -15,6 +15,7 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Models;
 using FizzWare.NBuilder;
 using Moq;
 
@@ -24,16 +25,33 @@ public partial class PageInfoOrchestrationServiceTests
 {
     private readonly Mock<IPageInfoProcessingService> pageInfoProcessingServiceMock;
     private readonly Mock<IPageInfoEventProcessingService> pageInfoEventProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly PageInfoOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
 
     public PageInfoOrchestrationServiceTests()
     {
         pageInfoProcessingServiceMock = new Mock<IPageInfoProcessingService>(behavior: MockBehavior.Strict);
         pageInfoEventProcessingServiceMock = new Mock<IPageInfoEventProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
+
+        pageInfoProcessingServiceMock
+            .Setup(expression: service => service.GetOwningAppId(
+                pageId: It.IsAny<int>()))
+            .Returns(value: null);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                context: It.IsAny<AuthorizationContext>()));
 
         orchestrationService = new PageInfoOrchestrationService(
 processingService: pageInfoProcessingServiceMock.Object,
-eventService: pageInfoEventProcessingServiceMock.Object
+eventService: pageInfoEventProcessingServiceMock.Object,
+authorizationProcessingService: authorizationProcessingServiceMock.Object
         );
     }
 

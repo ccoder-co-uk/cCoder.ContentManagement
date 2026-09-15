@@ -28,14 +28,21 @@ public partial class ComponentEventProcessingServiceTests
         Component entity = CreateRandomComponent();
 
         componentEventServiceMock
-            .Setup(expression: x => x.RaiseComponentUpdateEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseComponentUpdateEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseComponentUpdateEventAsync(component: entity);
+        await service.RaiseComponentUpdateEventAsync(
+            component: entity,
+            userId: CurrentUserId);
 
         // Then
-        componentEventServiceMock.Verify(expression: x => x.RaiseComponentUpdateEventAsync(entity: entity), times: Times.Once);
+        componentEventServiceMock.Verify(expression: x => x.RaiseComponentUpdateEventAsync(
+            entity: entity,
+            userId: CurrentUserId), times: Times.Once);
+
         componentEventServiceMock.VerifyNoOtherCalls();
     }
 

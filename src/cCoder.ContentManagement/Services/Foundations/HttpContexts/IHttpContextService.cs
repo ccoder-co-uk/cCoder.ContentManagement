@@ -9,4 +9,8 @@ namespace cCoder.ContentManagement.Services.Foundations.HttpContexts;
 internal interface IHttpContextService
 {
     HttpPageRenderContext GetPageRenderContext();
+
+    string GetRequestPath();
+
+    string GetRequestHost();
 }

@@ -8,9 +8,9 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal interface IComponentEventService
 {
-    ValueTask RaiseComponentAddEventAsync(Component entity);
+    ValueTask RaiseComponentAddEventAsync(Component entity, string userId);
 
-    ValueTask RaiseComponentUpdateEventAsync(Component entity);
+    ValueTask RaiseComponentUpdateEventAsync(Component entity, string userId);
 
-    ValueTask RaiseComponentDeleteEventAsync(Component entity);
+    ValueTask RaiseComponentDeleteEventAsync(Component entity, string userId);
 }

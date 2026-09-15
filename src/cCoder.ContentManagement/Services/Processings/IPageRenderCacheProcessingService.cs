@@ -8,6 +8,10 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface IPageRenderCacheProcessingService
 {
+    IQueryable<PageRenderCache> GetAllPageRenderCaches();
+
+    PageRenderCache GetPageRenderCache(string pageRenderCacheId);
+
     ValueTask<PageRenderCache> AddPageRenderCacheAsync(PageRenderCache newPageRenderCache);
 
     ValueTask<PageRenderCache> UpdatePageRenderCacheAsync(PageRenderCache updatedPageRenderCache);

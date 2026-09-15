@@ -8,8 +8,7 @@ using cCoder.ContentManagement.Models.Serialization;
 namespace cCoder.ContentManagement.Services.Foundations.Serialization;
 
 internal partial class JsonService(
-    IJsonBroker jsonBroker,
-    ISystemTextJsonBroker systemTextJsonBroker = null) : IJsonService
+    IJsonBroker jsonBroker) : IJsonService
 {
     public object ParseJson(string json) =>
         TryCatch<object>(operation: () =>
@@ -74,7 +73,7 @@ internal partial class JsonService(
     {
         ValidateJsonRecordsDocumentOnParse(inputs: [jsonRecordsDocument]);
 
-        return systemTextJsonBroker.ParseRecords(json: jsonRecordsDocument.Json);
+        return jsonBroker.ParseRecords(json: jsonRecordsDocument.Json);
     });
 
 }

@@ -8,7 +8,7 @@ using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Brokers.Events;
 
-public interface IPageEventBroker : IAuthenticatedEventBroker
+public interface IPageEventBroker
 {
     ValueTask RaisePageAddEventAsync(EventMessage<Page> message);
 

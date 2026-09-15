@@ -31,9 +31,6 @@ public partial class CultureEventServiceTests
         cultureEventBrokerMock = new Mock<ICultureEventBroker>(behavior: MockBehavior.Strict);
         cultureEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        cultureEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.CultureEventService(
 cultureEventBroker: cultureEventBrokerMock.Object
         );

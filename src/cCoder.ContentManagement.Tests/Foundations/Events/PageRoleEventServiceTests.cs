@@ -31,9 +31,6 @@ public partial class PageRoleEventServiceTests
         pageRoleEventBrokerMock = new Mock<IPageRoleEventBroker>(behavior: MockBehavior.Strict);
         pageRoleEventBrokerMock = new(behavior: MockBehavior.Strict);
 
-        pageRoleEventBrokerMock.Setup(expression: x => x.GetCurrentUserId())
-            .Returns(value: CurrentUserId);
-
         service = new cCoder.ContentManagement.Services.Foundations.Events.PageRoleEventService(
 pageRoleEventBroker: pageRoleEventBrokerMock.Object
         );

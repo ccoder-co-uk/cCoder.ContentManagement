@@ -18,20 +18,34 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal sealed partial class PageRenderProcessingService(
     IPageRenderService pageRenderService,
-    ContentManagementConfiguration config) : IPageRenderProcessingService
+    ContentManagementConfiguration config)
+        : IPageRenderProcessingService
 {
+    public string ComputeFingerprint(object value) =>
+        TryCatch<string>(operation: () =>
+        {
+            ValidateSerializeRuntimeValue(inputs: [value]);
+
+            return pageRenderService.ComputeFingerprintPageRenderFoundationOperation(
+                pageRenderFoundationOperation: new PageRenderFoundationOperation
+                {
+                    Value = value
+                })
+            .Json;
+        });
+
     public string SerializeRuntimeValue(object value) =>
         TryCatch<string>(operation: () =>
-    {
-        ValidateSerializeRuntimeValue(inputs: [value]);
+        {
+            ValidateSerializeRuntimeValue(inputs: [value]);
 
-        return pageRenderService.SerializePageRenderFoundationOperation(
-            pageRenderFoundationOperation: new PageRenderFoundationOperation
-            {
-                Value = value
-            })
-        .Json;
-    });
+            return pageRenderService.SerializePageRenderFoundationOperation(
+                pageRenderFoundationOperation: new PageRenderFoundationOperation
+                {
+                    Value = value
+                })
+            .Json;
+        });
 
     public PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation pageRenderOperation) =>

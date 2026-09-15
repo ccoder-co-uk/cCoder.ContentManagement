@@ -36,7 +36,9 @@ public partial class PageInfoEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaisePageInfoAddEventAsync(pageInfo: entity);
+        await service.RaisePageInfoAddEventAsync(
+            pageInfo: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -56,9 +58,6 @@ public partial class PageInfoEventServiceTests
 expression: x => x.RaisePageInfoAddEventAsync(message: It.IsAny<EventMessage<PageInfo>>()),
 times: Times.Once
         );
-
-        pageInfoEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         pageInfoEventBrokerMock.VerifyNoOtherCalls();
     }

@@ -13,6 +13,10 @@ using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
 using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
+using System.Security;
+using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
+using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -35,7 +39,7 @@ public partial class TemplateOrchestrationServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         templateEventProcessingServiceMock
-            .Setup(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entity))
+            .Setup(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entity, userId: CurrentUserId))
             .Returns(value: ValueTask.CompletedTask);
 
         // When
@@ -44,7 +48,49 @@ public partial class TemplateOrchestrationServiceTests
         // Then
         templateProcessingServiceMock.Verify(expression: x => x.GetTemplate(templateId: id), times: Times.Once);
         templateProcessingServiceMock.Verify(expression: x => x.DeleteAsync(templateId: id), times: Times.Once);
-        templateEventProcessingServiceMock.Verify(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entity), times: Times.Once);
+        templateEventProcessingServiceMock.Verify(expression: x => x.RaiseTemplateDeleteEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);
+
+        authorizationProcessingServiceMock.Verify(
+            expression: service => service.AuthorizeAuthorizationContext(
+                context: It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Template_delete")),
+            times: Times.Once);
+    }
+
+    [Fact]
+    public async Task Template_WhenUserLacksDeletePrivilege_IsNotDeleted()
+    {
+        // Given
+        int id = 1;
+        Template entity = CreateRandomTemplate();
+
+        templateProcessingServiceMock
+            .Setup(expression: service => service.GetTemplate(templateId: id))
+            .Returns(value: entity);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                context: It.Is<AuthorizationContext>(match: context =>
+                    context.Request.AppId == entity.AppId
+                    && context.Request.Privilege == "Template_delete")))
+            .Throws(exception: new SecurityException(message: "Access Denied!"));
+
+        // When
+        Func<Task> action = async () =>
+            await orchestrationService.DeleteAsync(templateId: id);
+
+        // Then
+        await action
+            .Should()
+            .ThrowAsync<ContentManagementSecurityException>();
+
+        templateProcessingServiceMock.Verify(
+            expression: service => service.GetTemplate(templateId: id),
+            times: Times.Once);
+
+        templateProcessingServiceMock.VerifyNoOtherCalls();
+        templateEventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
 }

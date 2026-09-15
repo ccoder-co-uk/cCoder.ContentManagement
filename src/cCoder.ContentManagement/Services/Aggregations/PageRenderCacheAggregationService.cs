@@ -70,7 +70,7 @@ internal sealed partial class PageRenderCacheAggregationService(
         bool fromEvent = false) =>
         TryCatch(operation: () =>
         {
-            ValidateAppPageRenderCachesOnDelete(inputs: [appId, fromEvent]);
+            ValidateAppOnDelete(inputs: [appId, fromEvent]);
 
             return fromEvent
                 ? DeleteAppPageRenderCacheFromEventAsync(appId: appId)
@@ -82,7 +82,7 @@ internal sealed partial class PageRenderCacheAggregationService(
         bool fromEvent = false) =>
         TryCatch(operation: () =>
         {
-            ValidatePagePageRenderCachesOnDelete(inputs: [pageId, fromEvent]);
+            ValidatePageOnDelete(inputs: [pageId, fromEvent]);
 
             return fromEvent
                 ? DeletePagePageRenderCacheFromEventAsync(pageId: pageId)

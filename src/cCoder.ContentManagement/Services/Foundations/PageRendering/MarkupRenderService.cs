@@ -4,23 +4,48 @@
 
 using System.Text;
 using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Brokers.Rendering;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
-using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Models.Rendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class MarkupRenderService(
-    IComponentReaderBroker componentReaderBroker,
-    IScriptReaderBroker scriptReaderBroker,
-    IRenderFileContentBroker renderFileContentBroker,
+    IContentRenderBroker contentRenderBroker,
     IJsonBroker jsonBroker,
-    ISystemTextJsonBroker systemTextJsonBroker,
-    IWorkflowExecutionBroker workflowExecutionBroker,
-    IRegularExpressionBroker regularExpressionBroker)
+    IRegularExpressionBroker regularExpressionBroker,
+    IRenderingUtilityBroker renderingUtilityBroker = null)
         : IMarkupRenderService
 {
+    private readonly IRenderingUtilityBroker renderingUtilityBroker =
+        renderingUtilityBroker ?? new RenderingUtilityBroker();
+
+    public TagHandlingOperation HtmlEncodeTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateHtmlEncodeTagHandlingOperation(inputs: [tagHandlingOperation]);
+
+            tagHandlingOperation.Content = renderingUtilityBroker.HtmlEncode(
+                value: tagHandlingOperation.Content);
+
+            return tagHandlingOperation;
+        });
+
+    public TagHandlingOperation GetPropertyValuesTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidatePropertyValuesTagHandlingOperationOnGet(
+                inputs: [tagHandlingOperation]);
+
+            tagHandlingOperation.RuntimeProperties = renderingUtilityBroker
+                .GetPropertyValues(value: tagHandlingOperation.Value);
+
+            return tagHandlingOperation;
+        });
+
     private const string ElementPattern = "<(?<tag>script|style)\\b";
 
     private const string NoncePattern =

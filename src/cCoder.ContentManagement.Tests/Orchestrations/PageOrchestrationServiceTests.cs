@@ -15,6 +15,7 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Models;
 using FizzWare.NBuilder;
 using Moq;
 
@@ -25,19 +26,54 @@ public partial class PageOrchestrationServiceTests
 {
     private readonly Mock<IPageProcessingService> pageProcessingServiceMock;
     private readonly Mock<IPageEventProcessingService> pageEventProcessingServiceMock;
-    private readonly Mock<ILayoutProcessingService> layoutProcessingServiceMock;
+    private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly PageOrchestrationService orchestrationService;
+    private const string CurrentUserId = "test-user";
 
     public PageOrchestrationServiceTests()
     {
         pageProcessingServiceMock = new Mock<IPageProcessingService>(behavior: MockBehavior.Strict);
         pageEventProcessingServiceMock = new Mock<IPageEventProcessingService>(behavior: MockBehavior.Strict);
-        layoutProcessingServiceMock = new Mock<ILayoutProcessingService>(behavior: MockBehavior.Strict);
+        authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.GetCurrentUserId())
+            .Returns(value: CurrentUserId);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.AuthorizeAuthorizationContext(
+                context: It.IsAny<AuthorizationContext>()));
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.ResolveCurrentAuthorizationContext(
+                context: It.IsAny<AuthorizationContext>()))
+            .Returns(valueFunction: (AuthorizationContext context) =>
+            {
+                context.User = new User
+                {
+                    Id = "test-user",
+                    Roles = []
+                };
+
+                context.UserId = "test-user";
+                return context;
+            });
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.IsAdminOfAppAuthorizationContext(
+                context: It.IsAny<AuthorizationContext>()))
+            .Returns(value: true);
+
+        authorizationProcessingServiceMock
+            .Setup(expression: service => service.UserCanPageAuthorizationContext(
+                context: It.IsAny<AuthorizationContext>()))
+            .Returns(value: true);
 
         orchestrationService = new PageOrchestrationService(
-processingService: pageProcessingServiceMock.Object,
-eventService: pageEventProcessingServiceMock.Object,
-layoutProcessingService: layoutProcessingServiceMock.Object
+            processingService: pageProcessingServiceMock.Object,
+            eventService: pageEventProcessingServiceMock.Object,
+            authorizationProcessingService:
+                authorizationProcessingServiceMock.Object
         );
     }
 
@@ -45,10 +81,4 @@ layoutProcessingService: layoutProcessingServiceMock.Object
         Builder<Page>.CreateNew()
         .Build();
 
-    private static Layout CreateLayoutFor(Page page) =>
-        Builder<Layout>
-            .CreateNew()
-        .With(func: layout => layout.AppId = page.AppId)
-        .With(func: layout => layout.Name = page.Layout)
-        .Build();
 }

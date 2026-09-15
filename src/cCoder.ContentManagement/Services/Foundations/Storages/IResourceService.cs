@@ -17,6 +17,4 @@ internal interface IResourceService
     ValueTask<Resource> UpdateResourceAsync(Resource updatedResource);
 
     ValueTask DeleteAsync(int resourceId);
-
-    string GetCurrentUserId();
 }

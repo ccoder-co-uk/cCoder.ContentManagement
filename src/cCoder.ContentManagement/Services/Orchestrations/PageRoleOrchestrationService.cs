@@ -6,10 +6,16 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.CMS;
+using System.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal partial class PageRoleOrchestrationService(IPageRoleProcessingService processingService, IPageRoleEventProcessingService eventService) : IPageRoleOrchestrationService
+internal partial class PageRoleOrchestrationService(
+    IPageRoleProcessingService processingService,
+    IPageRoleEventProcessingService eventService,
+    IAuthorizationProcessingService authorizationProcessingService)
+        : IPageRoleOrchestrationService
 {
     public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageRole>>(operation: () =>
@@ -23,8 +29,13 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
     {
         ValidatePageRoleOnAdd(inputs: [newPageRole]);
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
+        Authorize(pageRole: newPageRole, privilege: "pagerole_create", requireRole: true);
         PageRole result = await processingService.AddPageRoleAsync(newPageRole: newPageRole);
-        await eventService.RaisePageRoleAddEventAsync(entity: result);
+
+        await eventService.RaisePageRoleAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
 
     }, isValueTask: true);
@@ -34,7 +45,12 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
     {
         ValidatePageRoleOnDelete(inputs: [deletedPageRole]);
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "entity");
-        await eventService.RaisePageRoleDeleteEventAsync(entity: deletedPageRole);
+        Authorize(pageRole: deletedPageRole, privilege: "pagerole_delete");
+
+        await eventService.RaisePageRoleDeleteEventAsync(
+            entity: deletedPageRole,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeletePageRoleAsync(deletedPageRole: deletedPageRole);
 
     }, isValueTask: true);
@@ -145,15 +161,77 @@ internal partial class PageRoleOrchestrationService(IPageRoleProcessingService p
     private async ValueTask<PageRole> ExecuteAddPageRoleAsync(PageRole newPageRole)
     {
         ValidatePageRole(pageRole: newPageRole, parameterName: "entity");
+        Authorize(pageRole: newPageRole, privilege: "pagerole_create", requireRole: true);
         PageRole result = await processingService.AddPageRoleAsync(newPageRole: newPageRole);
-        await eventService.RaisePageRoleAddEventAsync(entity: result);
+
+        await eventService.RaisePageRoleAddEventAsync(
+            entity: result,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         return result;
     }
 
     private async ValueTask ExecuteDeletePageRoleAsync(PageRole deletedPageRole)
     {
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "entity");
-        await eventService.RaisePageRoleDeleteEventAsync(entity: deletedPageRole);
+        Authorize(pageRole: deletedPageRole, privilege: "pagerole_delete");
+
+        await eventService.RaisePageRoleDeleteEventAsync(
+            entity: deletedPageRole,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
         await processingService.DeletePageRoleAsync(deletedPageRole: deletedPageRole);
+    }
+
+    private void Authorize(
+        PageRole pageRole,
+        string privilege,
+        bool requireRole = false)
+    {
+        PageRole pageRoleContext = new()
+        {
+            PageId = pageRole.PageId,
+            RoleId = pageRole.RoleId
+        };
+
+        PageRole resolvedPageRole = processingService.ResolvePageRole(
+            pageRole: pageRoleContext);
+
+        Page page = resolvedPageRole.Page;
+        bool roleExists = !requireRole || resolvedPageRole.Role != null;
+
+        if (page == null || !roleExists)
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        AuthorizationContext context =
+            authorizationProcessingService.ResolveCurrentAuthorizationContext(
+                context: new AuthorizationContext
+                {
+                    PageAuthorization = new PageAuthorization
+                    {
+                        Page = page,
+                        Privilege = privilege
+                    }
+                });
+
+        context.PageAuthorization.User = context.User;
+
+        if (!authorizationProcessingService.UserCanPageAuthorizationContext(
+            context: context))
+        {
+            throw new SecurityException(message: "Access Denied!");
+        }
+
+        authorizationProcessingService.AuthorizeAuthorizationContext(
+            context: new AuthorizationContext
+            {
+                Request = new AuthorizationRequest
+                {
+                    AppId = page.AppId,
+                    Privilege = privilege
+                }
+            });
     }
 }

@@ -10,6 +10,12 @@ namespace cCoder.ContentManagement.Services.Foundations.HttpContexts;
 internal sealed partial class HttpContextService(
     IHttpContextBroker httpContextBroker) : IHttpContextService
 {
+    public string GetRequestPath() =>
+        TryCatch(operation: () => httpContextBroker.GetRequestPath());
+
+    public string GetRequestHost() =>
+        TryCatch(operation: () => httpContextBroker.GetRequestHost());
+
     public HttpPageRenderContext GetPageRenderContext() =>
         TryCatch(operation: () =>
     {

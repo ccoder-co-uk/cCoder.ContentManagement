@@ -24,7 +24,7 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class PageRoleProcessingServiceTests
 {
     [Fact]
-    public async Task ShouldDelegateToFoundationDeleteWhenUserCanDeletePageRoleForDeleteAsync()
+    public async Task DeletePageRole_WhenPageRoleExists_ShouldPersistDeleteAsync()
     {
         // Given
         User user = TestUsers.WithPrivilege(privilege: "pagerole_delete", appId: 1);
@@ -64,10 +64,6 @@ public partial class PageRoleProcessingServiceTests
 
         pageRoleServiceMock.Setup(expression: x => x.GetAllPageRole(ignoreFilters: true))
             .Returns(value: new[] { link }.AsQueryable());
-
-        pageRoleServiceMock.Setup(expression: x => x.UserCanDeletePageRole(
-                pageRole: It.IsAny<LocalPageRole>()))
-            .Returns(value: true);
 
         pageRoleServiceMock.Setup(expression: x => x.DeletePageRoleAsync(deletedPageRole: link))
             .Returns(value: ValueTask.CompletedTask);

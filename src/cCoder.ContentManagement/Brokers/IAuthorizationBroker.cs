@@ -7,7 +7,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Brokers;
 
-public interface IAuthorizationBroker
+internal interface IAuthorizationBroker
 {
     User GetCurrentUser();
 

@@ -3,16 +3,16 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Services.Foundations.Authorizations;
-using cCoder.ContentManagement.Services.Foundations.HttpContexts;
-using cCoder.ContentManagement.Services.Foundations.Authorization;
+using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Services.Processings.HttpContexts;
+using cCoder.ContentManagement.Services.Processings.PageContexts;
 
 namespace cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 
 internal sealed partial class PageContextOrchestrationService(
-    IHttpContextService httpContextService,
-    IPageAuthorizationService pageAuthorizationService,
-    IAuthorizationService authorizationService)
+    IHttpContextProcessingService httpContextProcessingService,
+    IPageAuthorizationProcessingService pageAuthorizationProcessingService,
+    IAuthorizationProcessingService authorizationProcessingService)
         : IPageContextOrchestrationService
 {
     public ValueTask<HttpPageRenderContext>
@@ -21,15 +21,15 @@ internal sealed partial class PageContextOrchestrationService(
     {
 
         HttpPageRenderContext context =
-            httpContextService.GetPageRenderContext();
+            httpContextProcessingService.GetPageRenderContext();
 
         bool hasCultureOverride = context.CultureWasExplicitlyRequested;
 
-        context = await pageAuthorizationService
+        context = await pageAuthorizationProcessingService
             .AuthorizeHttpPageRenderContextAsync(
-                pageRenderContext: context);
+                httpPageRenderContext: context);
 
-        context.User = authorizationService
+        context.User = authorizationProcessingService
             .ResolveCurrentAuthorizationContext(
                 context: new AuthorizationContext
                 {

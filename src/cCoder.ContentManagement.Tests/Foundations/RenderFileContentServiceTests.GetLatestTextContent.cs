@@ -14,7 +14,6 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -58,8 +57,8 @@ public partial class RenderFileContentServiceTests
     {
         // Given
         renderFileContentBrokerMock
-            .Setup(expression: broker => broker.GetLatestRawData(appId: 1, path: "/assets/file.txt"))
-            .Returns(value: []);
+            .Setup(expression: broker => broker.GetLatestTextContent(appId: 1, path: "/assets/file.txt"))
+            .Returns(value: string.Empty);
 
         // When
         string result = renderFileContentService.GetLatestTextContent(appId: 1, path: "/assets/file.txt");
@@ -68,7 +67,7 @@ public partial class RenderFileContentServiceTests
         result.Should()
             .BeEmpty();
 
-        renderFileContentBrokerMock.Verify(expression: broker => broker.GetLatestRawData(appId: 1, path: "/assets/file.txt"), times: Times.Once);
+        renderFileContentBrokerMock.Verify(expression: broker => broker.GetLatestTextContent(appId: 1, path: "/assets/file.txt"), times: Times.Once);
         renderFileContentBrokerMock.VerifyNoOtherCalls();
     }
 
@@ -77,11 +76,10 @@ public partial class RenderFileContentServiceTests
     {
         // Given
         string expected = "rendered file content";
-        byte[] rawData = Encoding.UTF8.GetBytes(s: expected);
 
         renderFileContentBrokerMock
-            .Setup(expression: broker => broker.GetLatestRawData(appId: 7, path: "/assets/content.txt"))
-            .Returns(value: rawData);
+            .Setup(expression: broker => broker.GetLatestTextContent(appId: 7, path: "/assets/content.txt"))
+            .Returns(value: expected);
 
         // When
         string result = renderFileContentService.GetLatestTextContent(appId: 7, path: "/assets/content.txt");
@@ -90,7 +88,7 @@ public partial class RenderFileContentServiceTests
         result.Should()
             .Be(expected: expected);
 
-        renderFileContentBrokerMock.Verify(expression: broker => broker.GetLatestRawData(appId: 7, path: "/assets/content.txt"), times: Times.Once);
+        renderFileContentBrokerMock.Verify(expression: broker => broker.GetLatestTextContent(appId: 7, path: "/assets/content.txt"), times: Times.Once);
         renderFileContentBrokerMock.VerifyNoOtherCalls();
     }
 }

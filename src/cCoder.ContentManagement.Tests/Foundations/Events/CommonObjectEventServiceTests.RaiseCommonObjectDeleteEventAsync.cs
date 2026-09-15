@@ -35,7 +35,9 @@ public partial class CommonObjectEventServiceTests
             .Returns(value: ValueTask.CompletedTask);
 
         // When
-        await service.RaiseCommonObjectDeleteEventAsync(commonObject: entity);
+        await service.RaiseCommonObjectDeleteEventAsync(
+            commonObject: entity,
+            userId: CurrentUserId);
 
         // Then
 
@@ -55,9 +57,6 @@ public partial class CommonObjectEventServiceTests
 expression: x => x.RaiseCommonObjectDeleteEventAsync(message: It.IsAny<EventMessage<CommonObject>>()),
 times: Times.Once
         );
-
-        commonObjectEventBrokerMock.Verify(expression: x => x.GetCurrentUserId(), times: Times.Once);
-
 
         commonObjectEventBrokerMock.VerifyNoOtherCalls();
     }

@@ -25,11 +25,13 @@ public partial class ScriptEventProcessingServiceTests
 {
     private readonly Mock<IScriptEventService> scriptEventServiceMock;
     private readonly ScriptEventProcessingService service;
+    private const string CurrentUserId = "test-user";
 
     public ScriptEventProcessingServiceTests()
     {
         scriptEventServiceMock = new Mock<IScriptEventService>(behavior: MockBehavior.Strict);
-        service = new ScriptEventProcessingService(eventService: scriptEventServiceMock.Object);
+        service = new ScriptEventProcessingService(
+            eventService: scriptEventServiceMock.Object);
     }
 
     private static Script CreateRandomScript() =>

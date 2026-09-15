@@ -12,6 +12,8 @@ public interface IPageInfoBroker
 
     IQueryable<PageInfo> GetAllPageInfoIgnoringFilters();
 
+    int? GetOwningAppId(int pageId);
+
     ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo);
 
     ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo);

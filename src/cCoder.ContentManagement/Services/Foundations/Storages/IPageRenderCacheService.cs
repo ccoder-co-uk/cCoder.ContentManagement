@@ -20,5 +20,4 @@ internal interface IPageRenderCacheService
 
     ValueTask ReplacePageRenderCachesAsync(int appId, int[] pageIds, PageRenderCache[] replacements);
 
-    void Authorize(int? appId, string privilege);
 }

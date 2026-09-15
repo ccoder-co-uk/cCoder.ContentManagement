@@ -12,16 +12,16 @@ namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class PackageItemEventService(IPackageItemEventBroker packageItemEventBroker) : IPackageItemEventService
 {
-    public ValueTask RaisePackageItemAddEventAsync(PackageItem packageItem) =>
+    public ValueTask RaisePackageItemAddEventAsync(PackageItem packageItem, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePackageItemAddEventAsync(inputs: [packageItem]);
+        ValidateRaisePackageItemAddEventAsync(inputs: [packageItem, userId]);
 
         EventMessage<DataPackageItem> message = new EventMessage<DataPackageItem>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = packageItemEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = packageItem
         };
@@ -30,16 +30,16 @@ internal partial class PackageItemEventService(IPackageItemEventBroker packageIt
 
     }, isValueTask: true);
 
-    public ValueTask RaisePackageItemUpdateEventAsync(PackageItem packageItem) =>
+    public ValueTask RaisePackageItemUpdateEventAsync(PackageItem packageItem, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePackageItemUpdateEventAsync(inputs: [packageItem]);
+        ValidateRaisePackageItemUpdateEventAsync(inputs: [packageItem, userId]);
 
         EventMessage<DataPackageItem> message = new EventMessage<DataPackageItem>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = packageItemEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = packageItem
         };
@@ -48,16 +48,16 @@ internal partial class PackageItemEventService(IPackageItemEventBroker packageIt
 
     }, isValueTask: true);
 
-    public ValueTask RaisePackageItemDeleteEventAsync(PackageItem packageItem) =>
+    public ValueTask RaisePackageItemDeleteEventAsync(PackageItem packageItem, string userId) =>
         TryCatch(operation: async () =>
     {
-        ValidateRaisePackageItemDeleteEventAsync(inputs: [packageItem]);
+        ValidateRaisePackageItemDeleteEventAsync(inputs: [packageItem, userId]);
 
         EventMessage<DataPackageItem> message = new EventMessage<DataPackageItem>
         {
             AuthInfo = new EventAuthInfo
             {
-                SSOUserId = packageItemEventBroker.GetCurrentUserId()
+                SSOUserId = userId
             },
             Data = packageItem
         };
