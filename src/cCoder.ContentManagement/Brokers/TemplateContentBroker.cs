@@ -3,12 +3,13 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Dependencies;
+using cCoder.CodeAnalysis.Exposures;
 
 namespace cCoder.ContentManagement.Brokers;
 
 internal sealed class TemplateContentBroker(
     TemplateContentDependency templateContentDependency)
-        : ITemplateContentBroker
+        : ITemplateContentBroker, IUtilityBroker
 {
     public async ValueTask<string> ReadAsync(Stream source)
     {

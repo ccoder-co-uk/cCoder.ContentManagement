@@ -52,8 +52,8 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
         if (edit is false)
         {
             renderService.Setup(expression: service =>
-                service.SerializeRuntimeValue(value: It.IsAny<object>()))
-                .Returns(value: "{}");
+                service.ComputeFingerprint(value: It.IsAny<object>()))
+                .Returns(value: "fingerprint");
         }
 
         pageService.Setup(expression: service =>

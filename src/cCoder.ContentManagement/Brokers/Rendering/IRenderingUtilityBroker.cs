@@ -10,7 +10,9 @@ internal interface IRenderingUtilityBroker
 {
     string HtmlEncode(string value);
 
+    string Serialize(object value);
+
     RuntimePropertyValue[] GetPropertyValues(object value);
 
-    string ComputeFingerprint(string value);
+    string ComputeFingerprint(object value);
 }

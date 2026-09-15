@@ -84,9 +84,6 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
     {
         PageRenderResult result = response.Page;
 
-        string fingerprintSource = pageRenderProcessingService
-            .SerializeRuntimeValue(value: result);
-
         return new PageRenderCache
         {
             AppId = result.AppId,
@@ -102,7 +99,7 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
             Header = result.HeaderHtml,
             Body = result.BodyHtml,
             SourceFingerprint = pageRenderProcessingService.ComputeFingerprint(
-                value: fingerprintSource),
+                value: result),
             RenderedOn = DateTimeOffset.UtcNow
         };
     }

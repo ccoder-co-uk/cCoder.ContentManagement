@@ -9,10 +9,17 @@ using cCoder.ContentManagement.Models.Rendering;
 
 namespace cCoder.ContentManagement.Dependencies.Rendering;
 
-internal sealed class RenderingUtilityDependency
+internal sealed class RenderingUtilityDependency(
+    SystemTextJsonDependency jsonDependency = null)
 {
+    private readonly SystemTextJsonDependency jsonDependency =
+        jsonDependency ?? new SystemTextJsonDependency();
+
     public string HtmlEncode(string value) =>
         WebUtility.HtmlEncode(value: value);
+
+    public string Serialize(object value) =>
+        jsonDependency.Serialize(value: value);
 
     public RuntimePropertyValue[] GetPropertyValues(object value) =>
         value.GetType()
@@ -26,8 +33,9 @@ internal sealed class RenderingUtilityDependency
             })
             .ToArray();
 
-    public string ComputeFingerprint(string value) =>
+    public string ComputeFingerprint(object value) =>
         Convert.ToHexString(
             inArray: SHA256.HashData(
-                source: Encoding.UTF8.GetBytes(s: value)));
+                source: Encoding.UTF8.GetBytes(
+                    s: jsonDependency.Serialize(value: value))));
 }

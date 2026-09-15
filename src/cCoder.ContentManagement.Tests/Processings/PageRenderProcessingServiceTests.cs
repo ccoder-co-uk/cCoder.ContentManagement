@@ -89,8 +89,7 @@ public partial class PageRenderProcessingServiceTests
             renderSessionManager: renderSessionManager);
 
         PageRenderService pageRenderService = new(
-            renderBroker: renderBroker,
-            jsonBroker: new JsonBroker());
+            renderBroker: renderBroker);
 
         return new PageRenderProcessingService(
             pageRenderService: pageRenderService,

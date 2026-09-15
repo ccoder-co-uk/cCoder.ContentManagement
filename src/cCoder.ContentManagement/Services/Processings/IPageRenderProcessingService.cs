@@ -7,9 +7,10 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface IPageRenderProcessingService
 {
-    string ComputeFingerprint(string value);
+    string ComputeFingerprint(object value);
+
+    string SerializeRuntimeValue(object value);
     PageRenderOperation RenderPageRenderOperation(
         PageRenderOperation operation);
 
-    string SerializeRuntimeValue(object value);
 }

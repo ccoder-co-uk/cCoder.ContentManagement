@@ -18,9 +18,12 @@ internal sealed class RenderingUtilityBroker(
     public string HtmlEncode(string value) =>
         dependency.HtmlEncode(value: value);
 
+    public string Serialize(object value) =>
+        dependency.Serialize(value: value);
+
     public RuntimePropertyValue[] GetPropertyValues(object value) =>
         dependency.GetPropertyValues(value: value);
 
-    public string ComputeFingerprint(string value) =>
+    public string ComputeFingerprint(object value) =>
         dependency.ComputeFingerprint(value: value);
 }
