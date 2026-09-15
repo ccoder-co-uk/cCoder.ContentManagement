@@ -3,10 +3,11 @@
 // ---------------------------------------------------------------
 
 using System.Text.RegularExpressions;
+using cCoder.CodeAnalysis.Exposures;
 
 namespace cCoder.ContentManagement.Brokers;
 
-internal sealed class RegularExpressionBroker : IRegularExpressionBroker
+internal sealed class RegularExpressionBroker : IRegularExpressionBroker, IUtilityBroker
 {
     private const RegexOptions StandardOptions =
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline;

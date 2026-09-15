@@ -2,13 +2,14 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.CodeAnalysis.Exposures;
 using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Models.Serialization;
 
 namespace cCoder.ContentManagement.Brokers;
 
 internal sealed class JsonBroker(
-    SystemTextJsonDependency dependency = null) : IJsonBroker
+    SystemTextJsonDependency dependency = null) : IJsonBroker, IUtilityBroker
 {
     private readonly SystemTextJsonDependency dependency =
         dependency ?? new SystemTextJsonDependency();
