@@ -33,13 +33,13 @@ public partial class MetadataCacheTests
         MetadataContainerSet core = new()
         {
             Name = "Core",
-            Types = [typeof(string).CreateExtendedMetadataContainer(category: "Core")],
+            Types = [CreateMetadata(type: typeof(string), category: "Core")],
         };
 
         MetadataContainerSet workflow = new()
         {
             Name = "Workflow",
-            Types = [typeof(int).CreateExtendedMetadataContainer(category: "Workflow")],
+            Types = [CreateMetadata(type: typeof(int), category: "Workflow")],
         };
 
         MetadataCacheDependency subject = CreateSubject(typeSets: [core, workflow]);
@@ -72,13 +72,13 @@ times: Times.Once
         MetadataContainerSet initial = new()
         {
             Name = "Core",
-            Types = [typeof(string).CreateExtendedMetadataContainer(category: "Core")],
+            Types = [CreateMetadata(type: typeof(string), category: "Core")],
         };
 
         MetadataContainerSet updated = new()
         {
             Name = "Workflow",
-            Types = [typeof(int).CreateExtendedMetadataContainer(category: "Workflow")],
+            Types = [CreateMetadata(type: typeof(int), category: "Workflow")],
         };
 
         string[] currentTypeSetPayloads = [JsonSerializer.Serialize(value: initial)];
@@ -126,14 +126,14 @@ times: Times.Exactly(callCount: 2)
         {
             Name = "Core",
             UriBase = "Core",
-            Types = [typeof(App).CreateExtendedMetadataContainer(category: "Core")],
+            Types = [CreateMetadata(type: typeof(App), category: "Core")],
         };
 
         MetadataContainerSet appSecurity = new()
         {
             Name = "Core",
             UriBase = "Core",
-            Types = [typeof(Role).CreateExtendedMetadataContainer(category: "Core")],
+            Types = [CreateMetadata(type: typeof(Role), category: "Core")],
         };
 
         MetadataCacheDependency subject = CreateSubject(typeSets: [contentManagement, appSecurity]);

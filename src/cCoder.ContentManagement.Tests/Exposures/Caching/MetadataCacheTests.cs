@@ -18,6 +18,7 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Dependencies.Caching;
+using cCoder.ContentManagement.Brokers.OData;
 using Moq;
 using cCoder.Data.Exposures;
 
@@ -51,5 +52,39 @@ public partial class MetadataCacheTests
         return new MetadataCacheDependency(
             metadataTypeCache: metadataTypeCacheMock.Object,
             resourceCache: commonObjectCacheMock.Object);
+    }
+
+    private static ExtendedMetadataContainer CreateMetadata(
+        Type type,
+        string category)
+    {
+        MetadataTypeDefinition definition = new MetadataTypeBroker()
+            .GetDefinition(type: type);
+
+        return new ExtendedMetadataContainer
+        {
+            IsValueType = definition.IsValueType,
+            Type = definition.Type,
+            Name = definition.Name,
+            DisplayName = definition.Name,
+            Description = definition.Name,
+            ServerType = definition.ServerType,
+            ServerTypeName = definition.ServerTypeName,
+            Properties = definition.Properties.Select(selector: property => new PropertyContainer
+            {
+                Name = property.Name,
+                Type = property.Type,
+                ServerType = property.ServerType,
+                ServerTypeName = property.ServerTypeName,
+                IsValueType = property.IsValueType,
+                DisplayName = property.Name,
+                ShortDisplayName = property.Name,
+                Description = property.Name,
+                IsReadOnly = property.IsReadOnly,
+                Template = property.IsKey ? "key" : property.Name,
+                IsRequired = property.IsRequired
+            }).ToArray(),
+            Category = category
+        };
     }
 }

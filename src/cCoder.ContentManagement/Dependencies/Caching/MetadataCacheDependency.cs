@@ -64,7 +64,9 @@ internal class MetadataCacheDependency : IMetadataCache
 
             foreach (MetadataContainerSet metadataContainerSet in typeSets)
             {
-                MetadataContainerSet metadataContainerSet2 = metadataContainerSet.Resource(culture: culture.Id, resources: resources);
+                MetadataContainerSet metadataContainerSet2 = metadataContainerSet.Resource(
+                    culture: culture.Id,
+                    resources: resources);
                 ExtendedMetadataContainer[] types = metadataContainerSet2.Types;
 
                 foreach (ExtendedMetadataContainer extendedMetadataContainer in types)

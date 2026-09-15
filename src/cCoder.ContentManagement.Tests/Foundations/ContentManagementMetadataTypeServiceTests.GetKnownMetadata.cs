@@ -15,7 +15,6 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using Style = cCoder.ContentManagement.Models.Style;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
-using cCoder.ContentManagement.Extensions.OData;
 using FluentAssertions;
 using Xunit;
 

@@ -2,18 +2,17 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Extensions.OData;
 using cCoder.ContentManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
-using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.OData;
 
 namespace cCoder.ContentManagement.Services.Foundations;
 
 internal sealed partial class ContentManagementMetadataTypeService(
-    IJsonBroker jsonBroker) : IContentManagementMetadataTypeService
+    IMetadataTypeBroker metadataTypeBroker) : IContentManagementMetadataTypeService
 {
     public IEnumerable<MetadataContainerSet> GetKnownMetadata() =>
         TryCatch<IEnumerable<MetadataContainerSet>>(operation: () =>
@@ -22,10 +21,10 @@ internal sealed partial class ContentManagementMetadataTypeService(
     public IEnumerable<string> GetKnownMetadataPayloads() =>
         TryCatch<IEnumerable<string>>(operation: () =>
             GetKnownMetadataCore()
-                .Select(selector: jsonBroker.Serialize)
+                .Select(selector: metadataTypeBroker.Serialize)
                 .ToArray());
 
-    private static IEnumerable<MetadataContainerSet> GetKnownMetadataCore() =>
+    private IEnumerable<MetadataContainerSet> GetKnownMetadataCore() =>
         new MetadataContainerSet[2]
         {
             ContentManagementTypes(),
@@ -33,7 +32,7 @@ internal sealed partial class ContentManagementMetadataTypeService(
         }.OrderBy(keySelector: (MetadataContainerSet set) => set.Name)
             .ToArray();
 
-    private static MetadataContainerSet ContentManagementTypes()
+    private MetadataContainerSet ContentManagementTypes()
     {
         MetadataContainerSet metadataContainerSet = new MetadataContainerSet();
         metadataContainerSet.Name = "ContentManagement";
@@ -70,27 +69,27 @@ internal sealed partial class ContentManagementMetadataTypeService(
         return metadataContainerSet;
     }
 
-    private static MetadataContainerSet SystemTypes()
+    private MetadataContainerSet SystemTypes()
     {
         MetadataContainerSet metadataContainerSet = new MetadataContainerSet();
         metadataContainerSet.Name = "System";
 
         metadataContainerSet.Types = new ExtendedMetadataContainer[14]
         {
-            typeof(int).CreateExtendedMetadataContainer(),
-            typeof(string).CreateExtendedMetadataContainer(),
-            typeof(decimal).CreateExtendedMetadataContainer(),
-            typeof(double).CreateExtendedMetadataContainer(),
-            typeof(float).CreateExtendedMetadataContainer(),
-            typeof(bool).CreateExtendedMetadataContainer(),
-            typeof(DateTime).CreateExtendedMetadataContainer(),
-            typeof(DateTimeOffset).CreateExtendedMetadataContainer(),
-            typeof(TimeSpan).CreateExtendedMetadataContainer(),
-            typeof(IEnumerable<object>).CreateExtendedMetadataContainer(),
-            typeof(ICollection<object>).CreateExtendedMetadataContainer(),
-            typeof(IDictionary<string, object>).CreateExtendedMetadataContainer(),
-            typeof(object).CreateExtendedMetadataContainer(),
-            typeof(Guid).CreateExtendedMetadataContainer()
+            CreateExtendedMetadataContainer<int>(category: "System"),
+            CreateExtendedMetadataContainer<string>(category: "System"),
+            CreateExtendedMetadataContainer<decimal>(category: "System"),
+            CreateExtendedMetadataContainer<double>(category: "System"),
+            CreateExtendedMetadataContainer<float>(category: "System"),
+            CreateExtendedMetadataContainer<bool>(category: "System"),
+            CreateExtendedMetadataContainer<DateTime>(category: "System"),
+            CreateExtendedMetadataContainer<DateTimeOffset>(category: "System"),
+            CreateExtendedMetadataContainer<TimeSpan>(category: "System"),
+            CreateExtendedMetadataContainer<IEnumerable<object>>(category: "System"),
+            CreateExtendedMetadataContainer<ICollection<object>>(category: "System"),
+            CreateExtendedMetadataContainer<IDictionary<string, object>>(category: "System"),
+            CreateExtendedMetadataContainer<object>(category: "System"),
+            CreateExtendedMetadataContainer<Guid>(category: "System")
         }.Select(selector: type =>
         {
             type.Category = "System";
@@ -101,31 +100,53 @@ internal sealed partial class ContentManagementMetadataTypeService(
         return metadataContainerSet;
     }
 
-    private static ExtendedMetadataContainer Entity<T>() =>
-        CreateExtendedMetadataContainer(
-            type: typeof(T),
+    private ExtendedMetadataContainer Entity<T>() =>
+        CreateExtendedMetadataContainer<T>(
             category: "ContentManagement",
             isEntity: true,
             hasEndpoint: true);
 
-    private static ExtendedMetadataContainer Complex<T>() =>
-        CreateExtendedMetadataContainer(
-            type: typeof(T),
+    private ExtendedMetadataContainer Complex<T>() =>
+        CreateExtendedMetadataContainer<T>(
             category: "ContentManagement");
 
-    private static ExtendedMetadataContainer CreateExtendedMetadataContainer(
-        Type type,
+    private ExtendedMetadataContainer CreateExtendedMetadataContainer<T>(
         string category,
         bool isEntity = false,
         bool hasEndpoint = false)
     {
-        ExtendedMetadataContainer metadata = type.CreateExtendedMetadataContainer(
-            isEntity: isEntity,
-            hasEndpoint: hasEndpoint);
+        MetadataTypeDefinition definition = metadataTypeBroker.GetDefinition<T>();
 
-        metadata.Category = category;
-
-        return metadata;
+        return new ExtendedMetadataContainer
+        {
+            IsValueType = definition.IsValueType,
+            Type = definition.Type,
+            Name = definition.Name,
+            DisplayName = definition.Name,
+            Description = definition.Name,
+            ServerType = definition.ServerType,
+            ServerTypeName = definition.ServerTypeName,
+            Properties = definition.Properties
+                .Select(selector: property => new PropertyContainer
+                {
+                    Name = property.Name,
+                    Type = property.Type,
+                    ServerType = property.ServerType,
+                    ServerTypeName = property.ServerTypeName,
+                    IsValueType = property.IsValueType,
+                    DisplayName = property.Name,
+                    ShortDisplayName = property.Name,
+                    Description = property.Name,
+                    IsReadOnly = property.IsReadOnly,
+                    Template = property.IsKey ? "key" : property.Name,
+                    IsRequired = property.IsRequired
+                })
+                .ToArray(),
+            IsEntity = isEntity,
+            IsJoinEntity = isEntity && definition.IsJoinEntity,
+            HasEndpoint = hasEndpoint,
+            Category = category
+        };
     }
 
 }

@@ -14,6 +14,7 @@ using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Dependencies.Caching;
 using cCoder.ContentManagement.Dependencies;
+using cCoder.ContentManagement.Dependencies.OData;
 using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Brokers;
@@ -184,6 +185,7 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddDependencies(this IServiceCollection services)
     {
+        services.AddTransient<MetadataTypeDependency>();
         services.AddTransient<TemplateContentDependency>();
         services.AddTransient<WorkflowExecutionDependency>();
     }
@@ -241,6 +243,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateBroker, TemplateBroker>();
         services.AddTransient<IAuthorizationBroker, AuthorizationBroker>();
         services.AddTransient<IJsonBroker, JsonBroker>();
+        services.AddTransient<IMetadataTypeBroker, MetadataTypeBroker>();
         services.AddTransient<IRegularExpressionBroker, RegularExpressionBroker>();
         services.AddTransient<
             ITemplateContentBroker,
