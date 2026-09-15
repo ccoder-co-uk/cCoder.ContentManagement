@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Extensions.OData;
 using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Events;
+using cCoder.ContentManagement.Brokers.Exports;
 using cCoder.ContentManagement.Brokers.Authorizations;
 using cCoder.ContentManagement.Brokers.HttpContexts;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -246,6 +247,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IJsonBroker, JsonBroker>();
         services.AddTransient<IMetadataTypeBroker, MetadataTypeBroker>();
         services.AddTransient<IRegularExpressionBroker, RegularExpressionBroker>();
+        services.AddTransient<IPackageExportBroker, PackageExportBroker>();
         services.AddTransient<
             ITemplateContentBroker,
             TemplateContentBroker>();
