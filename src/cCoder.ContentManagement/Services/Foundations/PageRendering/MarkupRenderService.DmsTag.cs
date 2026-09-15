@@ -29,7 +29,7 @@ internal sealed partial class MarkupRenderService
 
     private string ResolveContent(int appId, string path)
     {
-        return renderFileContentBroker.GetLatestTextContent(
+        return contentRenderBroker.GetLatestTextContent(
             appId: appId,
             path: path) ?? string.Empty;
     }

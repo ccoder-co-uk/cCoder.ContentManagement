@@ -14,7 +14,6 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Brokers;
 
 
 
@@ -27,17 +26,13 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class TemplateServiceTests
 {
     private readonly Mock<ITemplateBroker> templateBrokerMock;
-    private readonly Mock<ITemplateContentBroker> templateContentBrokerMock;
     private readonly TemplateService templateService;
 
     public TemplateServiceTests()
     {
         templateBrokerMock = new Mock<ITemplateBroker>(behavior: MockBehavior.Strict);
-        templateContentBrokerMock = new Mock<ITemplateContentBroker>(behavior: MockBehavior.Strict);
-
         templateService = new TemplateService(
-templateBroker: templateBrokerMock.Object,
-templateContentBroker: templateContentBrokerMock.Object
+templateBroker: templateBrokerMock.Object
         );
     }
 

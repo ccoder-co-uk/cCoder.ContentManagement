@@ -7,6 +7,7 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
+using cCoder.ContentManagement.Tests.Brokers.Rendering;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -29,16 +30,10 @@ public sealed partial class ComponentRenderServiceTests
             .Returns(value: expectedContent);
 
         IComponentRenderService componentRenderService = new ComponentRenderService(
-            metadataReaderBroker: Mock.Of<IMetadataReaderBroker>(),
-            commonObjectReaderBroker: Mock.Of<ICommonObjectReaderBroker>(),
+            contentRenderBroker: new TestContentRenderBroker(
+                renderFileContentBroker: renderFileContentBrokerMock.Object),
             jsonBroker: Mock.Of<IJsonBroker>(),
-            workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
-            regularExpressionBroker: Mock.Of<IRegularExpressionBroker>(),
-            renderFileContentBroker: renderFileContentBrokerMock.Object,
-            appBroker: Mock.Of<IAppBroker>(),
-            componentBroker: Mock.Of<IComponentBroker>(),
-            resourceBroker: Mock.Of<IResourceBroker>(),
-            scriptBroker: Mock.Of<IScriptBroker>());
+            regularExpressionBroker: Mock.Of<IRegularExpressionBroker>());
 
         // When
         ComponentRenderFoundationOperation operation =

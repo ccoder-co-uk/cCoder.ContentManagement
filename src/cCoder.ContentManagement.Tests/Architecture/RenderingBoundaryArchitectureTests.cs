@@ -11,6 +11,46 @@ namespace cCoder.ContentManagement.Tests.Architecture;
 
 public sealed partial class RenderingBoundaryArchitectureTests
 {
+    public static TheoryData<string> RenderingFoundationTypeNames =>
+        new()
+        {
+            "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService",
+            "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
+            "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService"
+        };
+
+    [Theory]
+    [MemberData(nameof(RenderingFoundationTypeNames))]
+    public void RenderingFoundation_WhenComposed_UsesOneContentRenderBroker(
+        string foundationTypeName)
+    {
+        // Given
+        Assembly assembly = typeof(ComponentRenderService).Assembly;
+
+        Type foundationType = assembly.GetType(name: foundationTypeName);
+
+        // When
+        Type[] ordinaryBrokerTypes = foundationType
+            .GetConstructors(bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+            .Single()
+            .GetParameters()
+            .Select(selector: parameter => parameter.ParameterType)
+            .Where(predicate: dependencyType =>
+                dependencyType.Name.EndsWith(
+                    value: "Broker",
+                    comparisonType: StringComparison.Ordinal)
+                && dependencyType.Name is not "IJsonBroker"
+                && dependencyType.Name is not "ILoggingBroker"
+                && dependencyType.Name is not "IRegularExpressionBroker"
+                && dependencyType.Name is not "IRenderingUtilityBroker")
+            .ToArray();
+
+        // Then
+        ordinaryBrokerTypes.Should()
+            .ContainSingle(predicate: dependencyType =>
+                dependencyType.Name == "IContentRenderBroker");
+    }
+
     [Fact]
     public void ComponentRenderingFoundation_WhenComposed_ShouldOwnBrokerOperations()
     {

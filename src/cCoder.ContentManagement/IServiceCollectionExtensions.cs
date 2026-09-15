@@ -34,6 +34,7 @@ using cCoder.ContentManagement.Services.Foundations.HttpContexts;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.ContentManagement.Services.Foundations.Exports;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Foundations.TemplateContents;
 using cCoder.Data;
 using cCoder.ContentManagement.Services.Foundations.Serialization;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
@@ -188,15 +189,18 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddDependencies(this IServiceCollection services)
     {
+        services.AddTransient<ContentRenderDependency>();
         services.AddTransient<MetadataTypeDependency>();
         services.AddTransient<RenderingUtilityDependency>();
-        services.AddTransient<TemplateContentDependency>();
+        services.AddTransient<TemplateStreamDependency>();
+        services.AddTransient<HtmlToPdfDependency>();
         services.AddTransient<WorkflowExecutionDependency>();
     }
 
     private static void AddBrokers(this IServiceCollection services)
     {
         services.AddTransient<SystemTextJsonDependency>();
+        services.AddTransient<IContentRenderBroker, ContentRenderBroker>();
         services.AddTransient<IRenderingUtilityBroker, RenderingUtilityBroker>();
         services.AddTransient<Brokers.Loggings.ILoggingBroker, Brokers.Loggings.LoggingBroker>();
         services.AddHttpContextAccessor();
@@ -248,9 +252,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IMetadataTypeBroker, MetadataTypeBroker>();
         services.AddTransient<IRegularExpressionBroker, RegularExpressionBroker>();
         services.AddTransient<IPackageExportBroker, PackageExportBroker>();
-        services.AddTransient<
-            ITemplateContentBroker,
-            TemplateContentBroker>();
+        services.AddTransient<ITemplateStreamBroker, TemplateStreamBroker>();
+        services.AddTransient<IHtmlToPdfBroker, HtmlToPdfBroker>();
         services.AddTransient<
             IWorkflowExecutionBroker,
             WorkflowExecutionBroker>();
@@ -260,11 +263,13 @@ public static partial class IServiceCollectionExtensions
     private static void AddCoordinations(this IServiceCollection services)
     {
         services.AddTransient<IAppManagerAggregationService, AppManagerAggregationService>();
+        services.AddTransient<ITemplateManagerAggregationService, TemplateManagerAggregationService>();
         services.AddTransient<IAppRenderableCoordinationService, AppRenderableCoordinationService>();
         services.AddTransient<IAppPageComponentCoordinationService, AppPageComponentCoordinationService>();
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
         services.AddTransient<IAppLifecycleCoordinationService, AppLifecycleCoordinationService>();
         services.AddTransient<IAppManagerCoordinationService, AppManagerCoordinationService>();
+        services.AddTransient<ICommonObjectCoordinationService, CommonObjectCoordinationService>();
         services.AddTransient<
             IContentManagementPackageCoordinationService,
             ContentManagementPackageCoordinationService>();
@@ -279,7 +284,6 @@ public static partial class IServiceCollectionExtensions
     private static void AddEventHandlers(this IServiceCollection services)
     {
         services.AddTransient<IAppManager, AppManager>();
-        services.AddTransient<IAuthorizationManager, AuthorizationManager>();
         services.AddTransient<IComponentManager, ComponentManager>();
         services.AddTransient<IContentManagementPackageManager, ContentManagementPackageManager>();
         services.AddTransient<IComponentRenderer, ComponentRenderer>();
@@ -329,11 +333,13 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IRenderOrchestrationService, RenderOrchestrationService>();
         services.AddTransient<IMetadataCacheService, MetadataCacheService>();
         services.AddTransient<ICommonObjectCacheService, CommonObjectCacheService>();
+        services.AddTransient<ICommonObjectLatestCacheService, CommonObjectLatestCacheService>();
         services.AddTransient<IMarkupRenderService, MarkupRenderService>();
         services.AddTransient<ICachedPageRenderService, CachedPageRenderService>();
         services.AddTransient<IMarkupRenderProcessingService, MarkupRenderProcessingService>();
         services.AddTransient<IMetadataCacheProcessingService, MetadataCacheProcessingService>();
         services.AddTransient<ICommonObjectCacheProcessingService, CommonObjectCacheProcessingService>();
+        services.AddTransient<ICommonObjectLatestCacheProcessingService, CommonObjectLatestCacheProcessingService>();
         services.AddScoped<IRenderBroker, RenderBroker>();
         services.AddTransient<IComponentReaderBroker, ComponentReaderBroker>();
         services.AddTransient<IScriptReaderBroker, ScriptReaderBroker>();
@@ -382,6 +388,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IScriptService, ScriptService>();
         services.AddTransient<ISubmissionService, SubmissionService>();
         services.AddTransient<ITemplateService, TemplateService>();
+        services.AddTransient<ITemplateContentService, TemplateContentService>();
+        services.AddTransient<IHtmlToPdfService, HtmlToPdfService>();
 
         services.AddTransient<ICurrentAppResolver, CurrentAppManager>();
         services.AddTransient<IContentManagementMetadataTypeService, ContentManagementMetadataTypeService>();
@@ -417,7 +425,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppPageOrderOrchestrationService, AppPageOrderOrchestrationService>();
         services.AddTransient<ICurrentAppOrchestrationService, CurrentAppOrchestrationService>();
         services.AddTransient<ICommonObjectOrchestrationService, CommonObjectOrchestrationService>();
-        services.AddTransient<ICommonObjectManager, CommonObjectOrchestrationService>();
+        services.AddTransient<ICommonObjectEventOrchestrationService, CommonObjectEventOrchestrationService>();
+        services.AddTransient<ICommonObjectManager, CommonObjectManager>();
         services.AddTransient<IComponentOrchestrationService, ComponentOrchestrationService>();
         services.AddTransient<IComponentRenderOrchestrationService, ComponentRenderOrchestrationService>();
         services.AddTransient<IContentOrchestrationService, ContentOrchestrationService>();
@@ -443,6 +452,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ISubmissionOrchestrationService, SubmissionOrchestrationService>();
         services.AddTransient<ISubmissionManager, SubmissionOrchestrationService>();
         services.AddTransient<ITemplateOrchestrationService, TemplateOrchestrationService>();
+        services.AddTransient<ITemplateContentOrchestrationService, TemplateContentOrchestrationService>();
         services.AddTransient<ITemplateRenderOrchestrationService, TemplateRenderOrchestrationService>();
     }
 
@@ -498,6 +508,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ISubmissionProcessingService, SubmissionProcessingService>();
         services.AddTransient<ITemplateEventProcessingService, TemplateEventProcessingService>();
         services.AddTransient<ITemplateProcessingService, TemplateProcessingService>();
+        services.AddTransient<ITemplateContentProcessingService, TemplateContentProcessingService>();
+        services.AddTransient<IHtmlToPdfProcessingService, HtmlToPdfProcessingService>();
         services.AddTransient<ITemplateRenderProcessingService, TemplateRenderProcessingService>();
     }
 

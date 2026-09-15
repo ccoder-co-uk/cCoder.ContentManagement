@@ -7,12 +7,6 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class TemplateProcessingService
 {
-    private static void ValidateTemplateContentOnRead(object[] inputs) =>
-        Validate(inputs: inputs);
-
-    private static void ValidateTemplateContentOnConvert(object[] inputs) =>
-        Validate(inputs: inputs);
-
     private static void ValidateTemplateOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 

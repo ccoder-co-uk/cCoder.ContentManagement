@@ -5,20 +5,13 @@
 using System.Security;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.Data.Models;
-using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Security;
-
-using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Models.Serialization;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class CommonObjectService(
     ICommonObjectBroker commonObjectBroker,
-    IAuthorizationManager authorizationManager,
-    ICommonObjectReaderBroker cache,
     IJsonBroker jsonBroker) : ICommonObjectService
 {
     public CommonObject[] DeserializeCommonObjects(object payload) =>
@@ -31,67 +24,6 @@ internal partial class CommonObjectService(
             .Select(selector: record =>
                 jsonBroker.ParseJson<CommonObject>(json: record.RawText))
             .ToArray();
-    });
-
-    public string GetCurrentUserId() =>
-        TryCatch<string>(operation: () =>
-            authorizationManager.GetCurrentUserId());
-
-    public void Authorize(int? appId, string privilege) =>
-        TryCatch(operation: () =>
-    {
-        ValidateAuthorization(inputs: [appId, privilege]);
-        authorizationManager.Authorize(appId: appId, privilege: privilege);
-    });
-
-    public bool IsAdminOfApp(int appId) =>
-        TryCatch<bool>(operation: () =>
-    {
-        ValidateAppAdministration(inputs: [appId]);
-        return authorizationManager.IsAdminOfApp(appId: appId);
-    });
-
-    public IEnumerable<CommonObject> GetLatestSet() =>
-        TryCatch<IEnumerable<CommonObject>>(operation: () =>
-            cache.GetLatestSet());
-
-    public void CacheCommonObjectComponent(CommonObject commonObject) =>
-        TryCatch(operation: () =>
-    {
-        ValidateComponentOnCache(inputs: [commonObject]);
-        ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
-
-        Component component = jsonBroker.ParseJson<Component>(json: commonObject.Json);
-
-        cache.Set(
-            key: "component|" + commonObject.Name.ToLowerInvariant(),
-            item: component);
-    });
-
-    public void CacheCommonObjectResource(CommonObject commonObject) =>
-        TryCatch(operation: () =>
-    {
-        ValidateResourceOnCache(inputs: [commonObject]);
-        ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
-
-        Resource resource = jsonBroker.ParseJson<Resource>(json: commonObject.Json);
-
-        cache.Set(
-            key: $"resource|{commonObject.Key?.ToLowerInvariant() ?? string.Empty}-{commonObject.Name?.ToLowerInvariant() ?? string.Empty}-{commonObject.Culture?.ToLowerInvariant() ?? string.Empty}",
-            item: resource);
-    });
-
-    public void CacheCommonObjectScript(CommonObject commonObject) =>
-        TryCatch(operation: () =>
-    {
-        ValidateScriptOnCache(inputs: [commonObject]);
-        ValidateCommonObject(commonObject: commonObject, parameterName: "commonObject");
-
-        Script script = jsonBroker.ParseJson<Script>(json: commonObject.Json);
-
-        cache.Set(
-            key: "script|" + commonObject.Name.ToLowerInvariant(),
-            item: script);
     });
 
     public CommonObject GetCommonObject(int commonObjectId, bool ignoreFilters = false) =>
@@ -136,21 +68,18 @@ internal partial class CommonObjectService(
             : commonObjectBroker.GetAllCommonObjects();
     });
 
-    public ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject) =>
+    public ValueTask<CommonObject> AddCommonObjectAsync(
+        CommonObject newCommonObject,
+        string userId) =>
         TryCatch<CommonObject>(operation: async () =>
     {
-        ValidateCommonObjectOnAdd(inputs: [newCommonObject]);
+        ValidateCommonObjectOnAdd(inputs: [newCommonObject, userId]);
         ValidateCommonObject(commonObject: newCommonObject, parameterName: "commonObject");
         CommonObject storageCommonObject = CreateStorageCommonObject(newCommonObject: newCommonObject);
-        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: storageCommonObject), privilege: "commonobject_create");
-
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
-
         DateTimeOffset now = (storageCommonObject.CreatedOn = DateTimeOffset.UtcNow);
-        storageCommonObject.CreatedBy = currentUserId;
+        storageCommonObject.CreatedBy = userId;
         storageCommonObject.LastUpdated = now;
-        storageCommonObject.LastUpdatedBy = currentUserId;
+        storageCommonObject.LastUpdatedBy = userId;
         CommonObject result = await commonObjectBroker.AddCommonObjectAsync(newCommonObject: storageCommonObject);
         newCommonObject.Id = result.Id;
         newCommonObject.Name = result.Name;
@@ -168,20 +97,17 @@ internal partial class CommonObjectService(
 
     }, isValueTask: true);
 
-    public ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject) =>
+    public ValueTask<CommonObject> UpdateCommonObjectAsync(
+        CommonObject updatedCommonObject,
+        string userId) =>
         TryCatch<CommonObject>(operation: async () =>
     {
-        ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject]);
+        ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject, userId]);
         ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "commonObject");
         CommonObject updateCommonObject = CreateStorageCommonObject(newCommonObject: updatedCommonObject);
-        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: updateCommonObject), privilege: "commonobject_update");
-
-        string currentUserId = authorizationManager.GetCurrentUser()
-            .Id;
-
         DateTimeOffset now = DateTimeOffset.UtcNow;
         updateCommonObject.LastUpdated = now;
-        updateCommonObject.LastUpdatedBy = currentUserId;
+        updateCommonObject.LastUpdatedBy = userId;
         CommonObject result = await commonObjectBroker.UpdateCommonObjectAsync(updatedCommonObject: updateCommonObject);
         updatedCommonObject.Id = result.Id;
         updatedCommonObject.Name = result.Name;
@@ -206,7 +132,6 @@ internal partial class CommonObjectService(
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
         CommonObject commonObject = ExecuteGetCommonObject(commonObjectId: commonObjectId);
         CommonObject dataCommonObject = CreateStorageCommonObject(newCommonObject: commonObject);
-        authorizationManager.Authorize(appId: commonObjectBroker.GetAppId(entity: dataCommonObject), privilege: "commonobject_delete");
         await commonObjectBroker.DeleteCommonObjectAsync(deletedCommonObject: dataCommonObject);
 
     }, isValueTask: true);

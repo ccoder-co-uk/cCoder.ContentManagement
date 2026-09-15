@@ -20,7 +20,6 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
 
 using cCoder.ContentManagement.Exposures;

@@ -103,7 +103,7 @@ internal sealed partial class MarkupRenderService
             return component;
         }
 
-        Component dataComponent = componentReaderBroker.GetComponent(
+        Component dataComponent = contentRenderBroker.GetComponent(
             appId: session.Request.AppId,
             name: name);
 

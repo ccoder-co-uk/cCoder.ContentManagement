@@ -21,7 +21,6 @@ using cCoder.ContentManagement.Services.Foundations.Storages;
 using FizzWare.NBuilder;
 using Moq;
 using DataPageInfo = cCoder.Data.Models.CMS.PageInfo;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
 using cCoder.ContentManagement.Exposures;
 

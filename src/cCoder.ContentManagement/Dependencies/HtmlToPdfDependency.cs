@@ -6,16 +6,8 @@ using iText.Html2pdf;
 
 namespace cCoder.ContentManagement.Dependencies;
 
-internal sealed class TemplateContentDependency : MemoryStream
+internal sealed class HtmlToPdfDependency : MemoryStream
 {
-    public TemplateContentDependency()
-    { }
-
-    internal string ReadContent()
-    {
-        return System.Text.Encoding.UTF8.GetString(bytes: ToArray());
-    }
-
     internal byte[] ConvertHtmlToPdf(string html)
     {
         SetLength(value: 0);

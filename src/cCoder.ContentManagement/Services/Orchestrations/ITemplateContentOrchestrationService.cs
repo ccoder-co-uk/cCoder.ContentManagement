@@ -2,11 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-namespace cCoder.ContentManagement.Brokers;
+namespace cCoder.ContentManagement.Services.Orchestrations;
 
-public interface ITemplateContentBroker
+internal interface ITemplateContentOrchestrationService
 {
-    ValueTask<string> ReadAsync(Stream source);
+    ValueTask<string> ReadContentAsync(Stream source);
 
     byte[] ConvertHtmlToPdf(string html);
 }

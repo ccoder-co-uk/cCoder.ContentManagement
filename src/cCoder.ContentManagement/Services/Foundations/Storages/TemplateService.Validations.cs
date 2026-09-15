@@ -9,12 +9,6 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class TemplateService
 {
-    private static void ValidateTemplateContentOnRead(object[] inputs) =>
-        Validate(inputs: inputs);
-
-    private static void ValidateTemplateContentOnConvert(object[] inputs) =>
-        Validate(inputs: inputs);
-
     private static void ValidateId(int templateId, string parameterName) =>
         ThrowIf(condition: templateId < 1, message: parameterName + " must be greater than 0.");
 

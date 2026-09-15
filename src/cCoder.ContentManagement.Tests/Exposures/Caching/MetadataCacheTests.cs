@@ -27,14 +27,14 @@ namespace cCoder.Core.Services.Tests.CMS.Exposures.Caching;
 public partial class MetadataCacheTests
 {
     private readonly Mock<IMetadataTypeCache> metadataTypeCacheMock;
-    private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock;
+    private readonly Mock<ICommonObjectCache> commonObjectCacheMock;
 
     public MetadataCacheTests()
     {
         metadataTypeCacheMock = new Mock<IMetadataTypeCache>(behavior: MockBehavior.Strict);
 
         commonObjectCacheMock =
-            new Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker>(
+            new Mock<ICommonObjectCache>(
                 behavior: MockBehavior.Strict);
     }
 

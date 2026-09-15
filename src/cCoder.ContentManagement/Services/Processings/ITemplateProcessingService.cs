@@ -9,10 +9,6 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface ITemplateProcessingService
 {
-    ValueTask<string> ReadContentAsync(Stream source);
-
-    byte[] ConvertHtmlToPdf(string html);
-
     Template GetTemplate(int templateId);
 
     IQueryable<Template> GetAllTemplate(bool ignoreFilters = false);

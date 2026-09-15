@@ -4,7 +4,6 @@
 
 using cCoder.ContentManagement.Extensions.OData;
 using cCoder.ContentManagement.Exposures.Caching;
-using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Models;
 using cCoder.Data;
 using cCoder.Data.Exposures;
@@ -25,12 +24,12 @@ internal class MetadataCacheDependency : IMetadataCache
 
     private readonly IDictionary<string, IDictionary<string, string>> metaSerialized;
     private readonly IMetadataTypeCache metadataTypeCache;
-    private readonly ICommonObjectReaderBroker resourceCache;
+    private readonly ICommonObjectCache resourceCache;
     private string metadataSignature;
 
     public MetadataCacheDependency(
         IMetadataTypeCache metadataTypeCache,
-        ICommonObjectReaderBroker resourceCache)
+        ICommonObjectCache resourceCache)
     {
         metaSerialized = new Dictionary<string, IDictionary<string, string>>(
             comparer: StringComparer.OrdinalIgnoreCase);

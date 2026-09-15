@@ -15,7 +15,6 @@ using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Brokers.Storages;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 
 
 
@@ -28,13 +27,11 @@ namespace cCoder.Core.Services.Tests.CMS.Foundations.Storages;
 public partial class AppServiceTests
 {
     private readonly Mock<IAppBroker> appBrokerMock;
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock;
     private readonly AppService appService;
 
     public AppServiceTests()
     {
         appBrokerMock = new Mock<IAppBroker>(behavior: MockBehavior.Strict);
-        authorizationManagerMock = new Mock<IAuthorizationManager>(behavior: MockBehavior.Strict);
         appService = new AppService(
             appBroker: appBrokerMock.Object);
     }

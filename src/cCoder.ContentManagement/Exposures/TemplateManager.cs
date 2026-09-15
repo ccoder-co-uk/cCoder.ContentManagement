@@ -2,38 +2,38 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class TemplateManager(
-    ITemplateOrchestrationService templateOrchestrationService)
+    ITemplateManagerAggregationService templateManagerAggregationService)
         : ITemplateManager
 {
     public ValueTask<string> ReadContentAsync(Stream source) =>
-        templateOrchestrationService.ReadContentAsync(source: source);
+        templateManagerAggregationService.ReadContentAsync(source: source);
 
     public byte[] ConvertHtmlToPdf(string html) =>
-        templateOrchestrationService.ConvertHtmlToPdf(html: html);
+        templateManagerAggregationService.ConvertHtmlToPdf(html: html);
 
     public IQueryable<Template> GetAll() =>
-        templateOrchestrationService.GetAllTemplate();
+        templateManagerAggregationService.GetAllTemplate();
 
     public Template Get(int templateId) =>
-        templateOrchestrationService.GetTemplate(templateId: templateId);
+        templateManagerAggregationService.GetTemplate(templateId: templateId);
 
     public ValueTask<Template> AddAsync(Template newTemplate) =>
-        templateOrchestrationService.AddTemplateAsync(newTemplate: newTemplate);
+        templateManagerAggregationService.AddTemplateAsync(newTemplate: newTemplate);
 
     public ValueTask<Template> UpdateAsync(Template updatedTemplate) =>
-        templateOrchestrationService.UpdateTemplateAsync(updatedTemplate: updatedTemplate);
+        templateManagerAggregationService.UpdateTemplateAsync(updatedTemplate: updatedTemplate);
 
     public ValueTask DeleteAsync(int templateId) =>
-        templateOrchestrationService.DeleteAsync(templateId: templateId);
+        templateManagerAggregationService.DeleteTemplateAsync(templateId: templateId);
 
     public ValueTask ImportTemplatesAsync(int appId, Template[] items) =>
-        templateOrchestrationService.ImportTemplatesAsync(
+        templateManagerAggregationService.ImportTemplatesAsync(
             appId: appId,
             items: items);
 }

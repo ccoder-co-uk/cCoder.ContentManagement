@@ -27,19 +27,7 @@ public partial class PageProcessingServiceTests
     public async Task ShouldDelegateToFoundationServiceWhenUserCanDeletePageForDeleteAsync()
     {
         // Given
-        authorizationManagerMock
-            .Setup(expression: x => x.Authorize(appId: It.IsAny<int?>(), privilege: It.IsAny<string>()))
-            .Callback(action: (int? appId, string privilege) =>
-            {
-                if (!(currentUser?.Can(appId: appId, operation: privilege) ?? false))
-                {
-                    throw new SecurityException(message: "Access Denied!");
-                }
-            });
 
-        authorizationManagerMock
-            .Setup(expression: x => x.IsAdminOfApp(appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) => currentUser?.IsAdminOfApp(appId: appId) ?? false);
 
 
         User user = TestUsers.WithPrivilege(privilege: "page_delete", appId: 1);

@@ -17,8 +17,6 @@ using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
-using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Models;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
@@ -27,28 +25,10 @@ public partial class PageProcessingServiceTests
 {
     private User currentUser = TestUsers.WithoutPrivileges();
     private readonly Mock<IPageService> pageServiceMock = new();
-    private readonly Mock<IAuthorizationManager> authorizationManagerMock = new();
     private readonly PageProcessingService pageProcessingService;
 
     public PageProcessingServiceTests()
     {
-        authorizationManagerMock
-            .Setup(expression: manager => manager.IsAdminOfApp(
-                appId: It.IsAny<int>()))
-            .Returns(valueFunction: (int appId) =>
-                currentUser?.IsAdminOfApp(appId: appId) ?? false);
-
-        authorizationManagerMock
-            .Setup(expression: manager => manager.UserCanPageAuthorization(
-                pageAuthorization: It.IsAny<PageAuthorization>()))
-            .Returns(valueFunction: (PageAuthorization authorization) =>
-                TestUsers.UserCanPage(authorization: new PageAuthorization
-                {
-                    Page = authorization.Page,
-                    User = currentUser,
-                    Privilege = authorization.Privilege
-                }));
-
         pageProcessingService = new PageProcessingService(
 service: pageServiceMock.Object
         );

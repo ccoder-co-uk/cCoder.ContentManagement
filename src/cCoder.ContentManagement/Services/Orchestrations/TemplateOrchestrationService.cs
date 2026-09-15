@@ -16,21 +16,6 @@ internal partial class TemplateOrchestrationService(
     IAuthorizationProcessingService authorizationProcessingService)
         : ITemplateOrchestrationService
 {
-
-    public ValueTask<string> ReadContentAsync(Stream source) =>
-        TryCatch<string>(operation: () =>
-        {
-            ValidateTemplateContentOnRead(inputs: [source]);
-            return processingService.ReadContentAsync(source: source);
-        }, isValueTask: true);
-
-    public byte[] ConvertHtmlToPdf(string html) =>
-        TryCatch(operation: () =>
-        {
-            ValidateTemplateContentOnConvert(inputs: [html]);
-            return processingService.ConvertHtmlToPdf(html: html);
-        });
-
     public Template GetTemplate(int templateId) =>
         TryCatch<Template>(operation: () =>
     {

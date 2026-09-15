@@ -3,30 +3,14 @@
 // ---------------------------------------------------------------
 
 using System.Security;
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class TemplateService(
-    ITemplateBroker templateBroker,
-    ITemplateContentBroker templateContentBroker) : ITemplateService
+    ITemplateBroker templateBroker) : ITemplateService
 {
-    public ValueTask<string> ReadContentAsync(Stream source) =>
-        TryCatch<string>(operation: () =>
-        {
-            ValidateTemplateContentOnRead(inputs: [source]);
-            return templateContentBroker.ReadAsync(source: source);
-        }, isValueTask: true);
-
-    public byte[] ConvertHtmlToPdf(string html) =>
-        TryCatch(operation: () =>
-        {
-            ValidateTemplateContentOnConvert(inputs: [html]);
-            return templateContentBroker.ConvertHtmlToPdf(html: html);
-        });
-
     public Template GetTemplate(int templateId, bool ignoreFilters = false) =>
         TryCatch<Template>(operation: () =>
     {

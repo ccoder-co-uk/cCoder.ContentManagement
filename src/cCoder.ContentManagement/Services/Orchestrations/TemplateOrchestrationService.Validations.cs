@@ -7,12 +7,6 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class TemplateOrchestrationService
 {
-    private static void ValidateTemplateContentOnRead(object[] inputs) =>
-        Validate(inputs: inputs);
-
-    private static void ValidateTemplateContentOnConvert(object[] inputs) =>
-        Validate(inputs: inputs);
-
     private static void ValidateTemplateOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 

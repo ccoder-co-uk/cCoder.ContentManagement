@@ -4,21 +4,16 @@
 
 using System.Text;
 using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Brokers.Rendering;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Models.Rendering;
-using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class MarkupRenderService(
-    IComponentReaderBroker componentReaderBroker,
-    IScriptReaderBroker scriptReaderBroker,
-    IRenderFileContentBroker renderFileContentBroker,
+    IContentRenderBroker contentRenderBroker,
     IJsonBroker jsonBroker,
-    IWorkflowExecutionBroker workflowExecutionBroker,
     IRegularExpressionBroker regularExpressionBroker,
     IRenderingUtilityBroker renderingUtilityBroker = null)
         : IMarkupRenderService

@@ -7,7 +7,8 @@ using cCoder.ContentManagement.Models.PageRendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
-internal sealed partial class CommonObjectCacheService(ICommonObjectReaderBroker broker) : ICommonObjectCacheService
+internal sealed partial class CommonObjectCacheService(
+    ICommonObjectReaderBroker broker) : ICommonObjectCacheService
 {
     public void Refresh() =>
         TryCatch(operation: () => broker.Refresh());
@@ -26,4 +27,5 @@ internal sealed partial class CommonObjectCacheService(ICommonObjectReaderBroker
         };
 
     });
+
 }

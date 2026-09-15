@@ -9,6 +9,7 @@ using cCoder.ContentManagement.Rendering.Brokers;
 using FluentAssertions;
 using Moq;
 using Xunit;
+using cCoder.ContentManagement.Tests.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Tests.Foundations.Rendering;
 
@@ -100,10 +101,7 @@ public sealed partial class ContentSecurityPolicyNonceTests
 
     private static MarkupRenderService CreateService() =>
         new(
-            componentReaderBroker: Mock.Of<IComponentReaderBroker>(),
-            scriptReaderBroker: Mock.Of<IScriptReaderBroker>(),
-            renderFileContentBroker: Mock.Of<IRenderFileContentBroker>(),
+            contentRenderBroker: new TestContentRenderBroker(),
             jsonBroker: Mock.Of<IJsonBroker>(),
-            workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
             regularExpressionBroker: new RegularExpressionBroker());
 }

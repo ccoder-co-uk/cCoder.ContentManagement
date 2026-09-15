@@ -18,7 +18,6 @@ using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.Data;
 using Moq;
-using IAuthorizationManager = cCoder.ContentManagement.Exposures.IAuthorizationManager;
 using IRoleBroker = cCoder.ContentManagement.Brokers.IRoleBroker;
 using LocalRole = cCoder.Data.Models.Security.Role;
 

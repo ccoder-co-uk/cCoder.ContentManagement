@@ -11,6 +11,7 @@ using cCoder.ContentManagement.Rendering.Services.Processings;
 using FluentAssertions;
 using Moq;
 using Xunit;
+using cCoder.ContentManagement.Tests.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Tests.Processings;
 
@@ -164,12 +165,10 @@ public sealed partial class MarkupRenderProcessingServiceTagPipelineTests
 
         return new MarkupRenderProcessingService(
             markupRenderService: new MarkupRenderService(
-                componentReaderBroker: Mock.Of<IComponentReaderBroker>(),
-                scriptReaderBroker: Mock.Of<IScriptReaderBroker>(),
-                renderFileContentBroker: Mock.Of<IRenderFileContentBroker>(),
+                contentRenderBroker: new TestContentRenderBroker(
+                    workflowExecutionBroker:
+                        workflowExecutionBroker ?? Mock.Of<IWorkflowExecutionBroker>()),
                 jsonBroker: new JsonBroker(),
-                workflowExecutionBroker:
-                    workflowExecutionBroker ?? Mock.Of<IWorkflowExecutionBroker>(),
                 regularExpressionBroker: regularExpressionBroker));
     }
 

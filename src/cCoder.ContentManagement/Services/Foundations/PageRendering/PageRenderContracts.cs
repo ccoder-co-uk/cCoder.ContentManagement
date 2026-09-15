@@ -5,6 +5,7 @@
 
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Models.Rendering;
+using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
@@ -57,4 +58,11 @@ internal interface IMarkupRenderService
     TagHandlingOperation IsJsonArrayTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
     TagHandlingOperation IsJsonValueTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
     TagHandlingOperation GetJsonPropertiesTagHandlingOperation(TagHandlingOperation tagHandlingOperation);
+}
+
+internal interface ICommonObjectLatestCacheService
+{
+    void RefreshCommonObjects();
+
+    IEnumerable<cCoder.Data.Models.CommonObject> GetLatestCommonObjects();
 }

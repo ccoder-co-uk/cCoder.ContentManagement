@@ -5,8 +5,27 @@
 using cCoder.Data.Models;
 using cCoder.ContentManagement.Models;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface ICommonObjectOrchestrationService : ICommonObjectManager { }
+internal interface ICommonObjectOrchestrationService
+{
+    CommonObject GetCommonObject(int commonObjectId);
+
+    IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false);
+
+    CommonObject[] DeserializeCommonObjects(object payload);
+
+    ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
+        CommonObject[] newCommonObjects);
+
+    ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);
+
+    ValueTask DeleteAsync(int commonObjectId);
+
+    ValueTask<IEnumerable<OperationResult<CommonObject>>> AddOrUpdateCommonObjectResult(
+        IEnumerable<CommonObject> newCommonObject);
+
+    ValueTask DeleteAllCommonObjectAsync(IEnumerable<CommonObject> deletedCommonObject);
+
+    IEnumerable<CommonObject> LatestCommonObject(string type);
+}

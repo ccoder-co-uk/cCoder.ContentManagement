@@ -3,59 +3,47 @@
 // ---------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
+using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models;
-using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Security;
-using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Processings;
 
-internal partial class CommonObjectProcessingService(ICommonObjectService service) : ICommonObjectProcessingService
+internal partial class CommonObjectProcessingService(
+    ICommonObjectService service)
+    : ICommonObjectProcessingService
 {
     public CommonObject[] DeserializeCommonObjects(object payload) =>
-        TryCatch<CommonObject[]>(operation: () =>
+        TryCatch(operation: () =>
     {
         ValidateDeserializeCommonObjects(inputs: [payload]);
-
         return service.DeserializeCommonObjects(payload: payload);
     });
 
-    private string GetCurrentUserId() =>
-        service.GetCurrentUserId();
-
     public CommonObject GetCommonObject(int commonObjectId) =>
-        TryCatch<CommonObject>(operation: () =>
+        TryCatch(operation: () =>
     {
         ValidateCommonObjectOnGet(inputs: [commonObjectId]);
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
         return service.GetCommonObject(commonObjectId: commonObjectId);
-
     });
 
     public IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false) =>
-        TryCatch<IQueryable<CommonObject>>(operation: () =>
+        TryCatch(operation: () =>
     {
         ValidateAllCommonObjectOnGet(inputs: [ignoreFilters]);
+
         return service.GetAllCommonObject(ignoreFilters: ignoreFilters);
     });
 
-    public IEnumerable<CommonObject> LatestCommonObject(string type) =>
-        TryCatch<IEnumerable<CommonObject>>(operation: () =>
-    {
-        ValidateLatestCommonObject(inputs: [type]);
-        ValidateType(type: type, parameterName: "type");
-
-        return service.GetLatestSet()
-            .Where(predicate: item => item.Type == type);
-
-    });
-
     public ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
-        CommonObject[] newCommonObjects) =>
+        CommonObject[] newCommonObjects,
+        IEnumerable<CommonObject> latestCommonObjects,
+        string userId) =>
         TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: async () =>
     {
-        ValidateAllCommonObjectsOnAdd(inputs: [newCommonObjects]);
+        ValidateAllCommonObjectsOnAdd(
+            inputs: [newCommonObjects, latestCommonObjects, userId]);
 
         ValidateCommonObjects(
             commonObjects: newCommonObjects,
@@ -66,268 +54,170 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
             NormalizeCulture(commonObject: commonObject);
         }
 
-        IEnumerable<string> types = newCommonObjects.Select(selector: (CommonObject i) => i.Type)
-            .Distinct();
+        List<CommonObject> adds = [];
+        List<CommonObject> updates = [];
 
-        List<OperationResult<CommonObject>> results = new List<OperationResult<CommonObject>>();
-        List<CommonObject> adds = new List<CommonObject>();
-        List<CommonObject> updates = new List<CommonObject>();
-
-        foreach (string type in types)
+        foreach (string type in newCommonObjects
+            .Select(selector: item => item.Type)
+            .Distinct())
         {
-            IEnumerable<CommonObject> dbSet = ExecuteLatestCommonObject(type: type);
-
-            CommonObject[] newSet = newCommonObjects.Where(predicate: (CommonObject i) => i.Type == type)
+            CommonObject[] existingSet = latestCommonObjects
+                .Where(predicate: item => item.Type == type)
                 .ToArray();
 
-            CommonObject[] array = newSet;
-
-            foreach (CommonObject entry in array)
+            foreach (CommonObject entry in newCommonObjects.Where(
+                predicate: item => item.Type == type))
             {
-                CommonObject matchedDbEntry = dbSet.FirstOrDefault(predicate: (CommonObject dbc) => MatchesOnCultureNameAndKey(dbc: dbc, commonObject: entry));
+                CommonObject matched = existingSet.FirstOrDefault(
+                    predicate: existing =>
+                        existing.Culture == entry.Culture
+                        && existing.Name == entry.Name
+                        && existing.Key == entry.Key);
 
-                if (matchedDbEntry == null)
+                if (matched is null)
                 {
                     entry.Id = 0;
                     entry.Version = 1;
                     adds.Add(item: entry);
                 }
-                else
+                else if (entry.CreatedOn > matched.CreatedOn
+                    || entry.LastUpdated > matched.LastUpdated)
                 {
-                    if (entry.CreatedOn > matchedDbEntry.CreatedOn || entry.LastUpdated > matchedDbEntry.LastUpdated)
-                    {
-                        entry.Version = matchedDbEntry.Version + 1;
-                        updates.Add(item: entry);
-                    }
+                    entry.Version = matched.Version + 1;
+                    updates.Add(item: entry);
                 }
             }
         }
 
-        results.AddRange(collection: await ExecuteAddOrUpdateCommonObjectResult(newCommonObject: adds));
-        results.AddRange(collection: await ExecuteAddOrUpdateCommonObjectResult(newCommonObject: updates));
+        List<OperationResult<CommonObject>> results = [];
+
+        results.AddRange(collection:
+            await ExecuteAddOrUpdateCommonObjectResult(
+                commonObjects: adds,
+                userId: userId));
+
+        results.AddRange(collection:
+            await ExecuteAddOrUpdateCommonObjectResult(
+                commonObjects: updates,
+                userId: userId));
+
         return results;
-
-        static bool MatchesOnCultureNameAndKey(CommonObject dbc, CommonObject commonObject)
-        {
-            return dbc.Culture == commonObject.Culture && dbc.Name == commonObject.Name && dbc.Key == commonObject.Key;
-        }
-
     }, isValueTask: true);
 
-    public ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject) =>
+    public ValueTask<CommonObject> AddCommonObjectAsync(
+        CommonObject newCommonObject,
+        string userId) =>
         TryCatch<CommonObject>(operation: async () =>
     {
-        ValidateCommonObjectOnAdd(inputs: [newCommonObject]);
-        ValidateCommonObject(commonObject: newCommonObject, parameterName: "entity");
-        NormalizeCulture(commonObject: newCommonObject);
-        service.Authorize(appId: null, privilege: "commonobject_create");
-        return await service.AddCommonObjectAsync(newCommonObject: newCommonObject);
+        ValidateCommonObjectOnAdd(inputs: [newCommonObject, userId]);
 
+        return await ExecuteAddCommonObjectAsync(
+            newCommonObject: newCommonObject,
+            userId: userId);
     }, isValueTask: true);
 
-    public ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject) =>
+    public ValueTask<CommonObject> UpdateCommonObjectAsync(
+        CommonObject updatedCommonObject,
+        string userId) =>
         TryCatch<CommonObject>(operation: async () =>
     {
-        ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject]);
-        ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "entity");
-        NormalizeCulture(commonObject: updatedCommonObject);
-        service.Authorize(appId: null, privilege: "commonobject_create");
-        service.Authorize(appId: null, privilege: "commonobject_update");
+        ValidateCommonObjectOnUpdate(inputs: [updatedCommonObject, userId]);
 
-        int newVersionCount = service.GetAllCommonObject()
-            .Count(predicate: (CommonObject c) => c.Name == updatedCommonObject.Name && c.Type == updatedCommonObject.Type && c.Culture == updatedCommonObject.Culture && c.Key == updatedCommonObject.Key) + 1;
-
-        int newVersionFromField = service.GetAllCommonObject()
-            .Where(predicate: item => item.Name == updatedCommonObject.Name && item.Type == updatedCommonObject.Type && item.Culture == updatedCommonObject.Culture && item.Key == updatedCommonObject.Key)
-            .OrderByDescending(keySelector: item => item.Version)
-            .FirstOrDefault()?.Version ?? 1;
-
-        updatedCommonObject.Id = 0;
-        updatedCommonObject.Version = ((newVersionCount > newVersionFromField) ? newVersionCount : (newVersionFromField + 1));
-        updatedCommonObject.CreatedOn = DateTimeOffset.Now;
-        updatedCommonObject.LastUpdated = DateTimeOffset.Now;
-        updatedCommonObject.LastUpdatedBy = GetCurrentUserId();
-        updatedCommonObject.CreatedBy = GetCurrentUserId();
-        updatedCommonObject = await service.AddCommonObjectAsync(newCommonObject: updatedCommonObject);
-
-        if (updatedCommonObject.Type.ToLowerInvariant() == "core/component")
-        {
-            service.CacheCommonObjectComponent(commonObject: updatedCommonObject);
-
-            CommonObject latestSetObject = service.GetLatestSet()
-                .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "ContentManagement/Component");
-
-            latestSetObject.Version = updatedCommonObject.Version;
-            latestSetObject.Key = updatedCommonObject.Key;
-            latestSetObject.Type = updatedCommonObject.Type;
-            latestSetObject.Json = updatedCommonObject.Json;
-            latestSetObject.Culture = updatedCommonObject.Culture;
-            latestSetObject.Name = updatedCommonObject.Name;
-            latestSetObject.Description = updatedCommonObject.Description;
-            latestSetObject.LastUpdated = updatedCommonObject.LastUpdated;
-            latestSetObject.LastUpdatedBy = updatedCommonObject.LastUpdatedBy;
-            latestSetObject.CreatedBy = updatedCommonObject.CreatedBy;
-        }
-        else
-        {
-            if (updatedCommonObject.Type.ToLowerInvariant() == "core/resource")
-            {
-                service.CacheCommonObjectResource(commonObject: updatedCommonObject);
-
-                CommonObject latestSetObject2 = service.GetLatestSet()
-                    .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Key.ToLowerInvariant() == updatedCommonObject.Key.ToLowerInvariant() && r.Name == updatedCommonObject.Name.ToLowerInvariant() && r.Culture.ToLowerInvariant() == updatedCommonObject.Culture.ToLowerInvariant() && r.Type == "ContentManagement/Resource");
-
-                latestSetObject2.Version = updatedCommonObject.Version;
-                latestSetObject2.Key = updatedCommonObject.Key;
-                latestSetObject2.Type = updatedCommonObject.Type;
-                latestSetObject2.Json = updatedCommonObject.Json;
-                latestSetObject2.Culture = updatedCommonObject.Culture;
-                latestSetObject2.Name = updatedCommonObject.Name;
-                latestSetObject2.Description = updatedCommonObject.Description;
-                latestSetObject2.LastUpdated = updatedCommonObject.LastUpdated;
-                latestSetObject2.LastUpdatedBy = updatedCommonObject.LastUpdatedBy;
-                latestSetObject2.CreatedBy = updatedCommonObject.CreatedBy;
-            }
-            else
-            {
-                if (updatedCommonObject.Type.ToLowerInvariant() == "core/script")
-                {
-                    CommonObject latestSetObject3 = service.GetLatestSet()
-                        .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "ContentManagement/Script");
-
-                    latestSetObject3.Version = updatedCommonObject.Version;
-                    latestSetObject3.Key = updatedCommonObject.Key;
-                    latestSetObject3.Type = updatedCommonObject.Type;
-                    latestSetObject3.Json = updatedCommonObject.Json;
-                    latestSetObject3.Culture = updatedCommonObject.Culture;
-                    latestSetObject3.Name = updatedCommonObject.Name;
-                    latestSetObject3.Description = updatedCommonObject.Description;
-                    latestSetObject3.LastUpdated = updatedCommonObject.LastUpdated;
-                    latestSetObject3.LastUpdatedBy = updatedCommonObject.LastUpdatedBy;
-                    latestSetObject3.CreatedBy = updatedCommonObject.CreatedBy;
-                    service.CacheCommonObjectScript(commonObject: updatedCommonObject);
-                }
-            }
-        }
-
-        return updatedCommonObject;
-
+        return await ExecuteUpdateCommonObjectAsync(
+            updatedCommonObject: updatedCommonObject,
+            userId: userId);
     }, isValueTask: true);
 
     public ValueTask DeleteAsync(int commonObjectId) =>
         TryCatch(operation: async () =>
     {
         ValidateDeleteAsync(inputs: [commonObjectId]);
-        ValidateId(commonObjectId: commonObjectId, parameterName: "id");
-        service.Authorize(appId: null, privilege: "commonobject_delete");
-        await service.DeleteAsync(commonObjectId: commonObjectId);
 
+        await ExecuteDeleteAsync(commonObjectId: commonObjectId);
     }, isValueTask: true);
 
-    public ValueTask<IEnumerable<OperationResult<CommonObject>>> AddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject) =>
+    public ValueTask<IEnumerable<OperationResult<CommonObject>>> AddOrUpdateCommonObjectResult(
+        IEnumerable<CommonObject> newCommonObject,
+        string userId) =>
         TryCatch<IEnumerable<OperationResult<CommonObject>>>(operation: async () =>
     {
-        ValidateOrUpdateCommonObjectResultOnAdd(inputs: [newCommonObject]);
-        ValidateCommonObjects(commonObjects: newCommonObject, parameterName: "items");
-        List<OperationResult<CommonObject>> results = new List<OperationResult<CommonObject>>();
+        ValidateOrUpdateCommonObjectResultOnAdd(inputs: [newCommonObject, userId]);
 
-        foreach (CommonObject item in newCommonObject)
-        {
-            try
-            {
-                CommonObject savedItem = item.Id < 1 ? await ExecuteAddCommonObjectAsync(newCommonObject: item) : await ExecuteUpdateCommonObjectAsync(updatedCommonObject: item);
+        ValidateCommonObjects(
+            commonObjects: newCommonObject,
+            parameterName: "items");
 
-                results.Add(item: new OperationResult<CommonObject>
-                {
-                    Success = true,
-                    Item = savedItem,
-                    Message = item.Id < 1 ? "Added Successfully" : "Updated Successfully"
-                });
-            }
-            catch (Exception ex)
-            {
-                results.Add(item: new OperationResult<CommonObject>
-                {
-                    Success = false,
-                    Item = item,
-                    Message = ex.Message
-                });
-            }
-        }
-
-        return results;
-
+        return await ExecuteAddOrUpdateCommonObjectResult(
+            commonObjects: newCommonObject,
+            userId: userId);
     }, isValueTask: true);
 
-    public ValueTask DeleteAllCommonObjectAsync(IEnumerable<CommonObject> deletedCommonObject) =>
+    public ValueTask DeleteAllCommonObjectAsync(
+        IEnumerable<CommonObject> deletedCommonObject) =>
         TryCatch(operation: async () =>
     {
         ValidateAllCommonObjectOnDelete(inputs: [deletedCommonObject]);
-        ValidateCommonObjects(commonObjects: deletedCommonObject, parameterName: "items");
+
+        ValidateCommonObjects(
+            commonObjects: deletedCommonObject,
+            parameterName: "items");
 
         foreach (CommonObject item in deletedCommonObject)
         {
             await ExecuteDeleteAsync(commonObjectId: item.Id);
         }
-
     }, isValueTask: true);
 
-    private static void ValidateId(int commonObjectId, string parameterName) =>
-        ThrowIf(condition: commonObjectId < 1, message: parameterName + " must be greater than 0.");
-
-    private static void ValidateType(string type, string parameterName) =>
-        ThrowIf(condition: string.IsNullOrWhiteSpace(value: type), message: parameterName + " is required.");
-
-    private static void ValidateCommonObject(CommonObject commonObject, string parameterName) =>
-        ThrowIf(condition: commonObject == null, message: parameterName + " is required.");
-
-    private static void ValidateCommonObjects(IEnumerable<CommonObject> commonObjects, string parameterName) =>
-        ThrowIf(condition: commonObjects == null, message: parameterName + " is required.");
-
-    private static void NormalizeCulture(CommonObject commonObject) =>
-        commonObject.Culture ??= string.Empty;
-
-    private static void ThrowIf(bool condition, string message)
+    private async ValueTask<CommonObject> ExecuteAddCommonObjectAsync(
+        CommonObject newCommonObject,
+        string userId)
     {
-        if (condition)
-        {
-            throw new ValidationException(message: message);
-        }
-    }
+        ValidateCommonObject(
+            commonObject: newCommonObject,
+            parameterName: "entity");
 
-    private async ValueTask<CommonObject> ExecuteAddCommonObjectAsync(CommonObject newCommonObject)
-    {
-        ValidateCommonObject(commonObject: newCommonObject, parameterName: "entity");
         NormalizeCulture(commonObject: newCommonObject);
-        service.Authorize(appId: null, privilege: "commonobject_create");
-        return await service.AddCommonObjectAsync(newCommonObject: newCommonObject);
+
+        return await service.AddCommonObjectAsync(
+            newCommonObject: newCommonObject,
+            userId: userId);
     }
 
-    private async ValueTask<IEnumerable<OperationResult<CommonObject>>> ExecuteAddOrUpdateCommonObjectResult(IEnumerable<CommonObject> newCommonObject)
+    private async ValueTask<IEnumerable<OperationResult<CommonObject>>>
+        ExecuteAddOrUpdateCommonObjectResult(
+            IEnumerable<CommonObject> commonObjects,
+            string userId)
     {
-        ValidateCommonObjects(commonObjects: newCommonObject, parameterName: "items");
-        List<OperationResult<CommonObject>> results = new List<OperationResult<CommonObject>>();
+        List<OperationResult<CommonObject>> results = [];
 
-        foreach (CommonObject item in newCommonObject)
+        foreach (CommonObject item in commonObjects)
         {
             try
             {
-                CommonObject savedItem = item.Id < 1 ? await ExecuteAddCommonObjectAsync(newCommonObject: item) : await ExecuteUpdateCommonObjectAsync(updatedCommonObject: item);
+                bool isNew = item.Id < 1;
+
+                CommonObject savedItem = isNew
+                    ? await ExecuteAddCommonObjectAsync(
+                        newCommonObject: item,
+                        userId: userId)
+                    : await ExecuteUpdateCommonObjectAsync(
+                        updatedCommonObject: item,
+                        userId: userId);
 
                 results.Add(item: new OperationResult<CommonObject>
                 {
                     Success = true,
                     Item = savedItem,
-                    Message = item.Id < 1 ? "Added Successfully" : "Updated Successfully"
+                    Message = isNew ? "Added Successfully" : "Updated Successfully"
                 });
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 results.Add(item: new OperationResult<CommonObject>
                 {
                     Success = false,
                     Item = item,
-                    Message = ex.Message
+                    Message = exception.Message
                 });
             }
         }
@@ -338,101 +228,74 @@ internal partial class CommonObjectProcessingService(ICommonObjectService servic
     private async ValueTask ExecuteDeleteAsync(int commonObjectId)
     {
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
-        service.Authorize(appId: null, privilege: "commonobject_delete");
         await service.DeleteAsync(commonObjectId: commonObjectId);
     }
 
-    private IEnumerable<CommonObject> ExecuteLatestCommonObject(string type)
+    private async ValueTask<CommonObject> ExecuteUpdateCommonObjectAsync(
+        CommonObject updatedCommonObject,
+        string userId)
     {
-        ValidateType(type: type, parameterName: "type");
+        ValidateCommonObject(
+            commonObject: updatedCommonObject,
+            parameterName: "entity");
 
-        return service.GetLatestSet()
-            .Where(predicate: item => item.Type == type);
-    }
-
-    private async ValueTask<CommonObject> ExecuteUpdateCommonObjectAsync(CommonObject updatedCommonObject)
-    {
-        ValidateCommonObject(commonObject: updatedCommonObject, parameterName: "entity");
         NormalizeCulture(commonObject: updatedCommonObject);
-        service.Authorize(appId: null, privilege: "commonobject_create");
-        service.Authorize(appId: null, privilege: "commonobject_update");
 
-        int newVersionCount = service.GetAllCommonObject()
-            .Count(predicate: (CommonObject c) => c.Name == updatedCommonObject.Name && c.Type == updatedCommonObject.Type && c.Culture == updatedCommonObject.Culture && c.Key == updatedCommonObject.Key) + 1;
+        int versionCount = service.GetAllCommonObject()
+            .Count(predicate: item => item.Name == updatedCommonObject.Name
+                && item.Type == updatedCommonObject.Type
+                && item.Culture == updatedCommonObject.Culture
+                && item.Key == updatedCommonObject.Key) + 1;
 
-        int newVersionFromField = service.GetAllCommonObject()
-            .Where(predicate: item => item.Name == updatedCommonObject.Name && item.Type == updatedCommonObject.Type && item.Culture == updatedCommonObject.Culture && item.Key == updatedCommonObject.Key)
+        int nextStoredVersion = (service.GetAllCommonObject()
+            .Where(predicate: item => item.Name == updatedCommonObject.Name
+                && item.Type == updatedCommonObject.Type
+                && item.Culture == updatedCommonObject.Culture
+                && item.Key == updatedCommonObject.Key)
             .OrderByDescending(keySelector: item => item.Version)
-            .FirstOrDefault()?.Version ?? 1;
+            .FirstOrDefault()?.Version ?? 0) + 1;
 
         updatedCommonObject.Id = 0;
-        updatedCommonObject.Version = ((newVersionCount > newVersionFromField) ? newVersionCount : (newVersionFromField + 1));
+
+        updatedCommonObject.Version = Math.Max(
+            val1: versionCount,
+            val2: nextStoredVersion);
+
         updatedCommonObject.CreatedOn = DateTimeOffset.Now;
         updatedCommonObject.LastUpdated = DateTimeOffset.Now;
-        updatedCommonObject.LastUpdatedBy = GetCurrentUserId();
-        updatedCommonObject.CreatedBy = GetCurrentUserId();
-        updatedCommonObject = await service.AddCommonObjectAsync(newCommonObject: updatedCommonObject);
+        updatedCommonObject.LastUpdatedBy = userId;
+        updatedCommonObject.CreatedBy = userId;
 
-        if (updatedCommonObject.Type.ToLowerInvariant() == "core/component")
+        return await service.AddCommonObjectAsync(
+            newCommonObject: updatedCommonObject,
+            userId: userId);
+    }
+
+    private static void ValidateId(int commonObjectId, string parameterName) =>
+        ThrowIf(
+            condition: commonObjectId < 1,
+            message: parameterName + " must be greater than 0.");
+
+    private static void ValidateCommonObject(CommonObject commonObject, string parameterName) =>
+        ThrowIf(
+            condition: commonObject is null,
+            message: parameterName + " is required.");
+
+    private static void ValidateCommonObjects(
+        IEnumerable<CommonObject> commonObjects,
+        string parameterName) =>
+        ThrowIf(
+            condition: commonObjects is null,
+            message: parameterName + " is required.");
+
+    private static void NormalizeCulture(CommonObject commonObject) =>
+        commonObject.Culture ??= string.Empty;
+
+    private static void ThrowIf(bool condition, string message)
+    {
+        if (condition)
         {
-            service.CacheCommonObjectComponent(commonObject: updatedCommonObject);
-
-            CommonObject latestSetObject = service.GetLatestSet()
-                .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "ContentManagement/Component");
-
-            latestSetObject.Version = updatedCommonObject.Version;
-            latestSetObject.Key = updatedCommonObject.Key;
-            latestSetObject.Type = updatedCommonObject.Type;
-            latestSetObject.Json = updatedCommonObject.Json;
-            latestSetObject.Culture = updatedCommonObject.Culture;
-            latestSetObject.Name = updatedCommonObject.Name;
-            latestSetObject.Description = updatedCommonObject.Description;
-            latestSetObject.LastUpdated = updatedCommonObject.LastUpdated;
-            latestSetObject.LastUpdatedBy = updatedCommonObject.LastUpdatedBy;
-            latestSetObject.CreatedBy = updatedCommonObject.CreatedBy;
+            throw new ValidationException(message: message);
         }
-        else
-        {
-            if (updatedCommonObject.Type.ToLowerInvariant() == "core/resource")
-            {
-                service.CacheCommonObjectResource(commonObject: updatedCommonObject);
-
-                CommonObject latestSetObject2 = service.GetLatestSet()
-                    .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Key.ToLowerInvariant() == updatedCommonObject.Key.ToLowerInvariant() && r.Name == updatedCommonObject.Name.ToLowerInvariant() && r.Culture.ToLowerInvariant() == updatedCommonObject.Culture.ToLowerInvariant() && r.Type == "ContentManagement/Resource");
-
-                latestSetObject2.Version = updatedCommonObject.Version;
-                latestSetObject2.Key = updatedCommonObject.Key;
-                latestSetObject2.Type = updatedCommonObject.Type;
-                latestSetObject2.Json = updatedCommonObject.Json;
-                latestSetObject2.Culture = updatedCommonObject.Culture;
-                latestSetObject2.Name = updatedCommonObject.Name;
-                latestSetObject2.Description = updatedCommonObject.Description;
-                latestSetObject2.LastUpdated = updatedCommonObject.LastUpdated;
-                latestSetObject2.LastUpdatedBy = updatedCommonObject.LastUpdatedBy;
-                latestSetObject2.CreatedBy = updatedCommonObject.CreatedBy;
-            }
-            else
-            {
-                if (updatedCommonObject.Type.ToLowerInvariant() == "core/script")
-                {
-                    CommonObject latestSetObject3 = service.GetLatestSet()
-                        .First(predicate: (CommonObject r) => r.Name.ToLowerInvariant() == updatedCommonObject.Name.ToLowerInvariant() && r.Type == "ContentManagement/Script");
-
-                    latestSetObject3.Version = updatedCommonObject.Version;
-                    latestSetObject3.Key = updatedCommonObject.Key;
-                    latestSetObject3.Type = updatedCommonObject.Type;
-                    latestSetObject3.Json = updatedCommonObject.Json;
-                    latestSetObject3.Culture = updatedCommonObject.Culture;
-                    latestSetObject3.Name = updatedCommonObject.Name;
-                    latestSetObject3.Description = updatedCommonObject.Description;
-                    latestSetObject3.LastUpdated = updatedCommonObject.LastUpdated;
-                    latestSetObject3.LastUpdatedBy = updatedCommonObject.LastUpdatedBy;
-                    latestSetObject3.CreatedBy = updatedCommonObject.CreatedBy;
-                    service.CacheCommonObjectScript(commonObject: updatedCommonObject);
-                }
-            }
-        }
-
-        return updatedCommonObject;
     }
 }
