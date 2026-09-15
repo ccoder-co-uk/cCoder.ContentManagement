@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
+using cCoder.ContentManagement.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
@@ -19,9 +20,26 @@ internal sealed partial class ComponentRenderService(
     IAppBroker appBroker,
     IComponentBroker componentBroker,
     IResourceBroker resourceBroker,
-    IScriptBroker scriptBroker)
+    IScriptBroker scriptBroker,
+    IRenderingUtilityBroker renderingUtilityBroker = null)
         : IComponentRenderService
 {
+    private readonly IRenderingUtilityBroker renderingUtilityBroker =
+        renderingUtilityBroker ?? new RenderingUtilityBroker();
+
+    public ComponentRenderFoundationOperation GetPropertyValuesComponentRenderFoundationOperation(
+        ComponentRenderFoundationOperation componentRenderFoundationOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidatePropertyValuesComponentRenderFoundationOperationOnGet(
+                inputs: [componentRenderFoundationOperation]);
+
+            componentRenderFoundationOperation.RuntimeProperties = renderingUtilityBroker
+                .GetPropertyValues(value: componentRenderFoundationOperation.Value);
+
+            return componentRenderFoundationOperation;
+        });
+
     public ComponentRenderFoundationOperation GetAppsComponentRenderFoundationOperation(
         ComponentRenderFoundationOperation componentRenderFoundationOperation) =>
         TryCatch(operation: () =>

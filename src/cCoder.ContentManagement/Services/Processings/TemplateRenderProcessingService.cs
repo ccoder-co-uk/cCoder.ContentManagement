@@ -569,14 +569,18 @@ internal partial class TemplateRenderProcessingService(
     }
 
     private IEnumerable<MarkupReplacement> BuildIEnumerableThemeReplacements<T>(T model, string prefix) =>
-        model.GetType()
-        .GetProperties()
+        templateRenderService.GetPropertyValuesTemplateRenderFoundationOperation(
+            templateRenderFoundationOperation: new TemplateRenderFoundationOperation
+            {
+                Value = model
+            })
+        .RuntimeProperties
         .SelectMany(selector: property =>
             {
-                object value = property.GetValue(obj: model);
+                object value = property.Value;
                 string text = ((prefix.Length > 0) ? (prefix + "." + property.Name) : property.Name);
 
-                if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
+                if (property.IsValueType)
                 {
                     MarkupReplacement[] array = new MarkupReplacement[2];
                     string old = "[theme[" + prefix + "]]";
@@ -708,14 +712,18 @@ internal partial class TemplateRenderProcessingService(
     }
 
     private IEnumerable<MarkupReplacement> BuildModelReplacementsForObject(object model, string prefix) =>
-        model.GetType()
-        .GetProperties()
+        templateRenderService.GetPropertyValuesTemplateRenderFoundationOperation(
+            templateRenderFoundationOperation: new TemplateRenderFoundationOperation
+            {
+                Value = model
+            })
+        .RuntimeProperties
         .SelectMany(selector: property =>
             {
-                object value = property.GetValue(obj: model);
+                object value = property.Value;
                 string text = ((prefix.Length > 0) ? (prefix + "." + property.Name) : property.Name);
 
-                if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
+                if (property.IsValueType)
                 {
                     return new MarkupReplacement[2]
                     {

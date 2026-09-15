@@ -8,6 +8,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal interface IComponentRenderService
 {
+    ComponentRenderFoundationOperation GetPropertyValuesComponentRenderFoundationOperation(
+        ComponentRenderFoundationOperation componentRenderFoundationOperation);
     ComponentRenderFoundationOperation GetAppsComponentRenderFoundationOperation(ComponentRenderFoundationOperation componentRenderFoundationOperation);
     ComponentRenderFoundationOperation GetComponentsComponentRenderFoundationOperation(ComponentRenderFoundationOperation componentRenderFoundationOperation);
     ComponentRenderFoundationOperation GetResourcesComponentRenderFoundationOperation(ComponentRenderFoundationOperation componentRenderFoundationOperation);

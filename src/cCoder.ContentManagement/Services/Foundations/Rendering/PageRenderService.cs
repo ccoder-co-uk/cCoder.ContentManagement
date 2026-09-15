@@ -5,14 +5,31 @@
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class PageRenderService(
     IRenderBroker renderBroker,
-    IJsonBroker jsonBroker)
+    IJsonBroker jsonBroker,
+    IRenderingUtilityBroker renderingUtilityBroker = null)
         : IPageRenderService
 {
+    private readonly IRenderingUtilityBroker renderingUtilityBroker =
+        renderingUtilityBroker ?? new RenderingUtilityBroker();
+
+    public PageRenderFoundationOperation ComputeFingerprintPageRenderFoundationOperation(
+        PageRenderFoundationOperation pageRenderFoundationOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
+
+            pageRenderFoundationOperation.Json = renderingUtilityBroker
+                .ComputeFingerprint(value: pageRenderFoundationOperation.Value.ToString());
+
+            return pageRenderFoundationOperation;
+        });
+
     public PageRenderFoundationOperation SerializePageRenderFoundationOperation(
         PageRenderFoundationOperation pageRenderFoundationOperation) =>
         TryCatch(operation: () =>

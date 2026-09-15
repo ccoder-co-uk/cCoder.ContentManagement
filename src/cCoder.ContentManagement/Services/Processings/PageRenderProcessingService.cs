@@ -20,6 +20,19 @@ internal sealed partial class PageRenderProcessingService(
     IPageRenderService pageRenderService,
     ContentManagementConfiguration config) : IPageRenderProcessingService
 {
+    public string ComputeFingerprint(string value) =>
+        TryCatch<string>(operation: () =>
+        {
+            ValidateSerializeRuntimeValue(inputs: [value]);
+
+            return pageRenderService.ComputeFingerprintPageRenderFoundationOperation(
+                pageRenderFoundationOperation: new PageRenderFoundationOperation
+                {
+                    Value = value
+                })
+            .Json;
+        });
+
     public string SerializeRuntimeValue(object value) =>
         TryCatch<string>(operation: () =>
     {

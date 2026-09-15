@@ -10,6 +10,10 @@ internal sealed partial class TemplateRenderService
     private static void ValidateTemplateRenderFoundationOperation(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidatePropertyValuesTemplateRenderFoundationOperationOnGet(
+        object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void ValidateAppsTemplateRenderFoundationOperationOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 

@@ -6,7 +6,7 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
-using System.Net;
+using cCoder.ContentManagement.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
@@ -16,9 +16,12 @@ internal sealed partial class RenderAggregationService(
     IUncachedPageRenderOrchestrationService uncachedPageRenderOrchestrationService,
     IJsonOrchestrationService jsonOrchestrationService,
     ITemplateRenderOrchestrationService templateRenderOrchestrationService,
-    IComponentRenderOrchestrationService componentRenderOrchestrationService)
+    IComponentRenderOrchestrationService componentRenderOrchestrationService,
+    IRenderingUtilityBroker renderingUtilityBroker = null)
         : IRenderAggregationService
 {
+    private readonly IRenderingUtilityBroker renderingUtilityBroker =
+        renderingUtilityBroker ?? new RenderingUtilityBroker();
     public ValueTask<RenderResult> RenderPageRenderResultAsync() =>
         TryCatch<RenderResult>(operation: async () =>
     {
@@ -102,7 +105,7 @@ internal sealed partial class RenderAggregationService(
             loginLink: loginLink);
     }
 
-    private static string HydrateMarkup(
+    private string HydrateMarkup(
         string markup,
         HttpPageRenderContext context,
         string serializedUser,
@@ -119,7 +122,7 @@ internal sealed partial class RenderAggregationService(
                 comparisonType: StringComparison.Ordinal)
             .Replace(
                 oldValue: PageRenderRuntimeTokens.DisplayName,
-                newValue: WebUtility.HtmlEncode(value: displayName),
+                newValue: renderingUtilityBroker.HtmlEncode(value: displayName),
                 comparisonType: StringComparison.Ordinal)
             .Replace(
                 oldValue: PageRenderRuntimeTokens.LoginLink,

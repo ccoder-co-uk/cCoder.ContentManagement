@@ -8,6 +8,7 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Models.Serialization;
 using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
@@ -22,9 +23,26 @@ internal sealed partial class TemplateRenderService(
     IComponentBroker componentBroker,
     IResourceBroker resourceBroker,
     IScriptBroker scriptBroker,
-    ITemplateBroker templateBroker)
+    ITemplateBroker templateBroker,
+    IRenderingUtilityBroker renderingUtilityBroker = null)
         : ITemplateRenderService
 {
+    private readonly IRenderingUtilityBroker renderingUtilityBroker =
+        renderingUtilityBroker ?? new RenderingUtilityBroker();
+
+    public TemplateRenderFoundationOperation GetPropertyValuesTemplateRenderFoundationOperation(
+        TemplateRenderFoundationOperation templateRenderFoundationOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidatePropertyValuesTemplateRenderFoundationOperationOnGet(
+                inputs: [templateRenderFoundationOperation]);
+
+            templateRenderFoundationOperation.RuntimeProperties = renderingUtilityBroker
+                .GetPropertyValues(value: templateRenderFoundationOperation.Value);
+
+            return templateRenderFoundationOperation;
+        });
+
     public TemplateRenderFoundationOperation GetAppsTemplateRenderFoundationOperation(
         TemplateRenderFoundationOperation templateRenderFoundationOperation) =>
         TryCatch(operation: () =>

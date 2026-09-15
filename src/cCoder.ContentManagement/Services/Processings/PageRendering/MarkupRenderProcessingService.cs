@@ -7,6 +7,7 @@ using System.Net;
 using System.Reflection;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 
@@ -86,8 +87,8 @@ internal sealed partial class MarkupRenderProcessingService(
             new MarkupReplacement { Old = "[[date]]", Value = cacheTemplate
                 ? PageRenderRuntimeTokens.Date
                 : DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy") },
-            new MarkupReplacement { Old = "[[culture]]", Value = WebUtility.HtmlEncode(value: culture) },
-            new MarkupReplacement { Old = "[[lang]]", Value = WebUtility.HtmlEncode(value: culture.Split(separator: '-')
+            new MarkupReplacement { Old = "[[culture]]", Value = HtmlEncode(value: culture) },
+            new MarkupReplacement { Old = "[[lang]]", Value = HtmlEncode(value: culture.Split(separator: '-')
             .FirstOrDefault() ?? string.Empty) }
         ];
 
@@ -116,8 +117,8 @@ internal sealed partial class MarkupRenderProcessingService(
                 new MarkupReplacement { Old = "[page[keywords]]", Value = session.Page.Keywords ?? string.Empty },
                 new MarkupReplacement { Old = "[page[id]]", Value = session.Page.Id.ToString() },
                 new MarkupReplacement { Old = "[page[parentid]]", Value = session.Page.ParentId?.ToString() ?? string.Empty },
-                new MarkupReplacement { Old = "[page[path]]", Value = WebUtility.HtmlEncode(value: session.Page.Path ?? string.Empty) },
-                new MarkupReplacement { Old = "[page[url]]", Value = WebUtility.HtmlEncode(value: pageRoot + (session.Page.Path ?? string.Empty)) },
+                new MarkupReplacement { Old = "[page[path]]", Value = HtmlEncode(value: session.Page.Path ?? string.Empty) },
+                new MarkupReplacement { Old = "[page[url]]", Value = HtmlEncode(value: pageRoot + (session.Page.Path ?? string.Empty)) },
                 new MarkupReplacement
                 {
                     Old = "[[editlink]]",
@@ -133,7 +134,7 @@ internal sealed partial class MarkupRenderProcessingService(
 
         if (!string.IsNullOrWhiteSpace(value: session.Request.Theme))
         {
-            replacements.Add(item: new MarkupReplacement { Old = "[theme[name]]", Value = WebUtility.HtmlEncode(value: session.Request.Theme) });
+            replacements.Add(item: new MarkupReplacement { Old = "[theme[name]]", Value = HtmlEncode(value: session.Request.Theme) });
         }
 
         if (session.Target?.Model != null)
@@ -419,14 +420,13 @@ internal sealed partial class MarkupRenderProcessingService(
     }
 
     private IEnumerable<MarkupReplacement> BuildObjectReplacements(object model, string prefix) =>
-        model.GetType()
-        .GetProperties()
+        GetPropertyValues(value: model)
         .SelectMany(selector: property =>
             {
-                object value = property.GetValue(obj: model);
+                object value = property.Value;
                 string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
 
-                if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
+                if (property.IsValueType)
                 {
                     return [new MarkupReplacement { Old = "[model[" + bindingExpression + "]]", Value = value?.ToString() ?? string.Empty }];
                 }
@@ -514,14 +514,13 @@ internal sealed partial class MarkupRenderProcessingService(
     }
 
     private IEnumerable<MarkupReplacement> BuildThemeObjectReplacements(object model, string prefix) =>
-        model.GetType()
-        .GetProperties()
+        GetPropertyValues(value: model)
         .SelectMany(selector: property =>
             {
-                object value = property.GetValue(obj: model);
+                object value = property.Value;
                 string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
 
-                if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
+                if (property.IsValueType)
                 {
                     return
                     [
@@ -637,5 +636,15 @@ internal sealed partial class MarkupRenderProcessingService(
         markupRenderService.GetJsonPropertiesTagHandlingOperation(
             tagHandlingOperation: new TagHandlingOperation { Value = value })
         .JsonProperties;
+
+    private string HtmlEncode(string value) =>
+        markupRenderService.HtmlEncodeTagHandlingOperation(
+            tagHandlingOperation: new TagHandlingOperation { Content = value })
+        .Content;
+
+    private RuntimePropertyValue[] GetPropertyValues(object value) =>
+        markupRenderService.GetPropertyValuesTagHandlingOperation(
+            tagHandlingOperation: new TagHandlingOperation { Value = value })
+        .RuntimeProperties;
 
 }

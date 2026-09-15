@@ -4,6 +4,7 @@
 
 
 using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Models.Rendering;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
@@ -21,6 +22,12 @@ internal interface ICommonObjectCacheService
 
 internal interface IMarkupRenderService
 {
+    TagHandlingOperation HtmlEncodeTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation GetPropertyValuesTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation);
+
     string MarkContentSecurityPolicyNonce(string markup);
 
     TagHandlingOperation RenderCultureLinkTagHandlingOperation(TagHandlingOperation tagHandlingOperation);

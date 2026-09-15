@@ -8,6 +8,8 @@ namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal interface IPageRenderService
 {
+    PageRenderFoundationOperation ComputeFingerprintPageRenderFoundationOperation(
+        PageRenderFoundationOperation pageRenderFoundationOperation);
     PageRenderFoundationOperation SerializePageRenderFoundationOperation(PageRenderFoundationOperation pageRenderFoundationOperation);
     PageRenderFoundationOperation RenderPageRenderFoundationOperation(PageRenderFoundationOperation pageRenderFoundationOperation);
 }

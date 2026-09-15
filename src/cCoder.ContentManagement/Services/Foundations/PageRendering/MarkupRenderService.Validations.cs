@@ -10,6 +10,12 @@ internal sealed partial class MarkupRenderService
     private static void ValidateTagHandlingOperation(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidateHtmlEncodeTagHandlingOperation(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidatePropertyValuesTagHandlingOperationOnGet(object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void ValidateMarkContentSecurityPolicyNonce(object[] inputs) =>
         Validate(inputs: inputs);
 
