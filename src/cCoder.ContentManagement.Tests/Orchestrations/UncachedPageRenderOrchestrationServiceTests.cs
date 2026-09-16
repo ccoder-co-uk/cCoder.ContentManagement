@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using Moq;
@@ -16,11 +17,9 @@ namespace cCoder.ContentManagement.Tests.Orchestrations;
 public sealed partial class UncachedPageRenderOrchestrationServiceTests
 {
     [Theory]
-    [InlineData(false, true)]
-    [InlineData(true, false)]
-    public async Task ShouldRenderAndStoreOnlyRequestedVariantOutsideEditModeAsync(
-        bool edit,
-        bool shouldStore)
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ShouldRenderOnlyRequestedVariantAsync(bool edit)
     {
         // Given
         App app = new()
@@ -47,14 +46,7 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
 
         Mock<IPageProcessingService> pageService = new();
         Mock<IPageRenderProcessingService> renderService = new();
-        Mock<IPageRenderCacheProcessingService> cacheService = new();
-
-        if (edit is false)
-        {
-            renderService.Setup(expression: service =>
-                service.ComputeFingerprint(value: It.IsAny<object>()))
-                .Returns(value: "fingerprint");
-        }
+        Mock<IMarkupRenderProcessingService> markupRenderService = new();
 
         pageService.Setup(expression: service =>
             service.GetPageForRenderAsync(pageId: page.Id))
@@ -80,25 +72,19 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
                 return item;
             });
 
-        if (shouldStore)
-        {
-            cacheService.Setup(expression: service =>
-                service.StorePageRenderCacheAsync(
-                    pageRenderCache: It.Is<PageRenderCache>(match:
-                        item => item.AppId == app.Id
-                            && item.PageId == page.Id
-                            && item.Culture == "en-gb"
-                            && item.Theme == "dark"
-                            && item.Path == "Admin/AppManagement"
-                            && item.Header == "header"
-                            && item.Body == "body")))
-                .ReturnsAsync(valueFunction: (PageRenderCache item) => item);
-        }
+        markupRenderService.Setup(expression: service =>
+            service.RenderRenderSession(session: null))
+            .Returns(value: null);
+
+        renderService.Setup(expression: service =>
+            service.CompletePageRenderOperation(
+                operation: It.IsAny<PageRenderOperation>()))
+            .Returns(valueFunction: (PageRenderOperation item) => item);
 
         UncachedPageRenderOrchestrationService service = new(
             pageProcessingService: pageService.Object,
             pageRenderProcessingService: renderService.Object,
-            pageRenderCacheProcessingService: cacheService.Object);
+            markupRenderProcessingService: markupRenderService.Object);
 
         // When
         HttpPageRenderOperation result = await service
@@ -109,14 +95,6 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
         Assert.Equal(expected: edit, actual: result.Response.Edit);
         pageService.VerifyAll();
         renderService.VerifyAll();
-
-        if (shouldStore)
-        {
-            cacheService.VerifyAll();
-        }
-        else
-        {
-            cacheService.VerifyNoOtherCalls();
-        }
+        markupRenderService.VerifyAll();
     }
 }

@@ -5,6 +5,7 @@
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
@@ -12,7 +13,7 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 internal sealed partial class UncachedPageRenderOrchestrationService(
     IPageProcessingService pageProcessingService,
     IPageRenderProcessingService pageRenderProcessingService,
-    IPageRenderCacheProcessingService pageRenderCacheProcessingService)
+    IMarkupRenderProcessingService markupRenderProcessingService)
         : IUncachedPageRenderOrchestrationService
 {
     public ValueTask<HttpPageRenderOperation>
@@ -59,6 +60,12 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
                     Edit = context.Edit
                 });
 
+        renderOperation.RenderSession = markupRenderProcessingService
+            .RenderRenderSession(session: renderOperation.RenderSession);
+
+        renderOperation = pageRenderProcessingService
+            .CompletePageRenderOperation(operation: renderOperation);
+
         httpPageRenderOperation.Response = new PageRenderResponse
         {
             App = page.App,
@@ -68,40 +75,8 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
             Edit = context.Edit
         };
 
-        if (!context.Edit)
-        {
-            await pageRenderCacheProcessingService.StorePageRenderCacheAsync(
-                pageRenderCache: CreatePageRenderCache(
-                    response: httpPageRenderOperation.Response));
-        }
-
         return httpPageRenderOperation;
 
     }, isValueTask: true);
-
-    private PageRenderCache CreatePageRenderCache(
-        PageRenderResponse response)
-    {
-        PageRenderResult result = response.Page;
-
-        return new PageRenderCache
-        {
-            AppId = result.AppId,
-            PageId = result.PageId,
-            Culture = response.Culture,
-            Theme = response.Theme,
-            ParentId = result.ParentId,
-            Path = result.Path,
-            Title = result.Title,
-            Description = result.Description,
-            Keywords = result.Keywords,
-            ShowOnMenus = result.ShowOnMenus,
-            Header = result.HeaderHtml,
-            Body = result.BodyHtml,
-            SourceFingerprint = pageRenderProcessingService.ComputeFingerprint(
-                value: result),
-            RenderedOn = DateTimeOffset.UtcNow
-        };
-    }
 
 }

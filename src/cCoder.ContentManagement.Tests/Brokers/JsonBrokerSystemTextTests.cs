@@ -5,6 +5,7 @@
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.Serialization;
 using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Services.Foundations.Serialization;
 using FluentAssertions;
 using System.Text.Json;
 using Xunit;
@@ -48,10 +49,15 @@ public sealed partial class JsonBrokerSystemTextTests
     {
         // Given
         JsonBroker broker = new();
+        JsonService service = new(jsonBroker: broker);
         JsonElement payload = ParseElement(json: "{\"name\":\"single\"}");
 
         // When
-        JsonRecordsDocument result = broker.ParseRecords(payload: payload);
+        JsonRecordsDocument result = service.ParseJsonRecordsDocument(
+            jsonRecordsDocument: new JsonRecordsDocument
+            {
+                Json = payload.GetRawText()
+            });
 
         // Then
         result.Records.Should()
@@ -68,12 +74,17 @@ public sealed partial class JsonBrokerSystemTextTests
     {
         // Given
         JsonBroker broker = new();
+        JsonService service = new(jsonBroker: broker);
 
         JsonElement payload = ParseElement(
             json: "[{\"name\":\"first\"},{\"name\":\"second\"}]");
 
         // When
-        JsonRecordsDocument result = broker.ParseRecords(payload: payload);
+        JsonRecordsDocument result = service.ParseJsonRecordsDocument(
+            jsonRecordsDocument: new JsonRecordsDocument
+            {
+                Json = payload.GetRawText()
+            });
 
         // Then
         result.Records
@@ -87,12 +98,17 @@ public sealed partial class JsonBrokerSystemTextTests
     {
         // Given
         JsonBroker broker = new();
+        JsonService service = new(jsonBroker: broker);
 
         JsonElement payload = ParseElement(
             json: "{\"value\":[{\"name\":\"wrapped\"}]}");
 
         // When
-        JsonRecordsDocument result = broker.ParseRecords(payload: payload);
+        JsonRecordsDocument result = service.ParseJsonRecordsDocument(
+            jsonRecordsDocument: new JsonRecordsDocument
+            {
+                Json = payload.GetRawText()
+            });
 
         // Then
         result.Records.Should()
@@ -109,10 +125,15 @@ public sealed partial class JsonBrokerSystemTextTests
     {
         // Given
         JsonBroker broker = new();
+        JsonService service = new(jsonBroker: broker);
         JsonElement payload = ParseElement(json: "null");
 
         // When
-        JsonRecordsDocument result = broker.ParseRecords(payload: payload);
+        JsonRecordsDocument result = service.ParseJsonRecordsDocument(
+            jsonRecordsDocument: new JsonRecordsDocument
+            {
+                Json = payload.GetRawText()
+            });
 
         // Then
         result.Should()
@@ -127,14 +148,11 @@ public sealed partial class JsonBrokerSystemTextTests
         TestPayload payload = new() { Name = "unchanged" };
 
         // When
-        JsonValueDocument result = broker.Normalize(value: payload);
+        bool result = broker.IsJsonElement(value: payload);
 
         // Then
-        result.IsRawJson.Should()
+        result.Should()
             .BeFalse();
-
-        result.Value.Should()
-            .BeSameAs(expected: payload);
     }
 
     [Fact]
@@ -145,17 +163,15 @@ public sealed partial class JsonBrokerSystemTextTests
         JsonElement payload = ParseElement(json: "{\"name\":\"json\"}");
 
         // When
-        JsonValueDocument result = broker.Normalize(value: payload);
+        bool isJsonElement = broker.IsJsonElement(value: payload);
+        string result = broker.GetJsonRawText(value: payload);
 
         // Then
-        result.IsRawJson.Should()
+        isJsonElement.Should()
             .BeTrue();
 
-        result.RawJson.Should()
+        result.Should()
             .Be(expected: "{\"name\":\"json\"}");
-
-        result.Value.Should()
-            .BeNull();
     }
 
     [Fact]

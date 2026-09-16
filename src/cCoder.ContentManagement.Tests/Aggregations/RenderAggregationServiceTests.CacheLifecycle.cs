@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
@@ -66,10 +67,12 @@ public sealed partial class RenderAggregationServiceTests
             queryProcessingService: cacheQuery,
             renderProcessingService: new CachedPageRenderProcessingService(
                 cachedPageRenderService: new CachedPageRenderService(
-                    regularExpressionBroker: new RegularExpressionBroker())));
+                    regularExpressionBroker: new RegularExpressionBroker())),
+            cacheProcessingService: cacheProcessing);
 
         Mock<IPageProcessingService> pageProcessing = new();
         Mock<IPageRenderProcessingService> renderProcessing = new();
+        Mock<IMarkupRenderProcessingService> markupRenderProcessing = new();
 
         renderProcessing.Setup(expression: service =>
             service.SerializeRuntimeValue(value: It.IsAny<object>()))
@@ -96,10 +99,19 @@ public sealed partial class RenderAggregationServiceTests
                 return operation;
             });
 
+        markupRenderProcessing.Setup(expression: service =>
+            service.RenderRenderSession(session: null))
+            .Returns(value: null);
+
+        renderProcessing.Setup(expression: service =>
+            service.CompletePageRenderOperation(
+                operation: It.IsAny<PageRenderOperation>()))
+            .Returns(valueFunction: (PageRenderOperation operation) => operation);
+
         UncachedPageRenderOrchestrationService uncached = new(
             pageProcessingService: pageProcessing.Object,
             pageRenderProcessingService: renderProcessing.Object,
-            pageRenderCacheProcessingService: cacheProcessing);
+            markupRenderProcessingService: markupRenderProcessing.Object);
 
         Mock<IJsonOrchestrationService> json = new();
 

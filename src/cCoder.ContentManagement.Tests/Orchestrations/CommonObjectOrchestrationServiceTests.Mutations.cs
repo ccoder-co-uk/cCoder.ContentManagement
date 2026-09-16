@@ -4,6 +4,7 @@
 
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
+using cCoder.ContentManagement.Models.Caching;
 using cCoder.Data.Models;
 using FluentAssertions;
 using Moq;
@@ -23,8 +24,8 @@ public partial class CommonObjectOrchestrationServiceTests
         OperationResult<CommonObject>[] results = [new() { Success = true, Item = entity }];
 
         cacheProcessingServiceMock
-            .Setup(expression: service => service.GetLatestCommonObjects())
-            .Returns(value: []);
+            .Setup(expression: service => service.GetCommonObjectCacheSnapshot())
+            .Returns(value: new CommonObjectCacheSnapshot { LatestSet = [] });
 
         ShouldSetupAuthorization(privilege: "commonobject_create");
 
@@ -62,8 +63,8 @@ public partial class CommonObjectOrchestrationServiceTests
         CommonObject[] items = [CreateRandomCommonObject()];
 
         cacheProcessingServiceMock
-            .Setup(expression: service => service.GetLatestCommonObjects())
-            .Returns(value: []);
+            .Setup(expression: service => service.GetCommonObjectCacheSnapshot())
+            .Returns(value: new CommonObjectCacheSnapshot { LatestSet = [] });
 
         ShouldSetupAuthorization(privilege: "commonobject_create");
 
@@ -97,8 +98,8 @@ public partial class CommonObjectOrchestrationServiceTests
         CommonObject[] items = [CreateRandomCommonObject()];
 
         cacheProcessingServiceMock
-            .Setup(expression: service => service.GetLatestCommonObjects())
-            .Returns(value: []);
+            .Setup(expression: service => service.GetCommonObjectCacheSnapshot())
+            .Returns(value: new CommonObjectCacheSnapshot { LatestSet = [] });
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
@@ -264,8 +265,11 @@ public partial class CommonObjectOrchestrationServiceTests
         excluded.Type = "Core/Script";
 
         cacheProcessingServiceMock
-            .Setup(expression: service => service.GetLatestCommonObjects())
-            .Returns(value: [included, excluded]);
+            .Setup(expression: service => service.GetCommonObjectCacheSnapshot())
+            .Returns(value: new CommonObjectCacheSnapshot
+            {
+                LatestSet = [included, excluded]
+            });
 
         // When
         CommonObject[] actual = orchestrationService

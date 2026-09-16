@@ -52,6 +52,8 @@ public sealed partial class ScriptTagHandlingProcessingServiceTests
         MarkupRenderProcessingService service = new(
             markupRenderService: new MarkupRenderService(
                 contentRenderBroker: new TestContentRenderBroker(),
+                workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
+                cacheBroker: Mock.Of<cCoder.ContentManagement.Brokers.Caching.ICacheBroker>(),
                 jsonBroker: Mock.Of<IJsonBroker>(),
                 regularExpressionBroker: new RegularExpressionBroker()));
 

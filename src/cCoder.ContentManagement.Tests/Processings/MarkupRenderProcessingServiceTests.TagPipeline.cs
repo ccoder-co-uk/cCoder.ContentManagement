@@ -165,9 +165,10 @@ public sealed partial class MarkupRenderProcessingServiceTagPipelineTests
 
         return new MarkupRenderProcessingService(
             markupRenderService: new MarkupRenderService(
-                contentRenderBroker: new TestContentRenderBroker(
-                    workflowExecutionBroker:
-                        workflowExecutionBroker ?? Mock.Of<IWorkflowExecutionBroker>()),
+                contentRenderBroker: new TestContentRenderBroker(),
+                workflowExecutionBroker:
+                    workflowExecutionBroker ?? Mock.Of<IWorkflowExecutionBroker>(),
+                cacheBroker: Mock.Of<cCoder.ContentManagement.Brokers.Caching.ICacheBroker>(),
                 jsonBroker: new JsonBroker(),
                 regularExpressionBroker: regularExpressionBroker));
     }

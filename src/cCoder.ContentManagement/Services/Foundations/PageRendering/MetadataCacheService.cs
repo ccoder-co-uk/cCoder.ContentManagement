@@ -2,16 +2,30 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Brokers.Caching;
+using cCoder.ContentManagement.Models.Caching;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
-internal sealed partial class MetadataCacheService(IMetadataReaderBroker broker) : IMetadataCacheService
+internal sealed partial class MetadataCacheService(
+    ICacheBroker cacheBroker) : IMetadataCacheService
 {
-    public Func<string, string> Get(string culture) =>
-        TryCatch<Func<string, string>>(operation: () =>
-    {
-        ValidateGet(inputs: [culture]);
-        return name => broker.GetMetadata(name: name, culture: culture);
-    });
+    private const string CacheKey = "ContentManagement.Metadata";
+
+    public MetadataCacheSnapshot GetMetadataCacheSnapshot() =>
+        TryCatch(operation: () => cacheBroker.Get<MetadataCacheSnapshot>(
+            key: CacheKey));
+
+    public void SetMetadataCacheSnapshot(
+        MetadataCacheSnapshot metadataCacheSnapshot) =>
+        TryCatch(operation: () =>
+        {
+            ValidateMetadataCacheSnapshotOnSet(
+                inputs: [metadataCacheSnapshot]);
+
+            cacheBroker.Set(
+                key: CacheKey,
+                value: metadataCacheSnapshot,
+                expiry: TimeSpan.FromDays(value: 365));
+        });
 }

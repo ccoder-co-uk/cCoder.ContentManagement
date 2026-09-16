@@ -73,7 +73,85 @@ internal partial class JsonService(
     {
         ValidateJsonRecordsDocumentOnParse(inputs: [jsonRecordsDocument]);
 
-        return jsonBroker.ParseRecords(json: jsonRecordsDocument.Json);
+        object records = ParseRecordsPayload(json: jsonRecordsDocument.Json);
+
+        return records is null || jsonBroker.IsJsonNull(value: records)
+            ? null
+            : new JsonRecordsDocument
+            {
+                Json = jsonBroker.Serialize(value: records),
+                Records = GetRecordValues(records: records)
+                    .Select(selector: CreateJsonObjectRecord)
+                    .ToArray()
+            };
     });
+
+    private object ParseRecordsPayload(string json)
+    {
+        object parsedPayload = jsonBroker.ParseJsonElement(json: json);
+
+        if (!jsonBroker.IsJsonObject(value: parsedPayload))
+        {
+            return parsedPayload;
+        }
+
+        return GetProperties(value: parsedPayload)
+            .FirstOrDefault(predicate: property => string.Equals(
+                a: property.Key,
+                b: "value",
+                comparisonType: StringComparison.OrdinalIgnoreCase))
+            .Value ?? parsedPayload;
+    }
+
+    private IEnumerable<object> GetRecordValues(object records)
+    {
+        if (jsonBroker.IsJsonArray(value: records))
+        {
+            return GetItems(value: records);
+        }
+
+        return jsonBroker.IsJsonObject(value: records)
+            ? [records]
+            : [];
+    }
+
+    private JsonObjectRecord CreateJsonObjectRecord(object record)
+    {
+        KeyValuePair<string, object>[] properties = GetProperties(value: record)
+            .Where(predicate: property => jsonBroker.IsJsonString(
+                value: property.Value))
+            .ToArray();
+
+        return new JsonObjectRecord
+        {
+            RawText = jsonBroker.IsJsonElement(value: record)
+                ? jsonBroker.GetJsonRawText(value: record)
+                : jsonBroker.Serialize(value: record),
+            StringValues = properties.ToDictionary(
+                keySelector: property => property.Key,
+                elementSelector: property => property.Value.ToString(),
+                comparer: StringComparer.Ordinal),
+            DateTimeOffsetValues = properties
+                .Where(predicate: property => DateTimeOffset.TryParse(
+                    input: property.Value.ToString(),
+                    result: out _))
+                .ToDictionary(
+                    keySelector: property => property.Key,
+                    elementSelector: property => DateTimeOffset.Parse(
+                        input: property.Value.ToString()),
+                    comparer: StringComparer.Ordinal)
+        };
+    }
+
+    private IEnumerable<KeyValuePair<string, object>> GetProperties(
+        object value) =>
+        jsonBroker.IsJsonElement(value: value)
+            ? jsonBroker.GetJsonElementProperties(value: value)
+            : jsonBroker.GetJsonProperties(value: value);
+
+    private IEnumerable<object> GetItems(object value) =>
+        jsonBroker.IsJsonElement(value: value)
+            ? jsonBroker.GetJsonElementItems(value: value)
+            : jsonBroker.GetJsonItems(value: value);
 
 }

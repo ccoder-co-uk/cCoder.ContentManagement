@@ -37,7 +37,9 @@ public sealed partial class CachedPageRenderOrchestrationServiceTests
 
         CachedPageRenderOrchestrationService service = new(
             queryProcessingService: queryService.Object,
-            renderProcessingService: renderService.Object);
+            renderProcessingService: renderService.Object,
+            cacheProcessingService:
+                Mock.Of<IPageRenderCacheProcessingService>());
 
         // When
         HttpPageRenderOperation result =
@@ -65,7 +67,9 @@ public sealed partial class CachedPageRenderOrchestrationServiceTests
         CachedPageRenderOrchestrationService service = new(
             queryProcessingService: queryService.Object,
             renderProcessingService:
-                Mock.Of<ICachedPageRenderProcessingService>());
+                Mock.Of<ICachedPageRenderProcessingService>(),
+            cacheProcessingService:
+                Mock.Of<IPageRenderCacheProcessingService>());
 
         // When
         HttpPageRenderOperation result =

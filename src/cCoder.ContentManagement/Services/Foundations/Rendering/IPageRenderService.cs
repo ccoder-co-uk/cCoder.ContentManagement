@@ -12,5 +12,4 @@ internal interface IPageRenderService
         PageRenderFoundationOperation pageRenderFoundationOperation);
     PageRenderFoundationOperation SerializePageRenderFoundationOperation(
         PageRenderFoundationOperation pageRenderFoundationOperation);
-    PageRenderFoundationOperation RenderPageRenderFoundationOperation(PageRenderFoundationOperation pageRenderFoundationOperation);
 }

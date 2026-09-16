@@ -3,12 +3,13 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Dependencies;
+using cCoder.CodeAnalysis.Exposures;
 
 namespace cCoder.ContentManagement.Brokers;
 
 internal sealed class WorkflowExecutionBroker(
     WorkflowExecutionDependency workflowExecutionDependency)
-        : IWorkflowExecutionBroker
+        : IWorkflowExecutionBroker, IUtilityBroker
 {
     public string Execute(string baseAddress, string content) =>
         workflowExecutionDependency.Execute(

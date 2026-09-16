@@ -22,11 +22,5 @@ internal interface IContentRenderBroker
 
     Script GetScript(int appId, string name);
 
-    T GetCommonObject<T>(string key);
-
-    string GetMetadata(string key, string culture);
-
     string GetLatestTextContent(int appId, string path);
-
-    string ExecuteWorkflow(string baseAddress, string content);
 }

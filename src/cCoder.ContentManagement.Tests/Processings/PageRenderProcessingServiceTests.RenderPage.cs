@@ -36,12 +36,15 @@ public partial class PageRenderProcessingServiceTests
         RenderPage page = app.Pages.First(predicate: foundPage => foundPage.Id == 10);
         RenderUser user = CreateUser();
 
-        metadataReaderBroker.Set(name: "site-description", culture: "en-GB", value: "Meta Description");
+        cacheBroker.SetMetadata(
+            key: "site-description",
+            culture: "en-GB",
+            value: "Meta Description");
 
         // When
         PageRenderResult result = await RenderTestWorkflowServer.RunRenderResultAsync(action: workflowBaseUrl =>
         {
-            PageRenderProcessingService sut = CreateSut(
+            PageRenderTestHarness sut = CreateSut(
                 config: CreateConfig(workflowBaseUrl: workflowBaseUrl));
 
             return sut.RenderPageUserRenderResult(
@@ -88,9 +91,6 @@ public partial class PageRenderProcessingServiceTests
         result.BodyHtml.Should()
             .Contain(expected: "dropdown-menu");
 
-        metadataReaderBroker.Requests.Should()
-            .ContainSingle(predicate: request =>
-            request.Name == "site-description" && request.Culture == "en-GB");
     }
 
     [Fact]
@@ -100,7 +100,7 @@ public partial class PageRenderProcessingServiceTests
         Config config = CreateConfig(
             workflowBaseUrl: "http://127.0.0.1/");
 
-        PageRenderProcessingService sut = CreateSut(config: config);
+        PageRenderTestHarness sut = CreateSut(config: config);
 
         // When
         Action act = () => sut.RenderPageUserRenderResult(

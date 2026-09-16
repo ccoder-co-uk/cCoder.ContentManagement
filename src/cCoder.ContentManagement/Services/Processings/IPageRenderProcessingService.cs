@@ -10,7 +10,11 @@ internal interface IPageRenderProcessingService
     string ComputeFingerprint(object value);
 
     string SerializeRuntimeValue(object value);
+
     PageRenderOperation RenderPageRenderOperation(
+        PageRenderOperation operation);
+
+    PageRenderOperation CompletePageRenderOperation(
         PageRenderOperation operation);
 
 }

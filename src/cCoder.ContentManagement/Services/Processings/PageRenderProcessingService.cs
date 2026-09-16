@@ -53,9 +53,22 @@ internal sealed partial class PageRenderProcessingService(
     {
         ValidateRenderPageRenderOperation(inputs: [pageRenderOperation]);
 
-        pageRenderOperation.Page = RenderPageUserRenderResult(
+        ValidatePage(
+            page: pageRenderOperation.SourcePage,
+            parameterName: "pageRenderOperation.SourcePage");
+
+        ValidateUser(
+            user: pageRenderOperation.User,
+            parameterName: "pageRenderOperation.User");
+
+        ValidateTheme(
+            theme: pageRenderOperation.Theme,
+            parameterName: "pageRenderOperation.Theme");
+
+        pageRenderOperation.RenderSession = BuildSession(
             page: pageRenderOperation.SourcePage,
             user: pageRenderOperation.User,
+            config: config,
             theme: pageRenderOperation.Theme,
             culture: pageRenderOperation.Culture,
             edit: pageRenderOperation.Edit,
@@ -65,41 +78,15 @@ internal sealed partial class PageRenderProcessingService(
         return pageRenderOperation;
     });
 
-    internal PageRenderResult RenderPageUserRenderResult(
-        Page page,
-        User user,
-        string theme,
-        string culture,
-        bool edit = false,
-        bool headerOnly = false,
-        bool cacheTemplate = false) =>
-        TryCatch<PageRenderResult>(operation: () =>
+    public PageRenderOperation CompletePageRenderOperation(
+        PageRenderOperation pageRenderOperation) =>
+        TryCatch<PageRenderOperation>(operation: () =>
     {
-        ValidateRenderPageUserRenderResult(inputs: [page, user, theme, culture, edit, headerOnly]);
-        ValidatePage(page: page, parameterName: "page");
-        ValidateUser(user: user, parameterName: "user");
-        ValidateTheme(theme: theme, parameterName: "theme");
+        ValidateRenderPageRenderOperation(inputs: [pageRenderOperation]);
 
-        RenderSession session =
-            BuildSession(
-                page: page,
-                user: user,
-                config: config,
-                theme: theme,
-                culture: culture,
-                edit: edit,
-                headerOnly: headerOnly,
-                cacheTemplate: cacheTemplate);
+        RenderSession renderedSession = pageRenderOperation.RenderSession;
 
-        RenderSession renderedSession = pageRenderService
-            .RenderPageRenderFoundationOperation(
-                pageRenderFoundationOperation: new PageRenderFoundationOperation
-                {
-                    RenderSession = session
-                })
-            .RenderSession;
-
-        return new PageRenderResult
+        pageRenderOperation.Page = new PageRenderResult
         {
             AppId = renderedSession.App?.Id ?? 0,
             PageId = renderedSession.Page?.Id ?? 0,
@@ -121,6 +108,7 @@ internal sealed partial class PageRenderProcessingService(
             StatusCode = renderedSession.Page == null ? 404 : 200
         };
 
+        return pageRenderOperation;
     });
 
     private static RenderSession BuildSession(

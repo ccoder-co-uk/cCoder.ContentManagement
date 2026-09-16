@@ -21,6 +21,8 @@ public partial class MarkupRenderServiceTests
         return new(
             markupRenderService: new MarkupRenderService(
                 contentRenderBroker: new TestContentRenderBroker(),
+                workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
+                cacheBroker: Mock.Of<cCoder.ContentManagement.Brokers.Caching.ICacheBroker>(),
                 jsonBroker: Mock.Of<IJsonBroker>(),
                 regularExpressionBroker: regularExpressionBroker));
     }

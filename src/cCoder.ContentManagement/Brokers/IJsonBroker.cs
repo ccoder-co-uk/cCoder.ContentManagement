@@ -4,11 +4,11 @@
 
 namespace cCoder.ContentManagement.Brokers;
 
-using cCoder.ContentManagement.Models.Serialization;
-
 internal interface IJsonBroker
 {
     object ParseJson(string json);
+
+    object ParseJsonElement(string json);
 
     T ParseJson<T>(string json);
 
@@ -16,11 +16,13 @@ internal interface IJsonBroker
 
     string SerializeIgnoringReferences(object value);
 
-    JsonRecordsDocument ParseRecords(string json);
+    bool IsJsonElement(object value);
 
-    JsonRecordsDocument ParseRecords(object payload);
+    bool IsJsonNull(object value);
 
-    JsonValueDocument Normalize(object value);
+    bool IsJsonString(object value);
+
+    string GetJsonRawText(object value);
 
     bool IsJsonObject(object value);
 
@@ -31,7 +33,12 @@ internal interface IJsonBroker
     IEnumerable<KeyValuePair<string, object>> GetJsonProperties(
         object value);
 
+    IEnumerable<KeyValuePair<string, object>> GetJsonElementProperties(
+        object value);
+
     IEnumerable<object> GetJsonItems(object value);
+
+    IEnumerable<object> GetJsonElementItems(object value);
 
     void RemoveJsonProperty(object value, string propertyName);
 }

@@ -22,6 +22,14 @@ internal sealed partial class MarkupRenderProcessingService(
         ValidateRenderRenderSession(inputs: [renderSession]);
         ValidateRenderSession(session: renderSession);
 
+        renderSession = markupRenderService
+            .PrepareRenderSessionTagHandlingOperation(
+                tagHandlingOperation: new TagHandlingOperation
+                {
+                    Session = renderSession
+                })
+            .Session;
+
         string key = string.IsNullOrWhiteSpace(value: renderSession.Target?.ResourceKey)
             ? "Default"
             : renderSession.Target.ResourceKey;

@@ -2,18 +2,17 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies;
+using System.Text;
 
 namespace cCoder.ContentManagement.Brokers;
 
-internal sealed class TemplateStreamBroker(
-    TemplateStreamDependency templateStreamDependency)
-        : ITemplateStreamBroker
+internal sealed class TemplateStreamBroker : ITemplateStreamBroker
 {
     public async ValueTask<string> ReadAsync(Stream source)
     {
-        await source.CopyToAsync(destination: templateStreamDependency);
+        using MemoryStream destination = new();
+        await source.CopyToAsync(destination: destination);
 
-        return templateStreamDependency.ReadContent();
+        return Encoding.UTF8.GetString(bytes: destination.ToArray());
     }
 }

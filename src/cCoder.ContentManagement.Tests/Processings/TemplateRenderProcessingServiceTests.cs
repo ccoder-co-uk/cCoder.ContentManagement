@@ -21,7 +21,7 @@ using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Tests.Brokers.Rendering;
 using Moq;
-using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
+using cCoder.ContentManagement.Tests.Brokers.Caching;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
 using RenderApp = cCoder.Data.Models.CMS.App;
 using RenderComponent = cCoder.Data.Models.CMS.Component;
@@ -30,25 +30,21 @@ using RenderResource = cCoder.Data.Models.CMS.Resource;
 using RenderScript = cCoder.Data.Models.CMS.Script;
 using RenderTemplate = cCoder.Data.Models.CMS.Template;
 using RenderUser = cCoder.Data.Models.Security.User;
-using ICommonObjectReaderBroker = cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class TemplateRenderProcessingServiceTests
 {
-    private readonly Mock<IMetadataCache> metadataCacheMock = new();
-
-    private readonly Mock<ICommonObjectReaderBroker> commonObjectCacheMock = new();
+    private readonly TestCacheBroker cacheBroker = new();
 
     private TemplateRenderProcessingService CreateSut(RenderConfig config)
     {
         TemplateRenderService templateRenderService = new(
-            contentRenderBroker: new TestContentRenderBroker(
-                metadataReaderBroker: metadataCacheMock.Object,
-                commonObjectReaderBroker: commonObjectCacheMock.Object,
-                workflowExecutionBroker: new WorkflowExecutionBroker(
-                    workflowExecutionDependency:
-                        new WorkflowExecutionDependency())),
+            contentRenderBroker: new TestContentRenderBroker(),
+            workflowExecutionBroker: new WorkflowExecutionBroker(
+                workflowExecutionDependency:
+                    new WorkflowExecutionDependency()),
+            cacheBroker: cacheBroker,
             jsonBroker: new JsonBroker(),
             loggingBroker: Mock.Of<ILoggingBroker>(),
             regularExpressionBroker: new RegularExpressionBroker()

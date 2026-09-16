@@ -15,6 +15,8 @@ using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -58,10 +60,13 @@ public partial class PageRenderOrchestrationServiceTests
         PageRenderResult expected = new() { StatusCode = 200 };
         Mock<IPageRenderProcessingService> processingServiceMock = new();
         Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock = new();
+        Mock<IMarkupRenderProcessingService> markupRenderProcessingServiceMock = new();
+        RenderSession renderSession = new();
 
         PageRenderOrchestrationService orchestrationService = new(
             pageRenderProcessingService: processingServiceMock.Object,
-            authorizationProcessingService: authorizationProcessingServiceMock.Object);
+            authorizationProcessingService: authorizationProcessingServiceMock.Object,
+            markupRenderProcessingService: markupRenderProcessingServiceMock.Object);
 
         processingServiceMock
             .Setup(expression: service => service.RenderPageRenderOperation(
@@ -73,8 +78,23 @@ public partial class PageRenderOrchestrationServiceTests
                     && operation.Edit)))
             .Returns(valueFunction: (PageRenderOperation operation) =>
             {
-                operation.Page = expected;
+                operation.RenderSession = renderSession;
 
+                return operation;
+            });
+
+        markupRenderProcessingServiceMock
+            .Setup(expression: service => service.RenderRenderSession(
+                session: renderSession))
+            .Returns(value: renderSession);
+
+        processingServiceMock
+            .Setup(expression: service => service.CompletePageRenderOperation(
+                operation: It.Is<PageRenderOperation>(match: operation =>
+                    operation.RenderSession == renderSession)))
+            .Returns(valueFunction: (PageRenderOperation operation) =>
+            {
+                operation.Page = expected;
                 return operation;
             });
 
@@ -86,5 +106,6 @@ public partial class PageRenderOrchestrationServiceTests
             .BeSameAs(expected: expected);
 
         processingServiceMock.VerifyAll();
+        markupRenderProcessingServiceMock.VerifyAll();
     }
 }

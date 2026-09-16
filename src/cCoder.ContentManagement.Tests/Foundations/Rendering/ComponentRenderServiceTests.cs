@@ -32,6 +32,8 @@ public sealed partial class ComponentRenderServiceTests
         IComponentRenderService componentRenderService = new ComponentRenderService(
             contentRenderBroker: new TestContentRenderBroker(
                 renderFileContentBroker: renderFileContentBrokerMock.Object),
+            workflowExecutionBroker: Mock.Of<cCoder.ContentManagement.Brokers.IWorkflowExecutionBroker>(),
+            cacheBroker: Mock.Of<cCoder.ContentManagement.Brokers.Caching.ICacheBroker>(),
             jsonBroker: Mock.Of<IJsonBroker>(),
             regularExpressionBroker: Mock.Of<IRegularExpressionBroker>());
 

@@ -8,6 +8,26 @@ namespace cCoder.ContentManagement.Rendering.Services.Processings;
 
 internal sealed partial class MetadataCacheProcessingService
 {
+    private static void TryCatch(Action operation)
+    {
+        try
+        {
+            operation();
+        }
+        catch (ContentManagementValidationException innerException)
+        {
+            throw new ContentManagementValidationException(innerException: innerException);
+        }
+        catch (ContentManagementDependencyException innerException)
+        {
+            throw new ContentManagementDependencyException(innerException: innerException);
+        }
+        catch (Exception innerException)
+        {
+            throw new ContentManagementServiceException(innerException: innerException);
+        }
+    }
+
     private static TResult TryCatch<TResult>(Func<TResult> operation)
     {
         try

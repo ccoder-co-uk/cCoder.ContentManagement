@@ -8,7 +8,7 @@
     <WarningsNotAsErrors>NETSDK1233;NU1903</WarningsNotAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.15.1012" PrivateAssets="all" />
+    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.16.1212" PrivateAssets="all" />
     <PackageReference Include="cCoder.Data" Version="2026.8.28.1700" />
     <PackageReference Include="cCoder.Eventing" Version="2026.9.14.1140" />
     <PackageReference Include="FluentAssertions" Version="8.10.0" />

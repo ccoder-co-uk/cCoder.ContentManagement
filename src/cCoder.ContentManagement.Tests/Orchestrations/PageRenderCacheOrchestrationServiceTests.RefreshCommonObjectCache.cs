@@ -13,7 +13,8 @@ public partial class PageRenderCacheOrchestrationServiceTests
     {
         // Given
         commonObjectCacheProcessingServiceMock.Setup(
-            expression: service => service.Refresh());
+            expression: service => service.RefreshCommonObjects(
+                changedCommonObjectCount: 1));
 
         // When
         orchestrationService.RefreshCommonObjectCache();

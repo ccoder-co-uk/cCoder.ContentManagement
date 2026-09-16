@@ -6,11 +6,12 @@ using cCoder.ContentManagement.Models.OData;
 
 namespace cCoder.ContentManagement.Brokers.OData;
 
+using System.Reflection;
+
 internal interface IMetadataTypeBroker
 {
-    MetadataTypeDefinition GetDefinition<T>();
-
-    MetadataTypeDefinition GetDefinition(Type type);
+    T GetCustomAttribute<T>(MemberInfo memberInfo)
+        where T : Attribute;
 
     string Serialize(object value);
 }

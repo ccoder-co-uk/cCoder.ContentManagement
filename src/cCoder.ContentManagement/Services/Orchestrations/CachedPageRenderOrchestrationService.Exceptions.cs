@@ -17,4 +17,16 @@ internal sealed partial class CachedPageRenderOrchestrationService
         catch (InvalidOperationException exception) { throw new ContentManagementDependencyException(innerException: exception); }
         catch (Exception exception) { throw new ContentManagementServiceException(innerException: exception); }
     }
+
+    private static async ValueTask<TResult> TryCatch<TResult>(
+        Func<ValueTask<TResult>> operation,
+        bool isValueTask)
+    {
+        try { return await operation(); }
+        catch (ContentManagementValidationException exception) { throw new ContentManagementValidationException(innerException: exception); }
+        catch (ContentManagementDependencyException exception) { throw new ContentManagementDependencyException(innerException: exception); }
+        catch (ArgumentException exception) { throw new ContentManagementValidationException(innerException: exception); }
+        catch (InvalidOperationException exception) { throw new ContentManagementDependencyException(innerException: exception); }
+        catch (Exception exception) { throw new ContentManagementServiceException(innerException: exception); }
+    }
 }

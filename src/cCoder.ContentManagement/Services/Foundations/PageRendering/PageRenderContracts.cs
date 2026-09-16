@@ -5,24 +5,44 @@
 
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Models.Rendering;
+using cCoder.ContentManagement.Models.Caching;
 using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal interface IMetadataCacheService
 {
+    MetadataCacheSnapshot GetMetadataCacheSnapshot();
+
+    void SetMetadataCacheSnapshot(MetadataCacheSnapshot metadataCacheSnapshot);
+}
+
+internal interface IMetadataCacheSourceService
+{
+    MetadataCacheSnapshot BuildMetadataCacheSnapshot();
+
+    string GetMetadataSignature();
+}
+
+internal interface IMetadataRenderCacheService
+{
     Func<string, string> Get(string culture);
 }
 
 internal interface ICommonObjectCacheService
 {
-    void Refresh();
+    CommonObjectCacheSnapshot GetCommonObjectCacheSnapshot();
 
-    PageCacheSlice GetPageCacheSlice();
+    void SetCommonObjectCacheSnapshot(
+        CommonObjectCacheSnapshot commonObjectCacheSnapshot,
+        TimeSpan expiry);
 }
 
 internal interface IMarkupRenderService
 {
+    TagHandlingOperation PrepareRenderSessionTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation);
+
     TagHandlingOperation HtmlEncodeTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation);
 
@@ -62,7 +82,12 @@ internal interface IMarkupRenderService
 
 internal interface ICommonObjectLatestCacheService
 {
-    void RefreshCommonObjects();
+    CommonObjectCacheSnapshot LoadCommonObjectCacheSnapshot();
 
-    IEnumerable<cCoder.Data.Models.CommonObject> GetLatestCommonObjects();
+    CommonObjectCacheSnapshot GetCommonObjectCacheSnapshot();
+}
+
+internal interface ICommonObjectRenderCacheService
+{
+    PageCacheSlice GetPageCacheSlice();
 }
