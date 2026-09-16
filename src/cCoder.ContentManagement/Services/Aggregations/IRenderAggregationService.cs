@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Exposures;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
-internal interface IRenderAggregationService : IRenderer
+public interface IRenderAggregationService : IRenderer
 {
     ValueTask<RenderResult> RenderPageRenderResultAsync();
 }

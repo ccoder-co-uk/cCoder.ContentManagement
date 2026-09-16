@@ -7,6 +7,7 @@ using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
+using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -19,9 +20,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class ComponentController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
-    private readonly IComponentManager manager;
+    private readonly IComponentOrchestrationService manager;
 
-    public ComponentController(IComponentManager manager, ILoggingBroker loggingBroker)
+    public ComponentController(IComponentOrchestrationService manager, ILoggingBroker loggingBroker)
     {
         this.manager = manager;
         this.loggingBroker = loggingBroker;
@@ -34,7 +35,7 @@ public class ComponentController : ODataController
     {
         try
         {
-            return Ok(value: manager.GetAll());
+            return Ok(value: manager.GetAllComponent());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -63,7 +64,7 @@ public class ComponentController : ODataController
     {
         try
         {
-            Component result = manager.GetAll()
+            Component result = manager.GetAllComponent()
                 .FirstOrDefault(predicate: component => component.Id == key);
 
             return result is null
@@ -101,7 +102,7 @@ public class ComponentController : ODataController
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            return StatusCode(statusCode: StatusCodes.Status201Created, value: await manager.AddAsync(newComponent: newComponent));
+            return StatusCode(statusCode: StatusCodes.Status201Created, value: await manager.AddComponentAsync(newComponent: newComponent));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -134,7 +135,7 @@ public class ComponentController : ODataController
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            return Ok(value: await manager.UpdateAsync(updatedComponent: updatedComponent));
+            return Ok(value: await manager.UpdateComponentAsync(updatedComponent: updatedComponent));
         }
         catch (ContentManagementValidationException exception)
         {

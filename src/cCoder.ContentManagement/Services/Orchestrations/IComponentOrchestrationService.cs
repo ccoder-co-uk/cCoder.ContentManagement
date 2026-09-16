@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface IComponentOrchestrationService
+public interface IComponentOrchestrationService
 {
     Component GetComponent(int componentId);
 

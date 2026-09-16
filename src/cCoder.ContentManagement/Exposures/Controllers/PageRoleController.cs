@@ -17,9 +17,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class PageRoleController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
-    private readonly IPageRoleManager service;
+    private readonly IPageRoleOrchestrationService service;
 
-    public PageRoleController(IPageRoleManager service, ILoggingBroker loggingBroker)
+    public PageRoleController(IPageRoleOrchestrationService service, ILoggingBroker loggingBroker)
     {
         this.service = service;
         this.loggingBroker = loggingBroker;

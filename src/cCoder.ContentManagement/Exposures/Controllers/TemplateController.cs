@@ -7,6 +7,7 @@ using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
+using cCoder.ContentManagement.Services.Aggregations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -19,9 +20,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class TemplateController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
-    private readonly ITemplateManager manager;
+    private readonly ITemplateManagerAggregationService manager;
 
-    public TemplateController(ITemplateManager manager, ILoggingBroker loggingBroker)
+    public TemplateController(ITemplateManagerAggregationService manager, ILoggingBroker loggingBroker)
     {
         this.manager = manager;
         this.loggingBroker = loggingBroker;
@@ -69,7 +70,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            return Ok(value: manager.GetAll());
+            return Ok(value: manager.GetAllTemplate());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -98,7 +99,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            Template result = manager.GetAll()
+            Template result = manager.GetAllTemplate()
                 .FirstOrDefault(predicate: template => template.Id == key);
 
             return result is null
@@ -136,7 +137,7 @@ public class TemplateController : ODataController
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            return StatusCode(statusCode: StatusCodes.Status201Created, value: await manager.AddAsync(newTemplate: newTemplate));
+            return StatusCode(statusCode: StatusCodes.Status201Created, value: await manager.AddTemplateAsync(newTemplate: newTemplate));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -169,7 +170,7 @@ public class TemplateController : ODataController
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            return Ok(value: await manager.UpdateAsync(updatedTemplate: updatedTemplate));
+            return Ok(value: await manager.UpdateTemplateAsync(updatedTemplate: updatedTemplate));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -196,7 +197,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            await manager.DeleteAsync(templateId: key);
+            await manager.DeleteTemplateAsync(templateId: key);
             return NoContent();
         }
         catch (ContentManagementValidationException exception)

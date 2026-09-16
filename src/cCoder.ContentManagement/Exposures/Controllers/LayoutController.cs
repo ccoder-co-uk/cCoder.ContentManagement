@@ -20,9 +20,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class LayoutController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
-    private readonly ILayoutManager service;
+    private readonly ILayoutOrchestrationService service;
 
-    public LayoutController(ILayoutManager service, ILoggingBroker loggingBroker)
+    public LayoutController(ILayoutOrchestrationService service, ILoggingBroker loggingBroker)
     {
         this.service = service;
         this.loggingBroker = loggingBroker;

@@ -5,6 +5,7 @@
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Controllers;
+using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -25,11 +26,13 @@ public partial class ControllerGetAllTests
     public void AppGetAll_ShouldReturnServiceQueryableUntouched()
     {
         // Given
-        Mock<IAppManager> managerMock = new();
+        Mock<IAppManagerAggregationService> managerMock = new();
         IQueryable<App> expectedApps = new[] { new App { Id = 1, Name = "App" } }.AsQueryable();
 
-        managerMock.Setup(expression: manager => manager.GetAll(ignoreFilters: false))
-            .Returns(value: expectedApps);
+        managerMock.Setup(expression: manager =>
+                manager.GetAllAppManagerContext(
+                    appManagerContext: It.IsAny<AppManagerContext>()))
+            .Returns(value: new AppManagerContext { Apps = expectedApps });
 
         // When
         AppController controller = new(
@@ -75,10 +78,10 @@ public partial class ControllerGetAllTests
     public void PageGetAll_ShouldReturnServiceQueryableUntouched()
     {
         // Given
-        Mock<IPageManager> managerMock = new();
+        Mock<IPageOrchestrationService> managerMock = new();
         IQueryable<Page> expectedPages = new[] { new Page { Id = 1, AppId = 1, Name = "Admin", Path = "Admin" } }.AsQueryable();
 
-        managerMock.Setup(expression: manager => manager.GetAll())
+        managerMock.Setup(expression: manager => manager.GetAllPage())
             .Returns(value: expectedPages);
 
         // When

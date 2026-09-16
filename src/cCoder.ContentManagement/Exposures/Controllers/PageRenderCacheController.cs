@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Brokers.Loggings;
+using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class PageRenderCacheController(
-    IPageRenderCacheManager manager,
+    IPageRenderCacheAggregationService manager,
     ILoggingBroker loggingBroker) : ODataController
 {
     [HttpGet]
@@ -21,7 +22,7 @@ public class PageRenderCacheController(
     {
         try
         {
-            return Ok(value: manager.GetAll());
+            return Ok(value: manager.GetAllPageRenderCaches());
         }
         catch (ContentManagementValidationException exception) {
             loggingBroker.LogError(exception: exception, message: "Controller request failed.");
@@ -43,7 +44,7 @@ public class PageRenderCacheController(
     {
         try
         {
-            PageRenderCache result = manager.Get(pageRenderCacheId: key);
+            PageRenderCache result = manager.GetPageRenderCache(pageRenderCacheId: key);
             return result == null ? NotFound() : Ok(value: result);
         }
         catch (ContentManagementValidationException exception) {
@@ -69,7 +70,7 @@ public class PageRenderCacheController(
 
             return StatusCode(
                 statusCode: StatusCodes.Status201Created,
-                value: await manager.AddAsync(newPageRenderCache: newPageRenderCache));
+                value: await manager.AddPageRenderCacheAsync(newPageRenderCache: newPageRenderCache));
         }
         catch (ContentManagementValidationException exception) {
             loggingBroker.LogError(exception: exception, message: "Controller request failed.");
@@ -93,7 +94,7 @@ public class PageRenderCacheController(
             if (!ModelState.IsValid) { return BadRequest(modelState: ModelState); }
 
             updatedPageRenderCache.Id = key;
-            return Ok(value: await manager.UpdateAsync(updatedPageRenderCache: updatedPageRenderCache));
+            return Ok(value: await manager.UpdatePageRenderCacheAsync(updatedPageRenderCache: updatedPageRenderCache));
         }
         catch (ContentManagementValidationException exception) {
             loggingBroker.LogError(exception: exception, message: "Controller request failed.");
@@ -114,7 +115,7 @@ public class PageRenderCacheController(
     {
         try
         {
-            await manager.DeleteAsync(pageRenderCacheId: key);
+            await manager.DeletePageRenderCacheAsync(pageRenderCacheId: key);
             return NoContent();
         }
         catch (ContentManagementValidationException exception) {

@@ -7,7 +7,7 @@ using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Models;
 
-internal sealed class AppManagerContext
+public sealed class AppManagerContext
 {
     public int AppId { get; set; }
 
