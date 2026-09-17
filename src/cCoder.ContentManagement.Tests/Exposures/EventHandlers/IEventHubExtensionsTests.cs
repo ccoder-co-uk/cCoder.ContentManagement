@@ -165,6 +165,24 @@ public sealed partial class IEventHubExtensionsTests
 
         eventHubMock.Invocations
             .Should()
+            .NotContain(predicate: invocation =>
+                invocation.Arguments[0] as string == "app_delete" &&
+                invocation.Method.GetGenericArguments()[1] ==
+                    typeof(IAppOrchestrationService));
+    }
+
+    [Fact]
+    public void FinalContentManagementEvents_WhenStarted_RegisterOnlyFinalAppDeletion()
+    {
+        // Given
+        Mock<IEventHub> eventHubMock = new();
+
+        // When
+        eventHubMock.Object.ListenToFinalContentManagementEvents();
+
+        // Then
+        eventHubMock.Invocations
+            .Should()
             .ContainSingle(predicate: invocation =>
                 invocation.Arguments[0] as string == "app_delete" &&
                 invocation.Method.GetGenericArguments()[1] ==

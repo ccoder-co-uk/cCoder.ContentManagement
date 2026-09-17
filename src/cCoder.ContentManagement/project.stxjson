@@ -29411,7 +29411,7 @@
         {
           "Id": "cCoder.ContentManagement.IEventHubExtensions.ListenToContentManagementWebEvents(cCoder.Eventing.IEventHub)",
           "Name": "ListenToContentManagementWebEvents",
-          "LineNumber": 28,
+          "LineNumber": 35,
           "Inputs": [
             {
               "Name": "eventHub",
@@ -29426,6 +29426,47 @@
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.IEventHubExtensions.ListenToFinalContentManagementEvents(cCoder.Eventing.IEventHub)",
+          "Name": "ListenToFinalContentManagementEvents",
+          "LineNumber": 27,
+          "Inputs": [
+            {
+              "Name": "eventHub",
+              "Type": "cCoder.Eventing.IEventHub"
+            }
+          ],
+          "ReturnType": "cCoder.Eventing.IEventHub",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
