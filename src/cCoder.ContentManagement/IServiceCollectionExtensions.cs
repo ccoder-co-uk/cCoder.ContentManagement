@@ -16,7 +16,6 @@ using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Brokers.Rendering;
 using cCoder.ContentManagement.Brokers.Caching;
-using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
@@ -83,7 +82,7 @@ public static partial class IServiceCollectionExtensions
         services.AddProcessings();
         services.AddOrchestrations();
         services.AddCoordinations();
-        services.AddEventHandlers();
+        services.AddExposures();
         services.AddRendering();
         services.AddConfiguredApi(
             newContentManagementConfiguration: configuration,
@@ -115,7 +114,7 @@ public static partial class IServiceCollectionExtensions
         services.AddProcessings();
         services.AddOrchestrations();
         services.AddCoordinations();
-        services.AddEventHandlers();
+        services.AddExposures();
         services.AddRendering();
     }
 
@@ -207,7 +206,6 @@ public static partial class IServiceCollectionExtensions
                         .GetRequiredService<IHttpContextAccessor>()
                         .HttpContext));
         services.AddTransient<IPageAuthorizationBroker, PageAuthorizationBroker>();
-        services.AddTransient<IEventRegistrationBroker, EventRegistrationBroker>();
         services.AddTransient<IAppCultureEventBroker, AppCultureEventBroker>();
         services.AddTransient<IAppEventBroker, AppEventBroker>();
         services.AddTransient<ICommonObjectEventBroker, CommonObjectEventBroker>();
@@ -276,7 +274,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageStructureCoordinationService, PageStructureCoordinationService>();
     }
 
-    private static void AddEventHandlers(this IServiceCollection services)
+    private static void AddExposures(this IServiceCollection services)
     {
         services.AddTransient<IAppManager, AppManager>();
         services.AddTransient<IComponentManager, ComponentManager>();
@@ -287,24 +285,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageRenderer, PageRenderer>();
         services.AddTransient<ITemplateManager, TemplateManager>();
         services.AddTransient<ITemplateRenderer, TemplateRenderer>();
-        services.AddTransient<IContentManagementEventHandlers, AppSupportingResourcesEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, AppRenderableEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, AppPageComponentEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, PageCoordinationEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, PageStructureEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, FinalAppDeleteEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, AppOwnedRenderCacheEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, PageOwnedRenderCacheEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, CommonObjectRenderCacheEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, PackageImportRenderCacheEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, ComponentPackageImportEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, LayoutPackageImportEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, PagePackageImportEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, ResourcePackageImportEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, ScriptPackageImportEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, TemplatePackageImportEventHandlers>();
-        services.AddTransient<IContentManagementEventHandlers, CommonObjectPackageImportEventHandlers>();
-        services.AddTransient<IPageRenderCacheEventHandlers, PageRenderCacheEventHandlers>();
     }
 
     private static void AddRendering(this IServiceCollection services)

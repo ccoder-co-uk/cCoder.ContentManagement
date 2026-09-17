@@ -513,7 +513,7 @@
     {
       "Name": "ContentManagement.Web.Program",
       "StandardElementType": "App",
-      "LineNumber": 7,
+      "LineNumber": 9,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": null,
@@ -523,7 +523,7 @@
         {
           "Id": "ContentManagement.Web.Program.Main(System.String[])",
           "Name": "Main",
-          "LineNumber": 9,
+          "LineNumber": 11,
           "Inputs": [
             {
               "Name": "args",
@@ -565,6 +565,20 @@
               "TypeName": "Microsoft.AspNetCore.Builder.WebApplicationBuilder",
               "MethodName": "Build",
               "MethodId": "Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions",
+              "MethodName": "GetRequiredService",
+              "MethodId": "Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(System.IServiceProvider)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.IEventHubExtensions",
+              "MethodName": "ListenToContentManagementWebEvents",
+              "MethodId": "cCoder.ContentManagement.IEventHubExtensions.ListenToContentManagementWebEvents(cCoder.Eventing.IEventHub)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             }

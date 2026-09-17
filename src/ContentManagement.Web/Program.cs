@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement;
+
 namespace ContentManagement.Web;
 
 public class Program
@@ -28,6 +30,10 @@ public class Program
                 ]);
 
         WebApplication app = builder.Build();
+
+        app.Services
+            .GetRequiredService<cCoder.Eventing.IEventHub>()
+            .ListenToContentManagementWebEvents();
 
         app.UseContentManagementApplication()
             .Run();
