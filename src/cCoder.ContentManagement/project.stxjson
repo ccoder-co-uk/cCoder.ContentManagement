@@ -3358,7 +3358,7 @@
     {
       "Name": "cCoder.ContentManagement.Brokers.JsonBroker",
       "StandardElementType": "Broker",
-      "LineNumber": 12,
+      "LineNumber": 13,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -3784,7 +3784,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.ParseJson(System.String)",
           "Name": "ParseJson",
-          "LineNumber": 20,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "json",
@@ -3819,7 +3819,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.ParseJson(System.String)",
           "Name": "ParseJson",
-          "LineNumber": 26,
+          "LineNumber": 29,
           "Inputs": [
             {
               "Name": "json",
@@ -3835,13 +3835,6 @@
               "TypeName": "System.Text.Json.JsonSerializer",
               "MethodName": "Deserialize",
               "MethodId": "System.Text.Json.JsonSerializer.Deserialize(System.String,System.Text.Json.JsonSerializerOptions?)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Text.Json.JsonSerializerOptions",
-              "MethodName": ".ctor",
-              "MethodId": "System.Text.Json.JsonSerializerOptions..ctor()",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             }
@@ -3861,7 +3854,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.ParseJsonElement(System.String)",
           "Name": "ParseJsonElement",
-          "LineNumber": 23,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "json",
@@ -11777,6 +11770,136 @@
       "Interfaces": [],
       "Properties": [],
       "Methods": []
+    },
+    {
+      "Name": "cCoder.ContentManagement.Dependencies.Serialization.DateTimeOffsetJsonConverterDependency",
+      "StandardElementType": "Dependency",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": {
+        "Id": "System.Text.Json:System.Text.Json.Serialization.JsonConverter\u003CSystem.DateTimeOffset\u003E",
+        "FullName": "System.Text.Json.Serialization.JsonConverter\u003CSystem.DateTimeOffset\u003E",
+        "Name": "JsonConverter",
+        "Namespace": "System.Text.Json.Serialization",
+        "AssemblyName": "System.Text.Json",
+        "Kind": "Class",
+        "IsInCurrentProject": false,
+        "StandardElementType": "Dependency"
+      },
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Dependencies.Serialization.DateTimeOffsetJsonConverterDependency.Read(System.Text.Json.Utf8JsonReader,System.Type,System.Text.Json.JsonSerializerOptions)",
+          "Name": "Read",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "reader",
+              "Type": "System.Text.Json.Utf8JsonReader"
+            },
+            {
+              "Name": "typeToConvert",
+              "Type": "System.Type"
+            },
+            {
+              "Name": "options",
+              "Type": "System.Text.Json.JsonSerializerOptions"
+            }
+          ],
+          "ReturnType": "System.DateTimeOffset",
+          "Implements": [],
+          "Calls": [
+            {
+              "TypeName": "System.DateTimeOffset",
+              "MethodName": "TryParse",
+              "MethodId": "System.DateTimeOffset.TryParse(System.String?,System.IFormatProvider?,System.Globalization.DateTimeStyles,System.DateTimeOffset)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Text.Json.JsonException",
+              "MethodName": ".ctor",
+              "MethodId": "System.Text.Json.JsonException..ctor(System.String?)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Text.Json.Utf8JsonReader",
+              "MethodName": "GetString",
+              "MethodId": "System.Text.Json.Utf8JsonReader.GetString()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Text.Json.Utf8JsonReader",
+              "MethodName": "TryGetDateTimeOffset",
+              "MethodId": "System.Text.Json.Utf8JsonReader.TryGetDateTimeOffset(System.DateTimeOffset)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.Text.Json.JsonException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.Text.Json.JsonException"
+          ],
+          "ThrowsExceptionTypes": [
+            "System.Text.Json.JsonException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Dependencies.Serialization.DateTimeOffsetJsonConverterDependency.Write(System.Text.Json.Utf8JsonWriter,System.DateTimeOffset,System.Text.Json.JsonSerializerOptions)",
+          "Name": "Write",
+          "LineNumber": 40,
+          "Inputs": [
+            {
+              "Name": "writer",
+              "Type": "System.Text.Json.Utf8JsonWriter"
+            },
+            {
+              "Name": "value",
+              "Type": "System.DateTimeOffset"
+            },
+            {
+              "Name": "options",
+              "Type": "System.Text.Json.JsonSerializerOptions"
+            }
+          ],
+          "ReturnType": "System.Void",
+          "Implements": [],
+          "Calls": [
+            {
+              "TypeName": "System.Text.Json.Utf8JsonWriter",
+              "MethodName": "WriteStringValue",
+              "MethodId": "System.Text.Json.Utf8JsonWriter.WriteStringValue(System.DateTimeOffset)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
     },
     {
       "Name": "cCoder.ContentManagement.Dependencies.WorkflowExecutionDependency",
@@ -107268,5 +107391,13 @@
       "ToType": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService"
     }
   ],
-  "AnalysisItems": []
+  "AnalysisItems": [
+    {
+      "Code": "STXD003",
+      "Description": "A dependency must encapsulate external resources rather than expose them through its surface.",
+      "Severity": "Warning",
+      "Type": "cCoder.ContentManagement.Dependencies.Serialization.DateTimeOffsetJsonConverterDependency",
+      "LineNumber": 12
+    }
+  ]
 }
