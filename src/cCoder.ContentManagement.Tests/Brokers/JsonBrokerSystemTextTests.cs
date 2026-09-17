@@ -30,6 +30,28 @@ public sealed partial class JsonBrokerSystemTextTests
     }
 
     [Fact]
+    public void DeserializeSystemText_WhenDateUsesLegacyPackageFormat_ReturnsDateTimeOffset()
+    {
+        // Given
+        JsonBroker broker = new();
+
+        // When
+        DatePayload result = broker.ParseJson<DatePayload>(
+            json: "{\"LastUpdated\":\"03/18/2022 10:41:54\"}");
+
+        // Then
+        result.LastUpdated.Should()
+            .Be(expected: new DateTimeOffset(
+                year: 2022,
+                month: 3,
+                day: 18,
+                hour: 10,
+                minute: 41,
+                second: 54,
+                offset: TimeSpan.Zero));
+    }
+
+    [Fact]
     public void SerializeSystemText_WhenMarkupIsPresent_PreservesSystemTextEscaping()
     {
         // Given
@@ -232,5 +254,10 @@ public sealed partial class JsonBrokerSystemTextTests
     private sealed class TestPayload
     {
         public string Name { get; init; }
+    }
+
+    private sealed class DatePayload
+    {
+        public DateTimeOffset LastUpdated { get; init; }
     }
 }
