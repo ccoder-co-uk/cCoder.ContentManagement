@@ -4,7 +4,6 @@
 
 using System.Security;
 using cCoder.ContentManagement.Exposures.Caching;
-using cCoder.ContentManagement.Exposures.EventHandlers;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.Data.Exposures;
 using Microsoft.AspNetCore.Diagnostics;
@@ -19,33 +18,17 @@ public static partial class WebApplicationExtensions
 
     public static WebApplication StartContentManagementWeb(
         this WebApplication app,
-        ILogger log = null) =>
-        app.UseContentManagementExposure(log: log)
-        .ListenToContentManagementEvents()
-        .ListenToContentManagementWebCacheEvents()
-        .StartContentManagementFinalAppDeleteEventHandler();
+        ILogger log = null)
+    {
+        app.UseContentManagementExposure(log: log);
+
+        return app;
+    }
 
     public static WebApplication StartContentManagementHostedServices(
         this WebApplication app)
     {
-        PopulateMetadataTypeCache(app: app);
-
-        return app.ListenToContentManagementEvents()
-            .ListenToContentManagementHostedEvents();
-    }
-
-    public static WebApplication StartContentManagementFinalAppDeleteEventHandler(
-        this WebApplication app)
-    {
-        using IServiceScope serviceScope = app.Services.CreateScope();
-
-        foreach (IContentManagementEventHandlers service in serviceScope
-            .ServiceProvider
-            .GetServices<IContentManagementEventHandlers>())
-        {
-            service.ListenToFinalAppDeleteEvent();
-        }
-
+        app.PopulateContentManagementMetadataTypeCache();
         return app;
     }
 
@@ -129,7 +112,7 @@ public static partial class WebApplicationExtensions
             return next(context: context);
         });
 
-        PopulateMetadataTypeCache(app: app);
+        app.PopulateContentManagementMetadataTypeCache();
         app.InitialiseContentManagementCaches();
 
         app.Use(middleware: async (context, next) =>
@@ -150,60 +133,20 @@ public static partial class WebApplicationExtensions
         return app;
     }
 
-    private static void PopulateMetadataTypeCache(WebApplication app)
-    {
-        IMetadataTypeCache requiredService = app.Services.GetRequiredService<IMetadataTypeCache>();
-
-        if (!requiredService.Contains(scope: "ContentManagement"))
-        {
-            requiredService.Set(
-scope: "ContentManagement",
-typeSetPayloads: app.Services.GetRequiredService<IContentManagementMetadataTypeService>()
-                .GetKnownMetadataPayloads());
-        }
-    }
-
-    private static WebApplication ListenToContentManagementEvents(this WebApplication app)
-    {
-        using IServiceScope serviceScope = app.Services.CreateScope();
-        IServiceProvider serviceProvider = serviceScope.ServiceProvider;
-
-        foreach (IContentManagementEventHandlers service in serviceProvider.GetServices<IContentManagementEventHandlers>())
-        {
-            service.ListenToAllEvents();
-        }
-
-        return app;
-    }
-
-    private static WebApplication ListenToContentManagementHostedEvents(
+    private static void PopulateContentManagementMetadataTypeCache(
         this WebApplication app)
     {
-        using IServiceScope serviceScope = app.Services.CreateScope();
+        IMetadataTypeCache metadataTypeCache =
+            app.Services.GetRequiredService<IMetadataTypeCache>();
 
-        foreach (IContentManagementEventHandlers service in serviceScope
-            .ServiceProvider
-            .GetServices<IContentManagementEventHandlers>())
+        if (!metadataTypeCache.Contains(scope: MetadataScope))
         {
-            service.ListenToHostedEvents();
+            metadataTypeCache.Set(
+                scope: MetadataScope,
+                typeSetPayloads: app.Services
+                    .GetRequiredService<IContentManagementMetadataTypeService>()
+                    .GetKnownMetadataPayloads());
         }
-
-        return app;
-    }
-
-    private static WebApplication ListenToContentManagementWebCacheEvents(
-        this WebApplication app)
-    {
-        using IServiceScope serviceScope = app.Services.CreateScope();
-
-        foreach (IContentManagementEventHandlers service in serviceScope
-            .ServiceProvider
-            .GetServices<IContentManagementEventHandlers>())
-        {
-            service.ListenToWebCacheEvents();
-        }
-
-        return app;
     }
 
     private static Task RemovePlatformHeaders(HttpContext context)
