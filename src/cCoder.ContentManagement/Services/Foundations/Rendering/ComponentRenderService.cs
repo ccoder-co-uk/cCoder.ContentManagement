@@ -5,11 +5,14 @@
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Brokers.Rendering;
+using cCoder.ContentManagement.Brokers.Caching;
 
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class ComponentRenderService(
     IContentRenderBroker contentRenderBroker,
+    IWorkflowExecutionBroker workflowExecutionBroker,
+    ICacheBroker cacheBroker,
     IJsonBroker jsonBroker,
     IRegularExpressionBroker regularExpressionBroker,
     IRenderingUtilityBroker renderingUtilityBroker = null)
@@ -84,7 +87,7 @@ internal sealed partial class ComponentRenderService(
         TryCatch(operation: () =>
     {
         ValidateComponentComponentRenderFoundationOperationOnGet(inputs: [componentRenderFoundationOperation]);
-        componentRenderFoundationOperation.Component = contentRenderBroker.GetCommonObject<cCoder.Data.Models.CMS.Component>(key: componentRenderFoundationOperation.Key);
+        componentRenderFoundationOperation.Component = GetCommonObject<cCoder.Data.Models.CMS.Component>(key: componentRenderFoundationOperation.Key);
         return componentRenderFoundationOperation;
     });
 
@@ -93,7 +96,7 @@ internal sealed partial class ComponentRenderService(
         TryCatch(operation: () =>
     {
         ValidateScriptComponentRenderFoundationOperationOnGet(inputs: [componentRenderFoundationOperation]);
-        componentRenderFoundationOperation.Script = contentRenderBroker.GetCommonObject<cCoder.Data.Models.CMS.Script>(key: componentRenderFoundationOperation.Key);
+        componentRenderFoundationOperation.Script = GetCommonObject<cCoder.Data.Models.CMS.Script>(key: componentRenderFoundationOperation.Key);
         return componentRenderFoundationOperation;
     });
 
@@ -102,7 +105,7 @@ internal sealed partial class ComponentRenderService(
         TryCatch(operation: () =>
     {
         ValidateResourceComponentRenderFoundationOperationOnGet(inputs: [componentRenderFoundationOperation]);
-        componentRenderFoundationOperation.Resource = contentRenderBroker.GetCommonObject<cCoder.Data.Models.CMS.Resource>(key: componentRenderFoundationOperation.Key);
+        componentRenderFoundationOperation.Resource = GetCommonObject<cCoder.Data.Models.CMS.Resource>(key: componentRenderFoundationOperation.Key);
         return componentRenderFoundationOperation;
     });
 
@@ -111,7 +114,7 @@ internal sealed partial class ComponentRenderService(
         TryCatch(operation: () =>
     {
         ValidateMetadataComponentRenderFoundationOperationOnGet(inputs: [componentRenderFoundationOperation]);
-        componentRenderFoundationOperation.Content = contentRenderBroker.GetMetadata(key: componentRenderFoundationOperation.Key, culture: componentRenderFoundationOperation.Culture);
+        componentRenderFoundationOperation.Content = GetMetadata(key: componentRenderFoundationOperation.Key, culture: componentRenderFoundationOperation.Culture);
         return componentRenderFoundationOperation;
     });
 
@@ -194,7 +197,7 @@ internal sealed partial class ComponentRenderService(
         TryCatch(operation: () =>
     {
         ValidateComponentRenderFoundationOperation(inputs: [componentRenderFoundationOperation]);
-        componentRenderFoundationOperation.Content = contentRenderBroker.ExecuteWorkflow(baseAddress: componentRenderFoundationOperation.BaseAddress, content: componentRenderFoundationOperation.Content);
+        componentRenderFoundationOperation.Content = workflowExecutionBroker.Execute(baseAddress: componentRenderFoundationOperation.BaseAddress, content: componentRenderFoundationOperation.Content);
         return componentRenderFoundationOperation;
     });
 

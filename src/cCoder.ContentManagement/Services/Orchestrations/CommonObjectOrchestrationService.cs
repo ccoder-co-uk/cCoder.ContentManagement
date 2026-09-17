@@ -56,7 +56,13 @@ internal partial class CommonObjectOrchestrationService(
         ];
 
         CommonObject[] latestCommonObjects = latestCacheProcessingService
-            .GetLatestCommonObjects()
+            .GetCommonObjectCacheSnapshot()?
+            .LatestSet
+            ?? latestCacheProcessingService
+                .LoadCommonObjectCacheSnapshot()
+                .LatestSet;
+
+        latestCommonObjects = latestCommonObjects
             .ToArray();
 
         AuthorizeImport(
@@ -160,7 +166,14 @@ internal partial class CommonObjectOrchestrationService(
         ValidateLatestCommonObject(inputs: [type]);
         ValidateType(type: type, parameterName: "type");
 
-        return latestCacheProcessingService.GetLatestCommonObjects()
+        CommonObject[] latestCommonObjects = latestCacheProcessingService
+            .GetCommonObjectCacheSnapshot()?
+            .LatestSet
+            ?? latestCacheProcessingService
+                .LoadCommonObjectCacheSnapshot()
+                .LatestSet;
+
+        return latestCommonObjects
             .Where(predicate: item => item.Type == type);
 
     });

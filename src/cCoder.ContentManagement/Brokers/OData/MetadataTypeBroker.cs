@@ -2,23 +2,17 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Dependencies.OData;
-using cCoder.ContentManagement.Models.OData;
+using System.Text.Json;
+using System.Reflection;
 
 namespace cCoder.ContentManagement.Brokers.OData;
 
-internal sealed class MetadataTypeBroker(MetadataTypeDependency metadataTypeDependency = null)
-    : IMetadataTypeBroker
+internal sealed class MetadataTypeBroker : IMetadataTypeBroker
 {
-    private readonly MetadataTypeDependency metadataTypeDependency =
-        metadataTypeDependency ?? new MetadataTypeDependency();
-
-    public MetadataTypeDefinition GetDefinition<T>() =>
-        metadataTypeDependency.GetDefinition<T>();
-
-    public MetadataTypeDefinition GetDefinition(Type type) =>
-        metadataTypeDependency.GetDefinition(type: type);
+    public T GetCustomAttribute<T>(MemberInfo memberInfo)
+        where T : Attribute =>
+        memberInfo.GetCustomAttribute<T>();
 
     public string Serialize(object value) =>
-        metadataTypeDependency.Serialize(value: value);
+        JsonSerializer.Serialize(value: value);
 }

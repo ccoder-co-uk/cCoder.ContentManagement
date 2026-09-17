@@ -3,10 +3,26 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Models.Caching;
 
 namespace cCoder.ContentManagement.Rendering.Services.Processings;
 
-internal interface IMetadataCacheProcessingService
+internal interface IMetadataRenderCacheProcessingService
 {
     RenderSession PrepareRenderSession(RenderSession session);
+}
+
+internal interface IMetadataCacheProcessingService
+{
+    MetadataCacheSnapshot GetMetadataCacheSnapshot();
+
+    void SetMetadataCacheSnapshot(MetadataCacheSnapshot metadataCacheSnapshot);
+}
+
+internal interface IMetadataCacheSourceProcessingService
+{
+    MetadataCacheSnapshot BuildMetadataCacheSnapshot();
+
+    bool IsCurrentMetadataCacheSnapshot(
+        MetadataCacheSnapshot metadataCacheSnapshot);
 }

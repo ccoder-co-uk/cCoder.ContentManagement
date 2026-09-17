@@ -7,27 +7,30 @@ using System.Text;
 
 namespace cCoder.ContentManagement.Dependencies;
 
-internal sealed class WorkflowExecutionDependency : HttpClient
+internal sealed class WorkflowExecutionDependency : IDisposable
 {
+    private readonly HttpClient httpClient;
+
     public WorkflowExecutionDependency()
-        : base(handler: new HttpClientHandler
+    {
+        httpClient = new HttpClient(handler: new HttpClientHandler
         {
             AutomaticDecompression =
                 DecompressionMethods.GZip | DecompressionMethods.Deflate
-        })
-    { }
+        });
+    }
 
     internal string Execute(string baseAddress, string content)
     {
-        BaseAddress = new Uri(uriString: baseAddress);
-        Timeout = TimeSpan.FromMinutes(minutes: 10);
+        httpClient.BaseAddress = new Uri(uriString: baseAddress);
+        httpClient.Timeout = TimeSpan.FromMinutes(minutes: 10);
 
         using StringContent requestContent = new(
             content: content,
             encoding: Encoding.UTF8,
             mediaType: "text/plain");
 
-        using HttpResponseMessage response = PostAsync(
+        using HttpResponseMessage response = httpClient.PostAsync(
                 requestUri: "ExecuteScript?useDetails=true",
                 content: requestContent)
             .GetAwaiter()
@@ -38,4 +41,7 @@ internal sealed class WorkflowExecutionDependency : HttpClient
             .GetAwaiter()
             .GetResult();
     }
+
+    public void Dispose() =>
+        httpClient.Dispose();
 }

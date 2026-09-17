@@ -3,10 +3,10 @@
 // ---------------------------------------------------------------
 
 using System.Text.Json;
+using cCoder.ContentManagement.Brokers.Caching;
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Models.PageRendering;
-using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Models.Caching;
 using cCoder.Data.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,22 +48,24 @@ public sealed partial class CommonObjectControllerTests
 
         cache.Refresh();
 
-        ICommonObjectReaderBroker readerBroker = fixture.Factory.Services
-            .GetRequiredService<ICommonObjectReaderBroker>();
+        ICacheBroker cacheBroker = fixture.Factory.Services
+            .GetRequiredService<ICacheBroker>();
 
         // When
-        IReadOnlyDictionary<string, PageRenderStyle> actualStyles =
-            readerBroker.GetStylesByName();
+        CommonObjectCacheSnapshot snapshot = cacheBroker
+            .Get<CommonObjectCacheSnapshot>(
+                key: "ContentManagement.CommonObjects");
+
+        Style actualStyle = snapshot.Items.Values
+            .OfType<Style>()
+            .Single(predicate: item => item.Name == name);
 
         IReadOnlyList<CommonObject> latestStyles =
             await GetLatestCommonObjectsAsync(
                 type: "ContentManagement/Style");
 
         // Then
-        actualStyles.Should()
-            .ContainKey(expected: name);
-
-        actualStyles[name].Content.Should()
+        actualStyle.Content.Should()
             .Be(expected: style.Content);
 
         latestStyles.Should()

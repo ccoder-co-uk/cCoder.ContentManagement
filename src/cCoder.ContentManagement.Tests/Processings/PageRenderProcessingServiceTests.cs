@@ -18,9 +18,7 @@ using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
-using cCoder.ContentManagement.Rendering.Services.Orchestrations;
 using cCoder.ContentManagement.Rendering.Services.Processings;
-using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
@@ -38,64 +36,49 @@ using RenderResource = cCoder.Data.Models.CMS.Resource;
 using RenderScript = cCoder.Data.Models.CMS.Script;
 using RenderUser = cCoder.Data.Models.Security.User;
 using cCoder.ContentManagement.Tests.Brokers.Rendering;
+using cCoder.ContentManagement.Tests.Brokers.Caching;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class PageRenderProcessingServiceTests
 {
-    private readonly TestMetadataReaderBroker metadataReaderBroker = new();
-    private readonly Mock<ICommonObjectReaderBroker> commonObjectReaderBrokerMock =
-        CreateCommonObjectReaderBrokerMock();
+    private readonly TestCacheBroker cacheBroker = new();
     private readonly TestComponentReaderBroker componentReaderBroker = new();
     private readonly TestScriptReaderBroker scriptReaderBroker = new();
     private readonly Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new();
 
-    private PageRenderProcessingService CreateSut(RenderConfig config)
+    private PageRenderTestHarness CreateSut(RenderConfig config)
     {
         RegularExpressionBroker regularExpressionBroker = new();
 
-        MetadataCacheService metadataCacheService = new(
-            broker: metadataReaderBroker);
-
-        CommonObjectCacheService commonObjectCacheService = new(
-            broker: commonObjectReaderBrokerMock.Object);
+        cacheBroker.SetCommonObject(
+            key: "style|common",
+            value: new cCoder.ContentManagement.Models.Style
+            {
+                Name = "Common",
+                Key = "Default",
+                Content = ".common { display: block; }"
+            });
 
         MarkupRenderService markupRenderService = new(
             contentRenderBroker: new TestContentRenderBroker(
-                workflowExecutionBroker:
-                    new WorkflowExecutionBroker(
-                        workflowExecutionDependency:
-                            new WorkflowExecutionDependency()),
                 renderFileContentBroker: renderFileContentBrokerMock.Object,
                 componentReaderBroker: componentReaderBroker,
                 scriptReaderBroker: scriptReaderBroker),
+            workflowExecutionBroker: new WorkflowExecutionBroker(
+                workflowExecutionDependency:
+                    new WorkflowExecutionDependency()),
+            cacheBroker: cacheBroker,
             jsonBroker: new JsonBroker(),
             regularExpressionBroker: regularExpressionBroker);
 
-        RenderOrchestrationService executionOrchestrationService =
-            new(
-                metadataCacheProcessingService:
-                    new MetadataCacheProcessingService(
-                        metadataCacheService: metadataCacheService),
-                commonObjectCacheProcessingService:
-                    new CommonObjectCacheProcessingService(
-                        commonObjectCacheService: commonObjectCacheService),
-                markupRenderProcessingService:
-                    new MarkupRenderProcessingService(
-                        markupRenderService: markupRenderService));
-
-        RenderSessionManager renderSessionManager = new(
-            renderOrchestrationService: executionOrchestrationService);
-
-        RenderBroker renderBroker = new(
-            renderSessionManager: renderSessionManager);
-
-        PageRenderService pageRenderService = new(
-            renderBroker: renderBroker);
-
-        return new PageRenderProcessingService(
-            pageRenderService: pageRenderService,
-            config: config);
+        return new PageRenderTestHarness(
+            pageRenderProcessingService: new PageRenderProcessingService(
+                pageRenderService: new PageRenderService(),
+                config: config),
+            markupRenderProcessingService:
+                new MarkupRenderProcessingService(
+                    markupRenderService: markupRenderService));
     }
 
     private static RenderConfig CreateConfig(string workflowBaseUrl) =>
@@ -277,72 +260,33 @@ public partial class PageRenderProcessingServiceTests
             Roles = [],
         };
 
-    private sealed class TestMetadataReaderBroker : IMetadataReaderBroker
+    private sealed class PageRenderTestHarness(
+        PageRenderProcessingService pageRenderProcessingService,
+        MarkupRenderProcessingService markupRenderProcessingService)
     {
-        private readonly Dictionary<string, string> values = new(comparer: StringComparer.OrdinalIgnoreCase);
-
-        public IList<(string Name, string Culture)> Requests { get; } = [];
-
-        public void Set(string name, string culture, string value) =>
-            values[BuildKey(name: name, culture: culture)] = value;
-
-        public string Get(string key, string culture) =>
-            GetMetadata(name: key, culture: culture);
-
-        public string GetMetadata(string name, string culture)
+        public PageRenderResult RenderPageUserRenderResult(
+            RenderPage page,
+            RenderUser user,
+            string theme,
+            string culture)
         {
-            Requests.Add(item: (name, culture));
-
-            return values.TryGetValue(key: BuildKey(name: name, culture: culture), value: out string value)
-                ? value
-                : string.Empty;
-        }
-
-        private static string BuildKey(string name, string culture) =>
-            $"{name}|{culture}";
-    }
-
-    private static Mock<ICommonObjectReaderBroker> CreateCommonObjectReaderBrokerMock()
-    {
-        IReadOnlyDictionary<string, PageRenderResource> resourcesByLookup =
-            new Dictionary<string, PageRenderResource>(comparer: StringComparer.OrdinalIgnoreCase);
-
-        IReadOnlyDictionary<string, PageRenderComponent> componentsByName =
-            new Dictionary<string, PageRenderComponent>(comparer: StringComparer.OrdinalIgnoreCase);
-
-        IReadOnlyDictionary<string, PageRenderScript> scriptsByName =
-            new Dictionary<string, PageRenderScript>(comparer: StringComparer.OrdinalIgnoreCase);
-
-        IReadOnlyDictionary<string, PageRenderStyle> stylesByName =
-            new Dictionary<string, PageRenderStyle>(comparer: StringComparer.OrdinalIgnoreCase)
+            cCoder.ContentManagement.Models.PageRenderOperation operation = new()
             {
-                ["Common"] = new PageRenderStyle
-                {
-                    Name = "Common",
-                    Key = "Default",
-                    Content = ".common { display: block; }"
-                }
+                SourcePage = page,
+                User = user,
+                Theme = theme,
+                Culture = culture
             };
 
-        Mock<ICommonObjectReaderBroker> brokerMock = new();
+            operation = pageRenderProcessingService.RenderPageRenderOperation(
+                pageRenderOperation: operation);
 
-        brokerMock
-            .Setup(expression: broker => broker.GetResourcesByLookup())
-            .Returns(value: resourcesByLookup);
+            operation.RenderSession = markupRenderProcessingService
+                .RenderRenderSession(renderSession: operation.RenderSession);
 
-        brokerMock
-            .Setup(expression: broker => broker.GetComponentsByName())
-            .Returns(value: componentsByName);
-
-        brokerMock
-            .Setup(expression: broker => broker.GetScriptsByName())
-            .Returns(value: scriptsByName);
-
-        brokerMock
-            .Setup(expression: broker => broker.GetStylesByName())
-            .Returns(value: stylesByName);
-
-        return brokerMock;
+            return pageRenderProcessingService.CompletePageRenderOperation(
+                pageRenderOperation: operation).Page;
+        }
     }
 
     private sealed class TestComponentReaderBroker : IComponentReaderBroker

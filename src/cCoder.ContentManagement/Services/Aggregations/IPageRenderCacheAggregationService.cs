@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
-internal interface IPageRenderCacheAggregationService
+public interface IPageRenderCacheAggregationService
 {
     IQueryable<PageRenderCache> GetAllPageRenderCaches();
 

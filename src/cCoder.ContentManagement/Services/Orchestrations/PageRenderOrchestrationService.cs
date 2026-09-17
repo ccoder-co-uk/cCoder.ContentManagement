@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Processings;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 
@@ -15,7 +16,8 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class PageRenderOrchestrationService(
     IPageRenderProcessingService pageRenderProcessingService,
-    IAuthorizationProcessingService authorizationProcessingService)
+    IAuthorizationProcessingService authorizationProcessingService,
+    IMarkupRenderProcessingService markupRenderProcessingService)
         : IPageRenderOrchestrationService
 {
     public bool IsAdminOfApp(int appId) =>
@@ -193,10 +195,14 @@ internal partial class PageRenderOrchestrationService(
             CacheTemplate = cacheTemplate
         };
 
-        return pageRenderProcessingService
-            .RenderPageRenderOperation(
-                operation: operation)
-            .Page;
+        operation = pageRenderProcessingService.RenderPageRenderOperation(
+            operation: operation);
+
+        operation.RenderSession = markupRenderProcessingService
+            .RenderRenderSession(session: operation.RenderSession);
+
+        return pageRenderProcessingService.CompletePageRenderOperation(
+            operation: operation).Page;
     }
 
     private static void ValidatePage(Page page, string parameterName) =>

@@ -23,7 +23,9 @@ public sealed partial class CombinedRenderingArchitectureTests
             name: "cCoder.ContentManagement.Rendering.Brokers.RenderBroker");
 
         // When
-        Type[] dependencies = GetConstructorDependencies(type: renderBroker);
+        Type[] dependencies = renderBroker is null
+            ? []
+            : GetConstructorDependencies(type: renderBroker);
 
         // Then
         dependencies.Should()
@@ -32,6 +34,10 @@ public sealed partial class CombinedRenderingArchitectureTests
             && dependency.GetGenericArguments()
                 .Any(predicate: argument =>
                 argument.Name == "ITagHandlingProcessingService"));
+
+        renderBroker.Should()
+            .BeNull(
+                because: "the obsolete render exposure loop was retired");
     }
 
     [Fact]
@@ -46,7 +52,11 @@ public sealed partial class CombinedRenderingArchitectureTests
 
         // Then
         dependencies.Should()
-            .Contain(predicate: dependency =>
+            .ContainSingle(predicate: dependency =>
+                dependency.Name == "IRenderingUtilityBroker");
+
+        dependencies.Should()
+            .NotContain(predicate: dependency =>
                 dependency.Name == "IRenderBroker");
 
         dependencies.Should()

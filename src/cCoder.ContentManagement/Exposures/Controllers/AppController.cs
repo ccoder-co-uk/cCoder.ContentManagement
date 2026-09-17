@@ -8,6 +8,7 @@ using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Aggregations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
@@ -21,9 +22,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class AppController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
-    private readonly IAppManager manager;
+    private readonly IAppManagerAggregationService manager;
 
-    public AppController(IAppManager manager, ILoggingBroker loggingBroker)
+    public AppController(IAppManagerAggregationService manager, ILoggingBroker loggingBroker)
     {
         this.manager = manager;
         this.loggingBroker = loggingBroker;
@@ -40,7 +41,13 @@ public class AppController : ODataController
                 return NotFound();
             }
 
-            return Ok(value: manager.IsAdmin(appId: key, userName: userName));
+            return Ok(value: manager.GetAdminAppManagerContext(
+                appManagerContext: new AppManagerContext
+                {
+                    AppId = key,
+                    UserName = userName
+                })
+            .IsAdmin);
         }
         catch (ContentManagementValidationException exception)
         {
@@ -74,7 +81,9 @@ public class AppController : ODataController
                 return NotFound();
             }
 
-            return Ok(value: manager.GetUsers(appId: key));
+            return Ok(value: manager.GetUsersAppManagerContext(
+                appManagerContext: new AppManagerContext { AppId = key })
+            .Users);
         }
         catch (ContentManagementValidationException exception)
         {
@@ -103,7 +112,14 @@ public class AppController : ODataController
         try
         {
             App app = p["app"] as App;
-            await manager.UpdatePageOrderAsync(appId: key, updatedApp: app);
+
+            await manager.UpdatePageOrderAppManagerContextAsync(
+                updatedAppManagerContext: new AppManagerContext
+                {
+                    AppId = key,
+                    App = app
+                });
+
             return Ok();
         }
         catch (ContentManagementValidationException exception)
@@ -133,7 +149,9 @@ public class AppController : ODataController
     {
         try
         {
-            return Ok(value: manager.GetAll());
+            return Ok(value: manager.GetAllAppManagerContext(
+                appManagerContext: new AppManagerContext())
+            .Apps);
         }
         catch (ContentManagementValidationException exception)
         {
@@ -162,7 +180,9 @@ public class AppController : ODataController
     {
         try
         {
-            App result = manager.GetAll()
+            App result = manager.GetAllAppManagerContext(
+                appManagerContext: new AppManagerContext())
+            .Apps
                 .FirstOrDefault(predicate: app => app.Id == key);
 
             return result is null
@@ -200,7 +220,12 @@ public class AppController : ODataController
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            return StatusCode(statusCode: StatusCodes.Status201Created, value: CreateResponseApp(newApp: await manager.AddAsync(newApp: newApp)));
+            AppManagerContext result = await manager.AddAppManagerContextAsync(
+                newAppManagerContext: new AppManagerContext { App = newApp });
+
+            return StatusCode(
+                statusCode: StatusCodes.Status201Created,
+                value: CreateResponseApp(newApp: result.App));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -234,7 +259,11 @@ public class AppController : ODataController
             }
 
             updatedApp.Id = key;
-            return Ok(value: CreateResponseApp(newApp: await manager.UpdateAsync(updatedApp: updatedApp)));
+
+            AppManagerContext result = await manager.UpdateAppManagerContextAsync(
+                updatedAppManagerContext: new AppManagerContext { App = updatedApp });
+
+            return Ok(value: CreateResponseApp(newApp: result.App));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -261,7 +290,9 @@ public class AppController : ODataController
     {
         try
         {
-            await manager.DeleteAsync(appId: key);
+            await manager.DeleteAppManagerContextAsync(
+                deletedAppManagerContext: new AppManagerContext { AppId = key });
+
             return Accepted();
         }
         catch (ContentManagementValidationException exception)

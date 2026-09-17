@@ -2,30 +2,31 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Models.PageRendering;
+using cCoder.ContentManagement.Brokers.Caching;
+using cCoder.ContentManagement.Models.Caching;
 
 namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class CommonObjectCacheService(
-    ICommonObjectReaderBroker broker) : ICommonObjectCacheService
+    ICacheBroker cacheBroker) : ICommonObjectCacheService
 {
-    public void Refresh() =>
-        TryCatch(operation: () => broker.Refresh());
+    private const string CacheKey = "ContentManagement.CommonObjects";
 
-    public PageCacheSlice GetPageCacheSlice() =>
-        TryCatch<PageCacheSlice>(operation: () =>
-    {
-        broker.EnsureAvailable();
+    public CommonObjectCacheSnapshot GetCommonObjectCacheSnapshot() =>
+        TryCatch(operation: () => cacheBroker.Get<CommonObjectCacheSnapshot>(
+            key: CacheKey));
 
-        return new PageCacheSlice
+    public void SetCommonObjectCacheSnapshot(
+        CommonObjectCacheSnapshot commonObjectCacheSnapshot,
+        TimeSpan expiry) =>
+        TryCatch(operation: () =>
         {
-            CommonResourcesByLookup = broker.GetResourcesByLookup(),
-            CommonComponentsByName = broker.GetComponentsByName(),
-            CommonScriptsByName = broker.GetScriptsByName(),
-            CommonStylesByName = broker.GetStylesByName()
-        };
+            ValidateCommonObjectCacheSnapshotOnSet(
+                inputs: [commonObjectCacheSnapshot, expiry]);
 
-    });
-
+            cacheBroker.Set(
+                key: CacheKey,
+                value: commonObjectCacheSnapshot,
+                expiry: expiry);
+        });
 }

@@ -102,6 +102,8 @@ public sealed partial class ContentSecurityPolicyNonceTests
     private static MarkupRenderService CreateService() =>
         new(
             contentRenderBroker: new TestContentRenderBroker(),
+            workflowExecutionBroker: Mock.Of<cCoder.ContentManagement.Brokers.IWorkflowExecutionBroker>(),
+            cacheBroker: Mock.Of<cCoder.ContentManagement.Brokers.Caching.ICacheBroker>(),
             jsonBroker: Mock.Of<IJsonBroker>(),
             regularExpressionBroker: new RegularExpressionBroker());
 }

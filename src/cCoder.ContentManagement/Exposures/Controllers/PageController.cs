@@ -9,6 +9,7 @@ using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Services.Foundations.Storages;
+using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -21,9 +22,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class PageController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
-    private readonly IPageManager manager;
+    private readonly IPageOrchestrationService manager;
 
-    public PageController(IPageManager manager, ILoggingBroker loggingBroker)
+    public PageController(IPageOrchestrationService manager, ILoggingBroker loggingBroker)
     {
         this.manager = manager;
         this.loggingBroker = loggingBroker;
@@ -36,7 +37,7 @@ public class PageController : ODataController
     {
         try
         {
-            return Ok(value: manager.GetAll());
+            return Ok(value: manager.GetAllPage());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -66,7 +67,7 @@ public class PageController : ODataController
     {
         try
         {
-            Page result = manager.GetRoot(pageId: key);
+            Page result = manager.GetRootPage(pageId: key);
 
             return result is null
                 ? NotFound()
@@ -98,7 +99,7 @@ public class PageController : ODataController
     {
         try
         {
-            string menu = manager.GetMenu(pageId: key, culture: culture);
+            string menu = manager.MenuFor(pageId: key, culture: culture);
 
             if (menu is null)
             {
@@ -139,7 +140,7 @@ public class PageController : ODataController
     {
         try
         {
-            Page result = manager.GetAll()
+            Page result = manager.GetAllPage()
                 .FirstOrDefault(predicate: page => page.Id == key);
 
             return result is null
@@ -177,7 +178,7 @@ public class PageController : ODataController
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            return StatusCode(statusCode: StatusCodes.Status201Created, value: CreateResponsePage(newPage: await manager.AddAsync(newPage: newPage)));
+            return StatusCode(statusCode: StatusCodes.Status201Created, value: CreateResponsePage(newPage: await manager.AddPageAsync(newPage: newPage)));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -211,7 +212,7 @@ public class PageController : ODataController
             }
 
             updatedPage.Id = key;
-            return Ok(value: CreateResponsePage(newPage: await manager.UpdateAsync(updatedPage: updatedPage)));
+            return Ok(value: CreateResponsePage(newPage: await manager.UpdatePageAsync(updatedPage: updatedPage)));
         }
         catch (ContentManagementValidationException exception)
         {

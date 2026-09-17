@@ -47,6 +47,12 @@ internal sealed partial class RenderAggregationService(
             operation = await uncachedPageRenderOrchestrationService
                 .RenderHttpPageRenderOperationAsync(
                     operation: operation);
+
+            if (!context.Edit && context.PageId is not null)
+            {
+                operation = await cachedPageRenderOrchestrationService
+                    .StoreHttpPageRenderOperationAsync(operation: operation);
+            }
         }
 
         HydrateRequestValues(

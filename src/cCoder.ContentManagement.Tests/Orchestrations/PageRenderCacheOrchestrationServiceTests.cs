@@ -14,7 +14,7 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class PageRenderCacheOrchestrationServiceTests
 {
     private readonly Mock<IPageRenderCacheProcessingService> processingServiceMock;
-    private readonly Mock<ICommonObjectCacheProcessingService> commonObjectCacheProcessingServiceMock;
+    private readonly Mock<ICommonObjectLatestCacheProcessingService> commonObjectCacheProcessingServiceMock;
     private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly PageRenderCacheOrchestrationService orchestrationService;
 
@@ -23,7 +23,7 @@ public partial class PageRenderCacheOrchestrationServiceTests
         processingServiceMock = new Mock<IPageRenderCacheProcessingService>(
             behavior: MockBehavior.Strict);
 
-        commonObjectCacheProcessingServiceMock = new Mock<ICommonObjectCacheProcessingService>(
+        commonObjectCacheProcessingServiceMock = new Mock<ICommonObjectLatestCacheProcessingService>(
             behavior: MockBehavior.Strict);
 
         authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
@@ -37,7 +37,7 @@ public partial class PageRenderCacheOrchestrationServiceTests
 
         orchestrationService = new PageRenderCacheOrchestrationService(
             processingService: processingService,
-            commonObjectCacheProcessingService: commonObjectCacheProcessingServiceMock.Object,
+            commonObjectLatestCacheProcessingService: commonObjectCacheProcessingServiceMock.Object,
             authorizationProcessingService: authorizationProcessingServiceMock.Object);
     }
 

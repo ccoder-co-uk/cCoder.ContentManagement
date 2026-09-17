@@ -1,0 +1,11 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+namespace cCoder.ContentManagement.Rendering.Services.Foundations;
+
+internal sealed partial class CommonObjectRenderCacheService
+{
+    private static void Validate(params object[] inputs) =>
+        _ = inputs;
+}

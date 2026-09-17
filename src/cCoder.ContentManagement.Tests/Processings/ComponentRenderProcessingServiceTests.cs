@@ -21,7 +21,7 @@ using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Tests.Brokers.Rendering;
 using Moq;
-using IMetadataCache = cCoder.ContentManagement.Rendering.Brokers.IMetadataReaderBroker;
+using cCoder.ContentManagement.Tests.Brokers.Caching;
 using JsonBroker = cCoder.ContentManagement.Brokers.JsonBroker;
 using RenderApp = cCoder.Data.Models.CMS.App;
 using RenderComponent = cCoder.Data.Models.CMS.Component;
@@ -35,8 +35,7 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 
 public partial class ComponentRenderProcessingServiceTests
 {
-    private readonly Mock<IMetadataCache> metadataCacheMock = new();
-    private readonly Mock<cCoder.ContentManagement.Rendering.Brokers.ICommonObjectReaderBroker> commonObjectCacheMock = new();
+    private readonly TestCacheBroker cacheBroker = new();
     private readonly Mock<IRenderFileContentBroker> renderFileContentBrokerMock = new();
 
     private ComponentRenderProcessingService CreateSut(string workflowBaseUrl)
@@ -49,12 +48,11 @@ public partial class ComponentRenderProcessingServiceTests
 
         ComponentRenderService componentRenderService = new(
             contentRenderBroker: new TestContentRenderBroker(
-                metadataReaderBroker: metadataCacheMock.Object,
-                commonObjectReaderBroker: commonObjectCacheMock.Object,
-                workflowExecutionBroker: new WorkflowExecutionBroker(
-                    workflowExecutionDependency:
-                        new WorkflowExecutionDependency()),
                 renderFileContentBroker: renderFileContentBrokerMock.Object),
+            workflowExecutionBroker: new WorkflowExecutionBroker(
+                workflowExecutionDependency:
+                    new WorkflowExecutionDependency()),
+            cacheBroker: cacheBroker,
             jsonBroker: new JsonBroker(),
             regularExpressionBroker: new RegularExpressionBroker());
 

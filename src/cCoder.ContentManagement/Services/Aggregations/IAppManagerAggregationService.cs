@@ -6,7 +6,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
-internal interface IAppManagerAggregationService
+public interface IAppManagerAggregationService
 {
     AppManagerContext GetAppManagerContext(AppManagerContext appManagerContext);
 

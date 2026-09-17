@@ -3,13 +3,11 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models.Rendering;
-using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Brokers.Rendering;
 
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class PageRenderService(
-    IRenderBroker renderBroker,
     IRenderingUtilityBroker renderingUtilityBroker = null)
         : IPageRenderService
 {
@@ -39,13 +37,4 @@ internal sealed partial class PageRenderService(
 
             return pageRenderFoundationOperation;
         });
-
-    public PageRenderFoundationOperation RenderPageRenderFoundationOperation(
-        PageRenderFoundationOperation pageRenderFoundationOperation) =>
-        TryCatch(operation: () =>
-    {
-        ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
-        pageRenderFoundationOperation.RenderSession = renderBroker.RenderRenderSession(renderSession: pageRenderFoundationOperation.RenderSession);
-        return pageRenderFoundationOperation;
-    });
 }

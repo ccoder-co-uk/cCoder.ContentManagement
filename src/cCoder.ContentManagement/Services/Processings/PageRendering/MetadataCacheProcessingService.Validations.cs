@@ -7,7 +7,7 @@ namespace cCoder.ContentManagement.Rendering.Services.Processings;
 
 internal sealed partial class MetadataCacheProcessingService
 {
-    private static void ValidatePrepareRenderSession(object[] inputs) =>
+    private static void ValidateMetadataCacheSnapshotOnSet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void Validate(params object[] inputs) =>

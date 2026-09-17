@@ -5,6 +5,8 @@
 using System.Text;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Rendering;
+using cCoder.ContentManagement.Brokers.Caching;
+using cCoder.ContentManagement.Models.Caching;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Models.Rendering;
@@ -13,13 +15,52 @@ namespace cCoder.ContentManagement.Rendering.Services.Foundations;
 
 internal sealed partial class MarkupRenderService(
     IContentRenderBroker contentRenderBroker,
+    IWorkflowExecutionBroker workflowExecutionBroker,
     IJsonBroker jsonBroker,
     IRegularExpressionBroker regularExpressionBroker,
+    ICacheBroker cacheBroker,
     IRenderingUtilityBroker renderingUtilityBroker = null)
         : IMarkupRenderService
 {
     private readonly IRenderingUtilityBroker renderingUtilityBroker =
         renderingUtilityBroker ?? new RenderingUtilityBroker();
+
+    public TagHandlingOperation PrepareRenderSessionTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateTagHandlingOperation(inputs: [tagHandlingOperation]);
+
+            RenderSession renderSession = tagHandlingOperation.Session;
+
+            string culture = !string.IsNullOrWhiteSpace(
+                value: renderSession.Request.Culture)
+                    ? renderSession.Request.Culture
+                    : renderSession.App?.DefaultCulture ?? string.Empty;
+
+            MetadataCacheSnapshot metadata = cacheBroker
+                .Get<MetadataCacheSnapshot>(key: "ContentManagement.Metadata");
+
+            renderSession.MetadataResolver = name =>
+                metadata?.Serialized is not null
+                && metadata.Serialized.TryGetValue(
+                    key: culture,
+                    value: out IDictionary<string, string> values)
+                && values.TryGetValue(key: name, value: out string value)
+                    ? value
+                    : string.Empty;
+
+            CommonObjectCacheSnapshot commonObjects = cacheBroker
+                .Get<CommonObjectCacheSnapshot>(
+                    key: "ContentManagement.CommonObjects");
+
+            PopulateCommonObjects(
+                renderSession: renderSession,
+                commonObjects: commonObjects);
+
+            tagHandlingOperation.Session = renderSession;
+            return tagHandlingOperation;
+        });
 
     public TagHandlingOperation HtmlEncodeTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation) =>

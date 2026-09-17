@@ -18,13 +18,55 @@ internal partial class CommonObjectService(
         TryCatch<CommonObject[]>(operation: () =>
     {
         ValidateCommonObjectsOnDeserialize(inputs: [payload]);
-        JsonRecordsDocument document = jsonBroker.ParseRecords(payload: payload);
+        object records = ParseRecordsPayload(payload: payload);
 
-        return document?.Records
-            .Select(selector: record =>
-                jsonBroker.ParseJson<CommonObject>(json: record.RawText))
+        return GetRecordValues(records: records)
+            .Select(selector: record => jsonBroker.ParseJson<CommonObject>(
+                json: jsonBroker.Serialize(value: record)))
             .ToArray();
     });
+
+    private object ParseRecordsPayload(object payload)
+    {
+        if (payload is null)
+        {
+            return null;
+        }
+
+        object parsedPayload = jsonBroker.ParseJson(
+            json: jsonBroker.IsJsonElement(value: payload)
+                ? jsonBroker.GetJsonRawText(value: payload)
+                : jsonBroker.Serialize(value: payload));
+
+        if (!jsonBroker.IsJsonObject(value: parsedPayload))
+        {
+            return parsedPayload;
+        }
+
+        return jsonBroker.GetJsonProperties(value: parsedPayload)
+            .FirstOrDefault(predicate: property => string.Equals(
+                a: property.Key,
+                b: "value",
+                comparisonType: StringComparison.OrdinalIgnoreCase))
+            .Value ?? parsedPayload;
+    }
+
+    private IEnumerable<object> GetRecordValues(object records)
+    {
+        if (records is null)
+        {
+            return [];
+        }
+
+        if (jsonBroker.IsJsonArray(value: records))
+        {
+            return jsonBroker.GetJsonItems(value: records);
+        }
+
+        return jsonBroker.IsJsonObject(value: records)
+            ? [records]
+            : [];
+    }
 
     public CommonObject GetCommonObject(int commonObjectId, bool ignoreFilters = false) =>
         TryCatch<CommonObject>(operation: () =>

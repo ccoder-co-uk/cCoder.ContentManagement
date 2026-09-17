@@ -11,12 +11,14 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class PageRenderCacheOrchestrationService(
     IPageRenderCacheProcessingService processingService,
-    ICommonObjectCacheProcessingService commonObjectCacheProcessingService,
+    ICommonObjectLatestCacheProcessingService commonObjectLatestCacheProcessingService,
     IAuthorizationProcessingService authorizationProcessingService)
         : IPageRenderCacheOrchestrationService
 {
     public void RefreshCommonObjectCache() =>
-        TryCatch(operation: () => commonObjectCacheProcessingService.Refresh());
+        TryCatch(operation: () =>
+            commonObjectLatestCacheProcessingService.RefreshCommonObjects(
+                changedCommonObjectCount: 1));
 
     public IQueryable<PageRenderCache> GetAllPageRenderCaches() =>
         TryCatch<IQueryable<PageRenderCache>>(operation: () =>

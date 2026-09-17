@@ -22,33 +22,3 @@ internal interface IScriptReaderBroker
 
     Script GetScript(int appId, string name);
 }
-
-internal interface IMetadataReaderBroker
-{
-    string Get(string key, string culture);
-
-    string GetMetadata(string name, string culture);
-}
-
-internal interface ICommonObjectReaderBroker
-{
-    void Refresh();
-
-    void EnsureAvailable();
-
-    T[] GetAll<T>();
-
-    T Get<T>(string key);
-
-    void Set(string key, object item);
-
-    IEnumerable<CommonObject> GetLatestSet();
-
-    IReadOnlyDictionary<string, PageRenderResource> GetResourcesByLookup();
-
-    IReadOnlyDictionary<string, PageRenderComponent> GetComponentsByName();
-
-    IReadOnlyDictionary<string, PageRenderScript> GetScriptsByName();
-
-    IReadOnlyDictionary<string, PageRenderStyle> GetStylesByName();
-}

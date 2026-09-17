@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Rendering;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Rendering.Brokers;
@@ -12,9 +11,6 @@ namespace cCoder.ContentManagement.Tests.Brokers.Rendering;
 
 #pragma warning disable STXTEST001
 internal sealed class TestContentRenderBroker(
-    IMetadataReaderBroker metadataReaderBroker = null,
-    ICommonObjectReaderBroker commonObjectReaderBroker = null,
-    IWorkflowExecutionBroker workflowExecutionBroker = null,
     IRenderFileContentBroker renderFileContentBroker = null,
     IAppBroker appBroker = null,
     IComponentBroker componentBroker = null,
@@ -55,24 +51,9 @@ internal sealed class TestContentRenderBroker(
             appId: appId,
             name: name);
 
-    public T GetCommonObject<T>(string key) =>
-        commonObjectReaderBroker is null
-            ? default
-            : commonObjectReaderBroker.Get<T>(key: key);
-
-    public string GetMetadata(string key, string culture) =>
-        metadataReaderBroker?.Get(
-            key: key,
-            culture: culture);
-
     public string GetLatestTextContent(int appId, string path) =>
         renderFileContentBroker?.GetLatestTextContent(
             appId: appId,
             path: path);
-
-    public string ExecuteWorkflow(string baseAddress, string content) =>
-        workflowExecutionBroker?.Execute(
-            baseAddress: baseAddress,
-            content: content);
 }
 #pragma warning restore STXTEST001

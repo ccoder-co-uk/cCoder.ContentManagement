@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Controllers;
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Services.Aggregations;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -19,7 +20,7 @@ public sealed partial class RenderControllerTests
     public async Task ShouldReturnRenderedTemplateContentAsync()
     {
         // Given
-        Mock<IRenderer> renderer = new();
+        Mock<IRenderAggregationService> renderer = new();
         object model = new { Name = "Paul" };
 
         renderer.Setup(expression: service =>
@@ -57,7 +58,7 @@ public sealed partial class RenderControllerTests
     public async Task ShouldReturnRenderedComponentContentAsync()
     {
         // Given
-        Mock<IRenderer> renderer = new();
+        Mock<IRenderAggregationService> renderer = new();
 
         renderer.Setup(expression: service =>
                 service.RenderComponentRenderResultAsync(name: "Hero"))

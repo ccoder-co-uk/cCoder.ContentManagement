@@ -35,12 +35,18 @@ public partial class ComponentRenderProcessingServiceTests
         (RenderApp app, RenderUser user, RenderComponent component, RenderComponentParams renderParams) =
             CreateComponentRenderContext();
 
-        metadataCacheMock.Setup(expression: x => x.Get(key: "site-description", culture: "en-GB"))
-            .Returns(value: "Meta Description");
+        cacheBroker.SetMetadata(
+            key: "site-description",
+            culture: "en-GB",
+            value: "Meta Description");
 
-        commonObjectCacheMock
-            .Setup(expression: x => x.Get<RenderScript>(key: "script|bootstrap"))
-            .Returns(value: new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
+        cacheBroker.SetCommonObject(
+            key: "script|bootstrap",
+            value: new RenderScript
+            {
+                Name = "Bootstrap",
+                Content = "cached-bootstrap"
+            });
 
         renderFileContentBrokerMock
             .Setup(expression: broker => broker.GetLatestTextContent(
@@ -92,11 +98,9 @@ action: workflowBaseUrl => CreateSut(workflowBaseUrl: workflowBaseUrl)
         component.ResourceKey = "Workflow";
         component.Content = "[resource_displayname[dateformat]]";
 
-        commonObjectCacheMock
-            .Setup(expression: cache =>
-                cache.Get<RenderResource>(
-                    key: "resource|default-dateformat-en"))
-            .Returns(value: new RenderResource
+        cacheBroker.SetCommonObject(
+            key: "resource|default-dateformat-en",
+            value: new RenderResource
             {
                 Key = "Default",
                 Culture = "en",

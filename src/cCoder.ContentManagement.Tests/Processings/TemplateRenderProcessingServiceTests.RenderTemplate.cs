@@ -41,12 +41,18 @@ public partial class TemplateRenderProcessingServiceTests
             Culture = "en-GB"
         };
 
-        metadataCacheMock.Setup(expression: x => x.Get(key: "site-description", culture: "en-GB"))
-            .Returns(value: "Meta Description");
+        cacheBroker.SetMetadata(
+            key: "site-description",
+            culture: "en-GB",
+            value: "Meta Description");
 
-        commonObjectCacheMock
-            .Setup(expression: x => x.Get<RenderScript>(key: "script|bootstrap"))
-            .Returns(value: new RenderScript { Name = "Bootstrap", Content = "cached-bootstrap" });
+        cacheBroker.SetCommonObject(
+            key: "script|bootstrap",
+            value: new RenderScript
+            {
+                Name = "Bootstrap",
+                Content = "cached-bootstrap"
+            });
 
         // When
         string result = await RenderTestWorkflowServer.RunStringAsync(action: workflowBaseUrl =>

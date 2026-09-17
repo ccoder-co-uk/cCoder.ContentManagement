@@ -133,17 +133,11 @@ internal sealed partial class MarkupRenderService
         {
             ValidateTagHandlingOperation(inputs: [tagHandlingOperation]);
 
-            JsonValueDocument jsonValueDocument =
-                jsonBroker.Normalize(value: tagHandlingOperation.Value);
-
-            if (jsonValueDocument.IsRawJson)
+            if (jsonBroker.IsJsonElement(value: tagHandlingOperation.Value))
             {
                 tagHandlingOperation.Value = jsonBroker.ParseJson(
-                    json: jsonValueDocument.RawJson);
-            }
-            else
-            {
-                tagHandlingOperation.Value = jsonValueDocument.Value;
+                    json: jsonBroker.GetJsonRawText(
+                        value: tagHandlingOperation.Value));
             }
 
             return tagHandlingOperation;

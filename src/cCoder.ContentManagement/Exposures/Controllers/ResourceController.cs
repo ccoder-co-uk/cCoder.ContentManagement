@@ -20,9 +20,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class ResourceController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
-    private readonly IResourceManager service;
+    private readonly IResourceOrchestrationService service;
 
-    public ResourceController(IResourceManager service, ILoggingBroker loggingBroker)
+    public ResourceController(IResourceOrchestrationService service, ILoggingBroker loggingBroker)
     {
         this.service = service;
         this.loggingBroker = loggingBroker;

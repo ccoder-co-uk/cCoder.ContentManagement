@@ -5,8 +5,13 @@
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.Security;
 
-using cCoder.ContentManagement.Exposures;
-
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface IPageRoleOrchestrationService : IPageRoleManager { }
+public interface IPageRoleOrchestrationService
+{
+    IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false);
+    ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole);
+    ValueTask DeletePageRoleAsync(PageRole deletedPageRole);
+    ValueTask<IEnumerable<OperationResult<PageRole>>> AddOrUpdatePageRoleResult(IEnumerable<PageRole> newPageRole);
+    ValueTask DeleteAllPageRoleAsync(IEnumerable<PageRole> deletedPageRole);
+}

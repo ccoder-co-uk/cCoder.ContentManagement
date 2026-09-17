@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Brokers.Loggings;
+using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Models.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 [ApiController]
 [Route(template: "Api/ContentManagement")]
 public sealed class RenderController(
-    IRenderer renderer,
+    IRenderAggregationService renderer,
     ILoggingBroker loggingBroker) : ControllerBase
 {
     [HttpPost(template: "Template/Render()")]

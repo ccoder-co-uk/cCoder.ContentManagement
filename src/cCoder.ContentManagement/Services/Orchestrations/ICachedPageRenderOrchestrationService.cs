@@ -10,4 +10,7 @@ internal interface ICachedPageRenderOrchestrationService
 {
     HttpPageRenderOperation RenderHttpPageRenderOperation(
         HttpPageRenderOperation operation);
+
+    ValueTask<HttpPageRenderOperation> StoreHttpPageRenderOperationAsync(
+        HttpPageRenderOperation operation);
 }

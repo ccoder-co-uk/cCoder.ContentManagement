@@ -5,6 +5,7 @@
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.Data.Models;
+using cCoder.ContentManagement.Models.Caching;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -14,25 +15,30 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public sealed partial class CommonObjectLatestCacheProcessingServiceTests
 {
     [Fact]
-    public void ShouldDelegateWhenGetLatestCommonObjects()
+    public void ShouldDelegateWhenGetCommonObjectCacheSnapshot()
     {
         // Given
-        CommonObject[] items = [new() { Id = 42 }];
+        CommonObjectCacheSnapshot snapshot = new()
+        {
+            LatestSet = [new CommonObject { Id = 42 }]
+        };
+
         Mock<ICommonObjectLatestCacheService> foundationService = new(behavior: MockBehavior.Strict);
 
         foundationService
-            .Setup(expression: service => service.GetLatestCommonObjects())
-            .Returns(value: items);
+            .Setup(expression: service => service.GetCommonObjectCacheSnapshot())
+            .Returns(value: snapshot);
 
         CommonObjectLatestCacheProcessingService service = new(
             commonObjectLatestCacheService: foundationService.Object);
 
         // When
-        IEnumerable<CommonObject> actual = service.GetLatestCommonObjects();
+        CommonObjectCacheSnapshot actual = service
+            .GetCommonObjectCacheSnapshot();
 
         // Then
         actual.Should()
-            .BeSameAs(expected: items);
+            .BeSameAs(expected: snapshot);
 
         foundationService.VerifyAll();
         foundationService.VerifyNoOtherCalls();
@@ -45,7 +51,8 @@ public sealed partial class CommonObjectLatestCacheProcessingServiceTests
         Mock<ICommonObjectLatestCacheService> foundationService = new(behavior: MockBehavior.Strict);
 
         foundationService.Setup(
-            expression: service => service.RefreshCommonObjects());
+            expression: service => service.LoadCommonObjectCacheSnapshot())
+            .Returns(value: new CommonObjectCacheSnapshot());
 
         CommonObjectLatestCacheProcessingService service = new(
             commonObjectLatestCacheService: foundationService.Object);

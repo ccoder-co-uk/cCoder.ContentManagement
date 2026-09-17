@@ -3,27 +3,37 @@
 // ---------------------------------------------------------------
 
 using cCoder.CodeAnalysis.Exposures;
-using cCoder.ContentManagement.Dependencies.Rendering;
 using cCoder.ContentManagement.Models.Rendering;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 
 namespace cCoder.ContentManagement.Brokers.Rendering;
 
-internal sealed class RenderingUtilityBroker(
-    RenderingUtilityDependency dependency = null)
-        : IRenderingUtilityBroker, IUtilityBroker
+internal sealed class RenderingUtilityBroker : IRenderingUtilityBroker, IUtilityBroker
 {
-    private readonly RenderingUtilityDependency dependency =
-        dependency ?? new RenderingUtilityDependency();
-
     public string HtmlEncode(string value) =>
-        dependency.HtmlEncode(value: value);
+        WebUtility.HtmlEncode(value: value);
 
     public string Serialize(object value) =>
-        dependency.Serialize(value: value);
+        JsonSerializer.Serialize(value: value);
 
     public RuntimePropertyValue[] GetPropertyValues(object value) =>
-        dependency.GetPropertyValues(value: value);
+        value.GetType()
+            .GetProperties()
+            .Select(selector: property => new RuntimePropertyValue
+            {
+                Name = property.Name,
+                Value = property.GetValue(obj: value),
+                IsValueType = property.PropertyType.IsValueType
+                    || property.PropertyType == typeof(string)
+            })
+            .ToArray();
 
     public string ComputeFingerprint(object value) =>
-        dependency.ComputeFingerprint(value: value);
+        Convert.ToHexString(
+            inArray: SHA256.HashData(
+                source: Encoding.UTF8.GetBytes(
+                    s: JsonSerializer.Serialize(value: value))));
 }

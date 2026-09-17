@@ -20,9 +20,9 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class PageInfoController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
-    private readonly IPageInfoManager service;
+    private readonly IPageInfoOrchestrationService service;
 
-    public PageInfoController(IPageInfoManager service, ILoggingBroker loggingBroker)
+    public PageInfoController(IPageInfoOrchestrationService service, ILoggingBroker loggingBroker)
     {
         this.service = service;
         this.loggingBroker = loggingBroker;

@@ -10,6 +10,15 @@ internal sealed partial class CommonObjectCacheProcessingService
     private static void ValidatePrepareRenderSession(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidateKeyOnGet(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidateCacheItemOnSet(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidateCommonObjectCacheSnapshotOnSet(object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void Validate(params object[] inputs) =>
         _ = inputs;
 }
