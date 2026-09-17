@@ -20,6 +20,13 @@ public static partial class IEventHubExtensions
         this IEventHub eventHub)
     {
         ListenToContentManagementBusinessEvents(eventHub: eventHub);
+
+        return eventHub;
+    }
+
+    public static IEventHub ListenToFinalContentManagementEvents(
+        this IEventHub eventHub)
+    {
         ListenToFinalAppDeleteEvent(eventHub: eventHub);
 
         return eventHub;
