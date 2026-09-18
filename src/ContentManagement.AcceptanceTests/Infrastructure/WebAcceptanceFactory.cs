@@ -11,9 +11,11 @@ using ContentManagement.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Web.AcceptanceTests.Models;
 
 
@@ -44,6 +46,11 @@ initialData: [
 
         builder.ConfigureTestServices(servicesConfiguration: services =>
         {
+            services.RemoveAll<ILoggerProvider>();
+
+            services.AddDataProtection()
+                .UseEphemeralDataProtectionProvider();
+
             services.RemoveAll<ICoreContextFactory>();
             services.RemoveAll<ISecurityDbContextFactory>();
             services.RemoveAll<cCoder.Data.Models.DataConfiguration>();

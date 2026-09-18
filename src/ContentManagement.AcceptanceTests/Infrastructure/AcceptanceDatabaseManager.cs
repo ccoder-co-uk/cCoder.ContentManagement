@@ -141,11 +141,13 @@ END";
     private static SqlConnectionStringBuilder CreateAcceptanceConnectionStringBuilder(
         string connectionString)
     {
-        SqlConnectionStringBuilder builder = new(connectionString: connectionString)
+        SqlConnectionStringBuilder builder =
+            new(connectionString: connectionString);
+
+        if (builder.Encrypt)
         {
-            Encrypt = true,
-            TrustServerCertificate = true,
-        };
+            builder.TrustServerCertificate = true;
+        }
 
         return builder;
     }

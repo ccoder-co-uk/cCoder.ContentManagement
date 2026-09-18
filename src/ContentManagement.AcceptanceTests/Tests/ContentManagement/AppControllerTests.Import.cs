@@ -75,7 +75,9 @@ public sealed partial class AppControllerTests
                         && item.Type == "ContentManagement/Component");
             }
 
-            CommonObject cachedObject = fixture.Factory.Services
+            using IServiceScope cacheScope = fixture.Factory.Services.CreateScope();
+
+            CommonObject cachedObject = cacheScope.ServiceProvider
                 .GetRequiredService<ICommonObjectCache>()
                 .GetLatestSet()
                 .Single(predicate: item => item.Id == storedObject.Id);
@@ -110,7 +112,9 @@ public sealed partial class AppControllerTests
                 core.Remove(entity: commonObject);
                 await core.SaveChangesAsync();
 
-                fixture.Factory.Services
+                using IServiceScope cacheScope = fixture.Factory.Services.CreateScope();
+
+                cacheScope.ServiceProvider
                     .GetRequiredService<ICommonObjectCache>()
                     .Refresh();
             }

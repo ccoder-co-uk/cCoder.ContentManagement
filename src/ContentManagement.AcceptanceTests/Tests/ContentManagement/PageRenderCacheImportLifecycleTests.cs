@@ -43,7 +43,9 @@ public sealed partial class PageRenderCacheImportLifecycleTests(WebAcceptanceFix
             pagePath: pagePath,
             marker: originalMarker);
 
-        ICommonObjectCache commonObjectCache = fixture.Factory.Services
+        using IServiceScope cacheScope = fixture.Factory.Services.CreateScope();
+
+        ICommonObjectCache commonObjectCache = cacheScope.ServiceProvider
             .GetRequiredService<ICommonObjectCache>();
 
         commonObjectCache.Refresh();

@@ -218,10 +218,17 @@ END";
         command.ExecuteNonQuery();
     }
 
-    private static SqlConnectionStringBuilder CreateConnectionStringBuilder(string connectionString) =>
-        new(connectionString: connectionString)
+    private static SqlConnectionStringBuilder CreateConnectionStringBuilder(
+        string connectionString)
+    {
+        SqlConnectionStringBuilder builder =
+            new(connectionString: connectionString);
+
+        if (builder.Encrypt)
         {
-            Encrypt = true,
-            TrustServerCertificate = true,
-        };
+            builder.TrustServerCertificate = true;
+        }
+
+        return builder;
+    }
 }

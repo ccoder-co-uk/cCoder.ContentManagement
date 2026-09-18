@@ -127,8 +127,11 @@ public static partial class WebApplicationExtensions
     private static WebApplication InitialiseContentManagementCaches(
         this WebApplication app)
     {
-        app.Services.GetService<ICommonObjectCache>()?.Refresh();
-        app.Services.GetService<IMetadataCache>()?.Rebuild();
+        using IServiceScope serviceScope = app.Services.CreateScope();
+        IServiceProvider serviceProvider = serviceScope.ServiceProvider;
+
+        serviceProvider.GetService<ICommonObjectCache>()?.Refresh();
+        serviceProvider.GetService<IMetadataCache>()?.Rebuild();
 
         return app;
     }

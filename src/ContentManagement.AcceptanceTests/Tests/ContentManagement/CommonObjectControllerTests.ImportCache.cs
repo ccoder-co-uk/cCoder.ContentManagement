@@ -83,7 +83,9 @@ public sealed partial class CommonObjectControllerTests
             await core.SaveChangesAsync();
         }
 
-        ICommonObjectCache commonObjectCache = fixture.Factory.Services
+        using IServiceScope cacheScope = fixture.Factory.Services.CreateScope();
+
+        ICommonObjectCache commonObjectCache = cacheScope.ServiceProvider
             .GetRequiredService<ICommonObjectCache>();
 
         commonObjectCache.Refresh();

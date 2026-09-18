@@ -175,10 +175,13 @@ internal sealed class AcceptanceApplicationSeeder(IServiceProvider services)
 
     private static void RefreshCaches(IServiceProvider services)
     {
-        cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache commonObjectCache =
-            services.GetRequiredService<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache>();
+        using IServiceScope scope = services.CreateScope();
+        IServiceProvider serviceProvider = scope.ServiceProvider;
 
-        ContentMetadataCache metadataCache = services.GetRequiredService<ContentMetadataCache>();
+        cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache commonObjectCache =
+            serviceProvider.GetRequiredService<cCoder.ContentManagement.Exposures.Caching.ICommonObjectCache>();
+
+        ContentMetadataCache metadataCache = serviceProvider.GetRequiredService<ContentMetadataCache>();
 
         commonObjectCache.Refresh();
         metadataCache.Rebuild();

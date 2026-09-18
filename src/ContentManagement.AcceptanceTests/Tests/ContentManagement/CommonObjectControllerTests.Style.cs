@@ -43,7 +43,9 @@ public sealed partial class CommonObjectControllerTests
                 culture = string.Empty,
             });
 
-        ICommonObjectCache cache = fixture.Factory.Services
+        using IServiceScope cacheScope = fixture.Factory.Services.CreateScope();
+
+        ICommonObjectCache cache = cacheScope.ServiceProvider
             .GetRequiredService<ICommonObjectCache>();
 
         cache.Refresh();

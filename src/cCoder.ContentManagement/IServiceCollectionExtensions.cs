@@ -382,7 +382,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateRenderService, TemplateRenderService>();
         services.AddTransient<IPageRenderService, PageRenderService>();
         services.AddTransient<IResourceProvider, CoreResourceBroker>();
-        services.AddSingleton<ICommonObjectCache, CommonObjectCacheManager>();
+        services.AddScoped<ICommonObjectCache, CommonObjectCacheManager>();
         services.AddSingleton<IMetadataCache, MetadataCacheManager>();
     }
 

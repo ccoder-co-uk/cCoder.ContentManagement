@@ -138,7 +138,11 @@ public sealed partial class CommonObjectControllerTests
                 .ToArray();
         }
 
-        ICommonObjectCache cache = fixture.Factory.Services.GetRequiredService<ICommonObjectCache>();
+        using IServiceScope cacheScope = fixture.Factory.Services.CreateScope();
+
+        ICommonObjectCache cache = cacheScope.ServiceProvider
+            .GetRequiredService<ICommonObjectCache>();
+
         cache.Refresh();
 
         // When
