@@ -52,8 +52,8 @@ public sealed partial class RenderAggregationServiceTests
             .Returns(valueFunction: () => caches.SingleOrDefault());
 
         cacheFoundation.Setup(expression: service =>
-            service.AddPageRenderCacheAsync(
-                newPageRenderCache: It.IsAny<PageRenderCache>()))
+            service.StorePageRenderCacheAsync(
+                pageRenderCache: It.IsAny<PageRenderCache>()))
             .Callback<PageRenderCache>(action: cache => caches.Add(item: cache))
             .ReturnsAsync(valueFunction: (PageRenderCache cache) => cache);
 
