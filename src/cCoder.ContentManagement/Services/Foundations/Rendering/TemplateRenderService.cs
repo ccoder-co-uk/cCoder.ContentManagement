@@ -18,12 +18,9 @@ internal sealed partial class TemplateRenderService(
     IJsonBroker jsonBroker,
     ILoggingBroker loggingBroker,
     IRegularExpressionBroker regularExpressionBroker,
-    IRenderingUtilityBroker renderingUtilityBroker = null)
+    IRenderingUtilityBroker renderingUtilityBroker)
         : ITemplateRenderService
 {
-    private readonly IRenderingUtilityBroker renderingUtilityBroker =
-        renderingUtilityBroker ?? new RenderingUtilityBroker();
-
     public TemplateRenderFoundationOperation GetPropertyValuesTemplateRenderFoundationOperation(
         TemplateRenderFoundationOperation templateRenderFoundationOperation) =>
         TryCatch(operation: () =>

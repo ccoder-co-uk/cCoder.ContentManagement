@@ -15,12 +15,9 @@ internal sealed partial class ComponentRenderService(
     ICacheBroker cacheBroker,
     IJsonBroker jsonBroker,
     IRegularExpressionBroker regularExpressionBroker,
-    IRenderingUtilityBroker renderingUtilityBroker = null)
+    IRenderingUtilityBroker renderingUtilityBroker)
         : IComponentRenderService
 {
-    private readonly IRenderingUtilityBroker renderingUtilityBroker =
-        renderingUtilityBroker ?? new RenderingUtilityBroker();
-
     public ComponentRenderFoundationOperation GetPropertyValuesComponentRenderFoundationOperation(
         ComponentRenderFoundationOperation componentRenderFoundationOperation) =>
         TryCatch(operation: () =>

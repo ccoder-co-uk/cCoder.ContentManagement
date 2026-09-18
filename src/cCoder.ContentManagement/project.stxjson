@@ -12943,7 +12943,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCacheManager.GetLatestSet()",
           "Name": "GetLatestSet",
-          "LineNumber": 31,
+          "LineNumber": 29,
           "Inputs": [],
           "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
@@ -33609,7 +33609,7 @@
         {
           "Id": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService.GetPropertyValuesTagHandlingOperation(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
           "Name": "GetPropertyValuesTagHandlingOperation",
-          "LineNumber": 77,
+          "LineNumber": 74,
           "Inputs": [
             {
               "Name": "tagHandlingOperation",
@@ -33656,7 +33656,7 @@
         {
           "Id": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService.HtmlEncodeTagHandlingOperation(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
           "Name": "HtmlEncodeTagHandlingOperation",
-          "LineNumber": 65,
+          "LineNumber": 62,
           "Inputs": [
             {
               "Name": "tagHandlingOperation",
@@ -33844,7 +33844,7 @@
         {
           "Id": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService.MarkContentSecurityPolicyNonce(System.String)",
           "Name": "MarkContentSecurityPolicyNonce",
-          "LineNumber": 98,
+          "LineNumber": 95,
           "Inputs": [
             {
               "Name": "markup",
@@ -33991,7 +33991,7 @@
         {
           "Id": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService.PrepareRenderSessionTagHandlingOperation(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
           "Name": "PrepareRenderSessionTagHandlingOperation",
-          "LineNumber": 28,
+          "LineNumber": 25,
           "Inputs": [
             {
               "Name": "tagHandlingOperation",
@@ -36870,7 +36870,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderComponentRenderResultAsync(System.String)",
           "Name": "RenderComponentRenderResultAsync",
-          "LineNumber": 161,
+          "LineNumber": 159,
           "Inputs": [
             {
               "Name": "name",
@@ -36928,7 +36928,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderPageRenderResultAsync()",
           "Name": "RenderPageRenderResultAsync",
-          "LineNumber": 25,
+          "LineNumber": 23,
           "Inputs": [],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.RenderResult\u003E",
           "Implements": [
@@ -37003,7 +37003,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderTemplateRenderResultAsync(System.String,System.Object)",
           "Name": "RenderTemplateRenderResultAsync",
-          "LineNumber": 143,
+          "LineNumber": 141,
           "Inputs": [
             {
               "Name": "name",
@@ -44957,7 +44957,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.ExecuteWorkflowComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "ExecuteWorkflowComponentRenderFoundationOperation",
-          "LineNumber": 195,
+          "LineNumber": 192,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45004,7 +45004,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.ForEachRegularExpressionMatchComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "ForEachRegularExpressionMatchComponentRenderFoundationOperation",
-          "LineNumber": 213,
+          "LineNumber": 210,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45051,7 +45051,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetAppsComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetAppsComponentRenderFoundationOperation",
-          "LineNumber": 37,
+          "LineNumber": 34,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45098,7 +45098,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetComponentComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetComponentComponentRenderFoundationOperation",
-          "LineNumber": 85,
+          "LineNumber": 82,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45137,7 +45137,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetComponentsComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetComponentsComponentRenderFoundationOperation",
-          "LineNumber": 49,
+          "LineNumber": 46,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45184,7 +45184,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetJsonPropertiesComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetJsonPropertiesComponentRenderFoundationOperation",
-          "LineNumber": 182,
+          "LineNumber": 179,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45238,7 +45238,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetLatestTextContentComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetLatestTextContentComponentRenderFoundationOperation",
-          "LineNumber": 121,
+          "LineNumber": 118,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45287,7 +45287,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetMetadataComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetMetadataComponentRenderFoundationOperation",
-          "LineNumber": 112,
+          "LineNumber": 109,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45326,7 +45326,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetPropertyValuesComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetPropertyValuesComponentRenderFoundationOperation",
-          "LineNumber": 24,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45373,7 +45373,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetResourceComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetResourceComponentRenderFoundationOperation",
-          "LineNumber": 103,
+          "LineNumber": 100,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45412,7 +45412,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetResourcesComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetResourcesComponentRenderFoundationOperation",
-          "LineNumber": 61,
+          "LineNumber": 58,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45459,7 +45459,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetScriptComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetScriptComponentRenderFoundationOperation",
-          "LineNumber": 94,
+          "LineNumber": 91,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45498,7 +45498,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.GetScriptsComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "GetScriptsComponentRenderFoundationOperation",
-          "LineNumber": 73,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45545,7 +45545,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.IsJsonObjectComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "IsJsonObjectComponentRenderFoundationOperation",
-          "LineNumber": 164,
+          "LineNumber": 161,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45592,7 +45592,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.IsJsonValueComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "IsJsonValueComponentRenderFoundationOperation",
-          "LineNumber": 173,
+          "LineNumber": 170,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45639,7 +45639,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.ParseJsonComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "ParseJsonComponentRenderFoundationOperation",
-          "LineNumber": 155,
+          "LineNumber": 152,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45686,7 +45686,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.ReplaceRegularExpressionComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "ReplaceRegularExpressionComponentRenderFoundationOperation",
-          "LineNumber": 204,
+          "LineNumber": 201,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45733,7 +45733,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.SerializeComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "SerializeComponentRenderFoundationOperation",
-          "LineNumber": 137,
+          "LineNumber": 134,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45780,7 +45780,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService.SerializeIgnoringReferencesComponentRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.ComponentRenderFoundationOperation)",
           "Name": "SerializeIgnoringReferencesComponentRenderFoundationOperation",
-          "LineNumber": 146,
+          "LineNumber": 143,
           "Inputs": [
             {
               "Name": "componentRenderFoundationOperation",
@@ -45850,7 +45850,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService.ComputeFingerprintPageRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.PageRenderFoundationOperation)",
           "Name": "ComputeFingerprintPageRenderFoundationOperation",
-          "LineNumber": 17,
+          "LineNumber": 14,
           "Inputs": [
             {
               "Name": "pageRenderFoundationOperation",
@@ -45897,7 +45897,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService.SerializePageRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.PageRenderFoundationOperation)",
           "Name": "SerializePageRenderFoundationOperation",
-          "LineNumber": 29,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "pageRenderFoundationOperation",
@@ -45967,7 +45967,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.ExecuteWorkflowTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "ExecuteWorkflowTemplateRenderFoundationOperation",
-          "LineNumber": 246,
+          "LineNumber": 243,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46014,7 +46014,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.ForEachRegularExpressionMatchTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "ForEachRegularExpressionMatchTemplateRenderFoundationOperation",
-          "LineNumber": 291,
+          "LineNumber": 288,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46061,7 +46061,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetAppsTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetAppsTemplateRenderFoundationOperation",
-          "LineNumber": 40,
+          "LineNumber": 37,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46108,7 +46108,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetComponentTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetComponentTemplateRenderFoundationOperation",
-          "LineNumber": 105,
+          "LineNumber": 102,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46147,7 +46147,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetComponentsTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetComponentsTemplateRenderFoundationOperation",
-          "LineNumber": 53,
+          "LineNumber": 50,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46194,7 +46194,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetJsonPropertiesTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetJsonPropertiesTemplateRenderFoundationOperation",
-          "LineNumber": 232,
+          "LineNumber": 229,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46248,7 +46248,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetMetadataTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetMetadataTemplateRenderFoundationOperation",
-          "LineNumber": 147,
+          "LineNumber": 144,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46287,7 +46287,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetPropertyValuesTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetPropertyValuesTemplateRenderFoundationOperation",
-          "LineNumber": 27,
+          "LineNumber": 24,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46334,7 +46334,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetResourceTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetResourceTemplateRenderFoundationOperation",
-          "LineNumber": 133,
+          "LineNumber": 130,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46373,7 +46373,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetResourcesTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetResourcesTemplateRenderFoundationOperation",
-          "LineNumber": 66,
+          "LineNumber": 63,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46420,7 +46420,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetScriptTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetScriptTemplateRenderFoundationOperation",
-          "LineNumber": 119,
+          "LineNumber": 116,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46459,7 +46459,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetScriptsTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetScriptsTemplateRenderFoundationOperation",
-          "LineNumber": 79,
+          "LineNumber": 76,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46506,7 +46506,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.GetTemplatesTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "GetTemplatesTemplateRenderFoundationOperation",
-          "LineNumber": 92,
+          "LineNumber": 89,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46553,7 +46553,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.IsJsonArrayTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "IsJsonArrayTemplateRenderFoundationOperation",
-          "LineNumber": 214,
+          "LineNumber": 211,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46600,7 +46600,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.IsJsonObjectTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "IsJsonObjectTemplateRenderFoundationOperation",
-          "LineNumber": 205,
+          "LineNumber": 202,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46647,7 +46647,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.IsJsonValueTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "IsJsonValueTemplateRenderFoundationOperation",
-          "LineNumber": 223,
+          "LineNumber": 220,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46694,7 +46694,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.IsLoggingEnabledTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "IsLoggingEnabledTemplateRenderFoundationOperation",
-          "LineNumber": 259,
+          "LineNumber": 256,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46741,7 +46741,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.LogDebugTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "LogDebugTemplateRenderFoundationOperation",
-          "LineNumber": 268,
+          "LineNumber": 265,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46788,7 +46788,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.NormalizeJsonTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "NormalizeJsonTemplateRenderFoundationOperation",
-          "LineNumber": 188,
+          "LineNumber": 185,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46849,7 +46849,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.ParseJsonTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "ParseJsonTemplateRenderFoundationOperation",
-          "LineNumber": 179,
+          "LineNumber": 176,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46896,7 +46896,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.ReplaceRegularExpressionTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "ReplaceRegularExpressionTemplateRenderFoundationOperation",
-          "LineNumber": 277,
+          "LineNumber": 274,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46943,7 +46943,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.SerializeIgnoringReferencesTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "SerializeIgnoringReferencesTemplateRenderFoundationOperation",
-          "LineNumber": 170,
+          "LineNumber": 167,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",
@@ -46990,7 +46990,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService.SerializeTemplateRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.TemplateRenderFoundationOperation)",
           "Name": "SerializeTemplateRenderFoundationOperation",
-          "LineNumber": 161,
+          "LineNumber": 158,
           "Inputs": [
             {
               "Name": "templateRenderFoundationOperation",

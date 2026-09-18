@@ -17,11 +17,9 @@ internal sealed partial class RenderAggregationService(
     IJsonOrchestrationService jsonOrchestrationService,
     ITemplateRenderOrchestrationService templateRenderOrchestrationService,
     IComponentRenderOrchestrationService componentRenderOrchestrationService,
-    IRenderingUtilityBroker renderingUtilityBroker = null)
+    IRenderingUtilityBroker renderingUtilityBroker)
         : IRenderAggregationService
 {
-    private readonly IRenderingUtilityBroker renderingUtilityBroker =
-        renderingUtilityBroker ?? new RenderingUtilityBroker();
     public ValueTask<RenderResult> RenderPageRenderResultAsync() =>
         TryCatch<RenderResult>(operation: async () =>
     {

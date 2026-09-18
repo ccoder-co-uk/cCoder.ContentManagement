@@ -80,7 +80,9 @@ public sealed partial class RenderAggregationServiceTests
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>());
+                Mock.Of<IComponentRenderOrchestrationService>(),
+            renderingUtilityBroker:
+                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
 
         // When
         RenderResult result = await service
@@ -177,7 +179,9 @@ public sealed partial class RenderAggregationServiceTests
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>());
+                Mock.Of<IComponentRenderOrchestrationService>(),
+            renderingUtilityBroker:
+                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
 
         // When
         RenderResult result = await service
@@ -234,7 +238,9 @@ public sealed partial class RenderAggregationServiceTests
                 Mock.Of<IJsonOrchestrationService>(),
             templateRenderOrchestrationService: templateService.Object,
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>());
+                Mock.Of<IComponentRenderOrchestrationService>(),
+            renderingUtilityBroker:
+                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
 
         // When
         RenderResult actual = await service
@@ -287,7 +293,9 @@ public sealed partial class RenderAggregationServiceTests
                 Mock.Of<IJsonOrchestrationService>(),
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
-            componentRenderOrchestrationService: componentService.Object);
+            componentRenderOrchestrationService: componentService.Object,
+            renderingUtilityBroker:
+                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
 
         // When
         RenderResult actual = await service

@@ -54,7 +54,9 @@ public partial class ComponentRenderProcessingServiceTests
                     new WorkflowExecutionDependency()),
             cacheBroker: cacheBroker,
             jsonBroker: new JsonBroker(),
-            regularExpressionBroker: new RegularExpressionBroker());
+            regularExpressionBroker: new RegularExpressionBroker(),
+            renderingUtilityBroker:
+                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
 
         return new ComponentRenderProcessingService(
             componentRenderService: componentRenderService,

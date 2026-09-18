@@ -70,11 +70,15 @@ public partial class PageRenderProcessingServiceTests
                     new WorkflowExecutionDependency()),
             cacheBroker: cacheBroker,
             jsonBroker: new JsonBroker(),
-            regularExpressionBroker: regularExpressionBroker);
+            regularExpressionBroker: regularExpressionBroker,
+            renderingUtilityBroker:
+                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
 
         return new PageRenderTestHarness(
             pageRenderProcessingService: new PageRenderProcessingService(
-                pageRenderService: new PageRenderService(),
+                pageRenderService: new PageRenderService(
+                    renderingUtilityBroker:
+                        new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker()),
                 config: config),
             markupRenderProcessingService:
                 new MarkupRenderProcessingService(

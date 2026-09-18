@@ -15,6 +15,43 @@ public sealed partial class CombinedRenderingArchitectureTests
         typeof(ComponentRenderService)
             .Assembly;
 
+    public static TheoryData<string> RenderingServiceTypeNames =>
+        new()
+        {
+            "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",
+            "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
+            "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
+            "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService",
+            "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService"
+        };
+
+    [Theory]
+    [MemberData(nameof(RenderingServiceTypeNames))]
+    public void RenderingService_WhenComposed_RequiresRenderingUtilityBroker(
+        string renderingServiceTypeName)
+    {
+        // Given
+        Type renderingServiceType = ContentManagementAssembly.GetType(
+            name: renderingServiceTypeName);
+
+        // When
+        ParameterInfo renderingUtilityBrokerParameter = renderingServiceType
+            .GetConstructors(
+                bindingAttr: BindingFlags.Instance
+                    | BindingFlags.NonPublic
+                    | BindingFlags.Public)
+            .Single()
+            .GetParameters()
+            .Single(predicate: parameter =>
+                parameter.ParameterType.Name == "IRenderingUtilityBroker");
+
+        // Then
+        renderingUtilityBrokerParameter.IsOptional
+            .Should()
+            .BeFalse(
+                because: "rendering services must receive utility brokers from the composition root");
+    }
+
     [Fact]
     public void MarkupRendering_WhenComposed_DoesNotHideProcessingHandlersBehindBroker()
     {

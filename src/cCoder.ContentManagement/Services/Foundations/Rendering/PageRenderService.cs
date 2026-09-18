@@ -8,12 +8,9 @@ using cCoder.ContentManagement.Brokers.Rendering;
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class PageRenderService(
-    IRenderingUtilityBroker renderingUtilityBroker = null)
+    IRenderingUtilityBroker renderingUtilityBroker)
         : IPageRenderService
 {
-    private readonly IRenderingUtilityBroker renderingUtilityBroker =
-        renderingUtilityBroker ?? new RenderingUtilityBroker();
-
     public PageRenderFoundationOperation ComputeFingerprintPageRenderFoundationOperation(
         PageRenderFoundationOperation pageRenderFoundationOperation) =>
         TryCatch(operation: () =>
