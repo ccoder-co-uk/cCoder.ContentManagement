@@ -8,12 +8,14 @@ using cCoder.Security.Data.EF.Dependencies;
 using cCoder.Security.Data.EF.Interfaces;
 using cCoder.Security.Models;
 using ContentManagement.Web;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace ContentManagement.IntegrationTests.Infrastructure;
 
@@ -41,6 +43,11 @@ initialData: [
 
         builder.ConfigureTestServices(servicesConfiguration: services =>
         {
+            services.RemoveAll<ILoggerProvider>();
+
+            services.AddDataProtection()
+                .UseEphemeralDataProtectionProvider();
+
             services.RemoveAll<ICoreContextFactory>();
             services.RemoveAll<ISecurityDbContextFactory>();
             services.RemoveAll<cCoder.Data.Models.DataConfiguration>();

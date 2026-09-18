@@ -48,11 +48,12 @@ internal sealed class AcceptanceTestConfiguration
         string suffix)
     {
         SqlConnectionStringBuilder builder =
-            new(connectionString: connectionString)
-            {
-                Encrypt = true,
-                TrustServerCertificate = true,
-            };
+            new(connectionString: connectionString);
+
+        if (builder.Encrypt)
+        {
+            builder.TrustServerCertificate = true;
+        }
 
         if (string.IsNullOrWhiteSpace(value: builder.InitialCatalog))
         {
