@@ -36,6 +36,11 @@ public partial class PageRenderCacheServiceTests
             .ReturnsAsync(valueFunction: (PageRenderCache cache) => cache);
 
         brokerMock
+            .Setup(expression: broker => broker.StorePageRenderCacheAsync(
+                pageRenderCache: It.IsAny<PageRenderCache>()))
+            .ReturnsAsync(valueFunction: (PageRenderCache cache) => cache);
+
+        brokerMock
             .Setup(expression: broker => broker.DeletePageRenderCacheAsync(
                 pageRenderCacheId: stored.Id))
             .Returns(value: ValueTask.CompletedTask);
@@ -54,6 +59,9 @@ public partial class PageRenderCacheServiceTests
 
         PageRenderCache updated = await service.UpdatePageRenderCacheAsync(
             updatedPageRenderCache: stored);
+
+        PageRenderCache storedAgain = await service.StorePageRenderCacheAsync(
+            pageRenderCache: stored);
 
         await service.DeletePageRenderCacheAsync(
             pageRenderCacheId: stored.Id);
@@ -77,6 +85,12 @@ public partial class PageRenderCacheServiceTests
             .NotBeSameAs(unexpected: stored);
 
         updated.Should()
+            .BeEquivalentTo(expectation: stored);
+
+        storedAgain.Should()
+            .NotBeSameAs(unexpected: stored);
+
+        storedAgain.Should()
             .BeEquivalentTo(expectation: stored);
 
         brokerMock.Verify(

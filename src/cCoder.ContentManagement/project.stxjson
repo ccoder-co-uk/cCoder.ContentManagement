@@ -9148,7 +9148,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.DeletePageRenderCacheAsync(System.String)",
           "Name": "DeletePageRenderCacheAsync",
-          "LineNumber": 33,
+          "LineNumber": 100,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -9227,7 +9227,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.ReplacePageRenderCachesByAppIdAsync(System.Int32,cCoder.Data.Models.CMS.PageRenderCache[])",
           "Name": "ReplacePageRenderCachesByAppIdAsync",
-          "LineNumber": 42,
+          "LineNumber": 109,
           "Inputs": [
             {
               "Name": "appId",
@@ -9314,7 +9314,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.ReplacePageRenderCachesByPageIdsAsync(System.Int32,System.Int32[],cCoder.Data.Models.CMS.PageRenderCache[])",
           "Name": "ReplacePageRenderCachesByPageIdsAsync",
-          "LineNumber": 64,
+          "LineNumber": 131,
           "Inputs": [
             {
               "Name": "appId",
@@ -9400,6 +9400,48 @@
           "ThrowsExceptionTypes": [
             "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
           ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker.StorePageRenderCacheAsync(cCoder.Data.Models.CMS.PageRenderCache)",
+          "Name": "StorePageRenderCacheAsync",
+          "LineNumber": 33,
+          "Inputs": [
+            {
+              "Name": "pageRenderCache",
+              "Type": "cCoder.Data.Models.CMS.PageRenderCache"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.PageRenderCache\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.StorePageRenderCacheAsync(cCoder.Data.Models.CMS.PageRenderCache)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions",
+              "MethodName": "ExecuteSqlInterpolatedAsync",
+              "MethodId": "Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlInterpolatedAsync(Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade,System.FormattableString,System.Threading.CancellationToken)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.Data.ICoreContextFactory",
+              "MethodName": "CreateCoreContext",
+              "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
           "HttpMethods": [],
           "HttpResponses": [],
           "IsHttpRequestHandler": false,
@@ -27227,7 +27269,6 @@
           ],
           "Calls": [],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -37469,7 +37510,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -51137,7 +51177,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageRenderCacheService.DeletePageRenderCacheAsync(System.String)",
           "Name": "DeletePageRenderCacheAsync",
-          "LineNumber": 53,
+          "LineNumber": 68,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -51277,7 +51317,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageRenderCacheService.ReplacePageRenderCachesAsync(System.Int32,System.Int32[],cCoder.Data.Models.CMS.PageRenderCache[])",
           "Name": "ReplacePageRenderCachesAsync",
-          "LineNumber": 63,
+          "LineNumber": 78,
           "Inputs": [
             {
               "Name": "appId",
@@ -51322,6 +51362,53 @@
           ],
           "IncomingExceptionTypes": [
             "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageRenderCacheService.StorePageRenderCacheAsync(cCoder.Data.Models.CMS.PageRenderCache)",
+          "Name": "StorePageRenderCacheAsync",
+          "LineNumber": 53,
+          "Inputs": [
+            {
+              "Name": "pageRenderCache",
+              "Type": "cCoder.Data.Models.CMS.PageRenderCache"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.PageRenderCache\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.StorePageRenderCacheAsync(cCoder.Data.Models.CMS.PageRenderCache)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker",
+              "MethodName": "StorePageRenderCacheAsync",
+              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.StorePageRenderCacheAsync(cCoder.Data.Models.CMS.PageRenderCache)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException"
           ],
@@ -55696,7 +55783,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -73306,7 +73392,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageRenderCacheProcessingService.DeletePageRenderCacheAsync(System.String)",
           "Name": "DeletePageRenderCacheAsync",
-          "LineNumber": 65,
+          "LineNumber": 59,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -73457,7 +73543,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageRenderCacheProcessingService.ReplacePageRenderCachesAsync(System.Int32,System.Int32[],cCoder.Data.Models.CMS.PageRenderCache[])",
           "Name": "ReplacePageRenderCachesAsync",
-          "LineNumber": 81,
+          "LineNumber": 75,
           "Inputs": [
             {
               "Name": "appId",
@@ -73516,7 +73602,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageRenderCacheProcessingService.ReplacePageRenderCachesFromEventAsync(System.Int32,System.Int32[],cCoder.Data.Models.CMS.PageRenderCache[])",
           "Name": "ReplacePageRenderCachesFromEventAsync",
-          "LineNumber": 94,
+          "LineNumber": 88,
           "Inputs": [
             {
               "Name": "appId",
@@ -73596,28 +73682,13 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService",
-              "MethodName": "AddPageRenderCacheAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.AddPageRenderCacheAsync(cCoder.Data.Models.CMS.PageRenderCache)",
-              "StandardElementType": "FoundationService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService",
-              "MethodName": "GetPageRenderCache",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.GetPageRenderCache(System.String)",
-              "StandardElementType": "FoundationService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService",
-              "MethodName": "UpdatePageRenderCacheAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.UpdatePageRenderCacheAsync(cCoder.Data.Models.CMS.PageRenderCache)",
+              "MethodName": "StorePageRenderCacheAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.StorePageRenderCacheAsync(cCoder.Data.Models.CMS.PageRenderCache)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -82847,7 +82918,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.DeletePageRenderCacheAsync(System.String)",
           "Name": "DeletePageRenderCacheAsync",
-          "LineNumber": 17,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -82892,7 +82963,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.ReplacePageRenderCachesByAppIdAsync(System.Int32,cCoder.Data.Models.CMS.PageRenderCache[])",
           "Name": "ReplacePageRenderCachesByAppIdAsync",
-          "LineNumber": 19,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "appId",
@@ -82921,7 +82992,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.ReplacePageRenderCachesByPageIdsAsync(System.Int32,System.Int32[],cCoder.Data.Models.CMS.PageRenderCache[])",
           "Name": "ReplacePageRenderCachesByPageIdsAsync",
-          "LineNumber": 21,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "appId",
@@ -82937,6 +83008,31 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Storages.IPageRenderCacheBroker.StorePageRenderCacheAsync(cCoder.Data.Models.CMS.PageRenderCache)",
+          "Name": "StorePageRenderCacheAsync",
+          "LineNumber": 17,
+          "Inputs": [
+            {
+              "Name": "pageRenderCache",
+              "Type": "cCoder.Data.Models.CMS.PageRenderCache"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.PageRenderCache\u003E",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -95893,7 +95989,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.DeletePageRenderCacheAsync(System.String)",
           "Name": "DeletePageRenderCacheAsync",
-          "LineNumber": 19,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "pageRenderCacheId",
@@ -95963,7 +96059,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.ReplacePageRenderCachesAsync(System.Int32,System.Int32[],cCoder.Data.Models.CMS.PageRenderCache[])",
           "Name": "ReplacePageRenderCachesAsync",
-          "LineNumber": 21,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "appId",
@@ -95979,6 +96075,31 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.StorePageRenderCacheAsync(cCoder.Data.Models.CMS.PageRenderCache)",
+          "Name": "StorePageRenderCacheAsync",
+          "LineNumber": 19,
+          "Inputs": [
+            {
+              "Name": "pageRenderCache",
+              "Type": "cCoder.Data.Models.CMS.PageRenderCache"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.PageRenderCache\u003E",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],

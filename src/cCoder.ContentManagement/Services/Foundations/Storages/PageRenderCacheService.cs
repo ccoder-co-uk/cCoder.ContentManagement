@@ -50,6 +50,21 @@ internal sealed partial class PageRenderCacheService(
                     pageRenderCache: updatedPageRenderCache));
         }, isValueTask: true);
 
+    public ValueTask<PageRenderCache> StorePageRenderCacheAsync(
+        PageRenderCache pageRenderCache) =>
+        TryCatch<PageRenderCache>(operation: () =>
+        {
+            ValidatePageRenderCacheOnUpdate(inputs: [pageRenderCache]);
+
+            ValidatePageRenderCache(
+                cache: pageRenderCache,
+                parameterName: "entity");
+
+            return broker.StorePageRenderCacheAsync(
+                pageRenderCache: CreateStoragePageRenderCache(
+                    pageRenderCache: pageRenderCache));
+        }, isValueTask: true);
+
     public ValueTask DeletePageRenderCacheAsync(string pageRenderCacheId) =>
         TryCatch(operation: async () =>
         {

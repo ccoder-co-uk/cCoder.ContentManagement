@@ -13,11 +13,8 @@ namespace cCoder.ContentManagement.Tests.Processings;
 
 public sealed partial class PageRenderCacheProcessingServiceTests
 {
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task ShouldStoreOnlyTheExactNormalizedVariantAsync(
-        bool variantExists)
+    [Fact]
+    public async Task ShouldStoreOnlyTheExactNormalizedVariantAsync()
     {
         // Given
         PageRenderCache cache = new()
@@ -35,24 +32,9 @@ public sealed partial class PageRenderCacheProcessingServiceTests
         Mock<IPageRenderCacheService> cacheService = new();
 
         cacheService.Setup(expression: service =>
-            service.GetPageRenderCache(
-                pageRenderCacheId: expectedId))
-            .Returns(value: variantExists ? new PageRenderCache() : null);
-
-        if (variantExists)
-        {
-            cacheService.Setup(expression: service =>
-                service.UpdatePageRenderCacheAsync(
-                    updatedPageRenderCache: cache))
-                .ReturnsAsync(value: cache);
-        }
-        else
-        {
-            cacheService.Setup(expression: service =>
-                service.AddPageRenderCacheAsync(
-                    newPageRenderCache: cache))
-                .ReturnsAsync(value: cache);
-        }
+            service.StorePageRenderCacheAsync(
+                pageRenderCache: cache))
+            .ReturnsAsync(value: cache);
 
         PageRenderCacheProcessingService service = new(
             service: cacheService.Object);
