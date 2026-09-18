@@ -63,7 +63,7 @@ public sealed partial class RenderAggregationServiceTests
 
         Mock<IPageContextOrchestrationService> contextService = new();
         Mock<ICachedPageRenderOrchestrationService> cachedService = new();
-        Mock<IUncachedPageRenderOrchestrationService> uncachedService = new();
+        Mock<IRenderEventOrchestrationService> renderEventService = new();
         Mock<IRenderDataOrchestrationService> jsonService = CreateRenderDataOrchestrationServiceMock();
 
         jsonService.Setup(expression: service =>
@@ -88,7 +88,7 @@ public sealed partial class RenderAggregationServiceTests
         RenderAggregationService service = new(
             pageContextOrchestrationService: contextService.Object,
             cachedPageRenderOrchestrationService: cachedService.Object,
-            uncachedPageRenderOrchestrationService: uncachedService.Object,
+            renderEventOrchestrationService: renderEventService.Object,
             renderDataOrchestrationService: jsonService.Object,
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
@@ -132,7 +132,7 @@ public sealed partial class RenderAggregationServiceTests
                 value: It.IsAny<object>()),
             times: Times.Once);
 
-        uncachedService.VerifyNoOtherCalls();
+        renderEventService.VerifyNoOtherCalls();
     }
 
     [Theory]
@@ -161,7 +161,7 @@ public sealed partial class RenderAggregationServiceTests
 
         Mock<IPageContextOrchestrationService> contextService = new();
         Mock<ICachedPageRenderOrchestrationService> cachedService = new();
-        Mock<IUncachedPageRenderOrchestrationService> uncachedService = new();
+        Mock<IRenderEventOrchestrationService> renderEventService = new();
         Mock<IRenderDataOrchestrationService> jsonService = CreateRenderDataOrchestrationServiceMock();
 
         jsonService.Setup(expression: service =>
@@ -173,19 +173,19 @@ public sealed partial class RenderAggregationServiceTests
                 service.ResolvePageRenderContextAsync())
             .Returns(value: ValueTask.FromResult(result: context));
 
-        uncachedService.Setup(expression: service =>
-                service.RenderHttpPageRenderOperationAsync(
-                    operation: It.IsAny<HttpPageRenderOperation>()))
-            .Returns(valueFunction: (HttpPageRenderOperation operation) =>
+        renderEventService.Setup(expression: service =>
+                service.RaiseHttpPageRenderOperationRenderRequestAsync(
+                    httpPageRenderOperation: It.IsAny<HttpPageRenderOperation>()))
+            .Callback<HttpPageRenderOperation>(action: operation =>
             {
                 operation.Response = expectedResponse;
-                return ValueTask.FromResult(result: operation);
-            });
+            })
+            .Returns(value: ValueTask.CompletedTask);
 
         RenderAggregationService service = new(
             pageContextOrchestrationService: contextService.Object,
             cachedPageRenderOrchestrationService: cachedService.Object,
-            uncachedPageRenderOrchestrationService: uncachedService.Object,
+            renderEventOrchestrationService: renderEventService.Object,
             renderDataOrchestrationService: jsonService.Object,
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
@@ -205,9 +205,9 @@ public sealed partial class RenderAggregationServiceTests
 
         cachedService.VerifyNoOtherCalls();
 
-        uncachedService.Verify(
-            expression: item => item.RenderHttpPageRenderOperationAsync(
-                operation: It.IsAny<HttpPageRenderOperation>()),
+        renderEventService.Verify(
+            expression: item => item.RaiseHttpPageRenderOperationRenderRequestAsync(
+                httpPageRenderOperation: It.IsAny<HttpPageRenderOperation>()),
             times: Times.Once);
     }
 
@@ -241,8 +241,8 @@ public sealed partial class RenderAggregationServiceTests
             pageContextOrchestrationService: contextService.Object,
             cachedPageRenderOrchestrationService:
                 Mock.Of<ICachedPageRenderOrchestrationService>(),
-            uncachedPageRenderOrchestrationService:
-                Mock.Of<IUncachedPageRenderOrchestrationService>(),
+            renderEventOrchestrationService:
+                Mock.Of<IRenderEventOrchestrationService>(),
             renderDataOrchestrationService:
                 Mock.Of<IRenderDataOrchestrationService>(),
             templateRenderOrchestrationService: templateService.Object,
@@ -294,8 +294,8 @@ public sealed partial class RenderAggregationServiceTests
             pageContextOrchestrationService: contextService.Object,
             cachedPageRenderOrchestrationService:
                 Mock.Of<ICachedPageRenderOrchestrationService>(),
-            uncachedPageRenderOrchestrationService:
-                Mock.Of<IUncachedPageRenderOrchestrationService>(),
+            renderEventOrchestrationService:
+                Mock.Of<IRenderEventOrchestrationService>(),
             renderDataOrchestrationService:
                 Mock.Of<IRenderDataOrchestrationService>(),
             templateRenderOrchestrationService:

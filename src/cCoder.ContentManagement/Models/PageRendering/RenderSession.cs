@@ -40,4 +40,6 @@ internal sealed class RenderSession
 
     public IReadOnlyDictionary<string, PageRenderStyle> CommonStylesByName { get; set; }
 
+    public Func<TagHandlingOperation, ValueTask> TagHandler { get; set; }
+
 }

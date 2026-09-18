@@ -2312,6 +2312,99 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Brokers.Events.RenderEventBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Brokers.Events.IRenderEventBroker",
+          "FullName": "cCoder.ContentManagement.Brokers.Events.IRenderEventBroker",
+          "Name": "IRenderEventBroker",
+          "Namespace": "cCoder.ContentManagement.Brokers.Events",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Broker"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Events.RenderEventBroker.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.HttpPageRenderOperation\u003E)",
+          "Name": "RaiseHttpPageRenderOperationRenderRequestAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "message",
+              "Type": "cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.HttpPageRenderOperation\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.Events.IRenderEventBroker.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.HttpPageRenderOperation\u003E)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.Eventing.IEventHub",
+              "MethodName": "RaiseEventAsync",
+              "MethodId": "cCoder.Eventing.IEventHub.RaiseEventAsync(System.String,cCoder.Eventing.Models.EventMessage\u003CT\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Events.RenderEventBroker.RaiseTagHandlingOperationRenderTagsAsync(cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PageRendering.TagHandlingOperation\u003E)",
+          "Name": "RaiseTagHandlingOperationRenderTagsAsync",
+          "LineNumber": 21,
+          "Inputs": [
+            {
+              "Name": "message",
+              "Type": "cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PageRendering.TagHandlingOperation\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.Events.IRenderEventBroker.RaiseTagHandlingOperationRenderTagsAsync(cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PageRendering.TagHandlingOperation\u003E)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.Eventing.IEventHub",
+              "MethodName": "RaiseEventAsync",
+              "MethodId": "cCoder.Eventing.IEventHub.RaiseEventAsync(System.String,cCoder.Eventing.Models.EventMessage\u003CT\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Brokers.Events.ResourceEventBroker",
       "StandardElementType": "Broker",
       "LineNumber": 11,
@@ -27135,30 +27228,22 @@
           "Calls": [],
           "PossibleExceptionTypes": [
             "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
-            "System.ArgumentException",
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "ThrowsExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "HttpMethods": [],
           "HttpResponses": [],
@@ -29413,7 +29498,7 @@
     {
       "Name": "cCoder.ContentManagement.IEventHubExtensions",
       "StandardElementType": "Exposure",
-      "LineNumber": 17,
+      "LineNumber": 19,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": null,
@@ -29423,7 +29508,7 @@
         {
           "Id": "cCoder.ContentManagement.IEventHubExtensions.ListenToContentManagementEvents(cCoder.Eventing.IEventHub)",
           "Name": "ListenToContentManagementEvents",
-          "LineNumber": 19,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "eventHub",
@@ -29466,7 +29551,7 @@
         {
           "Id": "cCoder.ContentManagement.IEventHubExtensions.ListenToContentManagementWebEvents(cCoder.Eventing.IEventHub)",
           "Name": "ListenToContentManagementWebEvents",
-          "LineNumber": 35,
+          "LineNumber": 37,
           "Inputs": [
             {
               "Name": "eventHub",
@@ -29478,6 +29563,7 @@
           "Calls": [],
           "PossibleExceptionTypes": [
             "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
+            "System.ArgumentException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -29485,17 +29571,23 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
           ],
           "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
           ],
           "ThrowsExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
           ],
           "HttpMethods": [],
           "HttpResponses": [],
@@ -29509,7 +29601,7 @@
         {
           "Id": "cCoder.ContentManagement.IEventHubExtensions.ListenToFinalContentManagementEvents(cCoder.Eventing.IEventHub)",
           "Name": "ListenToFinalContentManagementEvents",
-          "LineNumber": 27,
+          "LineNumber": 29,
           "Inputs": [
             {
               "Name": "eventHub",
@@ -29552,7 +29644,7 @@
     {
       "Name": "cCoder.ContentManagement.IServiceCollectionExtensions",
       "StandardElementType": "App",
-      "LineNumber": 59,
+      "LineNumber": 60,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": null,
@@ -29562,7 +29654,7 @@
         {
           "Id": "cCoder.ContentManagement.IServiceCollectionExtensions.AddContentManagementHostedServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action\u003CcCoder.ContentManagement.Models.ContentManagementConfiguration\u003E)",
           "Name": "AddContentManagementHostedServices",
-          "LineNumber": 95,
+          "LineNumber": 96,
           "Inputs": [
             {
               "Name": "services",
@@ -29606,7 +29698,7 @@
         {
           "Id": "cCoder.ContentManagement.IServiceCollectionExtensions.AddContentManagementHostedServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,cCoder.ContentManagement.Models.ContentManagementConfiguration)",
           "Name": "AddContentManagementHostedServices",
-          "LineNumber": 104,
+          "LineNumber": 105,
           "Inputs": [
             {
               "Name": "services",
@@ -29635,7 +29727,7 @@
         {
           "Id": "cCoder.ContentManagement.IServiceCollectionExtensions.AddContentManagementWeb(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action\u003CcCoder.ContentManagement.Models.ContentManagementConfiguration\u003E,Microsoft.OData.ModelBuilder.ODataConventionModelBuilder)",
           "Name": "AddContentManagementWeb",
-          "LineNumber": 61,
+          "LineNumber": 62,
           "Inputs": [
             {
               "Name": "services",
@@ -29683,7 +29775,7 @@
         {
           "Id": "cCoder.ContentManagement.IServiceCollectionExtensions.AddContentManagementWeb(Microsoft.Extensions.DependencyInjection.IServiceCollection,cCoder.ContentManagement.Models.ContentManagementConfiguration,Microsoft.OData.ModelBuilder.ODataConventionModelBuilder)",
           "Name": "AddContentManagementWeb",
-          "LineNumber": 71,
+          "LineNumber": 72,
           "Inputs": [
             {
               "Name": "services",
@@ -30617,6 +30709,10 @@
         {
           "Name": "Context",
           "Type": "cCoder.ContentManagement.Models.HttpPageRenderContext"
+        },
+        {
+          "Name": "RenderOperation",
+          "Type": "cCoder.ContentManagement.Models.PageRenderOperation"
         },
         {
           "Name": "Response",
@@ -31968,6 +32064,10 @@
         {
           "Name": "ScriptsByName",
           "Type": "System.Collections.Generic.IDictionary\u003CSystem.String, cCoder.ContentManagement.Models.PageRendering.PageRenderScript\u003E"
+        },
+        {
+          "Name": "TagHandler",
+          "Type": "System.Func\u003CcCoder.ContentManagement.Models.PageRendering.TagHandlingOperation, System.Threading.Tasks.ValueTask\u003E"
         },
         {
           "Name": "Target",
@@ -35376,36 +35476,7 @@
           "Implements": [
             "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderProcessingService.RenderRenderSession(cCoder.ContentManagement.Models.PageRendering.RenderSession)"
           ],
-          "Calls": [
-            {
-              "TypeName": "System.Linq.Enumerable",
-              "MethodName": "ToList",
-              "MethodId": "System.Linq.Enumerable.ToList(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.String",
-              "MethodName": "IsNullOrWhiteSpace",
-              "MethodId": "System.String.IsNullOrWhiteSpace(System.String?)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Rendering.Services.Foundations.IMarkupRenderService",
-              "MethodName": "MarkContentSecurityPolicyNonce",
-              "MethodId": "cCoder.ContentManagement.Rendering.Services.Foundations.IMarkupRenderService.MarkContentSecurityPolicyNonce(System.String)",
-              "StandardElementType": "FoundationService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Rendering.Services.Foundations.IMarkupRenderService",
-              "MethodName": "PrepareRenderSessionTagHandlingOperation",
-              "MethodId": "cCoder.ContentManagement.Rendering.Services.Foundations.IMarkupRenderService.PrepareRenderSessionTagHandlingOperation(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
-              "StandardElementType": "FoundationService",
-              "IsDependencyBoundary": false
-            }
-          ],
+          "Calls": [],
           "PossibleExceptionTypes": [
             "System.ArgumentException",
             "System.InvalidOperationException",
@@ -35418,6 +35489,503 @@
           "IncomingExceptionTypes": [
             "System.ArgumentException",
             "System.InvalidOperationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderProcessingService.RenderRenderSessionAsync(cCoder.ContentManagement.Models.PageRendering.RenderSession)",
+          "Name": "RenderRenderSessionAsync",
+          "LineNumber": 31,
+          "Inputs": [
+            {
+              "Name": "renderSession",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.RenderSession"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageRendering.RenderSession\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderProcessingService.RenderRenderSessionAsync(cCoder.ContentManagement.Models.PageRendering.RenderSession)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "System.ArgumentException",
+            "System.InvalidOperationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.ArgumentException",
+            "System.InvalidOperationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 10,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService",
+          "FullName": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService",
+          "Name": "IMarkupRenderTagHandlingProcessingService",
+          "Namespace": "cCoder.ContentManagement.Rendering.Services.Processings",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "ProcessingService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderComponentTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderComponentTagHandlingOperationAsync",
+          "LineNumber": 46,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderComponentTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderContentTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderContentTagHandlingOperationAsync",
+          "LineNumber": 38,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderContentTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderCultureLinkTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderCultureLinkTagHandlingOperationAsync",
+          "LineNumber": 14,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderCultureLinkTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderDmsTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderDmsTagHandlingOperationAsync",
+          "LineNumber": 78,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderDmsTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderExecuteTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderExecuteTagHandlingOperationAsync",
+          "LineNumber": 94,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderExecuteTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderMetadataTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderMetadataTagHandlingOperationAsync",
+          "LineNumber": 22,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderMetadataTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderNavigationTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderNavigationTagHandlingOperationAsync",
+          "LineNumber": 30,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderNavigationTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderReplacementTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderReplacementTagHandlingOperationAsync",
+          "LineNumber": 70,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderReplacementTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderResourceTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderResourceTagHandlingOperationAsync",
+          "LineNumber": 86,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderResourceTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderScriptTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderScriptTagHandlingOperationAsync",
+          "LineNumber": 54,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderScriptTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService.RenderStyleTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderStyleTagHandlingOperationAsync",
+          "LineNumber": 62,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderStyleTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)"
+          ],
+          "Calls": [],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
@@ -36882,9 +37450,9 @@
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IUncachedPageRenderOrchestrationService",
-              "MethodName": "RenderHttpPageRenderOperationAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IUncachedPageRenderOrchestrationService.RenderHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IRenderEventOrchestrationService",
+              "MethodName": "RaiseHttpPageRenderOperationRenderRequestAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IRenderEventOrchestrationService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             },
@@ -36898,30 +37466,22 @@
           ],
           "PossibleExceptionTypes": [
             "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
-            "System.ArgumentException",
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "ThrowsExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "HttpMethods": [],
           "HttpResponses": [],
@@ -41733,6 +42293,94 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Events.HttpPageRenderOperationEventService",
+      "StandardElementType": "FoundationService",
+      "LineNumber": 11,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Foundations.Events.IHttpPageRenderOperationEventService",
+          "FullName": "cCoder.ContentManagement.Services.Foundations.Events.IHttpPageRenderOperationEventService",
+          "Name": "IHttpPageRenderOperationEventService",
+          "Namespace": "cCoder.ContentManagement.Services.Foundations.Events",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "FoundationService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.HttpPageRenderOperationEventService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation,System.String)",
+          "Name": "RaiseHttpPageRenderOperationRenderRequestAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "httpPageRenderOperation",
+              "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
+            },
+            {
+              "Name": "userId",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Foundations.Events.IHttpPageRenderOperationEventService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation,System.String)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IRenderEventBroker",
+              "MethodName": "RaiseHttpPageRenderOperationRenderRequestAsync",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IRenderEventBroker.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.HttpPageRenderOperation\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.Eventing.Models.EventAuthInfo",
+              "MethodName": ".ctor",
+              "MethodId": "cCoder.Eventing.Models.EventAuthInfo..ctor()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.Eventing.Models.EventMessage\u003CT\u003E",
+              "MethodName": ".ctor",
+              "MethodId": "cCoder.Eventing.Models.EventMessage\u003CT\u003E..ctor()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Foundations.Events.LayoutEventService",
       "StandardElementType": "FoundationService",
       "LineNumber": 12,
@@ -43534,6 +44182,94 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Events.TagHandlingOperationEventService",
+      "StandardElementType": "FoundationService",
+      "LineNumber": 11,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Foundations.Events.ITagHandlingOperationEventService",
+          "FullName": "cCoder.ContentManagement.Services.Foundations.Events.ITagHandlingOperationEventService",
+          "Name": "ITagHandlingOperationEventService",
+          "Namespace": "cCoder.ContentManagement.Services.Foundations.Events",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "FoundationService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.TagHandlingOperationEventService.RaiseTagHandlingOperationRenderTagsAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation,System.String)",
+          "Name": "RaiseTagHandlingOperationRenderTagsAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            },
+            {
+              "Name": "userId",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Foundations.Events.ITagHandlingOperationEventService.RaiseTagHandlingOperationRenderTagsAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation,System.String)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Events.IRenderEventBroker",
+              "MethodName": "RaiseTagHandlingOperationRenderTagsAsync",
+              "MethodId": "cCoder.ContentManagement.Brokers.Events.IRenderEventBroker.RaiseTagHandlingOperationRenderTagsAsync(cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PageRendering.TagHandlingOperation\u003E)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.Eventing.Models.EventAuthInfo",
+              "MethodName": ".ctor",
+              "MethodId": "cCoder.Eventing.Models.EventAuthInfo..ctor()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "cCoder.Eventing.Models.EventMessage\u003CT\u003E",
+              "MethodName": ".ctor",
+              "MethodId": "cCoder.Eventing.Models.EventMessage\u003CT\u003E..ctor()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "IncomingExceptionTypes": [
@@ -58925,6 +59661,80 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Orchestrations.MarkupRenderOrchestrationService",
+      "StandardElementType": "OrchestrationService",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Orchestrations.IMarkupRenderOrchestrationService",
+          "FullName": "cCoder.ContentManagement.Services.Orchestrations.IMarkupRenderOrchestrationService",
+          "Name": "IMarkupRenderOrchestrationService",
+          "Namespace": "cCoder.ContentManagement.Services.Orchestrations",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "OrchestrationService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.MarkupRenderOrchestrationService.RenderHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
+          "Name": "RenderHttpPageRenderOperationAsync",
+          "LineNumber": 17,
+          "Inputs": [
+            {
+              "Name": "httpPageRenderOperation",
+              "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Orchestrations.IMarkupRenderOrchestrationService.RenderHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderProcessingService",
+              "MethodName": "RenderRenderSessionAsync",
+              "MethodId": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderProcessingService.RenderRenderSessionAsync(cCoder.ContentManagement.Models.PageRendering.RenderSession)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ArgumentException",
+            "System.InvalidOperationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.PageContexts.PageContextOrchestrationService",
       "StandardElementType": "OrchestrationService",
       "LineNumber": 12,
@@ -62051,6 +62861,84 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Orchestrations.RenderEventOrchestrationService",
+      "StandardElementType": "OrchestrationService",
+      "LineNumber": 10,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Orchestrations.IRenderEventOrchestrationService",
+          "FullName": "cCoder.ContentManagement.Services.Orchestrations.IRenderEventOrchestrationService",
+          "Name": "IRenderEventOrchestrationService",
+          "Namespace": "cCoder.ContentManagement.Services.Orchestrations",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "OrchestrationService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.RenderEventOrchestrationService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
+          "Name": "RaiseHttpPageRenderOperationRenderRequestAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "httpPageRenderOperation",
+              "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Orchestrations.IRenderEventOrchestrationService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService",
+              "MethodName": "GetCurrentUserId",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService.GetCurrentUserId()",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IHttpPageRenderOperationEventProcessingService",
+              "MethodName": "RaiseHttpPageRenderOperationRenderRequestAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IHttpPageRenderOperationEventProcessingService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation,System.String)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService",
       "StandardElementType": "OrchestrationService",
       "LineNumber": 13,
@@ -64590,7 +65478,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService",
       "StandardElementType": "OrchestrationService",
-      "LineNumber": 13,
+      "LineNumber": 12,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -64609,18 +65497,67 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService.RenderHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
-          "Name": "RenderHttpPageRenderOperationAsync",
-          "LineNumber": 20,
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService.CompleteHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
+          "Name": "CompleteHttpPageRenderOperationAsync",
+          "LineNumber": 64,
           "Inputs": [
             {
               "Name": "httpPageRenderOperation",
               "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.HttpPageRenderOperation\u003E",
+          "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IUncachedPageRenderOrchestrationService.RenderHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)"
+            "cCoder.ContentManagement.Services.Orchestrations.IUncachedPageRenderOrchestrationService.CompleteHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IPageRenderProcessingService",
+              "MethodName": "CompletePageRenderOperation",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageRenderProcessingService.CompletePageRenderOperation(cCoder.ContentManagement.Models.PageRenderOperation)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService.PrepareHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
+          "Name": "PrepareHttpPageRenderOperationAsync",
+          "LineNumber": 17,
+          "Inputs": [
+            {
+              "Name": "httpPageRenderOperation",
+              "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Orchestrations.IUncachedPageRenderOrchestrationService.PrepareHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)"
           ],
           "Calls": [
             {
@@ -64631,23 +65568,9 @@
               "IsDependencyBoundary": true
             },
             {
-              "TypeName": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderProcessingService",
-              "MethodName": "RenderRenderSession",
-              "MethodId": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderProcessingService.RenderRenderSession(cCoder.ContentManagement.Models.PageRendering.RenderSession)",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            },
-            {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
               "MethodName": "GetPageForRenderAsync",
               "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetPageForRenderAsync(System.Int32)",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.IPageRenderProcessingService",
-              "MethodName": "CompletePageRenderOperation",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageRenderProcessingService.CompletePageRenderOperation(cCoder.ContentManagement.Models.PageRenderOperation)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -64660,7 +65583,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "System.ArgumentException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
@@ -69198,6 +70120,82 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Processings.HttpPageRenderOperationEventProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 11,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Processings.IHttpPageRenderOperationEventProcessingService",
+          "FullName": "cCoder.ContentManagement.Services.Processings.IHttpPageRenderOperationEventProcessingService",
+          "Name": "IHttpPageRenderOperationEventProcessingService",
+          "Namespace": "cCoder.ContentManagement.Services.Processings",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "ProcessingService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.HttpPageRenderOperationEventProcessingService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation,System.String)",
+          "Name": "RaiseHttpPageRenderOperationRenderRequestAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "httpPageRenderOperation",
+              "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
+            },
+            {
+              "Name": "userId",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.IHttpPageRenderOperationEventProcessingService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation,System.String)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Events.IHttpPageRenderOperationEventService",
+              "MethodName": "RaiseHttpPageRenderOperationRenderRequestAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Events.IHttpPageRenderOperationEventService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation,System.String)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
@@ -75682,6 +76680,82 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Processings.TagHandlingOperationEventProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 11,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Processings.ITagHandlingOperationEventProcessingService",
+          "FullName": "cCoder.ContentManagement.Services.Processings.ITagHandlingOperationEventProcessingService",
+          "Name": "ITagHandlingOperationEventProcessingService",
+          "Namespace": "cCoder.ContentManagement.Services.Processings",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "ProcessingService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.TagHandlingOperationEventProcessingService.RaiseTagHandlingOperationRenderTagsAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation,System.String)",
+          "Name": "RaiseTagHandlingOperationRenderTagsAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            },
+            {
+              "Name": "userId",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.ITagHandlingOperationEventProcessingService.RaiseTagHandlingOperationRenderTagsAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation,System.String)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Events.ITagHandlingOperationEventService",
+              "MethodName": "RaiseTagHandlingOperationRenderTagsAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Events.ITagHandlingOperationEventService.RaiseTagHandlingOperationRenderTagsAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation,System.String)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Processings.TemplateContentProcessingService",
       "StandardElementType": "ProcessingService",
       "LineNumber": 9,
@@ -77642,6 +78716,68 @@
             {
               "Name": "message",
               "Type": "cCoder.Eventing.Models.EventMessage\u003CcCoder.Data.Models.Security.PageRole\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Brokers.Events.IRenderEventBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 11,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Events.IRenderEventBroker.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.HttpPageRenderOperation\u003E)",
+          "Name": "RaiseHttpPageRenderOperationRenderRequestAsync",
+          "LineNumber": 13,
+          "Inputs": [
+            {
+              "Name": "message",
+              "Type": "cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.HttpPageRenderOperation\u003E"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Events.IRenderEventBroker.RaiseTagHandlingOperationRenderTagsAsync(cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PageRendering.TagHandlingOperation\u003E)",
+          "Name": "RaiseTagHandlingOperationRenderTagsAsync",
+          "LineNumber": 16,
+          "Inputs": [
+            {
+              "Name": "message",
+              "Type": "cCoder.Eventing.Models.EventMessage\u003CcCoder.ContentManagement.Models.PageRendering.TagHandlingOperation\u003E"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask",
@@ -87521,11 +88657,323 @@
           "LineNumber": 11,
           "Inputs": [
             {
-              "Name": "session",
+              "Name": "renderSession",
               "Type": "cCoder.ContentManagement.Models.PageRendering.RenderSession"
             }
           ],
           "ReturnType": "cCoder.ContentManagement.Models.PageRendering.RenderSession",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderProcessingService.RenderRenderSessionAsync(cCoder.ContentManagement.Models.PageRendering.RenderSession)",
+          "Name": "RenderRenderSessionAsync",
+          "LineNumber": 13,
+          "Inputs": [
+            {
+              "Name": "renderSession",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.RenderSession"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageRendering.RenderSession\u003E",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderComponentTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderComponentTagHandlingOperationAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderContentTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderContentTagHandlingOperationAsync",
+          "LineNumber": 14,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderCultureLinkTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderCultureLinkTagHandlingOperationAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderDmsTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderDmsTagHandlingOperationAsync",
+          "LineNumber": 19,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderExecuteTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderExecuteTagHandlingOperationAsync",
+          "LineNumber": 21,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderMetadataTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderMetadataTagHandlingOperationAsync",
+          "LineNumber": 12,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderNavigationTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderNavigationTagHandlingOperationAsync",
+          "LineNumber": 13,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderReplacementTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderReplacementTagHandlingOperationAsync",
+          "LineNumber": 18,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderResourceTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderResourceTagHandlingOperationAsync",
+          "LineNumber": 20,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderScriptTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderScriptTagHandlingOperationAsync",
+          "LineNumber": 16,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Rendering.Services.Processings.IMarkupRenderTagHandlingProcessingService.RenderStyleTagHandlingOperationAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation)",
+          "Name": "RenderStyleTagHandlingOperationAsync",
+          "LineNumber": 17,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -90276,6 +91724,47 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Events.IHttpPageRenderOperationEventService",
+      "StandardElementType": "FoundationService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.IHttpPageRenderOperationEventService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation,System.String)",
+          "Name": "RaiseHttpPageRenderOperationRenderRequestAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "httpPageRenderOperation",
+              "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
+            },
+            {
+              "Name": "userId",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Foundations.Events.ILayoutEventService",
       "StandardElementType": "FoundationService",
       "LineNumber": 9,
@@ -91060,6 +92549,47 @@
             {
               "Name": "entity",
               "Type": "cCoder.Data.Models.CMS.Submission"
+            },
+            {
+              "Name": "userId",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Events.ITagHandlingOperationEventService",
+      "StandardElementType": "FoundationService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Events.ITagHandlingOperationEventService.RaiseTagHandlingOperationRenderTagsAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation,System.String)",
+          "Name": "RaiseTagHandlingOperationRenderTagsAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
             },
             {
               "Name": "userId",
@@ -98164,6 +99694,43 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Orchestrations.IMarkupRenderOrchestrationService",
+      "StandardElementType": "OrchestrationService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IMarkupRenderOrchestrationService.RenderHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
+          "Name": "RenderHttpPageRenderOperationAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "httpPageRenderOperation",
+              "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.IPageImportOrchestrationService",
       "StandardElementType": "OrchestrationService",
       "LineNumber": 9,
@@ -99428,6 +100995,43 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Orchestrations.IRenderEventOrchestrationService",
+      "StandardElementType": "OrchestrationService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IRenderEventOrchestrationService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
+          "Name": "RaiseHttpPageRenderOperationRenderRequestAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "httpPageRenderOperation",
+              "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService",
       "StandardElementType": "OrchestrationService",
       "LineNumber": 10,
@@ -100459,16 +102063,41 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IUncachedPageRenderOrchestrationService.RenderHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
-          "Name": "RenderHttpPageRenderOperationAsync",
-          "LineNumber": 11,
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IUncachedPageRenderOrchestrationService.CompleteHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
+          "Name": "CompleteHttpPageRenderOperationAsync",
+          "LineNumber": 14,
           "Inputs": [
             {
-              "Name": "operation",
+              "Name": "httpPageRenderOperation",
               "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.HttpPageRenderOperation\u003E",
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IUncachedPageRenderOrchestrationService.PrepareHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
+          "Name": "PrepareHttpPageRenderOperationAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "httpPageRenderOperation",
+              "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -102732,6 +104361,47 @@
             }
           ],
           "ReturnType": "System.Byte[]",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Processings.IHttpPageRenderOperationEventProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.IHttpPageRenderOperationEventProcessingService.RaiseHttpPageRenderOperationRenderRequestAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation,System.String)",
+          "Name": "RaiseHttpPageRenderOperationRenderRequestAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "httpPageRenderOperation",
+              "Type": "cCoder.ContentManagement.Models.HttpPageRenderOperation"
+            },
+            {
+              "Name": "userId",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -105701,6 +107371,47 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Processings.ITagHandlingOperationEventProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.ITagHandlingOperationEventProcessingService.RaiseTagHandlingOperationRenderTagsAsync(cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation,System.String)",
+          "Name": "RaiseTagHandlingOperationRenderTagsAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "tagHandlingOperation",
+              "Type": "cCoder.ContentManagement.Models.PageRendering.TagHandlingOperation"
+            },
+            {
+              "Name": "userId",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Processings.ITemplateContentProcessingService",
       "StandardElementType": "ProcessingService",
       "LineNumber": 7,
@@ -106168,6 +107879,10 @@
       "ToType": "cCoder.Eventing.IEventHub"
     },
     {
+      "FromType": "cCoder.ContentManagement.Brokers.Events.RenderEventBroker",
+      "ToType": "cCoder.Eventing.IEventHub"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Brokers.Events.ResourceEventBroker",
       "ToType": "cCoder.Eventing.IEventHub"
     },
@@ -106632,6 +108347,10 @@
       "ToType": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderTagHandlingProcessingService",
+      "ToType": "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Rendering.Services.Processings.MetadataCacheProcessingService",
       "ToType": "cCoder.ContentManagement.Rendering.Services.Foundations.MetadataCacheService"
     },
@@ -106677,11 +108396,11 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService"
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.RenderEventOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService"
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.TemplateManagerAggregationService",
@@ -106816,6 +108535,10 @@
       "ToType": "cCoder.ContentManagement.Brokers.Events.CultureEventBroker"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Events.HttpPageRenderOperationEventService",
+      "ToType": "cCoder.ContentManagement.Brokers.Events.RenderEventBroker"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Events.LayoutEventService",
       "ToType": "cCoder.ContentManagement.Brokers.Events.LayoutEventBroker"
     },
@@ -106850,6 +108573,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Events.SubmissionEventService",
       "ToType": "cCoder.ContentManagement.Brokers.Events.SubmissionEventBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Events.TagHandlingOperationEventService",
+      "ToType": "cCoder.ContentManagement.Brokers.Events.RenderEventBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Events.TemplateEventService",
@@ -107200,6 +108927,14 @@
       "ToType": "cCoder.ContentManagement.Services.Processings.LayoutProcessingService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.MarkupRenderOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.MarkupRenderOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.TagHandlingOperationEventProcessingService"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.PageContexts.PageContextOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
     },
@@ -107300,6 +109035,14 @@
       "ToType": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.RenderEventOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.RenderEventOrchestrationService",
+      "ToType": "cCoder.ContentManagement.Services.Processings.HttpPageRenderOperationEventProcessingService"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
     },
@@ -107362,10 +109105,6 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.TemplateRenderOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.TemplateRenderProcessingService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Rendering.Services.Processings.MarkupRenderProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService",
@@ -107450,6 +109189,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.HttpContexts.HttpContextProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.HttpContexts.HttpContextService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.HttpPageRenderOperationEventProcessingService",
+      "ToType": "cCoder.ContentManagement.Services.Foundations.Events.HttpPageRenderOperationEventService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.JsonProcessingService",
@@ -107546,6 +109289,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.SubmissionProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.SubmissionService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.TagHandlingOperationEventProcessingService",
+      "ToType": "cCoder.ContentManagement.Services.Foundations.Events.TagHandlingOperationEventService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.TemplateContentProcessingService",

@@ -22,6 +22,30 @@ internal sealed partial class MarkupRenderProcessingService(
         ValidateRenderRenderSession(inputs: [renderSession]);
         ValidateRenderSession(session: renderSession);
 
+        return RenderRenderSessionCoreAsync(
+                renderSession: renderSession,
+                handleTagHandlingOperationAsync: HandleTagHandlingOperationWithoutEventsAsync)
+            .Result;
+    });
+
+    public ValueTask<RenderSession> RenderRenderSessionAsync(
+        RenderSession renderSession) =>
+        TryCatch<RenderSession>(operation: async () =>
+    {
+        ValidateRenderRenderSession(inputs: [renderSession]);
+        ValidateRenderSession(session: renderSession);
+
+        return await RenderRenderSessionCoreAsync(
+            renderSession: renderSession,
+            handleTagHandlingOperationAsync: renderSession.TagHandler);
+
+    }, isValueTask: true);
+
+    private async ValueTask<RenderSession> RenderRenderSessionCoreAsync(
+        RenderSession renderSession,
+        Func<TagHandlingOperation, ValueTask> handleTagHandlingOperationAsync)
+    {
+
         renderSession = markupRenderService
             .PrepareRenderSessionTagHandlingOperation(
                 tagHandlingOperation: new TagHandlingOperation
@@ -37,31 +61,74 @@ internal sealed partial class MarkupRenderProcessingService(
         List<MarkupReplacement> replacements = BuildDefaultReplacements(session: renderSession)
             .ToList();
 
-        AddThemeTemplateReplacements(newRenderSession: renderSession, newReplacement: replacements);
+        await AddThemeTemplateReplacementsAsync(
+            newRenderSession: renderSession,
+            newReplacement: replacements,
+            handleTagHandlingOperationAsync: handleTagHandlingOperationAsync);
 
         renderSession.Output = new RenderOutput
         {
             HeaderMarkup = markupRenderService.MarkContentSecurityPolicyNonce(
-                markup: RenderMarkup(
+                markup: await RenderMarkupAsync(
                     key: key,
                     content: renderSession.Target?.HeaderMarkup ?? string.Empty,
                     session: renderSession,
                     replacements: replacements,
-                    allowContentTags: renderSession.Target?.AllowHeaderContentTags ?? false)),
+                    allowContentTags: renderSession.Target?.AllowHeaderContentTags ?? false,
+                    handleTagHandlingOperationAsync: handleTagHandlingOperationAsync)),
             BodyMarkup = renderSession.Request.HeaderOnly
                 ? string.Empty
                 : markupRenderService.MarkContentSecurityPolicyNonce(
-                    markup: RenderMarkup(
+                    markup: await RenderMarkupAsync(
                         key: key,
                         content: renderSession.Target?.BodyMarkup ?? string.Empty,
                         session: renderSession,
                         replacements: replacements,
-                        allowContentTags: renderSession.Target?.AllowBodyContentTags ?? true))
+                        allowContentTags: renderSession.Target?.AllowBodyContentTags ?? true,
+                        handleTagHandlingOperationAsync: handleTagHandlingOperationAsync))
         };
 
         return renderSession;
+    }
 
-    });
+    private ValueTask HandleTagHandlingOperationWithoutEventsAsync(
+        TagHandlingOperation tagHandlingOperation)
+    {
+        _ = markupRenderService.RenderCultureLinkTagHandlingOperation(
+            tagHandlingOperation: tagHandlingOperation);
+
+        _ = markupRenderService.RenderMetadataTagHandlingOperation(
+            tagHandlingOperation: tagHandlingOperation);
+
+        _ = markupRenderService.RenderNavigationTagHandlingOperation(
+            tagHandlingOperation: tagHandlingOperation);
+
+        _ = markupRenderService.RenderContentTagHandlingOperation(
+            tagHandlingOperation: tagHandlingOperation);
+
+        _ = markupRenderService.RenderComponentTagHandlingOperation(
+            tagHandlingOperation: tagHandlingOperation);
+
+        _ = markupRenderService.RenderScriptTagHandlingOperation(
+            tagHandlingOperation: tagHandlingOperation);
+
+        _ = markupRenderService.RenderStyleTagHandlingOperation(
+            tagHandlingOperation: tagHandlingOperation);
+
+        _ = RenderReplacementTagHandlingOperation(
+            operation: tagHandlingOperation);
+
+        _ = markupRenderService.RenderDmsTagHandlingOperation(
+            tagHandlingOperation: tagHandlingOperation);
+
+        _ = markupRenderService.RenderResourceTagHandlingOperation(
+            tagHandlingOperation: tagHandlingOperation);
+
+        _ = markupRenderService.RenderExecuteTagHandlingOperation(
+            tagHandlingOperation: tagHandlingOperation);
+
+        return ValueTask.CompletedTask;
+    }
 
     private IEnumerable<MarkupReplacement> BuildDefaultReplacements(RenderSession session)
     {
@@ -202,7 +269,10 @@ internal sealed partial class MarkupRenderProcessingService(
         }
     }
 
-    private void AddThemeTemplateReplacements(RenderSession newRenderSession, ICollection<MarkupReplacement> newReplacement)
+    private async ValueTask AddThemeTemplateReplacementsAsync(
+        RenderSession newRenderSession,
+        ICollection<MarkupReplacement> newReplacement,
+        Func<TagHandlingOperation, ValueTask> handleTagHandlingOperationAsync)
     {
         if (!TryGetThemeDictionary(config: newRenderSession.App?.Config, themeDictionary: out IDictionary<string, object> themeDictionary))
         {
@@ -217,7 +287,12 @@ internal sealed partial class MarkupRenderProcessingService(
 
         string baseTheme = baseTemplate == null
             ? string.Empty
-            : RenderTemplate(template: baseTemplate, model: themeDictionary, session: newRenderSession, pageReplacements: newReplacement.ToList());
+            : await RenderTemplateAsync(
+                template: baseTemplate,
+                model: themeDictionary,
+                session: newRenderSession,
+                pageReplacements: newReplacement.ToList(),
+                handleTagHandlingOperationAsync: handleTagHandlingOperationAsync);
 
         themeDictionary.TryGetValue(key: newRenderSession.Request.Theme ?? string.Empty, value: out object themeModel);
 
@@ -228,24 +303,35 @@ internal sealed partial class MarkupRenderProcessingService(
 
         string renderedTheme = themeModel == null || themeTemplate == null
             ? string.Empty
-            : RenderTemplate(template: themeTemplate, model: themeModel, session: newRenderSession, pageReplacements: newReplacement.ToList());
+            : await RenderTemplateAsync(
+                template: themeTemplate,
+                model: themeModel,
+                session: newRenderSession,
+                pageReplacements: newReplacement.ToList(),
+                handleTagHandlingOperationAsync: handleTagHandlingOperationAsync);
 
         newReplacement.Add(item: new MarkupReplacement { Old = "[theme[template]]", Value = renderedTheme });
         newReplacement.Add(item: new MarkupReplacement { Old = "[theme[base]]", Value = baseTheme });
     }
 
-    private string RenderTemplate(PageRenderTemplate template, object model, RenderSession session, IReadOnlyCollection<MarkupReplacement> pageReplacements)
+    private ValueTask<string> RenderTemplateAsync(
+        PageRenderTemplate template,
+        object model,
+        RenderSession session,
+        IReadOnlyCollection<MarkupReplacement> pageReplacements,
+        Func<TagHandlingOperation, ValueTask> handleTagHandlingOperationAsync)
     {
         List<MarkupReplacement> replacements = pageReplacements.ToList();
         replacements.Add(item: new MarkupReplacement { Old = "[model]", Value = Serialize(value: model) });
         replacements.AddRange(collection: BuildModelReplacements(model: model));
 
-        return RenderMarkup(
+        return RenderMarkupAsync(
             key: template.ResourceKey,
             content: template.RawString,
             session: session,
             replacements: replacements,
-            allowContentTags: false);
+            allowContentTags: false,
+            handleTagHandlingOperationAsync: handleTagHandlingOperationAsync);
     }
 
     internal string RenderMarkup(
@@ -253,14 +339,30 @@ internal sealed partial class MarkupRenderProcessingService(
         string content,
         RenderSession session,
         IReadOnlyCollection<MarkupReplacement> replacements,
-        bool allowContentTags)
+        bool allowContentTags) =>
+        RenderMarkupAsync(
+            key: key,
+            content: content,
+            session: session,
+            replacements: replacements,
+            allowContentTags: allowContentTags,
+            handleTagHandlingOperationAsync: HandleTagHandlingOperationWithoutEventsAsync)
+        .Result;
+
+    internal async ValueTask<string> RenderMarkupAsync(
+        string key,
+        string content,
+        RenderSession session,
+        IReadOnlyCollection<MarkupReplacement> replacements,
+        bool allowContentTags,
+        Func<TagHandlingOperation, ValueTask> handleTagHandlingOperationAsync)
     {
         if (string.IsNullOrEmpty(value: content))
         {
             return string.Empty;
         }
 
-        TagHandlingOperation operation = RenderTagHandlingOperation(
+        TagHandlingOperation operation = await RenderTagHandlingOperationAsync(
             operation: new TagHandlingOperation
             {
                 Session = session,
@@ -270,13 +372,15 @@ internal sealed partial class MarkupRenderProcessingService(
                 Editable = session.Request.Edit,
                 Replacements = replacements,
                 Fragments = []
-            });
+            },
+            handleTagHandlingOperationAsync: handleTagHandlingOperationAsync);
 
         return operation.Content;
     }
 
-    private TagHandlingOperation RenderTagHandlingOperation(
-        TagHandlingOperation operation)
+    private async ValueTask<TagHandlingOperation> RenderTagHandlingOperationAsync(
+        TagHandlingOperation operation,
+        Func<TagHandlingOperation, ValueTask> handleTagHandlingOperationAsync)
     {
         HashSet<string> observedContent = new(
             comparer: StringComparer.Ordinal);
@@ -291,53 +395,14 @@ internal sealed partial class MarkupRenderProcessingService(
                     message: "Tag rendering entered a replacement cycle.");
             }
 
-            operation = markupRenderService
-                .RenderCultureLinkTagHandlingOperation(
-                    tagHandlingOperation: operation);
-
-            operation = markupRenderService
-                .RenderMetadataTagHandlingOperation(
-                    tagHandlingOperation: operation);
-
-            operation = markupRenderService
-                .RenderNavigationTagHandlingOperation(
-                    tagHandlingOperation: operation);
-
-            operation = markupRenderService
-                .RenderContentTagHandlingOperation(
-                    tagHandlingOperation: operation);
-
-            operation = markupRenderService
-                .RenderComponentTagHandlingOperation(
-                    tagHandlingOperation: operation);
-
-            operation = markupRenderService
-                .RenderScriptTagHandlingOperation(
-                    tagHandlingOperation: operation);
-
-            operation = markupRenderService
-                .RenderStyleTagHandlingOperation(
-                    tagHandlingOperation: operation);
-
-            operation = RenderReplacementTagHandlingOperation(
-                operation: operation);
-
-            operation = markupRenderService
-                .RenderDmsTagHandlingOperation(
-                    tagHandlingOperation: operation);
-
-            operation = markupRenderService
-                .RenderResourceTagHandlingOperation(
-                    tagHandlingOperation: operation);
-
-            operation = markupRenderService
-                .RenderExecuteTagHandlingOperation(
-                    tagHandlingOperation: operation);
+            await handleTagHandlingOperationAsync(arg: operation);
 
             foreach (TagHandlingFragment fragment in operation.Fragments)
             {
                 TagHandlingOperation renderedFragment =
-                    RenderTagHandlingOperation(operation: fragment.Operation);
+                    await RenderTagHandlingOperationAsync(
+                        operation: fragment.Operation,
+                        handleTagHandlingOperationAsync: handleTagHandlingOperationAsync);
 
                 operation.Content = operation.Content.Replace(
                     oldValue: fragment.Token,
@@ -359,7 +424,7 @@ internal sealed partial class MarkupRenderProcessingService(
             message: "Tag rendering exceeded the maximum replacement passes.");
     }
 
-    private static TagHandlingOperation RenderReplacementTagHandlingOperation(
+    internal static TagHandlingOperation RenderReplacementTagHandlingOperation(
         TagHandlingOperation operation)
     {
         foreach (MarkupReplacement replacement in operation.Replacements)

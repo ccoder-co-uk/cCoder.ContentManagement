@@ -85,7 +85,7 @@ public partial class PageRenderOrchestrationServiceTests
 
         markupRenderProcessingServiceMock
             .Setup(expression: service => service.RenderRenderSession(
-                session: renderSession))
+                renderSession: renderSession))
             .Returns(value: renderSession);
 
         processingServiceMock

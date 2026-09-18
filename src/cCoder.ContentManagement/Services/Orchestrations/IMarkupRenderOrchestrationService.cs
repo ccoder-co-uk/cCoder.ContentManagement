@@ -6,11 +6,8 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface IUncachedPageRenderOrchestrationService
+internal interface IMarkupRenderOrchestrationService
 {
-    ValueTask PrepareHttpPageRenderOperationAsync(
-        HttpPageRenderOperation httpPageRenderOperation);
-
-    ValueTask CompleteHttpPageRenderOperationAsync(
+    ValueTask RenderHttpPageRenderOperationAsync(
         HttpPageRenderOperation httpPageRenderOperation);
 }
