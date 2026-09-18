@@ -8,6 +8,8 @@ internal sealed class HttpPageRenderOperation
 {
     public HttpPageRenderContext Context { get; set; }
 
+    public HttpPageRenderFailure Failure { get; set; }
+
     public PageRenderOperation RenderOperation { get; set; }
 
     public PageRenderResponse Response { get; set; }

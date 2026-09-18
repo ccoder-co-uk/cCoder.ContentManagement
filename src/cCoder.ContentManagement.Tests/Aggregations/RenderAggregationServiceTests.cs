@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -16,6 +17,62 @@ namespace cCoder.ContentManagement.Tests.Aggregations;
 
 public sealed partial class RenderAggregationServiceTests
 {
+    [Theory]
+    [InlineData(
+        (int)HttpPageRenderFailure.PageNotFound,
+        typeof(PageNotFoundException))]
+    [InlineData(
+        (int)HttpPageRenderFailure.PageAccessDenied,
+        typeof(PageAccessSecurityException))]
+    public async Task ShouldRestoreRequestFailureAfterRenderEventCompletesAsync(
+        int failureValue,
+        Type expectedExceptionType)
+    {
+        // Given
+        HttpPageRenderFailure failure =
+            (HttpPageRenderFailure)failureValue;
+
+        HttpPageRenderContext context = new();
+        Mock<IPageContextOrchestrationService> contextService = new();
+        Mock<IRenderEventOrchestrationService> renderEventService = new();
+
+        contextService.Setup(expression: service =>
+                service.ResolvePageRenderContextAsync())
+            .Returns(value: ValueTask.FromResult(result: context));
+
+        renderEventService.Setup(expression: service =>
+                service.RaiseHttpPageRenderOperationRenderRequestAsync(
+                    httpPageRenderOperation:
+                        It.IsAny<HttpPageRenderOperation>()))
+            .Callback<HttpPageRenderOperation>(action: operation =>
+                operation.Failure = failure)
+            .Returns(value: ValueTask.CompletedTask);
+
+        RenderAggregationService service = new(
+            pageContextOrchestrationService: contextService.Object,
+            cachedPageRenderOrchestrationService:
+                Mock.Of<ICachedPageRenderOrchestrationService>(),
+            renderEventOrchestrationService: renderEventService.Object,
+            renderDataOrchestrationService:
+                Mock.Of<IRenderDataOrchestrationService>(),
+            templateRenderOrchestrationService:
+                Mock.Of<ITemplateRenderOrchestrationService>(),
+            componentRenderOrchestrationService:
+                Mock.Of<IComponentRenderOrchestrationService>());
+
+        // When
+        Exception actualException = await Record.ExceptionAsync(
+            testCode: () => service.RenderPageRenderResultAsync()
+                .AsTask());
+
+        // Then
+        Assert.IsType(
+            expectedType: expectedExceptionType,
+            @object: actualException);
+
+        renderEventService.VerifyAll();
+    }
+
     private static Mock<IRenderDataOrchestrationService>
         CreateRenderDataOrchestrationServiceMock()
     {
