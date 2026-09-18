@@ -113,7 +113,7 @@ public sealed partial class RenderAggregationServiceTests
             pageRenderProcessingService: renderProcessing.Object,
             markupRenderProcessingService: markupRenderProcessing.Object);
 
-        Mock<IJsonOrchestrationService> json = new();
+        Mock<IRenderDataOrchestrationService> json = CreateRenderDataOrchestrationServiceMock();
 
         json.Setup(expression: service =>
             service.SerializeRuntimeValue(value: It.IsAny<object>()))
@@ -130,13 +130,11 @@ public sealed partial class RenderAggregationServiceTests
             pageContextOrchestrationService: pageContext.Object,
             cachedPageRenderOrchestrationService: cached,
             uncachedPageRenderOrchestrationService: uncached,
-            jsonOrchestrationService: json.Object,
+            renderDataOrchestrationService: json.Object,
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>(),
-            renderingUtilityBroker:
-                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
+                Mock.Of<IComponentRenderOrchestrationService>());
 
         // When
         RenderResult uncachedResult = await service.RenderPageRenderResultAsync();

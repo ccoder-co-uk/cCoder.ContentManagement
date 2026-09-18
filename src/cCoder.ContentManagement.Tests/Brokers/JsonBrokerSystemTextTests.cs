@@ -244,6 +244,21 @@ public sealed partial class JsonBrokerSystemTextTests
             .Be(expected: "{\"Children\":[]}");
     }
 
+    [Fact]
+    public void ComputeFingerprint_WhenValueProvided_ReturnsDeterministicSerializedHash()
+    {
+        // Given
+        JsonBroker broker = new();
+        object value = new { Id = 7, Name = "Alpha" };
+
+        // When
+        string result = broker.ComputeFingerprint(value: value);
+
+        // Then
+        result.Should()
+            .Be(expected: "D26E0620D9B69E0CB6BF80C0717522796D97B3A02276009CBC742A36EE3439D7");
+    }
+
     private static JsonElement ParseElement(string json)
     {
         using JsonDocument document = JsonDocument.Parse(json: json);

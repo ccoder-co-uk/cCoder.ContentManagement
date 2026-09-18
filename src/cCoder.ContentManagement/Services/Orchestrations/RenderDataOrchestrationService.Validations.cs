@@ -2,12 +2,14 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal sealed partial class JsonOrchestrationService
+internal sealed partial class RenderDataOrchestrationService
 {
     private static void ValidateSerializeRuntimeValue(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidateHtmlEncode(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateParseJsonRecordsDocument(object[] inputs) =>

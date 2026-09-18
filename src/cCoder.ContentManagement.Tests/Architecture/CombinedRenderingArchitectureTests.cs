@@ -15,43 +15,6 @@ public sealed partial class CombinedRenderingArchitectureTests
         typeof(ComponentRenderService)
             .Assembly;
 
-    public static TheoryData<string> RenderingServiceTypeNames =>
-        new()
-        {
-            "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",
-            "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService",
-            "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
-            "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService",
-            "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService"
-        };
-
-    [Theory]
-    [MemberData(nameof(RenderingServiceTypeNames))]
-    public void RenderingService_WhenComposed_RequiresRenderingUtilityBroker(
-        string renderingServiceTypeName)
-    {
-        // Given
-        Type renderingServiceType = ContentManagementAssembly.GetType(
-            name: renderingServiceTypeName);
-
-        // When
-        ParameterInfo renderingUtilityBrokerParameter = renderingServiceType
-            .GetConstructors(
-                bindingAttr: BindingFlags.Instance
-                    | BindingFlags.NonPublic
-                    | BindingFlags.Public)
-            .Single()
-            .GetParameters()
-            .Single(predicate: parameter =>
-                parameter.ParameterType.Name == "IRenderingUtilityBroker");
-
-        // Then
-        renderingUtilityBrokerParameter.IsOptional
-            .Should()
-            .BeFalse(
-                because: "rendering services must receive utility brokers from the composition root");
-    }
-
     [Fact]
     public void MarkupRendering_WhenComposed_DoesNotHideProcessingHandlersBehindBroker()
     {
@@ -90,7 +53,7 @@ public sealed partial class CombinedRenderingArchitectureTests
         // Then
         dependencies.Should()
             .ContainSingle(predicate: dependency =>
-                dependency.Name == "IRenderingUtilityBroker");
+                dependency.Name == "IJsonBroker");
 
         dependencies.Should()
             .NotContain(predicate: dependency =>
@@ -99,6 +62,75 @@ public sealed partial class CombinedRenderingArchitectureTests
         dependencies.Should()
             .NotContain(predicate: dependency =>
                 dependency.Name == "IServiceProviderBroker");
+    }
+
+    [Fact]
+    public void PageRendering_WhenComposed_UsesJsonBoundaryForSerializationAndFingerprinting()
+    {
+        // Given
+        Type pageRenderService = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService");
+
+        // When
+        Type[] dependencies = GetConstructorDependencies(type: pageRenderService);
+
+        // Then
+        dependencies.Should()
+            .ContainSingle(predicate: dependency =>
+                dependency.Name == "IJsonBroker",
+                because: "JSON serialization and its deterministic fingerprint belong to the JSON boundary");
+
+        dependencies.Should()
+            .NotContain(predicate: dependency =>
+                dependency.Name == "IRenderingUtilityBroker");
+    }
+
+    [Fact]
+    public void RenderingUtilities_WhenComposed_AreOwnedByNormalRenderingBoundaries()
+    {
+        // Given
+        Type renderingUtilityBroker = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker");
+
+        Type renderAggregationService = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService");
+
+        Type[] renderingFoundationTypes =
+        [
+            ContentManagementAssembly.GetType(
+                name: "cCoder.ContentManagement.Services.Foundations.Rendering.ComponentRenderService"),
+            ContentManagementAssembly.GetType(
+                name: "cCoder.ContentManagement.Services.Foundations.Rendering.TemplateRenderService"),
+            ContentManagementAssembly.GetType(
+                name: "cCoder.ContentManagement.Rendering.Services.Foundations.MarkupRenderService")
+        ];
+
+        // When
+        Type[] aggregationDependencies = GetConstructorDependencies(
+            type: renderAggregationService);
+
+        Type[] renderingFoundationDependencies = renderingFoundationTypes
+            .SelectMany(selector: GetConstructorDependencies)
+            .ToArray();
+
+        // Then
+        renderingUtilityBroker.Should()
+            .BeNull(
+                because: "HTML encoding and property discovery have distinct normal rendering boundaries");
+
+        aggregationDependencies.Should()
+            .ContainSingle(predicate: dependency =>
+                dependency.Name == "IRenderDataOrchestrationService");
+
+        aggregationDependencies.Should()
+            .NotContain(predicate: dependency =>
+                dependency.Name.EndsWith(
+                    value: "Broker",
+                    comparisonType: StringComparison.Ordinal));
+
+        renderingFoundationDependencies.Should()
+            .NotContain(predicate: dependency =>
+                dependency.Name == "IRenderingUtilityBroker");
     }
 
     [Fact]

@@ -55,9 +55,7 @@ public sealed partial class ScriptTagHandlingProcessingServiceTests
                 workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
                 cacheBroker: Mock.Of<cCoder.ContentManagement.Brokers.Caching.ICacheBroker>(),
                 jsonBroker: Mock.Of<IJsonBroker>(),
-                regularExpressionBroker: new RegularExpressionBroker(),
-                renderingUtilityBroker:
-                    new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker()));
+                regularExpressionBroker: new RegularExpressionBroker()));
 
         // When
         RenderSession nestedSession = service.RenderRenderSession(

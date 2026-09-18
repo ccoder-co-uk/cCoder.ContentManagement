@@ -6,9 +6,11 @@ using cCoder.ContentManagement.Models.Serialization;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface IJsonOrchestrationService
+internal interface IRenderDataOrchestrationService
 {
     string SerializeRuntimeValue(object value);
+
+    string HtmlEncode(string value);
 
     JsonRecordsDocument ParseJsonRecordsDocument(
         JsonRecordsDocument jsonRecordsDocument);

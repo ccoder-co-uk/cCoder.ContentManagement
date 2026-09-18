@@ -14,8 +14,7 @@ internal sealed partial class ComponentRenderService(
     IWorkflowExecutionBroker workflowExecutionBroker,
     ICacheBroker cacheBroker,
     IJsonBroker jsonBroker,
-    IRegularExpressionBroker regularExpressionBroker,
-    IRenderingUtilityBroker renderingUtilityBroker)
+    IRegularExpressionBroker regularExpressionBroker)
         : IComponentRenderService
 {
     public ComponentRenderFoundationOperation GetPropertyValuesComponentRenderFoundationOperation(
@@ -25,7 +24,7 @@ internal sealed partial class ComponentRenderService(
             ValidatePropertyValuesComponentRenderFoundationOperationOnGet(
                 inputs: [componentRenderFoundationOperation]);
 
-            componentRenderFoundationOperation.RuntimeProperties = renderingUtilityBroker
+            componentRenderFoundationOperation.RuntimeProperties = contentRenderBroker
                 .GetPropertyValues(value: componentRenderFoundationOperation.Value);
 
             return componentRenderFoundationOperation;

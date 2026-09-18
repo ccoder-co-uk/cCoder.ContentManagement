@@ -24,8 +24,6 @@ public partial class MarkupRenderServiceTests
                 workflowExecutionBroker: Mock.Of<IWorkflowExecutionBroker>(),
                 cacheBroker: Mock.Of<cCoder.ContentManagement.Brokers.Caching.ICacheBroker>(),
                 jsonBroker: Mock.Of<IJsonBroker>(),
-                regularExpressionBroker: regularExpressionBroker,
-                renderingUtilityBroker:
-                    new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker()));
+                regularExpressionBroker: regularExpressionBroker));
     }
 }

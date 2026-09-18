@@ -16,6 +16,19 @@ namespace cCoder.ContentManagement.Tests.Aggregations;
 
 public sealed partial class RenderAggregationServiceTests
 {
+    private static Mock<IRenderDataOrchestrationService>
+        CreateRenderDataOrchestrationServiceMock()
+    {
+        Mock<IRenderDataOrchestrationService> service = new();
+
+        service.Setup(expression: candidate => candidate.HtmlEncode(
+                value: It.IsAny<string>()))
+            .Returns(valueFunction: (string value) =>
+                System.Net.WebUtility.HtmlEncode(value: value));
+
+        return service;
+    }
+
     [Fact]
     public async Task ShouldReturnCachedResponseWithoutRenderingUncachedAsync()
     {
@@ -51,7 +64,7 @@ public sealed partial class RenderAggregationServiceTests
         Mock<IPageContextOrchestrationService> contextService = new();
         Mock<ICachedPageRenderOrchestrationService> cachedService = new();
         Mock<IUncachedPageRenderOrchestrationService> uncachedService = new();
-        Mock<IJsonOrchestrationService> jsonService = new();
+        Mock<IRenderDataOrchestrationService> jsonService = CreateRenderDataOrchestrationServiceMock();
 
         jsonService.Setup(expression: service =>
             service.SerializeRuntimeValue(value: It.IsAny<object>()))
@@ -76,13 +89,11 @@ public sealed partial class RenderAggregationServiceTests
             pageContextOrchestrationService: contextService.Object,
             cachedPageRenderOrchestrationService: cachedService.Object,
             uncachedPageRenderOrchestrationService: uncachedService.Object,
-            jsonOrchestrationService: jsonService.Object,
+            renderDataOrchestrationService: jsonService.Object,
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>(),
-            renderingUtilityBroker:
-                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
+                Mock.Of<IComponentRenderOrchestrationService>());
 
         // When
         RenderResult result = await service
@@ -151,7 +162,7 @@ public sealed partial class RenderAggregationServiceTests
         Mock<IPageContextOrchestrationService> contextService = new();
         Mock<ICachedPageRenderOrchestrationService> cachedService = new();
         Mock<IUncachedPageRenderOrchestrationService> uncachedService = new();
-        Mock<IJsonOrchestrationService> jsonService = new();
+        Mock<IRenderDataOrchestrationService> jsonService = CreateRenderDataOrchestrationServiceMock();
 
         jsonService.Setup(expression: service =>
             service.SerializeRuntimeValue(value: It.IsAny<object>()))
@@ -175,13 +186,11 @@ public sealed partial class RenderAggregationServiceTests
             pageContextOrchestrationService: contextService.Object,
             cachedPageRenderOrchestrationService: cachedService.Object,
             uncachedPageRenderOrchestrationService: uncachedService.Object,
-            jsonOrchestrationService: jsonService.Object,
+            renderDataOrchestrationService: jsonService.Object,
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>(),
-            renderingUtilityBroker:
-                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
+                Mock.Of<IComponentRenderOrchestrationService>());
 
         // When
         RenderResult result = await service
@@ -234,13 +243,11 @@ public sealed partial class RenderAggregationServiceTests
                 Mock.Of<ICachedPageRenderOrchestrationService>(),
             uncachedPageRenderOrchestrationService:
                 Mock.Of<IUncachedPageRenderOrchestrationService>(),
-            jsonOrchestrationService:
-                Mock.Of<IJsonOrchestrationService>(),
+            renderDataOrchestrationService:
+                Mock.Of<IRenderDataOrchestrationService>(),
             templateRenderOrchestrationService: templateService.Object,
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>(),
-            renderingUtilityBroker:
-                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
+                Mock.Of<IComponentRenderOrchestrationService>());
 
         // When
         RenderResult actual = await service
@@ -289,13 +296,11 @@ public sealed partial class RenderAggregationServiceTests
                 Mock.Of<ICachedPageRenderOrchestrationService>(),
             uncachedPageRenderOrchestrationService:
                 Mock.Of<IUncachedPageRenderOrchestrationService>(),
-            jsonOrchestrationService:
-                Mock.Of<IJsonOrchestrationService>(),
+            renderDataOrchestrationService:
+                Mock.Of<IRenderDataOrchestrationService>(),
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
-            componentRenderOrchestrationService: componentService.Object,
-            renderingUtilityBroker:
-                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
+            componentRenderOrchestrationService: componentService.Object);
 
         // When
         RenderResult actual = await service
