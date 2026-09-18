@@ -3,12 +3,12 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models.Rendering;
-using cCoder.ContentManagement.Brokers.Rendering;
+using cCoder.ContentManagement.Brokers;
 
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class PageRenderService(
-    IRenderingUtilityBroker renderingUtilityBroker)
+    IJsonBroker jsonBroker)
         : IPageRenderService
 {
     public PageRenderFoundationOperation ComputeFingerprintPageRenderFoundationOperation(
@@ -17,7 +17,7 @@ internal sealed partial class PageRenderService(
         {
             ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
 
-            pageRenderFoundationOperation.Json = renderingUtilityBroker
+            pageRenderFoundationOperation.Json = jsonBroker
                 .ComputeFingerprint(value: pageRenderFoundationOperation.Value);
 
             return pageRenderFoundationOperation;
@@ -29,7 +29,7 @@ internal sealed partial class PageRenderService(
         {
             ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
 
-            pageRenderFoundationOperation.Json = renderingUtilityBroker
+            pageRenderFoundationOperation.Json = jsonBroker
                 .Serialize(value: pageRenderFoundationOperation.Value);
 
             return pageRenderFoundationOperation;

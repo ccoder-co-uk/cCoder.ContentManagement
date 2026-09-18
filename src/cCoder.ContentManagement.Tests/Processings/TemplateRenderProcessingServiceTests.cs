@@ -47,9 +47,7 @@ public partial class TemplateRenderProcessingServiceTests
             cacheBroker: cacheBroker,
             jsonBroker: new JsonBroker(),
             loggingBroker: Mock.Of<ILoggingBroker>(),
-            regularExpressionBroker: new RegularExpressionBroker(),
-            renderingUtilityBroker:
-                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker()
+            regularExpressionBroker: new RegularExpressionBroker()
         );
 
         return new TemplateRenderProcessingService(

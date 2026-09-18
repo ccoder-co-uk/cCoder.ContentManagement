@@ -18,8 +18,7 @@ internal sealed partial class MarkupRenderService(
     IWorkflowExecutionBroker workflowExecutionBroker,
     IJsonBroker jsonBroker,
     IRegularExpressionBroker regularExpressionBroker,
-    ICacheBroker cacheBroker,
-    IRenderingUtilityBroker renderingUtilityBroker)
+    ICacheBroker cacheBroker)
         : IMarkupRenderService
 {
     public TagHandlingOperation PrepareRenderSessionTagHandlingOperation(
@@ -65,7 +64,7 @@ internal sealed partial class MarkupRenderService(
         {
             ValidateHtmlEncodeTagHandlingOperation(inputs: [tagHandlingOperation]);
 
-            tagHandlingOperation.Content = renderingUtilityBroker.HtmlEncode(
+            tagHandlingOperation.Content = contentRenderBroker.HtmlEncode(
                 value: tagHandlingOperation.Content);
 
             return tagHandlingOperation;
@@ -78,7 +77,7 @@ internal sealed partial class MarkupRenderService(
             ValidatePropertyValuesTagHandlingOperationOnGet(
                 inputs: [tagHandlingOperation]);
 
-            tagHandlingOperation.RuntimeProperties = renderingUtilityBroker
+            tagHandlingOperation.RuntimeProperties = contentRenderBroker
                 .GetPropertyValues(value: tagHandlingOperation.Value);
 
             return tagHandlingOperation;

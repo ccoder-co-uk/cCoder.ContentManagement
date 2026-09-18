@@ -5,7 +5,9 @@
 using cCoder.ContentManagement.Brokers.Rendering;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Rendering.Brokers;
+using cCoder.ContentManagement.Models.Rendering;
 using cCoder.Data.Models.CMS;
+using System.Net;
 
 namespace cCoder.ContentManagement.Tests.Brokers.Rendering;
 
@@ -55,5 +57,20 @@ internal sealed class TestContentRenderBroker(
         renderFileContentBroker?.GetLatestTextContent(
             appId: appId,
             path: path);
+
+    public string HtmlEncode(string value) =>
+        WebUtility.HtmlEncode(value: value);
+
+    public RuntimePropertyValue[] GetPropertyValues(object value) =>
+        value.GetType()
+            .GetProperties()
+            .Select(selector: property => new RuntimePropertyValue
+            {
+                Name = property.Name,
+                Value = property.GetValue(obj: value),
+                IsValueType = property.PropertyType.IsValueType
+                    || property.PropertyType == typeof(string)
+            })
+            .ToArray();
 }
 #pragma warning restore STXTEST001

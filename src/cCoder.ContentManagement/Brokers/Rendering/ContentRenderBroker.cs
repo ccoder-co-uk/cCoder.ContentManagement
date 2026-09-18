@@ -2,8 +2,10 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Net;
 using System.Text;
 using cCoder.Data;
+using cCoder.ContentManagement.Models.Rendering;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.DMS;
 using Microsoft.EntityFrameworkCore;
@@ -80,6 +82,21 @@ internal sealed class ContentRenderBroker(
 
         return Encoding.UTF8.GetString(bytes: rawData);
     }
+
+    public string HtmlEncode(string value) =>
+        WebUtility.HtmlEncode(value: value);
+
+    public RuntimePropertyValue[] GetPropertyValues(object value) =>
+        value.GetType()
+            .GetProperties()
+            .Select(selector: property => new RuntimePropertyValue
+            {
+                Name = property.Name,
+                Value = property.GetValue(obj: value),
+                IsValueType = property.PropertyType.IsValueType
+                    || property.PropertyType == typeof(string)
+            })
+            .ToArray();
 
     private T[] Query<T>(
         Func<CoreDataContext, DbSet<T>> selectSet)

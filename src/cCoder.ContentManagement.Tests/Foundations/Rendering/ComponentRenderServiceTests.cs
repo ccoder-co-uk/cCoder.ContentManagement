@@ -35,9 +35,7 @@ public sealed partial class ComponentRenderServiceTests
             workflowExecutionBroker: Mock.Of<cCoder.ContentManagement.Brokers.IWorkflowExecutionBroker>(),
             cacheBroker: Mock.Of<cCoder.ContentManagement.Brokers.Caching.ICacheBroker>(),
             jsonBroker: Mock.Of<IJsonBroker>(),
-            regularExpressionBroker: Mock.Of<IRegularExpressionBroker>(),
-            renderingUtilityBroker:
-                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
+            regularExpressionBroker: Mock.Of<IRegularExpressionBroker>());
 
         // When
         ComponentRenderFoundationOperation operation =

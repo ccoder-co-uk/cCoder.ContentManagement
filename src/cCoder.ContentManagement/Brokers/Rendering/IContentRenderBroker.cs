@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models.CMS;
+using cCoder.ContentManagement.Models.Rendering;
 
 namespace cCoder.ContentManagement.Brokers.Rendering;
 
@@ -23,4 +24,8 @@ internal interface IContentRenderBroker
     Script GetScript(int appId, string name);
 
     string GetLatestTextContent(int appId, string path);
+
+    string HtmlEncode(string value);
+
+    RuntimePropertyValue[] GetPropertyValues(object value);
 }

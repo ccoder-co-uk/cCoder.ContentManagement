@@ -195,7 +195,6 @@ public static partial class IServiceCollectionExtensions
         services.AddSingleton<ICacheBroker, CacheBroker>();
         services.AddTransient<IMetadataTypeCacheBroker, MetadataTypeCacheBroker>();
         services.AddTransient<IContentRenderBroker, ContentRenderBroker>();
-        services.AddTransient<IRenderingUtilityBroker, RenderingUtilityBroker>();
         services.AddTransient<Brokers.Loggings.ILoggingBroker, Brokers.Loggings.LoggingBroker>();
         services.AddHttpContextAccessor();
 
@@ -336,6 +335,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IHttpContextService, HttpContextService>();
         services.AddTransient<IPageAuthorizationService, PageAuthorizationService>();
         services.AddTransient<IJsonService, JsonService>();
+        services.AddTransient<IHtmlRenderService, HtmlRenderService>();
         services.AddTransient<IAuthorizationService, AuthorizationService>();
         services.AddTransient<IAppCultureEventService, AppCultureEventService>();
         services.AddTransient<IAppEventService, AppEventService>();
@@ -422,7 +422,9 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ICultureManager, CultureManager>();
         services.AddTransient<ILayoutOrchestrationService, LayoutOrchestrationService>();
         services.AddTransient<ILayoutManager, LayoutManager>();
-        services.AddTransient<IJsonOrchestrationService, JsonOrchestrationService>();
+        services.AddTransient<
+            IRenderDataOrchestrationService,
+            RenderDataOrchestrationService>();
         services.AddTransient<IPageInfoOrchestrationService, PageInfoOrchestrationService>();
         services.AddTransient<IPageInfoManager, PageInfoManager>();
         services.AddTransient<IPageOrchestrationService, PageOrchestrationService>();
@@ -462,6 +464,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ILayoutEventProcessingService, LayoutEventProcessingService>();
         services.AddTransient<ILayoutProcessingService, LayoutProcessingService>();
         services.AddTransient<IJsonProcessingService, JsonProcessingService>();
+        services.AddTransient<IHtmlRenderProcessingService, HtmlRenderProcessingService>();
         services.AddTransient<IPackageExportProcessingService, PackageExportProcessingService>();
         services.AddTransient<IPackageItemEventProcessingService, PackageItemEventProcessingService>();
         services.AddTransient<

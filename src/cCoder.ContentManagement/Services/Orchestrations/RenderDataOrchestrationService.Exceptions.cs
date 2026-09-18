@@ -6,7 +6,7 @@ using cCoder.ContentManagement.Models.Exceptions;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal sealed partial class JsonOrchestrationService
+internal sealed partial class RenderDataOrchestrationService
 {
     private static TResult TryCatch<TResult>(Func<TResult> operation)
     {

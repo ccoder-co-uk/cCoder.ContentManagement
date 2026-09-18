@@ -14,10 +14,9 @@ internal sealed partial class RenderAggregationService(
     IPageContextOrchestrationService pageContextOrchestrationService,
     ICachedPageRenderOrchestrationService cachedPageRenderOrchestrationService,
     IUncachedPageRenderOrchestrationService uncachedPageRenderOrchestrationService,
-    IJsonOrchestrationService jsonOrchestrationService,
+    IRenderDataOrchestrationService renderDataOrchestrationService,
     ITemplateRenderOrchestrationService templateRenderOrchestrationService,
-    IComponentRenderOrchestrationService componentRenderOrchestrationService,
-    IRenderingUtilityBroker renderingUtilityBroker)
+    IComponentRenderOrchestrationService componentRenderOrchestrationService)
         : IRenderAggregationService
 {
     public ValueTask<RenderResult> RenderPageRenderResultAsync() =>
@@ -83,7 +82,7 @@ internal sealed partial class RenderAggregationService(
             ? "<a href='/Login'>Login</a>"
             : "<a name='logout' href=''>Logout</a>";
 
-        string serializedUser = jsonOrchestrationService.SerializeRuntimeValue(value: new
+        string serializedUser = renderDataOrchestrationService.SerializeRuntimeValue(value: new
         {
             Id = isGuest ? "Guest" : context.User.Id,
             DefaultCultureId = string.IsNullOrWhiteSpace(
@@ -126,7 +125,7 @@ internal sealed partial class RenderAggregationService(
                 comparisonType: StringComparison.Ordinal)
             .Replace(
                 oldValue: PageRenderRuntimeTokens.DisplayName,
-                newValue: renderingUtilityBroker.HtmlEncode(value: displayName),
+                newValue: renderDataOrchestrationService.HtmlEncode(value: displayName),
                 comparisonType: StringComparison.Ordinal)
             .Replace(
                 oldValue: PageRenderRuntimeTokens.LoginLink,

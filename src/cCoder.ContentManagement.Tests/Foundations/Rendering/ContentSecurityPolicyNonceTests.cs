@@ -105,7 +105,5 @@ public sealed partial class ContentSecurityPolicyNonceTests
             workflowExecutionBroker: Mock.Of<cCoder.ContentManagement.Brokers.IWorkflowExecutionBroker>(),
             cacheBroker: Mock.Of<cCoder.ContentManagement.Brokers.Caching.ICacheBroker>(),
             jsonBroker: Mock.Of<IJsonBroker>(),
-            regularExpressionBroker: new RegularExpressionBroker(),
-            renderingUtilityBroker:
-                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
+            regularExpressionBroker: new RegularExpressionBroker());
 }

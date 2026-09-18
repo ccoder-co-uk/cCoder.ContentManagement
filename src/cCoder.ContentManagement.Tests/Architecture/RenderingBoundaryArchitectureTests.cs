@@ -41,8 +41,7 @@ public sealed partial class RenderingBoundaryArchitectureTests
                     comparisonType: StringComparison.Ordinal)
                 && dependencyType.Name is not "IJsonBroker"
                 && dependencyType.Name is not "ILoggingBroker"
-                && dependencyType.Name is not "IRegularExpressionBroker"
-                && dependencyType.Name is not "IRenderingUtilityBroker")
+                && dependencyType.Name is not "IRegularExpressionBroker")
             .ToArray();
 
         // Then

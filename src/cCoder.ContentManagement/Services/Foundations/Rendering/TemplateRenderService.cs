@@ -17,8 +17,7 @@ internal sealed partial class TemplateRenderService(
     ICacheBroker cacheBroker,
     IJsonBroker jsonBroker,
     ILoggingBroker loggingBroker,
-    IRegularExpressionBroker regularExpressionBroker,
-    IRenderingUtilityBroker renderingUtilityBroker)
+    IRegularExpressionBroker regularExpressionBroker)
         : ITemplateRenderService
 {
     public TemplateRenderFoundationOperation GetPropertyValuesTemplateRenderFoundationOperation(
@@ -28,7 +27,7 @@ internal sealed partial class TemplateRenderService(
             ValidatePropertyValuesTemplateRenderFoundationOperationOnGet(
                 inputs: [templateRenderFoundationOperation]);
 
-            templateRenderFoundationOperation.RuntimeProperties = renderingUtilityBroker
+            templateRenderFoundationOperation.RuntimeProperties = contentRenderBroker
                 .GetPropertyValues(value: templateRenderFoundationOperation.Value);
 
             return templateRenderFoundationOperation;

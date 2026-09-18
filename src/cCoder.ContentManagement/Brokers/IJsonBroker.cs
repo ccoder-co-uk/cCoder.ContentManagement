@@ -16,6 +16,8 @@ internal interface IJsonBroker
 
     string SerializeIgnoringReferences(object value);
 
+    string ComputeFingerprint(object value);
+
     bool IsJsonElement(object value);
 
     bool IsJsonNull(object value);
