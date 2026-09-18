@@ -21,6 +21,11 @@ internal sealed partial class MarkupRenderOrchestrationService(
         ValidateRenderHttpPageRenderOperationAsync(
             inputs: [httpPageRenderOperation]);
 
+        if (httpPageRenderOperation.Failure != HttpPageRenderFailure.None)
+        {
+            return;
+        }
+
         PageRenderOperation pageRenderOperation =
             httpPageRenderOperation.RenderOperation;
 

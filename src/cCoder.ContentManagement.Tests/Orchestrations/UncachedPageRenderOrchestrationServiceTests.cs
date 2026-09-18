@@ -16,6 +16,35 @@ namespace cCoder.ContentManagement.Tests.Orchestrations;
 
 public sealed partial class UncachedPageRenderOrchestrationServiceTests
 {
+    [Fact]
+    public async Task ShouldDeferPageNotFoundOutcomeUntilEventCompletesAsync()
+    {
+        // Given
+        HttpPageRenderOperation operation = new()
+        {
+            Context = new HttpPageRenderContext()
+        };
+
+        UncachedPageRenderOrchestrationService service = new(
+            pageProcessingService: Mock.Of<IPageProcessingService>(),
+            pageRenderProcessingService:
+                Mock.Of<IPageRenderProcessingService>());
+
+        // When
+        Exception exception = await Record.ExceptionAsync(
+            testCode: async () =>
+                await service.PrepareHttpPageRenderOperationAsync(
+                    httpPageRenderOperation: operation));
+
+        // Then
+        Assert.Null(@object: exception);
+        Assert.Null(@object: operation.RenderOperation);
+
+        Assert.Equal(
+            expected: HttpPageRenderFailure.PageNotFound,
+            actual: operation.Failure);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

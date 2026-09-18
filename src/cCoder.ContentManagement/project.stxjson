@@ -27233,17 +27233,23 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
           ],
           "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
           ],
           "ThrowsExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
           ],
           "HttpMethods": [],
           "HttpResponses": [],
@@ -29571,23 +29577,17 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "ThrowsExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "HttpMethods": [],
           "HttpResponses": [],
@@ -30709,6 +30709,10 @@
         {
           "Name": "Context",
           "Type": "cCoder.ContentManagement.Models.HttpPageRenderContext"
+        },
+        {
+          "Name": "Failure",
+          "Type": "cCoder.ContentManagement.Models.HttpPageRenderFailure"
         },
         {
           "Name": "RenderOperation",
@@ -37349,7 +37353,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",
       "StandardElementType": "AggregationService",
-      "LineNumber": 13,
+      "LineNumber": 14,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -37370,7 +37374,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderComponentRenderResultAsync(System.String)",
           "Name": "RenderComponentRenderResultAsync",
-          "LineNumber": 158,
+          "LineNumber": 175,
           "Inputs": [
             {
               "Name": "name",
@@ -37428,7 +37432,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderPageRenderResultAsync()",
           "Name": "RenderPageRenderResultAsync",
-          "LineNumber": 22,
+          "LineNumber": 23,
           "Inputs": [],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.RenderResult\u003E",
           "Implements": [
@@ -37471,17 +37475,23 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
           ],
           "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
           ],
           "ThrowsExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
           ],
           "HttpMethods": [],
           "HttpResponses": [],
@@ -37495,7 +37505,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderTemplateRenderResultAsync(System.String,System.Object)",
           "Name": "RenderTemplateRenderResultAsync",
-          "LineNumber": 140,
+          "LineNumber": 157,
           "Inputs": [
             {
               "Name": "name",
@@ -65478,7 +65488,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService",
       "StandardElementType": "OrchestrationService",
-      "LineNumber": 12,
+      "LineNumber": 11,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -65499,7 +65509,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService.CompleteHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
           "Name": "CompleteHttpPageRenderOperationAsync",
-          "LineNumber": 64,
+          "LineNumber": 67,
           "Inputs": [
             {
               "Name": "httpPageRenderOperation",
@@ -65548,7 +65558,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService.PrepareHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
           "Name": "PrepareHttpPageRenderOperationAsync",
-          "LineNumber": 17,
+          "LineNumber": 16,
           "Inputs": [
             {
               "Name": "httpPageRenderOperation",
@@ -65589,23 +65599,17 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "ThrowsExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.PageAccessSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.PageNotFoundException"
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "HttpMethods": [],
           "HttpResponses": [],

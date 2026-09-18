@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
@@ -45,6 +46,8 @@ internal sealed partial class RenderAggregationService(
                 .RaiseHttpPageRenderOperationRenderRequestAsync(
                     httpPageRenderOperation: operation);
 
+            ThrowRenderFailure(operation: operation);
+
             if (!context.Edit && context.PageId is not null)
             {
                 operation = await cachedPageRenderOrchestrationService
@@ -62,6 +65,20 @@ internal sealed partial class RenderAggregationService(
         };
 
     }, isValueTask: true);
+
+    private static void ThrowRenderFailure(HttpPageRenderOperation operation)
+    {
+        switch (operation.Failure)
+        {
+            case HttpPageRenderFailure.PageNotFound:
+                throw new PageNotFoundException(
+                    pageRenderContext: operation.Context);
+
+            case HttpPageRenderFailure.PageAccessDenied:
+                throw new PageAccessSecurityException(
+                    pageRenderContext: operation.Context);
+        }
+    }
 
     private void HydrateRequestValues(
         PageRenderResult page,

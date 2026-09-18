@@ -3,7 +3,6 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
 
@@ -24,14 +23,18 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
 
         if (context.PageId is null)
         {
-            throw new PageNotFoundException(
-                pageRenderContext: context);
+            httpPageRenderOperation.Failure =
+                HttpPageRenderFailure.PageNotFound;
+
+            return;
         }
 
         if (context.AccessDenied)
         {
-            throw new PageAccessSecurityException(
-                pageRenderContext: context);
+            httpPageRenderOperation.Failure =
+                HttpPageRenderFailure.PageAccessDenied;
+
+            return;
         }
 
         Page page = await pageProcessingService.GetPageForRenderAsync(
@@ -66,6 +69,11 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
         TryCatch(operation: () =>
     {
         ValidateHttpPageRenderOperationOnRenderAsync(inputs: [httpPageRenderOperation]);
+
+        if (httpPageRenderOperation.Failure != HttpPageRenderFailure.None)
+        {
+            return ValueTask.CompletedTask;
+        }
 
         HttpPageRenderContext context = httpPageRenderOperation.Context;
         PageRenderOperation renderOperation = httpPageRenderOperation.RenderOperation;
