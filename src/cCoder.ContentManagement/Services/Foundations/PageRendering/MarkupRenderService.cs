@@ -19,12 +19,9 @@ internal sealed partial class MarkupRenderService(
     IJsonBroker jsonBroker,
     IRegularExpressionBroker regularExpressionBroker,
     ICacheBroker cacheBroker,
-    IRenderingUtilityBroker renderingUtilityBroker = null)
+    IRenderingUtilityBroker renderingUtilityBroker)
         : IMarkupRenderService
 {
-    private readonly IRenderingUtilityBroker renderingUtilityBroker =
-        renderingUtilityBroker ?? new RenderingUtilityBroker();
-
     public TagHandlingOperation PrepareRenderSessionTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation) =>
         TryCatch(operation: () =>

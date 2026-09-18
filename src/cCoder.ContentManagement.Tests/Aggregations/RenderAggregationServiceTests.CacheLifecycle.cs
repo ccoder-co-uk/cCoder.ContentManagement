@@ -134,7 +134,9 @@ public sealed partial class RenderAggregationServiceTests
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>());
+                Mock.Of<IComponentRenderOrchestrationService>(),
+            renderingUtilityBroker:
+                new cCoder.ContentManagement.Brokers.Rendering.RenderingUtilityBroker());
 
         // When
         RenderResult uncachedResult = await service.RenderPageRenderResultAsync();
