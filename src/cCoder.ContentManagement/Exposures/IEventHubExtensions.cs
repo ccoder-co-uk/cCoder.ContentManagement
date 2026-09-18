@@ -4,6 +4,7 @@
 
 using cCoder.ContentManagement.Exposures.Caching;
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Foundations;
@@ -11,6 +12,7 @@ using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Eventing;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 
 namespace cCoder.ContentManagement;
 
@@ -40,6 +42,8 @@ public static partial class IEventHubExtensions
         ListenToPageOwnedRenderCacheEvents(eventHub: eventHub);
         ListenToCommonObjectRenderCacheEvents(eventHub: eventHub);
         ListenToPackageImportRenderCacheEvents(eventHub: eventHub);
+        ListenToRenderRequestEvents(eventHub: eventHub);
+        ListenToRenderTagEvents(eventHub: eventHub);
         ListenToFinalAppDeleteEvent(eventHub: eventHub);
 
         return eventHub;
@@ -401,6 +405,96 @@ public static partial class IEventHubExtensions
             name: "package_import_complete",
             handler: (IPageRenderCacheAggregationService service, PackageImportEvent args) =>
                 service.InvalidatePackageAsync(appId: args.AppId));
+
+    private static void ListenToRenderTagEvents(IEventHub eventHub)
+    {
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderCultureLinkTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderMetadataTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderNavigationTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderContentTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderComponentTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderScriptTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderStyleTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderReplacementTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderDmsTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderResourceTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+
+        eventHub.ListenToEvent<TagHandlingOperation, IMarkupRenderTagHandlingProcessingService>(
+            name: "render_tags",
+            handler: static (service, operation) =>
+                service.RenderExecuteTagHandlingOperationAsync(
+                    tagHandlingOperation: operation));
+    }
+
+    private static void ListenToRenderRequestEvents(IEventHub eventHub)
+    {
+        eventHub.ListenToEvent<HttpPageRenderOperation, IUncachedPageRenderOrchestrationService>(
+            name: "render_request",
+            handler: static (service, operation) =>
+                service.PrepareHttpPageRenderOperationAsync(
+                    httpPageRenderOperation: operation));
+
+        eventHub.ListenToEvent<HttpPageRenderOperation, IMarkupRenderOrchestrationService>(
+            name: "render_request",
+            handler: static (service, operation) =>
+                service.RenderHttpPageRenderOperationAsync(
+                    httpPageRenderOperation: operation));
+
+        eventHub.ListenToEvent<HttpPageRenderOperation, IUncachedPageRenderOrchestrationService>(
+            name: "render_request",
+            handler: static (service, operation) =>
+                service.CompleteHttpPageRenderOperationAsync(
+                    httpPageRenderOperation: operation));
+    }
 
     private static void ListenToFinalAppDeleteEvent(IEventHub eventHub) =>
         eventHub.ListenToEvent(

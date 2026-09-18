@@ -7,6 +7,7 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
@@ -130,6 +131,20 @@ public sealed partial class IEventHubExtensionsTests
             ("common_object_delete", typeof(IPageRenderCacheAggregationService)),
             ("common_objects_imported", typeof(IPageRenderCacheAggregationService)),
             ("package_import_complete", typeof(IPageRenderCacheAggregationService)),
+            ("render_request", typeof(IUncachedPageRenderOrchestrationService)),
+            ("render_request", typeof(IMarkupRenderOrchestrationService)),
+            ("render_request", typeof(IUncachedPageRenderOrchestrationService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
+            ("render_tags", typeof(IMarkupRenderTagHandlingProcessingService)),
             ("app_delete", typeof(IAppOrchestrationService))
         ];
 

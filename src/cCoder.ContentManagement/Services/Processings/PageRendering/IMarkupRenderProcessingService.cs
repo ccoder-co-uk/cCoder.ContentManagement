@@ -8,5 +8,8 @@ namespace cCoder.ContentManagement.Rendering.Services.Processings;
 
 internal interface IMarkupRenderProcessingService
 {
-    RenderSession RenderRenderSession(RenderSession session);
+    RenderSession RenderRenderSession(RenderSession renderSession);
+
+    ValueTask<RenderSession> RenderRenderSessionAsync(
+        RenderSession renderSession);
 }

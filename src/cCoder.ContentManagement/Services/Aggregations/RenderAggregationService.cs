@@ -13,7 +13,7 @@ namespace cCoder.ContentManagement.Services.Aggregations;
 internal sealed partial class RenderAggregationService(
     IPageContextOrchestrationService pageContextOrchestrationService,
     ICachedPageRenderOrchestrationService cachedPageRenderOrchestrationService,
-    IUncachedPageRenderOrchestrationService uncachedPageRenderOrchestrationService,
+    IRenderEventOrchestrationService renderEventOrchestrationService,
     IRenderDataOrchestrationService renderDataOrchestrationService,
     ITemplateRenderOrchestrationService templateRenderOrchestrationService,
     IComponentRenderOrchestrationService componentRenderOrchestrationService)
@@ -41,9 +41,9 @@ internal sealed partial class RenderAggregationService(
 
         if (operation.Response is null)
         {
-            operation = await uncachedPageRenderOrchestrationService
-                .RenderHttpPageRenderOperationAsync(
-                    operation: operation);
+            await renderEventOrchestrationService
+                .RaiseHttpPageRenderOperationRenderRequestAsync(
+                    httpPageRenderOperation: operation);
 
             if (!context.Edit && context.PageId is not null)
             {

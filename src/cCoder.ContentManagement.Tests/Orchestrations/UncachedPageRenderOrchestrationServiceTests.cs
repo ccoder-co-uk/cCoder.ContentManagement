@@ -46,7 +46,6 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
 
         Mock<IPageProcessingService> pageService = new();
         Mock<IPageRenderProcessingService> renderService = new();
-        Mock<IMarkupRenderProcessingService> markupRenderService = new();
 
         pageService.Setup(expression: service =>
             service.GetPageForRenderAsync(pageId: page.Id))
@@ -72,10 +71,6 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
                 return item;
             });
 
-        markupRenderService.Setup(expression: service =>
-            service.RenderRenderSession(session: null))
-            .Returns(value: null);
-
         renderService.Setup(expression: service =>
             service.CompletePageRenderOperation(
                 operation: It.IsAny<PageRenderOperation>()))
@@ -83,18 +78,19 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
 
         UncachedPageRenderOrchestrationService service = new(
             pageProcessingService: pageService.Object,
-            pageRenderProcessingService: renderService.Object,
-            markupRenderProcessingService: markupRenderService.Object);
+            pageRenderProcessingService: renderService.Object);
 
         // When
-        HttpPageRenderOperation result = await service
-            .RenderHttpPageRenderOperationAsync(httpPageRenderOperation: operation);
+        await service.PrepareHttpPageRenderOperationAsync(
+            httpPageRenderOperation: operation);
+
+        await service.CompleteHttpPageRenderOperationAsync(
+            httpPageRenderOperation: operation);
 
         // Then
-        Assert.NotNull(@object: result.Response);
-        Assert.Equal(expected: edit, actual: result.Response.Edit);
+        Assert.NotNull(@object: operation.Response);
+        Assert.Equal(expected: edit, actual: operation.Response.Edit);
         pageService.VerifyAll();
         renderService.VerifyAll();
-        markupRenderService.VerifyAll();
     }
 }

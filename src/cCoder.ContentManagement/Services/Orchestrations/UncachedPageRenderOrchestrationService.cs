@@ -5,21 +5,18 @@
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Services.Processings;
-using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class UncachedPageRenderOrchestrationService(
     IPageProcessingService pageProcessingService,
-    IPageRenderProcessingService pageRenderProcessingService,
-    IMarkupRenderProcessingService markupRenderProcessingService)
+    IPageRenderProcessingService pageRenderProcessingService)
         : IUncachedPageRenderOrchestrationService
 {
-    public ValueTask<HttpPageRenderOperation>
-        RenderHttpPageRenderOperationAsync(
-            HttpPageRenderOperation httpPageRenderOperation) =>
-        TryCatch<HttpPageRenderOperation>(operation: async () =>
+    public ValueTask PrepareHttpPageRenderOperationAsync(
+        HttpPageRenderOperation httpPageRenderOperation) =>
+        TryCatch(operation: async () =>
     {
         ValidateHttpPageRenderOperationOnRenderAsync(inputs: [httpPageRenderOperation]);
 
@@ -60,8 +57,21 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
                     Edit = context.Edit
                 });
 
-        renderOperation.RenderSession = markupRenderProcessingService
-            .RenderRenderSession(session: renderOperation.RenderSession);
+        httpPageRenderOperation.RenderOperation = renderOperation;
+
+    }, isValueTask: true);
+
+    public ValueTask CompleteHttpPageRenderOperationAsync(
+        HttpPageRenderOperation httpPageRenderOperation) =>
+        TryCatch(operation: () =>
+    {
+        ValidateHttpPageRenderOperationOnRenderAsync(inputs: [httpPageRenderOperation]);
+
+        HttpPageRenderContext context = httpPageRenderOperation.Context;
+        PageRenderOperation renderOperation = httpPageRenderOperation.RenderOperation;
+        Page page = renderOperation.SourcePage;
+        string culture = renderOperation.Culture;
+        string theme = renderOperation.Theme;
 
         renderOperation = pageRenderProcessingService
             .CompletePageRenderOperation(operation: renderOperation);
@@ -75,7 +85,7 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
             Edit = context.Edit
         };
 
-        return httpPageRenderOperation;
+        return ValueTask.CompletedTask;
 
     }, isValueTask: true);
 

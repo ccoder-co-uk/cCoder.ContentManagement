@@ -17,6 +17,7 @@ using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Brokers.Rendering;
 using cCoder.ContentManagement.Brokers.Caching;
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Processings;
@@ -182,6 +183,8 @@ public static partial class IServiceCollectionExtensions
         services.AddEventingForType<Script>();
         services.AddEventingForType<Submission>();
         services.AddEventingForType<Template>();
+        services.AddEventingForType<HttpPageRenderOperation>();
+        services.AddEventingForType<TagHandlingOperation>();
     }
 
     private static void AddDependencies(this IServiceCollection services)
@@ -221,6 +224,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IScriptEventBroker, ScriptEventBroker>();
         services.AddTransient<ISubmissionEventBroker, SubmissionEventBroker>();
         services.AddTransient<ITemplateEventBroker, TemplateEventBroker>();
+        services.AddTransient<IRenderEventBroker, RenderEventBroker>();
         services.AddTransient<IAppBroker, AppBroker>();
         services.AddTransient<IAppCultureBroker, AppCultureBroker>();
         services.AddTransient<ICommonObjectBroker, CommonObjectBroker>();
@@ -314,6 +318,9 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IMarkupRenderService, MarkupRenderService>();
         services.AddTransient<ICachedPageRenderService, CachedPageRenderService>();
         services.AddTransient<IMarkupRenderProcessingService, MarkupRenderProcessingService>();
+        services.AddTransient<
+            IMarkupRenderTagHandlingProcessingService,
+            MarkupRenderTagHandlingProcessingService>();
         services.AddTransient<IMetadataCacheProcessingService, MetadataCacheProcessingService>();
         services.AddTransient<
             IMetadataCacheSourceProcessingService,
@@ -353,6 +360,12 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IScriptEventService, ScriptEventService>();
         services.AddTransient<ISubmissionEventService, SubmissionEventService>();
         services.AddTransient<ITemplateEventService, TemplateEventService>();
+        services.AddTransient<
+            IHttpPageRenderOperationEventService,
+            HttpPageRenderOperationEventService>();
+        services.AddTransient<
+            ITagHandlingOperationEventService,
+            TagHandlingOperationEventService>();
         services.AddTransient<IPackageExportService, PackageExportService>();
         services.AddTransient<IAppCultureService, AppCultureService>();
         services.AddTransient<IAppService, AppService>();
@@ -443,6 +456,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateOrchestrationService, TemplateOrchestrationService>();
         services.AddTransient<ITemplateContentOrchestrationService, TemplateContentOrchestrationService>();
         services.AddTransient<ITemplateRenderOrchestrationService, TemplateRenderOrchestrationService>();
+        services.AddTransient<IRenderEventOrchestrationService, RenderEventOrchestrationService>();
+        services.AddTransient<IMarkupRenderOrchestrationService, MarkupRenderOrchestrationService>();
     }
 
     private static void AddProcessings(this IServiceCollection services)
@@ -501,6 +516,12 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateContentProcessingService, TemplateContentProcessingService>();
         services.AddTransient<IHtmlToPdfProcessingService, HtmlToPdfProcessingService>();
         services.AddTransient<ITemplateRenderProcessingService, TemplateRenderProcessingService>();
+        services.AddTransient<
+            IHttpPageRenderOperationEventProcessingService,
+            HttpPageRenderOperationEventProcessingService>();
+        services.AddTransient<
+            ITagHandlingOperationEventProcessingService,
+            TagHandlingOperationEventProcessingService>();
     }
 
     private static void RegisterConfiguration(

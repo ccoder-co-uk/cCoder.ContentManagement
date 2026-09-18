@@ -72,7 +72,6 @@ public sealed partial class RenderAggregationServiceTests
 
         Mock<IPageProcessingService> pageProcessing = new();
         Mock<IPageRenderProcessingService> renderProcessing = new();
-        Mock<IMarkupRenderProcessingService> markupRenderProcessing = new();
 
         renderProcessing.Setup(expression: service =>
             service.SerializeRuntimeValue(value: It.IsAny<object>()))
@@ -99,10 +98,6 @@ public sealed partial class RenderAggregationServiceTests
                 return operation;
             });
 
-        markupRenderProcessing.Setup(expression: service =>
-            service.RenderRenderSession(session: null))
-            .Returns(value: null);
-
         renderProcessing.Setup(expression: service =>
             service.CompletePageRenderOperation(
                 operation: It.IsAny<PageRenderOperation>()))
@@ -110,8 +105,26 @@ public sealed partial class RenderAggregationServiceTests
 
         UncachedPageRenderOrchestrationService uncached = new(
             pageProcessingService: pageProcessing.Object,
-            pageRenderProcessingService: renderProcessing.Object,
-            markupRenderProcessingService: markupRenderProcessing.Object);
+            pageRenderProcessingService: renderProcessing.Object);
+
+        Mock<IRenderEventOrchestrationService> renderEvent = new();
+
+        renderEvent.Setup(expression: service =>
+                service.RaiseHttpPageRenderOperationRenderRequestAsync(
+                    httpPageRenderOperation: It.IsAny<HttpPageRenderOperation>()))
+            .Callback<HttpPageRenderOperation>(action: operation =>
+            {
+                uncached.PrepareHttpPageRenderOperationAsync(
+                        httpPageRenderOperation: operation)
+                    .GetAwaiter()
+                    .GetResult();
+
+                uncached.CompleteHttpPageRenderOperationAsync(
+                        httpPageRenderOperation: operation)
+                    .GetAwaiter()
+                    .GetResult();
+            })
+            .Returns(value: ValueTask.CompletedTask);
 
         Mock<IRenderDataOrchestrationService> json = CreateRenderDataOrchestrationServiceMock();
 
@@ -129,7 +142,7 @@ public sealed partial class RenderAggregationServiceTests
         RenderAggregationService service = new(
             pageContextOrchestrationService: pageContext.Object,
             cachedPageRenderOrchestrationService: cached,
-            uncachedPageRenderOrchestrationService: uncached,
+            renderEventOrchestrationService: renderEvent.Object,
             renderDataOrchestrationService: json.Object,
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),

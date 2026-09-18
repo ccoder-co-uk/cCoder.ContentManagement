@@ -92,6 +92,84 @@ public sealed partial class MarkupRenderProcessingServiceTagPipelineTests
     }
 
     [Fact]
+    public void ShouldPreferAppComponentBeforeCommonCacheComponent()
+    {
+        // Given
+        MarkupRenderProcessingService service = CreateService();
+        RenderSession session = CreateSession();
+
+        session.ComponentsByName["Shared"] = new PageRenderComponent
+        {
+            Id = 1,
+            Name = "Shared",
+            ResourceKey = "Default",
+            Content = "App component",
+            Script = string.Empty
+        };
+
+        session.CommonComponentsByName = new Dictionary<string, PageRenderComponent>(
+            comparer: StringComparer.OrdinalIgnoreCase)
+        {
+            ["Shared"] = new PageRenderComponent
+            {
+                Id = 2,
+                Name = "Shared",
+                ResourceKey = "Default",
+                Content = "Common component",
+                Script = string.Empty
+            }
+        };
+
+        // When
+        string result = service.RenderMarkup(
+            key: "Default",
+            content: "[component[Shared]]",
+            session: session,
+            replacements: [],
+            allowContentTags: true);
+
+        // Then
+        result.Should()
+            .Contain(expected: "App component");
+
+        result.Should()
+            .NotContain(unexpected: "Common component");
+    }
+
+    [Fact]
+    public void ShouldUseCommonCacheComponentWhenAppComponentIsMissing()
+    {
+        // Given
+        MarkupRenderProcessingService service = CreateService();
+        RenderSession session = CreateSession();
+
+        session.CommonComponentsByName = new Dictionary<string, PageRenderComponent>(
+            comparer: StringComparer.OrdinalIgnoreCase)
+        {
+            ["Shared"] = new PageRenderComponent
+            {
+                Id = 2,
+                Name = "Shared",
+                ResourceKey = "Default",
+                Content = "Common component",
+                Script = string.Empty
+            }
+        };
+
+        // When
+        string result = service.RenderMarkup(
+            key: "Default",
+            content: "[component[Shared]]",
+            session: session,
+            replacements: [],
+            allowContentTags: true);
+
+        // Then
+        result.Should()
+            .Contain(expected: "Common component");
+    }
+
+    [Fact]
     public void ShouldReportAReplacementCycle()
     {
         // Given

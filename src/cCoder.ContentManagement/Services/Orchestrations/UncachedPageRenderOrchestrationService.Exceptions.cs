@@ -8,13 +8,13 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class UncachedPageRenderOrchestrationService
 {
-    private static async ValueTask<TResult> TryCatch<TResult>(
-        Func<ValueTask<TResult>> operation,
+    private static async ValueTask TryCatch(
+        Func<ValueTask> operation,
         bool isValueTask)
     {
         try
         {
-            return await operation();
+            await operation();
         }
         catch (PageNotFoundException)
         {

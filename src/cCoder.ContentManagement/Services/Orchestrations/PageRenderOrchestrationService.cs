@@ -199,7 +199,7 @@ internal partial class PageRenderOrchestrationService(
             operation: operation);
 
         operation.RenderSession = markupRenderProcessingService
-            .RenderRenderSession(session: operation.RenderSession);
+            .RenderRenderSession(renderSession: operation.RenderSession);
 
         return pageRenderProcessingService.CompletePageRenderOperation(
             operation: operation).Page;

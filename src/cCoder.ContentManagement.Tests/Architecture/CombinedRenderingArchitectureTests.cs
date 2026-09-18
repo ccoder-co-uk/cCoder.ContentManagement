@@ -134,21 +134,84 @@ public sealed partial class CombinedRenderingArchitectureTests
     }
 
     [Fact]
-    public void TagHandling_WhenComposed_IsOwnedByMarkupFoundation()
+    public void TagHandling_WhenComposed_IsOwnedByFocusedProcessingOperations()
     {
         // Given
         Type[] contentManagementTypes = ContentManagementAssembly.GetTypes();
 
         // When
-        Type[] processingHandlers = contentManagementTypes
-            .Where(predicate: type => type.Name.EndsWith(
-                value: "TagHandlingProcessingService",
+        Type markupRenderProcessingContract = contentManagementTypes
+            .Single(predicate: type =>
+                type.Name == "IMarkupRenderTagHandlingProcessingService");
+
+        string[] processingOperations = markupRenderProcessingContract
+            .GetMethods()
+            .Where(predicate: method => method.Name.EndsWith(
+                value: "TagHandlingOperationAsync",
                 comparisonType: StringComparison.Ordinal))
+            .Select(selector: method => method.Name)
             .ToArray();
 
         // Then
-        processingHandlers.Should()
-            .BeEmpty();
+        processingOperations.Should()
+            .BeEquivalentTo(
+            expectation:
+            [
+                "RenderComponentTagHandlingOperationAsync",
+                "RenderContentTagHandlingOperationAsync",
+                "RenderCultureLinkTagHandlingOperationAsync",
+                "RenderDmsTagHandlingOperationAsync",
+                "RenderExecuteTagHandlingOperationAsync",
+                "RenderMetadataTagHandlingOperationAsync",
+                "RenderNavigationTagHandlingOperationAsync",
+                "RenderReplacementTagHandlingOperationAsync",
+                "RenderResourceTagHandlingOperationAsync",
+                "RenderScriptTagHandlingOperationAsync",
+                "RenderStyleTagHandlingOperationAsync"
+            ],
+            because: "render_tags must fan out into one focused operation per tag family");
+    }
+
+    [Fact]
+    public void Rendering_WhenComposed_UsesEventsForCacheMissWork()
+    {
+        // Given
+        Type renderAggregationService = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService");
+
+        Type renderEventBroker = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Brokers.Events.RenderEventBroker");
+
+        Type renderEventProcessingService = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Services.Processings.HttpPageRenderOperationEventProcessingService");
+
+        // When
+        Type[] aggregationDependencies = GetConstructorDependencies(
+            type: renderAggregationService);
+
+        Type[] eventProcessingDependencies = GetConstructorDependencies(
+            type: renderEventProcessingService);
+
+        // Then
+        aggregationDependencies
+            .Should()
+            .ContainSingle(
+            predicate: dependency =>
+                dependency.Name == "IRenderEventOrchestrationService");
+
+        aggregationDependencies
+            .Should()
+            .NotContain(
+            predicate: dependency =>
+                dependency.Name == "IUncachedPageRenderOrchestrationService");
+
+        renderEventBroker.Should()
+            .NotBeNull(
+                because: "render events must cross the IEventHub boundary through a broker");
+
+        eventProcessingDependencies.Should()
+            .ContainSingle(predicate: dependency =>
+                dependency.Name == "IHttpPageRenderOperationEventService");
     }
 
     [Fact]
