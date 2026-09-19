@@ -3150,6 +3150,78 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Brokers.FingerprintBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 10,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Brokers.IFingerprintBroker",
+          "FullName": "cCoder.ContentManagement.Brokers.IFingerprintBroker",
+          "Name": "IFingerprintBroker",
+          "Namespace": "cCoder.ContentManagement.Brokers",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Broker"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.FingerprintBroker.Compute(System.String)",
+          "Name": "Compute",
+          "LineNumber": 12,
+          "Inputs": [
+            {
+              "Name": "value",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.String",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.IFingerprintBroker.Compute(System.String)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "System.Convert",
+              "MethodName": "ToHexString",
+              "MethodId": "System.Convert.ToHexString(System.Byte[])",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Security.Cryptography.SHA256",
+              "MethodName": "HashData",
+              "MethodId": "System.Security.Cryptography.SHA256.HashData(System.Byte[])",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Text.Encoding",
+              "MethodName": "GetBytes",
+              "MethodId": "System.Text.Encoding.GetBytes(System.String)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Brokers.HtmlToPdfBroker",
       "StandardElementType": "Broker",
       "LineNumber": 9,
@@ -3451,7 +3523,7 @@
     {
       "Name": "cCoder.ContentManagement.Brokers.JsonBroker",
       "StandardElementType": "Broker",
-      "LineNumber": 15,
+      "LineNumber": 13,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -3480,65 +3552,9 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Brokers.JsonBroker.ComputeFingerprint(System.Object)",
-          "Name": "ComputeFingerprint",
-          "LineNumber": 42,
-          "Inputs": [
-            {
-              "Name": "value",
-              "Type": "System.Object"
-            }
-          ],
-          "ReturnType": "System.String",
-          "Implements": [
-            "cCoder.ContentManagement.Brokers.IJsonBroker.ComputeFingerprint(System.Object)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "System.Convert",
-              "MethodName": "ToHexString",
-              "MethodId": "System.Convert.ToHexString(System.Byte[])",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Security.Cryptography.SHA256",
-              "MethodName": "HashData",
-              "MethodId": "System.Security.Cryptography.SHA256.HashData(System.Byte[])",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Text.Encoding",
-              "MethodName": "GetBytes",
-              "MethodId": "System.Text.Encoding.GetBytes(System.String)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Text.Json.JsonSerializer",
-              "MethodName": "Serialize",
-              "MethodId": "System.Text.Json.JsonSerializer.Serialize(TValue,System.Text.Json.JsonSerializerOptions?)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            }
-          ],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.GetJsonElementItems(System.Object)",
           "Name": "GetJsonElementItems",
-          "LineNumber": 97,
+          "LineNumber": 89,
           "Inputs": [
             {
               "Name": "value",
@@ -3587,7 +3603,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.GetJsonElementProperties(System.Object)",
           "Name": "GetJsonElementProperties",
-          "LineNumber": 84,
+          "LineNumber": 76,
           "Inputs": [
             {
               "Name": "value",
@@ -3643,7 +3659,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.GetJsonItems(System.Object)",
           "Name": "GetJsonItems",
-          "LineNumber": 93,
+          "LineNumber": 85,
           "Inputs": [
             {
               "Name": "value",
@@ -3678,7 +3694,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.GetJsonProperties(System.Object)",
           "Name": "GetJsonProperties",
-          "LineNumber": 76,
+          "LineNumber": 68,
           "Inputs": [
             {
               "Name": "value",
@@ -3720,7 +3736,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.GetJsonRawText(System.Object)",
           "Name": "GetJsonRawText",
-          "LineNumber": 60,
+          "LineNumber": 52,
           "Inputs": [
             {
               "Name": "value",
@@ -3755,7 +3771,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.IsJsonArray(System.Object)",
           "Name": "IsJsonArray",
-          "LineNumber": 67,
+          "LineNumber": 59,
           "Inputs": [
             {
               "Name": "value",
@@ -3782,7 +3798,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.IsJsonElement(System.Object)",
           "Name": "IsJsonElement",
-          "LineNumber": 48,
+          "LineNumber": 40,
           "Inputs": [
             {
               "Name": "value",
@@ -3809,7 +3825,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.IsJsonNull(System.Object)",
           "Name": "IsJsonNull",
-          "LineNumber": 51,
+          "LineNumber": 43,
           "Inputs": [
             {
               "Name": "value",
@@ -3844,7 +3860,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.IsJsonObject(System.Object)",
           "Name": "IsJsonObject",
-          "LineNumber": 63,
+          "LineNumber": 55,
           "Inputs": [
             {
               "Name": "value",
@@ -3871,7 +3887,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.IsJsonString(System.Object)",
           "Name": "IsJsonString",
-          "LineNumber": 55,
+          "LineNumber": 47,
           "Inputs": [
             {
               "Name": "value",
@@ -3906,7 +3922,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.IsJsonValue(System.Object)",
           "Name": "IsJsonValue",
-          "LineNumber": 71,
+          "LineNumber": 63,
           "Inputs": [
             {
               "Name": "value",
@@ -3933,7 +3949,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.ParseJson(System.String)",
           "Name": "ParseJson",
-          "LineNumber": 25,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "json",
@@ -3968,7 +3984,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.ParseJson(System.String)",
           "Name": "ParseJson",
-          "LineNumber": 31,
+          "LineNumber": 29,
           "Inputs": [
             {
               "Name": "json",
@@ -4003,7 +4019,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.ParseJsonElement(System.String)",
           "Name": "ParseJsonElement",
-          "LineNumber": 28,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "json",
@@ -4038,7 +4054,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.RemoveJsonProperty(System.Object,System.String)",
           "Name": "RemoveJsonProperty",
-          "LineNumber": 102,
+          "LineNumber": 94,
           "Inputs": [
             {
               "Name": "value",
@@ -4098,7 +4114,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.Serialize(System.Object)",
           "Name": "Serialize",
-          "LineNumber": 36,
+          "LineNumber": 34,
           "Inputs": [
             {
               "Name": "value",
@@ -4133,7 +4149,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.JsonBroker.SerializeIgnoringReferences(System.Object)",
           "Name": "SerializeIgnoringReferences",
-          "LineNumber": 39,
+          "LineNumber": 37,
           "Inputs": [
             {
               "Name": "value",
@@ -46638,7 +46654,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService.ComputeFingerprintPageRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.PageRenderFoundationOperation)",
           "Name": "ComputeFingerprintPageRenderFoundationOperation",
-          "LineNumber": 14,
+          "LineNumber": 15,
           "Inputs": [
             {
               "Name": "pageRenderFoundationOperation",
@@ -46651,9 +46667,16 @@
           ],
           "Calls": [
             {
+              "TypeName": "cCoder.ContentManagement.Brokers.IFingerprintBroker",
+              "MethodName": "Compute",
+              "MethodId": "cCoder.ContentManagement.Brokers.IFingerprintBroker.Compute(System.String)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Brokers.IJsonBroker",
-              "MethodName": "ComputeFingerprint",
-              "MethodId": "cCoder.ContentManagement.Brokers.IJsonBroker.ComputeFingerprint(System.Object)",
+              "MethodName": "Serialize",
+              "MethodId": "cCoder.ContentManagement.Brokers.IJsonBroker.Serialize(System.Object)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             }
@@ -46685,7 +46708,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService.SerializePageRenderFoundationOperation(cCoder.ContentManagement.Models.Rendering.PageRenderFoundationOperation)",
           "Name": "SerializePageRenderFoundationOperation",
-          "LineNumber": 26,
+          "LineNumber": 28,
           "Inputs": [
             {
               "Name": "pageRenderFoundationOperation",
@@ -79713,6 +79736,43 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Brokers.IFingerprintBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 7,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.IFingerprintBroker.Compute(System.String)",
+          "Name": "Compute",
+          "LineNumber": 9,
+          "Inputs": [
+            {
+              "Name": "value",
+              "Type": "System.String"
+            }
+          ],
+          "ReturnType": "System.String",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Brokers.IHtmlToPdfBroker",
       "StandardElementType": "Broker",
       "LineNumber": 7,
@@ -79760,34 +79820,9 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.ComputeFingerprint(System.Object)",
-          "Name": "ComputeFingerprint",
-          "LineNumber": 19,
-          "Inputs": [
-            {
-              "Name": "value",
-              "Type": "System.Object"
-            }
-          ],
-          "ReturnType": "System.String",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.GetJsonElementItems(System.Object)",
           "Name": "GetJsonElementItems",
-          "LineNumber": 43,
+          "LineNumber": 41,
           "Inputs": [
             {
               "Name": "value",
@@ -79812,7 +79847,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.GetJsonElementProperties(System.Object)",
           "Name": "GetJsonElementProperties",
-          "LineNumber": 38,
+          "LineNumber": 36,
           "Inputs": [
             {
               "Name": "value",
@@ -79837,7 +79872,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.GetJsonItems(System.Object)",
           "Name": "GetJsonItems",
-          "LineNumber": 41,
+          "LineNumber": 39,
           "Inputs": [
             {
               "Name": "value",
@@ -79862,7 +79897,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.GetJsonProperties(System.Object)",
           "Name": "GetJsonProperties",
-          "LineNumber": 35,
+          "LineNumber": 33,
           "Inputs": [
             {
               "Name": "value",
@@ -79887,7 +79922,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.GetJsonRawText(System.Object)",
           "Name": "GetJsonRawText",
-          "LineNumber": 27,
+          "LineNumber": 25,
           "Inputs": [
             {
               "Name": "value",
@@ -79912,7 +79947,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.IsJsonArray(System.Object)",
           "Name": "IsJsonArray",
-          "LineNumber": 31,
+          "LineNumber": 29,
           "Inputs": [
             {
               "Name": "value",
@@ -79937,7 +79972,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.IsJsonElement(System.Object)",
           "Name": "IsJsonElement",
-          "LineNumber": 21,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "value",
@@ -79962,7 +79997,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.IsJsonNull(System.Object)",
           "Name": "IsJsonNull",
-          "LineNumber": 23,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "value",
@@ -79987,7 +80022,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.IsJsonObject(System.Object)",
           "Name": "IsJsonObject",
-          "LineNumber": 29,
+          "LineNumber": 27,
           "Inputs": [
             {
               "Name": "value",
@@ -80012,7 +80047,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.IsJsonString(System.Object)",
           "Name": "IsJsonString",
-          "LineNumber": 25,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "value",
@@ -80037,7 +80072,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.IsJsonValue(System.Object)",
           "Name": "IsJsonValue",
-          "LineNumber": 33,
+          "LineNumber": 31,
           "Inputs": [
             {
               "Name": "value",
@@ -80137,7 +80172,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.IJsonBroker.RemoveJsonProperty(System.Object,System.String)",
           "Name": "RemoveJsonProperty",
-          "LineNumber": 45,
+          "LineNumber": 43,
           "Inputs": [
             {
               "Name": "value",
@@ -108750,6 +108785,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Rendering.HtmlRenderService",
       "ToType": "cCoder.ContentManagement.Brokers.Rendering.ContentRenderBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",
+      "ToType": "cCoder.ContentManagement.Brokers.FingerprintBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService",

@@ -244,6 +244,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ISubmissionBroker, SubmissionBroker>();
         services.AddTransient<ITemplateBroker, TemplateBroker>();
         services.AddTransient<IAuthorizationBroker, AuthorizationBroker>();
+        services.AddTransient<IFingerprintBroker, FingerprintBroker>();
         services.AddTransient<IJsonBroker, JsonBroker>();
         services.AddTransient<IMetadataTypeBroker, MetadataTypeBroker>();
         services.AddTransient<IRegularExpressionBroker, RegularExpressionBroker>();
