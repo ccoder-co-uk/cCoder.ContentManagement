@@ -8,7 +8,8 @@ using cCoder.ContentManagement.Brokers;
 namespace cCoder.ContentManagement.Services.Foundations.Rendering;
 
 internal sealed partial class PageRenderService(
-    IJsonBroker jsonBroker)
+    IJsonBroker jsonBroker,
+    IFingerprintBroker fingerprintBroker)
         : IPageRenderService
 {
     public PageRenderFoundationOperation ComputeFingerprintPageRenderFoundationOperation(
@@ -17,8 +18,9 @@ internal sealed partial class PageRenderService(
         {
             ValidatePageRenderFoundationOperation(inputs: [pageRenderFoundationOperation]);
 
-            pageRenderFoundationOperation.Json = jsonBroker
-                .ComputeFingerprint(value: pageRenderFoundationOperation.Value);
+            pageRenderFoundationOperation.Json = fingerprintBroker.Compute(
+                value: jsonBroker.Serialize(
+                    value: pageRenderFoundationOperation.Value));
 
             return pageRenderFoundationOperation;
         });

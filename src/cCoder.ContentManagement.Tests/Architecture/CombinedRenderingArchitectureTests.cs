@@ -65,7 +65,7 @@ public sealed partial class CombinedRenderingArchitectureTests
     }
 
     [Fact]
-    public void PageRendering_WhenComposed_UsesJsonBoundaryForSerializationAndFingerprinting()
+    public void PageRendering_WhenComposed_UsesJsonBoundaryForSerialization()
     {
         // Given
         Type pageRenderService = ContentManagementAssembly.GetType(
@@ -78,11 +78,47 @@ public sealed partial class CombinedRenderingArchitectureTests
         dependencies.Should()
             .ContainSingle(predicate: dependency =>
                 dependency.Name == "IJsonBroker",
-                because: "JSON serialization and its deterministic fingerprint belong to the JSON boundary");
+                because: "JSON serialization belongs to the JSON boundary");
 
         dependencies.Should()
             .NotContain(predicate: dependency =>
                 dependency.Name == "IRenderingUtilityBroker");
+    }
+
+    [Fact]
+    public void Fingerprinting_WhenComposed_UsesDedicatedBrokerBoundary()
+    {
+        // Given
+        Type jsonBrokerContract = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Brokers.IJsonBroker");
+
+        Type fingerprintBroker = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Brokers.FingerprintBroker");
+
+        Type pageRenderService = ContentManagementAssembly.GetType(
+            name: "cCoder.ContentManagement.Services.Foundations.Rendering.PageRenderService");
+
+        // When
+        string[] jsonOperations = jsonBrokerContract
+            .GetMethods()
+            .Select(selector: method => method.Name)
+            .ToArray();
+
+        Type[] dependencies = GetConstructorDependencies(type: pageRenderService);
+
+        // Then
+        jsonOperations.Should()
+            .NotContain(
+                unexpected: "ComputeFingerprint",
+                because: "cryptographic fingerprinting is not a JSON broker responsibility");
+
+        fingerprintBroker.Should()
+            .NotBeNull(
+                because: "fingerprinting requires its own external dependency boundary");
+
+        dependencies.Should()
+            .ContainSingle(predicate: dependency =>
+                dependency.Name == "IFingerprintBroker");
     }
 
     [Fact]

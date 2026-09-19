@@ -75,7 +75,8 @@ public partial class PageRenderProcessingServiceTests
         return new PageRenderTestHarness(
             pageRenderProcessingService: new PageRenderProcessingService(
                 pageRenderService: new PageRenderService(
-                    jsonBroker: new JsonBroker()),
+                    jsonBroker: new JsonBroker(),
+                    fingerprintBroker: new FingerprintBroker()),
                 config: config),
             markupRenderProcessingService:
                 new MarkupRenderProcessingService(

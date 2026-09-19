@@ -2,8 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
@@ -38,12 +36,6 @@ internal sealed class JsonBroker : IJsonBroker, IUtilityBroker
 
     public string SerializeIgnoringReferences(object value) =>
         JsonSerializer.Serialize(value: value, options: IgnoreReferencesOptions);
-
-    public string ComputeFingerprint(object value) =>
-        Convert.ToHexString(
-            inArray: SHA256.HashData(
-                source: Encoding.UTF8.GetBytes(
-                    s: JsonSerializer.Serialize(value: value))));
 
     public bool IsJsonElement(object value) =>
         value is JsonElement;
