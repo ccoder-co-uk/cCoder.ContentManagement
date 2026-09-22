@@ -98,6 +98,56 @@ public sealed partial class PageRenderCacheImportLifecycleTests(WebAcceptanceFix
             .Be(expected: refreshedCache.RenderedOn);
     }
 
+    [Fact]
+    public async Task ConcurrentCacheMisses_StoreOnlyOnePageRenderCacheAsync()
+    {
+        // Given
+
+        string suffix = Guid.NewGuid()
+            .ToString(format: "N");
+
+        string componentName = $"ConcurrentComponent{suffix}";
+        string commonObjectName = $"ConcurrentObject{suffix}";
+        string commonObjectKey = $"ConcurrentKey{suffix}";
+        string pagePath = $"concurrent-cache-{suffix}";
+        const string marker = "concurrent-cache-marker";
+
+        int pageId = await SeedRenderGraphAsync(
+            componentName: componentName,
+            commonObjectName: commonObjectName,
+            commonObjectKey: commonObjectKey,
+            pagePath: pagePath,
+            marker: marker);
+
+        using IServiceScope cacheScope = fixture.Factory.Services.CreateScope();
+
+        ICommonObjectCache commonObjectCache = cacheScope.ServiceProvider
+            .GetRequiredService<ICommonObjectCache>();
+
+        commonObjectCache.Refresh();
+
+        // When
+        PageRenderResponse[] responses = await Task.WhenAll(tasks:
+        [
+            RenderAsync(path: pagePath),
+            RenderAsync(path: pagePath),
+            RenderAsync(path: pagePath)
+        ]);
+
+        PageRenderCache[] caches = await GetCachesAsync(pageId: pageId);
+
+        // Then
+        responses.Should()
+            .HaveCount(expected: 3)
+            .And.OnlyContain(predicate: response =>
+                response.Page.BodyHtml.Contains(value: marker));
+
+        caches.Should()
+            .ContainSingle()
+            .Which.Body.Should()
+            .Contain(expected: marker);
+    }
+
     private async Task<int> SeedRenderGraphAsync(
         string componentName,
         string commonObjectName,

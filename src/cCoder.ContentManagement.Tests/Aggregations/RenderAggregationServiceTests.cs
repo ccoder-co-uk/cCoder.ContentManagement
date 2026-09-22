@@ -7,6 +7,7 @@ using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Services.Orchestrations.Caching;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 using cCoder.Data.Models.Security;
 using FluentAssertions;
@@ -58,7 +59,9 @@ public sealed partial class RenderAggregationServiceTests
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>());
+                Mock.Of<IComponentRenderOrchestrationService>(),
+            commonObjectCacheOrchestrationService:
+                Mock.Of<ICommonObjectCacheOrchestrationService>());
 
         // When
         Exception actualException = await Record.ExceptionAsync(
@@ -122,6 +125,10 @@ public sealed partial class RenderAggregationServiceTests
         Mock<ICachedPageRenderOrchestrationService> cachedService = new();
         Mock<IRenderEventOrchestrationService> renderEventService = new();
         Mock<IRenderDataOrchestrationService> jsonService = CreateRenderDataOrchestrationServiceMock();
+        Mock<ICommonObjectCacheOrchestrationService> cacheService = new();
+
+        cacheService.Setup(
+            expression: service => service.EnsureAvailable());
 
         jsonService.Setup(expression: service =>
             service.SerializeRuntimeValue(value: It.IsAny<object>()))
@@ -150,7 +157,9 @@ public sealed partial class RenderAggregationServiceTests
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>());
+                Mock.Of<IComponentRenderOrchestrationService>(),
+            commonObjectCacheOrchestrationService:
+                cacheService.Object);
 
         // When
         RenderResult result = await service
@@ -187,6 +196,10 @@ public sealed partial class RenderAggregationServiceTests
         jsonService.Verify(
             expression: service => service.SerializeRuntimeValue(
                 value: It.IsAny<object>()),
+            times: Times.Once);
+
+        cacheService.Verify(
+            expression: service => service.EnsureAvailable(),
             times: Times.Once);
 
         renderEventService.VerifyNoOtherCalls();
@@ -247,7 +260,9 @@ public sealed partial class RenderAggregationServiceTests
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>());
+                Mock.Of<IComponentRenderOrchestrationService>(),
+            commonObjectCacheOrchestrationService:
+                Mock.Of<ICommonObjectCacheOrchestrationService>());
 
         // When
         RenderResult result = await service
@@ -304,7 +319,9 @@ public sealed partial class RenderAggregationServiceTests
                 Mock.Of<IRenderDataOrchestrationService>(),
             templateRenderOrchestrationService: templateService.Object,
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>());
+                Mock.Of<IComponentRenderOrchestrationService>(),
+            commonObjectCacheOrchestrationService:
+                Mock.Of<ICommonObjectCacheOrchestrationService>());
 
         // When
         RenderResult actual = await service
@@ -357,7 +374,9 @@ public sealed partial class RenderAggregationServiceTests
                 Mock.Of<IRenderDataOrchestrationService>(),
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
-            componentRenderOrchestrationService: componentService.Object);
+            componentRenderOrchestrationService: componentService.Object,
+            commonObjectCacheOrchestrationService:
+                Mock.Of<ICommonObjectCacheOrchestrationService>());
 
         // When
         RenderResult actual = await service

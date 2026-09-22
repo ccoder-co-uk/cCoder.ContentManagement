@@ -12,6 +12,7 @@ using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Services.Orchestrations.Caching;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models;
@@ -147,7 +148,9 @@ public sealed partial class RenderAggregationServiceTests
             templateRenderOrchestrationService:
                 Mock.Of<ITemplateRenderOrchestrationService>(),
             componentRenderOrchestrationService:
-                Mock.Of<IComponentRenderOrchestrationService>());
+                Mock.Of<IComponentRenderOrchestrationService>(),
+            commonObjectCacheOrchestrationService:
+                Mock.Of<ICommonObjectCacheOrchestrationService>());
 
         // When
         RenderResult uncachedResult = await service.RenderPageRenderResultAsync();

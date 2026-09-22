@@ -13026,7 +13026,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Caching.CommonObjectCacheManager.GetLatestSet()",
           "Name": "GetLatestSet",
-          "LineNumber": 29,
+          "LineNumber": 31,
           "Inputs": [],
           "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
@@ -27286,6 +27286,7 @@
           "Calls": [],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.InvalidOperationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
@@ -37410,7 +37411,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",
       "StandardElementType": "AggregationService",
-      "LineNumber": 14,
+      "LineNumber": 15,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -37431,7 +37432,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderComponentRenderResultAsync(System.String)",
           "Name": "RenderComponentRenderResultAsync",
-          "LineNumber": 175,
+          "LineNumber": 180,
           "Inputs": [
             {
               "Name": "name",
@@ -37443,6 +37444,13 @@
             "cCoder.ContentManagement.Exposures.IRenderer.RenderComponentRenderResultAsync(System.String)"
           ],
           "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.Caching.ICommonObjectCacheOrchestrationService",
+              "MethodName": "EnsureAvailable",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.Caching.ICommonObjectCacheOrchestrationService.EnsureAvailable()",
+              "StandardElementType": "OrchestrationService",
+              "IsDependencyBoundary": false
+            },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IComponentRenderOrchestrationService",
               "MethodName": "RenderComponentRenderResult",
@@ -37489,13 +37497,20 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderPageRenderResultAsync()",
           "Name": "RenderPageRenderResultAsync",
-          "LineNumber": 23,
+          "LineNumber": 25,
           "Inputs": [],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.RenderResult\u003E",
           "Implements": [
             "cCoder.ContentManagement.Services.Aggregations.IRenderAggregationService.RenderPageRenderResultAsync()"
           ],
           "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.Caching.ICommonObjectCacheOrchestrationService",
+              "MethodName": "EnsureAvailable",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.Caching.ICommonObjectCacheOrchestrationService.EnsureAvailable()",
+              "StandardElementType": "OrchestrationService",
+              "IsDependencyBoundary": false
+            },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICachedPageRenderOrchestrationService",
               "MethodName": "RenderHttpPageRenderOperation",
@@ -37527,6 +37542,7 @@
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
+            "System.InvalidOperationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
@@ -37561,7 +37577,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService.RenderTemplateRenderResultAsync(System.String,System.Object)",
           "Name": "RenderTemplateRenderResultAsync",
-          "LineNumber": 157,
+          "LineNumber": 160,
           "Inputs": [
             {
               "Name": "name",
@@ -37577,6 +37593,13 @@
             "cCoder.ContentManagement.Exposures.IRenderer.RenderTemplateRenderResultAsync(System.String,System.Object)"
           ],
           "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.Caching.ICommonObjectCacheOrchestrationService",
+              "MethodName": "EnsureAvailable",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.Caching.ICommonObjectCacheOrchestrationService.EnsureAvailable()",
+              "StandardElementType": "OrchestrationService",
+              "IsDependencyBoundary": false
+            },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ITemplateRenderOrchestrationService",
               "MethodName": "RenderTemplateRenderResult",
@@ -108541,6 +108564,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.CachedPageRenderOrchestrationService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.Caching.CommonObjectCacheOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Aggregations.RenderAggregationService",

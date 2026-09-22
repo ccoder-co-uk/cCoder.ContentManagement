@@ -24,7 +24,9 @@ internal sealed class CommonObjectCacheManager(
         orchestrationService.Get<T>(key: key);
 
     public void Set(string key, object item) =>
-        orchestrationService.Set(key: key, item: item);
+        orchestrationService.Set(
+            key: key,
+            item: item);
 
     public IEnumerable<CommonObject> GetLatestSet() =>
         orchestrationService.GetLatestSet();
