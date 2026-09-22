@@ -9,12 +9,12 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.17.1541" PrivateAssets="all" />
-    <PackageReference Include="cCoder.Data" Version="2026.8.28.1700" />
+    <PackageReference Include="cCoder.Data" Version="2026.9.13.1526" />
     <PackageReference Include="cCoder.Eventing" Version="2026.9.14.1140" />
-    <PackageReference Include="FluentAssertions" Version="8.10.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageReference Include="FluentAssertions" Version="8.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="NBuilder" Version="6.1.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
