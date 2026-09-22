@@ -9,8 +9,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.17.1541" PrivateAssets="all" />
-    <PackageReference Include="cCoder.Data" Version="2026.9.13.1526" />
-    <PackageReference Include="cCoder.Eventing" Version="2026.9.14.1140" />
+    <PackageReference Include="cCoder.Data" Version="2026.9.22.1438" />
+    <PackageReference Include="cCoder.Eventing" Version="2026.9.22.1323" />
     <PackageReference Include="FluentAssertions" Version="8.11.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
