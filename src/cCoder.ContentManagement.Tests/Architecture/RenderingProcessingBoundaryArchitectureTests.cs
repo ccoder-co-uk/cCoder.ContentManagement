@@ -43,6 +43,35 @@ public sealed partial class RenderingProcessingBoundaryArchitectureTests
             "Services/Processings/PageRendering/MarkupRenderProcessingService.cs"
         };
 
+    public static TheoryData<string> RenderingProcessingSources =>
+        new()
+        {
+            "Services/Processings/ComponentRenderProcessingService.cs",
+            "Services/Processings/TemplateRenderProcessingService.cs",
+            "Services/Processings/PageRenderProcessingService.cs",
+            "Services/Processings/PageRenderCacheProcessingService.cs"
+        };
+
+    private static readonly string[] EnumerableOperations =
+    [
+        ".Any(",
+        ".First(",
+        ".FirstOrDefault(",
+        ".GroupBy(",
+        ".Last(",
+        ".OrderBy(",
+        ".OrderByDescending(",
+        ".Select(",
+        ".SelectMany(",
+        ".Single(",
+        ".SingleOrDefault(",
+        ".Take(",
+        ".ToArray(",
+        ".ToDictionary(",
+        ".ToList(",
+        ".Where("
+    ];
+
     [Theory]
     [MemberData(nameof(ProcessingServices))]
     public void RenderingProcessing_WhenComposed_UsesOnlyMatchingFoundation(
@@ -102,6 +131,46 @@ public sealed partial class RenderingProcessingBoundaryArchitectureTests
             .NotContain(unexpected: "JsonElement");
     }
 
+    [Theory]
+    [MemberData(nameof(RenderingProcessingSources))]
+    public void RenderingProcessing_WhenImplemented_DoesNotUseCollectionsMarshal(
+        string relativeSourcePath)
+    {
+        // Given
+        string source = ReadRenderingSource(relativeSourcePath: relativeSourcePath);
+
+        // When
+        bool usesCollectionsMarshal = source.Contains(
+            value: "CollectionsMarshal",
+            comparisonType: StringComparison.Ordinal);
+
+        // Then
+        usesCollectionsMarshal.Should()
+            .BeFalse(
+                because: "processing logic should use normal collection operations rather than runtime interop helpers");
+    }
+
+    [Theory]
+    [MemberData(nameof(RenderingProcessingSources))]
+    public void RenderingProcessing_WhenImplemented_DoesNotUseEnumerableExtensions(
+        string relativeSourcePath)
+    {
+        // Given
+        string source = ReadRenderingSource(relativeSourcePath: relativeSourcePath);
+
+        // When
+        string[] usedOperations = EnumerableOperations
+            .Where(predicate: operation => source.Contains(
+                value: operation,
+                comparisonType: StringComparison.Ordinal))
+            .ToArray();
+
+        // Then
+        usedOperations.Should()
+            .BeEmpty(
+                because: "render processing should build its in-memory results directly without depending on Enumerable helpers");
+    }
+
     private static bool IsForbiddenProcessingDependency(Type type)
     {
         string namespaceName = type.Namespace ?? string.Empty;
@@ -115,6 +184,22 @@ public sealed partial class RenderingProcessingBoundaryArchitectureTests
             || namespaceName.Contains(
                 value: ".HttpExposures",
                 comparisonType: StringComparison.Ordinal);
+    }
+
+    private static string ReadRenderingSource(string relativeSourcePath)
+    {
+        string sourcePath = Path.GetFullPath(
+            path: Path.Combine(
+                paths:
+                [
+                    Path.GetDirectoryName(path: GetThisFilePath()),
+                    "..",
+                    "..",
+                    "cCoder.ContentManagement",
+                    relativeSourcePath
+                ]));
+
+        return File.ReadAllText(path: sourcePath);
     }
 
     private static string GetThisFilePath(

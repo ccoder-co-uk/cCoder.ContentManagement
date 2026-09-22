@@ -6,7 +6,6 @@ using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
@@ -60,9 +59,16 @@ internal partial class TemplateRenderProcessingService(
         ValidateModel(model: model, parameterName: "model");
         ValidateUser(user: user, parameterName: "user");
 
-        App app = GetApps()
-            .Where(predicate: existingApp => existingApp.Id == appId)
-            .Select(selector: existingApp => new App
+        App app = null;
+
+        foreach (App existingApp in GetApps())
+        {
+            if (existingApp.Id != appId)
+            {
+                continue;
+            }
+
+            app = new App
             {
                 Id = existingApp.Id,
                 DefaultCultureId = existingApp.DefaultCultureId,
@@ -71,31 +77,53 @@ internal partial class TemplateRenderProcessingService(
                 Domain = existingApp.Domain,
                 DefaultTheme = existingApp.DefaultTheme,
                 ConfigJson = existingApp.ConfigJson
-            })
-            .FirstOrDefault();
+            };
+
+            break;
+        }
 
         if (app == null)
         {
             throw new InvalidOperationException(message: $"App '{appId}' was not found.");
         }
 
-        app.Components = GetComponents()
-            .Where(predicate: existingComponent => existingComponent.AppId == appId)
-            .ToArray();
+        List<Component> components = [];
+        List<Resource> resources = [];
+        List<Script> scripts = [];
 
-        app.Resources = GetResources()
-            .Where(predicate: existingResource => existingResource.AppId == appId)
-            .ToArray();
+        foreach (Component existingComponent in GetComponents())
+        {
+            if (existingComponent.AppId == appId)
+            {
+                components.Add(item: existingComponent);
+            }
+        }
 
-        app.Scripts = GetScripts()
-            .Where(predicate: existingScript => existingScript.AppId == appId)
-            .ToArray();
+        foreach (Resource existingResource in GetResources())
+        {
+            if (existingResource.AppId == appId)
+            {
+                resources.Add(item: existingResource);
+            }
+        }
 
-        Template template = GetTemplates()
-            .Where(predicate: existingTemplate => existingTemplate.AppId == appId)
-            .ToArray()
-            .FirstOrDefault(predicate: existingTemplate =>
-                existingTemplate.Name.Equals(value: name, comparisonType: StringComparison.OrdinalIgnoreCase))
+        foreach (Script existingScript in GetScripts())
+        {
+            if (existingScript.AppId == appId)
+            {
+                scripts.Add(item: existingScript);
+            }
+        }
+
+        app.Components = components;
+        app.Resources = resources;
+        app.Scripts = scripts;
+
+        Template template = FindFirst(
+            source: GetTemplates(),
+            predicate: existingTemplate =>
+                existingTemplate.AppId == appId
+                && existingTemplate.Name.Equals(value: name, comparisonType: StringComparison.OrdinalIgnoreCase))
             ?? throw new InvalidOperationException(message: "Template '" + name + "' was not found.");
 
         TemplateRenderParams templateRenderParams = new()
@@ -124,8 +152,8 @@ internal partial class TemplateRenderProcessingService(
         ValidateModel(model: model, parameterName: "model");
         ValidateRenderParamsArgument(renderParams: renderParams, parameterName: "renderParams");
 
-        List<MarkupReplacement> list = DefaultReplacements(renderParams: renderParams, config: config)
-            .ToList();
+        List<MarkupReplacement> list = CopyToList(
+            source: DefaultReplacements(renderParams: renderParams, config: config));
 
         list.Add(item: new MarkupReplacement { Old = "[model]", Value = Serialize(value: model) });
         list.AddRange(collection: BuildModelReplacements(model: model));
@@ -158,12 +186,12 @@ internal partial class TemplateRenderProcessingService(
             ? $":{sslPort}"
             : string.Empty;
 
-        int num = 10;
-        List<MarkupReplacement> list = new List<MarkupReplacement>(capacity: num);
-        CollectionsMarshal.SetCount(list: list, count: num);
-        Span<MarkupReplacement> span = CollectionsMarshal.AsSpan(list: list);
+        int cultureSeparator = text2.IndexOf(value: '-');
+        string language = cultureSeparator < 0 ? text2 : text2[..cultureSeparator];
 
-        span[0] = new MarkupReplacement
+        List<MarkupReplacement> list =
+        [
+            new MarkupReplacement
         {
             Old = "[[user]]",
             Value = Serialize(value: new
@@ -173,24 +201,18 @@ internal partial class TemplateRenderProcessingService(
                 DisplayName = renderParams.User?.DisplayName,
                 Email = renderParams.User?.Email
             })
-        };
+        },
+            new MarkupReplacement { Old = "[[displayname]]", Value = renderParams.User?.DisplayName },
+            new MarkupReplacement { Old = "[[loginlink]]", Value = (renderParams.User?.Id == "Guest") ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>" },
+            new MarkupReplacement { Old = "[[date]]", Value = DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy") },
+            new MarkupReplacement { Old = "[[culture]]", Value = text2 },
+            new MarkupReplacement { Old = "[[lang]]", Value = language },
+            new MarkupReplacement { Old = "[app[name]]", Value = renderParams.App?.Name },
+            new MarkupReplacement { Old = "[app[domain]]", Value = renderParams.App?.Domain },
+            new MarkupReplacement { Old = "[app[root]]", Value = "https://" + renderParams.App?.Domain + text3 + "/" },
+            new MarkupReplacement { Old = "[app[id]]", Value = renderParams.App?.Id.ToString() }
+        ];
 
-        span[1] = new MarkupReplacement { Old = "[[displayname]]", Value = renderParams.User?.DisplayName };
-        span[2] = new MarkupReplacement { Old = "[[loginlink]]", Value = (renderParams.User?.Id == "Guest") ? "<a href='/Login'>[resource_displayname[Login]]</a>" : "<a name='logout' href=''>[resource_displayname[Logout]]</a>" };
-        span[3] = new MarkupReplacement { Old = "[[date]]", Value = DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy") };
-        span[4] = new MarkupReplacement { Old = "[[culture]]", Value = text2 };
-
-        span[5] = new MarkupReplacement
-        {
-            Old = "[[lang]]",
-            Value = text2.Split(separator: '-')
-            .First()
-        };
-
-        span[6] = new MarkupReplacement { Old = "[app[name]]", Value = renderParams.App?.Name };
-        span[7] = new MarkupReplacement { Old = "[app[domain]]", Value = renderParams.App?.Domain };
-        span[8] = new MarkupReplacement { Old = "[app[root]]", Value = "https://" + renderParams.App?.Domain + text3 + "/" };
-        span[9] = new MarkupReplacement { Old = "[app[id]]", Value = renderParams.App?.Id.ToString() };
         List<MarkupReplacement> list2 = list;
 
         if (config != null)
@@ -207,11 +229,12 @@ internal partial class TemplateRenderProcessingService(
         {
             list2.Add(item: new MarkupReplacement { Old = "[theme[name]]", Value = "Default" });
             IDictionary<string, object> source = default(IDictionary<string, object>);
+            object firstTheme = null;
 
-            if (TryGetThemeDictionary(config: renderParams.App.Config, themeDictionary: out source) && source.Any())
+            if (TryGetThemeDictionary(config: renderParams.App.Config, themeDictionary: out source)
+                && TryGetFirstValue(source: source, value: out firstTheme))
             {
-                list2.AddRange(collection: BuildThemeReplacements(model: source.First()
-                    .Value));
+                list2.AddRange(collection: BuildThemeReplacements(model: firstTheme));
             }
         }
 
@@ -280,7 +303,7 @@ internal partial class TemplateRenderProcessingService(
         string[] array = match.Value
             .Split(separator: "[");
 
-        string[] array2 = array.Last()
+        string[] array2 = array[^1]
             .Split(separator: "]");
 
         return (type: array[1].ToLower(), name: array2[0].ToLower(), options: array2[1].Split(separator: "|", options: StringSplitOptions.RemoveEmptyEntries));
@@ -297,7 +320,7 @@ internal partial class TemplateRenderProcessingService(
 
                                                                                                                                    if (script != null)
                                                                                                                                    {
-                                                                                                                                       Script obj = renderParams.App?.Scripts?.FirstOrDefault(predicate: (Script s) => s.Name.Equals(value: name, comparisonType: StringComparison.CurrentCultureIgnoreCase));
+                                                                                                                                        Script obj = FindFirst(source: renderParams.App?.Scripts, predicate: s => s.Name.Equals(value: name, comparisonType: StringComparison.CurrentCultureIgnoreCase));
                                                                                                                                        return ProcessContentString(key: key, renderParams: renderParams, content: obj?.Content ?? script.Content, replacements: replacements);
                                                                                                                                    }
 
@@ -308,17 +331,29 @@ internal partial class TemplateRenderProcessingService(
         RegexReplace(source: result, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "component"), action: match =>
                                                                                                                                   {
                                                                                                                                       (string _, string name, string[] options) tag = SplitMatch(match: match);
-                                                                                                                                      Component component = renderParams.App?.Components?.FirstOrDefault(predicate: (Component c) => c.Name.Equals(value: tag.name, comparisonType: StringComparison.CurrentCultureIgnoreCase)) ?? GetComponent(key: "component|" + tag.name);
+                                                                                                                                      Component component = FindFirst(source: renderParams.App?.Components, predicate: c => c.Name.Equals(value: tag.name, comparisonType: StringComparison.CurrentCultureIgnoreCase)) ?? GetComponent(key: "component|" + tag.name);
                                                                                                                                       return (component == null) ? ("[[Missing Component:" + tag.name + "]]") : ProcessContentString(key: key, renderParams: renderParams, content: BuildComponentMarkup(component: component, tag: tag, replacements: replacements, renderParams: renderParams), replacements: replacements);
                                                                                                                                   });
 
     private string BuildComponentMarkup(Component component, (string type, string name, string[] options) tag, IEnumerable<MarkupReplacement> replacements, RenderParams renderParams)
     {
-        string value = string.Join(separator: " ", values: tag.options
-            .Where(predicate: option => option.StartsWith(value: "class="))
-            .Select(selector: option => option.Replace(oldValue: "class=", newValue: "")));
+        List<string> classes = [];
+        List<string> attributes = [];
 
-        string content = $"<section name='{component.Name}' class='component {value}' data-id='{component.Id}' data-resource-key='{component.ResourceKey}' {string.Join(separator: " ", values: tag.options.Where(predicate: (string option) => !option.StartsWith(value: "class=")))}>\r\n                        {ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}\r\n                        <script type='text/javascript' nonce='{ContentSecurityPolicyNonceContract.Placeholder}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script>\r\n                    </section>";
+        foreach (string option in tag.options)
+        {
+            if (option.StartsWith(value: "class="))
+            {
+                classes.Add(item: option.Replace(oldValue: "class=", newValue: ""));
+            }
+            else
+            {
+                attributes.Add(item: option);
+            }
+        }
+
+        string value = string.Join(separator: " ", values: classes);
+        string content = $"<section name='{component.Name}' class='component {value}' data-id='{component.Id}' data-resource-key='{component.ResourceKey}' {string.Join(separator: " ", values: attributes)}>\r\n                        {ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}\r\n                        <script type='text/javascript' nonce='{ContentSecurityPolicyNonceContract.Placeholder}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script>\r\n                    </section>";
         return ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: content, replacements: replacements);
     }
 
@@ -330,12 +365,12 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                          string content = SerializeIgnoringReferences(value: new
                                                                                                                                          {
                                                                                                                                              Script = value,
-                                                                                                                                             Model = ParseJson(json: replacements.First(predicate: (MarkupReplacement r) => r.Old == "[model]")
+                                                                                                                                             Model = ParseJson(json: FindRequired(source: replacements, predicate: r => r.Old == "[model]")
                                                                                                                                              .New)
                                                                                                                                          });
 
                                                                                                                                          string result = ExecuteWorkflow(
-                                                                                                                                             baseAddress: replacements.First(predicate: replacement => replacement.Old == "[api[workflow]]").New,
+                                                                                                                                             baseAddress: FindRequired(source: replacements, predicate: replacement => replacement.Old == "[api[workflow]]").New,
                                                                                                                                              content: content);
 
                                                                                                                                          return ProcessContentString(key: key, renderParams: renderParams, content: result, replacements: replacements);
@@ -396,13 +431,13 @@ internal partial class TemplateRenderProcessingService(
             }
         }
 
-        RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_displayname"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: known.FirstOrDefault(predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.DisplayName ?? GetTagName(source: match)
+        RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_displayname"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: FindFirst(source: known, predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.DisplayName ?? GetTagName(source: match)
             .ToLower(), replacements: replacements));
 
-        RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_shortdisplayname"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: known.FirstOrDefault(predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.ShortDisplayName ?? GetTagName(source: match)
+        RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_shortdisplayname"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: FindFirst(source: known, predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.ShortDisplayName ?? GetTagName(source: match)
             .ToLower(), replacements: replacements));
 
-        RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_description"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: known.FirstOrDefault(predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.Description ?? GetTagName(source: match)
+        RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_description"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: FindFirst(source: known, predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.Description ?? GetTagName(source: match)
             .ToLower(), replacements: replacements));
     }
 
@@ -455,11 +490,35 @@ internal partial class TemplateRenderProcessingService(
     {
         List<Resource> list = new List<Resource>();
 
-        foreach (IGrouping<string, Resource> item in potentials
-            .Where(predicate: resource => string.Equals(a: resource.Key, b: key, comparisonType: StringComparison.OrdinalIgnoreCase))
-            .GroupBy(keySelector: resource => resource.Name.ToLowerInvariant()))
+        Dictionary<string, List<Resource>> resourcesByName =
+            new(comparer: StringComparer.OrdinalIgnoreCase);
+
+        foreach (Resource resource in potentials ?? [])
         {
-            Resource closestCulturalMatch = GetClosestCulturalMatch(potentials: item, culture: culture);
+            if (!string.Equals(
+                a: resource.Key,
+                b: key,
+                comparisonType: StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            string name = resource.Name ?? string.Empty;
+
+            if (!resourcesByName.TryGetValue(key: name, value: out List<Resource> resources))
+            {
+                resources = [];
+                resourcesByName.Add(key: name, value: resources);
+            }
+
+            resources.Add(item: resource);
+        }
+
+        foreach (List<Resource> resources in resourcesByName.Values)
+        {
+            Resource closestCulturalMatch = GetClosestCulturalMatch(
+                potentials: resources,
+                culture: culture);
 
             if (closestCulturalMatch != null)
             {
@@ -474,17 +533,23 @@ internal partial class TemplateRenderProcessingService(
     {
         Resource resource = null;
 
-        List<string> list = (culture ?? string.Empty).ToLowerInvariant()
-            .Split(separator: '-')
-            .ToList();
+        string[] cultureParts = (culture ?? string.Empty).ToLowerInvariant()
+            .Split(separator: '-');
 
-        int num = list.Count;
+        int num = cultureParts.Length;
         string resultCulture = string.Empty;
 
         while (resource == null && resultCulture != null)
         {
-            resultCulture = string.Join(separator: "-", values: list.Take(count: num));
-            resource = potentials.FirstOrDefault(predicate: (Resource resource2) => string.Equals(a: resource2.Culture, b: resultCulture, comparisonType: StringComparison.OrdinalIgnoreCase));
+            resultCulture = string.Join(separator: "-", value: cultureParts, startIndex: 0, count: num);
+
+            resource = FindFirst(
+                source: potentials,
+                predicate: candidate => string.Equals(
+                    a: candidate.Culture,
+                    b: resultCulture,
+                    comparisonType: StringComparison.OrdinalIgnoreCase));
+
             num--;
 
             if (num == 0)
@@ -493,7 +558,9 @@ internal partial class TemplateRenderProcessingService(
             }
         }
 
-        return resource ?? potentials.FirstOrDefault(predicate: (Resource resource2) => string.IsNullOrEmpty(value: resource2.Culture));
+        return resource ?? FindFirst(
+            source: potentials,
+            predicate: candidate => string.IsNullOrEmpty(value: candidate.Culture));
     }
 
     private void Meta(StringBuilder source, string culture) =>
@@ -568,101 +635,91 @@ internal partial class TemplateRenderProcessingService(
         return list;
     }
 
-    private IEnumerable<MarkupReplacement> BuildIEnumerableThemeReplacements<T>(T model, string prefix) =>
-        templateRenderService.GetPropertyValuesTemplateRenderFoundationOperation(
+    private IEnumerable<MarkupReplacement> BuildIEnumerableThemeReplacements<T>(T model, string prefix)
+    {
+        List<MarkupReplacement> replacements = [];
+
+        IReadOnlyList<RuntimePropertyValue> properties = templateRenderService.GetPropertyValuesTemplateRenderFoundationOperation(
             templateRenderFoundationOperation: new TemplateRenderFoundationOperation
             {
                 Value = model
             })
-        .RuntimeProperties
-        .SelectMany(selector: property =>
+        .RuntimeProperties;
+
+        foreach (RuntimePropertyValue property in properties)
+        {
+            object value = property.Value;
+            string text = ((prefix.Length > 0) ? (prefix + "." + property.Name) : property.Name);
+
+            if (property.IsValueType)
             {
-                object value = property.Value;
-                string text = ((prefix.Length > 0) ? (prefix + "." + property.Name) : property.Name);
-
-                if (property.IsValueType)
+                replacements.Add(item: new MarkupReplacement
                 {
-                    MarkupReplacement[] array = new MarkupReplacement[2];
-                    string old = "[theme[" + prefix + "]]";
-                    object obj = model?.ToString();
+                    Old = "[theme[" + prefix + "]]",
+                    Value = model?.ToString() ?? string.Empty
+                });
 
-                    if (obj == null)
-                    {
-                        obj = string.Empty;
-                    }
-
-                    array[0] = new MarkupReplacement { Old = old, Value = (string)obj };
-                    array[1] = new MarkupReplacement { Old = "[theme[" + text + "]]", Value = value?.ToString() ?? string.Empty };
-                    return array;
-                }
-
-                IEnumerable<MarkupReplacement> result;
-
-                if (value == null)
+                replacements.Add(item: new MarkupReplacement
                 {
-                    IEnumerable<MarkupReplacement> enumerable = Array.Empty<MarkupReplacement>();
-                    result = enumerable;
-                }
-                else
-                {
-                    result = BuildThemeReplacements(model: value, prefix: text);
-                }
+                    Old = "[theme[" + text + "]]",
+                    Value = value?.ToString() ?? string.Empty
+                });
+            }
+            else if (value != null)
+            {
+                replacements.AddRange(collection: BuildThemeReplacements(model: value, prefix: text));
+            }
+        }
 
-                return result;
-            })
-        .Where(predicate: replacement => replacement.Old != null && replacement.New != null);
+        RemoveInvalidReplacements(replacements: replacements);
+        return replacements;
+    }
 
     private IEnumerable<MarkupReplacement> BuildJObjectThemeReplacements<T>(T model, string prefix)
     {
         IEnumerable<KeyValuePair<string, object>> source =
             GetJsonProperties(value: model);
 
-        return source.SelectMany(selector: token =>
+        List<MarkupReplacement> replacements = [];
+
+        foreach (KeyValuePair<string, object> token in source)
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + token.Key) : token.Key);
 
             if (IsJsonValue(value: token.Value))
             {
-                return new[] { new MarkupReplacement { Old = "[theme[" + text + "]]", Value = token.Value.ToString() ?? string.Empty } };
+                replacements.Add(item: new MarkupReplacement { Old = "[theme[" + text + "]]", Value = token.Value.ToString() ?? string.Empty });
             }
-
-            IEnumerable<MarkupReplacement> result;
-
-            if (token.Value == null)
+            else if (token.Value != null)
             {
-                IEnumerable<MarkupReplacement> enumerable = Array.Empty<MarkupReplacement>();
-                result = enumerable;
-            }
-            else
-            {
-                result = BuildThemeReplacements(model: token.Value, prefix: text);
+                replacements.AddRange(collection: BuildThemeReplacements(model: token.Value, prefix: text));
             }
 
-            return result;
-        });
+        }
+
+        return replacements;
     }
 
     private IEnumerable<MarkupReplacement> BuildDynamicThemeReplacements<T>(T model, string prefix)
     {
         IDictionary<string, object> dynamicModel = (IDictionary<string, object>)(object)model;
 
-        return dynamicModel.Keys.SelectMany(selector: key =>
+        List<MarkupReplacement> replacements = [];
+
+        foreach (string key in dynamicModel.Keys)
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + key) : key);
-            int num = 1;
-            List<MarkupReplacement> list = new List<MarkupReplacement>(capacity: num);
-            CollectionsMarshal.SetCount(list: list, count: num);
-            CollectionsMarshal.AsSpan(list: list)[0] = new MarkupReplacement { Old = "[theme[" + text + "]]", Value = dynamicModel[key]?.ToString() ?? string.Empty };
-            List<MarkupReplacement> list2 = list;
+            replacements.Add(item: new MarkupReplacement { Old = "[theme[" + text + "]]", Value = dynamicModel[key]?.ToString() ?? string.Empty });
 
             if (dynamicModel[key] != null && !dynamicModel[key].GetType()
                 .IsValueType)
             {
-                list2.AddRange(collection: BuildThemeReplacements(model: dynamicModel[key], prefix: text));
+                replacements.AddRange(collection: BuildThemeReplacements(model: dynamicModel[key], prefix: text));
             }
 
-            return list2;
-        });
+        }
+
+        return replacements;
     }
 
     private IEnumerable<MarkupReplacement> BuildModelReplacements(object model, string prefix = "")
@@ -711,97 +768,91 @@ internal partial class TemplateRenderProcessingService(
         return list;
     }
 
-    private IEnumerable<MarkupReplacement> BuildModelReplacementsForObject(object model, string prefix) =>
-        templateRenderService.GetPropertyValuesTemplateRenderFoundationOperation(
+    private IEnumerable<MarkupReplacement> BuildModelReplacementsForObject(object model, string prefix)
+    {
+        List<MarkupReplacement> replacements = [];
+
+        IReadOnlyList<RuntimePropertyValue> properties = templateRenderService.GetPropertyValuesTemplateRenderFoundationOperation(
             templateRenderFoundationOperation: new TemplateRenderFoundationOperation
             {
                 Value = model
             })
-        .RuntimeProperties
-        .SelectMany(selector: property =>
+        .RuntimeProperties;
+
+        foreach (RuntimePropertyValue property in properties)
+        {
+            object value = property.Value;
+            string text = ((prefix.Length > 0) ? (prefix + "." + property.Name) : property.Name);
+
+            if (property.IsValueType)
             {
-                object value = property.Value;
-                string text = ((prefix.Length > 0) ? (prefix + "." + property.Name) : property.Name);
-
-                if (property.IsValueType)
+                replacements.Add(item: new MarkupReplacement
                 {
-                    return new MarkupReplacement[2]
-                    {
-                        new MarkupReplacement { Old = "[model[" + prefix + "]]", Value = model?.ToString() ?? string.Empty },
-                        new MarkupReplacement { Old = "[model[" + text + "]]", Value = value?.ToString() ?? string.Empty }
-                    };
-                }
+                    Old = "[model[" + prefix + "]]",
+                    Value = model?.ToString() ?? string.Empty
+                });
 
-                IEnumerable<MarkupReplacement> result;
-
-                if (value == null)
+                replacements.Add(item: new MarkupReplacement
                 {
-                    IEnumerable<MarkupReplacement> enumerable = Array.Empty<MarkupReplacement>();
-                    result = enumerable;
-                }
-                else
-                {
-                    result = BuildModelReplacements(model: value, prefix: text);
-                }
+                    Old = "[model[" + text + "]]",
+                    Value = value?.ToString() ?? string.Empty
+                });
+            }
+            else if (value != null)
+            {
+                replacements.AddRange(collection: BuildModelReplacements(model: value, prefix: text));
+            }
+        }
 
-                return result;
-            })
-        .Where(predicate: replacement => replacement.Old != null && replacement.New != null)
-        .ToList();
+        RemoveInvalidReplacements(replacements: replacements);
+        return replacements;
+    }
 
     private IEnumerable<MarkupReplacement> BuildModelReplacementsForJObject(object model, string prefix)
     {
         IEnumerable<KeyValuePair<string, object>> source =
             GetJsonProperties(value: model);
 
-        return source.SelectMany(selector: token =>
+        List<MarkupReplacement> replacements = [];
+
+        foreach (KeyValuePair<string, object> token in source)
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + token.Key) : token.Key);
 
             if (IsJsonValue(value: token.Value))
             {
-                return new[] { new MarkupReplacement { Old = "[model[" + text + "]]", Value = token.Value.ToString() ?? string.Empty } };
+                replacements.Add(item: new MarkupReplacement { Old = "[model[" + text + "]]", Value = token.Value.ToString() ?? string.Empty });
             }
-
-            IEnumerable<MarkupReplacement> result;
-
-            if (token.Value == null)
+            else if (token.Value != null)
             {
-                IEnumerable<MarkupReplacement> enumerable = Array.Empty<MarkupReplacement>();
-                result = enumerable;
-            }
-            else
-            {
-                result = BuildModelReplacements(model: token.Value, prefix: text);
+                replacements.AddRange(collection: BuildModelReplacements(model: token.Value, prefix: text));
             }
 
-            return result;
-        })
-            .ToList();
+        }
+
+        return replacements;
     }
 
     private IEnumerable<MarkupReplacement> BuildModelReplacementsForDynamicObject(object model, string prefix)
     {
         IDictionary<string, object> dynamicModel = (IDictionary<string, object>)model;
 
-        return dynamicModel.Keys.SelectMany(selector: key =>
+        List<MarkupReplacement> replacements = [];
+
+        foreach (string key in dynamicModel.Keys)
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + key) : key);
-            int num = 1;
-            List<MarkupReplacement> list = new List<MarkupReplacement>(capacity: num);
-            CollectionsMarshal.SetCount(list: list, count: num);
-            CollectionsMarshal.AsSpan(list: list)[0] = new MarkupReplacement { Old = "[model[" + text + "]]", Value = dynamicModel[key]?.ToString() ?? string.Empty };
-            List<MarkupReplacement> list2 = list;
+            replacements.Add(item: new MarkupReplacement { Old = "[model[" + text + "]]", Value = dynamicModel[key]?.ToString() ?? string.Empty });
 
             if (dynamicModel[key] != null && !dynamicModel[key].GetType()
                 .IsValueType)
             {
-                list2.AddRange(collection: BuildModelReplacements(model: dynamicModel[key], prefix: text));
+                replacements.AddRange(collection: BuildModelReplacements(model: dynamicModel[key], prefix: text));
             }
 
-            return list2;
-        })
-            .ToList();
+        }
+
+        return replacements;
     }
 
     private static Template ValidateTemplate(Template template, string parameterName)
@@ -905,8 +956,8 @@ internal partial class TemplateRenderProcessingService(
         ValidateModel(model: model, parameterName: "model");
         ValidateRenderParamsArgument(renderParams: renderParams, parameterName: "renderParams");
 
-        List<MarkupReplacement> list = DefaultReplacements(renderParams: renderParams, config: config)
-            .ToList();
+        List<MarkupReplacement> list = CopyToList(
+            source: DefaultReplacements(renderParams: renderParams, config: config));
 
         list.Add(item: new MarkupReplacement { Old = "[model]", Value = Serialize(value: model) });
         list.AddRange(collection: BuildModelReplacements(model: model));
@@ -1084,4 +1135,66 @@ internal partial class TemplateRenderProcessingService(
         TemplateRenderFoundationOperation operation,
         Func<TemplateRenderFoundationOperation, TemplateRenderFoundationOperation> action) =>
         action(arg: operation);
+
+    private static T FindFirst<T>(IEnumerable<T> source, Func<T, bool> predicate)
+        where T : class
+    {
+        foreach (T item in source ?? [])
+        {
+            if (predicate(arg: item))
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    private static T FindRequired<T>(IEnumerable<T> source, Func<T, bool> predicate)
+        where T : class =>
+        FindFirst(source: source, predicate: predicate)
+        ?? throw new InvalidOperationException(message: "Sequence contains no matching element.");
+
+    private static List<T> CopyToList<T>(IEnumerable<T> source)
+    {
+        List<T> items = [];
+
+        foreach (T item in source ?? [])
+        {
+            items.Add(item: item);
+        }
+
+        return items;
+    }
+
+    private static bool TryGetFirstValue(
+        IDictionary<string, object> source,
+        out object value)
+    {
+        if (source == null)
+        {
+            value = null;
+            return false;
+        }
+
+        foreach (KeyValuePair<string, object> item in source)
+        {
+            value = item.Value;
+            return true;
+        }
+
+        value = null;
+        return false;
+    }
+
+    private static void RemoveInvalidReplacements(List<MarkupReplacement> replacements)
+    {
+        for (int index = replacements.Count - 1; index >= 0; index--)
+        {
+            if (replacements[index].Old == null || replacements[index].New == null)
+            {
+                replacements.RemoveAt(index: index);
+            }
+        }
+    }
 }
