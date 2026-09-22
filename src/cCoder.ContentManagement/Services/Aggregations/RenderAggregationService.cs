@@ -6,6 +6,7 @@ using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Services.Orchestrations;
+using cCoder.ContentManagement.Services.Orchestrations.Caching;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 using cCoder.ContentManagement.Brokers.Rendering;
 
@@ -17,12 +18,14 @@ internal sealed partial class RenderAggregationService(
     IRenderEventOrchestrationService renderEventOrchestrationService,
     IRenderDataOrchestrationService renderDataOrchestrationService,
     ITemplateRenderOrchestrationService templateRenderOrchestrationService,
-    IComponentRenderOrchestrationService componentRenderOrchestrationService)
+    IComponentRenderOrchestrationService componentRenderOrchestrationService,
+    ICommonObjectCacheOrchestrationService commonObjectCacheOrchestrationService)
         : IRenderAggregationService
 {
     public ValueTask<RenderResult> RenderPageRenderResultAsync() =>
         TryCatch<RenderResult>(operation: async () =>
     {
+        commonObjectCacheOrchestrationService.EnsureAvailable();
 
         HttpPageRenderContext context = await pageContextOrchestrationService
             .ResolvePageRenderContextAsync();
@@ -159,6 +162,8 @@ internal sealed partial class RenderAggregationService(
         object model) =>
         TryCatch<RenderResult>(operation: async () =>
     {
+        commonObjectCacheOrchestrationService.EnsureAvailable();
+
         ValidateRenderTemplateRenderResult(
             inputs: [name, model]);
 
@@ -176,6 +181,8 @@ internal sealed partial class RenderAggregationService(
         string name) =>
         TryCatch<RenderResult>(operation: async () =>
     {
+        commonObjectCacheOrchestrationService.EnsureAvailable();
+
         ValidateRenderComponentRenderResult(
             inputs: [name]);
 
