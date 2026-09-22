@@ -166,8 +166,34 @@ internal sealed partial class PageRenderProcessingService(
         };
     }
 
-    private static PageRenderApp MapApp(App app, string culture) =>
-        new PageRenderApp
+    private static PageRenderApp MapApp(App app, string culture)
+    {
+        Dictionary<string, PageRenderTemplate> templatesByName =
+            new(comparer: StringComparer.OrdinalIgnoreCase);
+
+        foreach (Template template in app.Templates ?? [])
+        {
+            string name = template.Name ?? string.Empty;
+
+            if (!templatesByName.ContainsKey(key: name))
+            {
+                templatesByName.Add(key: name, value: MapTemplate(template: template));
+            }
+        }
+
+        Dictionary<int, PageRenderPage> pagesById = [];
+
+        foreach (Page page in app.Pages ?? [])
+        {
+            if (!pagesById.ContainsKey(key: page.Id))
+            {
+                pagesById.Add(
+                    key: page.Id,
+                    value: MapPage(page: page, culture: culture, includeContent: false));
+            }
+        }
+
+        return new PageRenderApp
         {
             Id = app.Id,
             Name = app.Name ?? string.Empty,
@@ -175,13 +201,10 @@ internal sealed partial class PageRenderProcessingService(
             DefaultTheme = app.DefaultTheme ?? string.Empty,
             DefaultCulture = app.DefaultCultureId ?? string.Empty,
             Config = app.Config,
-            TemplatesByName = (app.Templates ?? new List<Template>())
-                .GroupBy(keySelector: template => template.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
-        .ToDictionary(keySelector: group => group.Key, elementSelector: group => MapTemplate(template: group.First()), comparer: StringComparer.OrdinalIgnoreCase),
-            PagesById = (app.Pages ?? new List<Page>())
-                .GroupBy(keySelector: foundPage => foundPage.Id)
-        .ToDictionary(keySelector: group => group.Key, elementSelector: group => MapPage(page: group.First(), culture: culture, includeContent: false))
+            TemplatesByName = templatesByName,
+            PagesById = pagesById
         };
+    }
 
     private static PageRenderTemplate MapTemplate(Template template) =>
         new PageRenderTemplate
@@ -211,27 +234,56 @@ internal sealed partial class PageRenderProcessingService(
                 : new Dictionary<string, PageRenderContent>(comparer: StringComparer.OrdinalIgnoreCase)
         };
 
-    private static PageRenderUser MapUser(User user) =>
-        new PageRenderUser
+    private static PageRenderUser MapUser(User user)
+    {
+        Dictionary<int, ISet<string>> appPrivileges = [];
+
+        foreach (UserRole userRole in user.Roles ?? [])
+        {
+            if (userRole.Role?.AppId is not int appId)
+            {
+                continue;
+            }
+
+            if (!appPrivileges.TryGetValue(key: appId, value: out ISet<string> privileges))
+            {
+                privileges = new HashSet<string>(comparer: StringComparer.OrdinalIgnoreCase);
+                appPrivileges.Add(key: appId, value: privileges);
+            }
+
+            foreach (string privilege in userRole.Role.Privileges ?? [])
+            {
+                privileges.Add(item: privilege);
+            }
+        }
+
+        return new PageRenderUser
         {
             Id = user.Id ?? string.Empty,
             DefaultCultureId = user.DefaultCultureId ?? string.Empty,
             DisplayName = user.DisplayName ?? string.Empty,
             Email = user.Email ?? string.Empty,
-            AppPrivileges = (user.Roles ?? new List<UserRole>())
-                .Where(predicate: role => role.Role?.AppId != null)
-        .GroupBy(keySelector: role => role.Role.AppId)
-        .ToDictionary(
-keySelector: group => group.Key,
-elementSelector: group => (ISet<string>)new HashSet<string>(
-collection: group.SelectMany(selector: role => role.Role?.Privileges ?? new List<string>()),
-comparer: StringComparer.OrdinalIgnoreCase))
+            AppPrivileges = appPrivileges
         };
+    }
 
     private static PageRenderLayout ResolveLayout(App app, string layoutName)
     {
-        Layout layout = app.Layouts?.FirstOrDefault(predicate: item => item.Name == layoutName)
-            ?? app.Layouts?.FirstOrDefault();
+        Layout layout = null;
+        Layout firstLayout = null;
+
+        foreach (Layout candidate in app.Layouts ?? [])
+        {
+            firstLayout ??= candidate;
+
+            if (candidate.Name == layoutName)
+            {
+                layout = candidate;
+                break;
+            }
+        }
+
+        layout ??= firstLayout;
 
         return layout == null
             ? new PageRenderLayout
@@ -248,31 +300,55 @@ comparer: StringComparer.OrdinalIgnoreCase))
             };
     }
 
-    private static IReadOnlyDictionary<string, PageRenderContent> BuildContentLookup(IEnumerable<Content> contents, string culture) =>
-        (contents ?? Array.Empty<Content>())
-            .GroupBy(keySelector: content => content.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
-        .ToDictionary(
-keySelector: group => group.Key,
-elementSelector: group => MapContent(content: GetClosestContent(potentials: group, culture: culture) ?? group.First()),
-comparer: StringComparer.OrdinalIgnoreCase);
+    private static IReadOnlyDictionary<string, PageRenderContent> BuildContentLookup(
+        IEnumerable<Content> contents,
+        string culture)
+    {
+        Dictionary<string, List<Content>> contentsByName =
+            new(comparer: StringComparer.OrdinalIgnoreCase);
+
+        foreach (Content content in contents ?? [])
+        {
+            string name = content.Name ?? string.Empty;
+
+            if (!contentsByName.TryGetValue(key: name, value: out List<Content> potentials))
+            {
+                potentials = [];
+                contentsByName.Add(key: name, value: potentials);
+            }
+
+            potentials.Add(item: content);
+        }
+
+        Dictionary<string, PageRenderContent> contentLookup =
+            new(comparer: StringComparer.OrdinalIgnoreCase);
+
+        foreach (KeyValuePair<string, List<Content>> entry in contentsByName)
+        {
+            Content content = GetClosestContent(
+                potentials: entry.Value,
+                culture: culture) ?? entry.Value[0];
+
+            contentLookup.Add(key: entry.Key, value: MapContent(content: content));
+        }
+
+        return contentLookup;
+    }
 
     private static Content GetClosestContent(IEnumerable<Content> potentials, string culture)
     {
         Content content = null;
 
-        List<string> cultureParts = (culture ?? string.Empty).ToLowerInvariant()
-            .Split(separator: '-')
-            .ToList();
+        string[] cultureParts = (culture ?? string.Empty).ToLowerInvariant()
+            .Split(separator: '-');
 
-        int count = cultureParts.Count;
+        int count = cultureParts.Length;
         string resultCulture = string.Empty;
 
         while (content == null && resultCulture != null)
         {
-            resultCulture = string.Join(separator: "-", values: cultureParts.Take(count: count));
-
-            content = potentials.FirstOrDefault(predicate: candidate =>
-                string.Equals(a: candidate.CultureId ?? string.Empty, b: resultCulture ?? string.Empty, comparisonType: StringComparison.OrdinalIgnoreCase));
+            resultCulture = string.Join(separator: "-", value: cultureParts, startIndex: 0, count: count);
+            content = FindContentByCulture(potentials: potentials, culture: resultCulture);
 
             count--;
 
@@ -282,7 +358,23 @@ comparer: StringComparer.OrdinalIgnoreCase);
             }
         }
 
-        return content ?? potentials.FirstOrDefault(predicate: candidate => string.IsNullOrEmpty(value: candidate.CultureId));
+        return content ?? FindContentByCulture(potentials: potentials, culture: string.Empty);
+    }
+
+    private static Content FindContentByCulture(IEnumerable<Content> potentials, string culture)
+    {
+        foreach (Content candidate in potentials ?? [])
+        {
+            if (string.Equals(
+                a: candidate.CultureId ?? string.Empty,
+                b: culture ?? string.Empty,
+                comparisonType: StringComparison.OrdinalIgnoreCase))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
     }
 
     private static PageRenderContent MapContent(Content content) =>
@@ -293,9 +385,13 @@ comparer: StringComparer.OrdinalIgnoreCase);
             Html = content.Html ?? string.Empty
         };
 
-    private static IReadOnlyList<PageRenderResource> MapResources(IEnumerable<Resource> resources) =>
-        (resources ?? Array.Empty<Resource>())
-            .Select(selector: resource => new PageRenderResource
+    private static IReadOnlyList<PageRenderResource> MapResources(IEnumerable<Resource> resources)
+    {
+        List<PageRenderResource> mappedResources = [];
+
+        foreach (Resource resource in resources ?? [])
+        {
+            mappedResources.Add(item: new PageRenderResource
             {
                 Key = resource.Key ?? string.Empty,
                 Culture = resource.Culture ?? string.Empty,
@@ -303,66 +399,87 @@ comparer: StringComparer.OrdinalIgnoreCase);
                 DisplayName = resource.DisplayName ?? resource.Name ?? string.Empty,
                 ShortDisplayName = resource.ShortDisplayName ?? resource.Name ?? string.Empty,
                 Description = resource.Description ?? string.Empty
-            })
-        .ToArray();
+            });
+        }
 
-    private static IReadOnlyDictionary<string, PageRenderResource> BuildResourceLookup(IEnumerable<Resource> resources) =>
-        (resources ?? Array.Empty<Resource>())
-            .GroupBy(keySelector: resource => $"{resource.Key ?? string.Empty}|{resource.Name ?? string.Empty}|{resource.Culture ?? string.Empty}", comparer: StringComparer.OrdinalIgnoreCase)
-        .ToDictionary(
-keySelector: group => group.Key,
-elementSelector: group => new PageRenderResource
-{
-    Key = group.First()
-        .Key ?? string.Empty,
-    Culture = group.First()
-        .Culture ?? string.Empty,
-    Name = group.First()
-        .Name ?? string.Empty,
-    DisplayName = group.First()
-        .DisplayName ?? group.First()
-        .Name ?? string.Empty,
-    ShortDisplayName = group.First()
-        .ShortDisplayName ?? group.First()
-        .Name ?? string.Empty,
-    Description = group.First()
-        .Description ?? string.Empty
-},
-comparer: StringComparer.OrdinalIgnoreCase);
+        return mappedResources;
+    }
 
-    private static IDictionary<string, PageRenderComponent> BuildComponentLookup(IEnumerable<Component> components) =>
-        (components ?? Array.Empty<Component>())
-            .GroupBy(keySelector: component => component.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
-        .ToDictionary(
-keySelector: group => group.Key,
-elementSelector: group => new PageRenderComponent
-{
-    Id = group.First()
-        .Id,
-    Name = group.First()
-        .Name ?? string.Empty,
-    ResourceKey = group.First()
-        .ResourceKey ?? string.Empty,
-    Content = group.First()
-        .Content ?? string.Empty,
-    Script = group.First()
-        .Script ?? string.Empty
-},
-comparer: StringComparer.OrdinalIgnoreCase);
+    private static IReadOnlyDictionary<string, PageRenderResource> BuildResourceLookup(
+        IEnumerable<Resource> resources)
+    {
+        Dictionary<string, PageRenderResource> lookup =
+            new(comparer: StringComparer.OrdinalIgnoreCase);
 
-    private static IDictionary<string, PageRenderScript> BuildScriptLookup(IEnumerable<Script> scripts) =>
-        (scripts ?? Array.Empty<Script>())
-            .GroupBy(keySelector: script => script.Name ?? string.Empty, comparer: StringComparer.OrdinalIgnoreCase)
-        .ToDictionary(
-keySelector: group => group.Key,
-elementSelector: group => new PageRenderScript
-{
-    Name = group.First()
-        .Name ?? string.Empty,
-    Content = group.First()
-        .Content ?? string.Empty
-},
-comparer: StringComparer.OrdinalIgnoreCase);
+        foreach (Resource resource in resources ?? [])
+        {
+            string key = $"{resource.Key ?? string.Empty}|{resource.Name ?? string.Empty}|{resource.Culture ?? string.Empty}";
+
+            if (!lookup.ContainsKey(key: key))
+            {
+                lookup.Add(key: key, value: new PageRenderResource
+                {
+                    Key = resource.Key ?? string.Empty,
+                    Culture = resource.Culture ?? string.Empty,
+                    Name = resource.Name ?? string.Empty,
+                    DisplayName = resource.DisplayName ?? resource.Name ?? string.Empty,
+                    ShortDisplayName = resource.ShortDisplayName ?? resource.Name ?? string.Empty,
+                    Description = resource.Description ?? string.Empty
+                });
+            }
+        }
+
+        return lookup;
+    }
+
+    private static IDictionary<string, PageRenderComponent> BuildComponentLookup(
+        IEnumerable<Component> components)
+    {
+        Dictionary<string, PageRenderComponent> lookup =
+            new(comparer: StringComparer.OrdinalIgnoreCase);
+
+        foreach (Component component in components ?? [])
+        {
+            string name = component.Name ?? string.Empty;
+
+            if (!lookup.ContainsKey(key: name))
+            {
+                lookup.Add(key: name, value: new PageRenderComponent
+                {
+                    Id = component.Id,
+                    Name = name,
+                    ResourceKey = component.ResourceKey ?? string.Empty,
+                    Content = component.Content ?? string.Empty,
+                    Script = component.Script ?? string.Empty
+                });
+            }
+        }
+
+        return lookup;
+    }
+
+    private static IDictionary<string, PageRenderScript> BuildScriptLookup(
+        IEnumerable<Script> scripts)
+    {
+        Dictionary<string, PageRenderScript> lookup =
+            new(comparer: StringComparer.OrdinalIgnoreCase);
+
+        foreach (Script script in scripts ?? [])
+        {
+            string name = script.Name ?? string.Empty;
+
+            if (!lookup.ContainsKey(key: name))
+            {
+                lookup.Add(key: name, value: new PageRenderScript
+                {
+                    Name = name,
+                    Content = script.Content ?? string.Empty
+                });
+            }
+        }
+
+        return lookup;
+    }
 
     private static void ValidatePage(Page page, string parameterName) =>
         ThrowIf(condition: page == null, message: parameterName + " is required.");
@@ -385,7 +502,7 @@ comparer: StringComparer.OrdinalIgnoreCase);
     {
         culture ??= string.Empty;
 
-        if (page?.PageInfo == null || !page.PageInfo.Any())
+        if (page?.PageInfo == null || page.PageInfo.Count == 0)
         {
             return new PageInfo
             {
@@ -396,15 +513,28 @@ comparer: StringComparer.OrdinalIgnoreCase);
             };
         }
 
-        IOrderedEnumerable<PageInfo> orderedInfo = page.PageInfo
-            .OrderByDescending(
-                keySelector: info => info.CultureId?.Length ?? 0);
+        PageInfo bestMatch = null;
+        PageInfo longest = null;
 
-        return orderedInfo.FirstOrDefault(
-            predicate: info =>
-                culture == info.CultureId
-                || culture.Contains(value: info.CultureId ?? string.Empty))
-            ?? orderedInfo.FirstOrDefault()
+        foreach (PageInfo info in page.PageInfo)
+        {
+            if (longest == null
+                || (info.CultureId?.Length ?? 0) > (longest.CultureId?.Length ?? 0))
+            {
+                longest = info;
+            }
+
+            if ((culture == info.CultureId
+                    || culture.Contains(value: info.CultureId ?? string.Empty))
+                && (bestMatch == null
+                    || (info.CultureId?.Length ?? 0) > (bestMatch.CultureId?.Length ?? 0)))
+            {
+                bestMatch = info;
+            }
+        }
+
+        return bestMatch
+            ?? longest
             ?? new PageInfo
             {
                 CultureId = culture,
