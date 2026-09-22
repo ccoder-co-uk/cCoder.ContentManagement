@@ -5,8 +5,8 @@
 using cCoder.ContentManagement;
 using cCoder.Data;
 using cCoder.Security.Data.EF;
-using cCoder.Security.Data.EF.Dependencies;
 using cCoder.Security.Data.EF.Interfaces;
+using cCoder.Security.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Web.AcceptanceTests.Models;
@@ -77,10 +77,11 @@ public sealed class WebAcceptanceFixture : IAsyncLifetime
         services.AddLogging();
         services.AddSingleton(implementationInstance: dataConfig);
 
-        services.AddSingleton<ISecurityDbContextFactory>(
-            implementationFactory: _ =>
-                new MSSQLSecurityDbContextFactory(
-                    connectionString: settings.SsoConnectionString));
+        services.AddSecurityData(
+            configuration: new SecurityDataConfiguration
+            {
+                ConnectionString = settings.SsoConnectionString
+            });
 
         services.AddData(configuration: dataConfig);
 

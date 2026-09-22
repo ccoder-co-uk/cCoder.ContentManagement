@@ -5,7 +5,6 @@
 using cCoder.Data;
 using cCoder.Data.Models.Security;
 using cCoder.Security.Data.EF;
-using cCoder.Security.Data.EF.Dependencies;
 using cCoder.Security.Data.EF.Interfaces;
 using cCoder.Security.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -147,8 +146,11 @@ decryptionKey: DecryptionKey);
         services.AddSingleton(
             implementationInstance: dataConfiguration);
 
-        services.AddSingleton<ISecurityDbContextFactory>(
-implementationFactory: _ => new MSSQLSecurityDbContextFactory(connectionString: ssoConnectionString));
+        services.AddSecurityData(
+            configuration: new SecurityDataConfiguration
+            {
+                ConnectionString = ssoConnectionString
+            });
 
         services.AddData(configuration: dataConfiguration);
 
