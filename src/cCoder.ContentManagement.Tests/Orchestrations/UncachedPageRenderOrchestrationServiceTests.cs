@@ -26,7 +26,8 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
         };
 
         UncachedPageRenderOrchestrationService service = new(
-            pageProcessingService: Mock.Of<IPageProcessingService>(),
+            pageRenderDataProcessingService:
+                Mock.Of<IPageRenderDataProcessingService>(),
             pageRenderProcessingService:
                 Mock.Of<IPageRenderProcessingService>());
 
@@ -73,7 +74,7 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
             }
         };
 
-        Mock<IPageProcessingService> pageService = new();
+        Mock<IPageRenderDataProcessingService> pageService = new();
         Mock<IPageRenderProcessingService> renderService = new();
 
         pageService.Setup(expression: service =>
@@ -106,7 +107,7 @@ public sealed partial class UncachedPageRenderOrchestrationServiceTests
             .Returns(valueFunction: (PageRenderOperation item) => item);
 
         UncachedPageRenderOrchestrationService service = new(
-            pageProcessingService: pageService.Object,
+            pageRenderDataProcessingService: pageService.Object,
             pageRenderProcessingService: renderService.Object);
 
         // When

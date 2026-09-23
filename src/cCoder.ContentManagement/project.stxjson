@@ -8296,7 +8296,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.AddPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 67,
+          "LineNumber": 38,
           "Inputs": [
             {
               "Name": "newPage",
@@ -8351,7 +8351,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.DeleteAllPagesAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "DeleteAllPagesAsync",
-          "LineNumber": 93,
+          "LineNumber": 64,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -8406,7 +8406,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.DeletePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "DeletePageAsync",
-          "LineNumber": 86,
+          "LineNumber": 57,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -8526,83 +8526,6 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.GetPageForRenderAsync(System.Int32)",
-          "Name": "GetPageForRenderAsync",
-          "LineNumber": 38,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.Page\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Brokers.Storages.IPageBroker.GetPageForRenderAsync(System.Int32)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
-              "MethodName": "IgnoreQueryFilters",
-              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IgnoreQueryFilters(System.Linq.IQueryable\u003CTEntity\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
-              "MethodName": "Include",
-              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.Include(System.Linq.IQueryable\u003CTEntity\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTEntity, TProperty\u003E\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
-              "MethodName": "SingleOrDefaultAsync",
-              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.SingleOrDefaultAsync(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, System.Boolean\u003E\u003E,System.Threading.CancellationToken)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
-              "MethodName": "ThenInclude",
-              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ThenInclude(Microsoft.EntityFrameworkCore.Query.IIncludableQueryable\u003CTEntity, System.Collections.Generic.IEnumerable\u003CTPreviousProperty\u003E\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTPreviousProperty, TProperty\u003E\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
-              "MethodName": "ThenInclude",
-              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ThenInclude(Microsoft.EntityFrameworkCore.Query.IIncludableQueryable\u003CTEntity, TPreviousProperty\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTPreviousProperty, TProperty\u003E\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.RelationalQueryableExtensions",
-              "MethodName": "AsSplitQuery",
-              "MethodId": "Microsoft.EntityFrameworkCore.RelationalQueryableExtensions.AsSplitQuery(System.Linq.IQueryable\u003CTEntity\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "cCoder.Data.ICoreContextFactory",
-              "MethodName": "CreateCoreContext",
-              "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            }
-          ],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.LayoutExistsForApp(System.Int32,System.String)",
           "Name": "LayoutExistsForApp",
           "LineNumber": 27,
@@ -8658,7 +8581,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.UpdatePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 75,
+          "LineNumber": 46,
           "Inputs": [
             {
               "Name": "updatedPage",
@@ -9513,6 +9436,64 @@
           "ThrowsExceptionTypes": [
             "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
           ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Brokers.Storages.PageRenderDataBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Brokers.Storages.IPageRenderDataBroker",
+          "FullName": "cCoder.ContentManagement.Brokers.Storages.IPageRenderDataBroker",
+          "Name": "IPageRenderDataBroker",
+          "Namespace": "cCoder.ContentManagement.Brokers.Storages",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Broker"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Storages.PageRenderDataBroker.GetPageRenderDataAsync(System.Int32)",
+          "Name": "GetPageRenderDataAsync",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageRenderData\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.Storages.IPageRenderDataBroker.GetPageRenderDataAsync(System.Int32)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "System.Threading.Tasks.Task",
+              "MethodName": "WhenAll",
+              "MethodId": "System.Threading.Tasks.Task.WhenAll(System.ReadOnlySpan\u003CSystem.Threading.Tasks.Task\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
           "HttpMethods": [],
           "HttpResponses": [],
           "IsHttpRequestHandler": false,
@@ -31297,6 +31278,46 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Models.PageRenderData",
+      "StandardElementType": "Model",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [
+        {
+          "Name": "Components",
+          "Type": "cCoder.Data.Models.CMS.Component[]"
+        },
+        {
+          "Name": "Layouts",
+          "Type": "cCoder.Data.Models.CMS.Layout[]"
+        },
+        {
+          "Name": "Page",
+          "Type": "cCoder.Data.Models.CMS.Page"
+        },
+        {
+          "Name": "Pages",
+          "Type": "cCoder.Data.Models.CMS.Page[]"
+        },
+        {
+          "Name": "Resources",
+          "Type": "cCoder.Data.Models.CMS.Resource[]"
+        },
+        {
+          "Name": "Scripts",
+          "Type": "cCoder.Data.Models.CMS.Script[]"
+        },
+        {
+          "Name": "Templates",
+          "Type": "cCoder.Data.Models.CMS.Template[]"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Models.PageRenderOperation",
       "StandardElementType": "Model",
       "LineNumber": 20,
@@ -51523,6 +51544,79 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Storages.PageRenderDataService",
+      "StandardElementType": "FoundationService",
+      "LineNumber": 10,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderDataService",
+          "FullName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderDataService",
+          "Name": "IPageRenderDataService",
+          "Namespace": "cCoder.ContentManagement.Services.Foundations.Storages",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "FoundationService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageRenderDataService.GetPageRenderDataAsync(System.Int32)",
+          "Name": "GetPageRenderDataAsync",
+          "LineNumber": 13,
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageRenderData\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderDataService.GetPageRenderDataAsync(System.Int32)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Storages.IPageRenderDataBroker",
+              "MethodName": "GetPageRenderDataAsync",
+              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IPageRenderDataBroker.GetPageRenderDataAsync(System.Int32)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Foundations.Storages.PageRoleService",
       "StandardElementType": "FoundationService",
       "LineNumber": 10,
@@ -52038,7 +52132,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageService.AddPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 75,
+          "LineNumber": 65,
           "Inputs": [
             {
               "Name": "newPage",
@@ -52091,7 +52185,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 123,
+          "LineNumber": 113,
           "Inputs": [
             {
               "Name": "pageId",
@@ -52147,7 +52241,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageService.GetAllPage(System.Boolean)",
           "Name": "GetAllPage",
-          "LineNumber": 65,
+          "LineNumber": 55,
           "Inputs": [
             {
               "Name": "ignoreFilters",
@@ -52203,7 +52297,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageService.GetPage(System.Int32,System.Boolean)",
           "Name": "GetPage",
-          "LineNumber": 33,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "pageId",
@@ -52280,57 +52374,6 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageService.GetPageForRenderAsync(System.Int32)",
-          "Name": "GetPageForRenderAsync",
-          "LineNumber": 23,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.Page\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetPageForRenderAsync(System.Int32)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Brokers.Storages.IPageBroker",
-              "MethodName": "GetPageForRenderAsync",
-              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IPageBroker.GetPageForRenderAsync(System.Int32)",
-              "StandardElementType": "Broker",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageService.LayoutExistsForApp(System.Int32,System.String)",
           "Name": "LayoutExistsForApp",
           "LineNumber": 13,
@@ -52386,7 +52429,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageService.UpdatePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 99,
+          "LineNumber": 89,
           "Inputs": [
             {
               "Name": "updatedPage",
@@ -60589,7 +60632,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.AddOrUpdatePageResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "AddOrUpdatePageResult",
-          "LineNumber": 159,
+          "LineNumber": 149,
           "Inputs": [
             {
               "Name": "newPage",
@@ -60661,7 +60704,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.AddPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 46,
+          "LineNumber": 36,
           "Inputs": [
             {
               "Name": "newPage",
@@ -60728,7 +60771,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.DeleteAllPageAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "DeleteAllPageAsync",
-          "LineNumber": 265,
+          "LineNumber": 255,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -60781,7 +60824,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 105,
+          "LineNumber": 95,
           "Inputs": [
             {
               "Name": "pageId",
@@ -60871,7 +60914,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.DeleteByAppIdAsync(System.Int32)",
           "Name": "DeleteByAppIdAsync",
-          "LineNumber": 139,
+          "LineNumber": 129,
           "Inputs": [
             {
               "Name": "appId",
@@ -60945,7 +60988,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetAllPage(System.Boolean)",
           "Name": "GetAllPage",
-          "LineNumber": 39,
+          "LineNumber": 29,
           "Inputs": [
             {
               "Name": "ignoreFilters",
@@ -60994,7 +61037,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetChildrenPage(System.Int32)",
           "Name": "GetChildrenPage",
-          "LineNumber": 303,
+          "LineNumber": 293,
           "Inputs": [
             {
               "Name": "pageId",
@@ -61045,7 +61088,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetPage(System.Int32)",
           "Name": "GetPage",
-          "LineNumber": 30,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "pageId",
@@ -61095,60 +61138,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetPageForRenderAsync(System.Int32)",
-          "Name": "GetPageForRenderAsync",
-          "LineNumber": 20,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.Page\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetPageForRenderAsync(System.Int32)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
-              "MethodName": "GetPageForRenderAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetPageForRenderAsync(System.Int32)",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetRootPage(System.Int32)",
           "Name": "GetRootPage",
-          "LineNumber": 294,
+          "LineNumber": 284,
           "Inputs": [
             {
               "Name": "pageId",
@@ -61200,7 +61192,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.ImportPagesAsync(System.Int32,cCoder.Data.Models.CMS.Page[])",
           "Name": "ImportPagesAsync",
-          "LineNumber": 200,
+          "LineNumber": 190,
           "Inputs": [
             {
               "Name": "appId",
@@ -61355,7 +61347,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.MenuFor(System.Int32,System.String)",
           "Name": "MenuFor",
-          "LineNumber": 312,
+          "LineNumber": 302,
           "Inputs": [
             {
               "Name": "pageId",
@@ -61410,7 +61402,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.RecomputeAllForAppAsync(System.Int32)",
           "Name": "RecomputeAllForAppAsync",
-          "LineNumber": 280,
+          "LineNumber": 270,
           "Inputs": [
             {
               "Name": "appId",
@@ -61472,7 +61464,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.UpdatePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 67,
+          "LineNumber": 57,
           "Inputs": [
             {
               "Name": "updatedPage",
@@ -65710,9 +65702,9 @@
               "IsDependencyBoundary": true
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IPageRenderDataProcessingService",
               "MethodName": "GetPageForRenderAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetPageForRenderAsync(System.Int32)",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageRenderDataProcessingService.GetPageForRenderAsync(System.Int32)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -72470,7 +72462,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.AddOrUpdatePageResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "AddOrUpdatePageResult",
-          "LineNumber": 245,
+          "LineNumber": 235,
           "Inputs": [
             {
               "Name": "newPage",
@@ -72527,7 +72519,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.AddPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 146,
+          "LineNumber": 136,
           "Inputs": [
             {
               "Name": "newPage",
@@ -72670,7 +72662,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.DeleteAllPageAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "DeleteAllPageAsync",
-          "LineNumber": 280,
+          "LineNumber": 270,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -72716,7 +72708,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 97,
+          "LineNumber": 87,
           "Inputs": [
             {
               "Name": "pageId",
@@ -72770,7 +72762,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.GetAllPage(System.Boolean)",
           "Name": "GetAllPage",
-          "LineNumber": 45,
+          "LineNumber": 35,
           "Inputs": [
             {
               "Name": "ignoreFilters",
@@ -72819,7 +72811,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.GetChildrenPage(System.Int32)",
           "Name": "GetChildrenPage",
-          "LineNumber": 86,
+          "LineNumber": 76,
           "Inputs": [
             {
               "Name": "pageId",
@@ -72870,7 +72862,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.GetPage(System.Int32)",
           "Name": "GetPage",
-          "LineNumber": 36,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "pageId",
@@ -72921,60 +72913,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.GetPageForRenderAsync(System.Int32)",
-          "Name": "GetPageForRenderAsync",
-          "LineNumber": 26,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.Page\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetPageForRenderAsync(System.Int32)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService",
-              "MethodName": "GetPageForRenderAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetPageForRenderAsync(System.Int32)",
-              "StandardElementType": "FoundationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.GetRootPage(System.Int32)",
           "Name": "GetRootPage",
-          "LineNumber": 69,
+          "LineNumber": 59,
           "Inputs": [
             {
               "Name": "pageId",
@@ -73019,7 +72960,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.ImportPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "ImportPageAsync",
-          "LineNumber": 230,
+          "LineNumber": 220,
           "Inputs": [
             {
               "Name": "page",
@@ -73147,7 +73088,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.MenuFor(System.Int32,System.String)",
           "Name": "MenuFor",
-          "LineNumber": 52,
+          "LineNumber": 42,
           "Inputs": [
             {
               "Name": "pageId",
@@ -73237,7 +73178,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.RecomputeAllForAppAsync(System.Int32)",
           "Name": "RecomputeAllForAppAsync",
-          "LineNumber": 293,
+          "LineNumber": 283,
           "Inputs": [
             {
               "Name": "appId",
@@ -73281,7 +73222,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.UpdatePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 107,
+          "LineNumber": 97,
           "Inputs": [
             {
               "Name": "updatedPage",
@@ -74010,6 +73951,79 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Processings.PageRenderDataProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 11,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Processings.IPageRenderDataProcessingService",
+          "FullName": "cCoder.ContentManagement.Services.Processings.IPageRenderDataProcessingService",
+          "Name": "IPageRenderDataProcessingService",
+          "Namespace": "cCoder.ContentManagement.Services.Processings",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "ProcessingService"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.PageRenderDataProcessingService.GetPageForRenderAsync(System.Int32)",
+          "Name": "GetPageForRenderAsync",
+          "LineNumber": 14,
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.Page\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.IPageRenderDataProcessingService.GetPageForRenderAsync(System.Int32)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderDataService",
+              "MethodName": "GetPageRenderDataAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderDataService.GetPageRenderDataAsync(System.Int32)",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
@@ -82568,7 +82582,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.IPageBroker.AddPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 19,
+          "LineNumber": 17,
           "Inputs": [
             {
               "Name": "newPage",
@@ -82593,7 +82607,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.IPageBroker.DeleteAllPagesAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "DeleteAllPagesAsync",
-          "LineNumber": 25,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -82618,7 +82632,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.IPageBroker.DeletePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "DeletePageAsync",
-          "LineNumber": 23,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -82681,31 +82695,6 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Storages.IPageBroker.GetPageForRenderAsync(System.Int32)",
-          "Name": "GetPageForRenderAsync",
-          "LineNumber": 17,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.Page\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Brokers.Storages.IPageBroker.LayoutExistsForApp(System.Int32,System.String)",
           "Name": "LayoutExistsForApp",
           "LineNumber": 15,
@@ -82737,7 +82726,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.IPageBroker.UpdatePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 21,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "updatedPage",
@@ -83116,6 +83105,43 @@
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.PageRenderCache\u003E",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Brokers.Storages.IPageRenderDataBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.Storages.IPageRenderDataBroker.GetPageRenderDataAsync(System.Int32)",
+          "Name": "GetPageRenderDataAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageRenderData\u003E",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -96200,6 +96226,43 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderDataService",
+      "StandardElementType": "FoundationService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderDataService.GetPageRenderDataAsync(System.Int32)",
+          "Name": "GetPageRenderDataAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageRenderData\u003E",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService",
       "StandardElementType": "FoundationService",
       "LineNumber": 10,
@@ -96449,7 +96512,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.AddPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 19,
+          "LineNumber": 17,
           "Inputs": [
             {
               "Name": "newPage",
@@ -96474,7 +96537,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 23,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "pageId",
@@ -96499,7 +96562,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPage(System.Boolean)",
           "Name": "GetAllPage",
-          "LineNumber": 15,
+          "LineNumber": 13,
           "Inputs": [
             {
               "Name": "ignoreFilters",
@@ -96551,34 +96614,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetPageForRenderAsync(System.Int32)",
-          "Name": "GetPageForRenderAsync",
-          "LineNumber": 13,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.Page\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.LayoutExistsForApp(System.Int32,System.String)",
           "Name": "LayoutExistsForApp",
-          "LineNumber": 17,
+          "LineNumber": 15,
           "Inputs": [
             {
               "Name": "appId",
@@ -96607,7 +96645,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.UpdatePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 21,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "updatedPage",
@@ -100150,7 +100188,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.AddOrUpdatePageResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "AddOrUpdatePageResult",
-          "LineNumber": 26,
+          "LineNumber": 24,
           "Inputs": [
             {
               "Name": "newPage",
@@ -100175,7 +100213,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.AddPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 18,
+          "LineNumber": 16,
           "Inputs": [
             {
               "Name": "newPage",
@@ -100200,7 +100238,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.DeleteAllPageAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "DeleteAllPageAsync",
-          "LineNumber": 30,
+          "LineNumber": 28,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -100225,7 +100263,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 22,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "pageId",
@@ -100250,7 +100288,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.DeleteByAppIdAsync(System.Int32)",
           "Name": "DeleteByAppIdAsync",
-          "LineNumber": 24,
+          "LineNumber": 22,
           "Inputs": [
             {
               "Name": "appId",
@@ -100275,7 +100313,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPage(System.Boolean)",
           "Name": "GetAllPage",
-          "LineNumber": 16,
+          "LineNumber": 14,
           "Inputs": [
             {
               "Name": "ignoreFilters",
@@ -100300,7 +100338,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetChildrenPage(System.Int32)",
           "Name": "GetChildrenPage",
-          "LineNumber": 36,
+          "LineNumber": 34,
           "Inputs": [
             {
               "Name": "pageId",
@@ -100348,34 +100386,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetPageForRenderAsync(System.Int32)",
-          "Name": "GetPageForRenderAsync",
-          "LineNumber": 14,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.Page\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetRootPage(System.Int32)",
           "Name": "GetRootPage",
-          "LineNumber": 34,
+          "LineNumber": 32,
           "Inputs": [
             {
               "Name": "pageId",
@@ -100400,7 +100413,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.ImportPagesAsync(System.Int32,cCoder.Data.Models.CMS.Page[])",
           "Name": "ImportPagesAsync",
-          "LineNumber": 28,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "appId",
@@ -100429,7 +100442,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.MenuFor(System.Int32,System.String)",
           "Name": "MenuFor",
-          "LineNumber": 38,
+          "LineNumber": 36,
           "Inputs": [
             {
               "Name": "pageId",
@@ -100458,7 +100471,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.RecomputeAllForAppAsync(System.Int32)",
           "Name": "RecomputeAllForAppAsync",
-          "LineNumber": 32,
+          "LineNumber": 30,
           "Inputs": [
             {
               "Name": "appId",
@@ -100483,7 +100496,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.UpdatePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 20,
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "updatedPage",
@@ -105611,7 +105624,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.AddOrUpdatePageResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "AddOrUpdatePageResult",
-          "LineNumber": 26,
+          "LineNumber": 24,
           "Inputs": [
             {
               "Name": "newPage",
@@ -105636,7 +105649,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.AddPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 18,
+          "LineNumber": 16,
           "Inputs": [
             {
               "Name": "newPage",
@@ -105661,7 +105674,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.DeleteAllPageAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "DeleteAllPageAsync",
-          "LineNumber": 28,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -105686,7 +105699,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 24,
+          "LineNumber": 22,
           "Inputs": [
             {
               "Name": "pageId",
@@ -105711,7 +105724,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPage(System.Boolean)",
           "Name": "GetAllPage",
-          "LineNumber": 16,
+          "LineNumber": 14,
           "Inputs": [
             {
               "Name": "ignoreFilters",
@@ -105736,7 +105749,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetChildrenPage(System.Int32)",
           "Name": "GetChildrenPage",
-          "LineNumber": 34,
+          "LineNumber": 32,
           "Inputs": [
             {
               "Name": "pageId",
@@ -105784,34 +105797,9 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetPageForRenderAsync(System.Int32)",
-          "Name": "GetPageForRenderAsync",
-          "LineNumber": 14,
-          "Inputs": [
-            {
-              "Name": "pageId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.Page\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetRootPage(System.Int32)",
           "Name": "GetRootPage",
-          "LineNumber": 32,
+          "LineNumber": 30,
           "Inputs": [
             {
               "Name": "pageId",
@@ -105836,7 +105824,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.ImportPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "ImportPageAsync",
-          "LineNumber": 20,
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "page",
@@ -105861,7 +105849,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.LayoutExistsForApp(System.Int32,System.String)",
           "Name": "LayoutExistsForApp",
-          "LineNumber": 38,
+          "LineNumber": 36,
           "Inputs": [
             {
               "Name": "appId",
@@ -105890,7 +105878,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.MenuFor(System.Int32,System.String)",
           "Name": "MenuFor",
-          "LineNumber": 36,
+          "LineNumber": 34,
           "Inputs": [
             {
               "Name": "pageId",
@@ -105919,7 +105907,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.RecomputeAllForAppAsync(System.Int32)",
           "Name": "RecomputeAllForAppAsync",
-          "LineNumber": 30,
+          "LineNumber": 28,
           "Inputs": [
             {
               "Name": "appId",
@@ -105944,7 +105932,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.UpdatePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 22,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "updatedPage",
@@ -106265,6 +106253,43 @@
             }
           ],
           "ReturnType": "cCoder.Data.Models.CMS.PageRenderCache",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
+      "Name": "cCoder.ContentManagement.Services.Processings.IPageRenderDataProcessingService",
+      "StandardElementType": "ProcessingService",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Services.Processings.IPageRenderDataProcessingService.GetPageForRenderAsync(System.Int32)",
+          "Name": "GetPageForRenderAsync",
+          "LineNumber": 11,
+          "Inputs": [
+            {
+              "Name": "pageId",
+              "Type": "System.Int32"
+            }
+          ],
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CMS.Page\u003E",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -108150,6 +108175,10 @@
       "ToType": "cCoder.Data.ICoreContextFactory"
     },
     {
+      "FromType": "cCoder.ContentManagement.Brokers.Storages.PageRenderDataBroker",
+      "ToType": "cCoder.Data.ICoreContextFactory"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Brokers.Storages.PageRoleBroker",
       "ToType": "cCoder.Data.ICoreContextFactory"
     },
@@ -108890,6 +108919,10 @@
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PageRenderCacheBroker"
     },
     {
+      "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageRenderDataService",
+      "ToType": "cCoder.ContentManagement.Brokers.Storages.PageRenderDataBroker"
+    },
+    {
       "FromType": "cCoder.ContentManagement.Services.Foundations.Storages.PageRoleService",
       "ToType": "cCoder.ContentManagement.Brokers.Storages.PageRoleBroker"
     },
@@ -109299,7 +109332,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Services.Processings.PageProcessingService"
+      "ToType": "cCoder.ContentManagement.Services.Processings.PageRenderDataProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.UncachedPageRenderOrchestrationService",
@@ -109436,6 +109469,10 @@
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRenderCacheQueryProcessingService",
       "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.PageRenderCacheService"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Services.Processings.PageRenderDataProcessingService",
+      "ToType": "cCoder.ContentManagement.Services.Foundations.Storages.PageRenderDataService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Processings.PageRenderProcessingService",

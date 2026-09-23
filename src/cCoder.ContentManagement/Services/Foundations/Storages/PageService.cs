@@ -20,16 +20,6 @@ internal partial class PageService(IPageBroker pageBroker) : IPageService
                 layoutName: layoutName);
         });
 
-    public ValueTask<Page> GetPageForRenderAsync(int pageId) =>
-        TryCatch<Page>(operation: async () =>
-    {
-        ValidatePageForRenderOnGet(inputs: [pageId]);
-        ValidateId(pageId: pageId, parameterName: "id");
-
-        return await pageBroker.GetPageForRenderAsync(
-            pageId: pageId);
-    }, isValueTask: true);
-
     public Page GetPage(int pageId, bool ignoreFilters = false) =>
         TryCatch<Page>(operation: () =>
     {

@@ -11,8 +11,6 @@ public interface IPageOrchestrationService
 {
     Page GetPage(int pageId);
 
-    ValueTask<Page> GetPageForRenderAsync(int pageId);
-
     IQueryable<Page> GetAllPage(bool ignoreFilters = false);
 
     ValueTask<Page> AddPageAsync(Page newPage);

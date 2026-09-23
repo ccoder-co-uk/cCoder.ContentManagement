@@ -9,7 +9,7 @@ using cCoder.Data.Models.CMS;
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class UncachedPageRenderOrchestrationService(
-    IPageProcessingService pageProcessingService,
+    IPageRenderDataProcessingService pageRenderDataProcessingService,
     IPageRenderProcessingService pageRenderProcessingService)
         : IUncachedPageRenderOrchestrationService
 {
@@ -37,7 +37,7 @@ internal sealed partial class UncachedPageRenderOrchestrationService(
             return;
         }
 
-        Page page = await pageProcessingService.GetPageForRenderAsync(
+        Page page = await pageRenderDataProcessingService.GetPageForRenderAsync(
             pageId: context.PageId.Value);
 
         string culture = string.IsNullOrWhiteSpace(value: context.Culture)
