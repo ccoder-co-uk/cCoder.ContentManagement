@@ -7,19 +7,20 @@
     <WarningsNotAsErrors>NETSDK1233</WarningsNotAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.23.903" PrivateAssets="all" />
+    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.23.1632" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
+    <PackageReference Include="cCoder.CodeAnalysis.Contracts" Version="2026.9.23.1632" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="10.0.12" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
-    <PackageReference Include="cCoder.AppSecurity" Version="2026.9.22.1506" />
-    <PackageReference Include="cCoder.Eventing" Version="2026.9.22.2040" />
-    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.9.22.2040" />
-    <PackageReference Include="cCoder.Eventing.Http" Version="2026.9.22.2040" />
-    <PackageReference Include="cCoder.Security" Version="2026.9.22.2049" />
-    <PackageReference Include="cCoder.Security.Data" Version="2026.9.22.2049" />
+    <PackageReference Include="cCoder.AppSecurity" Version="2026.9.22.2204" />
+    <PackageReference Include="cCoder.Eventing" Version="2026.9.23.1651" />
+    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.9.23.1651" />
+    <PackageReference Include="cCoder.Eventing.Http" Version="2026.9.23.1651" />
+    <PackageReference Include="cCoder.Security" Version="2026.9.23.1720" />
+    <PackageReference Include="cCoder.Security.Data" Version="2026.9.23.1720" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" />
