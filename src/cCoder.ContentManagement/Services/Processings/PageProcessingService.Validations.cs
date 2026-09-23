@@ -32,10 +32,6 @@ internal partial class PageProcessingService
         }
     }
 
-    private static void ValidatePageForRenderOnGet(
-        object[] inputs) =>
-        Validate(inputs: inputs);
-
     private static void ValidatePageOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 

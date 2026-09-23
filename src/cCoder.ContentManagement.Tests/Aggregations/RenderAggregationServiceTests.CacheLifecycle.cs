@@ -71,7 +71,7 @@ public sealed partial class RenderAggregationServiceTests
                     regularExpressionBroker: new RegularExpressionBroker())),
             cacheProcessingService: cacheProcessing);
 
-        Mock<IPageProcessingService> pageProcessing = new();
+        Mock<IPageRenderDataProcessingService> pageProcessing = new();
         Mock<IPageRenderProcessingService> renderProcessing = new();
 
         renderProcessing.Setup(expression: service =>
@@ -105,7 +105,7 @@ public sealed partial class RenderAggregationServiceTests
             .Returns(valueFunction: (PageRenderOperation operation) => operation);
 
         UncachedPageRenderOrchestrationService uncached = new(
-            pageProcessingService: pageProcessing.Object,
+            pageRenderDataProcessingService: pageProcessing.Object,
             pageRenderProcessingService: renderProcessing.Object);
 
         Mock<IRenderEventOrchestrationService> renderEvent = new();

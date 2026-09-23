@@ -30,7 +30,7 @@ public partial class PageProcessingServiceTests
     public PageProcessingServiceTests()
     {
         pageProcessingService = new PageProcessingService(
-service: pageServiceMock.Object
+            service: pageServiceMock.Object
         );
     }
 

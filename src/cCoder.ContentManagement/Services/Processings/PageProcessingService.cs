@@ -23,16 +23,6 @@ internal partial class PageProcessingService(
             return service.LayoutExistsForApp(appId: appId, layoutName: layoutName);
         });
 
-    public ValueTask<Page> GetPageForRenderAsync(int pageId) =>
-        TryCatch<Page>(operation: async () =>
-    {
-        ValidatePageForRenderOnGet(inputs: [pageId]);
-        ValidateId(pageId: pageId, parameterName: "id");
-
-        return await service.GetPageForRenderAsync(
-            pageId: pageId);
-    }, isValueTask: true);
-
     public Page GetPage(int pageId) =>
         TryCatch<Page>(operation: () =>
     {

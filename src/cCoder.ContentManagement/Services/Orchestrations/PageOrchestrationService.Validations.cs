@@ -7,10 +7,6 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class PageOrchestrationService
 {
-    private static void ValidatePageForRenderOnGet(
-        object[] inputs) =>
-        Validate(inputs: inputs);
-
     private static void ValidatePageOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 

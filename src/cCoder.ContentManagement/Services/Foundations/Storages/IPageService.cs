@@ -10,8 +10,6 @@ internal interface IPageService
 {
     Page GetPage(int pageId, bool ignoreFilters = false);
 
-    ValueTask<Page> GetPageForRenderAsync(int pageId);
-
     IQueryable<Page> GetAllPage(bool ignoreFilters = false);
 
     bool LayoutExistsForApp(int appId, string layoutName);

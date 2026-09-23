@@ -233,6 +233,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ICultureBroker, CultureBroker>();
         services.AddTransient<ILayoutBroker, LayoutBroker>();
         services.AddTransient<IPageBroker, PageBroker>();
+        services.AddTransient<IPageRenderDataBroker, PageRenderDataBroker>();
         services.AddTransient<IPageInfoBroker, PageInfoBroker>();
         services.AddTransient<IPageRoleBroker, PageRoleBroker>();
         services.AddTransient<IPageRenderCacheBroker, PageRenderCacheBroker>();
@@ -381,6 +382,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageInfoService, PageInfoService>();
         services.AddTransient<IPageRoleService, PageRoleService>();
         services.AddTransient<IPageService, PageService>();
+        services.AddTransient<IPageRenderDataService, PageRenderDataService>();
         services.AddTransient<IPageRenderCacheService, PageRenderCacheService>();
         services.AddTransient<IResourceService, ResourceService>();
         services.AddTransient<IScriptService, ScriptService>();
@@ -490,6 +492,9 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPageInfoEventProcessingService, PageInfoEventProcessingService>();
         services.AddTransient<IPageInfoProcessingService, PageInfoProcessingService>();
         services.AddTransient<IPageProcessingService, PageProcessingService>();
+        services.AddTransient<
+            IPageRenderDataProcessingService,
+            PageRenderDataProcessingService>();
         services.AddTransient<
             IHttpContextProcessingService,
             HttpContextProcessingService>();

@@ -14,8 +14,6 @@ public interface IPageBroker
 
     bool LayoutExistsForApp(int appId, string layoutName);
 
-    ValueTask<Page> GetPageForRenderAsync(int pageId);
-
     ValueTask<Page> AddPageAsync(Page newPage);
 
     ValueTask<Page> UpdatePageAsync(Page updatedPage);
