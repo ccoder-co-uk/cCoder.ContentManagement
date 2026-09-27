@@ -2,13 +2,13 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.Data.Models.CMS;
-
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface IAppBootstrapOrchestrationService
+internal sealed partial class AppUserOrchestrationService
 {
-    App PrepareNewApp(App app, bool isFirstApp);
+    private static void ValidateAllAppUserOnGet(object[] inputs) =>
+        Validate(inputs: inputs);
 
-    void StampAppChildren(App app);
+    private static void Validate(params object[] inputs) =>
+        _ = inputs;
 }

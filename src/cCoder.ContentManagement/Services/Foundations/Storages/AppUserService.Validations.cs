@@ -2,11 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-namespace cCoder.ContentManagement.Services.Orchestrations;
+namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal sealed partial class AppPageOrderOrchestrationService
+internal sealed partial class AppUserService
 {
-    private static void ValidatePageOrderAppOnUpdate(object[] inputs) =>
+    private static void ValidateAllAppUserOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void Validate(params object[] inputs) =>

@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Brokers.Loggings;
-using cCoder.ContentManagement.Services.Aggregations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class PageRenderCacheController(
-    IPageRenderCacheAggregationService manager,
+    IPageRenderCacheOrchestrationService manager,
     ILoggingBroker loggingBroker) : ODataController
 {
     [HttpGet]

@@ -41,17 +41,28 @@ internal sealed partial class ContentManagementMetadataTypeService(
 
     public IEnumerable<string> GetKnownMetadataPayloads() =>
         TryCatch<IEnumerable<string>>(operation: () =>
-            GetKnownMetadataCore()
-                .Select(selector: metadataTypeBroker.Serialize)
-                .ToArray());
+        [
+            metadataTypeBroker.Serialize(value: ContentManagementTypes()),
+            metadataTypeBroker.Serialize(value: SystemTypes())
+        ]);
 
-    private IEnumerable<MetadataContainerSet> GetKnownMetadataCore() =>
-        new MetadataContainerSet[2]
+    private IEnumerable<MetadataContainerSet> GetKnownMetadataCore()
+    {
+        MetadataContainerSet[] sets =
         {
             ContentManagementTypes(),
             SystemTypes()
-        }.OrderBy(keySelector: (MetadataContainerSet set) => set.Name)
-            .ToArray();
+        };
+
+        Array.Sort(
+            array: sets,
+            comparison: (left, right) => string.Compare(
+                strA: left.Name,
+                strB: right.Name,
+                comparisonType: StringComparison.Ordinal));
+
+        return sets;
+    }
 
     private MetadataContainerSet ContentManagementTypes()
     {
@@ -59,7 +70,7 @@ internal sealed partial class ContentManagementMetadataTypeService(
         metadataContainerSet.Name = "ContentManagement";
         metadataContainerSet.UriBase = "ContentManagement";
 
-        metadataContainerSet.Types = new ExtendedMetadataContainer[23]
+        ExtendedMetadataContainer[] types =
         {
             Entity<App>(),
             Entity<Layout>(),
@@ -84,8 +95,16 @@ internal sealed partial class ContentManagementMetadataTypeService(
             Complex<Result<string>>(),
             Complex<Result<CommonObject>>(),
             Complex<FileContentResult>()
-        }.OrderBy(keySelector: (ExtendedMetadataContainer type) => type.Name)
-            .ToArray();
+        };
+
+        Array.Sort(
+            array: types,
+            comparison: (left, right) => string.Compare(
+                strA: left.Name,
+                strB: right.Name,
+                comparisonType: StringComparison.Ordinal));
+
+        metadataContainerSet.Types = types;
 
         return metadataContainerSet;
     }
@@ -95,8 +114,8 @@ internal sealed partial class ContentManagementMetadataTypeService(
         MetadataContainerSet metadataContainerSet = new MetadataContainerSet();
         metadataContainerSet.Name = "System";
 
-        metadataContainerSet.Types = new ExtendedMetadataContainer[14]
-        {
+        metadataContainerSet.Types =
+        [
             CreateExtendedMetadataContainer<int>(category: "System"),
             CreateExtendedMetadataContainer<string>(category: "System"),
             CreateExtendedMetadataContainer<decimal>(category: "System"),
@@ -111,12 +130,7 @@ internal sealed partial class ContentManagementMetadataTypeService(
             CreateExtendedMetadataContainer<IDictionary<string, object>>(category: "System"),
             CreateExtendedMetadataContainer<object>(category: "System"),
             CreateExtendedMetadataContainer<Guid>(category: "System")
-        }.Select(selector: type =>
-        {
-            type.Category = "System";
-            return type;
-        })
-            .ToArray();
+        ];
 
         return metadataContainerSet;
     }
@@ -139,6 +153,26 @@ internal sealed partial class ContentManagementMetadataTypeService(
         MetadataTypeDefinition definition = CreateMetadataTypeDefinition(
             type: typeof(T));
 
+        List<PropertyContainer> properties = [];
+
+        foreach (MetadataPropertyDefinition property in definition.Properties)
+        {
+            properties.Add(item: new PropertyContainer
+            {
+                Name = property.Name,
+                Type = property.Type,
+                ServerType = property.ServerType,
+                ServerTypeName = property.ServerTypeName,
+                IsValueType = property.IsValueType,
+                DisplayName = property.Name,
+                ShortDisplayName = property.Name,
+                Description = property.Name,
+                IsReadOnly = property.IsReadOnly,
+                Template = property.IsKey ? "key" : property.Name,
+                IsRequired = property.IsRequired
+            });
+        }
+
         return new ExtendedMetadataContainer
         {
             IsValueType = definition.IsValueType,
@@ -148,22 +182,7 @@ internal sealed partial class ContentManagementMetadataTypeService(
             Description = definition.Name,
             ServerType = definition.ServerType,
             ServerTypeName = definition.ServerTypeName,
-            Properties = definition.Properties
-                .Select(selector: property => new PropertyContainer
-                {
-                    Name = property.Name,
-                    Type = property.Type,
-                    ServerType = property.ServerType,
-                    ServerTypeName = property.ServerTypeName,
-                    IsValueType = property.IsValueType,
-                    DisplayName = property.Name,
-                    ShortDisplayName = property.Name,
-                    Description = property.Name,
-                    IsReadOnly = property.IsReadOnly,
-                    Template = property.IsKey ? "key" : property.Name,
-                    IsRequired = property.IsRequired
-                })
-                .ToArray(),
+            Properties = [.. properties],
             IsEntity = isEntity,
             IsJoinEntity = isEntity && definition.IsJoinEntity,
             HasEndpoint = hasEndpoint,
@@ -178,6 +197,17 @@ internal sealed partial class ContentManagementMetadataTypeService(
     {
         bool isValueType = type.IsValueType || type == typeof(string);
 
+        List<MetadataPropertyDefinition> properties = [];
+
+        if (!isValueType)
+        {
+            foreach (PropertyInfo property in type.GetProperties())
+            {
+                properties.Add(item: CreateMetadataPropertyDefinition(
+                    property: property));
+            }
+        }
+
         return new MetadataTypeDefinition
         {
             IsValueType = isValueType,
@@ -185,9 +215,7 @@ internal sealed partial class ContentManagementMetadataTypeService(
             Name = type.Name,
             ServerType = type.AssemblyQualifiedName,
             ServerTypeName = GetCSharpTypeName(type: type),
-            Properties = isValueType ? [] : type.GetProperties()
-                .Select(selector: CreateMetadataPropertyDefinition)
-                .ToArray(),
+            Properties = [.. properties],
             IsJoinEntity = IsJoinType(type: type)
         };
     }
@@ -218,8 +246,12 @@ internal sealed partial class ContentManagementMetadataTypeService(
             return type.Name;
         }
 
-        IEnumerable<string> genericNames = type.GenericTypeArguments
-            .Select(selector: GetCSharpTypeName);
+        List<string> genericNames = [];
+
+        foreach (Type genericType in type.GenericTypeArguments)
+        {
+            genericNames.Add(item: GetCSharpTypeName(type: genericType));
+        }
 
         return $"{type.Name.Split(separator: '`')[0]}<{string.Join(separator: ",", values: genericNames)}>"
             .Replace(oldValue: "System.Object", newValue: "dynamic");
@@ -247,13 +279,27 @@ internal sealed partial class ContentManagementMetadataTypeService(
         TableAttribute table = metadataTypeBroker
             .GetCustomAttribute<TableAttribute>(memberInfo: type);
 
-        return table != null && type.GetProperties().Length == 4
-            && type.GetProperties()
-                .Where(predicate: property => property.PropertyType.IsValueType
-                    || property.PropertyType == typeof(string))
-                .All(predicate: property => metadataTypeBroker
-                    .GetCustomAttribute<ForeignKeyAttribute>(
-                        memberInfo: property) != null);
+        PropertyInfo[] properties = type.GetProperties();
+
+        if (table is null || properties.Length != 4)
+        {
+            return false;
+        }
+
+        foreach (PropertyInfo property in properties)
+        {
+            bool isValueProperty = property.PropertyType.IsValueType
+                || property.PropertyType == typeof(string);
+
+            if (isValueProperty && metadataTypeBroker
+                .GetCustomAttribute<ForeignKeyAttribute>(
+                    memberInfo: property) is null)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

@@ -20,10 +20,8 @@ internal partial class CommonObjectService(
         ValidateCommonObjectsOnDeserialize(inputs: [payload]);
         object records = ParseRecordsPayload(payload: payload);
 
-        return GetRecordValues(records: records)
-            .Select(selector: record => jsonBroker.ParseJson<CommonObject>(
-                json: jsonBroker.Serialize(value: record)))
-            .ToArray();
+        return jsonBroker.ParseJson<CommonObject[]>(
+            json: jsonBroker.Serialize(value: GetRecordValues(records: records)));
     });
 
     private object ParseRecordsPayload(object payload)
@@ -43,12 +41,19 @@ internal partial class CommonObjectService(
             return parsedPayload;
         }
 
-        return jsonBroker.GetJsonProperties(value: parsedPayload)
-            .FirstOrDefault(predicate: property => string.Equals(
+        foreach (KeyValuePair<string, object> property in
+            jsonBroker.GetJsonProperties(value: parsedPayload))
+        {
+            if (string.Equals(
                 a: property.Key,
                 b: "value",
                 comparisonType: StringComparison.OrdinalIgnoreCase))
-            .Value ?? parsedPayload;
+            {
+                return property.Value ?? parsedPayload;
+            }
+        }
+
+        return parsedPayload;
     }
 
     private IEnumerable<object> GetRecordValues(object records)

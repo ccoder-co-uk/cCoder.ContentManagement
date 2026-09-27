@@ -2,11 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface IAppRoleOrchestrationService
+public interface IAppUserOrchestrationService
 {
-    ValueTask PersistNewAppRolesAsync(App app);
+    IQueryable<User> GetAllAppUser(int appId);
 }

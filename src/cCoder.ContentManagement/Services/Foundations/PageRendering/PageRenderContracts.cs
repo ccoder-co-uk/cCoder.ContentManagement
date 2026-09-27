@@ -49,6 +49,12 @@ internal interface IMarkupRenderService
     TagHandlingOperation GetPropertyValuesTagHandlingOperation(
         TagHandlingOperation tagHandlingOperation);
 
+    TagHandlingOperation IsValueTypeTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation);
+
+    TagHandlingOperation GetStringValueTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation);
+
     string MarkContentSecurityPolicyNonce(string markup);
 
     TagHandlingOperation RenderCultureLinkTagHandlingOperation(TagHandlingOperation tagHandlingOperation);

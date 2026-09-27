@@ -4,7 +4,7 @@
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface ITemplateContentOrchestrationService
+public interface ITemplateContentOrchestrationService
 {
     ValueTask<string> ReadContentAsync(Stream source);
 

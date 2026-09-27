@@ -58,18 +58,25 @@ internal sealed partial class MarkupRenderService
             return "[[Missing Content:" + name + "]]";
         }
 
-        string optionalClass = string.Join(
-            separator: " ",
-            values: options
-                .Where(predicate: option => option.StartsWith(value: "class="))
-                .Select(selector: option => option.Replace(
-                    oldValue: "class=",
-                    newValue: string.Empty)));
+        List<string> classes = [];
+        List<string> attributes = [];
 
-        string otherOptions = string.Join(
-            separator: " ",
-            values: options.Where(predicate: option =>
-                !option.StartsWith(value: "class=")));
+        foreach (string option in options)
+        {
+            if (option.StartsWith(value: "class="))
+            {
+                classes.Add(item: option.Replace(
+                    oldValue: "class=",
+                    newValue: string.Empty));
+            }
+            else
+            {
+                attributes.Add(item: option);
+            }
+        }
+
+        string optionalClass = string.Join(separator: " ", values: classes);
+        string otherOptions = string.Join(separator: " ", values: attributes);
 
         string contentEditable = operation.Editable
             ? "contenteditable"

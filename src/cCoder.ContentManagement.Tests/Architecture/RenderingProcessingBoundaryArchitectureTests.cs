@@ -49,7 +49,15 @@ public sealed partial class RenderingProcessingBoundaryArchitectureTests
             "Services/Processings/ComponentRenderProcessingService.cs",
             "Services/Processings/TemplateRenderProcessingService.cs",
             "Services/Processings/PageRenderProcessingService.cs",
-            "Services/Processings/PageRenderCacheProcessingService.cs"
+            "Services/Processings/PageRenderCacheProcessingService.cs",
+            "Services/Processings/PageRendering/MarkupRenderProcessingService.cs"
+        };
+
+    public static TheoryData<string> MutableTextProcessingSources =>
+        new()
+        {
+            "Services/Processings/ComponentRenderProcessingService.cs",
+            "Services/Processings/TemplateRenderProcessingService.cs"
         };
 
     private static readonly string[] EnumerableOperations =
@@ -169,6 +177,80 @@ public sealed partial class RenderingProcessingBoundaryArchitectureTests
         usedOperations.Should()
             .BeEmpty(
                 because: "render processing should build its in-memory results directly without depending on Enumerable helpers");
+    }
+
+    [Theory]
+    [MemberData(nameof(MutableTextProcessingSources))]
+    public void RenderingProcessing_WhenBuildingMarkup_DoesNotUseStringBuilder(
+        string relativeSourcePath)
+    {
+        // Given
+        string source = ReadRenderingSource(relativeSourcePath: relativeSourcePath);
+
+        // When
+        bool usesStringBuilder = source.Contains(
+            value: "StringBuilder",
+            comparisonType: StringComparison.Ordinal);
+
+        // Then
+        usesStringBuilder.Should()
+            .BeFalse(
+                because: "processing logic should compose strings through its rendering foundation rather than an external mutable text component");
+    }
+
+    [Theory]
+    [MemberData(nameof(RenderingProcessingSources))]
+    public void RenderingProcessing_WhenInspectingRuntimeTypes_UsesItsFoundation(
+        string relativeSourcePath)
+    {
+        // Given
+        string source = ReadRenderingSource(relativeSourcePath: relativeSourcePath);
+
+        // When
+        bool directlyInspectsRuntimeTypes = source.Contains(
+            value: ".GetType()",
+            comparisonType: StringComparison.Ordinal);
+
+        // Then
+        directlyInspectsRuntimeTypes.Should()
+            .BeFalse(
+                because: "runtime type inspection is an external concern owned by the rendering broker boundary");
+    }
+
+    [Theory]
+    [MemberData(nameof(RenderingProcessingSources))]
+    public void RenderingProcessing_WhenConvertingRuntimeValues_UsesItsFoundation(
+        string relativeSourcePath)
+    {
+        // Given
+        string source = ReadRenderingSource(relativeSourcePath: relativeSourcePath);
+
+        // When
+        string[] directRuntimeConversions =
+        [
+            "(object)model",
+            "BuildThemeReplacements<T>",
+            "BuildIEnumerableThemeReplacements<T>",
+            "BuildJObjectThemeReplacements<T>",
+            "model.ToString()",
+            "model?.ToString()",
+            "value.ToString()",
+            "value?.ToString()",
+            "property.Value.ToString()",
+            "token.Value.ToString()",
+            "dynamicModel[key]?.ToString()"
+        ];
+
+        string[] usedConversions = directRuntimeConversions
+            .Where(predicate: conversion => source.Contains(
+                value: conversion,
+                comparisonType: StringComparison.Ordinal))
+            .ToArray();
+
+        // Then
+        usedConversions.Should()
+            .BeEmpty(
+                because: "runtime value conversion is an external concern owned by the rendering broker boundary");
     }
 
     private static bool IsForbiddenProcessingDependency(Type type)

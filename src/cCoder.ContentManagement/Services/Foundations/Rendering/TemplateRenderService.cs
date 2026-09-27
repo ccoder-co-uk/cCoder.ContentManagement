@@ -33,6 +33,32 @@ internal sealed partial class TemplateRenderService(
             return templateRenderFoundationOperation;
         });
 
+    public TemplateRenderFoundationOperation IsValueTypeTemplateRenderFoundationOperation(
+        TemplateRenderFoundationOperation templateRenderFoundationOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateTemplateRenderFoundationOperation(
+                inputs: [templateRenderFoundationOperation]);
+
+            templateRenderFoundationOperation.Condition = contentRenderBroker
+                .IsValueType(value: templateRenderFoundationOperation.Value);
+
+            return templateRenderFoundationOperation;
+        });
+
+    public TemplateRenderFoundationOperation GetStringValueTemplateRenderFoundationOperation(
+        TemplateRenderFoundationOperation templateRenderFoundationOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateStringValueTemplateRenderFoundationOperationOnGet(
+                inputs: [templateRenderFoundationOperation]);
+
+            templateRenderFoundationOperation.Content = contentRenderBroker
+                .GetStringValue(value: templateRenderFoundationOperation.Value);
+
+            return templateRenderFoundationOperation;
+        });
+
     public TemplateRenderFoundationOperation GetAppsTemplateRenderFoundationOperation(
         TemplateRenderFoundationOperation templateRenderFoundationOperation) =>
         TryCatch(operation: () =>
@@ -232,9 +258,15 @@ internal sealed partial class TemplateRenderService(
         ValidateJsonPropertiesTemplateRenderFoundationOperationOnGet(
             inputs: [templateRenderFoundationOperation]);
 
-        templateRenderFoundationOperation.JsonProperties = jsonBroker
-            .GetJsonProperties(value: templateRenderFoundationOperation.Value)
-            .ToArray();
+        List<KeyValuePair<string, object>> properties = [];
+
+        foreach (KeyValuePair<string, object> property in
+            jsonBroker.GetJsonProperties(value: templateRenderFoundationOperation.Value))
+        {
+            properties.Add(item: property);
+        }
+
+        templateRenderFoundationOperation.JsonProperties = properties;
 
         return templateRenderFoundationOperation;
     });

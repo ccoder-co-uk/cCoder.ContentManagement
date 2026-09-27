@@ -78,10 +78,6 @@ internal class ContentManagementModelBroker
             .ReturnsCollection<User>();
 
         builder.EntityType<App>()
-            .Action(name: "UpdatePageOrder")
-            .Parameter<App>(name: "app");
-
-        builder.EntityType<App>()
             .Function(name: "IsAdmin")
             .Returns<bool>();
 

@@ -39,20 +39,29 @@ internal sealed partial class PageRenderCacheQueryProcessingService(
 
             string[] cultures = ResolveCultureFallbacks(culture: culture);
 
-            PageRenderCache[] matches =
-            [
-                .. pageRenderCacheService.GetAllPageRenderCaches()
+            List<PageRenderCache> matches = [];
+
+            foreach (PageRenderCache cache in pageRenderCacheService
+                .GetAllPageRenderCaches()
                 .Where(predicate: cache =>
                     cache.PageId == pageId
-                    && cultures.Contains(value: cache.Culture)
-                    && cache.Theme == theme)
-            ];
+                    && cache.Theme == theme))
+            {
+                matches.Add(item: cache);
+            }
 
-            return cultures
-                .Select(selector: fallbackCulture => matches
-                    .SingleOrDefault(predicate: cache =>
-                        cache.Culture == fallbackCulture))
-                .FirstOrDefault(predicate: cache => cache is not null);
+            foreach (string fallbackCulture in cultures)
+            {
+                foreach (PageRenderCache match in matches)
+                {
+                    if (match.Culture == fallbackCulture)
+                    {
+                        return match;
+                    }
+                }
+            }
+
+            return null;
         });
 
     private static string[] ResolveCultureFallbacks(string culture)
@@ -74,6 +83,30 @@ internal sealed partial class PageRenderCacheQueryProcessingService(
         }
 
         cultures.Add(item: string.Empty);
-        return [.. cultures.Distinct(comparer: StringComparer.OrdinalIgnoreCase)];
+        List<string> distinctCultures = [];
+
+        foreach (string fallbackCulture in cultures)
+        {
+            bool exists = false;
+
+            foreach (string distinctCulture in distinctCultures)
+            {
+                if (string.Equals(
+                    a: distinctCulture,
+                    b: fallbackCulture,
+                    comparisonType: StringComparison.OrdinalIgnoreCase))
+                {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists)
+            {
+                distinctCultures.Add(item: fallbackCulture);
+            }
+        }
+
+        return [.. distinctCultures];
     }
 }

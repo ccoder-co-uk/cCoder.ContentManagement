@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
@@ -11,14 +10,19 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class PageRenderCacheOrchestrationService(
     IPageRenderCacheProcessingService processingService,
-    ICommonObjectLatestCacheProcessingService commonObjectLatestCacheProcessingService,
     IAuthorizationProcessingService authorizationProcessingService)
         : IPageRenderCacheOrchestrationService
 {
-    public void RefreshCommonObjectCache() =>
-        TryCatch(operation: () =>
-            commonObjectLatestCacheProcessingService.RefreshCommonObjects(
-                changedCommonObjectCount: 1));
+    private static readonly HashSet<string> CommonCacheRenderTypes =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Component",
+            "Components",
+            "Resource",
+            "Resources",
+            "Script",
+            "Scripts"
+        };
 
     public IQueryable<PageRenderCache> GetAllPageRenderCaches() =>
         TryCatch<IQueryable<PageRenderCache>>(operation: () =>
@@ -221,6 +225,64 @@ internal sealed partial class PageRenderCacheOrchestrationService(
                 pageIds: pageIds,
                 replacements: replacements);
         }, isValueTask: true);
+
+    public ValueTask InvalidateCommonObjectConsumersAsync(
+        string commonObjectType) =>
+        TryCatch(operation: () =>
+    {
+        ValidateCommonObjectConsumersOnInvalidate(
+            inputs: [commonObjectType]);
+
+        return IsCommonCacheRenderType(type: commonObjectType)
+            ? ExecuteInvalidateCommonCacheAsync()
+            : ValueTask.CompletedTask;
+    }, isValueTask: true);
+
+    public ValueTask InvalidateCommonCacheAsync() =>
+        TryCatch(operation: async () =>
+    {
+        ValidateCommonCacheOnInvalidate(inputs: ["CommonCache"]);
+
+        await ExecuteInvalidateCommonCacheAsync();
+    }, isValueTask: true);
+
+    private async ValueTask ExecuteInvalidateCommonCacheAsync()
+    {
+
+        int[] appIds = processingService
+            .GetAllPageRenderCaches()
+            .Select(selector: cache => cache.AppId)
+            .Distinct()
+            .ToArray();
+
+        foreach (int appId in appIds)
+        {
+            await DeleteAppPageRenderCaches(
+                appId: appId,
+                fromEvent: true);
+        }
+    }
+
+    public ValueTask InvalidatePackageAsync(int? appId) =>
+        TryCatch(operation: () =>
+    {
+        ValidatePackageOnInvalidate(inputs: [appId]);
+
+        return appId is int resolvedAppId
+            ? DeleteAppPageRenderCaches(
+                appId: resolvedAppId,
+                fromEvent: true)
+            : ExecuteInvalidateCommonCacheAsync();
+    }, isValueTask: true);
+
+    private static bool IsCommonCacheRenderType(string type)
+    {
+        string normalizedType = type?
+            .Split(separator: '/', options: StringSplitOptions.RemoveEmptyEntries)
+            .LastOrDefault() ?? string.Empty;
+
+        return CommonCacheRenderTypes.Contains(item: normalizedType);
+    }
 
     private void Authorize(int appId, string privilege) =>
         authorizationProcessingService.AuthorizeAuthorizationContext(

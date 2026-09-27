@@ -3,7 +3,6 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Exposures;
 
@@ -23,7 +22,4 @@ public interface IAppManager
 
     bool IsAdmin(int appId, string userName);
 
-    IQueryable<User> GetUsers(int appId);
-
-    ValueTask UpdatePageOrderAsync(int appId, App updatedApp);
 }

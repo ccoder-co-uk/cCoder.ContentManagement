@@ -31,6 +31,9 @@ internal partial class AppOrchestrationService
     private static void ValidateAppOnUpdate(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidateAppOnDelete(object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void ValidateAppEventOnRaise(object[] inputs) =>
         Validate(inputs: inputs);
 

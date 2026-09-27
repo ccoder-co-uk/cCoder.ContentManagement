@@ -6,7 +6,7 @@ using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Coordinations;
 
-public interface IContentManagementPackageCoordinationService
+internal interface IContentManagementPackageCoordinationService
 {
     ValueTask ImportPackageAsync(int? appId, Package package);
 

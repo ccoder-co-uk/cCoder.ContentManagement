@@ -104,24 +104,48 @@ internal partial class AuthorizationProcessingService(
         ValidateUserCanPageAuthorization(inputs: [authorizationContext]);
         PageAuthorization pageAuthorization = authorizationContext.PageAuthorization;
 
-        Guid[] userRoles = pageAuthorization.User?.Roles?
-            .Select(selector: role => role.RoleId)
-            .ToArray()
-            ?? [];
-
-        return IsAdminOfApp(
+        if (IsAdminOfApp(
             user: pageAuthorization.User,
-            appId: pageAuthorization.Page.AppId)
-            || (pageAuthorization.Page.Roles?
-                .Where(predicate: pageRole =>
-                    userRoles.Contains(value: pageRole.RoleId))
-                .SelectMany(selector: pageRole =>
-                    pageRole.Role?.Privileges ?? [])
-                .Contains(
-                    value: pageAuthorization.Privilege?
-                        .ToLowerInvariant()
-                        ?? string.Empty)
-                ?? false);
+            appId: pageAuthorization.Page.AppId))
+        {
+            return true;
+        }
+
+        string requestedPrivilege = pageAuthorization.Privilege?
+            .ToLowerInvariant()
+            ?? string.Empty;
+
+        foreach (PageRole pageRole in pageAuthorization.Page.Roles ?? [])
+        {
+            bool userIsInRole = false;
+
+            foreach (UserRole userRole in pageAuthorization.User?.Roles ?? [])
+            {
+                if (userRole.RoleId == pageRole.RoleId)
+                {
+                    userIsInRole = true;
+                    break;
+                }
+            }
+
+            if (!userIsInRole)
+            {
+                continue;
+            }
+
+            foreach (string privilege in pageRole.Role?.Privileges ?? [])
+            {
+                if (string.Equals(
+                    a: privilege,
+                    b: requestedPrivilege,
+                    comparisonType: StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     });
 
     private bool HasPrivilege(
@@ -132,31 +156,57 @@ internal partial class AuthorizationProcessingService(
         string normalizedPrivilege = privilege.ToLowerInvariant();
         Role[] userRoles = GetUserRoles(userId: userId);
 
-        return appId.HasValue
-            && HasAppAdminPrivilege(userId: userId, appId: appId.Value)
-            || userRoles.Any(
-                predicate: role =>
-                    (!appId.HasValue || role.AppId == appId)
-                    && role.Privileges.Any(
-                        predicate: foundPrivilege => string.Equals(
-                            a: foundPrivilege,
-                            b: normalizedPrivilege,
-                            comparisonType:
-                                StringComparison.OrdinalIgnoreCase)));
+        if (appId.HasValue
+            && HasAppAdminPrivilege(userId: userId, appId: appId.Value))
+        {
+            return true;
+        }
+
+        foreach (Role role in userRoles)
+        {
+            if (appId.HasValue && role.AppId != appId)
+            {
+                continue;
+            }
+
+            foreach (string foundPrivilege in role.Privileges)
+            {
+                if (string.Equals(
+                    a: foundPrivilege,
+                    b: normalizedPrivilege,
+                    comparisonType: StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
-    private bool HasAppAdminPrivilege(string userId, int? appId) =>
-        GetUserRoles(userId: userId)
-            .Any(
-                predicate: role =>
-                    role.AppId == appId
-                    && role.Privileges.Any(
-                        predicate: privilege => string.Equals(
-                            a: privilege,
-                            b: "app_admin",
-                            comparisonType:
-                                StringComparison.OrdinalIgnoreCase)))
-        || !authorizationService.HasApps();
+    private bool HasAppAdminPrivilege(string userId, int? appId)
+    {
+        foreach (Role role in GetUserRoles(userId: userId))
+        {
+            if (role.AppId != appId)
+            {
+                continue;
+            }
+
+            foreach (string privilege in role.Privileges)
+            {
+                if (string.Equals(
+                    a: privilege,
+                    b: "app_admin",
+                    comparisonType: StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return !authorizationService.HasApps();
+    }
 
     private Role[] GetUserRoles(string userId)
     {
@@ -174,11 +224,12 @@ internal partial class AuthorizationProcessingService(
         Role[] guestRoles =
             authorizationService.GetRolesForUser(userId: "Guest").Roles;
 
-        return userRoles
-            .Concat(second: guestRoles)
-            .GroupBy(keySelector: role => role.Id)
-            .Select(selector: group => group.First())
-            .ToArray();
+        List<Role> combinedRoles = [];
+
+        AddUniqueRoles(source: userRoles, destination: combinedRoles);
+        AddUniqueRoles(source: guestRoles, destination: combinedRoles);
+
+        return [.. combinedRoles];
     }
 
     private string ResolveCurrentUserId()
@@ -199,11 +250,51 @@ internal partial class AuthorizationProcessingService(
         return authorizationContext;
     }
 
-    private static bool IsAdminOfApp(User user, int appId) =>
-        user?.Roles?.Any(
-            predicate: role =>
-                role.Role?.AppId == appId
-                && (role.Role?.Privileges?.Contains(item: "app_admin")
-                    ?? false))
-        ?? false;
+    private static void AddUniqueRoles(
+        IEnumerable<Role> source,
+        ICollection<Role> destination)
+    {
+        foreach (Role role in source)
+        {
+            bool roleExists = false;
+
+            foreach (Role existingRole in destination)
+            {
+                if (existingRole.Id == role.Id)
+                {
+                    roleExists = true;
+                    break;
+                }
+            }
+
+            if (!roleExists)
+            {
+                destination.Add(item: role);
+            }
+        }
+    }
+
+    private static bool IsAdminOfApp(User user, int appId)
+    {
+        foreach (UserRole userRole in user?.Roles ?? [])
+        {
+            if (userRole.Role?.AppId != appId)
+            {
+                continue;
+            }
+
+            foreach (string privilege in userRole.Role?.Privileges ?? [])
+            {
+                if (string.Equals(
+                    a: privilege,
+                    b: "app_admin",
+                    comparisonType: StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

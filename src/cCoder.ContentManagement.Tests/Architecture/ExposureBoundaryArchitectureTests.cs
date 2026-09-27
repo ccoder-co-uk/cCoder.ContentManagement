@@ -14,6 +14,87 @@ namespace cCoder.ContentManagement.Tests.Architecture;
 public sealed partial class ExposureBoundaryArchitectureTests
 {
     [Fact]
+    public void AppController_WhenComposed_ShouldUseAppOrchestrationDirectly()
+    {
+        // Given
+        Type controllerType = typeof(
+            global::cCoder.ContentManagement.Exposures.Controllers.AppController);
+
+        // When
+        Type[] businessDependencies = controllerType
+            .GetConstructors()
+            .Single()
+            .GetParameters()
+            .Select(selector: parameter => parameter.ParameterType)
+            .Where(predicate: dependency =>
+                dependency != typeof(
+                    global::cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker))
+            .ToArray();
+
+        // Then
+        businessDependencies.Should()
+            .Equal(elements: typeof(IAppOrchestrationService));
+    }
+
+    [Fact]
+    public void PackageController_WhenComposed_ShouldUsePackageImportOrchestrationDirectly()
+    {
+        // Given
+        Type controllerType = typeof(
+            global::cCoder.ContentManagement.Exposures.Controllers.PackageController);
+
+        // When
+        Type[] businessDependencies = controllerType
+            .GetConstructors()
+            .Single()
+            .GetParameters()
+            .Select(selector: parameter => parameter.ParameterType)
+            .Where(predicate: dependency =>
+                dependency != typeof(
+                    global::cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker))
+            .ToArray();
+
+        // Then
+        businessDependencies.Should()
+            .Equal(elements: typeof(
+                IContentManagementPackageImportOrchestrationService));
+    }
+
+    [Theory]
+    [InlineData(
+        "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
+        typeof(ITemplateOrchestrationService))]
+    [InlineData(
+        "cCoder.ContentManagement.Exposures.Controllers.TemplateContentController",
+        typeof(ITemplateContentOrchestrationService))]
+    public void TemplateControllers_WhenComposed_ShouldUseTheirOrchestrationDirectly(
+        string controllerTypeName,
+        Type expectedDependencyType)
+    {
+        // Given
+        Type controllerType = typeof(IAppManager)
+            .Assembly.GetType(name: controllerTypeName);
+
+        // When
+        Type[] businessDependencies = controllerType?
+            .GetConstructors()
+            .Single()
+            .GetParameters()
+            .Select(selector: parameter => parameter.ParameterType)
+            .Where(predicate: dependency =>
+                dependency != typeof(
+                    global::cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker))
+            .ToArray() ?? [];
+
+        // Then
+        controllerType.Should()
+            .NotBeNull();
+
+        businessDependencies.Should()
+            .Equal(elements: expectedDependencyType);
+    }
+
+    [Fact]
     public void HttpAndEventExposures_WhenComposed_DoNotDependOnLocalManagerExposures()
     {
         // Given
@@ -61,6 +142,59 @@ public sealed partial class ExposureBoundaryArchitectureTests
         invalidDependencies.Should()
             .BeEmpty(
                 because: "one exposure must consume the underlying service contract rather than another local exposure");
+    }
+
+    [Fact]
+    public void CompositeRuntimeExposures_WhenReviewed_ShouldMatchIntentionalBoundaries()
+    {
+        // Given
+        string[] expectedCompositeBoundaries =
+        [
+            "CommonObjectController -> ICommonObjectCoordinationService",
+            "CommonObjectManager -> ICommonObjectCoordinationService",
+            "ContentManagementPackageManager -> IContentManagementPackageCoordinationService",
+            "PageRenderer -> IRenderAggregationService",
+            "RenderController -> IRenderAggregationService",
+            "TemplateManager -> ITemplateManagerAggregationService"
+        ];
+
+        Type[] runtimeExposureTypes = typeof(IAppManager)
+            .Assembly
+            .GetTypes()
+            .Where(predicate: type =>
+                type.IsClass
+                && type.Namespace is not null
+                && (type.Namespace == "cCoder.ContentManagement.Exposures"
+                    || type.Namespace.EndsWith(
+                        value: ".Exposures.Controllers",
+                        comparisonType: StringComparison.Ordinal)))
+            .ToArray();
+
+        // When
+        string[] actualCompositeBoundaries = runtimeExposureTypes
+            .SelectMany(selector: type => type
+                .GetConstructors(bindingAttr:
+                    BindingFlags.Instance
+                    | BindingFlags.NonPublic
+                    | BindingFlags.Public)
+                .SelectMany(selector: constructor => constructor
+                    .GetParameters()
+                    .Where(predicate: parameter =>
+                        parameter.ParameterType.Namespace is not null
+                        && (parameter.ParameterType.Namespace.EndsWith(
+                                value: ".Services.Aggregations",
+                                comparisonType: StringComparison.Ordinal)
+                            || parameter.ParameterType.Namespace.EndsWith(
+                                value: ".Services.Coordinations",
+                                comparisonType: StringComparison.Ordinal)))
+                    .Select(selector: parameter =>
+                        $"{type.Name} -> {parameter.ParameterType.Name}")))
+            .Order()
+            .ToArray();
+
+        // Then
+        actualCompositeBoundaries.Should()
+            .Equal(elements: expectedCompositeBoundaries);
     }
 
     [Fact]
@@ -144,9 +278,10 @@ public sealed partial class ExposureBoundaryArchitectureTests
     }
 
     [Theory]
-    [InlineData("cCoder.ContentManagement.Exposures.AppManager", typeof(IAppManagerAggregationService))]
+    [InlineData("cCoder.ContentManagement.Exposures.AppManager", typeof(IAppOrchestrationService))]
     [InlineData("cCoder.ContentManagement.Exposures.ComponentManager", typeof(IComponentOrchestrationService))]
     [InlineData("cCoder.ContentManagement.Exposures.PageManager", typeof(IPageOrchestrationService))]
+    [InlineData("cCoder.ContentManagement.Exposures.PageRenderCacheManager", typeof(IPageRenderCacheOrchestrationService))]
     [InlineData("cCoder.ContentManagement.Exposures.TemplateManager", typeof(ITemplateManagerAggregationService))]
     public void Manager_WhenComposed_ShouldUseOnlyItsOrchestration(
         string managerTypeName,

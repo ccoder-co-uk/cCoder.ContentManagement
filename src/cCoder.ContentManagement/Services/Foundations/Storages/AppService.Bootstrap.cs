@@ -2,41 +2,42 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Services.Foundations.Authorization;
-using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
+using cCoder.ContentManagement.Models;
 
-namespace cCoder.ContentManagement.Services.Orchestrations;
+namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal sealed partial class AppBootstrapOrchestrationService(
-    ICultureService cultureService,
-    IPrivilegeService privilegeService,
-    IAuthorizationService authorizationService)
-        : IAppBootstrapOrchestrationService
+internal partial class AppService
 {
-    public App PrepareNewApp(App app, bool isFirstApp) =>
-        TryCatch(operation: () =>
+    public AppOperation PrepareNewAppAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
     {
-        ValidateNewAppOnPrepare(inputs: [app, isFirstApp]);
-        ArgumentNullException.ThrowIfNull(argument: app);
+        ValidatePrepareNewAppAppOperation(inputs: [appOperation]);
+        ArgumentNullException.ThrowIfNull(argument: appOperation);
+        ArgumentNullException.ThrowIfNull(argument: appOperation.App);
 
-        if (string.IsNullOrEmpty(value: app.DefaultTheme))
+        if (string.IsNullOrEmpty(value: appOperation.App.DefaultTheme))
         {
-            app.DefaultTheme = "Default";
+            appOperation.App.DefaultTheme = "Default";
         }
 
-        app.Cultures = BuildCulturesForApp(app: app);
-        app.Roles = BuildRolesForApp(app: app, isFirstApp: isFirstApp);
-        return app;
+        appOperation.App.Cultures = BuildCulturesForApp(app: appOperation.App);
+
+        appOperation.App.Roles = BuildRolesForApp(
+            app: appOperation.App,
+            isFirstApp: appOperation.IsFirstApp);
+
+        return appOperation;
     });
 
-    public void StampAppChildren(App app) =>
-        TryCatch(operation: () =>
+    public AppOperation StampAppChildrenAppOperation(AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: () =>
     {
-        ValidateAppChildrenOnStamp(inputs: [app]);
-        ArgumentNullException.ThrowIfNull(argument: app);
-
+        ValidateStampAppChildrenAppOperation(inputs: [appOperation]);
+        ArgumentNullException.ThrowIfNull(argument: appOperation);
+        ArgumentNullException.ThrowIfNull(argument: appOperation.App);
+        App app = appOperation.App;
         StampAppIds(appId: app.Id, items: app.Cultures);
         StampAppIds(appId: app.Id, items: app.Pages);
         StampAppIds(appId: app.Id, items: app.Components);
@@ -56,25 +57,31 @@ internal sealed partial class AppBootstrapOrchestrationService(
                 userRole.Role = null;
             }
         }
+
+        return appOperation;
     });
+
+    public ValueTask<AppOperation> PersistNewAppRolesAppOperationAsync(
+        AppOperation appOperation) =>
+        TryCatch<AppOperation>(operation: async () =>
+    {
+        ValidatePersistNewAppRolesAppOperationOnAdd(inputs: [appOperation]);
+        ArgumentNullException.ThrowIfNull(argument: appOperation);
+        ArgumentNullException.ThrowIfNull(argument: appOperation.App);
+        await appBroker.PersistNewAppRolesAsync(app: appOperation.App);
+        return appOperation;
+    }, isValueTask: true);
 
     private ICollection<AppCulture> BuildCulturesForApp(App app)
     {
-        IEnumerable<string> requestedCultures = app.Cultures?
+        HashSet<string> requestedCultureIds = (app.Cultures ?? [])
             .Select(selector: culture => culture.CultureId ?? string.Empty)
-            ?? [];
-
-        string[] requestedCultureIds = requestedCultures
-            .Distinct(comparer: StringComparer.Ordinal)
-            .ToArray();
-
-        HashSet<string> requestedCultureSet = requestedCultureIds
             .ToHashSet(comparer: StringComparer.Ordinal);
 
-        AppCulture[] cultures = cultureService.GetAllCulture()
+        AppCulture[] cultures = appBroker.GetCultures()
             .Where(predicate: culture =>
                 culture.Id == string.Empty
-                || requestedCultureSet.Contains(item: culture.Id))
+                || requestedCultureIds.Contains(item: culture.Id))
             .Select(selector: culture => new AppCulture
             {
                 CultureId = culture.Id
@@ -92,10 +99,10 @@ internal sealed partial class AppBootstrapOrchestrationService(
 
     private ICollection<Role> BuildRolesForApp(App app, bool isFirstApp)
     {
-        List<Role> roles = (app.Roles ?? []).ToList();
+        List<Role> roles = [.. app.Roles ?? []];
 
-        string currentUserId = authorizationService.GetCurrentUser().User?.Id
-            ?? authorizationService.GetCurrentUserId();
+        string currentUserId = appBroker.GetCurrentUser()?.Id
+            ?? appBroker.GetCurrentUserId();
 
         string defaultUserId = string.IsNullOrWhiteSpace(value: currentUserId)
             ? "Guest"
@@ -105,9 +112,7 @@ internal sealed partial class AppBootstrapOrchestrationService(
             ? NormalizeBootstrapUserId(userId: currentUserId)
             : defaultUserId;
 
-        Privilege[] privileges = privilegeService
-            .GetAllPrivileges()
-            .ToArray();
+        Privilege[] privileges = appBroker.GetPrivileges();
 
         string[] administratorPrivilegeIds = privileges
             .Where(predicate: privilege =>
@@ -190,7 +195,9 @@ internal sealed partial class AppBootstrapOrchestrationService(
         role.Pages ??= [];
 
         role.Privileges = role.Privileges
-            .Union(second: requiredPrivileges, comparer: StringComparer.OrdinalIgnoreCase)
+            .Union(
+                second: requiredPrivileges,
+                comparer: StringComparer.OrdinalIgnoreCase)
             .ToList();
 
         role.Privs = string.Join(separator: ',', values: role.Privileges);
@@ -216,9 +223,7 @@ internal sealed partial class AppBootstrapOrchestrationService(
             ? null
             : userId;
 
-    private static void StampAppIds(
-        int appId,
-        IEnumerable<AppCulture> items)
+    private static void StampAppIds(int appId, IEnumerable<AppCulture> items)
     {
         foreach (AppCulture item in items ?? [])
         {
@@ -234,9 +239,7 @@ internal sealed partial class AppBootstrapOrchestrationService(
         }
     }
 
-    private static void StampAppIds(
-        int appId,
-        IEnumerable<Component> items)
+    private static void StampAppIds(int appId, IEnumerable<Component> items)
     {
         foreach (Component item in items ?? [])
         {

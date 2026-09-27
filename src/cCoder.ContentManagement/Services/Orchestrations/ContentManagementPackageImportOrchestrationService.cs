@@ -25,23 +25,44 @@ internal sealed partial class ContentManagementPackageImportOrchestrationService
             "CreatedBy"
         };
 
-    public ValueTask ImportCommonCachePackageAsync(Package package) =>
-        TryCatch(operation: async () =>
-    {
-        ValidateImportPackageAsync(inputs: [package]);
-        await RaiseCommonObjectImportAsync(package: package);
-    }, isValueTask: true);
-
-    public ValueTask ImportAppPackageAsync(int appId, Package package) =>
-        TryCatch(operation: async () =>
+    public ValueTask ImportPackageAsync(int? appId, Package package) =>
+        TryCatch(operation: () =>
     {
         ValidateImportPackageAsync(inputs: [appId, package]);
 
+        return appId is int resolvedAppId
+            ? ExecuteImportAppPackageAsync(
+                appId: resolvedAppId,
+                package: package)
+            : ExecuteImportCommonCachePackageAsync(package: package);
+    }, isValueTask: true);
+
+    public ValueTask ImportCommonCachePackageAsync(Package package) =>
+        TryCatch(operation: () =>
+    {
+        ValidateImportPackageAsync(inputs: [package]);
+        return ExecuteImportCommonCachePackageAsync(package: package);
+    }, isValueTask: true);
+
+    public ValueTask ImportAppPackageAsync(int appId, Package package) =>
+        TryCatch(operation: () =>
+    {
+        ValidateImportPackageAsync(inputs: [appId, package]);
+        return ExecuteImportAppPackageAsync(appId: appId, package: package);
+    }, isValueTask: true);
+
+    private ValueTask ExecuteImportCommonCachePackageAsync(Package package) =>
+        RaiseCommonObjectImportAsync(package: package);
+
+    private async ValueTask ExecuteImportAppPackageAsync(
+        int appId,
+        Package package)
+    {
         foreach (PackageItem item in package.Items ?? [])
         {
             await RaiseAppImportAsync(appId: appId, item: item);
         }
-    }, isValueTask: true);
+    }
 
     private async ValueTask RaiseAppImportAsync(int appId, PackageItem item)
     {

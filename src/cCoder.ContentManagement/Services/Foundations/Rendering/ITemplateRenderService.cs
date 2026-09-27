@@ -10,6 +10,11 @@ internal interface ITemplateRenderService
 {
     TemplateRenderFoundationOperation GetPropertyValuesTemplateRenderFoundationOperation(
         TemplateRenderFoundationOperation templateRenderFoundationOperation);
+    TemplateRenderFoundationOperation IsValueTypeTemplateRenderFoundationOperation(
+        TemplateRenderFoundationOperation templateRenderFoundationOperation);
+
+    TemplateRenderFoundationOperation GetStringValueTemplateRenderFoundationOperation(
+        TemplateRenderFoundationOperation templateRenderFoundationOperation);
     TemplateRenderFoundationOperation GetAppsTemplateRenderFoundationOperation(TemplateRenderFoundationOperation templateRenderFoundationOperation);
     TemplateRenderFoundationOperation GetComponentsTemplateRenderFoundationOperation(TemplateRenderFoundationOperation templateRenderFoundationOperation);
     TemplateRenderFoundationOperation GetResourcesTemplateRenderFoundationOperation(TemplateRenderFoundationOperation templateRenderFoundationOperation);

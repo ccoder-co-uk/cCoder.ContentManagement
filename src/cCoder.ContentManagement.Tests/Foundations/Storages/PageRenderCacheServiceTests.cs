@@ -26,6 +26,11 @@ public partial class PageRenderCacheServiceTests
             .Returns(value: new[] { stored }.AsQueryable());
 
         brokerMock
+            .Setup(expression: broker => broker.GetPageRenderCache(
+                pageRenderCacheId: stored.Id))
+            .Returns(value: stored);
+
+        brokerMock
             .Setup(expression: broker => broker.AddPageRenderCacheAsync(
                 newPageRenderCache: It.IsAny<PageRenderCache>()))
             .ReturnsAsync(valueFunction: (PageRenderCache cache) => cache);

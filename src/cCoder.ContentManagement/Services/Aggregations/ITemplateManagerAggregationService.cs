@@ -6,7 +6,7 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Aggregations;
 
-public interface ITemplateManagerAggregationService
+internal interface ITemplateManagerAggregationService
 {
     ValueTask<string> ReadContentAsync(Stream source);
     byte[] ConvertHtmlToPdf(string html);

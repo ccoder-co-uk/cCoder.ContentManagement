@@ -49,6 +49,10 @@ internal sealed class JsonBroker : IJsonBroker, IUtilityBroker
         || value is JsonValue jsonValue
         && jsonValue.TryGetValue<string>(value: out _);
 
+    public string GetJsonString(object value) =>
+        JsonSerializer.Deserialize<string>(
+            json: JsonSerializer.Serialize(value: value));
+
     public string GetJsonRawText(object value) =>
         ((JsonElement)value).GetRawText();
 

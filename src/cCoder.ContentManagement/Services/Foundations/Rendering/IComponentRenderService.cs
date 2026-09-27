@@ -10,6 +10,11 @@ internal interface IComponentRenderService
 {
     ComponentRenderFoundationOperation GetPropertyValuesComponentRenderFoundationOperation(
         ComponentRenderFoundationOperation componentRenderFoundationOperation);
+    ComponentRenderFoundationOperation IsValueTypeComponentRenderFoundationOperation(
+        ComponentRenderFoundationOperation componentRenderFoundationOperation);
+
+    ComponentRenderFoundationOperation GetStringValueComponentRenderFoundationOperation(
+        ComponentRenderFoundationOperation componentRenderFoundationOperation);
     ComponentRenderFoundationOperation GetAppsComponentRenderFoundationOperation(ComponentRenderFoundationOperation componentRenderFoundationOperation);
     ComponentRenderFoundationOperation GetComponentsComponentRenderFoundationOperation(ComponentRenderFoundationOperation componentRenderFoundationOperation);
     ComponentRenderFoundationOperation GetResourcesComponentRenderFoundationOperation(ComponentRenderFoundationOperation componentRenderFoundationOperation);

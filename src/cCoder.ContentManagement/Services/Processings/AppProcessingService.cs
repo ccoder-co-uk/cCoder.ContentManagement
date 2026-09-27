@@ -70,6 +70,41 @@ internal partial class AppProcessingService(
         return GetAllAppsFromStorage(ignoreFilters: ignoreFilters);
     });
 
+    public App PrepareNewApp(App app, bool isFirstApp) =>
+        TryCatch<App>(operation: () =>
+    {
+        ValidateAppOnPrepare(inputs: [app, isFirstApp]);
+        ValidateApp(app: app, parameterName: "app");
+
+        return service.PrepareNewAppAppOperation(
+            appOperation: new AppOperation
+            {
+                App = app,
+                IsFirstApp = isFirstApp
+            })
+        .App;
+    });
+
+    public void StampAppChildren(App app) =>
+        TryCatch(operation: () =>
+    {
+        ValidateAppChildrenOnStamp(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
+
+        service.StampAppChildrenAppOperation(
+            appOperation: new AppOperation { App = app });
+    });
+
+    public ValueTask PersistNewAppRolesAsync(App app) =>
+        TryCatch(operation: async () =>
+    {
+        ValidateAppRolesOnPersist(inputs: [app]);
+        ValidateApp(app: app, parameterName: "app");
+
+        await service.PersistNewAppRolesAppOperationAsync(
+            appOperation: new AppOperation { App = app });
+    }, isValueTask: true);
+
     public ValueTask<App> AddAppAsync(App newApp) =>
         TryCatch<App>(operation: async () =>
     {

@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.CodeAnalysis.Exposures;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.Data.Models;
@@ -10,7 +11,7 @@ namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class CommonObjectManager(
     ICommonObjectCoordinationService commonObjectCoordinationService)
-        : ICommonObjectManager
+        : ICommonObjectManager, ICompositionExposure
 {
     public CommonObject GetCommonObject(int commonObjectId) =>
         commonObjectCoordinationService.GetCommonObject(

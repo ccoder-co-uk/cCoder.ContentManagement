@@ -28,6 +28,15 @@ internal partial class AppProcessingService
     private static void ValidateAppOnAdd(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidateAppOnPrepare(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidateAppChildrenOnStamp(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidateAppRolesOnPersist(object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void ValidateAppOnUpdate(object[] inputs) =>
         Validate(inputs: inputs);
 

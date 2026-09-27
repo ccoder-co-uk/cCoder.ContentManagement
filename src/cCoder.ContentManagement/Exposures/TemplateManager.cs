@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.CodeAnalysis.Exposures;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.Data.Models.CMS;
 
@@ -9,7 +10,7 @@ namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class TemplateManager(
     ITemplateManagerAggregationService templateManagerAggregationService)
-        : ITemplateManager
+        : ITemplateManager, ICompositionExposure
 {
     public ValueTask<string> ReadContentAsync(Stream source) =>
         templateManagerAggregationService.ReadContentAsync(source: source);

@@ -6,7 +6,6 @@ using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Models.RegularExpressions;
@@ -194,7 +193,7 @@ internal partial class TemplateRenderProcessingService(
             new MarkupReplacement
         {
             Old = "[[user]]",
-            Value = Serialize(value: new
+            Value = Serialize(value: new PageRenderUser
             {
                 Id = renderParams.User?.Id,
                 DefaultCultureId = renderParams.User?.DefaultCultureId,
@@ -259,20 +258,20 @@ internal partial class TemplateRenderProcessingService(
         }
 
         ValidateRenderParams(renderParams: renderParams, replacements: replacements);
-        StringBuilder result = new StringBuilder(value: content, capacity: content.Length * 4);
-        Script(key: key, source: result, renderParams: renderParams, replacements: replacements);
-        RegexReplace(source: result, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "culturelink"), action: match => "?culture=" + GetTagName(source: match));
-        Component(key: key, renderParams: renderParams, replacements: replacements, result: result);
-        Meta(source: result, culture: renderParams.Culture);
-        Resource(key: key, source: result, renderParams: renderParams, replacements: replacements);
-        ExecuteAsync(key: key, source: result, renderParams: renderParams, replacements: replacements);
+        string result = content;
+        result = Script(key: key, source: result, renderParams: renderParams, replacements: replacements);
+        result = RegexReplace(source: result, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "culturelink"), action: match => "?culture=" + GetTagName(source: match));
+        result = Component(key: key, renderParams: renderParams, replacements: replacements, result: result);
+        result = Meta(source: result, culture: renderParams.Culture);
+        result = Resource(key: key, source: result, renderParams: renderParams, replacements: replacements);
+        result = ExecuteAsync(key: key, source: result, renderParams: renderParams, replacements: replacements);
 
         foreach (MarkupReplacement replacement in replacements)
         {
-            result.Replace(oldValue: replacement.Old, newValue: replacement.New);
+            result = result.Replace(oldValue: replacement.Old, newValue: replacement.New);
         }
 
-        return result.ToString();
+        return result;
     }
 
     private static void ValidateRenderParams(RenderParams renderParams, IEnumerable<MarkupReplacement> replacements)
@@ -309,7 +308,7 @@ internal partial class TemplateRenderProcessingService(
         return (type: array[1].ToLower(), name: array2[0].ToLower(), options: array2[1].Split(separator: "|", options: StringSplitOptions.RemoveEmptyEntries));
     }
 
-    private void Script(string key, StringBuilder source, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements) =>
+    private string Script(string key, string source, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[script\\[[A-Za-z\\d_/. \\-]*\\]\\]", action: match =>
                                                                                                                                {
                                                                                                                                    string name = match.Value.Replace(oldValue: "[script[", newValue: "")
@@ -327,7 +326,7 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                    return string.Empty;
                                                                                                                                });
 
-    private void Component(string key, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements, StringBuilder result) =>
+    private string Component(string key, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements, string result) =>
         RegexReplace(source: result, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "component"), action: match =>
                                                                                                                                   {
                                                                                                                                       (string _, string name, string[] options) tag = SplitMatch(match: match);
@@ -357,7 +356,7 @@ internal partial class TemplateRenderProcessingService(
         return ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: content, replacements: replacements);
     }
 
-    private void ExecuteAsync(string key, StringBuilder source, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements) =>
+    private string ExecuteAsync(string key, string source, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements) =>
         RegexReplace(source: source, matchExpression: "\\[execute\\](.*?)\\[/execute\\]", action: match =>
                                                                                                                                      {
                                                                                                                                          string value = match.Groups["1"];
@@ -376,7 +375,7 @@ internal partial class TemplateRenderProcessingService(
                                                                                                                                          return ProcessContentString(key: key, renderParams: renderParams, content: result, replacements: replacements);
                                                                                                                                      });
 
-    private void Resource(string key, StringBuilder source, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements)
+    private string Resource(string key, string source, RenderParams renderParams, IEnumerable<MarkupReplacement> replacements)
     {
         List<Resource> known = new List<Resource>();
         List<string> namesInKey = new List<string>();
@@ -398,7 +397,7 @@ internal partial class TemplateRenderProcessingService(
 
         if (namesInKey.Count == 0)
         {
-            return;
+            return source;
         }
 
         List<Resource> list = known;
@@ -431,14 +430,16 @@ internal partial class TemplateRenderProcessingService(
             }
         }
 
-        RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_displayname"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: FindFirst(source: known, predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.DisplayName ?? GetTagName(source: match)
+        source = RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_displayname"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: FindFirst(source: known, predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.DisplayName ?? GetTagName(source: match)
             .ToLower(), replacements: replacements));
 
-        RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_shortdisplayname"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: FindFirst(source: known, predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.ShortDisplayName ?? GetTagName(source: match)
+        source = RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_shortdisplayname"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: FindFirst(source: known, predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.ShortDisplayName ?? GetTagName(source: match)
             .ToLower(), replacements: replacements));
 
-        RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_description"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: FindFirst(source: known, predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.Description ?? GetTagName(source: match)
+        source = RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "resource_description"), action: match => ProcessContentString(key: key, renderParams: renderParams, content: FindFirst(source: known, predicate: resource => resource.Name.Equals(value: GetTagName(source: match), comparisonType: StringComparison.CurrentCultureIgnoreCase))?.Description ?? GetTagName(source: match)
             .ToLower(), replacements: replacements));
+
+        return source;
     }
 
     private Resource FindResourceInCache(string key, string name, string culture)
@@ -563,7 +564,7 @@ internal partial class TemplateRenderProcessingService(
             predicate: candidate => string.IsNullOrEmpty(value: candidate.Culture));
     }
 
-    private void Meta(StringBuilder source, string culture) =>
+    private string Meta(string source, string culture) =>
         RegexReplace(source: source, matchExpression: "\\[TYPE\\[[A-Za-z\\d_/-]*\\][A-Za-z\\d_/-]*\\=*\\\"*-*[A-Za-z\\d_/-]*\\\"*\\]".Replace(oldValue: "TYPE", newValue: "meta"), action: match =>
                                                                {
                                                                    string value = match.Value;
@@ -590,13 +591,14 @@ internal partial class TemplateRenderProcessingService(
         return themeDictionary != null;
     }
 
-    private IEnumerable<MarkupReplacement> BuildThemeReplacements<T>(T model, string prefix = "")
+    private IEnumerable<MarkupReplacement> BuildThemeReplacements(
+        object model,
+        string prefix = "")
     {
-        if ((object)model.GetType()
-            .GetInterface(name: "IDynamicMetaObjectProvider") != null
+        if (model is IDictionary<string, object> dynamicModel
             && !IsJsonObject(value: model))
         {
-            return BuildDynamicThemeReplacements(model: model, prefix: prefix);
+            return BuildDynamicThemeReplacements(model: dynamicModel, prefix: prefix);
         }
 
         if (IsJsonObject(value: model))
@@ -606,24 +608,26 @@ internal partial class TemplateRenderProcessingService(
 
         if (model is string)
         {
-            return new[] { new MarkupReplacement { Old = "[theme[" + prefix + "]]", Value = model.ToString() } };
+            return [new MarkupReplacement { Old = "[theme[" + prefix + "]]", Value = GetStringValue(value: model) }];
         }
 
-        if (!(model is IEnumerable))
+        if (model is not IEnumerable enumerable)
         {
             return BuildIEnumerableThemeReplacements(model: model, prefix: prefix);
         }
 
-        return BuildObjectThemeReplacements(model: model, prefix: prefix);
+        return BuildObjectThemeReplacements(model: enumerable, prefix: prefix);
     }
 
-    private List<MarkupReplacement> BuildObjectThemeReplacements<T>(T model, string prefix)
+    private List<MarkupReplacement> BuildObjectThemeReplacements(
+        IEnumerable model,
+        string prefix)
     {
         string text = prefix ?? string.Empty;
         List<MarkupReplacement> list = new List<MarkupReplacement>();
         int num = 0;
 
-        foreach (object item in (IEnumerable)(object)model)
+        foreach (object item in model)
         {
             string prefix2 = text + $"[{num}]";
             list.AddRange(collection: BuildThemeReplacements(model: item, prefix: prefix2));
@@ -635,7 +639,9 @@ internal partial class TemplateRenderProcessingService(
         return list;
     }
 
-    private IEnumerable<MarkupReplacement> BuildIEnumerableThemeReplacements<T>(T model, string prefix)
+    private IEnumerable<MarkupReplacement> BuildIEnumerableThemeReplacements(
+        object model,
+        string prefix)
     {
         List<MarkupReplacement> replacements = [];
 
@@ -656,13 +662,13 @@ internal partial class TemplateRenderProcessingService(
                 replacements.Add(item: new MarkupReplacement
                 {
                     Old = "[theme[" + prefix + "]]",
-                    Value = model?.ToString() ?? string.Empty
+                    Value = GetStringValue(value: model)
                 });
 
                 replacements.Add(item: new MarkupReplacement
                 {
                     Old = "[theme[" + text + "]]",
-                    Value = value?.ToString() ?? string.Empty
+                    Value = GetStringValue(value: value)
                 });
             }
             else if (value != null)
@@ -675,7 +681,9 @@ internal partial class TemplateRenderProcessingService(
         return replacements;
     }
 
-    private IEnumerable<MarkupReplacement> BuildJObjectThemeReplacements<T>(T model, string prefix)
+    private IEnumerable<MarkupReplacement> BuildJObjectThemeReplacements(
+        object model,
+        string prefix)
     {
         IEnumerable<KeyValuePair<string, object>> source =
             GetJsonProperties(value: model);
@@ -688,7 +696,7 @@ internal partial class TemplateRenderProcessingService(
 
             if (IsJsonValue(value: token.Value))
             {
-                replacements.Add(item: new MarkupReplacement { Old = "[theme[" + text + "]]", Value = token.Value.ToString() ?? string.Empty });
+                replacements.Add(item: new MarkupReplacement { Old = "[theme[" + text + "]]", Value = GetStringValue(value: token.Value) });
             }
             else if (token.Value != null)
             {
@@ -700,21 +708,21 @@ internal partial class TemplateRenderProcessingService(
         return replacements;
     }
 
-    private IEnumerable<MarkupReplacement> BuildDynamicThemeReplacements<T>(T model, string prefix)
+    private IEnumerable<MarkupReplacement> BuildDynamicThemeReplacements(
+        IDictionary<string, object> model,
+        string prefix)
     {
-        IDictionary<string, object> dynamicModel = (IDictionary<string, object>)(object)model;
-
         List<MarkupReplacement> replacements = [];
 
-        foreach (string key in dynamicModel.Keys)
+        foreach (string key in model.Keys)
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + key) : key);
-            replacements.Add(item: new MarkupReplacement { Old = "[theme[" + text + "]]", Value = dynamicModel[key]?.ToString() ?? string.Empty });
+            replacements.Add(item: new MarkupReplacement { Old = "[theme[" + text + "]]", Value = GetStringValue(value: model[key]) });
 
-            if (dynamicModel[key] != null && !dynamicModel[key].GetType()
-                .IsValueType)
+            if (model[key] != null
+                && !IsRuntimeValueType(value: model[key]))
             {
-                replacements.AddRange(collection: BuildThemeReplacements(model: dynamicModel[key], prefix: text));
+                replacements.AddRange(collection: BuildThemeReplacements(model: model[key], prefix: text));
             }
 
         }
@@ -728,7 +736,7 @@ internal partial class TemplateRenderProcessingService(
 
         if (model is string)
         {
-            return new[] { new MarkupReplacement { Old = "[theme[" + prefix + "]]", Value = model.ToString() } };
+            return [new MarkupReplacement { Old = "[theme[" + prefix + "]]", Value = GetStringValue(value: model) }];
         }
 
         if (IsJsonObject(value: model))
@@ -741,8 +749,7 @@ internal partial class TemplateRenderProcessingService(
             return BuildModelReplacementsForCollection(model: model, prefix: prefix);
         }
 
-        if ((object)model.GetType()
-            .GetInterface(name: "IDynamicMetaObjectProvider") != null)
+        if (model is IDictionary<string, object>)
         {
             return BuildModelReplacementsForDynamicObject(model: model, prefix: prefix);
         }
@@ -789,13 +796,13 @@ internal partial class TemplateRenderProcessingService(
                 replacements.Add(item: new MarkupReplacement
                 {
                     Old = "[model[" + prefix + "]]",
-                    Value = model?.ToString() ?? string.Empty
+                    Value = GetStringValue(value: model)
                 });
 
                 replacements.Add(item: new MarkupReplacement
                 {
                     Old = "[model[" + text + "]]",
-                    Value = value?.ToString() ?? string.Empty
+                    Value = GetStringValue(value: value)
                 });
             }
             else if (value != null)
@@ -821,7 +828,7 @@ internal partial class TemplateRenderProcessingService(
 
             if (IsJsonValue(value: token.Value))
             {
-                replacements.Add(item: new MarkupReplacement { Old = "[model[" + text + "]]", Value = token.Value.ToString() ?? string.Empty });
+                replacements.Add(item: new MarkupReplacement { Old = "[model[" + text + "]]", Value = GetStringValue(value: token.Value) });
             }
             else if (token.Value != null)
             {
@@ -842,10 +849,10 @@ internal partial class TemplateRenderProcessingService(
         foreach (string key in dynamicModel.Keys)
         {
             string text = ((prefix.Length > 0) ? (prefix + "." + key) : key);
-            replacements.Add(item: new MarkupReplacement { Old = "[model[" + text + "]]", Value = dynamicModel[key]?.ToString() ?? string.Empty });
+            replacements.Add(item: new MarkupReplacement { Old = "[model[" + text + "]]", Value = GetStringValue(value: dynamicModel[key]) });
 
-            if (dynamicModel[key] != null && !dynamicModel[key].GetType()
-                .IsValueType)
+            if (dynamicModel[key] != null
+                && !IsRuntimeValueType(value: dynamicModel[key]))
             {
                 replacements.AddRange(collection: BuildModelReplacements(model: dynamicModel[key], prefix: text));
             }
@@ -901,13 +908,12 @@ internal partial class TemplateRenderProcessingService(
         return user;
     }
 
-    private void RegexReplace(
-        StringBuilder source,
+    private string RegexReplace(
+        string source,
         string matchExpression,
-        Func<RegularExpressionMatch, string> action)
-    {
-        string result = ReplaceRegularExpression(
-            input: source.ToString(),
+        Func<RegularExpressionMatch, string> action) =>
+        ReplaceRegularExpression(
+            input: source,
             pattern: matchExpression,
             evaluator: (value, groups) => action(
                 arg: new RegularExpressionMatch
@@ -916,16 +922,12 @@ internal partial class TemplateRenderProcessingService(
                     Groups = groups
                 }));
 
-        source.Clear();
-        source.Append(value: result);
-    }
-
     private void RegexMatch(
-        StringBuilder source,
+        string source,
         string matchExpression,
         Action<RegularExpressionMatch> action) =>
         ForEachRegularExpressionMatch(
-            input: source.ToString(),
+            input: source,
             pattern: matchExpression,
             action: (value, groups) => action(
                 obj: new RegularExpressionMatch
@@ -1034,6 +1036,22 @@ internal partial class TemplateRenderProcessingService(
         ExecuteFoundation(
             operation: new TemplateRenderFoundationOperation { Value = value },
             action: templateRenderService.SerializeTemplateRenderFoundationOperation)
+        .Content;
+
+    private bool IsRuntimeValueType(object value) =>
+        templateRenderService.IsValueTypeTemplateRenderFoundationOperation(
+            templateRenderFoundationOperation: new TemplateRenderFoundationOperation
+            {
+                Value = value
+            })
+        .Condition;
+
+    private string GetStringValue(object value) =>
+        templateRenderService.GetStringValueTemplateRenderFoundationOperation(
+            templateRenderFoundationOperation: new TemplateRenderFoundationOperation
+            {
+                Value = value
+            })
         .Content;
 
     private string SerializeIgnoringReferences(object value) =>

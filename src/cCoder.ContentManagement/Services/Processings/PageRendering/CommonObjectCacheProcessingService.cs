@@ -23,13 +23,25 @@ internal sealed partial class CommonObjectCacheProcessingService(
                 .Length > 0);
 
     public T[] GetAll<T>() =>
-        TryCatch(operation: () =>
-            (commonObjectCacheService
+        TryCatch<T[]>(operation: () =>
+        {
+            List<T> results = [];
+
+            IEnumerable<object> values = commonObjectCacheService
                 .GetCommonObjectCacheSnapshot()?
                 .Items?
-                .Values ?? [])
-            .OfType<T>()
-            .ToArray());
+                .Values ?? [];
+
+            foreach (object value in values)
+            {
+                if (value is T result)
+                {
+                    results.Add(item: result);
+                }
+            }
+
+            return [.. results];
+        });
 
     public T Get<T>(string key) =>
         TryCatch(operation: () =>
@@ -58,11 +70,13 @@ internal sealed partial class CommonObjectCacheProcessingService(
                 commonObjectCacheService.GetCommonObjectCacheSnapshot()
                 ?? EmptySnapshot();
 
-            Dictionary<string, object> items = current.Items
-                .ToDictionary(
-                    keySelector: pair => pair.Key,
-                    elementSelector: pair => pair.Value,
-                    comparer: StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, object> items =
+                new(comparer: StringComparer.OrdinalIgnoreCase);
+
+            foreach (KeyValuePair<string, object> pair in current.Items)
+            {
+                items[pair.Key] = pair.Value;
+            }
 
             items[key.ToLowerInvariant()] = item;
 

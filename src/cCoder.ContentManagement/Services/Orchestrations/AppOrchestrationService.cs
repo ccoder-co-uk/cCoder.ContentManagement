@@ -32,21 +32,6 @@ internal partial class AppOrchestrationService(
         return processingService.GetApp(appId: appId);
     });
 
-    public App GetAppForDelete(int appId) =>
-        TryCatch<App>(operation: () =>
-    {
-        ValidateAppForDeleteOnGet(inputs: [appId]);
-        ValidateId(appId: appId, parameterName: "id");
-        App app = processingService.GetAppForDelete(appId: appId);
-
-        if (app?.Roles?.Any() == true)
-        {
-            Authorize(appId: appId, privilege: "app_delete");
-        }
-
-        return app;
-    });
-
     public bool IsAdminApp(int appId, string userName) =>
         TryCatch<bool>(operation: () =>
     {
@@ -90,7 +75,21 @@ internal partial class AppOrchestrationService(
         ValidateApp(app: newApp, parameterName: "entity");
         Authorize(appId: null, privilege: "app_create");
 
-        return await processingService.AddAppAsync(newApp: newApp);
+        bool isFirstApp = !processingService
+            .GetAllApp(ignoreFilters: true)
+            .Any();
+
+        processingService.PrepareNewApp(
+            app: newApp,
+            isFirstApp: isFirstApp);
+
+        App storedApp = await processingService.AddAppAsync(newApp: newApp);
+
+        processingService.StampAppChildren(app: storedApp);
+        await processingService.PersistNewAppRolesAsync(app: storedApp);
+        await ExecuteRaiseAppAddEventAsync(app: storedApp);
+
+        return storedApp;
     }, isValueTask: true);
 
     public ValueTask<App> UpdateAppAsync(App updatedApp) =>
@@ -100,40 +99,24 @@ internal partial class AppOrchestrationService(
         ValidateApp(app: updatedApp, parameterName: "entity");
         Authorize(appId: updatedApp.Id, privilege: "app_update");
 
-        return await processingService.UpdateAppAsync(updatedApp: updatedApp);
+        App storedApp = await processingService.UpdateAppAsync(updatedApp: updatedApp);
+        await ExecuteRaiseAppUpdateEventAsync(app: updatedApp);
+
+        return storedApp;
     }, isValueTask: true);
 
-    public ValueTask RaiseAppAddEventAsync(App app) =>
-        TryCatch(operation: () =>
+    public ValueTask DeleteAppAsync(int appId) =>
+        TryCatch(operation: async () =>
     {
-        ValidateAppEventOnRaise(inputs: [app]);
-        ValidateApp(app: app, parameterName: "app");
+        ValidateAppOnDelete(inputs: [appId]);
+        ValidateId(appId: appId, parameterName: "appId");
 
-        return eventProcessingService.RaiseAppAddEventAsync(
-            app: app,
-            userId: authorizationProcessingService.GetCurrentUserId());
-    }, isValueTask: true);
+        App app = ExecuteGetAppForDelete(appId: appId);
 
-    public ValueTask RaiseAppUpdateEventAsync(App app) =>
-        TryCatch(operation: () =>
-    {
-        ValidateAppEventOnRaise(inputs: [app]);
-        ValidateApp(app: app, parameterName: "app");
-
-        return eventProcessingService.RaiseAppUpdateEventAsync(
-            app: app,
-            userId: authorizationProcessingService.GetCurrentUserId());
-    }, isValueTask: true);
-
-    public ValueTask RaiseAppDeleteEventAsync(App app) =>
-        TryCatch(operation: () =>
-    {
-        ValidateAppEventOnRaise(inputs: [app]);
-        ValidateApp(app: app, parameterName: "app");
-
-        return eventProcessingService.RaiseAppDeleteEventAsync(
-            app: app,
-            userId: authorizationProcessingService.GetCurrentUserId());
+        if (app != null)
+        {
+            await ExecuteRaiseAppDeleteEventAsync(app: app);
+        }
     }, isValueTask: true);
 
     public ValueTask HandleAppDeleteAsync(App app) =>
@@ -151,6 +134,33 @@ internal partial class AppOrchestrationService(
         ArgumentNullException.ThrowIfNull(argument: deletedApp);
         return processingService.DeleteAllAppAsync(deletedApp: deletedApp);
     }, isValueTask: true);
+
+    private App ExecuteGetAppForDelete(int appId)
+    {
+        App app = processingService.GetAppForDelete(appId: appId);
+
+        if (app?.Roles?.Any() == true)
+        {
+            Authorize(appId: appId, privilege: "app_delete");
+        }
+
+        return app;
+    }
+
+    private ValueTask ExecuteRaiseAppAddEventAsync(App app) =>
+        eventProcessingService.RaiseAppAddEventAsync(
+            app: app,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
+    private ValueTask ExecuteRaiseAppUpdateEventAsync(App app) =>
+        eventProcessingService.RaiseAppUpdateEventAsync(
+            app: app,
+            userId: authorizationProcessingService.GetCurrentUserId());
+
+    private ValueTask ExecuteRaiseAppDeleteEventAsync(App app) =>
+        eventProcessingService.RaiseAppDeleteEventAsync(
+            app: app,
+            userId: authorizationProcessingService.GetCurrentUserId());
 
     private void Authorize(int? appId, string privilege) =>
         authorizationProcessingService.AuthorizeAuthorizationContext(

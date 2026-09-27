@@ -10,6 +10,8 @@ internal interface IPageRenderCacheBroker
 {
     IQueryable<PageRenderCache> GetAllPageRenderCaches();
 
+    PageRenderCache GetPageRenderCache(string pageRenderCacheId);
+
     ValueTask<PageRenderCache> AddPageRenderCacheAsync(PageRenderCache newPageRenderCache);
 
     ValueTask<PageRenderCache> UpdatePageRenderCacheAsync(PageRenderCache updatedPageRenderCache);

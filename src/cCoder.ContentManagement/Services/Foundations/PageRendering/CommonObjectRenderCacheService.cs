@@ -20,51 +20,80 @@ internal sealed partial class CommonObjectRenderCacheService(
             CommonObjectCacheSnapshot snapshot =
                 cacheBroker.Get<CommonObjectCacheSnapshot>(key: CacheKey);
 
+            Dictionary<string, PageRenderResource> resources = new(
+                comparer: StringComparer.OrdinalIgnoreCase);
+
+            Dictionary<string, PageRenderComponent> components = new(
+                comparer: StringComparer.OrdinalIgnoreCase);
+
+            Dictionary<string, PageRenderScript> scripts = new(
+                comparer: StringComparer.OrdinalIgnoreCase);
+
+            Dictionary<string, PageRenderStyle> styles = new(
+                comparer: StringComparer.OrdinalIgnoreCase);
+
+            foreach (object item in snapshot?.Items?.Values ?? [])
+            {
+                switch (item)
+                {
+                    case Resource resource:
+                        string resourceKey = $"{resource.Key}|{resource.Name}|{resource.Culture}";
+
+                        if (!resources.ContainsKey(key: resourceKey))
+                        {
+                            resources.Add(
+                                key: resourceKey,
+                                value: MapResource(resource: resource));
+                        }
+
+                        break;
+
+                    case Component component:
+                        string componentKey = component.Name ?? string.Empty;
+
+                        if (!components.ContainsKey(key: componentKey))
+                        {
+                            components.Add(
+                                key: componentKey,
+                                value: MapComponent(component: component));
+                        }
+
+                        break;
+
+                    case Script script:
+                        string scriptKey = script.Name ?? string.Empty;
+
+                        if (!scripts.ContainsKey(key: scriptKey))
+                        {
+                            scripts.Add(
+                                key: scriptKey,
+                                value: MapScript(script: script));
+                        }
+
+                        break;
+
+                    case Style style:
+                        string styleKey = style.Name ?? string.Empty;
+
+                        if (!styles.ContainsKey(key: styleKey))
+                        {
+                            styles.Add(
+                                key: styleKey,
+                                value: MapStyle(style: style));
+                        }
+
+                        break;
+                }
+            }
+
             return new PageCacheSlice
             {
-                CommonResourcesByLookup = GetAll<Resource>(snapshot: snapshot)
-                    .GroupBy(
-                        keySelector: resource => $"{resource.Key}|{resource.Name}|{resource.Culture}",
-                        comparer: StringComparer.OrdinalIgnoreCase)
-                    .ToDictionary(
-                        keySelector: group => group.Key,
-                        elementSelector: group => MapResource(
-                            resource: group.First()),
-                        comparer: StringComparer.OrdinalIgnoreCase),
-                CommonComponentsByName = GetAll<Component>(snapshot: snapshot)
-                    .GroupBy(
-                        keySelector: component => component.Name ?? string.Empty,
-                        comparer: StringComparer.OrdinalIgnoreCase)
-                    .ToDictionary(
-                        keySelector: group => group.Key,
-                        elementSelector: group => MapComponent(
-                            component: group.First()),
-                        comparer: StringComparer.OrdinalIgnoreCase),
-                CommonScriptsByName = GetAll<Script>(snapshot: snapshot)
-                    .GroupBy(
-                        keySelector: script => script.Name ?? string.Empty,
-                        comparer: StringComparer.OrdinalIgnoreCase)
-                    .ToDictionary(
-                        keySelector: group => group.Key,
-                        elementSelector: group => MapScript(
-                            script: group.First()),
-                        comparer: StringComparer.OrdinalIgnoreCase),
-                CommonStylesByName = GetAll<Style>(snapshot: snapshot)
-                    .GroupBy(
-                        keySelector: style => style.Name ?? string.Empty,
-                        comparer: StringComparer.OrdinalIgnoreCase)
-                    .ToDictionary(
-                        keySelector: group => group.Key,
-                        elementSelector: group => MapStyle(
-                            style: group.First()),
-                        comparer: StringComparer.OrdinalIgnoreCase)
+                CommonResourcesByLookup = resources,
+                CommonComponentsByName = components,
+                CommonScriptsByName = scripts,
+                CommonStylesByName = styles
             };
         });
-
-    private static T[] GetAll<T>(CommonObjectCacheSnapshot snapshot) =>
-        (snapshot?.Items?.Values ?? [])
-            .OfType<T>()
-            .ToArray();
 
     private static PageRenderResource MapResource(Resource resource) =>
         new()

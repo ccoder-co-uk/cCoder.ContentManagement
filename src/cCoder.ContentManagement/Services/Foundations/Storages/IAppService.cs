@@ -14,6 +14,10 @@ internal interface IAppService
     AppOperation GetUnfilteredAppAppOperation(AppOperation appOperation);
     ValueTask<AppOperation> GetAppForRenderAppOperationAsync(AppOperation appOperation);
     AppOperation GetAppForDeleteAppOperation(AppOperation appOperation);
+    AppOperation PrepareNewAppAppOperation(AppOperation appOperation);
+    AppOperation StampAppChildrenAppOperation(AppOperation appOperation);
+    ValueTask<AppOperation> PersistNewAppRolesAppOperationAsync(
+        AppOperation appOperation);
     ValueTask<AppOperation> AddAppOperationAsync(AppOperation newAppOperation);
     ValueTask<AppOperation> UpdateAppOperationAsync(AppOperation updatedAppOperation);
     ValueTask<AppOperation> DeleteAppOperationAsync(AppOperation deletedAppOperation);

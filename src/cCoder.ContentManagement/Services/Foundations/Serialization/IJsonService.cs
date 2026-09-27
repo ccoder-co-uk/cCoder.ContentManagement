@@ -21,7 +21,7 @@ internal interface IJsonService
 
     bool IsJsonArray(object value);
 
-    IEnumerable<KeyValuePair<string, object>> GetJsonProperties(object value);
+    IReadOnlyCollection<KeyValuePair<string, object>> GetJsonProperties(object value);
 
     IEnumerable<object> GetJsonItems(object value);
 

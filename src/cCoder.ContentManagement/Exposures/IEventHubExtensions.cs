@@ -229,181 +229,178 @@ public static partial class IEventHubExtensions
     {
         eventHub.ListenToEvent(
             name: "app_update",
-            handler: (IPageRenderCacheAggregationService service, App app) =>
-                service.DeleteAppAsync(appId: app.Id, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, App app) =>
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: app.Id));
 
         eventHub.ListenToEvent(
             name: "app_delete",
-            handler: (IPageRenderCacheAggregationService service, App app) =>
-                service.DeleteAppAsync(appId: app.Id, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, App app) =>
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: app.Id));
 
-        eventHub.ListenToEvent<AppCulture, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<AppCulture, IPageRenderCacheOrchestrationService>(
             name: "app_culture_add",
             handler: static (service, appCulture) =>
-                service.DeleteAppAsync(appId: appCulture.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: appCulture.AppId));
 
-        eventHub.ListenToEvent<AppCulture, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<AppCulture, IPageRenderCacheOrchestrationService>(
             name: "app_culture_delete",
             handler: static (service, appCulture) =>
-                service.DeleteAppAsync(appId: appCulture.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: appCulture.AppId));
 
-        eventHub.ListenToEvent<Layout, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Layout, IPageRenderCacheOrchestrationService>(
             name: "layout_add",
             handler: static (service, layout) =>
-                service.DeleteAppAsync(appId: layout.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: layout.AppId));
 
-        eventHub.ListenToEvent<Layout, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Layout, IPageRenderCacheOrchestrationService>(
             name: "layout_update",
             handler: static (service, layout) =>
-                service.DeleteAppAsync(appId: layout.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: layout.AppId));
 
-        eventHub.ListenToEvent<Layout, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Layout, IPageRenderCacheOrchestrationService>(
             name: "layout_delete",
             handler: static (service, layout) =>
-                service.DeleteAppAsync(appId: layout.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: layout.AppId));
 
-        eventHub.ListenToEvent<Template, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Template, IPageRenderCacheOrchestrationService>(
             name: "template_add",
             handler: static (service, template) =>
-                service.DeleteAppAsync(appId: template.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: template.AppId));
 
-        eventHub.ListenToEvent<Template, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Template, IPageRenderCacheOrchestrationService>(
             name: "template_update",
             handler: static (service, template) =>
-                service.DeleteAppAsync(appId: template.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: template.AppId));
 
-        eventHub.ListenToEvent<Template, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Template, IPageRenderCacheOrchestrationService>(
             name: "template_delete",
             handler: static (service, template) =>
-                service.DeleteAppAsync(appId: template.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: template.AppId));
 
-        eventHub.ListenToEvent<Component, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Component, IPageRenderCacheOrchestrationService>(
             name: "component_add",
             handler: static (service, component) =>
-                service.DeleteAppAsync(appId: component.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: component.AppId));
 
-        eventHub.ListenToEvent<Component, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Component, IPageRenderCacheOrchestrationService>(
             name: "component_update",
             handler: static (service, component) =>
-                service.DeleteAppAsync(appId: component.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: component.AppId));
 
-        eventHub.ListenToEvent<Component, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Component, IPageRenderCacheOrchestrationService>(
             name: "component_delete",
             handler: static (service, component) =>
-                service.DeleteAppAsync(appId: component.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: component.AppId));
 
-        eventHub.ListenToEvent<Resource, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Resource, IPageRenderCacheOrchestrationService>(
             name: "resource_add",
             handler: static (service, resource) =>
-                service.DeleteAppAsync(appId: resource.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: resource.AppId));
 
-        eventHub.ListenToEvent<Resource, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Resource, IPageRenderCacheOrchestrationService>(
             name: "resource_update",
             handler: static (service, resource) =>
-                service.DeleteAppAsync(appId: resource.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: resource.AppId));
 
-        eventHub.ListenToEvent<Resource, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Resource, IPageRenderCacheOrchestrationService>(
             name: "resource_delete",
             handler: static (service, resource) =>
-                service.DeleteAppAsync(appId: resource.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: resource.AppId));
 
-        eventHub.ListenToEvent<Script, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Script, IPageRenderCacheOrchestrationService>(
             name: "script_add",
             handler: static (service, script) =>
-                service.DeleteAppAsync(appId: script.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: script.AppId));
 
-        eventHub.ListenToEvent<Script, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Script, IPageRenderCacheOrchestrationService>(
             name: "script_update",
             handler: static (service, script) =>
-                service.DeleteAppAsync(appId: script.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: script.AppId));
 
-        eventHub.ListenToEvent<Script, IPageRenderCacheAggregationService>(
+        eventHub.ListenToEvent<Script, IPageRenderCacheOrchestrationService>(
             name: "script_delete",
             handler: static (service, script) =>
-                service.DeleteAppAsync(appId: script.AppId, fromEvent: true));
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: script.AppId));
     }
 
     private static void ListenToPageOwnedRenderCacheEvents(IEventHub eventHub)
     {
         eventHub.ListenToEvent(
             name: "page_add",
-            handler: (IPageRenderCacheAggregationService service, Page page) =>
-                service.DeletePageAsync(pageId: page.Id, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, Page page) =>
+                service.DeletePagePageRenderCachesFromEventAsync(pageId: page.Id));
 
         eventHub.ListenToEvent(
             name: "page_update",
-            handler: (IPageRenderCacheAggregationService service, Page page) =>
-                service.DeletePageAsync(pageId: page.Id, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, Page page) =>
+                service.DeletePagePageRenderCachesFromEventAsync(pageId: page.Id));
 
         eventHub.ListenToEvent(
             name: "page_delete",
-            handler: (IPageRenderCacheAggregationService service, Page page) =>
-                service.DeletePageAsync(pageId: page.Id, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, Page page) =>
+                service.DeletePagePageRenderCachesFromEventAsync(pageId: page.Id));
 
         eventHub.ListenToEvent(
             name: "content_add",
-            handler: (IPageRenderCacheAggregationService service, Content content) =>
-                service.DeletePageAsync(pageId: content.PageId, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, Content content) =>
+                service.DeletePagePageRenderCachesFromEventAsync(pageId: content.PageId));
 
         eventHub.ListenToEvent(
             name: "content_update",
-            handler: (IPageRenderCacheAggregationService service, Content content) =>
-                service.DeletePageAsync(pageId: content.PageId, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, Content content) =>
+                service.DeletePagePageRenderCachesFromEventAsync(pageId: content.PageId));
 
         eventHub.ListenToEvent(
             name: "content_delete",
-            handler: (IPageRenderCacheAggregationService service, Content content) =>
-                service.DeletePageAsync(pageId: content.PageId, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, Content content) =>
+                service.DeletePagePageRenderCachesFromEventAsync(pageId: content.PageId));
 
         eventHub.ListenToEvent(
             name: "page_info_add",
-            handler: (IPageRenderCacheAggregationService service, PageInfo pageInfo) =>
-                service.DeletePageAsync(pageId: pageInfo.PageId, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, PageInfo pageInfo) =>
+                service.DeletePagePageRenderCachesFromEventAsync(pageId: pageInfo.PageId));
 
         eventHub.ListenToEvent(
             name: "page_info_update",
-            handler: (IPageRenderCacheAggregationService service, PageInfo pageInfo) =>
-                service.DeletePageAsync(pageId: pageInfo.PageId, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, PageInfo pageInfo) =>
+                service.DeletePagePageRenderCachesFromEventAsync(pageId: pageInfo.PageId));
 
         eventHub.ListenToEvent(
             name: "page_info_delete",
-            handler: (IPageRenderCacheAggregationService service, PageInfo pageInfo) =>
-                service.DeletePageAsync(pageId: pageInfo.PageId, fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, PageInfo pageInfo) =>
+                service.DeletePagePageRenderCachesFromEventAsync(pageId: pageInfo.PageId));
     }
 
     private static void ListenToCommonObjectRenderCacheEvents(IEventHub eventHub)
     {
         eventHub.ListenToEvent(
             name: "common_object_add",
-            handler: (IPageRenderCacheAggregationService service, CommonObject commonObject) =>
+            handler: (IPageRenderCacheOrchestrationService service, CommonObject commonObject) =>
                 service.InvalidateCommonObjectConsumersAsync(
-                    commonObjectType: commonObject.Type,
-                    fromEvent: true));
+                    commonObjectType: commonObject.Type));
 
         eventHub.ListenToEvent(
             name: "common_object_update",
-            handler: (IPageRenderCacheAggregationService service, CommonObject commonObject) =>
+            handler: (IPageRenderCacheOrchestrationService service, CommonObject commonObject) =>
                 service.InvalidateCommonObjectConsumersAsync(
-                    commonObjectType: commonObject.Type,
-                    fromEvent: true));
+                    commonObjectType: commonObject.Type));
 
         eventHub.ListenToEvent(
             name: "common_object_delete",
-            handler: (IPageRenderCacheAggregationService service, CommonObject commonObject) =>
+            handler: (IPageRenderCacheOrchestrationService service, CommonObject commonObject) =>
                 service.InvalidateCommonObjectConsumersAsync(
-                    commonObjectType: commonObject.Type,
-                    fromEvent: true));
+                    commonObjectType: commonObject.Type));
 
         eventHub.ListenToEvent(
             name: "common_objects_imported",
-            handler: (IPageRenderCacheAggregationService service, CommonObject[] commonObjects) =>
-                service.InvalidateCommonCacheAsync(fromEvent: true));
+            handler: (IPageRenderCacheOrchestrationService service, CommonObject[] commonObjects) =>
+                service.InvalidateCommonCacheAsync());
     }
 
     private static void ListenToPackageImportRenderCacheEvents(IEventHub eventHub) =>
         eventHub.ListenToEvent(
             name: "package_import_complete",
-            handler: (IPageRenderCacheAggregationService service, PackageImportEvent args) =>
+            handler: (IPageRenderCacheOrchestrationService service, PackageImportEvent args) =>
                 service.InvalidatePackageAsync(appId: args.AppId));
 
     private static void ListenToRenderTagEvents(IEventHub eventHub)

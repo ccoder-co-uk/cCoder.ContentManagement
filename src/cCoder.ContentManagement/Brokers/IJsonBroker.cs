@@ -22,6 +22,8 @@ internal interface IJsonBroker
 
     bool IsJsonString(object value);
 
+    string GetJsonString(object value);
+
     string GetJsonRawText(object value);
 
     bool IsJsonObject(object value);

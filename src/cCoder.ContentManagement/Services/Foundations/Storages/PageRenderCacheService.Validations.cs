@@ -36,7 +36,7 @@ internal sealed partial class PageRenderCacheService
     {
         ThrowIf(condition: replacements == null, message: "replacements is required.");
 
-        if (pageIds != null && pageIds.Any(predicate: pageId => pageId < 1))
+        if (ContainsInvalidPageId(pageIds: pageIds))
         {
             throw new ValidationException(message: "pageIds must contain values greater than 0.");
         }
@@ -45,6 +45,19 @@ internal sealed partial class PageRenderCacheService
         {
             ValidatePageRenderCache(cache: replacement, parameterName: "replacement");
         }
+    }
+
+    private static bool ContainsInvalidPageId(int[] pageIds)
+    {
+        foreach (int pageId in pageIds ?? [])
+        {
+            if (pageId < 1)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static void ThrowIf(bool condition, string message)

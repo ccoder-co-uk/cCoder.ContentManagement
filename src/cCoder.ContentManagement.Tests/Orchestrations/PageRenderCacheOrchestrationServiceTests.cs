@@ -4,7 +4,6 @@
 
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
-using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
 using Moq;
@@ -14,16 +13,12 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class PageRenderCacheOrchestrationServiceTests
 {
     private readonly Mock<IPageRenderCacheProcessingService> processingServiceMock;
-    private readonly Mock<ICommonObjectLatestCacheProcessingService> commonObjectCacheProcessingServiceMock;
     private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
     private readonly PageRenderCacheOrchestrationService orchestrationService;
 
     public PageRenderCacheOrchestrationServiceTests()
     {
         processingServiceMock = new Mock<IPageRenderCacheProcessingService>(
-            behavior: MockBehavior.Strict);
-
-        commonObjectCacheProcessingServiceMock = new Mock<ICommonObjectLatestCacheProcessingService>(
             behavior: MockBehavior.Strict);
 
         authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
@@ -37,7 +32,6 @@ public partial class PageRenderCacheOrchestrationServiceTests
 
         orchestrationService = new PageRenderCacheOrchestrationService(
             processingService: processingService,
-            commonObjectLatestCacheProcessingService: commonObjectCacheProcessingServiceMock.Object,
             authorizationProcessingService: authorizationProcessingServiceMock.Object);
     }
 

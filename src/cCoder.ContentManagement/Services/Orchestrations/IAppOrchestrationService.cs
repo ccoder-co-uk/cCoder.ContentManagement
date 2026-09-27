@@ -6,13 +6,11 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface IAppOrchestrationService
+public interface IAppOrchestrationService
 {
     App GetApp(int appId);
 
     ValueTask<App> GetAppForRenderAsync(int appId);
-
-    App GetAppForDelete(int appId);
 
     bool IsAdminApp(int appId, string userName);
 
@@ -24,11 +22,7 @@ internal interface IAppOrchestrationService
 
     ValueTask<App> UpdateAppAsync(App updatedApp);
 
-    ValueTask RaiseAppAddEventAsync(App app);
-
-    ValueTask RaiseAppUpdateEventAsync(App app);
-
-    ValueTask RaiseAppDeleteEventAsync(App app);
+    ValueTask DeleteAppAsync(int appId);
 
     ValueTask HandleAppDeleteAsync(App app);
 

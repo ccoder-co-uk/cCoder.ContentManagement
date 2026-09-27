@@ -22,4 +22,8 @@ internal interface IPackageExportBroker
     IQueryable<Resource> GetResources();
 
     IQueryable<Page> GetPages();
+
+    IQueryable<Page> GetPagesWithContent();
+
+    T[] Materialize<T>(IQueryable<T> query);
 }

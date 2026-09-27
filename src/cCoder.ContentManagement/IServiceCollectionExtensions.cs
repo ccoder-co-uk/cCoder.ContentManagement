@@ -226,6 +226,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<ITemplateEventBroker, TemplateEventBroker>();
         services.AddTransient<IRenderEventBroker, RenderEventBroker>();
         services.AddTransient<IAppBroker, AppBroker>();
+        services.AddTransient<IAppUserBroker, AppUserBroker>();
         services.AddTransient<IAppCultureBroker, AppCultureBroker>();
         services.AddTransient<ICommonObjectBroker, CommonObjectBroker>();
         services.AddTransient<IComponentBroker, ComponentBroker>();
@@ -260,13 +261,10 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddCoordinations(this IServiceCollection services)
     {
-        services.AddTransient<IAppManagerAggregationService, AppManagerAggregationService>();
         services.AddTransient<ITemplateManagerAggregationService, TemplateManagerAggregationService>();
         services.AddTransient<IAppRenderableCoordinationService, AppRenderableCoordinationService>();
         services.AddTransient<IAppPageComponentCoordinationService, AppPageComponentCoordinationService>();
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
-        services.AddTransient<IAppLifecycleCoordinationService, AppLifecycleCoordinationService>();
-        services.AddTransient<IAppManagerCoordinationService, AppManagerCoordinationService>();
         services.AddTransient<ICommonObjectCoordinationService, CommonObjectCoordinationService>();
         services.AddTransient<
             IContentManagementPackageCoordinationService,
@@ -304,9 +302,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<
             IUncachedPageRenderOrchestrationService,
             UncachedPageRenderOrchestrationService>();
-        services.AddTransient<
-            IPageRenderCacheAggregationService,
-            PageRenderCacheAggregationService>();
         services.AddTransient<IPageRenderOrchestrationService, PageRenderOrchestrationService>();
         services.AddTransient<IPageRenderProcessingService, PageRenderProcessingService>();
         services.AddTransient<IMetadataCacheService, MetadataCacheService>();
@@ -371,6 +366,7 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IPackageExportService, PackageExportService>();
         services.AddTransient<IAppCultureService, AppCultureService>();
         services.AddTransient<IAppService, AppService>();
+        services.AddTransient<IAppUserService, AppUserService>();
         services.AddTransient<IPrivilegeService, PrivilegeService>();
         services.AddTransient<IRoleService, RoleService>();
         services.AddTransient<IUserRoleService, UserRoleService>();
@@ -413,7 +409,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<
             IPageContextOrchestrationService,
             PageContextOrchestrationService>();
-        services.AddSingleton<PageRenderCacheImportState>();
         services.AddTransient<
             IContentManagementPackageImportOrchestrationService,
             ContentManagementPackageImportOrchestrationService>();
@@ -423,9 +418,9 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppCultureOrchestrationService, AppCultureOrchestrationService>();
         services.AddTransient<IAppCultureManager, AppCultureManager>();
         services.AddTransient<IAppOrchestrationService, AppOrchestrationService>();
-        services.AddTransient<IAppBootstrapOrchestrationService, AppBootstrapOrchestrationService>();
-        services.AddTransient<IAppRoleOrchestrationService, AppRoleOrchestrationService>();
-        services.AddTransient<IAppPageOrderOrchestrationService, AppPageOrderOrchestrationService>();
+        services.AddTransient<
+            IAppUserOrchestrationService,
+            AppUserOrchestrationService>();
         services.AddTransient<ICurrentAppOrchestrationService, CurrentAppOrchestrationService>();
         services.AddTransient<ICommonObjectOrchestrationService, CommonObjectOrchestrationService>();
         services.AddTransient<ICommonObjectEventOrchestrationService, CommonObjectEventOrchestrationService>();

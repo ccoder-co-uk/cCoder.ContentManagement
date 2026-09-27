@@ -36,6 +36,16 @@ internal partial class AppService
     private static void ValidateAppOperationOnDelete(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidatePrepareNewAppAppOperation(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidateStampAppChildrenAppOperation(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidatePersistNewAppRolesAppOperationOnAdd(
+        object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void ValidateRequestPathAppOperationOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 

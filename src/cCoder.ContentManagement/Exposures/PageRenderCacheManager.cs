@@ -2,40 +2,42 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Services.Aggregations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class PageRenderCacheManager(
-    IPageRenderCacheAggregationService pageRenderCacheAggregationService)
+    IPageRenderCacheOrchestrationService pageRenderCacheOrchestrationService)
         : IPageRenderCacheManager
 {
     public IQueryable<PageRenderCache> GetAll() =>
-        pageRenderCacheAggregationService.GetAllPageRenderCaches();
+        pageRenderCacheOrchestrationService.GetAllPageRenderCaches();
 
     public PageRenderCache Get(string pageRenderCacheId) =>
-        pageRenderCacheAggregationService.GetPageRenderCache(
+        pageRenderCacheOrchestrationService.GetPageRenderCache(
             pageRenderCacheId: pageRenderCacheId);
 
     public ValueTask<PageRenderCache> AddAsync(
         PageRenderCache newPageRenderCache) =>
-        pageRenderCacheAggregationService.AddPageRenderCacheAsync(
+        pageRenderCacheOrchestrationService.AddPageRenderCacheAsync(
             newPageRenderCache: newPageRenderCache);
 
     public ValueTask<PageRenderCache> UpdateAsync(
         PageRenderCache updatedPageRenderCache) =>
-        pageRenderCacheAggregationService.UpdatePageRenderCacheAsync(
+        pageRenderCacheOrchestrationService.UpdatePageRenderCacheAsync(
             updatedPageRenderCache: updatedPageRenderCache);
 
     public ValueTask DeleteAsync(string pageRenderCacheId) =>
-        pageRenderCacheAggregationService.DeletePageRenderCacheAsync(
+        pageRenderCacheOrchestrationService.DeletePageRenderCacheAsync(
             pageRenderCacheId: pageRenderCacheId);
 
     public ValueTask DeleteAppAsync(int appId) =>
-        pageRenderCacheAggregationService.DeleteAppAsync(appId: appId);
+        pageRenderCacheOrchestrationService.DeleteAppPageRenderCachesAsync(
+            appId: appId);
 
     public ValueTask DeletePageAsync(int pageId) =>
-        pageRenderCacheAggregationService.DeletePageAsync(pageId: pageId);
+        pageRenderCacheOrchestrationService.DeletePagePageRenderCachesAsync(
+            pageId: pageId);
 
 }

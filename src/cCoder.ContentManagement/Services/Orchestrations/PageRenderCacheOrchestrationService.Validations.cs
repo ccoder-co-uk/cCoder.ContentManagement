@@ -39,6 +39,16 @@ internal sealed partial class PageRenderCacheOrchestrationService
     private static void ValidatePageRenderCachesOnReplace(object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidateCommonObjectConsumersOnInvalidate(
+        object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidateCommonCacheOnInvalidate(object[] inputs) =>
+        Validate(inputs: inputs);
+
+    private static void ValidatePackageOnInvalidate(object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void Validate(params object[] inputs) =>
         _ = inputs;
 }

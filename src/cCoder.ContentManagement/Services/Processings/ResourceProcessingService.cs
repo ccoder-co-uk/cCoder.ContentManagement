@@ -59,13 +59,10 @@ internal partial class ResourceProcessingService(IResourceService service) : IRe
 
         if (string.IsNullOrEmpty(value: resource.Culture))
         {
-            Resource[] allVersions = ExecuteGetAllResource()
-                .Where(predicate: item => item.AppId == resource.AppId && item.Key == resource.Key && item.Name == resource.Name)
-                .ToArray();
+            List<Resource> allVersions = GetResourceVersions(
+                resource: resource);
 
-            Resource[] array = allVersions;
-
-            foreach (Resource version in array)
+            foreach (Resource version in allVersions)
             {
                 await service.DeleteAsync(resourceId: version.Id);
             }
@@ -130,13 +127,10 @@ internal partial class ResourceProcessingService(IResourceService service) : IRe
 
             if (string.IsNullOrEmpty(value: item.Culture))
             {
-                Resource[] allVersions = ExecuteGetAllResource()
-                    .Where(predicate: resource => resource.AppId == item.AppId && resource.Key == item.Key && resource.Name == item.Name)
-                    .ToArray();
+                List<Resource> allVersions = GetResourceVersions(
+                    resource: item);
 
-                Resource[] array = allVersions;
-
-                foreach (Resource version in array)
+                foreach (Resource version in allVersions)
                 {
                     deletedIds.Add(item: version.Id.ToString());
                 }
@@ -186,13 +180,10 @@ internal partial class ResourceProcessingService(IResourceService service) : IRe
 
         if (string.IsNullOrEmpty(value: resource.Culture))
         {
-            Resource[] allVersions = ExecuteGetAllResource()
-                .Where(predicate: item => item.AppId == resource.AppId && item.Key == resource.Key && item.Name == resource.Name)
-                .ToArray();
+            List<Resource> allVersions = GetResourceVersions(
+                resource: resource);
 
-            Resource[] array = allVersions;
-
-            foreach (Resource version in array)
+            foreach (Resource version in allVersions)
             {
                 await service.DeleteAsync(resourceId: version.Id);
             }
@@ -216,5 +207,21 @@ internal partial class ResourceProcessingService(IResourceService service) : IRe
     {
         ValidateResource(resource: updatedResource, parameterName: "entity");
         return service.UpdateResourceAsync(updatedResource: updatedResource);
+    }
+
+    private List<Resource> GetResourceVersions(Resource resource)
+    {
+        List<Resource> versions = [];
+
+        foreach (Resource candidate in ExecuteGetAllResource()
+            .Where(predicate: item =>
+                item.AppId == resource.AppId
+                && item.Key == resource.Key
+                && item.Name == resource.Name))
+        {
+            versions.Add(item: candidate);
+        }
+
+        return versions;
     }
 }

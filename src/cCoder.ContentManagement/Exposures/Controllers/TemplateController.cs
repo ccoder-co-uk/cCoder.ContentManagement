@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
-using cCoder.ContentManagement.Services.Aggregations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -20,47 +20,14 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class TemplateController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
-    private readonly ITemplateManagerAggregationService manager;
+    private readonly ITemplateOrchestrationService service;
 
-    public TemplateController(ITemplateManagerAggregationService manager, ILoggingBroker loggingBroker)
+    public TemplateController(
+        ITemplateOrchestrationService service,
+        ILoggingBroker loggingBroker)
     {
-        this.manager = manager;
+        this.service = service;
         this.loggingBroker = loggingBroker;
-    }
-
-    [HttpPost]
-    [AllowAnonymous]
-    [ActionName("HtmlToPdf")]
-    public async Task<IActionResult> GetHtmlToPdf(string name)
-    {
-        try
-        {
-            string htmlContent = await manager.ReadContentAsync(
-                source: base.Request.Body);
-
-            byte[] content = manager.ConvertHtmlToPdf(
-                html: htmlContent);
-
-            return File(fileContents: content, contentType: "application/pdf", fileDownloadName: name + ".pdf");
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
     }
 
     [HttpGet]
@@ -70,7 +37,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            return Ok(value: manager.GetAllTemplate());
+            return Ok(value: service.GetAllTemplate());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -99,7 +66,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            Template result = manager.GetAllTemplate()
+            Template result = service.GetAllTemplate()
                 .FirstOrDefault(predicate: template => template.Id == key);
 
             return result is null
@@ -137,7 +104,7 @@ public class TemplateController : ODataController
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            return StatusCode(statusCode: StatusCodes.Status201Created, value: await manager.AddTemplateAsync(newTemplate: newTemplate));
+            return StatusCode(statusCode: StatusCodes.Status201Created, value: await service.AddTemplateAsync(newTemplate: newTemplate));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -170,7 +137,7 @@ public class TemplateController : ODataController
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            return Ok(value: await manager.UpdateTemplateAsync(updatedTemplate: updatedTemplate));
+            return Ok(value: await service.UpdateTemplateAsync(updatedTemplate: updatedTemplate));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -197,7 +164,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            await manager.DeleteTemplateAsync(templateId: key);
+            await service.DeleteAsync(templateId: key);
             return NoContent();
         }
         catch (ContentManagementValidationException exception)

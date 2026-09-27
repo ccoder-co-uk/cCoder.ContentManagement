@@ -68,18 +68,31 @@ internal sealed partial class MarkupRenderService
             return string.Empty;
         }
 
-        return string.Join(
-            separator: string.Empty,
-            values: session.App.PagesById.Values
-                .Where(predicate: subPage =>
-                    subPage.ParentId == page?.Id
-                    && subPage.ShowOnMenus)
-                .OrderBy(keySelector: subPage => subPage.Order)
-                .Select(selector: subPage => BuildMenuItem(
-                    session: session,
-                    parent: page,
-                    page: subPage,
-                    expand: expand)));
+        List<PageRenderPage> pages = [];
+
+        foreach (PageRenderPage subPage in session.App.PagesById.Values)
+        {
+            if (subPage.ParentId == page?.Id && subPage.ShowOnMenus)
+            {
+                pages.Add(item: subPage);
+            }
+        }
+
+        pages.Sort(comparison: (left, right) => left.Order.CompareTo(
+            value: right.Order));
+
+        List<string> menuItems = new(capacity: pages.Count);
+
+        foreach (PageRenderPage subPage in pages)
+        {
+            menuItems.Add(item: BuildMenuItem(
+                session: session,
+                parent: page,
+                page: subPage,
+                expand: expand));
+        }
+
+        return string.Concat(values: menuItems);
     }
 
     private static string BuildMenuItem(

@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.CodeAnalysis.Exposures;
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
 using System.Security;
@@ -20,7 +21,7 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class CommonObjectController(
     ICommonObjectCoordinationService service,
-    ILoggingBroker loggingBroker) : ODataController()
+    ILoggingBroker loggingBroker) : ODataController(), ICompositionExposure
 {
     private readonly ICommonObjectCoordinationService service = service;
 

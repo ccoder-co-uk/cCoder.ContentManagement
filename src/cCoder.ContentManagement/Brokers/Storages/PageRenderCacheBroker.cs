@@ -14,6 +14,10 @@ internal sealed class PageRenderCacheBroker(ICoreContextFactory coreContextFacto
     public IQueryable<PageRenderCache> GetAllPageRenderCaches() =>
         coreContextFactory.CreateCoreContext().PageRenderCaches;
 
+    public PageRenderCache GetPageRenderCache(string pageRenderCacheId) =>
+        coreContextFactory.CreateCoreContext().PageRenderCaches
+            .FirstOrDefault(predicate: cache => cache.Id == pageRenderCacheId);
+
     public async ValueTask<PageRenderCache> AddPageRenderCacheAsync(PageRenderCache newPageRenderCache)
     {
         using CoreDataContext context = coreContextFactory.CreateCoreContext();
