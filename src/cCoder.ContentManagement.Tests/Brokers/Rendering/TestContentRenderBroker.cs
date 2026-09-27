@@ -61,6 +61,12 @@ internal sealed class TestContentRenderBroker(
     public string HtmlEncode(string value) =>
         WebUtility.HtmlEncode(value: value);
 
+    public bool IsValueType(object value) =>
+        value is not null && (value.GetType().IsValueType || value is string);
+
+    public string GetStringValue(object value) =>
+        value?.ToString() ?? string.Empty;
+
     public RuntimePropertyValue[] GetPropertyValues(object value) =>
         value.GetType()
             .GetProperties()

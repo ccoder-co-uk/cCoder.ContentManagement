@@ -4,15 +4,15 @@
 
 using cCoder.ContentManagement.Models.Exceptions;
 
-namespace cCoder.ContentManagement.Services.Orchestrations;
+namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
-internal sealed partial class AppRoleOrchestrationService
+internal sealed partial class AppUserService
 {
-    private static async ValueTask TryCatch(Func<ValueTask> operation, bool isValueTask)
+    private static TResult TryCatch<TResult>(Func<TResult> operation)
     {
         try
         {
-            await operation();
+            return operation();
         }
         catch (ContentManagementValidationException innerException)
         {
@@ -21,10 +21,6 @@ internal sealed partial class AppRoleOrchestrationService
         catch (ContentManagementDependencyException innerException)
         {
             throw new ContentManagementDependencyException(innerException: innerException);
-        }
-        catch (System.ComponentModel.DataAnnotations.ValidationException innerException)
-        {
-            throw new ContentManagementValidationException(innerException: innerException);
         }
         catch (ArgumentException innerException)
         {
@@ -37,10 +33,6 @@ internal sealed partial class AppRoleOrchestrationService
         catch (System.Security.SecurityException innerException)
         {
             throw new ContentManagementSecurityException(innerException: innerException);
-        }
-        catch (TaskCanceledException innerException)
-        {
-            throw new ContentManagementTaskCanceledException(innerException: innerException);
         }
         catch (Exception innerException)
         {

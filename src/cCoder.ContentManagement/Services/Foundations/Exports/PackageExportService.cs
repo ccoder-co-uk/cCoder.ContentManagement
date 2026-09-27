@@ -5,6 +5,7 @@
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Exports;
 using cCoder.ContentManagement.Models.Exports;
+using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 
 namespace cCoder.ContentManagement.Services.Foundations.Exports;
@@ -22,10 +23,9 @@ internal partial class PackageExportService(
         return CreatePackage(
 name: "Roles",
 itemType: "Core/Role",
-data: packageExportBroker.GetRoles()
+data: packageExportBroker.Materialize(query: packageExportBroker.GetRoles()
             .Where(predicate: role => role.AppId == appId)
-            .Select(selector: role => new { role.Name, role.Privs })
-            .ToArray());
+            .Select(selector: role => new { role.Name, role.Privs })));
 
     });
 
@@ -38,7 +38,7 @@ data: packageExportBroker.GetRoles()
         return CreatePackage(
 name: "Layouts",
 itemType: "ContentManagement/Layout",
-data: packageExportBroker.GetLayouts()
+data: packageExportBroker.Materialize(query: packageExportBroker.GetLayouts()
             .Where(predicate: layout => layout.AppId == appId)
             .Select(selector: layout => new
             {
@@ -47,8 +47,7 @@ data: packageExportBroker.GetLayouts()
                 layout.Html,
                 layout.Script,
                 layout.LastUpdated
-            })
-            .ToArray());
+            })));
 
     });
 
@@ -61,7 +60,7 @@ data: packageExportBroker.GetLayouts()
         return CreatePackage(
 name: "Templates",
 itemType: "ContentManagement/Template",
-data: packageExportBroker.GetTemplates()
+data: packageExportBroker.Materialize(query: packageExportBroker.GetTemplates()
             .Where(predicate: template => template.AppId == appId)
             .Select(selector: template => new
             {
@@ -69,8 +68,7 @@ data: packageExportBroker.GetTemplates()
                 template.ResourceKey,
                 template.RawString,
                 template.LastUpdated
-            })
-            .ToArray());
+            })));
 
     });
 
@@ -83,7 +81,7 @@ data: packageExportBroker.GetTemplates()
         return CreatePackage(
 name: "Components",
 itemType: "ContentManagement/Component",
-data: packageExportBroker.GetComponents()
+data: packageExportBroker.Materialize(query: packageExportBroker.GetComponents()
             .Where(predicate: component => component.AppId == appId)
             .Select(selector: component => new
             {
@@ -93,8 +91,7 @@ data: packageExportBroker.GetComponents()
                 component.Script,
                 component.Content,
                 component.LastUpdated
-            })
-            .ToArray());
+            })));
 
     });
 
@@ -107,7 +104,7 @@ data: packageExportBroker.GetComponents()
         return CreatePackage(
 name: "Scripts",
 itemType: "ContentManagement/Script",
-data: packageExportBroker.GetScripts()
+data: packageExportBroker.Materialize(query: packageExportBroker.GetScripts()
             .Where(predicate: script => script.AppId == appId)
             .Select(selector: script => new
             {
@@ -116,8 +113,7 @@ data: packageExportBroker.GetScripts()
                 script.Key,
                 script.Content,
                 script.LastUpdated
-            })
-            .ToArray());
+            })));
 
     });
 
@@ -130,7 +126,7 @@ data: packageExportBroker.GetScripts()
         return CreatePackage(
 name: "Resources",
 itemType: "ContentManagement/Resource",
-data: packageExportBroker.GetResources()
+data: packageExportBroker.Materialize(query: packageExportBroker.GetResources()
             .Where(predicate: resource => resource.AppId == appId)
             .Select(selector: resource => new
             {
@@ -141,8 +137,7 @@ data: packageExportBroker.GetResources()
                 resource.ShortDisplayName,
                 resource.Description,
                 resource.LastUpdated
-            })
-            .ToArray());
+            })));
 
     });
 
@@ -152,9 +147,37 @@ data: packageExportBroker.GetResources()
         ValidateExportPagesPackage(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        List<ExportPage> pages = packageExportBroker.GetPages()
-            .Where(predicate: page => page.AppId == appId)
-            .Select(selector: page => new ExportPage
+        List<ExportPage> pages = [];
+
+        foreach (Page page in packageExportBroker.GetPagesWithContent()
+            .Where(predicate: page => page.AppId == appId))
+        {
+            List<ExportContent> contents = [];
+
+            foreach (Content content in page.Contents)
+            {
+                contents.Add(item: new ExportContent
+                {
+                    CultureId = content.CultureId,
+                    Name = content.Name,
+                    Html = content.Html
+                });
+            }
+
+            List<ExportPageInfo> pageInfo = [];
+
+            foreach (PageInfo info in page.PageInfo)
+            {
+                pageInfo.Add(item: new ExportPageInfo
+                {
+                    CultureId = info.CultureId,
+                    Description = info.Description,
+                    Keywords = info.Keywords,
+                    Title = info.Title
+                });
+            }
+
+            pages.Add(item: new ExportPage
             {
                 Id = page.Id,
                 ParentId = page.ParentId,
@@ -165,30 +188,25 @@ data: packageExportBroker.GetResources()
                 Order = page.Order,
                 LastUpdated = page.LastUpdated,
                 Layout = page.Layout,
-                Contents = page.Contents
-                    .Select(selector: content => new ExportContent
-                    {
-                        CultureId = content.CultureId,
-                        Name = content.Name,
-                        Html = content.Html
-                    })
-            .ToArray(),
-                PageInfo = page.PageInfo
-                    .Select(selector: info => new ExportPageInfo
-                    {
-                        CultureId = info.CultureId,
-                        Description = info.Description,
-                        Keywords = info.Keywords,
-                        Title = info.Title
-                    })
-            .ToArray()
-            })
-            .ToList();
+                Contents = [.. contents],
+                PageInfo = [.. pageInfo]
+            });
+        }
 
-        Dictionary<int, ExportPage> pagesById = pages.ToDictionary(keySelector: page => page.Id);
+        Dictionary<int, ExportPage> pagesById = [];
 
-        foreach (ExportPage page in pages.Where(predicate: page => page.ParentId.HasValue))
+        foreach (ExportPage page in pages)
         {
+            pagesById[page.Id] = page;
+        }
+
+        foreach (ExportPage page in pages)
+        {
+            if (!page.ParentId.HasValue)
+            {
+                continue;
+            }
+
             ExportPage root = page;
 
             while (root.ParentId.HasValue && pagesById.TryGetValue(key: root.ParentId.Value, value: out ExportPage parent))
@@ -202,22 +220,28 @@ data: packageExportBroker.GetResources()
             }
         }
 
+        List<object> packagePages = [];
+
+        foreach (ExportPage page in pages)
+        {
+            packagePages.Add(item: new
+            {
+                page.Path,
+                page.Name,
+                page.ResourceKey,
+                page.ShowOnMenus,
+                page.Order,
+                page.LastUpdated,
+                page.Layout,
+                page.Contents,
+                page.PageInfo
+            });
+        }
+
         return CreatePackage(
 name: "Pages",
 itemType: "ContentManagement/Page",
-data: pages.Select(selector: page => new
-{
-    page.Path,
-    page.Name,
-    page.ResourceKey,
-    page.ShowOnMenus,
-    page.Order,
-    page.LastUpdated,
-    page.Layout,
-    page.Contents,
-    page.PageInfo
-})
-            .ToArray());
+data: packagePages);
 
     });
 
@@ -230,14 +254,15 @@ data: pages.Select(selector: page => new
         return CreatePackage(
 name: "PageRoles",
 itemType: "ContentManagement/PageRole",
-data: packageExportBroker.GetPages()
+data: packageExportBroker.Materialize(query: packageExportBroker.GetPages()
             .Where(predicate: page => page.AppId == appId)
-            .SelectMany(selector: page => page.Roles.Select(selector: role => new
+            .SelectMany(
+                collectionSelector: page => page.Roles,
+                resultSelector: (page, role) => new
             {
                 page.Path,
                 Role = role.Role.Name
-            }))
-            .ToArray());
+            })));
 
     });
 

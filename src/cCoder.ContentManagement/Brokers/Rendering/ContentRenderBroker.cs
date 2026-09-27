@@ -98,6 +98,13 @@ internal sealed class ContentRenderBroker(
             })
             .ToArray();
 
+    public bool IsValueType(object value) =>
+        value is not null
+        && (value.GetType().IsValueType || value is string);
+
+    public string GetStringValue(object value) =>
+        value?.ToString() ?? string.Empty;
+
     private T[] Query<T>(
         Func<CoreDataContext, DbSet<T>> selectSet)
         where T : class

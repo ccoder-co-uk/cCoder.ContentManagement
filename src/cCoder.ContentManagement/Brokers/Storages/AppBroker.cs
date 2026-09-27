@@ -54,6 +54,38 @@ internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBr
             .FirstOrDefault(predicate: app => app.Id == appId);
     }
 
+    public Culture[] GetCultures()
+    {
+        using CoreDataContext coreDataContext =
+            coreContextFactory.CreateCoreContext();
+
+        return [.. coreDataContext.Cultures.IgnoreQueryFilters()];
+    }
+
+    public Privilege[] GetPrivileges()
+    {
+        using CoreDataContext coreDataContext =
+            coreContextFactory.CreateCoreContext();
+
+        return [.. coreDataContext.Privileges.IgnoreQueryFilters()];
+    }
+
+    public User GetCurrentUser()
+    {
+        using CoreDataContext coreDataContext =
+            coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.User;
+    }
+
+    public string GetCurrentUserId()
+    {
+        using CoreDataContext coreDataContext =
+            coreContextFactory.CreateCoreContext();
+
+        return coreDataContext.AuthInfo?.SSOUserId;
+    }
+
     public async ValueTask<App> AddAppAsync(App newApp)
     {
         using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
@@ -71,6 +103,37 @@ internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBr
 
         await coreDataContext.SaveChangesAsync();
         return result;
+    }
+
+    public async ValueTask PersistNewAppRolesAsync(App app)
+    {
+        await using CoreDataContext coreDataContext =
+            coreContextFactory.CreateCoreContext();
+
+        Role[] storageRoles = [.. (app.Roles ?? [])
+            .Select(selector: role => new Role
+            {
+                Id = role.Id,
+                AppId = app.Id,
+                Name = role.Name,
+                Description = role.Description,
+                Privs = role.Privs
+            })];
+
+        UserRole[] storageUserRoles = [.. (app.Roles ?? [])
+            .SelectMany(selector: role => (role.Users ?? [])
+                .Select(selector: userRole => new UserRole
+                {
+                    RoleId = role.Id,
+                    UserId = userRole.UserId
+                }))];
+
+        await coreDataContext.Roles.AddRangeAsync(entities: storageRoles);
+
+        await coreDataContext.UserRoles.AddRangeAsync(
+            entities: storageUserRoles);
+
+        await coreDataContext.SaveChangesAsync();
     }
 
     public async ValueTask<int> DeleteAppAsync(App deletedApp)

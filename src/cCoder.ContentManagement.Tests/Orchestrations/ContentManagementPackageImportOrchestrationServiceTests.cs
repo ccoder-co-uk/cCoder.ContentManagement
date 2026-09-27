@@ -62,7 +62,7 @@ public sealed partial class ContentManagementPackageImportOrchestrationServiceTe
         };
 
         // When
-        await service.ImportAppPackageAsync(appId: appId, package: package);
+        await service.ImportPackageAsync(appId: appId, package: package);
 
         // Then
         eventService.VerifyAll();
@@ -109,7 +109,7 @@ public sealed partial class ContentManagementPackageImportOrchestrationServiceTe
         };
 
         // When
-        await service.ImportCommonCachePackageAsync(package: package);
+        await service.ImportPackageAsync(appId: null, package: package);
 
         // Then
         eventService.VerifyAll();

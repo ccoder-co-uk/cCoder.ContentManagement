@@ -98,39 +98,39 @@ public sealed partial class IEventHubExtensionsTests
             ("script_import", typeof(IScriptOrchestrationService)),
             ("template_import", typeof(ITemplateOrchestrationService)),
             ("common_objects_import", typeof(ICommonObjectCoordinationService)),
-            ("app_update", typeof(IPageRenderCacheAggregationService)),
-            ("app_delete", typeof(IPageRenderCacheAggregationService)),
-            ("app_culture_add", typeof(IPageRenderCacheAggregationService)),
-            ("app_culture_delete", typeof(IPageRenderCacheAggregationService)),
-            ("layout_add", typeof(IPageRenderCacheAggregationService)),
-            ("layout_update", typeof(IPageRenderCacheAggregationService)),
-            ("layout_delete", typeof(IPageRenderCacheAggregationService)),
-            ("template_add", typeof(IPageRenderCacheAggregationService)),
-            ("template_update", typeof(IPageRenderCacheAggregationService)),
-            ("template_delete", typeof(IPageRenderCacheAggregationService)),
-            ("component_add", typeof(IPageRenderCacheAggregationService)),
-            ("component_update", typeof(IPageRenderCacheAggregationService)),
-            ("component_delete", typeof(IPageRenderCacheAggregationService)),
-            ("resource_add", typeof(IPageRenderCacheAggregationService)),
-            ("resource_update", typeof(IPageRenderCacheAggregationService)),
-            ("resource_delete", typeof(IPageRenderCacheAggregationService)),
-            ("script_add", typeof(IPageRenderCacheAggregationService)),
-            ("script_update", typeof(IPageRenderCacheAggregationService)),
-            ("script_delete", typeof(IPageRenderCacheAggregationService)),
-            ("page_add", typeof(IPageRenderCacheAggregationService)),
-            ("page_update", typeof(IPageRenderCacheAggregationService)),
-            ("page_delete", typeof(IPageRenderCacheAggregationService)),
-            ("content_add", typeof(IPageRenderCacheAggregationService)),
-            ("content_update", typeof(IPageRenderCacheAggregationService)),
-            ("content_delete", typeof(IPageRenderCacheAggregationService)),
-            ("page_info_add", typeof(IPageRenderCacheAggregationService)),
-            ("page_info_update", typeof(IPageRenderCacheAggregationService)),
-            ("page_info_delete", typeof(IPageRenderCacheAggregationService)),
-            ("common_object_add", typeof(IPageRenderCacheAggregationService)),
-            ("common_object_update", typeof(IPageRenderCacheAggregationService)),
-            ("common_object_delete", typeof(IPageRenderCacheAggregationService)),
-            ("common_objects_imported", typeof(IPageRenderCacheAggregationService)),
-            ("package_import_complete", typeof(IPageRenderCacheAggregationService)),
+            ("app_update", typeof(IPageRenderCacheOrchestrationService)),
+            ("app_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("app_culture_add", typeof(IPageRenderCacheOrchestrationService)),
+            ("app_culture_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("layout_add", typeof(IPageRenderCacheOrchestrationService)),
+            ("layout_update", typeof(IPageRenderCacheOrchestrationService)),
+            ("layout_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("template_add", typeof(IPageRenderCacheOrchestrationService)),
+            ("template_update", typeof(IPageRenderCacheOrchestrationService)),
+            ("template_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("component_add", typeof(IPageRenderCacheOrchestrationService)),
+            ("component_update", typeof(IPageRenderCacheOrchestrationService)),
+            ("component_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("resource_add", typeof(IPageRenderCacheOrchestrationService)),
+            ("resource_update", typeof(IPageRenderCacheOrchestrationService)),
+            ("resource_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("script_add", typeof(IPageRenderCacheOrchestrationService)),
+            ("script_update", typeof(IPageRenderCacheOrchestrationService)),
+            ("script_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("page_add", typeof(IPageRenderCacheOrchestrationService)),
+            ("page_update", typeof(IPageRenderCacheOrchestrationService)),
+            ("page_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("content_add", typeof(IPageRenderCacheOrchestrationService)),
+            ("content_update", typeof(IPageRenderCacheOrchestrationService)),
+            ("content_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("page_info_add", typeof(IPageRenderCacheOrchestrationService)),
+            ("page_info_update", typeof(IPageRenderCacheOrchestrationService)),
+            ("page_info_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("common_object_add", typeof(IPageRenderCacheOrchestrationService)),
+            ("common_object_update", typeof(IPageRenderCacheOrchestrationService)),
+            ("common_object_delete", typeof(IPageRenderCacheOrchestrationService)),
+            ("common_objects_imported", typeof(IPageRenderCacheOrchestrationService)),
+            ("package_import_complete", typeof(IPageRenderCacheOrchestrationService)),
             ("render_request", typeof(IUncachedPageRenderOrchestrationService)),
             ("render_request", typeof(IMarkupRenderOrchestrationService)),
             ("render_request", typeof(IUncachedPageRenderOrchestrationService)),
@@ -176,7 +176,7 @@ public sealed partial class IEventHubExtensionsTests
             .Should()
             .NotContain(predicate: invocation =>
                 invocation.Method.GetGenericArguments()[1] ==
-                    typeof(IPageRenderCacheAggregationService));
+                    typeof(IPageRenderCacheOrchestrationService));
 
         eventHubMock.Invocations
             .Should()
@@ -211,74 +211,72 @@ public sealed partial class IEventHubExtensionsTests
         const int appId = 23;
         const int pageId = 17;
         Mock<IEventHub> eventHubMock = new();
-        Mock<IPageRenderCacheAggregationService> cacheMock = new(MockBehavior.Strict);
+        Mock<IPageRenderCacheOrchestrationService> cacheMock = new(MockBehavior.Strict);
 
-        cacheMock.Setup(expression: service => service.DeleteAppAsync(
-                appId: appId,
-                fromEvent: true))
+        cacheMock.Setup(expression: service =>
+            service.DeleteAppPageRenderCachesFromEventAsync(appId: appId))
             .Returns(value: ValueTask.CompletedTask);
 
-        cacheMock.Setup(expression: service => service.DeletePageAsync(
-                pageId: pageId,
-                fromEvent: true))
+        cacheMock.Setup(expression: service =>
+            service.DeletePagePageRenderCachesFromEventAsync(pageId: pageId))
             .Returns(value: ValueTask.CompletedTask);
 
         eventHubMock.Object.ListenToContentManagementWebEvents();
 
         // When
-        Func<IPageRenderCacheAggregationService, AppCulture, ValueTask> appCultureHandler =
-            (Func<IPageRenderCacheAggregationService, AppCulture, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, AppCulture, ValueTask> appCultureHandler =
+            (Func<IPageRenderCacheOrchestrationService, AppCulture, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "app_culture_add",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
-        Func<IPageRenderCacheAggregationService, Layout, ValueTask> layoutHandler =
-            (Func<IPageRenderCacheAggregationService, Layout, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, Layout, ValueTask> layoutHandler =
+            (Func<IPageRenderCacheOrchestrationService, Layout, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "layout_update",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
-        Func<IPageRenderCacheAggregationService, Template, ValueTask> templateHandler =
-            (Func<IPageRenderCacheAggregationService, Template, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, Template, ValueTask> templateHandler =
+            (Func<IPageRenderCacheOrchestrationService, Template, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "template_update",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
-        Func<IPageRenderCacheAggregationService, Component, ValueTask> componentHandler =
-            (Func<IPageRenderCacheAggregationService, Component, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, Component, ValueTask> componentHandler =
+            (Func<IPageRenderCacheOrchestrationService, Component, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "component_update",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
-        Func<IPageRenderCacheAggregationService, Resource, ValueTask> resourceHandler =
-            (Func<IPageRenderCacheAggregationService, Resource, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, Resource, ValueTask> resourceHandler =
+            (Func<IPageRenderCacheOrchestrationService, Resource, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "resource_update",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
-        Func<IPageRenderCacheAggregationService, Script, ValueTask> scriptHandler =
-            (Func<IPageRenderCacheAggregationService, Script, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, Script, ValueTask> scriptHandler =
+            (Func<IPageRenderCacheOrchestrationService, Script, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "script_update",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
-        Func<IPageRenderCacheAggregationService, Page, ValueTask> pageHandler =
-            (Func<IPageRenderCacheAggregationService, Page, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, Page, ValueTask> pageHandler =
+            (Func<IPageRenderCacheOrchestrationService, Page, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "page_update",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
-        Func<IPageRenderCacheAggregationService, Content, ValueTask> contentHandler =
-            (Func<IPageRenderCacheAggregationService, Content, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, Content, ValueTask> contentHandler =
+            (Func<IPageRenderCacheOrchestrationService, Content, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "content_update",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
-        Func<IPageRenderCacheAggregationService, PageInfo, ValueTask> pageInfoHandler =
-            (Func<IPageRenderCacheAggregationService, PageInfo, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, PageInfo, ValueTask> pageInfoHandler =
+            (Func<IPageRenderCacheOrchestrationService, PageInfo, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "page_info_update",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
         await appCultureHandler(
             arg1: cacheMock.Object,
@@ -318,15 +316,13 @@ public sealed partial class IEventHubExtensionsTests
 
         // Then
         cacheMock.Verify(
-            expression: service => service.DeleteAppAsync(
-                appId: appId,
-                fromEvent: true),
+            expression: service =>
+                service.DeleteAppPageRenderCachesFromEventAsync(appId: appId),
             times: Times.Exactly(callCount: 6));
 
         cacheMock.Verify(
-            expression: service => service.DeletePageAsync(
-                pageId: pageId,
-                fromEvent: true),
+            expression: service =>
+                service.DeletePagePageRenderCachesFromEventAsync(pageId: pageId),
             times: Times.Exactly(callCount: 3));
     }
 
@@ -337,16 +333,15 @@ public sealed partial class IEventHubExtensionsTests
         const int appId = 23;
         const string commonObjectType = "Component";
         Mock<IEventHub> eventHubMock = new();
-        Mock<IPageRenderCacheAggregationService> cacheMock = new(MockBehavior.Strict);
+        Mock<IPageRenderCacheOrchestrationService> cacheMock = new(MockBehavior.Strict);
 
         cacheMock.Setup(expression: service =>
                 service.InvalidateCommonObjectConsumersAsync(
-                    commonObjectType: commonObjectType,
-                    fromEvent: true))
+                    commonObjectType: commonObjectType))
             .Returns(value: ValueTask.CompletedTask);
 
         cacheMock.Setup(expression: service =>
-                service.InvalidateCommonCacheAsync(fromEvent: true))
+                service.InvalidateCommonCacheAsync())
             .Returns(value: ValueTask.CompletedTask);
 
         cacheMock.Setup(expression: service =>
@@ -360,17 +355,17 @@ public sealed partial class IEventHubExtensionsTests
         eventHubMock.Object.ListenToContentManagementWebEvents();
 
         // When
-        Func<IPageRenderCacheAggregationService, CommonObject, ValueTask> commonObjectHandler =
-            (Func<IPageRenderCacheAggregationService, CommonObject, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, CommonObject, ValueTask> commonObjectHandler =
+            (Func<IPageRenderCacheOrchestrationService, CommonObject, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "common_object_update",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
-        Func<IPageRenderCacheAggregationService, CommonObject[], ValueTask> commonObjectsHandler =
-            (Func<IPageRenderCacheAggregationService, CommonObject[], ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, CommonObject[], ValueTask> commonObjectsHandler =
+            (Func<IPageRenderCacheOrchestrationService, CommonObject[], ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "common_objects_imported",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
         await commonObjectHandler(
             arg1: cacheMock.Object,
@@ -380,11 +375,11 @@ public sealed partial class IEventHubExtensionsTests
             arg1: cacheMock.Object,
             arg2: []);
 
-        Func<IPageRenderCacheAggregationService, PackageImportEvent, ValueTask> packageHandler =
-            (Func<IPageRenderCacheAggregationService, PackageImportEvent, ValueTask>)GetHandler(
+        Func<IPageRenderCacheOrchestrationService, PackageImportEvent, ValueTask> packageHandler =
+            (Func<IPageRenderCacheOrchestrationService, PackageImportEvent, ValueTask>)GetHandler(
                 eventHubMock: eventHubMock,
                 eventName: "package_import_complete",
-                serviceType: typeof(IPageRenderCacheAggregationService));
+                serviceType: typeof(IPageRenderCacheOrchestrationService));
 
         await packageHandler(
             arg1: cacheMock.Object,

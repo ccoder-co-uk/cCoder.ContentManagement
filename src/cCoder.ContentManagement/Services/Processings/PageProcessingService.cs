@@ -51,7 +51,7 @@ internal partial class PageProcessingService(
             .Select(selector: page =>
                 $"<li data-id='{page.Id}' class='item'><a href='/{page.Path}'>{GetPageInfo(page: page, culture: culture).Title}</a></li>");
 
-        string text = (enumerable.Any() ? string.Join(separator: "", values: enumerable) : string.Empty);
+        string text = string.Join(separator: "", values: enumerable);
         return "<ul class='submenu'>" + text + "</ul>";
 
     });
@@ -100,7 +100,9 @@ internal partial class PageProcessingService(
         ValidatePageOnUpdate(inputs: [updatedPage]);
         ValidatePage(page: updatedPage, parameterName: "page");
 
-        Page dbVersion = service.GetAllPage(ignoreFilters: true)
+        IQueryable<Page> pages = service.GetAllPage(ignoreFilters: true);
+
+        Page dbVersion = pages
             .Where(predicate: existingPage => existingPage.Id == updatedPage.Id)
             .FirstOrDefault();
 
@@ -110,8 +112,8 @@ internal partial class PageProcessingService(
         }
 
         Page parent = updatedPage.ParentId.HasValue
-            ? service.GetAllPage(ignoreFilters: true)
-            .Where(predicate: existingPage => existingPage.Id == updatedPage.ParentId.Value)
+            ? pages.Where(predicate: existingPage =>
+                existingPage.Id == updatedPage.ParentId.Value)
             .FirstOrDefault()
             : null;
 
@@ -119,6 +121,11 @@ internal partial class PageProcessingService(
         {
             throw new SecurityException(message: "Access Denied!");
         }
+
+        await NormalizeSiblingOrdersAsync(
+            storedPage: dbVersion,
+            updatedPage: updatedPage,
+            pages: pages);
 
         dbVersion.ParentId = updatedPage.ParentId;
         dbVersion.AppId = updatedPage.AppId;
@@ -187,31 +194,16 @@ internal partial class PageProcessingService(
         storagePage.ParentId = parent?.Id;
         storagePage.Parent = null;
 
-        storagePage.PageInfo = newPage.PageInfo.Select(selector: (PageInfo info) => new PageInfo
-        {
-            Id = 0,
-            CultureId = info.CultureId ?? string.Empty,
-            Description = info.Description,
-            Keywords = info.Keywords,
-            Title = info.Title
-        })
-            .ToList();
+        storagePage.PageInfo = ClonePageInfo(
+            pageInfo: newPage.PageInfo);
 
-        storagePage.Contents = (newPage.Contents ?? new List<Content>()).Select(selector: (Content content) => new Content
-        {
-            Id = 0,
-            CultureId = content.CultureId ?? string.Empty,
-            Name = content.Name,
-            Html = content.Html
-        })
-            .ToList();
+        storagePage.Contents = CloneContent(
+            contents: newPage.Contents);
 
-        storagePage.Roles = ResolveRolesForNewPage(page: newPage, parent: parent)
-            .Select(selector: role => new PageRole
-            {
-                RoleId = role.RoleId
-            })
-            .ToList();
+        storagePage.Roles = ClonePageRoles(
+            pageRoles: ResolveRolesForNewPage(
+                page: newPage,
+                parent: parent));
 
         return await service.AddPageAsync(newPage: storagePage);
 
@@ -292,10 +284,16 @@ internal partial class PageProcessingService(
 
     private async ValueTask RecomputePathsAsync(int appId)
     {
-        Page[] pages = service.GetAllPage(ignoreFilters: true)
+        IQueryable<Page> pagesQuery = service.GetAllPage(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
-            .OrderBy(keySelector: page => page.Order)
-            .ToArray();
+            .OrderBy(keySelector: page => page.Order);
+
+        List<Page> pages = [];
+
+        foreach (Page page in pagesQuery)
+        {
+            pages.Add(item: page);
+        }
 
         await RecomputePathsAsync(parentId: null, parentPath: null, pages: pages);
     }
@@ -305,10 +303,13 @@ internal partial class PageProcessingService(
         string parentPath,
         IEnumerable<Page> pages)
     {
-        foreach (Page page in pages
-            .Where(predicate: item => item.ParentId == parentId)
-            .OrderBy(keySelector: item => item.Order))
+        foreach (Page page in pages)
         {
+            if (page.ParentId != parentId)
+            {
+                continue;
+            }
+
             string newPath = BuildPath(pageName: page.Name, parentPath: parentPath);
 
             if (!string.Equals(a: page.Path, b: newPath, comparisonType: StringComparison.Ordinal))
@@ -323,19 +324,14 @@ internal partial class PageProcessingService(
 
     private ICollection<PageRole> ResolveRolesForNewPage(Page page, Page parent)
     {
-        if ((page.Roles ?? Array.Empty<PageRole>()).Any())
+        if (page.Roles?.Count > 0)
         {
             return page.Roles;
         }
 
-        return (parent != null)
-            ? (parent.Roles ?? Array.Empty<PageRole>())
-                .Select(selector: (PageRole role) => new PageRole
-                {
-                    RoleId = role.RoleId
-                })
-            .ToArray()
-            : [];
+        return parent is null
+            ? []
+            : ClonePageRoles(pageRoles: parent.Roles);
     }
 
     private static string BuildPath(string pageName, string parentPath)
@@ -435,31 +431,14 @@ internal partial class PageProcessingService(
         newPage.ParentId = parent?.Id;
         newPage.Parent = null;
 
-        newPage.PageInfo = page.PageInfo.Select(selector: (PageInfo info) => new PageInfo
-        {
-            Id = 0,
-            CultureId = info.CultureId ?? string.Empty,
-            Description = info.Description,
-            Keywords = info.Keywords,
-            Title = info.Title
-        })
-            .ToList();
+        newPage.PageInfo = ClonePageInfo(pageInfo: page.PageInfo);
 
-        newPage.Contents = (page.Contents ?? new List<Content>()).Select(selector: (Content content) => new Content
-        {
-            Id = 0,
-            CultureId = content.CultureId ?? string.Empty,
-            Name = content.Name,
-            Html = content.Html
-        })
-            .ToList();
+        newPage.Contents = CloneContent(contents: page.Contents);
 
-        newPage.Roles = ResolveRolesForNewPage(page: page, parent: parent)
-            .Select(selector: role => new PageRole
-            {
-                RoleId = role.RoleId
-            })
-            .ToList();
+        newPage.Roles = ClonePageRoles(
+            pageRoles: ResolveRolesForNewPage(
+                page: page,
+                parent: parent));
 
         return await service.AddPageAsync(newPage: newPage);
     }
@@ -484,7 +463,9 @@ internal partial class PageProcessingService(
     {
         ValidatePage(page: updatedPage, parameterName: "page");
 
-        Page dbVersion = service.GetAllPage(ignoreFilters: true)
+        IQueryable<Page> pages = service.GetAllPage(ignoreFilters: true);
+
+        Page dbVersion = pages
             .Where(predicate: existingPage => existingPage.Id == updatedPage.Id)
             .FirstOrDefault();
 
@@ -494,8 +475,8 @@ internal partial class PageProcessingService(
         }
 
         Page parent = updatedPage.ParentId.HasValue
-            ? service.GetAllPage(ignoreFilters: true)
-            .Where(predicate: existingPage => existingPage.Id == updatedPage.ParentId.Value)
+            ? pages.Where(predicate: existingPage =>
+                existingPage.Id == updatedPage.ParentId.Value)
             .FirstOrDefault()
             : null;
 
@@ -503,6 +484,11 @@ internal partial class PageProcessingService(
         {
             throw new SecurityException(message: "Access Denied!");
         }
+
+        await NormalizeSiblingOrdersAsync(
+            storedPage: dbVersion,
+            updatedPage: updatedPage,
+            pages: pages);
 
         dbVersion.ParentId = updatedPage.ParentId;
         dbVersion.AppId = updatedPage.AppId;
@@ -516,11 +502,99 @@ internal partial class PageProcessingService(
         return await service.UpdatePageAsync(updatedPage: dbVersion);
     }
 
+    private async ValueTask NormalizeSiblingOrdersAsync(
+        Page storedPage,
+        Page updatedPage,
+        IQueryable<Page> pages)
+    {
+        bool parentChanged = storedPage.ParentId != updatedPage.ParentId;
+
+        if (!parentChanged && storedPage.Order == updatedPage.Order)
+        {
+            return;
+        }
+
+        foreach (Page sibling in pages)
+        {
+            if (sibling.Id == storedPage.Id
+                || sibling.AppId != storedPage.AppId)
+            {
+                continue;
+            }
+
+            bool orderChanged = parentChanged
+                ? AdjustOrderAcrossParents(
+                    sibling: sibling,
+                    storedPage: storedPage,
+                    updatedPage: updatedPage)
+                : AdjustOrderWithinParent(
+                    sibling: sibling,
+                    storedPage: storedPage,
+                    updatedPage: updatedPage);
+
+            if (orderChanged)
+            {
+                await service.UpdatePageAsync(updatedPage: sibling);
+            }
+        }
+    }
+
+    private static bool AdjustOrderAcrossParents(
+        Page sibling,
+        Page storedPage,
+        Page updatedPage)
+    {
+        if (sibling.ParentId == storedPage.ParentId
+            && sibling.Order > storedPage.Order)
+        {
+            sibling.Order--;
+            return true;
+        }
+
+        if (sibling.ParentId == updatedPage.ParentId
+            && sibling.Order >= updatedPage.Order)
+        {
+            sibling.Order++;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool AdjustOrderWithinParent(
+        Page sibling,
+        Page storedPage,
+        Page updatedPage)
+    {
+        if (sibling.ParentId != storedPage.ParentId)
+        {
+            return false;
+        }
+
+        if (updatedPage.Order < storedPage.Order
+            && sibling.Order >= updatedPage.Order
+            && sibling.Order < storedPage.Order)
+        {
+            sibling.Order++;
+            return true;
+        }
+
+        if (updatedPage.Order > storedPage.Order
+            && sibling.Order > storedPage.Order
+            && sibling.Order <= updatedPage.Order)
+        {
+            sibling.Order--;
+            return true;
+        }
+
+        return false;
+    }
+
     private static PageInfo GetPageInfo(Page page, string culture)
     {
         culture ??= string.Empty;
 
-        if (page?.PageInfo == null || !page.PageInfo.Any())
+        if (page?.PageInfo == null || page.PageInfo.Count == 0)
         {
             return new PageInfo
             {
@@ -531,15 +605,32 @@ internal partial class PageProcessingService(
             };
         }
 
-        IOrderedEnumerable<PageInfo> orderedInfo = page.PageInfo
-            .OrderByDescending(
-                keySelector: info => info.CultureId?.Length ?? 0);
+        PageInfo fallback = null;
+        PageInfo match = null;
 
-        return orderedInfo.FirstOrDefault(
-            predicate: info =>
-                culture == info.CultureId
+        foreach (PageInfo info in page.PageInfo)
+        {
+            if (fallback is null
+                || (info.CultureId?.Length ?? 0)
+                    > (fallback.CultureId?.Length ?? 0))
+            {
+                fallback = info;
+            }
+
+            if (culture == info.CultureId
                 || culture.Contains(value: info.CultureId ?? string.Empty))
-            ?? orderedInfo.FirstOrDefault()
+            {
+                if (match is null
+                    || (info.CultureId?.Length ?? 0)
+                        > (match.CultureId?.Length ?? 0))
+                {
+                    match = info;
+                }
+            }
+        }
+
+        return match
+            ?? fallback
             ?? new PageInfo
             {
                 CultureId = culture,
@@ -547,5 +638,60 @@ internal partial class PageProcessingService(
                 Description = string.Empty,
                 Keywords = string.Empty
             };
+    }
+
+    private static List<PageInfo> ClonePageInfo(
+        IEnumerable<PageInfo> pageInfo)
+    {
+        List<PageInfo> results = [];
+
+        foreach (PageInfo info in pageInfo ?? [])
+        {
+            results.Add(item: new PageInfo
+            {
+                Id = 0,
+                CultureId = info.CultureId ?? string.Empty,
+                Description = info.Description,
+                Keywords = info.Keywords,
+                Title = info.Title
+            });
+        }
+
+        return results;
+    }
+
+    private static List<Content> CloneContent(
+        IEnumerable<Content> contents)
+    {
+        List<Content> results = [];
+
+        foreach (Content content in contents ?? [])
+        {
+            results.Add(item: new Content
+            {
+                Id = 0,
+                CultureId = content.CultureId ?? string.Empty,
+                Name = content.Name,
+                Html = content.Html
+            });
+        }
+
+        return results;
+    }
+
+    private static List<PageRole> ClonePageRoles(
+        IEnumerable<PageRole> pageRoles)
+    {
+        List<PageRole> results = [];
+
+        foreach (PageRole role in pageRoles ?? [])
+        {
+            results.Add(item: new PageRole
+            {
+                RoleId = role.RoleId
+            });
+        }
+
+        return results;
     }
 }

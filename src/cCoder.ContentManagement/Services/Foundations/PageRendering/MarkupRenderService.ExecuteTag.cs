@@ -29,9 +29,26 @@ internal sealed partial class MarkupRenderService
         string code,
         IReadOnlyCollection<MarkupReplacement> replacements)
     {
-        string json = replacements
-            .FirstOrDefault(predicate: replacement =>
-                replacement.Old == "[model]")?.New ?? "{}";
+        string json = "{}";
+        string workflowBaseAddress = null;
+
+        foreach (MarkupReplacement replacement in replacements)
+        {
+            if (replacement.Old == "[model]")
+            {
+                json = replacement.New;
+            }
+            else if (replacement.Old == "[api[workflow]]")
+            {
+                workflowBaseAddress = replacement.New;
+            }
+        }
+
+        if (workflowBaseAddress is null)
+        {
+            throw new InvalidOperationException(
+                message: "The workflow API replacement is required.");
+        }
 
         string content = jsonBroker.SerializeIgnoringReferences(value: new
         {
@@ -40,8 +57,7 @@ internal sealed partial class MarkupRenderService
         });
 
         return workflowExecutionBroker.Execute(
-            baseAddress: replacements.First(predicate: replacement =>
-                replacement.Old == "[api[workflow]]").New,
+            baseAddress: workflowBaseAddress,
             content: content);
     }
 

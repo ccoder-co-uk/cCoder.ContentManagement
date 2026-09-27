@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Exposures;
-using cCoder.ContentManagement.Services.Aggregations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 using Moq;
 using Xunit;
@@ -19,38 +19,38 @@ public sealed partial class PageRenderCacheManagerTests
         const int appId = 3;
         const int pageId = 17;
         PageRenderCache cache = new() { Id = "3_17__default" };
-        Mock<IPageRenderCacheAggregationService> aggregationService = new();
+        Mock<IPageRenderCacheOrchestrationService> orchestrationService = new();
 
-        aggregationService.Setup(expression: service =>
+        orchestrationService.Setup(expression: service =>
             service.GetAllPageRenderCaches())
             .Returns(value: new[] { cache }.AsQueryable());
 
-        aggregationService.Setup(expression: service =>
+        orchestrationService.Setup(expression: service =>
             service.GetPageRenderCache(pageRenderCacheId: cache.Id))
             .Returns(value: cache);
 
-        aggregationService.Setup(expression: service =>
+        orchestrationService.Setup(expression: service =>
             service.AddPageRenderCacheAsync(newPageRenderCache: cache))
             .ReturnsAsync(value: cache);
 
-        aggregationService.Setup(expression: service =>
+        orchestrationService.Setup(expression: service =>
             service.UpdatePageRenderCacheAsync(updatedPageRenderCache: cache))
             .ReturnsAsync(value: cache);
 
-        aggregationService.Setup(expression: service =>
+        orchestrationService.Setup(expression: service =>
             service.DeletePageRenderCacheAsync(pageRenderCacheId: cache.Id))
             .Returns(value: ValueTask.CompletedTask);
 
-        aggregationService.Setup(expression: service =>
-            service.DeleteAppAsync(appId: appId, fromEvent: false))
+        orchestrationService.Setup(expression: service =>
+            service.DeleteAppPageRenderCachesAsync(appId: appId))
             .Returns(value: ValueTask.CompletedTask);
 
-        aggregationService.Setup(expression: service =>
-            service.DeletePageAsync(pageId: pageId, fromEvent: false))
+        orchestrationService.Setup(expression: service =>
+            service.DeletePagePageRenderCachesAsync(pageId: pageId))
             .Returns(value: ValueTask.CompletedTask);
 
         PageRenderCacheManager manager = new(
-            pageRenderCacheAggregationService: aggregationService.Object);
+            pageRenderCacheOrchestrationService: orchestrationService.Object);
 
         // When
         _ = manager.GetAll();
@@ -61,6 +61,6 @@ public sealed partial class PageRenderCacheManagerTests
         await manager.DeleteAppAsync(appId: appId);
         await manager.DeletePageAsync(pageId: pageId);
         // Then
-        aggregationService.VerifyAll();
+        orchestrationService.VerifyAll();
     }
 }

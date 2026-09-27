@@ -6,10 +6,8 @@ using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface IPageRenderCacheOrchestrationService
+public interface IPageRenderCacheOrchestrationService
 {
-    void RefreshCommonObjectCache();
-
     IQueryable<PageRenderCache> GetAllPageRenderCaches();
 
     PageRenderCache GetPageRenderCache(string pageRenderCacheId);
@@ -37,4 +35,10 @@ internal interface IPageRenderCacheOrchestrationService
         int appId,
         int[] pageIds,
         PageRenderCache[] replacements);
+
+    ValueTask InvalidateCommonObjectConsumersAsync(string commonObjectType);
+
+    ValueTask InvalidateCommonCacheAsync();
+
+    ValueTask InvalidatePackageAsync(int? appId);
 }

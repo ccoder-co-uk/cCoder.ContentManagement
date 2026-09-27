@@ -23,7 +23,7 @@ internal sealed partial class HttpContextService(
         HttpContext context = httpContextBroker.GetHttpContext();
         HttpRequest request = context.Request;
 
-        string path = httpContextBroker.GetRouteValue(key: "path")?.ToString()
+        string path = httpContextBroker.GetRouteValue(key: "path") as string
             ?? request.Path.Value?.Trim(trimChar: '/');
 
         bool hasCultureQuery = httpContextBroker.TryGetQueryValue(
@@ -37,7 +37,7 @@ internal sealed partial class HttpContextService(
                 comparisonType: StringComparison.OrdinalIgnoreCase);
 
         string culture = hasCultureQuery
-            ? cultureValue.ToString()
+            ? cultureValue
             : httpContextBroker.GetSessionValue(key: "culture");
 
         string theme = httpContextBroker.TryGetQueryValue(
@@ -60,7 +60,7 @@ internal sealed partial class HttpContextService(
             Theme = theme,
             Nonce = context.Items[
                     ContentSecurityPolicyNonceContract.HttpContextItemKey]
-                ?.ToString()
+                as string
                 ?? string.Empty,
             RequestUrl = httpContextBroker.GetEncodedRequestUrl(),
             Edit = httpContextBroker.TryGetQueryValue(

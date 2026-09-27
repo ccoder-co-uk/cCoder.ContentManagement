@@ -25,7 +25,7 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class AppOrchestrationServiceTests
 {
     [Fact]
-    public void ShouldGetAndAuthorizeWhenGetAppForDelete()
+    public async Task ShouldGetAuthorizeAndRaiseEventWhenDeleteAppAsync()
     {
         // Given
         int id = 1;
@@ -42,8 +42,14 @@ public partial class AppOrchestrationServiceTests
         appProcessingServiceMock.Setup(expression: x => x.GetAppForDelete(appId: id))
             .Returns(value: app);
 
+        appEventProcessingServiceMock
+            .Setup(expression: service => service.RaiseAppDeleteEventAsync(
+                app: app,
+                userId: CurrentUserId))
+            .Returns(value: ValueTask.CompletedTask);
+
         // When
-        App result = orchestrationService.GetAppForDelete(appId: id);
+        await orchestrationService.DeleteAppAsync(appId: id);
 
         // Then
         authorizationProcessingServiceMock.Verify(
@@ -55,8 +61,7 @@ public partial class AppOrchestrationServiceTests
 
         appProcessingServiceMock.Verify(expression: x => x.GetAppForDelete(appId: id), times: Times.Once);
 
-        result.Should()
-            .BeSameAs(expected: app);
+        appEventProcessingServiceMock.VerifyAll();
     }
 
     [Fact]

@@ -24,6 +24,58 @@ namespace cCoder.Core.Services.Tests.CMS.Processings;
 public partial class PageProcessingServiceTests
 {
     [Fact]
+    public async Task UpdatePage_WhenOrderMovesEarlier_ShouldNormalizeSiblingOrders()
+    {
+        // Given
+        Page firstPage = CreateRandomPage();
+        firstPage.Order = 0;
+
+        Page secondPage = CreateRandomPage();
+        secondPage.Order = 1;
+
+        Page movedPage = CreateRandomPage();
+        movedPage.Order = 2;
+
+        Page updatedPage = CreateRandomPage();
+        updatedPage.Id = movedPage.Id;
+        updatedPage.AppId = movedPage.AppId;
+        updatedPage.ParentId = movedPage.ParentId;
+        updatedPage.Order = 0;
+
+        IQueryable<Page> storedPages = new[]
+        {
+            firstPage,
+            secondPage,
+            movedPage
+        }.AsQueryable();
+
+        pageServiceMock.Setup(expression: service =>
+                service.GetAllPage(ignoreFilters: true))
+            .Returns(value: storedPages);
+
+        pageServiceMock.Setup(expression: service =>
+                service.UpdatePageAsync(updatedPage: It.IsAny<Page>()))
+            .ReturnsAsync(valueFunction: (Page page) => page);
+
+        // When
+        await pageProcessingService.UpdatePageAsync(updatedPage: updatedPage);
+
+        // Then
+        firstPage.Order.Should()
+            .Be(expected: 1);
+
+        secondPage.Order.Should()
+            .Be(expected: 2);
+
+        movedPage.Order.Should()
+            .Be(expected: 0);
+
+        pageServiceMock.Verify(expression: service =>
+                service.UpdatePageAsync(updatedPage: It.IsAny<Page>()),
+            times: Times.Exactly(callCount: 3));
+    }
+
+    [Fact]
     public async Task ShouldUpdatePageWhenUserCanUpdatePageForUpdateAsync()
     {
 
@@ -145,10 +197,8 @@ public partial class PageProcessingServiceTests
 
         currentUser = actor;
 
-        pageServiceMock.SetupSequence(expression: x => x.GetAllPage(ignoreFilters: true))
-            .Returns(value: new[] { dbPage }.AsQueryable())
-            .Returns(value: Array.Empty<Page>()
-            .AsQueryable());
+        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+            .Returns(value: new[] { dbPage }.AsQueryable());
 
         pageServiceMock.Setup(expression: x => x.GetAllPage())
             .Returns(value: new[] { dbPage }.AsQueryable());
@@ -161,7 +211,10 @@ public partial class PageProcessingServiceTests
             .ThrowAsync<SecurityException>()
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Exactly(callCount: 2));
+        pageServiceMock.Verify(
+            expression: x => x.GetAllPage(ignoreFilters: true),
+            times: Times.Once);
+
         VerifyNoOtherPageServiceCalls();
     }
 

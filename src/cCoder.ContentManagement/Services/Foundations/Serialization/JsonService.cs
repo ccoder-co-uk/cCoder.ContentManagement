@@ -38,11 +38,19 @@ internal partial class JsonService(
         return jsonBroker.IsJsonArray(value: value);
     });
 
-    public IEnumerable<KeyValuePair<string, object>> GetJsonProperties(object value) =>
-        TryCatch<IEnumerable<KeyValuePair<string, object>>>(operation: () =>
+    public IReadOnlyCollection<KeyValuePair<string, object>> GetJsonProperties(object value) =>
+        TryCatch<IReadOnlyCollection<KeyValuePair<string, object>>>(operation: () =>
     {
         ValidateJsonPropertiesOnGet(inputs: [value]);
-        return jsonBroker.GetJsonProperties(value: value);
+
+        List<KeyValuePair<string, object>> properties = [];
+
+        foreach (KeyValuePair<string, object> property in jsonBroker.GetJsonProperties(value: value))
+        {
+            properties.Add(item: property);
+        }
+
+        return properties;
     });
 
     public IEnumerable<object> GetJsonItems(object value) =>
@@ -75,15 +83,23 @@ internal partial class JsonService(
 
         object records = ParseRecordsPayload(json: jsonRecordsDocument.Json);
 
-        return records is null || jsonBroker.IsJsonNull(value: records)
-            ? null
-            : new JsonRecordsDocument
-            {
-                Json = jsonBroker.Serialize(value: records),
-                Records = GetRecordValues(records: records)
-                    .Select(selector: CreateJsonObjectRecord)
-                    .ToArray()
-            };
+        if (records is null || jsonBroker.IsJsonNull(value: records))
+        {
+            return null;
+        }
+
+        List<JsonObjectRecord> recordValues = [];
+
+        foreach (object record in GetRecordValues(records: records))
+        {
+            recordValues.Add(item: CreateJsonObjectRecord(record: record));
+        }
+
+        return new JsonRecordsDocument
+        {
+            Json = jsonBroker.Serialize(value: records),
+            Records = [.. recordValues]
+        };
     });
 
     private object ParseRecordsPayload(string json)
@@ -95,12 +111,19 @@ internal partial class JsonService(
             return parsedPayload;
         }
 
-        return GetProperties(value: parsedPayload)
-            .FirstOrDefault(predicate: property => string.Equals(
+        foreach (KeyValuePair<string, object> property in
+            GetProperties(value: parsedPayload))
+        {
+            if (string.Equals(
                 a: property.Key,
                 b: "value",
                 comparisonType: StringComparison.OrdinalIgnoreCase))
-            .Value ?? parsedPayload;
+            {
+                return property.Value ?? parsedPayload;
+            }
+        }
+
+        return parsedPayload;
     }
 
     private IEnumerable<object> GetRecordValues(object records)
@@ -117,29 +140,35 @@ internal partial class JsonService(
 
     private JsonObjectRecord CreateJsonObjectRecord(object record)
     {
-        KeyValuePair<string, object>[] properties = GetProperties(value: record)
-            .Where(predicate: property => jsonBroker.IsJsonString(
-                value: property.Value))
-            .ToArray();
+        Dictionary<string, string> stringValues = new(StringComparer.Ordinal);
+        Dictionary<string, DateTimeOffset> dateTimeOffsetValues = new(StringComparer.Ordinal);
+
+        foreach (KeyValuePair<string, object> property in GetProperties(value: record))
+        {
+            if (!jsonBroker.IsJsonString(value: property.Value))
+            {
+                continue;
+            }
+
+            string value = jsonBroker.GetJsonString(value: property.Value);
+
+            stringValues[property.Key] = value;
+
+            if (DateTimeOffset.TryParse(
+                input: value,
+                result: out DateTimeOffset dateTimeOffset))
+            {
+                dateTimeOffsetValues[property.Key] = dateTimeOffset;
+            }
+        }
 
         return new JsonObjectRecord
         {
             RawText = jsonBroker.IsJsonElement(value: record)
                 ? jsonBroker.GetJsonRawText(value: record)
                 : jsonBroker.Serialize(value: record),
-            StringValues = properties.ToDictionary(
-                keySelector: property => property.Key,
-                elementSelector: property => property.Value.ToString(),
-                comparer: StringComparer.Ordinal),
-            DateTimeOffsetValues = properties
-                .Where(predicate: property => DateTimeOffset.TryParse(
-                    input: property.Value.ToString(),
-                    result: out _))
-                .ToDictionary(
-                    keySelector: property => property.Key,
-                    elementSelector: property => DateTimeOffset.Parse(
-                        input: property.Value.ToString()),
-                    comparer: StringComparer.Ordinal)
+            StringValues = stringValues,
+            DateTimeOffsetValues = dateTimeOffsetValues
         };
     }
 

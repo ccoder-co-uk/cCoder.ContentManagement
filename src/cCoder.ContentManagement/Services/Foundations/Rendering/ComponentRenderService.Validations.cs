@@ -15,6 +15,10 @@ internal sealed partial class ComponentRenderService
         object[] inputs) =>
         Validate(inputs: inputs);
 
+    private static void ValidateStringValueComponentRenderFoundationOperationOnGet(
+        object[] inputs) =>
+        Validate(inputs: inputs);
+
     private static void ValidateAppsComponentRenderFoundationOperationOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 

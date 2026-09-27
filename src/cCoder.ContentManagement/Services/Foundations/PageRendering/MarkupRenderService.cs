@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Text;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Rendering;
 using cCoder.ContentManagement.Brokers.Caching;
@@ -83,6 +82,31 @@ internal sealed partial class MarkupRenderService(
             return tagHandlingOperation;
         });
 
+    public TagHandlingOperation IsValueTypeTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateTagHandlingOperation(inputs: [tagHandlingOperation]);
+
+            tagHandlingOperation.Condition = contentRenderBroker
+                .IsValueType(value: tagHandlingOperation.Value);
+
+            return tagHandlingOperation;
+        });
+
+    public TagHandlingOperation GetStringValueTagHandlingOperation(
+        TagHandlingOperation tagHandlingOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateStringValueTagHandlingOperationOnGet(
+                inputs: [tagHandlingOperation]);
+
+            tagHandlingOperation.Content = contentRenderBroker
+                .GetStringValue(value: tagHandlingOperation.Value);
+
+            return tagHandlingOperation;
+        });
+
     private const string ElementPattern = "<(?<tag>script|style)\\b";
 
     private const string NoncePattern =
@@ -105,7 +129,7 @@ internal sealed partial class MarkupRenderService(
             return markup ?? string.Empty;
         }
 
-        StringBuilder result = new(capacity: markup.Length + 64);
+        List<string> fragments = [];
         int position = 0;
 
         while (TryFindElement(
@@ -123,16 +147,15 @@ internal sealed partial class MarkupRenderService(
                 break;
             }
 
-            result.Append(
-                value: markup,
+            fragments.Add(item: markup.Substring(
                 startIndex: position,
-                count: openingStart - position);
+                length: openingStart - position));
 
             string openingTag = markup.Substring(
                 startIndex: openingStart,
                 length: openingEnd - openingStart + 1);
 
-            result.Append(value: MarkOpeningTag(openingTag: openingTag));
+            fragments.Add(item: MarkOpeningTag(openingTag: openingTag));
             int contentStart = openingEnd + 1;
 
             int closingStart = markup.IndexOf(
@@ -146,20 +169,16 @@ internal sealed partial class MarkupRenderService(
                 continue;
             }
 
-            result.Append(
-                value: markup,
+            fragments.Add(item: markup.Substring(
                 startIndex: contentStart,
-                count: closingStart - contentStart);
+                length: closingStart - contentStart));
 
             position = closingStart;
         }
 
-        result.Append(
-            value: markup,
-            startIndex: position,
-            count: markup.Length - position);
+        fragments.Add(item: markup.Substring(startIndex: position));
 
-        return result.ToString();
+        return string.Concat(values: fragments);
     }
 
     private string MarkOpeningTag(string openingTag)

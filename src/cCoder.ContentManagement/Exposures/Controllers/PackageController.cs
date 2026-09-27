@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Brokers.Loggings;
-using cCoder.ContentManagement.Services.Coordinations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.Data.Models.Packaging;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 [ApiController]
 [Route("Api/ContentManagement/Package")]
 public sealed class PackageController(
-    IContentManagementPackageCoordinationService contentManagementPackageManager,
+    IContentManagementPackageImportOrchestrationService packageImportOrchestrationService,
     ILoggingBroker loggingBroker) : ControllerBase
 {
     [HttpPost("Import")]
@@ -28,7 +28,7 @@ public sealed class PackageController(
                 return BadRequest(modelState: ModelState);
             }
 
-            await contentManagementPackageManager.ImportPackageAsync(
+            await packageImportOrchestrationService.ImportPackageAsync(
                 appId: appId,
                 package: newPackage);
 

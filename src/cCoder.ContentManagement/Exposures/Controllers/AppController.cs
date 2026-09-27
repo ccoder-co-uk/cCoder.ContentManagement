@@ -8,10 +8,9 @@ using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Services.Foundations.Storages;
-using cCoder.ContentManagement.Services.Aggregations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -22,11 +21,11 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 public class AppController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
-    private readonly IAppManagerAggregationService manager;
+    private readonly IAppOrchestrationService service;
 
-    public AppController(IAppManagerAggregationService manager, ILoggingBroker loggingBroker)
+    public AppController(IAppOrchestrationService service, ILoggingBroker loggingBroker)
     {
-        this.manager = manager;
+        this.service = service;
         this.loggingBroker = loggingBroker;
     }
 
@@ -41,86 +40,7 @@ public class AppController : ODataController
                 return NotFound();
             }
 
-            return Ok(value: manager.GetAdminAppManagerContext(
-                appManagerContext: new AppManagerContext
-                {
-                    AppId = key,
-                    UserName = userName
-                })
-            .IsAdmin);
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [HttpGet]
-    [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]
-    [ActionName("Users")]
-    public IActionResult GetUsers([FromRoute] int key)
-    {
-        try
-        {
-            if (key <= 0)
-            {
-                return NotFound();
-            }
-
-            return Ok(value: manager.GetUsersAppManagerContext(
-                appManagerContext: new AppManagerContext { AppId = key })
-            .Users);
-        }
-        catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return BadRequest();
-        }
-        catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
-        catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [HttpPost]
-    [ActionName("UpdatePageOrder")]
-    public async Task<IActionResult> PostUpdatePageOrderAsync([FromRoute] int key, ODataActionParameters p)
-    {
-        try
-        {
-            App app = p["app"] as App;
-
-            await manager.UpdatePageOrderAppManagerContextAsync(
-                updatedAppManagerContext: new AppManagerContext
-                {
-                    AppId = key,
-                    App = app
-                });
-
-            return Ok();
+            return Ok(value: service.IsAdminApp(appId: key, userName: userName));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -149,9 +69,7 @@ public class AppController : ODataController
     {
         try
         {
-            return Ok(value: manager.GetAllAppManagerContext(
-                appManagerContext: new AppManagerContext())
-            .Apps);
+            return Ok(value: service.GetAllApp());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -180,9 +98,7 @@ public class AppController : ODataController
     {
         try
         {
-            App result = manager.GetAllAppManagerContext(
-                appManagerContext: new AppManagerContext())
-            .Apps
+            App result = service.GetAllApp()
                 .FirstOrDefault(predicate: app => app.Id == key);
 
             return result is null
@@ -220,12 +136,11 @@ public class AppController : ODataController
                 return new BadRequestResult(modelState: base.ModelState);
             }
 
-            AppManagerContext result = await manager.AddAppManagerContextAsync(
-                newAppManagerContext: new AppManagerContext { App = newApp });
+            App result = await service.AddAppAsync(newApp: newApp);
 
             return StatusCode(
                 statusCode: StatusCodes.Status201Created,
-                value: CreateResponseApp(newApp: result.App));
+                value: CreateResponseApp(newApp: result));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -260,10 +175,9 @@ public class AppController : ODataController
 
             updatedApp.Id = key;
 
-            AppManagerContext result = await manager.UpdateAppManagerContextAsync(
-                updatedAppManagerContext: new AppManagerContext { App = updatedApp });
+            App result = await service.UpdateAppAsync(updatedApp: updatedApp);
 
-            return Ok(value: CreateResponseApp(newApp: result.App));
+            return Ok(value: CreateResponseApp(newApp: result));
         }
         catch (ContentManagementValidationException exception)
         {
@@ -290,8 +204,7 @@ public class AppController : ODataController
     {
         try
         {
-            await manager.DeleteAppManagerContextAsync(
-                deletedAppManagerContext: new AppManagerContext { AppId = key });
+            await service.DeleteAppAsync(appId: key);
 
             return Accepted();
         }

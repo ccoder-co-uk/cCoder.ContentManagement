@@ -24,22 +24,47 @@ internal sealed partial class CommonObjectLatestCacheService(
     public CommonObjectCacheSnapshot LoadCommonObjectCacheSnapshot() =>
         TryCatch(operation: () =>
         {
-            CommonObject[] latestSet = commonObjectBroker
-                .GetLatestCommonObjectsPaged(pageSize: 500)
-                .OrderByDescending(
-                    keySelector: commonObject => commonObject.Version)
-                .ThenByDescending(
-                    keySelector: commonObject => commonObject.Id)
-                .GroupBy(
-                    keySelector: GetEffectiveCacheIdentity,
-                    comparer: StringComparer.OrdinalIgnoreCase)
-                .Select(selector: versions => versions.First())
-                .Where(predicate: commonObject =>
-                    commonObject.Type is "ContentManagement/Component"
-                        or "ContentManagement/Resource"
-                        or "ContentManagement/Script"
-                        or "ContentManagement/Style")
-                .ToArray();
+            List<CommonObject> orderedObjects = [];
+
+            foreach (CommonObject commonObject in commonObjectBroker
+                .GetLatestCommonObjectsPaged(pageSize: 500))
+            {
+                orderedObjects.Add(item: commonObject);
+            }
+
+            orderedObjects.Sort(comparison: (first, second) =>
+            {
+                int versionComparison = second.Version.CompareTo(value: first.Version);
+
+                return versionComparison != 0
+                    ? versionComparison
+                    : second.Id.CompareTo(value: first.Id);
+            });
+
+            HashSet<string> identities = new(
+                comparer: StringComparer.OrdinalIgnoreCase);
+
+            List<CommonObject> latestObjects = [];
+
+            foreach (CommonObject commonObject in orderedObjects)
+            {
+                if (commonObject.Type is not (
+                    "ContentManagement/Component"
+                    or "ContentManagement/Resource"
+                    or "ContentManagement/Script"
+                    or "ContentManagement/Style"))
+                {
+                    continue;
+                }
+
+                if (identities.Add(item: GetEffectiveCacheIdentity(
+                    commonObject: commonObject)))
+                {
+                    latestObjects.Add(item: commonObject);
+                }
+            }
+
+            CommonObject[] latestSet = [.. latestObjects];
 
             Dictionary<string, object> items = new(
                 comparer: StringComparer.OrdinalIgnoreCase);
@@ -101,7 +126,7 @@ internal sealed partial class CommonObjectLatestCacheService(
             Style style =>
                 $"style|{style.Name}".ToLowerInvariant(),
             _ => throw new InvalidOperationException(
-                message: $"Unsupported common object cache type '{item.GetType().Name}'.")
+                message: "Unsupported common object cache type.")
         };
 
     private static string GetEffectiveCacheIdentity(CommonObject commonObject) =>

@@ -57,22 +57,67 @@ internal partial class CommonObjectProcessingService(
         List<CommonObject> adds = [];
         List<CommonObject> updates = [];
 
-        foreach (string type in newCommonObjects
-            .Select(selector: item => item.Type)
-            .Distinct())
-        {
-            CommonObject[] existingSet = latestCommonObjects
-                .Where(predicate: item => item.Type == type)
-                .ToArray();
+        List<string> types = [];
 
-            foreach (CommonObject entry in newCommonObjects.Where(
-                predicate: item => item.Type == type))
+        foreach (CommonObject commonObject in newCommonObjects)
+        {
+            bool typeExists = false;
+
+            foreach (string type in types)
             {
-                CommonObject matched = existingSet.FirstOrDefault(
-                    predicate: existing =>
-                        existing.Culture == entry.Culture
+                if (string.Equals(
+                    a: type,
+                    b: commonObject.Type,
+                    comparisonType: StringComparison.Ordinal))
+                {
+                    typeExists = true;
+                    break;
+                }
+            }
+
+            if (!typeExists)
+            {
+                types.Add(item: commonObject.Type);
+            }
+        }
+
+        foreach (string type in types)
+        {
+            List<CommonObject> existingSet = [];
+
+            foreach (CommonObject existing in latestCommonObjects)
+            {
+                if (string.Equals(
+                    a: existing.Type,
+                    b: type,
+                    comparisonType: StringComparison.Ordinal))
+                {
+                    existingSet.Add(item: existing);
+                }
+            }
+
+            foreach (CommonObject entry in newCommonObjects)
+            {
+                if (!string.Equals(
+                    a: entry.Type,
+                    b: type,
+                    comparisonType: StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                CommonObject matched = null;
+
+                foreach (CommonObject existing in existingSet)
+                {
+                    if (existing.Culture == entry.Culture
                         && existing.Name == entry.Name
-                        && existing.Key == entry.Key);
+                        && existing.Key == entry.Key)
+                    {
+                        matched = existing;
+                        break;
+                    }
+                }
 
                 if (matched is null)
                 {
@@ -257,9 +302,9 @@ internal partial class CommonObjectProcessingService(
 
         updatedCommonObject.Id = 0;
 
-        updatedCommonObject.Version = Math.Max(
-            val1: versionCount,
-            val2: nextStoredVersion);
+        updatedCommonObject.Version = versionCount > nextStoredVersion
+            ? versionCount
+            : nextStoredVersion;
 
         updatedCommonObject.CreatedOn = DateTimeOffset.Now;
         updatedCommonObject.LastUpdated = DateTimeOffset.Now;

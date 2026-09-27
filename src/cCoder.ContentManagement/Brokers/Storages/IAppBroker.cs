@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
@@ -16,9 +17,19 @@ public interface IAppBroker
 
     App GetAppForDelete(int appId);
 
+    Culture[] GetCultures();
+
+    Privilege[] GetPrivileges();
+
+    User GetCurrentUser();
+
+    string GetCurrentUserId();
+
     ValueTask<App> AddAppAsync(App newApp);
 
     ValueTask<App> UpdateAppAsync(App updatedApp);
+
+    ValueTask PersistNewAppRolesAsync(App app);
 
     ValueTask<int> DeleteAppAsync(App deletedApp);
 

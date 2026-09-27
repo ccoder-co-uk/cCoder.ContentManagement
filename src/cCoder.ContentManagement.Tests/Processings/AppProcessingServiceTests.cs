@@ -173,6 +173,16 @@ public partial class AppProcessingServiceTests
             return appOperation;
         }
 
+        public AppOperation PrepareNewAppAppOperation(AppOperation appOperation) =>
+            appOperation;
+
+        public AppOperation StampAppChildrenAppOperation(AppOperation appOperation) =>
+            appOperation;
+
+        public ValueTask<AppOperation> PersistNewAppRolesAppOperationAsync(
+            AppOperation appOperation) =>
+            ValueTask.FromResult(result: appOperation);
+
         public async ValueTask<AppOperation> AddAppOperationAsync(AppOperation newAppOperation)
         {
             newAppOperation.App = await service.AddAppAsync(newApp: newAppOperation.App);

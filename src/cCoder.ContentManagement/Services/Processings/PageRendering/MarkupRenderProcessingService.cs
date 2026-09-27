@@ -58,8 +58,8 @@ internal sealed partial class MarkupRenderProcessingService(
             ? "Default"
             : renderSession.Target.ResourceKey;
 
-        List<MarkupReplacement> replacements = BuildDefaultReplacements(session: renderSession)
-            .ToList();
+        List<MarkupReplacement> replacements = CopyReplacements(
+            replacements: BuildDefaultReplacements(session: renderSession));
 
         await AddThemeTemplateReplacementsAsync(
             newRenderSession: renderSession,
@@ -163,8 +163,8 @@ internal sealed partial class MarkupRenderProcessingService(
                 ? PageRenderRuntimeTokens.Date
                 : DateTimeOffset.UtcNow.ToString(format: "dd MMM yyyy") },
             new MarkupReplacement { Old = "[[culture]]", Value = HtmlEncode(value: culture) },
-            new MarkupReplacement { Old = "[[lang]]", Value = HtmlEncode(value: culture.Split(separator: '-')
-            .FirstOrDefault() ?? string.Empty) }
+            new MarkupReplacement { Old = "[[lang]]", Value = HtmlEncode(
+                value: culture.Split(separator: '-')[0]) }
         ];
 
         if (session.App != null)
@@ -291,7 +291,8 @@ internal sealed partial class MarkupRenderProcessingService(
                 template: baseTemplate,
                 model: themeDictionary,
                 session: newRenderSession,
-                pageReplacements: newReplacement.ToList(),
+                pageReplacements: CopyReplacements(
+                    replacements: newReplacement),
                 handleTagHandlingOperationAsync: handleTagHandlingOperationAsync);
 
         themeDictionary.TryGetValue(key: newRenderSession.Request.Theme ?? string.Empty, value: out object themeModel);
@@ -307,7 +308,8 @@ internal sealed partial class MarkupRenderProcessingService(
                 template: themeTemplate,
                 model: themeModel,
                 session: newRenderSession,
-                pageReplacements: newReplacement.ToList(),
+                pageReplacements: CopyReplacements(
+                    replacements: newReplacement),
                 handleTagHandlingOperationAsync: handleTagHandlingOperationAsync);
 
         newReplacement.Add(item: new MarkupReplacement { Old = "[theme[template]]", Value = renderedTheme });
@@ -321,7 +323,9 @@ internal sealed partial class MarkupRenderProcessingService(
         IReadOnlyCollection<MarkupReplacement> pageReplacements,
         Func<TagHandlingOperation, ValueTask> handleTagHandlingOperationAsync)
     {
-        List<MarkupReplacement> replacements = pageReplacements.ToList();
+        List<MarkupReplacement> replacements = CopyReplacements(
+            replacements: pageReplacements);
+
         replacements.Add(item: new MarkupReplacement { Old = "[model]", Value = Serialize(value: model) });
         replacements.AddRange(collection: BuildModelReplacements(model: model));
 
@@ -461,10 +465,9 @@ internal sealed partial class MarkupRenderProcessingService(
             return BuildCollectionReplacements(model: (IEnumerable)model, prefix: prefix);
         }
 
-        if (model.GetType()
-            .GetInterface(name: "IDynamicMetaObjectProvider") != null)
+        if (model is IDictionary<string, object> dynamicModel)
         {
-            return BuildDynamicReplacements(model: (IDictionary<string, object>)model, prefix: prefix);
+            return BuildDynamicReplacements(model: dynamicModel, prefix: prefix);
         }
 
         if (model is IEnumerable enumerable && model is not string)
@@ -492,50 +495,95 @@ internal sealed partial class MarkupRenderProcessingService(
         return replacements;
     }
 
-    private IEnumerable<MarkupReplacement> BuildObjectReplacements(object model, string prefix) =>
-        GetPropertyValues(value: model)
-        .SelectMany(selector: property =>
+    private IEnumerable<MarkupReplacement> BuildObjectReplacements(
+        object model,
+        string prefix)
+    {
+        List<MarkupReplacement> replacements = [];
+
+        foreach (RuntimePropertyValue property in GetPropertyValues(value: model))
+        {
+            object value = property.Value;
+
+            string bindingExpression = string.IsNullOrEmpty(value: prefix)
+                ? property.Name
+                : prefix + "." + property.Name;
+
+            if (property.IsValueType)
             {
-                object value = property.Value;
-                string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
-
-                if (property.IsValueType)
+                replacements.Add(item: new MarkupReplacement
                 {
-                    return [new MarkupReplacement { Old = "[model[" + bindingExpression + "]]", Value = value?.ToString() ?? string.Empty }];
-                }
+                    Old = "[model[" + bindingExpression + "]]",
+                    Value = GetStringValue(value: value)
+                });
+            }
+            else if (value != null)
+            {
+                replacements.AddRange(collection: BuildModelReplacements(
+                    model: value,
+                    prefix: bindingExpression));
+            }
+        }
 
-                return value != null
-                    ? BuildModelReplacements(model: value, prefix: bindingExpression)
-                    : Array.Empty<MarkupReplacement>();
-            });
+        return replacements;
+    }
 
-    private IEnumerable<MarkupReplacement> BuildJObjectReplacements(object model, string prefix) =>
-        GetJsonProperties(value: model)
-        .SelectMany(selector: property =>
+    private IEnumerable<MarkupReplacement> BuildJObjectReplacements(
+        object model,
+        string prefix)
+    {
+        List<MarkupReplacement> replacements = [];
+
+        foreach (KeyValuePair<string, object> property in GetJsonProperties(value: model))
         {
             string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Key : prefix + "." + property.Key;
 
-            return IsJsonValue(value: property.Value)
-                ? [new MarkupReplacement { Old = "[model[" + bindingExpression + "]]", Value = property.Value.ToString() }]
-                : BuildModelReplacements(model: property.Value, prefix: bindingExpression);
-        });
+            if (IsJsonValue(value: property.Value))
+            {
+                replacements.Add(item: new MarkupReplacement
+                {
+                    Old = "[model[" + bindingExpression + "]]",
+                    Value = GetStringValue(value: property.Value)
+                });
+            }
+            else
+            {
+                replacements.AddRange(collection: BuildModelReplacements(
+                    model: property.Value,
+                    prefix: bindingExpression));
+            }
+        }
 
-    private IEnumerable<MarkupReplacement> BuildDynamicReplacements(IDictionary<string, object> model, string prefix) =>
-        model.Keys.SelectMany(selector: key =>
-                                                                                                                           {
-                                                                                                                               string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
-                                                                                                                               object value = model[key];
+        return replacements;
+    }
 
-                                                                                                                               List<MarkupReplacement> replacements = [new MarkupReplacement { Old = "[model[" + bindingExpression + "]]", Value = value?.ToString() ?? string.Empty }];
+    private IEnumerable<MarkupReplacement> BuildDynamicReplacements(
+        IDictionary<string, object> model,
+        string prefix)
+    {
+        List<MarkupReplacement> replacements = [];
 
-                                                                                                                               if (value != null && !value.GetType()
-                                                                                                                                   .IsValueType && value is not string)
-                                                                                                                               {
-                                                                                                                                   replacements.AddRange(collection: BuildModelReplacements(model: value, prefix: bindingExpression));
-                                                                                                                               }
+        foreach (string key in model.Keys)
+        {
+            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
+            object value = model[key];
 
-                                                                                                                               return replacements;
-                                                                                                                           });
+            replacements.Add(item: new MarkupReplacement
+            {
+                Old = "[model[" + bindingExpression + "]]",
+                Value = GetStringValue(value: value)
+            });
+
+            if (value != null && !IsRuntimeValueType(value: value))
+            {
+                replacements.AddRange(collection: BuildModelReplacements(
+                    model: value,
+                    prefix: bindingExpression));
+            }
+        }
+
+        return replacements;
+    }
 
     private IEnumerable<MarkupReplacement> BuildThemeReplacements(object model, string prefix = "")
     {
@@ -554,8 +602,7 @@ internal sealed partial class MarkupRenderProcessingService(
             return [new MarkupReplacement { Old = "[theme[" + prefix + "]]", Value = text }];
         }
 
-        if (model.GetType()
-            .GetInterface(name: "IDynamicMetaObjectProvider") != null && model is IDictionary<string, object> dynamicModel)
+        if (model is IDictionary<string, object> dynamicModel)
         {
             return BuildThemeDynamicReplacements(model: dynamicModel, prefix: prefix);
         }
@@ -586,54 +633,92 @@ internal sealed partial class MarkupRenderProcessingService(
         return replacements;
     }
 
-    private IEnumerable<MarkupReplacement> BuildThemeObjectReplacements(object model, string prefix) =>
-        GetPropertyValues(value: model)
-        .SelectMany(selector: property =>
+    private IEnumerable<MarkupReplacement> BuildThemeObjectReplacements(
+        object model,
+        string prefix)
+    {
+        List<MarkupReplacement> replacements = [];
+
+        foreach (RuntimePropertyValue property in GetPropertyValues(value: model))
+        {
+            object value = property.Value;
+            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
+
+            if (property.IsValueType)
             {
-                object value = property.Value;
-                string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Name : prefix + "." + property.Name;
+                replacements.AddRange(collection:
+                [
+                    new MarkupReplacement { Old = "[theme[" + prefix + "]]", Value = GetStringValue(value: model) },
+                    new MarkupReplacement { Old = "[theme[" + bindingExpression + "]]", Value = GetStringValue(value: value) }
+                ]);
+            }
+            else if (value != null)
+            {
+                replacements.AddRange(collection: BuildThemeReplacements(
+                    model: value,
+                    prefix: bindingExpression));
+            }
+        }
 
-                if (property.IsValueType)
-                {
-                    return
-                    [
-                        new MarkupReplacement { Old = "[theme[" + prefix + "]]", Value = model?.ToString() ?? string.Empty },
-                        new MarkupReplacement { Old = "[theme[" + bindingExpression + "]]", Value = value?.ToString() ?? string.Empty }
-                    ];
-                }
+        return replacements;
+    }
 
-                return value != null
-                    ? BuildThemeReplacements(model: value, prefix: bindingExpression)
-                    : Array.Empty<MarkupReplacement>();
-            });
+    private IEnumerable<MarkupReplacement> BuildThemeJObjectReplacements(
+        object model,
+        string prefix)
+    {
+        List<MarkupReplacement> replacements = [];
 
-    private IEnumerable<MarkupReplacement> BuildThemeJObjectReplacements(object model, string prefix) =>
-        GetJsonProperties(value: model)
-        .SelectMany(selector: property =>
+        foreach (KeyValuePair<string, object> property in GetJsonProperties(value: model))
         {
             string bindingExpression = string.IsNullOrEmpty(value: prefix) ? property.Key : prefix + "." + property.Key;
 
-            return IsJsonValue(value: property.Value)
-                ? [new MarkupReplacement { Old = "[theme[" + bindingExpression + "]]", Value = property.Value.ToString() }]
-                : BuildThemeReplacements(model: property.Value, prefix: bindingExpression);
-        });
+            if (IsJsonValue(value: property.Value))
+            {
+                replacements.Add(item: new MarkupReplacement
+                {
+                    Old = "[theme[" + bindingExpression + "]]",
+                    Value = GetStringValue(value: property.Value)
+                });
+            }
+            else
+            {
+                replacements.AddRange(collection: BuildThemeReplacements(
+                    model: property.Value,
+                    prefix: bindingExpression));
+            }
+        }
 
-    private IEnumerable<MarkupReplacement> BuildThemeDynamicReplacements(IDictionary<string, object> model, string prefix) =>
-        model.Keys.SelectMany(selector: key =>
-                                                                                                                                {
-                                                                                                                                    string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
-                                                                                                                                    object value = model[key];
+        return replacements;
+    }
 
-                                                                                                                                    List<MarkupReplacement> replacements = [new MarkupReplacement { Old = "[theme[" + bindingExpression + "]]", Value = value?.ToString() ?? string.Empty }];
+    private IEnumerable<MarkupReplacement> BuildThemeDynamicReplacements(
+        IDictionary<string, object> model,
+        string prefix)
+    {
+        List<MarkupReplacement> replacements = [];
 
-                                                                                                                                    if (value != null && !value.GetType()
-                                                                                                                                        .IsValueType)
-                                                                                                                                    {
-                                                                                                                                        replacements.AddRange(collection: BuildThemeReplacements(model: value, prefix: bindingExpression));
-                                                                                                                                    }
+        foreach (string key in model.Keys)
+        {
+            string bindingExpression = string.IsNullOrEmpty(value: prefix) ? key : prefix + "." + key;
+            object value = model[key];
 
-                                                                                                                                    return replacements;
-                                                                                                                                });
+            replacements.Add(item: new MarkupReplacement
+            {
+                Old = "[theme[" + bindingExpression + "]]",
+                Value = GetStringValue(value: value)
+            });
+
+            if (value != null && !IsRuntimeValueType(value: value))
+            {
+                replacements.AddRange(collection: BuildThemeReplacements(
+                    model: value,
+                    prefix: bindingExpression));
+            }
+        }
+
+        return replacements;
+    }
 
     private static bool TryGetThemeDictionary(object config, out IDictionary<string, object> themeDictionary)
     {
@@ -663,9 +748,15 @@ internal sealed partial class MarkupRenderProcessingService(
 
         if (!appId.HasValue)
         {
-            return user.AppPrivileges.Values.Any(
-                predicate: privileges =>
-                    privileges.Contains(item: normalizedOperation));
+            foreach (ISet<string> privileges in user.AppPrivileges.Values)
+            {
+                if (privileges.Contains(item: normalizedOperation))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         return user.AppPrivileges.TryGetValue(
@@ -689,6 +780,19 @@ internal sealed partial class MarkupRenderProcessingService(
             tagHandlingOperation: new TagHandlingOperation { Value = value })
         .Value;
 
+    private static List<MarkupReplacement> CopyReplacements(
+        IEnumerable<MarkupReplacement> replacements)
+    {
+        List<MarkupReplacement> results = [];
+
+        foreach (MarkupReplacement replacement in replacements)
+        {
+            results.Add(item: replacement);
+        }
+
+        return results;
+    }
+
     private bool IsJsonObject(object value) =>
         markupRenderService.IsJsonObjectTagHandlingOperation(
             tagHandlingOperation: new TagHandlingOperation { Value = value })
@@ -703,6 +807,16 @@ internal sealed partial class MarkupRenderProcessingService(
         markupRenderService.IsJsonValueTagHandlingOperation(
             tagHandlingOperation: new TagHandlingOperation { Value = value })
         .Condition;
+
+    private bool IsRuntimeValueType(object value) =>
+        markupRenderService.IsValueTypeTagHandlingOperation(
+            tagHandlingOperation: new TagHandlingOperation { Value = value })
+        .Condition;
+
+    private string GetStringValue(object value) =>
+        markupRenderService.GetStringValueTagHandlingOperation(
+            tagHandlingOperation: new TagHandlingOperation { Value = value })
+        .Content;
 
     private IReadOnlyCollection<KeyValuePair<string, object>> GetJsonProperties(
         object value) =>

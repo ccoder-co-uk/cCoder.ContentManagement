@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.CodeAnalysis.Exposures;
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Models.Exceptions;
@@ -14,7 +15,7 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 [Route(template: "Api/ContentManagement")]
 public sealed class RenderController(
     IRenderAggregationService renderer,
-    ILoggingBroker loggingBroker) : ControllerBase
+    ILoggingBroker loggingBroker) : ControllerBase, ICompositionExposure
 {
     [HttpPost(template: "Template/Render()")]
     [AllowAnonymous]

@@ -14,52 +14,52 @@ internal sealed partial class MarkupRenderService
         RenderSession renderSession,
         CommonObjectCacheSnapshot commonObjects)
     {
-        object[] items = (commonObjects?.Items?.Values ?? []).ToArray();
+        Dictionary<string, PageRenderResource> resources =
+            new Dictionary<string, PageRenderResource>(StringComparer.OrdinalIgnoreCase);
 
-        renderSession.CommonResourcesByLookup = items
-            .OfType<Resource>()
-            .GroupBy(
-                keySelector: resource =>
-                    $"{resource.Key}|{resource.Name}|{resource.Culture}",
-                comparer: StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                keySelector: group => group.Key,
-                elementSelector: group => MapResource(
-                    resource: group.First()),
-                comparer: StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, PageRenderComponent> components =
+            new Dictionary<string, PageRenderComponent>(StringComparer.OrdinalIgnoreCase);
 
-        renderSession.CommonComponentsByName = items
-            .OfType<Component>()
-            .GroupBy(
-                keySelector: component => component.Name ?? string.Empty,
-                comparer: StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                keySelector: group => group.Key,
-                elementSelector: group => MapComponent(
-                    component: group.First()),
-                comparer: StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, PageRenderScript> scripts =
+            new Dictionary<string, PageRenderScript>(StringComparer.OrdinalIgnoreCase);
 
-        renderSession.CommonScriptsByName = items
-            .OfType<Script>()
-            .GroupBy(
-                keySelector: script => script.Name ?? string.Empty,
-                comparer: StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                keySelector: group => group.Key,
-                elementSelector: group => MapScript(
-                    script: group.First()),
-                comparer: StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, PageRenderStyle> styles =
+            new Dictionary<string, PageRenderStyle>(StringComparer.OrdinalIgnoreCase);
 
-        renderSession.CommonStylesByName = items
-            .OfType<Style>()
-            .GroupBy(
-                keySelector: style => style.Name ?? string.Empty,
-                comparer: StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                keySelector: group => group.Key,
-                elementSelector: group => MapStyle(
-                    style: group.First()),
-                comparer: StringComparer.OrdinalIgnoreCase);
+        foreach (object item in commonObjects?.Items?.Values ?? [])
+        {
+            if (item is Resource resource)
+            {
+                string key = $"{resource.Key}|{resource.Name}|{resource.Culture}";
+
+                resources.TryAdd(
+                    key: key,
+                    value: MapResource(resource: resource));
+            }
+            else if (item is Component component)
+            {
+                components.TryAdd(
+                    key: component.Name ?? string.Empty,
+                    value: MapComponent(component: component));
+            }
+            else if (item is Script script)
+            {
+                scripts.TryAdd(
+                    key: script.Name ?? string.Empty,
+                    value: MapScript(script: script));
+            }
+            else if (item is Style style)
+            {
+                styles.TryAdd(
+                    key: style.Name ?? string.Empty,
+                    value: MapStyle(style: style));
+            }
+        }
+
+        renderSession.CommonResourcesByLookup = resources;
+        renderSession.CommonComponentsByName = components;
+        renderSession.CommonScriptsByName = scripts;
+        renderSession.CommonStylesByName = styles;
     }
 
     private static PageRenderResource MapResource(Resource resource) =>

@@ -24,12 +24,20 @@ internal sealed partial class MetadataCacheSourceService(
             Dictionary<string, IDictionary<string, string>> serialized = new(
                 comparer: StringComparer.OrdinalIgnoreCase);
 
-            Resource[] resources = (cacheBroker
+            List<Resource> resourceValues = [];
+
+            foreach (object value in cacheBroker
                 .Get<CommonObjectCacheSnapshot>(key: CommonObjectCacheKey)?
                 .Items?
                 .Values ?? [])
-                .OfType<Resource>()
-                .ToArray();
+            {
+                if (value is Resource resource)
+                {
+                    resourceValues.Add(item: resource);
+                }
+            }
+
+            Resource[] resources = [.. resourceValues];
 
             MetadataContainerSet[] typeSets = GetTypeSets();
 
@@ -64,11 +72,17 @@ internal sealed partial class MetadataCacheSourceService(
                         jsonBroker.Serialize(value: localized);
                 }
 
+                List<string> serializedTypeSets = [];
+
+                foreach (MetadataContainerSet typeSet in typeSets)
+                {
+                    serializedTypeSets.Add(item: cultureValues[
+                        typeSet.Name.ToLowerInvariant()]);
+                }
+
                 allJson[culture.Id] = "[" + string.Join(
                     separator: ',',
-                    values: typeSets.Select(
-                        selector: typeSet => cultureValues[
-                            typeSet.Name.ToLowerInvariant()])) + "]";
+                    values: serializedTypeSets) + "]";
 
                 dictionaryJson[culture.Id] = jsonBroker.Serialize(
                     value: cultureValues);
@@ -86,66 +100,130 @@ internal sealed partial class MetadataCacheSourceService(
     public string GetMetadataSignature() =>
         TryCatch(operation: () => ComputeMetadataSignature());
 
-    private MetadataContainerSet[] GetTypeSets() =>
-        metadataTypeCacheBroker.GetAll()
-            .Select(selector: payload =>
-                jsonBroker.ParseJson<MetadataContainerSet>(json: payload))
-            .GroupBy(
-                keySelector: typeSet => typeSet.Name,
-                comparer: StringComparer.OrdinalIgnoreCase)
-            .Select(selector: MergeTypeSetGroup)
-            .OrderBy(keySelector: typeSet => typeSet.Name)
-            .ToArray();
+    private MetadataContainerSet[] GetTypeSets()
+    {
+        Dictionary<string, List<MetadataContainerSet>> groups = new(
+            comparer: StringComparer.OrdinalIgnoreCase);
 
-    private string ComputeMetadataSignature() =>
-        string.Join(
-            separator: "\u001f",
-            values: metadataTypeCacheBroker
-                .GetAll()
-                .OrderBy(
-                    keySelector: payload => payload,
-                    comparer: StringComparer.Ordinal));
+        foreach (string payload in metadataTypeCacheBroker.GetAll())
+        {
+            MetadataContainerSet typeSet =
+                jsonBroker.ParseJson<MetadataContainerSet>(json: payload);
+
+            if (!groups.TryGetValue(
+                key: typeSet.Name,
+                value: out List<MetadataContainerSet> group))
+            {
+                group = [];
+                groups[typeSet.Name] = group;
+            }
+
+            group.Add(item: typeSet);
+        }
+
+        MetadataContainerSet[] typeSets = new MetadataContainerSet[groups.Count];
+        int index = 0;
+
+        foreach (List<MetadataContainerSet> group in groups.Values)
+        {
+            typeSets[index++] = MergeTypeSetGroup(group: group);
+        }
+
+        Array.Sort(
+            array: typeSets,
+            comparison: (left, right) => string.Compare(
+                strA: left.Name,
+                strB: right.Name,
+                comparisonType: StringComparison.Ordinal));
+
+        return typeSets;
+    }
+
+    private string ComputeMetadataSignature()
+    {
+        List<string> payloads = [];
+
+        foreach (string payload in metadataTypeCacheBroker.GetAll())
+        {
+            payloads.Add(item: payload);
+        }
+
+        payloads.Sort(comparer: StringComparer.Ordinal);
+
+        return string.Join(separator: "\u001f", values: payloads);
+    }
 
     private static MetadataContainerSet MergeTypeSetGroup(
-        IGrouping<string, MetadataContainerSet> group)
+        IReadOnlyList<MetadataContainerSet> group)
     {
-        MetadataContainerSet[] typeSets = group.ToArray();
-        MetadataContainerSet lastTypeSet = typeSets.Last();
+        MetadataContainerSet lastTypeSet = group[group.Count - 1];
+        string uriBase = null;
+
+        Dictionary<string, ExtendedMetadataContainer> typesByServerName = new(
+            comparer: StringComparer.OrdinalIgnoreCase);
+
+        foreach (MetadataContainerSet typeSet in group)
+        {
+            if (!string.IsNullOrWhiteSpace(value: typeSet.UriBase))
+            {
+                uriBase = typeSet.UriBase;
+            }
+
+            foreach (ExtendedMetadataContainer type in typeSet.Types ?? [])
+            {
+                typesByServerName[type.ServerTypeName] = type;
+            }
+        }
+
+        ExtendedMetadataContainer[] types = new ExtendedMetadataContainer[
+            typesByServerName.Count];
+
+        int index = 0;
+
+        foreach (ExtendedMetadataContainer type in typesByServerName.Values)
+        {
+            types[index++] = type;
+        }
+
+        Array.Sort(
+            array: types,
+            comparison: (left, right) => string.Compare(
+                strA: left.Name,
+                strB: right.Name,
+                comparisonType: StringComparison.Ordinal));
 
         return new MetadataContainerSet
         {
             Name = lastTypeSet.Name,
-            UriBase = typeSets
-                .Select(selector: typeSet => typeSet.UriBase)
-                .LastOrDefault(predicate: uriBase =>
-                    !string.IsNullOrWhiteSpace(value: uriBase)),
-            Types = typeSets
-                .SelectMany(selector: typeSet => typeSet.Types ?? [])
-                .GroupBy(
-                    keySelector: type => type.ServerTypeName,
-                    comparer: StringComparer.OrdinalIgnoreCase)
-                .Select(selector: types => types.Last())
-                .OrderBy(keySelector: type => type.Name)
-                .ToArray()
+            UriBase = uriBase,
+            Types = types
         };
     }
 
     private static MetadataContainerSet LocalizeMetadataContainerSet(
         MetadataContainerSet metadataContainerSet,
         string culture,
-        IEnumerable<Resource> resources) =>
-        new()
+        IEnumerable<Resource> resources)
+    {
+        ExtendedMetadataContainer[] types = new ExtendedMetadataContainer[
+            metadataContainerSet.Types.Length];
+
+        for (int index = 0; index < metadataContainerSet.Types.Length; index++)
+        {
+            types[index] = LocalizeMetadataContainer(
+                metadataContainer: metadataContainerSet.Types[index],
+                setName: metadataContainerSet.Name,
+                culture: culture,
+                resources: resources);
+        }
+
+        return new MetadataContainerSet
         {
             Name = metadataContainerSet.Name,
             UriBase = metadataContainerSet.UriBase,
-            Types = metadataContainerSet.Types
-                .Select(selector: type => LocalizeMetadataContainer(
-                    metadataContainer: type,
-                    setName: metadataContainerSet.Name,
-                    culture: culture,
-                    resources: resources))
-                .ToArray()
+            Types = types
         };
+    }
 
     private static ExtendedMetadataContainer LocalizeMetadataContainer(
         ExtendedMetadataContainer metadataContainer,
@@ -153,14 +231,31 @@ internal sealed partial class MetadataCacheSourceService(
         string culture,
         IEnumerable<Resource> resources)
     {
-        string cacheKey = $"{setName}|{metadataContainer.ServerTypeName
-            .Split(separator: '.')
-            .Last()}";
+        int lastSeparator = metadataContainer.ServerTypeName.LastIndexOf(
+            value: '.');
+
+        string serverTypeName = lastSeparator < 0
+            ? metadataContainer.ServerTypeName
+            : metadataContainer.ServerTypeName.Substring(
+                startIndex: lastSeparator + 1);
+
+        string cacheKey = $"{setName}|{serverTypeName}";
 
         Resource resource = FindResource(
             resources: resources,
             key: cacheKey,
             culture: culture);
+
+        List<PropertyContainer> properties = [];
+
+        foreach (PropertyContainer property in metadataContainer.Properties)
+        {
+            properties.Add(item: LocalizeProperty(
+                propertyContainer: property,
+                keyContext: cacheKey,
+                culture: culture,
+                resources: resources));
+        }
 
         return new ExtendedMetadataContainer
         {
@@ -176,13 +271,7 @@ internal sealed partial class MetadataCacheSourceService(
             Name = metadataContainer.Name,
             DisplayName = resource?.DisplayName ?? metadataContainer.DisplayName,
             Description = resource?.Description ?? metadataContainer.Description,
-            Properties = metadataContainer.Properties
-                .Select(selector: property => LocalizeProperty(
-                    propertyContainer: property,
-                    keyContext: cacheKey,
-                    culture: culture,
-                    resources: resources))
-                .ToArray(),
+            Properties = properties,
             Operations = metadataContainer.Operations
         };
     }
@@ -222,24 +311,33 @@ internal sealed partial class MetadataCacheSourceService(
         string key,
         string culture)
     {
-        Resource[] candidates = resources?
-            .Where(predicate: resource => string.Equals(
+        Resource exact = null;
+        Resource fallback = null;
+
+        foreach (Resource resource in resources ?? [])
+        {
+            if (!string.Equals(
                 a: resource.Key,
                 b: key,
                 comparisonType: StringComparison.OrdinalIgnoreCase))
-            .ToArray()
-            ?? [];
+            {
+                continue;
+            }
 
-        return candidates
-            .Where(predicate: resource => string.Equals(
+            if (exact is null && string.Equals(
                 a: resource.Culture ?? string.Empty,
                 b: culture ?? string.Empty,
                 comparisonType: StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(
-                keySelector: resource => resource.Culture?.Length ?? 0)
-            .FirstOrDefault()
-            ?? candidates.FirstOrDefault(
-                predicate: resource =>
-                    string.IsNullOrEmpty(value: resource.Culture));
+            {
+                exact = resource;
+            }
+
+            if (fallback is null && string.IsNullOrEmpty(value: resource.Culture))
+            {
+                fallback = resource;
+            }
+        }
+
+        return exact ?? fallback;
     }
 }

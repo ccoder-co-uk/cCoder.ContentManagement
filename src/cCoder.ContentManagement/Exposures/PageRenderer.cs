@@ -2,13 +2,14 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.CodeAnalysis.Exposures;
 using cCoder.ContentManagement.Services.Aggregations;
 
 namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class PageRenderer(
     IRenderAggregationService renderAggregationService)
-        : IPageRenderer
+        : IPageRenderer, ICompositionExposure
 {
     public ValueTask<PageRenderResponse> RenderAsync() =>
         ExecuteRenderAsync();

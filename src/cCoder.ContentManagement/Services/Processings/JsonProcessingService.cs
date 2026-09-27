@@ -65,15 +65,14 @@ internal partial class JsonProcessingService(
     {
         if (jsonService.IsJsonObject(value: value))
         {
-            KeyValuePair<string, object>[] properties = jsonService
-                .GetJsonProperties(value: value)
-                .ToArray();
+            IReadOnlyCollection<KeyValuePair<string, object>> properties = jsonService
+                .GetJsonProperties(value: value);
 
             foreach (KeyValuePair<string, object> property in properties)
             {
-                if (propertyNames.Contains(
-                    value: property.Key,
-                    comparer: StringComparer.OrdinalIgnoreCase))
+                if (ContainsPropertyName(
+                    propertyNames: propertyNames,
+                    propertyName: property.Key))
                 {
                     jsonService.RemoveJsonProperty(
                         value: value,
@@ -96,5 +95,23 @@ internal partial class JsonProcessingService(
                     propertyNames: propertyNames);
             }
         }
+    }
+
+    private static bool ContainsPropertyName(
+        IReadOnlyCollection<string> propertyNames,
+        string propertyName)
+    {
+        foreach (string candidate in propertyNames)
+        {
+            if (string.Equals(
+                a: candidate,
+                b: propertyName,
+                comparisonType: StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

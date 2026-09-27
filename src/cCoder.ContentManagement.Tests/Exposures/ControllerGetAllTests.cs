@@ -6,8 +6,6 @@ using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Controllers;
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Services.Aggregations;
-using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
@@ -26,17 +24,16 @@ public partial class ControllerGetAllTests
     public void AppGetAll_ShouldReturnServiceQueryableUntouched()
     {
         // Given
-        Mock<IAppManagerAggregationService> managerMock = new();
+        Mock<IAppOrchestrationService> serviceMock = new();
         IQueryable<App> expectedApps = new[] { new App { Id = 1, Name = "App" } }.AsQueryable();
 
-        managerMock.Setup(expression: manager =>
-                manager.GetAllAppManagerContext(
-                    appManagerContext: It.IsAny<AppManagerContext>()))
-            .Returns(value: new AppManagerContext { Apps = expectedApps });
+        serviceMock.Setup(expression: service => service.GetAllApp(
+            ignoreFilters: false))
+            .Returns(value: expectedApps);
 
         // When
         AppController controller = new(
-            manager: managerMock.Object,
+            service: serviceMock.Object,
             loggingBroker: Mock.Of<ILoggingBroker>());
 
         // Then

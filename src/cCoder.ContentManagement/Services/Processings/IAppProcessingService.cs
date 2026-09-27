@@ -20,6 +20,12 @@ internal interface IAppProcessingService
 
     IQueryable<App> GetAllApp(bool ignoreFilters = false);
 
+    App PrepareNewApp(App app, bool isFirstApp);
+
+    void StampAppChildren(App app);
+
+    ValueTask PersistNewAppRolesAsync(App app);
+
     ValueTask<App> AddAppAsync(App newApp);
 
     ValueTask<App> UpdateAppAsync(App updatedApp);

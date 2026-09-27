@@ -37,6 +37,12 @@ public partial class AppOrchestrationServiceTests
         appProcessingServiceMock.Setup(expression: x => x.UpdateAppAsync(updatedApp: entity))
             .ReturnsAsync(value: entity);
 
+        appEventProcessingServiceMock
+            .Setup(expression: service => service.RaiseAppUpdateEventAsync(
+                app: entity,
+                userId: CurrentUserId))
+            .Returns(value: ValueTask.CompletedTask);
+
         // When
         App result = await orchestrationService.UpdateAppAsync(updatedApp: entity);
 
@@ -47,6 +53,7 @@ public partial class AppOrchestrationServiceTests
 
         appProcessingServiceMock.Verify(expression: x => x.UpdateAppAsync(updatedApp: entity), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
+        appEventProcessingServiceMock.VerifyAll();
     }
 
     [Fact]
@@ -66,6 +73,12 @@ public partial class AppOrchestrationServiceTests
             .Setup(expression: service => service.UpdateAppAsync(updatedApp: postedApp))
             .ReturnsAsync(value: storedApp);
 
+        appEventProcessingServiceMock
+            .Setup(expression: service => service.RaiseAppUpdateEventAsync(
+                app: postedApp,
+                userId: CurrentUserId))
+            .Returns(value: ValueTask.CompletedTask);
+
         // When
         App result = await orchestrationService
             .UpdateAppAsync(updatedApp: postedApp);
@@ -79,5 +92,6 @@ public partial class AppOrchestrationServiceTests
             times: Times.Once);
 
         appProcessingServiceMock.VerifyNoOtherCalls();
+        appEventProcessingServiceMock.VerifyAll();
     }
 }

@@ -90,31 +90,40 @@ internal partial class PageRoleProcessingService(
     {
         ValidateOrUpdatePageRoleResultOnAdd(inputs: [newPageRole]);
         ValidatePageRoles(pageRoles: newPageRole, parameterName: "items");
-        PageRole[] itemArray = newPageRole.ToArray();
+        List<PageRole> items = [];
+        List<int> pageIds = [];
 
-        int[] leftIds = itemArray
-            .Select(selector: item => item.PageId)
-            .Distinct()
-            .ToArray();
-
-        PageRole[] existingItems = ExecuteGetAllPageRole()
-            .Where(predicate: item => ((ReadOnlySpan<int>)leftIds).Contains(value: item.PageId))
-            .ToArray();
-
-        List<OperationResult<PageRole>> results = new List<OperationResult<PageRole>>();
-
-        foreach (IGrouping<int, PageRole> group in itemArray.GroupBy(keySelector: item => item.PageId))
+        foreach (PageRole item in newPageRole)
         {
-            PageRole[] groupItems = group.ToArray();
+            items.Add(item: item);
 
-            PageRole[] existingGroupItems = existingItems
-                .Where(predicate: item => object.Equals(objA: item.PageId, objB: group.Key))
-                .ToArray();
+            if (!ContainsPageId(pageIds: pageIds, pageId: item.PageId))
+            {
+                pageIds.Add(item: item.PageId);
+            }
+        }
+
+        List<OperationResult<PageRole>> results = [];
+
+        foreach (int pageId in pageIds)
+        {
+            List<PageRole> existingGroupItems = [];
+
+            foreach (PageRole existingItem in ExecuteGetAllPageRole()
+                .Where(predicate: item => item.PageId == pageId))
+            {
+                existingGroupItems.Add(item: existingItem);
+            }
 
             await ExecuteDeleteAllPageRoleAsync(deletedPageRole: existingGroupItems);
 
-            foreach (PageRole item in groupItems)
+            foreach (PageRole item in items)
             {
+                if (item.PageId != pageId)
+                {
+                    continue;
+                }
+
                 try
                 {
                     results.Add(item: new OperationResult<PageRole>
@@ -244,4 +253,19 @@ internal partial class PageRoleProcessingService(
 
     private IQueryable<PageRole> ExecuteGetAllPageRole(bool ignoreFilters = false) =>
         service.GetAllPageRole(ignoreFilters: ignoreFilters);
+
+    private static bool ContainsPageId(
+        IEnumerable<int> pageIds,
+        int pageId)
+    {
+        foreach (int existingPageId in pageIds)
+        {
+            if (existingPageId == pageId)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

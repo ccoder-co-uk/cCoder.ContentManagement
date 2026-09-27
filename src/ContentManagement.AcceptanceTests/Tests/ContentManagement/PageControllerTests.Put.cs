@@ -13,6 +13,56 @@ namespace Web.AcceptanceTests.Tests.ContentManagement;
 public sealed partial class PageControllerTests
 {
     [Fact]
+    public async Task Put_WhenOrderChanges_ShouldNormalizeSiblingOrders()
+    {
+        // Given
+        SeededPageContext seededContext = await SeedDatabase(
+            privileges: ["page_create", "page_update", "page_delete"]);
+
+        Page firstPage = await CreatePageAsync(
+            payload: CreateValidPagePayload(
+                seededContext: seededContext,
+                name: Unique(prefix: "FirstPage"),
+                order: 0));
+
+        Page secondPage = await CreatePageAsync(
+            payload: CreateValidPagePayload(
+                seededContext: seededContext,
+                name: Unique(prefix: "SecondPage"),
+                order: 1));
+
+        Page movedPage = await CreatePageAsync(
+            payload: CreateValidPagePayload(
+                seededContext: seededContext,
+                name: Unique(prefix: "MovedPage"),
+                order: 2));
+
+        // When
+        _ = await UpdatePageAsync(
+            id: movedPage.Id,
+            payload: CreateValidPagePayload(
+                seededContext: seededContext,
+                name: movedPage.Name,
+                order: 0));
+
+        Page actualFirstPage = await GetPageAsync(id: firstPage.Id);
+        Page actualSecondPage = await GetPageAsync(id: secondPage.Id);
+        Page actualMovedPage = await GetPageAsync(id: movedPage.Id);
+
+        // Then
+        actualFirstPage.Order.Should()
+            .Be(expected: 1);
+
+        actualSecondPage.Order.Should()
+            .Be(expected: 2);
+
+        actualMovedPage.Order.Should()
+            .Be(expected: 0);
+
+        await Teardown(seededContext: seededContext);
+    }
+
+    [Fact]
     public async Task Put_UpdatesPage()
     {
         // Given

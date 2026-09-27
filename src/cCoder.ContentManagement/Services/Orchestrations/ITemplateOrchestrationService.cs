@@ -7,7 +7,7 @@ using cCoder.ContentManagement.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface ITemplateOrchestrationService
+public interface ITemplateOrchestrationService
 {
     Template GetTemplate(int templateId);
 

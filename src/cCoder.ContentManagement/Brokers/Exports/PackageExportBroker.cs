@@ -33,6 +33,15 @@ internal sealed class PackageExportBroker(ICoreContextFactory coreContextFactory
     public IQueryable<Page> GetPages() =>
         CreateContext().Pages.IgnoreQueryFilters();
 
+    public IQueryable<Page> GetPagesWithContent() =>
+        CreateContext().Pages
+            .IgnoreQueryFilters()
+            .Include(navigationPropertyPath: page => page.Contents)
+            .Include(navigationPropertyPath: page => page.PageInfo);
+
+    public T[] Materialize<T>(IQueryable<T> query) =>
+        query.ToArray();
+
     private CoreDataContext CreateContext() =>
         coreContextFactory.CreateCoreContext();
 }

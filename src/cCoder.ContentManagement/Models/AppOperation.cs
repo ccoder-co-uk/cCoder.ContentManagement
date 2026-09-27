@@ -23,6 +23,7 @@ internal sealed class AppOperation
     public int AppId { get; set; }
     public int? OptionalAppId { get; set; }
     public bool Result { get; set; }
+    public bool IsFirstApp { get; set; }
     public string Text { get; set; }
     public string Privilege { get; set; }
 }

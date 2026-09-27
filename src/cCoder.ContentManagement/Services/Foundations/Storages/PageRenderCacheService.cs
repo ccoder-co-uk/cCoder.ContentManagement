@@ -23,8 +23,8 @@ internal sealed partial class PageRenderCacheService(
             ValidatePageRenderCacheOnGet(inputs: [pageRenderCacheId]);
             ValidateId(pageRenderCacheId: pageRenderCacheId, parameterName: "id");
 
-            return broker.GetAllPageRenderCaches()
-                .FirstOrDefault(predicate: cache => cache.Id == pageRenderCacheId);
+            return broker.GetPageRenderCache(
+                pageRenderCacheId: pageRenderCacheId);
         });
 
     public ValueTask<PageRenderCache> AddPageRenderCacheAsync(PageRenderCache newPageRenderCache) =>

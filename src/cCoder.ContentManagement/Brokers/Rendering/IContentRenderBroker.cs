@@ -28,4 +28,8 @@ internal interface IContentRenderBroker
     string HtmlEncode(string value);
 
     RuntimePropertyValue[] GetPropertyValues(object value);
+
+    bool IsValueType(object value);
+
+    string GetStringValue(object value);
 }

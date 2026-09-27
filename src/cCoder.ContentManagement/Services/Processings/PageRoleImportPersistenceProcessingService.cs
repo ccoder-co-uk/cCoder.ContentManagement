@@ -24,43 +24,53 @@ internal sealed partial class PageRoleImportPersistenceProcessingService(
         ValidatePageRolesOnSynchronize(inputs: [pageRoles]);
         ValidatePageRoles(pageRoles: pageRoles, parameterName: "pageRoles");
 
-        int[] pageIds = pageRoles
-            .Select(selector: pageRole => pageRole.PageId)
-            .Distinct()
-            .ToArray();
+        List<int> pageIds = [];
 
-        PageRole[] existingPageRoles = service
-            .GetAllPageRolesIgnoringFilters()
-            .Where(
-                predicate: pageRole =>
-                    Enumerable.Contains(
-                        source: pageIds,
-                        value: pageRole.PageId))
-            .ToArray();
-
-        PageRole[] pageRolesToDelete = existingPageRoles
-            .Where(
-                predicate: existing =>
-                    !pageRoles.Any(
-                        predicate: incoming =>
-                            incoming.PageId == existing.PageId
-                            && incoming.RoleId == existing.RoleId))
-            .ToArray();
-
-        if (pageRolesToDelete.Length > 0)
+        foreach (PageRole pageRole in pageRoles)
         {
-            await service.DeleteAllPageRolesAsync(
-                deletedPageRole: pageRolesToDelete);
+            if (!ContainsPageId(pageIds: pageIds, pageId: pageRole.PageId))
+            {
+                pageIds.Add(item: pageRole.PageId);
+            }
         }
 
-        foreach (
-            PageRole pageRole in pageRoles.Where(
-                predicate: incoming =>
-                    !existingPageRoles.Any(
-                        predicate: existing =>
-                            existing.PageId == incoming.PageId
-                            && existing.RoleId == incoming.RoleId)))
+        List<PageRole> existingPageRoles = [];
+
+        foreach (PageRole existing in service.GetAllPageRolesIgnoringFilters())
         {
+            if (ContainsPageId(pageIds: pageIds, pageId: existing.PageId))
+            {
+                existingPageRoles.Add(item: existing);
+            }
+        }
+
+        List<PageRole> pageRolesToDelete = [];
+
+        foreach (PageRole existing in existingPageRoles)
+        {
+            if (!ContainsPageRole(pageRoles: pageRoles, candidate: existing))
+            {
+                pageRolesToDelete.Add(item: existing);
+            }
+        }
+
+        if (pageRolesToDelete.Count > 0)
+        {
+            PageRole[] deletedPageRoles = [.. pageRolesToDelete];
+
+            await service.DeleteAllPageRolesAsync(
+                deletedPageRole: deletedPageRoles);
+        }
+
+        foreach (PageRole pageRole in pageRoles)
+        {
+            if (ContainsPageRole(
+                pageRoles: existingPageRoles,
+                candidate: pageRole))
+            {
+                continue;
+            }
+
             await service.AddPageRoleForImportAsync(
                 newPageRole: pageRole);
         }
@@ -75,5 +85,36 @@ internal sealed partial class PageRoleImportPersistenceProcessingService(
             throw new ValidationException(
                 message: parameterName + " is required.");
         }
+    }
+
+    private static bool ContainsPageId(
+        IEnumerable<int> pageIds,
+        int pageId)
+    {
+        foreach (int existingPageId in pageIds)
+        {
+            if (existingPageId == pageId)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ContainsPageRole(
+        IEnumerable<PageRole> pageRoles,
+        PageRole candidate)
+    {
+        foreach (PageRole pageRole in pageRoles)
+        {
+            if (pageRole.PageId == candidate.PageId
+                && pageRole.RoleId == candidate.RoleId)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

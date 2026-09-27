@@ -177,9 +177,15 @@ internal sealed partial class MarkupRenderService
             ValidateJsonPropertiesTagHandlingOperationOnGet(
                 inputs: [tagHandlingOperation]);
 
-            tagHandlingOperation.JsonProperties = jsonBroker
-                .GetJsonProperties(value: tagHandlingOperation.Value)
-                .ToArray();
+            List<KeyValuePair<string, object>> properties = [];
+
+            foreach (KeyValuePair<string, object> property in
+                jsonBroker.GetJsonProperties(value: tagHandlingOperation.Value))
+            {
+                properties.Add(item: property);
+            }
+
+            tagHandlingOperation.JsonProperties = properties;
 
             return tagHandlingOperation;
         });

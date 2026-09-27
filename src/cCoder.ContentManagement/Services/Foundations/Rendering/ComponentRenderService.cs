@@ -30,6 +30,32 @@ internal sealed partial class ComponentRenderService(
             return componentRenderFoundationOperation;
         });
 
+    public ComponentRenderFoundationOperation IsValueTypeComponentRenderFoundationOperation(
+        ComponentRenderFoundationOperation componentRenderFoundationOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateComponentRenderFoundationOperation(
+                inputs: [componentRenderFoundationOperation]);
+
+            componentRenderFoundationOperation.Condition = contentRenderBroker
+                .IsValueType(value: componentRenderFoundationOperation.Value);
+
+            return componentRenderFoundationOperation;
+        });
+
+    public ComponentRenderFoundationOperation GetStringValueComponentRenderFoundationOperation(
+        ComponentRenderFoundationOperation componentRenderFoundationOperation) =>
+        TryCatch(operation: () =>
+        {
+            ValidateStringValueComponentRenderFoundationOperationOnGet(
+                inputs: [componentRenderFoundationOperation]);
+
+            componentRenderFoundationOperation.Content = contentRenderBroker
+                .GetStringValue(value: componentRenderFoundationOperation.Value);
+
+            return componentRenderFoundationOperation;
+        });
+
     public ComponentRenderFoundationOperation GetAppsComponentRenderFoundationOperation(
         ComponentRenderFoundationOperation componentRenderFoundationOperation) =>
         TryCatch(operation: () =>
@@ -181,9 +207,15 @@ internal sealed partial class ComponentRenderService(
     {
         ValidateJsonPropertiesComponentRenderFoundationOperationOnGet(inputs: [componentRenderFoundationOperation]);
 
-        componentRenderFoundationOperation.JsonProperties = jsonBroker
-            .GetJsonProperties(value: componentRenderFoundationOperation.Value)
-            .ToArray();
+        List<KeyValuePair<string, object>> properties = [];
+
+        foreach (KeyValuePair<string, object> property in
+            jsonBroker.GetJsonProperties(value: componentRenderFoundationOperation.Value))
+        {
+            properties.Add(item: property);
+        }
+
+        componentRenderFoundationOperation.JsonProperties = properties;
 
         return componentRenderFoundationOperation;
     });
