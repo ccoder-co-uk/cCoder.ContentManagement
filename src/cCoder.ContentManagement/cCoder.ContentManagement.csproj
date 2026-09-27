@@ -26,10 +26,10 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.27.1158" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
-    <PackageReference Include="cCoder.CodeAnalysis.Contracts" Version="2026.9.27.1158" />
-    <PackageReference Include="cCoder.Data" Version="2026.9.23.2308" />
-    <PackageReference Include="cCoder.Eventing" Version="2026.9.23.1651" />
+    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.27.1258" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
+    <PackageReference Include="cCoder.CodeAnalysis.Contracts" Version="2026.9.27.1258" />
+    <PackageReference Include="cCoder.Data" Version="2026.9.27.1341" />
+    <PackageReference Include="cCoder.Eventing" Version="2026.9.27.1313" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />

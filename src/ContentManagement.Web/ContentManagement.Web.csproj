@@ -7,20 +7,20 @@
     <WarningsNotAsErrors>NETSDK1233</WarningsNotAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.27.1158" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
-    <PackageReference Include="cCoder.CodeAnalysis.Contracts" Version="2026.9.27.1158" />
+    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.27.1258" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
+    <PackageReference Include="cCoder.CodeAnalysis.Contracts" Version="2026.9.27.1258" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="10.0.12" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
-    <PackageReference Include="cCoder.AppSecurity" Version="2026.9.23.2326" />
-    <PackageReference Include="cCoder.Eventing" Version="2026.9.23.1651" />
-    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.9.23.1651" />
-    <PackageReference Include="cCoder.Eventing.Http" Version="2026.9.23.1651" />
-    <PackageReference Include="cCoder.Security" Version="2026.9.23.2254" />
-    <PackageReference Include="cCoder.Security.Data" Version="2026.9.23.2254" />
+    <PackageReference Include="cCoder.AppSecurity" Version="2026.9.27.1403" />
+    <PackageReference Include="cCoder.Eventing" Version="2026.9.27.1313" />
+    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.9.27.1313" />
+    <PackageReference Include="cCoder.Eventing.Http" Version="2026.9.27.1313" />
+    <PackageReference Include="cCoder.Security" Version="2026.9.27.1325" />
+    <PackageReference Include="cCoder.Security.Data" Version="2026.9.27.1325" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" />
