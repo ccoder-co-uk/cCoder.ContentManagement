@@ -5,7 +5,6 @@
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Models.Rendering;
-using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Tests.Brokers.Rendering;
 using FluentAssertions;

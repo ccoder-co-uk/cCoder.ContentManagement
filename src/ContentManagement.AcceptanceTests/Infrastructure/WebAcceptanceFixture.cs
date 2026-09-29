@@ -2,10 +2,12 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using cCoder.ContentManagement;
 using cCoder.Data;
 using cCoder.Security.Data.EF;
-using cCoder.Security.Data.EF.Interfaces;
 using cCoder.Security.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;

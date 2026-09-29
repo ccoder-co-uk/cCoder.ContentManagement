@@ -2,19 +2,19 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
 using Microsoft.Data.SqlClient;
 
-namespace cCoder.ContentManagement.Testing;
+namespace ContentManagement.IntegrationTests.Infrastructure;
 
-internal sealed class AcceptanceTestConfiguration
+internal sealed class IntegrationTestConfiguration
 {
-    private AcceptanceTestConfiguration(
+    private IntegrationTestConfiguration(
         string contentManagementConnectionString,
         string securityConnectionString,
         string securityDecryptionKey)
     {
-        ContentManagementConnectionString =
-            contentManagementConnectionString;
+        ContentManagementConnectionString = contentManagementConnectionString;
         SecurityConnectionString = securityConnectionString;
         SecurityDecryptionKey = securityDecryptionKey;
     }
@@ -25,15 +25,14 @@ internal sealed class AcceptanceTestConfiguration
 
     internal string SecurityDecryptionKey { get; }
 
-    internal static AcceptanceTestConfiguration Load()
+    internal static IntegrationTestConfiguration Load()
     {
-        string suffix = $"-acceptance-{Guid.NewGuid():N}";
+        string suffix = $"-integration-{Guid.NewGuid():N}";
 
-        return new AcceptanceTestConfiguration(
+        return new IntegrationTestConfiguration(
             contentManagementConnectionString: AddDatabaseSuffix(
                 connectionString: ReadRequiredValue(
-                    variableName:
-                        "CoreData__ConnectionString"),
+                    variableName: "CoreData__ConnectionString"),
                 suffix: suffix),
             securityConnectionString: AddDatabaseSuffix(
                 connectionString: ReadRequiredValue(
@@ -58,7 +57,7 @@ internal sealed class AcceptanceTestConfiguration
         if (string.IsNullOrWhiteSpace(value: builder.InitialCatalog))
         {
             throw new InvalidOperationException(
-                "Acceptance test connection strings must name a database.");
+                "Integration test connection strings must name a database.");
         }
 
         builder.InitialCatalog = $"{builder.InitialCatalog}{suffix}";

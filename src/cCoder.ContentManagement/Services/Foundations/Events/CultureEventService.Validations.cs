@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-
 namespace cCoder.ContentManagement.Services.Foundations.Events;
 
 internal partial class CultureEventService

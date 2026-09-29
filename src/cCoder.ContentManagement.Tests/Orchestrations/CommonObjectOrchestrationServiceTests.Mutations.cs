@@ -2,6 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models.Results;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Models.Caching;

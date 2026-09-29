@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.Serialization;
 

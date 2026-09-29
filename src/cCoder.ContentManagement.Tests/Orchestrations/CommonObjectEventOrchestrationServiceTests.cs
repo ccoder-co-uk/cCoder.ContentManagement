@@ -2,7 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Results;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models;

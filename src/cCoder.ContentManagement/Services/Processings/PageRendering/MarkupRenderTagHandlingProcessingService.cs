@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 

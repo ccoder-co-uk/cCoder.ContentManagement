@@ -2,8 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Testing;
-
 namespace ContentManagement.IntegrationTests.Infrastructure;
 
 internal sealed class IntegrationConfiguration
@@ -14,8 +12,8 @@ internal sealed class IntegrationConfiguration
 
     internal static IntegrationConfiguration Create()
     {
-        AcceptanceTestConfiguration configuration =
-            AcceptanceTestConfiguration.Load();
+        IntegrationTestConfiguration configuration =
+            IntegrationTestConfiguration.Load();
 
         return new IntegrationConfiguration
         {

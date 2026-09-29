@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models.OData;
+using System;
 using System.Linq.Expressions;
 using cCoder.ContentManagement.Models;
 using Microsoft.AspNetCore.Mvc;

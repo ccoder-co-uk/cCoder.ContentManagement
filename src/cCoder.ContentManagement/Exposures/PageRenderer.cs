@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models;
+using System.Threading.Tasks;
 using cCoder.CodeAnalysis.Exposures;
 using cCoder.ContentManagement.Services.Aggregations;
 

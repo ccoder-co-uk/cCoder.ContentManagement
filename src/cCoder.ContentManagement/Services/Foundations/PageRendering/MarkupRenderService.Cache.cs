@@ -2,6 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using cCoder.ContentManagement.Models;
+using System;
+using System.Collections.Generic;
 using cCoder.ContentManagement.Models.Caching;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.Data.Models.CMS;

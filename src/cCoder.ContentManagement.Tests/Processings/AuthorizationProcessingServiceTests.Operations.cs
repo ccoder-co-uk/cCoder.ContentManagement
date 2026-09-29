@@ -2,13 +2,13 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Security;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
-using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
 using FluentAssertions;
-using Moq;
 using Xunit;
 
 namespace cCoder.Core.Services.Tests.CMS.Processings;

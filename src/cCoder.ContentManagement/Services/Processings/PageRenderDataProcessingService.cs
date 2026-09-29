@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.CMS;

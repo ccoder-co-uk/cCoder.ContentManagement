@@ -4,8 +4,6 @@
 
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Rendering.Brokers;
 using FluentAssertions;
 using Moq;
 using Xunit;

@@ -2,7 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Brokers;
+using cCoder.ContentManagement.Brokers.OData;
 using Microsoft.OData.ModelBuilder;
 
 namespace cCoder.ContentManagement.Extensions.OData;

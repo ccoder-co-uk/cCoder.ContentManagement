@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Collections.Generic;
+using System.Linq;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Exports;
 using cCoder.ContentManagement.Models.Exports;

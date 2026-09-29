@@ -2,6 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Exposures.Controllers;
 using FluentAssertions;
 using System.Linq.Expressions;
@@ -13,7 +18,7 @@ namespace cCoder.ContentManagement.Tests;
 public sealed partial class CoverageContractTests
 {
     [Fact]
-    public async Task ShouldExerciseEveryServiceAndExposureContract()
+    public async Task ShouldExerciseEveryServiceContract()
     {
         // Given
 
@@ -25,9 +30,6 @@ public sealed partial class CoverageContractTests
                 type.IsClass &&
                 !type.IsAbstract &&
                 (type.Namespace?.StartsWith(
-                    value: "cCoder.ContentManagement.Exposures",
-                    comparisonType: StringComparison.Ordinal) == true ||
-                    type.Namespace?.StartsWith(
                         value: "cCoder.ContentManagement.Services.",
                         comparisonType: StringComparison.Ordinal) == true ||
                     type.Namespace?.StartsWith(

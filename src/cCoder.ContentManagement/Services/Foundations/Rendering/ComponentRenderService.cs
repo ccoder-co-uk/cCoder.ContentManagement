@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Collections.Generic;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Brokers.Rendering;

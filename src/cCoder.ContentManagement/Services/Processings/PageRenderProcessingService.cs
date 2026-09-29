@@ -2,15 +2,13 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
-using cCoder.ContentManagement.Services;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Security;
-
-using cCoder.ContentManagement.Services.Foundations;
 using cCoder.ContentManagement.Models.Rendering;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 

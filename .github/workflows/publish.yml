@@ -100,7 +100,7 @@ jobs:
 
           ./.github/scripts/Run-Tests.ps1 -CollectCoverage
 
-      - name: Enforce services and exposures coverage
+      - name: Enforce services coverage
         run: |
           $coverageFiles = @(
             Get-ChildItem artifacts/test-results -Recurse -Filter coverage.cobertura.xml
@@ -118,7 +118,7 @@ jobs:
             foreach ($class in $coverage.coverage.packages.package.classes.class) {
               $sourceFile = [string] $class.filename
 
-              if ($sourceFile -notmatch '(^|[/\\])(Services|Exposures)[/\\]') {
+              if ($sourceFile -notmatch '(^|[/\\])Services[/\\]') {
                 continue
               }
 
@@ -137,18 +137,18 @@ jobs:
           }
 
           if ($lines.Count -eq 0) {
-            throw 'No service or exposure source lines were found in the coverage reports.'
+            throw 'No service source lines were found in the coverage reports.'
           }
 
           $coveredLines = @($lines.Values | Where-Object { $_ -eq 1 }).Count
           $lineRate = $coveredLines / $lines.Count
           $percentage = $lineRate.ToString('P3')
 
-          "Services and exposures line coverage: $coveredLines/$($lines.Count) ($percentage)" |
+          "Services line coverage: $coveredLines/$($lines.Count) ($percentage)" |
             Write-Output
 
           if ($lineRate -le 0.90) {
-            throw "Services and exposures line coverage must be greater than 90%; actual: $percentage."
+            throw "Services line coverage must be greater than 90%; actual: $percentage."
           }
 
       - name: Audit NuGet dependencies

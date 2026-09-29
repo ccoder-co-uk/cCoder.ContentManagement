@@ -2,6 +2,10 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using cCoder.Data;
 using cCoder.Data.Models.Security;
 using cCoder.Security.Data.EF;
@@ -178,10 +182,10 @@ decryptionKey: DecryptionKey);
         message: $"Refusing to run integration database operations against protected database '{protectedDatabaseName}'.");
         }
 
-        if (!databaseName.Contains(value: "-acceptance-", comparisonType: StringComparison.OrdinalIgnoreCase))
+        if (!databaseName.Contains(value: "-integration-", comparisonType: StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException(
-        message: $"Refusing to run integration database operations against non-acceptance database '{databaseName}'.");
+        message: $"Refusing to run integration database operations against non-integration database '{databaseName}'.");
         }
     }
 

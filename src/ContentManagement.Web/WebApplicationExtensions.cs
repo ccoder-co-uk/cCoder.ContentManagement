@@ -2,11 +2,18 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using System.Security;
-using Apps.Shared;
-using Apps.Shared.Hosting;
 using cCoder.ContentManagement;
-using cCoder.ContentManagement.Exposures;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Net.Http.Headers;

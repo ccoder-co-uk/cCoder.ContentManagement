@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Linq;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.Data.Models.Security;

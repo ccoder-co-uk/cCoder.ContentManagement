@@ -2,10 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
-using System.Net;
-using System.Reflection;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Models.RegularExpressions;

@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Foundations.Serialization;
@@ -10,7 +11,6 @@ using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
-using FluentAssertions;
 using Moq;
 using Xunit;
 

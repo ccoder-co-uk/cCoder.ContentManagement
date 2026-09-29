@@ -2,11 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Collections.Generic;
 using System.Net;
 using cCoder.ContentManagement.Models.PageRendering;
 using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Rendering.Services.Foundations;
 using FluentAssertions;
 using Xunit;
 

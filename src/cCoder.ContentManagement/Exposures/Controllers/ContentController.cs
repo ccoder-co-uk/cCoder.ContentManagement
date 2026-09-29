@@ -2,15 +2,16 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
-using System.Security;
-using cCoder.ContentManagement.Api.OData;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using cCoder.Data.Models.CMS;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;

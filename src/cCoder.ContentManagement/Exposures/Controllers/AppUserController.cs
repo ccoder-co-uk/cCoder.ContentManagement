@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using Microsoft.AspNetCore.Http;
+using System;
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Services.Orchestrations;

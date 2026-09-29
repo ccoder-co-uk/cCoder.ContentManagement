@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Linq;
 using cCoder.Data;
 using cCoder.Data.Models.DMS;
 using DmsFile = cCoder.Data.Models.DMS.File;

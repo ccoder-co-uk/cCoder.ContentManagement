@@ -3,7 +3,6 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Models;
-using cCoder.ContentManagement.Services.Foundations.Authorizations;
 using cCoder.ContentManagement.Services.Foundations.HttpContexts;
 using cCoder.ContentManagement.Services.Processings.HttpContexts;
 using Moq;

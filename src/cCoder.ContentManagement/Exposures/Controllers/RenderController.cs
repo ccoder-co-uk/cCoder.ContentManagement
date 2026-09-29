@@ -2,6 +2,10 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using Microsoft.AspNetCore.Http;
+using cCoder.ContentManagement.Models;
+using System;
+using System.Threading.Tasks;
 using cCoder.CodeAnalysis.Exposures;
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Services.Aggregations;
