@@ -6968,7 +6968,7 @@
     {
       "Name": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker",
       "StandardElementType": "Broker",
-      "LineNumber": 11,
+      "LineNumber": 10,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -6989,7 +6989,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.AddCommonObjectAsync(cCoder.Data.Models.CommonObject)",
           "Name": "AddCommonObjectAsync",
-          "LineNumber": 50,
+          "LineNumber": 41,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -7002,36 +7002,16 @@
           ],
           "Calls": [
             {
-              "TypeName": "Microsoft.EntityFrameworkCore.DbContext",
-              "MethodName": "SaveChangesAsync",
-              "MethodId": "Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(System.Threading.CancellationToken)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.DbSet\u003CTEntity\u003E",
+              "TypeName": "cCoder.Data.Exposures.ICommonObjectCacheManager",
               "MethodName": "AddAsync",
-              "MethodId": "Microsoft.EntityFrameworkCore.DbSet\u003CTEntity\u003E.AddAsync(TEntity,System.Threading.CancellationToken)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "cCoder.Data.ICoreContextFactory",
-              "MethodName": "CreateCoreContext",
-              "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
+              "MethodId": "cCoder.Data.Exposures.ICommonObjectCacheManager.AddAsync(cCoder.Data.Models.CommonObject)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             }
           ],
-          "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
-          "IncomingExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
-          "ThrowsExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
           "HttpMethods": [],
           "HttpResponses": [],
           "IsHttpRequestHandler": false,
@@ -7044,7 +7024,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.DeleteAllCommonObjectsAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
           "Name": "DeleteAllCommonObjectsAsync",
-          "LineNumber": 76,
+          "LineNumber": 56,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -7057,36 +7037,16 @@
           ],
           "Calls": [
             {
-              "TypeName": "Microsoft.EntityFrameworkCore.DbContext",
-              "MethodName": "SaveChangesAsync",
-              "MethodId": "Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(System.Threading.CancellationToken)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.DbSet\u003CTEntity\u003E",
-              "MethodName": "RemoveRange",
-              "MethodId": "Microsoft.EntityFrameworkCore.DbSet\u003CTEntity\u003E.RemoveRange(System.Collections.Generic.IEnumerable\u003CTEntity\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "cCoder.Data.ICoreContextFactory",
-              "MethodName": "CreateCoreContext",
-              "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
+              "TypeName": "cCoder.Data.Exposures.ICommonObjectCacheManager",
+              "MethodName": "DeleteAllAsync",
+              "MethodId": "cCoder.Data.Exposures.ICommonObjectCacheManager.DeleteAllAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             }
           ],
-          "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
-          "IncomingExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
-          "ThrowsExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
           "HttpMethods": [],
           "HttpResponses": [],
           "IsHttpRequestHandler": false,
@@ -7099,7 +7059,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.DeleteCommonObjectAsync(cCoder.Data.Models.CommonObject)",
           "Name": "DeleteCommonObjectAsync",
-          "LineNumber": 69,
+          "LineNumber": 51,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -7112,36 +7072,16 @@
           ],
           "Calls": [
             {
-              "TypeName": "Microsoft.EntityFrameworkCore.DbContext",
-              "MethodName": "SaveChangesAsync",
-              "MethodId": "Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(System.Threading.CancellationToken)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.DbSet\u003CTEntity\u003E",
-              "MethodName": "Remove",
-              "MethodId": "Microsoft.EntityFrameworkCore.DbSet\u003CTEntity\u003E.Remove(TEntity)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "cCoder.Data.ICoreContextFactory",
-              "MethodName": "CreateCoreContext",
-              "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
+              "TypeName": "cCoder.Data.Exposures.ICommonObjectCacheManager",
+              "MethodName": "DeleteAsync",
+              "MethodId": "cCoder.Data.Exposures.ICommonObjectCacheManager.DeleteAsync(cCoder.Data.Models.CommonObject)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             }
           ],
-          "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
-          "IncomingExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
-          "ThrowsExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
           "HttpMethods": [],
           "HttpResponses": [],
           "IsHttpRequestHandler": false,
@@ -7154,7 +7094,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.GetAllCommonObjects()",
           "Name": "GetAllCommonObjects",
-          "LineNumber": 14,
+          "LineNumber": 13,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
@@ -7162,9 +7102,9 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.Data.ICoreContextFactory",
-              "MethodName": "CreateCoreContext",
-              "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
+              "TypeName": "cCoder.Data.Exposures.ICommonObjectCacheManager",
+              "MethodName": "Get",
+              "MethodId": "cCoder.Data.Exposures.ICommonObjectCacheManager.Get(System.Boolean,System.Boolean)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             }
@@ -7184,7 +7124,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.GetAllCommonObjectsIgnoringFilters()",
           "Name": "GetAllCommonObjectsIgnoringFilters",
-          "LineNumber": 21,
+          "LineNumber": 18,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
@@ -7192,16 +7132,9 @@
           ],
           "Calls": [
             {
-              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
-              "MethodName": "IgnoreQueryFilters",
-              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IgnoreQueryFilters(System.Linq.IQueryable\u003CTEntity\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "cCoder.Data.ICoreContextFactory",
-              "MethodName": "CreateCoreContext",
-              "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
+              "TypeName": "cCoder.Data.Exposures.ICommonObjectCacheManager",
+              "MethodName": "Get",
+              "MethodId": "cCoder.Data.Exposures.ICommonObjectCacheManager.Get(System.Boolean,System.Boolean)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             }
@@ -7221,7 +7154,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.GetAppId(cCoder.Data.Models.CommonObject)",
           "Name": "GetAppId",
-          "LineNumber": 83,
+          "LineNumber": 61,
           "Inputs": [
             {
               "Name": "commonObject",
@@ -7248,7 +7181,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.GetLatestCommonObjectsPaged(System.Int32)",
           "Name": "GetLatestCommonObjectsPaged",
-          "LineNumber": 28,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "pageSize",
@@ -7260,20 +7193,6 @@
             "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.GetLatestCommonObjectsPaged(System.Int32)"
           ],
           "Calls": [
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
-              "MethodName": "AsNoTracking",
-              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.AsNoTracking(System.Linq.IQueryable\u003CTEntity\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
-              "MethodName": "IgnoreQueryFilters",
-              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IgnoreQueryFilters(System.Linq.IQueryable\u003CTEntity\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
             {
               "TypeName": "System.Linq.Enumerable",
               "MethodName": "First",
@@ -7310,9 +7229,9 @@
               "IsDependencyBoundary": true
             },
             {
-              "TypeName": "cCoder.Data.ICoreContextFactory",
-              "MethodName": "CreateCoreContext",
-              "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
+              "TypeName": "cCoder.Data.Exposures.ICommonObjectCacheManager",
+              "MethodName": "Get",
+              "MethodId": "cCoder.Data.Exposures.ICommonObjectCacheManager.Get(System.Boolean,System.Boolean)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             }
@@ -7332,7 +7251,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 58,
+          "LineNumber": 46,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -7345,36 +7264,16 @@
           ],
           "Calls": [
             {
-              "TypeName": "Microsoft.EntityFrameworkCore.DbContext",
-              "MethodName": "SaveChangesAsync",
-              "MethodId": "Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(System.Threading.CancellationToken)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "Microsoft.EntityFrameworkCore.DbSet\u003CTEntity\u003E",
-              "MethodName": "Update",
-              "MethodId": "Microsoft.EntityFrameworkCore.DbSet\u003CTEntity\u003E.Update(TEntity)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "cCoder.Data.ICoreContextFactory",
-              "MethodName": "CreateCoreContext",
-              "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
+              "TypeName": "cCoder.Data.Exposures.ICommonObjectCacheManager",
+              "MethodName": "UpdateAsync",
+              "MethodId": "cCoder.Data.Exposures.ICommonObjectCacheManager.UpdateAsync(cCoder.Data.Models.CommonObject)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             }
           ],
-          "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
-          "IncomingExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
-          "ThrowsExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"
-          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
           "HttpMethods": [],
           "HttpResponses": [],
           "IsHttpRequestHandler": false,
@@ -13835,7 +13734,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -13888,7 +13786,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -13941,7 +13838,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -13994,7 +13890,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -14247,7 +14142,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -16587,7 +16481,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -17106,7 +16999,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -17238,7 +17130,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -38109,7 +38000,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -38162,7 +38052,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -38215,7 +38104,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -38282,7 +38170,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -38542,7 +38429,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -48308,7 +48194,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -48317,7 +48202,6 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "IncomingExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
@@ -48361,7 +48245,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
@@ -48371,7 +48254,6 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "IncomingExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
@@ -48598,7 +48480,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -48607,7 +48488,6 @@
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
           ],
           "IncomingExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
@@ -55412,7 +55292,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -55480,7 +55359,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -55534,7 +55412,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -55595,7 +55472,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -55879,7 +55755,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.InvalidOperationException",
             "System.Security.SecurityException",
@@ -66685,7 +66560,6 @@
             }
           ],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -66733,7 +66607,6 @@
           ],
           "Calls": [],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -66781,7 +66654,6 @@
           ],
           "Calls": [],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -66825,7 +66697,6 @@
           ],
           "Calls": [],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
@@ -66871,7 +66742,6 @@
           ],
           "Calls": [],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
@@ -67072,7 +66942,6 @@
           ],
           "Calls": [],
           "PossibleExceptionTypes": [
-            "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException",
             "System.ComponentModel.DataAnnotations.ValidationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -106585,7 +106454,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker",
-      "ToType": "cCoder.Data.ICoreContextFactory"
+      "ToType": "cCoder.Data.Exposures.ICommonObjectCacheManager"
     },
     {
       "FromType": "cCoder.ContentManagement.Brokers.Storages.ComponentBroker",

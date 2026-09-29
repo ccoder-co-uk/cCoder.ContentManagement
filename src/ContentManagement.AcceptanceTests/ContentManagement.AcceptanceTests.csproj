@@ -9,6 +9,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
+    <UseLocalData Condition="'$(UseLocalData)' == 'true' and !Exists('$(LocalDataProject)')">false</UseLocalData>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Shared\Testing\AcceptanceTestConfiguration.cs" Link="Shared\Testing\AcceptanceTestConfiguration.cs" />
@@ -30,7 +31,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ContentManagement.Web\ContentManagement.Web.csproj" />
+    <ProjectReference Include="..\ContentManagement.Web\ContentManagement.Web.csproj" AdditionalProperties="UseLocalData=$(UseLocalData);LocalDataProject=$(LocalDataProject)" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

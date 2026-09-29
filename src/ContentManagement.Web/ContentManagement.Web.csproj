@@ -5,6 +5,8 @@
     <NoWarn>1591</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsNotAsErrors>NETSDK1233</WarningsNotAsErrors>
+    <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
+    <UseLocalData Condition="'$(UseLocalData)' == 'true' and !Exists('$(LocalDataProject)')">false</UseLocalData>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.27.1258" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
@@ -23,6 +25,6 @@
     <PackageReference Include="cCoder.Security.Data" Version="2026.9.27.1325" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" />
+    <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" AdditionalProperties="UseLocalData=$(UseLocalData);LocalDataProject=$(LocalDataProject)" />
   </ItemGroup>
 </Project>

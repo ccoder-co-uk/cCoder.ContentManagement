@@ -20,6 +20,8 @@
     <Copyright>2026 Paul Ward</Copyright>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsNotAsErrors>NETSDK1233</WarningsNotAsErrors>
+    <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
+    <UseLocalData Condition="'$(UseLocalData)' == 'true' and !Exists('$(LocalDataProject)')">false</UseLocalData>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\" />
@@ -28,7 +30,7 @@
   <ItemGroup>
     <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.27.1258" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
     <PackageReference Include="cCoder.CodeAnalysis.Contracts" Version="2026.9.27.1258" />
-    <PackageReference Include="cCoder.Data" Version="2026.9.27.1341" />
+    <PackageReference Include="cCoder.Data" Version="2026.9.29.1100" Condition="'$(UseLocalData)' != 'true'" />
     <PackageReference Include="cCoder.Eventing" Version="2026.9.27.1313" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
@@ -38,5 +40,8 @@
     <PackageReference Include="itext" Version="9.7.0" />
     <PackageReference Include="itext.pdfhtml" Version="6.3.3" />
     <PackageReference Include="itext.bouncy-castle-adapter" Version="9.7.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseLocalData)' == 'true'">
+    <ProjectReference Include="$(LocalDataProject)" />
   </ItemGroup>
 </Project>
