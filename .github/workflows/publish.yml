@@ -78,7 +78,15 @@ jobs:
           }
 
       - name: Build
-        run: dotnet build src/cCoder.ContentManagement.slnx -c Release --no-restore /p:Version="${{ steps.version.outputs.value }}"
+        run: >
+          dotnet build src/cCoder.ContentManagement.slnx
+          -c Release
+          --no-restore
+          -m:1
+          -nr:false
+          /p:BuildInParallel=false
+          /p:UseSharedCompilation=false
+          /p:Version="${{ steps.version.outputs.value }}"
 
       - name: Test
         run: |
