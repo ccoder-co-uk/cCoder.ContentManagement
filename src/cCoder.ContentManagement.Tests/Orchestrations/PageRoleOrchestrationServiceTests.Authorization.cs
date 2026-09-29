@@ -2,7 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using System.Security;
+using System;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.Data.Models.Security;
 using FluentAssertions;

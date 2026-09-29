@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.IO;
 using iText.Html2pdf;
 
 namespace cCoder.ContentManagement.Brokers;

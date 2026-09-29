@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Services.Foundations.Events;
 using cCoder.Data.Models.Packaging;
 

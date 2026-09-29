@@ -2,9 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Events;
 using cCoder.ContentManagement.Models;
-using cCoder.Data;
 using cCoder.Eventing.Models;
 
 namespace cCoder.ContentManagement.Services.Foundations.Events;

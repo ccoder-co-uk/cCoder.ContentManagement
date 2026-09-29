@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.IO;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Services.Foundations.TemplateContents;
 using cCoder.ContentManagement.Services.Processings;
 using FluentAssertions;

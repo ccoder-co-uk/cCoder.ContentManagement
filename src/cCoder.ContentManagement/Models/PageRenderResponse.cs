@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Models;

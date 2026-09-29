@@ -3,8 +3,6 @@
 // ---------------------------------------------------------------
 
 using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Tests.Brokers.Rendering;

@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using Microsoft.Extensions.Logging;
+using System;
 namespace cCoder.ContentManagement.Brokers.Loggings;
 
 public interface ILoggingBroker

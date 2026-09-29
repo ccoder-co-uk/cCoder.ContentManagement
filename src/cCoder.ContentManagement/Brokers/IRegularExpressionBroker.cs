@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 namespace cCoder.ContentManagement.Brokers;
 
 internal interface IRegularExpressionBroker

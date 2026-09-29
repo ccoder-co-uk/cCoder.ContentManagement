@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using Microsoft.AspNetCore.Http;
 namespace cCoder.ContentManagement.Brokers.HttpContexts;
 
 internal interface IHttpContextBroker

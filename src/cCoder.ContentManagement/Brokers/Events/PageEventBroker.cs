@@ -2,8 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
 using cCoder.Data.Models.CMS;
-using cCoder.ContentManagement.Models;
 using cCoder.Eventing;
 using cCoder.Eventing.Models;
 

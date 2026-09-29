@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Testing;
 using Web.AcceptanceTests.Models;
 
 namespace Web.AcceptanceTests.Infrastructure;

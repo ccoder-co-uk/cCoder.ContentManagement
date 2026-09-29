@@ -2,11 +2,10 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Exposures;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Rendering.Brokers;
-using cCoder.ContentManagement.Rendering.Services.Foundations;
-using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.ContentManagement.Services.Foundations.Storages;
@@ -15,7 +14,6 @@ using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Orchestrations.Caching;
 using cCoder.ContentManagement.Services.Orchestrations.PageContexts;
 using cCoder.ContentManagement.Services.Processings;
-using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using Moq;
 using Xunit;

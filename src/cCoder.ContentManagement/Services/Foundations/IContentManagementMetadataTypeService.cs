@@ -2,7 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Extensions.OData;
+using cCoder.ContentManagement.Models.OData;
+using System.Collections.Generic;
 
 namespace cCoder.ContentManagement.Services.Foundations;
 

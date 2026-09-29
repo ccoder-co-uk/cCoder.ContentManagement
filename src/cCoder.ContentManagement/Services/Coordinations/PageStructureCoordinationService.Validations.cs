@@ -2,7 +2,6 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-
 namespace cCoder.ContentManagement.Services.Coordinations;
 
 internal partial class PageStructureCoordinationService

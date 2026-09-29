@@ -2,7 +2,10 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Models.Results;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models.Security;
 

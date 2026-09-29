@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
 namespace cCoder.ContentManagement.Brokers.Authorizations;
 
 using cCoder.ContentManagement.Models;

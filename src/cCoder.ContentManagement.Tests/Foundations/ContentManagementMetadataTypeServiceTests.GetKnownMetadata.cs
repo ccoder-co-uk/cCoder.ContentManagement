@@ -2,19 +2,14 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.Data.Models;
+using System;
+using System.Linq;
 using cCoder.Data.Models.CMS;
 using cCoder.Data.Models.Packaging;
 using cCoder.Data.Models.Security;
 using cCoder.ContentManagement.Models.OData;
-using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
-using Config = cCoder.ContentManagement.Models.ContentManagementConfiguration;
-using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
-using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
-using RenderParams = cCoder.ContentManagement.Models.RenderParams;
 using RenderResult = cCoder.ContentManagement.Models.RenderResult;
 using Style = cCoder.ContentManagement.Models.Style;
-using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using FluentAssertions;
 using Xunit;
 

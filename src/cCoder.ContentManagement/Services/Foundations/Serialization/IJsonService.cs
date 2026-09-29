@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Collections.Generic;
 namespace cCoder.ContentManagement.Services.Foundations.Serialization;
 
 using cCoder.ContentManagement.Models.Serialization;

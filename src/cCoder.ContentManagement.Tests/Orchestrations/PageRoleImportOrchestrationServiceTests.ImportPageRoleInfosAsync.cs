@@ -2,10 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.Data.Models.Security;
-using cCoder.Data.Models.CMS;
 using FluentAssertions;
 using Moq;
 using Xunit;

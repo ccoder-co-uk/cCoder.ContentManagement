@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
 namespace cCoder.ContentManagement.Models.Caching;
 
 internal sealed class CacheEntry

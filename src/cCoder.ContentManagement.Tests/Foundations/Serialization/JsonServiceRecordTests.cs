@@ -2,6 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Models.Serialization;
 using cCoder.ContentManagement.Services.Foundations.Serialization;

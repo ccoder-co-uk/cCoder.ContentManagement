@@ -2,6 +2,9 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using cCoder.CodeAnalysis.Exposures;
 using cCoder.ContentManagement.Services.Aggregations;
 using cCoder.Data.Models.CMS;

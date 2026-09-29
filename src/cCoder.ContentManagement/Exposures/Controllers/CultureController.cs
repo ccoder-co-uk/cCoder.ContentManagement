@@ -2,17 +2,17 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
-using System.Security;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
-using cCoder.ContentManagement.Api.OData;
-using cCoder.ContentManagement.Services.Foundations.Storages;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using cCoder.Data.Models.CMS;
 
@@ -188,11 +188,6 @@ public class CultureController : ODataController
 
     private static Culture CreateResponseCulture(Culture newCulture)
     {
-        if (newCulture == null)
-        {
-            return null;
-        }
-
         return new Culture
         {
             Id = newCulture.Id,

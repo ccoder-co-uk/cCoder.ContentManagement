@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Models;

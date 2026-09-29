@@ -2,25 +2,16 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.Data.Models;
-using cCoder.Data.Models.CMS;
-using cCoder.Data.Models.Packaging;
-using cCoder.Data.Models.Security;
-using ComponentRenderParams = cCoder.ContentManagement.Models.ComponentRenderParams;
+using cCoder.ContentManagement.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Config = cCoder.ContentManagement.Models.ContentManagementConfiguration;
-using PageRenderParams = cCoder.ContentManagement.Models.PageRenderParams;
-using PageRoleInfo = cCoder.ContentManagement.Models.PageRoleInfo;
-using RenderParams = cCoder.ContentManagement.Models.RenderParams;
-using RenderResult = cCoder.ContentManagement.Models.RenderResult;
-using TemplateRenderParams = cCoder.ContentManagement.Models.TemplateRenderParams;
 using System.ComponentModel.DataAnnotations;
-using cCoder.ContentManagement.Services.Processings;
 using FluentAssertions;
-using Moq;
 using Xunit;
 using RenderApp = cCoder.Data.Models.CMS.App;
 using RenderPage = cCoder.Data.Models.CMS.Page;
-using RenderScript = cCoder.Data.Models.CMS.Script;
 using RenderUser = cCoder.Data.Models.Security.User;
 using cCoder.ContentManagement.Tests.Processings;
 
