@@ -2,36 +2,28 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
-using cCoder.Data;
+using cCoder.Data.Exposures;
 using cCoder.Data.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class CommonObjectBroker(
-    ICoreContextFactory coreContextFactory) : ICommonObjectBroker
+    ICommonObjectCacheManager commonObjectCacheManager) : ICommonObjectBroker
 {
-    public IQueryable<CommonObject> GetAllCommonObjects()
-    {
-        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+    public IQueryable<CommonObject> GetAllCommonObjects() =>
+        commonObjectCacheManager.Get(
+            fromCache: false,
+            ignoreFilters: false);
 
-        return coreDataContext.CommonObjects;
-    }
+    public IQueryable<CommonObject> GetAllCommonObjectsIgnoringFilters() =>
+        commonObjectCacheManager.Get(
+            fromCache: false,
+            ignoreFilters: true);
 
-    public IQueryable<CommonObject> GetAllCommonObjectsIgnoringFilters()
-    {
-        CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-
-        return coreDataContext.CommonObjects.IgnoreQueryFilters();
-    }
-
-    public CommonObject[] GetLatestCommonObjectsPaged(int pageSize = 500)
-    {
-        using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-
-        return coreDataContext.CommonObjects
-            .IgnoreQueryFilters()
-            .AsNoTracking()
+    public CommonObject[] GetLatestCommonObjectsPaged(int pageSize = 500) =>
+        commonObjectCacheManager.Get(
+                fromCache: false,
+                ignoreFilters: true)
             .GroupBy(keySelector: commonObject => new
             {
                 commonObject.Name,
@@ -45,40 +37,26 @@ internal sealed class CommonObjectBroker(
                         keySelector: version => version.Version)
                     .First())
             .ToArray();
-    }
 
-    public async ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject)
-    {
-        using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        CommonObject result = (await coreDataContext.CommonObjects.AddAsync(entity: newCommonObject)).Entity;
-        await coreDataContext.SaveChangesAsync();
-        return result;
-    }
+    public ValueTask<CommonObject> AddCommonObjectAsync(
+        CommonObject newCommonObject) =>
+        commonObjectCacheManager.AddAsync(
+            newCommonObject: newCommonObject);
 
-    public async ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject)
-    {
-        using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
+    public ValueTask<CommonObject> UpdateCommonObjectAsync(
+        CommonObject updatedCommonObject) =>
+        commonObjectCacheManager.UpdateAsync(
+            updatedCommonObject: updatedCommonObject);
 
-        CommonObject result = coreDataContext.CommonObjects.Update(entity: updatedCommonObject)
-            .Entity;
+    public ValueTask<int> DeleteCommonObjectAsync(
+        CommonObject deletedCommonObject) =>
+        commonObjectCacheManager.DeleteAsync(
+            deletedCommonObject: deletedCommonObject);
 
-        await coreDataContext.SaveChangesAsync();
-        return result;
-    }
-
-    public async ValueTask<int> DeleteCommonObjectAsync(CommonObject deletedCommonObject)
-    {
-        using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.CommonObjects.Remove(entity: deletedCommonObject);
-        return await coreDataContext.SaveChangesAsync();
-    }
-
-    public async ValueTask DeleteAllCommonObjectsAsync(IEnumerable<CommonObject> deletedCommonObject)
-    {
-        using CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
-        coreDataContext.CommonObjects.RemoveRange(entities: deletedCommonObject);
-        await coreDataContext.SaveChangesAsync();
-    }
+    public ValueTask DeleteAllCommonObjectsAsync(
+        IEnumerable<CommonObject> deletedCommonObject) =>
+        commonObjectCacheManager.DeleteAllAsync(
+            deletedCommonObjects: deletedCommonObject);
 
     public int? GetAppId(CommonObject commonObject) =>
         null;
