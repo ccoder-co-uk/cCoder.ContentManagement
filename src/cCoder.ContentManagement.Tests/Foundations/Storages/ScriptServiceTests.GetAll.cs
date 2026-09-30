@@ -28,7 +28,7 @@ public partial class ScriptServiceTests
             .Returns(value: scripts);
 
         // When
-        IQueryable<Script> result = scriptService.GetAllScript();
+        IQueryable<Script> result = scriptService.GetAllScripts();
 
         // Then
 

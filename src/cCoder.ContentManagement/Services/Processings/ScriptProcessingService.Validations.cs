@@ -9,7 +9,7 @@ internal partial class ScriptProcessingService
     private static void ValidateScriptOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllScriptOnGet(object[] inputs) =>
+    private static void ValidateAllScriptsOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateScriptOnAdd(object[] inputs) =>

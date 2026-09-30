@@ -13,7 +13,7 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 public interface IScriptOrchestrationService
 {
     Script GetScript(int scriptId);
-    IQueryable<Script> GetAllScript(bool ignoreFilters = false);
+    IQueryable<Script> GetAllScripts(bool ignoreFilters = false);
     ValueTask<Script> AddScriptAsync(Script newScript);
     ValueTask<Script> UpdateScriptAsync(Script updatedScript);
     ValueTask DeleteAsync(int scriptId);

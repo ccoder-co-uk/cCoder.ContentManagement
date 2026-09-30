@@ -12,7 +12,7 @@ internal interface IComponentService
 {
     Component GetComponent(int componentId, bool ignoreFilters = false);
 
-    IQueryable<Component> GetAllComponent(bool ignoreFilters = false);
+    IQueryable<Component> GetAllComponents(bool ignoreFilters = false);
 
     ValueTask<Component> AddComponentAsync(Component newComponent);
 

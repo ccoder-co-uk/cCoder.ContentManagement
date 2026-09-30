@@ -14,7 +14,7 @@ internal interface ICommonObjectProcessingService
 {
     CommonObject GetCommonObject(int commonObjectId);
 
-    IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false);
+    IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters = false);
 
     CommonObject[] DeserializeCommonObjects(object payload);
 

@@ -29,7 +29,7 @@ public partial class ResourceProcessingServiceTests
             .Returns(value: rootResource);
 
         resourceServiceMock
-            .Setup(expression: x => x.GetAllResource())
+            .Setup(expression: x => x.GetAllResources())
             .Returns(value: new[] { rootResource, secondVersion }.AsQueryable());
 
         resourceServiceMock

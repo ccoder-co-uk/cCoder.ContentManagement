@@ -29,7 +29,7 @@ public class ContentController(
     {
         try
         {
-            return Ok(value: contentOrchestrationService.GetAllContent());
+            return Ok(value: contentOrchestrationService.GetAllContents());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -58,7 +58,7 @@ public class ContentController(
     {
         try
         {
-            Content result = contentOrchestrationService.GetAllContent()
+            Content result = contentOrchestrationService.GetAllContents()
                 .FirstOrDefault(predicate: content => content.Id == key);
 
             return result is null

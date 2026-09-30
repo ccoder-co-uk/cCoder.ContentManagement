@@ -49,11 +49,11 @@ internal partial class PageRoleProcessingService(
         return service.ResolvePageRoleByIds(pageRole: pageRole);
     });
 
-    public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
+    public IQueryable<PageRole> GetAllPageRoles(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageRole>>(operation: () =>
     {
-        ValidateAllPageRoleOnGet(inputs: [ignoreFilters]);
-        return service.GetAllPageRole(ignoreFilters: ignoreFilters);
+        ValidateAllPageRolesOnGet(inputs: [ignoreFilters]);
+        return service.GetAllPageRoles(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole) =>
@@ -74,7 +74,7 @@ internal partial class PageRoleProcessingService(
         ValidatePageRoleOnDelete(inputs: [deletedPageRole]);
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "link");
 
-        PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)
+        PageRole dbVersion = service.GetAllPageRoles(ignoreFilters: true)
             .FirstOrDefault(predicate: pageRole => pageRole.RoleId == deletedPageRole.RoleId && pageRole.PageId == deletedPageRole.PageId);
 
         if (dbVersion == null)
@@ -110,7 +110,7 @@ internal partial class PageRoleProcessingService(
         {
             List<PageRole> existingGroupItems = [];
 
-            foreach (PageRole existingItem in ExecuteGetAllPageRole()
+            foreach (PageRole existingItem in ExecuteGetAllPageRoles()
                 .Where(predicate: item => item.PageId == pageId))
             {
                 existingGroupItems.Add(item: existingItem);
@@ -241,7 +241,7 @@ internal partial class PageRoleProcessingService(
     {
         ValidatePageRole(pageRole: deletedPageRole, parameterName: "link");
 
-        PageRole dbVersion = service.GetAllPageRole(ignoreFilters: true)
+        PageRole dbVersion = service.GetAllPageRoles(ignoreFilters: true)
             .FirstOrDefault(predicate: pageRole => pageRole.RoleId == deletedPageRole.RoleId && pageRole.PageId == deletedPageRole.PageId);
 
         if (dbVersion == null)
@@ -252,8 +252,8 @@ internal partial class PageRoleProcessingService(
         await service.DeletePageRoleAsync(deletedPageRole: dbVersion);
     }
 
-    private IQueryable<PageRole> ExecuteGetAllPageRole(bool ignoreFilters = false) =>
-        service.GetAllPageRole(ignoreFilters: ignoreFilters);
+    private IQueryable<PageRole> ExecuteGetAllPageRoles(bool ignoreFilters = false) =>
+        service.GetAllPageRoles(ignoreFilters: ignoreFilters);
 
     private static bool ContainsPageId(
         IEnumerable<int> pageIds,

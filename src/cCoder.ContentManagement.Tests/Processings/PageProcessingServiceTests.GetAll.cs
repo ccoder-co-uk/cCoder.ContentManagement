@@ -19,17 +19,17 @@ public partial class PageProcessingServiceTests
         Page[] pages = [CreateRandomPage()];
         IQueryable<Page> queryablePages = pages.AsQueryable();
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
+        pageServiceMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: queryablePages);
 
         // When
-        IQueryable<Page> result = pageProcessingService.GetAllPage();
+        IQueryable<Page> result = pageProcessingService.GetAllPages();
 
         // Then
         result.Should()
             .BeSameAs(expected: queryablePages);
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

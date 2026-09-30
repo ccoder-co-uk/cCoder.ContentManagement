@@ -13,8 +13,8 @@ namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class AppCultureManager(IAppCultureOrchestrationService service) : IAppCultureManager
 {
-    public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
-        service.GetAllAppCulture(ignoreFilters: ignoreFilters);
+    public IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters = false) =>
+        service.GetAllAppCultures(ignoreFilters: ignoreFilters);
 
     public ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture) =>
         service.AddAppCultureAsync(newAppCulture: newAppCulture);

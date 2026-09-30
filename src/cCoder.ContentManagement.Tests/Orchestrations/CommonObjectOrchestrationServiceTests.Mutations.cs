@@ -278,7 +278,7 @@ public partial class CommonObjectOrchestrationServiceTests
 
         // When
         CommonObject[] actual = orchestrationService
-            .LatestCommonObject(type: included.Type)
+            .LatestCommonObjects(type: included.Type)
             .ToArray();
 
         // Then

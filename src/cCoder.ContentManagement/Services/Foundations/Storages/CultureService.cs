@@ -20,11 +20,11 @@ internal partial class CultureService(ICultureBroker cultureBroker) : ICultureSe
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllCulture(ignoreFilters: true)
+            return ExecuteGetAllCultures(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
         }
 
-        Culture culture = ExecuteGetAllCulture()
+        Culture culture = ExecuteGetAllCultures()
             .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
 
         if ((object)culture != null)
@@ -32,7 +32,7 @@ internal partial class CultureService(ICultureBroker cultureBroker) : ICultureSe
             return culture;
         }
 
-        Culture culture2 = ExecuteGetAllCulture(ignoreFilters: true)
+        Culture culture2 = ExecuteGetAllCultures(ignoreFilters: true)
             .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
 
         if ((object)culture2 != null)
@@ -44,10 +44,10 @@ internal partial class CultureService(ICultureBroker cultureBroker) : ICultureSe
 
     });
 
-    public IQueryable<Culture> GetAllCulture(bool ignoreFilters = false) =>
+    public IQueryable<Culture> GetAllCultures(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Culture>>(operation: () =>
     {
-        ValidateAllCultureOnGet(inputs: [ignoreFilters]);
+        ValidateAllCulturesOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? cultureBroker.GetAllCulturesIgnoringFilters()
@@ -110,7 +110,7 @@ internal partial class CultureService(ICultureBroker cultureBroker) : ICultureSe
         };
     }
 
-    private IQueryable<Culture> ExecuteGetAllCulture(bool ignoreFilters = false) =>
+    private IQueryable<Culture> ExecuteGetAllCultures(bool ignoreFilters = false) =>
         (ignoreFilters
             ? cultureBroker.GetAllCulturesIgnoringFilters()
             : cultureBroker.GetAllCultures());
@@ -121,11 +121,11 @@ internal partial class CultureService(ICultureBroker cultureBroker) : ICultureSe
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllCulture(ignoreFilters: true)
+            return ExecuteGetAllCultures(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
         }
 
-        Culture culture = ExecuteGetAllCulture()
+        Culture culture = ExecuteGetAllCultures()
             .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
 
         if ((object)culture != null)
@@ -133,7 +133,7 @@ internal partial class CultureService(ICultureBroker cultureBroker) : ICultureSe
             return culture;
         }
 
-        Culture culture2 = ExecuteGetAllCulture(ignoreFilters: true)
+        Culture culture2 = ExecuteGetAllCultures(ignoreFilters: true)
             .FirstOrDefault(predicate: (Culture i) => i.Id == cultureId);
 
         if ((object)culture2 != null)

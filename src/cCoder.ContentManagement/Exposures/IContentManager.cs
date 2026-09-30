@@ -14,7 +14,7 @@ public interface IContentManager
 {
     Content GetContent(int contentId);
 
-    IQueryable<Content> GetAllContent(bool ignoreFilters = false);
+    IQueryable<Content> GetAllContents(bool ignoreFilters = false);
 
     ValueTask<Content> AddContentAsync(Content newContent);
 

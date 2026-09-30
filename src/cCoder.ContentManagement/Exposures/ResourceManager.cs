@@ -16,8 +16,8 @@ internal sealed class ResourceManager(IResourceOrchestrationService service) : I
     public Resource GetResource(int resourceId) =>
         service.GetResource(resourceId: resourceId);
 
-    public IQueryable<Resource> GetAllResource(bool ignoreFilters = false) =>
-        service.GetAllResource(ignoreFilters: ignoreFilters);
+    public IQueryable<Resource> GetAllResources(bool ignoreFilters = false) =>
+        service.GetAllResources(ignoreFilters: ignoreFilters);
 
     public ValueTask<Resource> AddResourceAsync(Resource newResource) =>
         service.AddResourceAsync(newResource: newResource);

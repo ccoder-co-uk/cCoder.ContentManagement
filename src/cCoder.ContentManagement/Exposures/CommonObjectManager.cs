@@ -20,9 +20,9 @@ internal sealed class CommonObjectManager(
         commonObjectCoordinationService.GetCommonObject(
             commonObjectId: commonObjectId);
 
-    public IQueryable<CommonObject> GetAllCommonObject(
+    public IQueryable<CommonObject> GetAllCommonObjects(
         bool ignoreFilters = false) =>
-        commonObjectCoordinationService.GetAllCommonObject(
+        commonObjectCoordinationService.GetAllCommonObjects(
             ignoreFilters: ignoreFilters);
 
     public CommonObject[] DeserializeCommonObjects(object payload) =>
@@ -54,6 +54,6 @@ internal sealed class CommonObjectManager(
         commonObjectCoordinationService.DeleteAllCommonObjectAsync(
             deletedCommonObject: deletedCommonObject);
 
-    public IEnumerable<CommonObject> LatestCommonObject(string type) =>
-        commonObjectCoordinationService.LatestCommonObject(type: type);
+    public IEnumerable<CommonObject> LatestCommonObjects(string type) =>
+        commonObjectCoordinationService.LatestCommonObjects(type: type);
 }

@@ -19,12 +19,12 @@ public partial class CultureOrchestrationServiceTests
         // Given
         IQueryable<Culture> entities = new[] { CreateRandomCulture() }.AsQueryable();
 
-        cultureProcessingServiceMock.Setup(expression: x => x.GetAllCulture(ignoreFilters: true))
+        cultureProcessingServiceMock.Setup(expression: x => x.GetAllCultures(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
 
-        var result = orchestrationService.GetAllCulture(ignoreFilters: true)
+        var result = orchestrationService.GetAllCultures(ignoreFilters: true)
             .ToArray();
 
         // Then
@@ -33,7 +33,7 @@ public partial class CultureOrchestrationServiceTests
             .Should()
             .Equal(expected: entities.Select(selector: item => item.Id));
 
-        cultureProcessingServiceMock.Verify(expression: x => x.GetAllCulture(ignoreFilters: true), times: Times.Once);
+        cultureProcessingServiceMock.Verify(expression: x => x.GetAllCultures(ignoreFilters: true), times: Times.Once);
         cultureProcessingServiceMock.VerifyNoOtherCalls();
         cultureEventProcessingServiceMock.VerifyNoOtherCalls();
     }

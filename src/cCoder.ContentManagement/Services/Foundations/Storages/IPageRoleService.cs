@@ -11,7 +11,7 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal interface IPageRoleService
 {
-    IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false);
+    IQueryable<PageRole> GetAllPageRoles(bool ignoreFilters = false);
 
     ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole);
 

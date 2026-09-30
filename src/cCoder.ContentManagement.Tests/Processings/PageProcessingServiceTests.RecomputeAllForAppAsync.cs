@@ -41,7 +41,7 @@ public partial class PageProcessingServiceTests
 
         currentUser = actor;
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageServiceMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { page }.AsQueryable());
 
         pageServiceMock
@@ -56,7 +56,7 @@ public partial class PageProcessingServiceTests
         page.Path.Should()
             .Be(expected: string.Empty);
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         pageServiceMock.Verify(expression: x => x.UpdatePageAsync(updatedPage: It.Is<Page>(match: updated => updated.Id == page.Id && updated.Path == string.Empty)), times: Times.Once);
         VerifyNoOtherPageServiceCalls();
     }

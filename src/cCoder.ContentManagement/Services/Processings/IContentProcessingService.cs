@@ -14,7 +14,7 @@ internal interface IContentProcessingService
 {
     Content GetContent(int contentId);
 
-    IQueryable<Content> GetAllContent(bool ignoreFilters = false);
+    IQueryable<Content> GetAllContents(bool ignoreFilters = false);
 
     int? GetAppIdByPageId(int pageId);
 

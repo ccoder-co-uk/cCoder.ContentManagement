@@ -12,7 +12,7 @@ internal partial class CommonObjectOrchestrationService
     private static void ValidateCommonObjectOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllCommonObjectOnGet(object[] inputs) =>
+    private static void ValidateAllCommonObjectsOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateCommonObjectOnAdd(object[] inputs) =>
@@ -30,7 +30,7 @@ internal partial class CommonObjectOrchestrationService
     private static void ValidateAllCommonObjectOnDelete(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateLatestCommonObject(object[] inputs) =>
+    private static void ValidateLatestCommonObjects(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateAllCommonObjectsOnAdd(object[] inputs) =>

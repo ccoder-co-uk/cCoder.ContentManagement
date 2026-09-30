@@ -64,7 +64,7 @@ public partial class PageOrchestrationServiceTests
             .Returns(value: true);
 
         pageProcessingServiceMock
-            .Setup(expression: service => service.GetAllPage(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { page }.AsQueryable());
 
         DenyAuthorization();
@@ -83,7 +83,7 @@ public partial class PageOrchestrationServiceTests
             layoutName: page.Layout), times: Times.Once);
 
         pageProcessingServiceMock.Verify(expression: service =>
-            service.GetAllPage(ignoreFilters: true), times: Times.Once);
+            service.GetAllPages(ignoreFilters: true), times: Times.Once);
 
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();

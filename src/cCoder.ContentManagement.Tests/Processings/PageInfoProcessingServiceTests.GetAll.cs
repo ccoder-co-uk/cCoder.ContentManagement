@@ -19,18 +19,18 @@ public partial class PageInfoProcessingServiceTests
         // Given
         IQueryable<PageInfo> entities = new[] { CreateRandomPageInfo() }.AsQueryable();
 
-        pageInfoServiceMock.Setup(expression: x => x.GetAllPageInfo())
+        pageInfoServiceMock.Setup(expression: x => x.GetAllPageInfos())
             .Returns(value: entities);
 
         // When
-        IQueryable<PageInfo> result = pageInfoProcessingService.GetAllPageInfo();
+        IQueryable<PageInfo> result = pageInfoProcessingService.GetAllPageInfos();
 
         // Then
 
         result.Should()
             .BeSameAs(expected: entities);
 
-        pageInfoServiceMock.Verify(expression: x => x.GetAllPageInfo(), times: Times.Once);
+        pageInfoServiceMock.Verify(expression: x => x.GetAllPageInfos(), times: Times.Once);
         pageInfoServiceMock.VerifyNoOtherCalls();
     }
 

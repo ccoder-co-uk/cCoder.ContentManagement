@@ -23,20 +23,20 @@ public partial class CommonObjectProcessingServiceTests
         IQueryable<CommonObject> queryableCommonObjects =
             commonObjects.AsQueryable();
 
-        commonObjectServiceMock.Setup(expression: x => x.GetAllCommonObject())
+        commonObjectServiceMock.Setup(expression: x => x.GetAllCommonObjects())
             .Returns(value: queryableCommonObjects);
 
         // When
 
         IQueryable<CommonObject> result =
-            commonObjectProcessingService.GetAllCommonObject();
+            commonObjectProcessingService.GetAllCommonObjects();
 
         // Then
 
         result.Should()
             .BeSameAs(expected: queryableCommonObjects);
 
-        commonObjectServiceMock.Verify(expression: x => x.GetAllCommonObject(), times: Times.Once);
+        commonObjectServiceMock.Verify(expression: x => x.GetAllCommonObjects(), times: Times.Once);
         commonObjectServiceMock.VerifyNoOtherCalls();
     }
 

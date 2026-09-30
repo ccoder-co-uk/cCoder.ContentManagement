@@ -11,9 +11,9 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 public interface IPageInfoBroker
 {
-    IQueryable<PageInfo> GetAllPageInfo();
+    IQueryable<PageInfo> GetAllPageInfos();
 
-    IQueryable<PageInfo> GetAllPageInfoIgnoringFilters();
+    IQueryable<PageInfo> GetAllPageInfosIgnoringFilters();
 
     int? GetOwningAppId(int pageId);
 

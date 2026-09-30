@@ -36,7 +36,7 @@ public class ScriptController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllScript());
+            return Ok(value: service.GetAllScripts());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -65,7 +65,7 @@ public class ScriptController : ODataController
     {
         try
         {
-            Script result = service.GetAllScript()
+            Script result = service.GetAllScripts()
                 .FirstOrDefault(predicate: script => script.Id == key);
 
             return result is null

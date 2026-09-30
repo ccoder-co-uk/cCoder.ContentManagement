@@ -20,11 +20,11 @@ internal partial class AppCultureOrchestrationService(
     IAuthorizationProcessingService authorizationProcessingService)
         : IAppCultureOrchestrationService
 {
-    public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
+    public IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters = false) =>
         TryCatch<IQueryable<AppCulture>>(operation: () =>
     {
-        ValidateAllAppCultureOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllAppCulture(ignoreFilters: ignoreFilters);
+        ValidateAllAppCulturesOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllAppCultures(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture) =>
@@ -65,7 +65,7 @@ internal partial class AppCultureOrchestrationService(
         ValidateByAppIdOnDelete(inputs: [appId]);
 
         AppCulture[] appCulturesToDelete =
-            [.. ExecuteGetAllAppCulture(ignoreFilters: true)
+            [.. ExecuteGetAllAppCultures(ignoreFilters: true)
             .Where(predicate: appCulture => appCulture.AppId == appId)];
 
         foreach (AppCulture appCulture in appCulturesToDelete)
@@ -89,7 +89,7 @@ internal partial class AppCultureOrchestrationService(
         {
             try
             {
-                AppCulture existingAppCulture = ExecuteGetAllAppCulture(ignoreFilters: true)
+                AppCulture existingAppCulture = ExecuteGetAllAppCultures(ignoreFilters: true)
                     .FirstOrDefault(predicate: existing =>
                         existing.AppId == appCulture.AppId &&
                         existing.CultureId == appCulture.CultureId);
@@ -194,8 +194,8 @@ internal partial class AppCultureOrchestrationService(
         await processingService.DeleteAppCultureAsync(deletedAppCulture: deletedAppCulture);
     }
 
-    private IQueryable<AppCulture> ExecuteGetAllAppCulture(bool ignoreFilters = false) =>
-        processingService.GetAllAppCulture(ignoreFilters: ignoreFilters);
+    private IQueryable<AppCulture> ExecuteGetAllAppCultures(bool ignoreFilters = false) =>
+        processingService.GetAllAppCultures(ignoreFilters: ignoreFilters);
 
     private void Authorize(int? appId, string privilege) =>
         authorizationProcessingService.AuthorizeAuthorizationContext(

@@ -14,7 +14,7 @@ public interface ILayoutManager
 {
     Layout GetLayout(int layoutId);
 
-    IQueryable<Layout> GetAllLayout(bool ignoreFilters = false);
+    IQueryable<Layout> GetAllLayouts(bool ignoreFilters = false);
 
     ValueTask<Layout> AddLayoutAsync(Layout newLayout);
 

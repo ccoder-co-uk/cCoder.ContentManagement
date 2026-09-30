@@ -13,7 +13,7 @@ internal interface ISubmissionService
 {
     Submission GetSubmission(Guid submissionId, bool ignoreFilters = false);
 
-    IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false);
+    IQueryable<Submission> GetAllSubmissions(bool ignoreFilters = false);
 
     ValueTask<Submission> AddSubmissionAsync(Submission newSubmission);
 

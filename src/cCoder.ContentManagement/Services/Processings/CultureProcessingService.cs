@@ -25,11 +25,11 @@ internal partial class CultureProcessingService(ICultureService service)
 
     });
 
-    public IQueryable<Culture> GetAllCulture(bool ignoreFilters = false) =>
+    public IQueryable<Culture> GetAllCultures(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Culture>>(operation: () =>
     {
-        ValidateAllCultureOnGet(inputs: [ignoreFilters]);
-        return service.GetAllCulture(ignoreFilters: ignoreFilters);
+        ValidateAllCulturesOnGet(inputs: [ignoreFilters]);
+        return service.GetAllCultures(ignoreFilters: ignoreFilters);
     });
 
     public int? GetOwningAppId(string cultureId) =>

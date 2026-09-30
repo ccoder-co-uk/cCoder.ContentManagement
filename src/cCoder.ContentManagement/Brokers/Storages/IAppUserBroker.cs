@@ -9,5 +9,5 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal interface IAppUserBroker
 {
-    IQueryable<User> GetAllAppUser(int appId);
+    IQueryable<User> GetAllUsers(int appId);
 }

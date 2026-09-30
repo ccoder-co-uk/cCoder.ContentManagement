@@ -6,7 +6,7 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class AppUserOrchestrationService
 {
-    private static void ValidateAllAppUserOnGet(object[] inputs) =>
+    private static void ValidateAllUsersOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void Validate(params object[] inputs) =>

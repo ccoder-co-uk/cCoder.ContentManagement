@@ -14,7 +14,7 @@ public interface IPageOrchestrationService
 {
     Page GetPage(int pageId);
 
-    IQueryable<Page> GetAllPage(bool ignoreFilters = false);
+    IQueryable<Page> GetAllPages(bool ignoreFilters = false);
 
     ValueTask<Page> AddPageAsync(Page newPage);
 
@@ -34,7 +34,7 @@ public interface IPageOrchestrationService
 
     Page GetRootPage(int pageId);
 
-    IEnumerable<Page> GetChildrenPage(int pageId);
+    IEnumerable<Page> GetChildrenPages(int pageId);
 
     string MenuFor(int pageId, string culture);
 }

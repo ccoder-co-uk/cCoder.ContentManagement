@@ -12,7 +12,7 @@ internal interface IPageInfoService
 {
     PageInfo GetPageInfo(int pageInfoId, bool ignoreFilters = false);
 
-    IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false);
+    IQueryable<PageInfo> GetAllPageInfos(bool ignoreFilters = false);
 
     int? GetOwningAppId(int pageId);
 

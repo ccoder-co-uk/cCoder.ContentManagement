@@ -41,7 +41,7 @@ internal partial class CultureService
     private static void ValidateCultureOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllCultureOnGet(object[] inputs) =>
+    private static void ValidateAllCulturesOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateOwningAppIdOnGet(object[] inputs) =>

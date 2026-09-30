@@ -21,11 +21,11 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker) : I
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllSubmission(ignoreFilters: true)
+            return ExecuteGetAllSubmissions(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
         }
 
-        Submission submission = ExecuteGetAllSubmission()
+        Submission submission = ExecuteGetAllSubmissions()
             .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
 
         if (submission != null)
@@ -33,7 +33,7 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker) : I
             return submission;
         }
 
-        Submission submission2 = ExecuteGetAllSubmission(ignoreFilters: true)
+        Submission submission2 = ExecuteGetAllSubmissions(ignoreFilters: true)
             .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
 
         if (submission2 != null)
@@ -45,10 +45,10 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker) : I
 
     });
 
-    public IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false) =>
+    public IQueryable<Submission> GetAllSubmissions(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Submission>>(operation: () =>
     {
-        ValidateAllSubmissionOnGet(inputs: [ignoreFilters]);
+        ValidateAllSubmissionsOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? submissionBroker.GetAllSubmissionsIgnoringFilters()
@@ -133,7 +133,7 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker) : I
         };
     }
 
-    private IQueryable<Submission> ExecuteGetAllSubmission(bool ignoreFilters = false) =>
+    private IQueryable<Submission> ExecuteGetAllSubmissions(bool ignoreFilters = false) =>
         (ignoreFilters
             ? submissionBroker.GetAllSubmissionsIgnoringFilters()
             : submissionBroker.GetAllSubmissions());
@@ -144,11 +144,11 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker) : I
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllSubmission(ignoreFilters: true)
+            return ExecuteGetAllSubmissions(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
         }
 
-        Submission submission = ExecuteGetAllSubmission()
+        Submission submission = ExecuteGetAllSubmissions()
             .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
 
         if (submission != null)
@@ -156,7 +156,7 @@ internal partial class SubmissionService(ISubmissionBroker submissionBroker) : I
             return submission;
         }
 
-        Submission submission2 = ExecuteGetAllSubmission(ignoreFilters: true)
+        Submission submission2 = ExecuteGetAllSubmissions(ignoreFilters: true)
             .FirstOrDefault(predicate: (Submission i) => i.Id == submissionId);
 
         if (submission2 != null)

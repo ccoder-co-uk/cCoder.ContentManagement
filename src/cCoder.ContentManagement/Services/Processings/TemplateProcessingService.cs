@@ -25,11 +25,11 @@ internal partial class TemplateProcessingService(
 
     });
 
-    public IQueryable<Template> GetAllTemplate(bool ignoreFilters = false) =>
+    public IQueryable<Template> GetAllTemplates(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Template>>(operation: () =>
     {
-        ValidateAllTemplateOnGet(inputs: [ignoreFilters]);
-        return service.GetAllTemplate(ignoreFilters: ignoreFilters);
+        ValidateAllTemplatesOnGet(inputs: [ignoreFilters]);
+        return service.GetAllTemplates(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Template> AddTemplateAsync(Template newTemplate) =>

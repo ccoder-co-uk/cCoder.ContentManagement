@@ -84,11 +84,11 @@ internal partial class CommonObjectService(
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllCommonObject(ignoreFilters: true)
+            return ExecuteGetAllCommonObjects(ignoreFilters: true)
                 .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
         }
 
-        CommonObject commonObject = ExecuteGetAllCommonObject()
+        CommonObject commonObject = ExecuteGetAllCommonObjects()
             .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
 
         if (commonObject != null)
@@ -96,7 +96,7 @@ internal partial class CommonObjectService(
             return commonObject;
         }
 
-        CommonObject commonObject2 = ExecuteGetAllCommonObject(ignoreFilters: true)
+        CommonObject commonObject2 = ExecuteGetAllCommonObjects(ignoreFilters: true)
             .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
 
         if (commonObject2 != null)
@@ -108,10 +108,10 @@ internal partial class CommonObjectService(
 
     });
 
-    public IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false) =>
+    public IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters = false) =>
         TryCatch<IQueryable<CommonObject>>(operation: () =>
     {
-        ValidateAllCommonObjectOnGet(inputs: [ignoreFilters]);
+        ValidateAllCommonObjectsOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? commonObjectBroker.GetAllCommonObjectsIgnoringFilters()
@@ -210,7 +210,7 @@ internal partial class CommonObjectService(
         };
     }
 
-    private IQueryable<CommonObject> ExecuteGetAllCommonObject(bool ignoreFilters = false) =>
+    private IQueryable<CommonObject> ExecuteGetAllCommonObjects(bool ignoreFilters = false) =>
         (ignoreFilters
             ? commonObjectBroker.GetAllCommonObjectsIgnoringFilters()
             : commonObjectBroker.GetAllCommonObjects());
@@ -221,11 +221,11 @@ internal partial class CommonObjectService(
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllCommonObject(ignoreFilters: true)
+            return ExecuteGetAllCommonObjects(ignoreFilters: true)
                 .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
         }
 
-        CommonObject commonObject = ExecuteGetAllCommonObject()
+        CommonObject commonObject = ExecuteGetAllCommonObjects()
             .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
 
         if (commonObject != null)
@@ -233,7 +233,7 @@ internal partial class CommonObjectService(
             return commonObject;
         }
 
-        CommonObject commonObject2 = ExecuteGetAllCommonObject(ignoreFilters: true)
+        CommonObject commonObject2 = ExecuteGetAllCommonObjects(ignoreFilters: true)
             .FirstOrDefault(predicate: (CommonObject i) => i.Id == commonObjectId);
 
         if (commonObject2 != null)

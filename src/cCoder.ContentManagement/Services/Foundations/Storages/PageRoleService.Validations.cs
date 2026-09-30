@@ -60,7 +60,7 @@ internal partial class PageRoleService
         }
     }
 
-    private static void ValidateAllPageRoleOnGet(object[] inputs) =>
+    private static void ValidateAllPageRolesOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidatePageRoleOnAdd(object[] inputs) =>

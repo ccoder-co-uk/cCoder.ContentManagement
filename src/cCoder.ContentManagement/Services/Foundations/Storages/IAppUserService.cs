@@ -9,5 +9,5 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal interface IAppUserService
 {
-    IQueryable<User> GetAllAppUser(int appId);
+    IQueryable<User> GetAllUsers(int appId);
 }

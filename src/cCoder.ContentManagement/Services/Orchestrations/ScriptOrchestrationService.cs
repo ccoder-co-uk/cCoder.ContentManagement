@@ -28,11 +28,11 @@ internal partial class ScriptOrchestrationService(
         return processingService.GetScript(scriptId: ValidateId(scriptId: scriptId, parameterName: "id"));
     });
 
-    public IQueryable<Script> GetAllScript(bool ignoreFilters = false) =>
+    public IQueryable<Script> GetAllScripts(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Script>>(operation: () =>
     {
-        ValidateAllScriptOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllScript(ignoreFilters: ignoreFilters);
+        ValidateAllScriptsOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllScripts(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Script> AddScriptAsync(Script newScript) =>
@@ -85,7 +85,7 @@ internal partial class ScriptOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllScript(ignoreFilters: true)
+            entity = processingService.GetAllScripts(ignoreFilters: true)
                 .FirstOrDefault(predicate: script => script.Id == scriptId);
         }
 
@@ -110,7 +110,7 @@ internal partial class ScriptOrchestrationService(
         ValidateByAppIdOnDelete(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        Script[] scriptsToDelete = [.. ExecuteGetAllScript(ignoreFilters: true)
+        Script[] scriptsToDelete = [.. ExecuteGetAllScripts(ignoreFilters: true)
             .Where(predicate: script => script.AppId == appId)];
 
         if (scriptsToDelete.Length > 0)
@@ -172,7 +172,7 @@ internal partial class ScriptOrchestrationService(
         string[] names = validatedItems.Select(selector: script => script.Name.ToLower())
             .ToArray();
 
-        var dbVersions = processingService.GetAllScript()
+        var dbVersions = processingService.GetAllScripts()
             .Where(predicate: script => script.AppId == appId && ((ReadOnlySpan<string>)names).Contains(value: script.Name.ToLower()))
             .Select(selector: script => new { script.Id, script.Name })
             .ToArray();
@@ -319,7 +319,7 @@ internal partial class ScriptOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllScript(ignoreFilters: true)
+            entity = processingService.GetAllScripts(ignoreFilters: true)
                 .FirstOrDefault(predicate: script => script.Id == scriptId);
         }
 
@@ -337,8 +337,8 @@ internal partial class ScriptOrchestrationService(
         await processingService.DeleteAsync(scriptId: scriptId);
     }
 
-    private IQueryable<Script> ExecuteGetAllScript(bool ignoreFilters = false) =>
-        processingService.GetAllScript(ignoreFilters: ignoreFilters);
+    private IQueryable<Script> ExecuteGetAllScripts(bool ignoreFilters = false) =>
+        processingService.GetAllScripts(ignoreFilters: ignoreFilters);
 
     private async ValueTask<Script> ExecuteUpdateScriptAsync(Script updatedScript)
     {

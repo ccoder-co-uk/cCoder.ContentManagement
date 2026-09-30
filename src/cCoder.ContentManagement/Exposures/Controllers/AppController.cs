@@ -69,7 +69,7 @@ public class AppController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllApp());
+            return Ok(value: service.GetAllApps());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -98,7 +98,7 @@ public class AppController : ODataController
     {
         try
         {
-            App result = service.GetAllApp()
+            App result = service.GetAllApps()
                 .FirstOrDefault(predicate: app => app.Id == key);
 
             return result is null

@@ -24,11 +24,11 @@ internal partial class ScriptProcessingService(IScriptService service) : IScript
 
     });
 
-    public IQueryable<Script> GetAllScript(bool ignoreFilters = false) =>
+    public IQueryable<Script> GetAllScripts(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Script>>(operation: () =>
     {
-        ValidateAllScriptOnGet(inputs: [ignoreFilters]);
-        return service.GetAllScript(ignoreFilters: ignoreFilters);
+        ValidateAllScriptsOnGet(inputs: [ignoreFilters]);
+        return service.GetAllScripts(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Script> AddScriptAsync(Script newScript) =>

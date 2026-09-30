@@ -27,11 +27,11 @@ internal partial class SubmissionOrchestrationService(
         return processingService.GetSubmission(submissionId: ValidateId(submissionId: submissionId, parameterName: "id"));
     });
 
-    public IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false) =>
+    public IQueryable<Submission> GetAllSubmissions(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Submission>>(operation: () =>
     {
-        ValidateAllSubmissionOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllSubmission(ignoreFilters: ignoreFilters);
+        ValidateAllSubmissionsOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllSubmissions(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Submission> AddSubmissionAsync(Submission newSubmission) =>

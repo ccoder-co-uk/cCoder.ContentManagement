@@ -14,7 +14,7 @@ internal interface IPageProcessingService
 {
     Page GetPage(int pageId);
 
-    IQueryable<Page> GetAllPage(bool ignoreFilters = false);
+    IQueryable<Page> GetAllPages(bool ignoreFilters = false);
 
     ValueTask<Page> AddPageAsync(Page newPage);
 
@@ -32,7 +32,7 @@ internal interface IPageProcessingService
 
     Page GetRootPage(int pageId);
 
-    IEnumerable<Page> GetChildrenPage(int pageId);
+    IEnumerable<Page> GetChildrenPages(int pageId);
 
     string MenuFor(int pageId, string culture);
 

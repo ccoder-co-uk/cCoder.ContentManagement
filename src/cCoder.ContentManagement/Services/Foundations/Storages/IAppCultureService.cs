@@ -10,7 +10,7 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal interface IAppCultureService
 {
-    IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false);
+    IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters = false);
 
     AppCulture GetAppCulture(int appId, string cultureId, bool ignoreFilters = false);
 

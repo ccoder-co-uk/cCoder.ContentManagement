@@ -96,15 +96,15 @@ resourceOrchestrationService: resourceOrchestrationServiceMock.Object);
         Resource existingResource = new() { Id = 789, AppId = app.Id };
 
         appCultureOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllAppCulture(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllAppCultures(ignoreFilters: true))
             .Returns(value: new[] { existingCulture }.AsQueryable());
 
         scriptOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllScript(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllScripts(ignoreFilters: true))
             .Returns(value: new[] { existingScript }.AsQueryable());
 
         resourceOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllResource(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllResources(ignoreFilters: true))
             .Returns(value: new[] { existingResource }.AsQueryable());
 
         appCultureOrchestrationServiceMock
@@ -127,15 +127,15 @@ deletedResource: It.Is<IEnumerable<Resource>>(match: items => items.Single() == 
 
         // Then
         appCultureOrchestrationServiceMock.Verify(
-            expression: service => service.GetAllAppCulture(ignoreFilters: true),
+            expression: service => service.GetAllAppCultures(ignoreFilters: true),
             times: Times.Exactly(callCount: 2));
 
         scriptOrchestrationServiceMock.Verify(
-            expression: service => service.GetAllScript(ignoreFilters: true),
+            expression: service => service.GetAllScripts(ignoreFilters: true),
             times: Times.Exactly(callCount: 2));
 
         resourceOrchestrationServiceMock.Verify(
-            expression: service => service.GetAllResource(ignoreFilters: true),
+            expression: service => service.GetAllResources(ignoreFilters: true),
             times: Times.Exactly(callCount: 2));
 
         appCultureOrchestrationServiceMock.Verify(

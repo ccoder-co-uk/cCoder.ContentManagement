@@ -22,7 +22,7 @@ internal sealed class TemplateManager(
         templateManagerAggregationService.ConvertHtmlToPdf(html: html);
 
     public IQueryable<Template> GetAll() =>
-        templateManagerAggregationService.GetAllTemplate();
+        templateManagerAggregationService.GetAllTemplates();
 
     public Template Get(int templateId) =>
         templateManagerAggregationService.GetTemplate(templateId: templateId);

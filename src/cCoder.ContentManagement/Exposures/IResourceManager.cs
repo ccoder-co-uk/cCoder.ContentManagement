@@ -14,7 +14,7 @@ public interface IResourceManager
 {
     Resource GetResource(int resourceId);
 
-    IQueryable<Resource> GetAllResource(bool ignoreFilters = false);
+    IQueryable<Resource> GetAllResources(bool ignoreFilters = false);
 
     ValueTask<Resource> AddResourceAsync(Resource newResource);
 

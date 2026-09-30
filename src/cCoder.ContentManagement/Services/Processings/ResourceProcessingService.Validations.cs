@@ -9,7 +9,7 @@ internal partial class ResourceProcessingService
     private static void ValidateResourceOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllResourceOnGet(object[] inputs) =>
+    private static void ValidateAllResourcesOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateResourceOnAdd(object[] inputs) =>

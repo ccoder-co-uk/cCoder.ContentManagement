@@ -27,7 +27,7 @@ public partial class ResourceProcessingServiceTests
             .Returns(value: rootResource);
 
         resourceServiceMock
-            .Setup(expression: x => x.GetAllResource())
+            .Setup(expression: x => x.GetAllResources())
             .Returns(value: new[] { rootResource, secondVersion }.AsQueryable());
 
         resourceServiceMock
@@ -43,7 +43,7 @@ public partial class ResourceProcessingServiceTests
 
         // Then
         resourceServiceMock.Verify(expression: x => x.GetResource(resourceId: rootResource.Id), times: Times.Once);
-        resourceServiceMock.Verify(expression: x => x.GetAllResource(), times: Times.Exactly(callCount: 2));
+        resourceServiceMock.Verify(expression: x => x.GetAllResources(), times: Times.Exactly(callCount: 2));
         resourceServiceMock.Verify(expression: x => x.DeleteAsync(resourceId: rootResource.Id), times: Times.Once);
         resourceServiceMock.Verify(expression: x => x.DeleteAsync(resourceId: secondVersion.Id), times: Times.Once);
         resourceServiceMock.VerifyNoOtherCalls();

@@ -12,7 +12,7 @@ internal interface IPageService
 {
     Page GetPage(int pageId, bool ignoreFilters = false);
 
-    IQueryable<Page> GetAllPage(bool ignoreFilters = false);
+    IQueryable<Page> GetAllPages(bool ignoreFilters = false);
 
     bool LayoutExistsForApp(int appId, string layoutName);
 

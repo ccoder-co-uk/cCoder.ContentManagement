@@ -32,7 +32,7 @@ public partial class PageCoordinationServiceTests
         page.Pages = null;
 
         pageOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllPage(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllPages(ignoreFilters: true))
             .Returns(value: Array.Empty<LocalPage>()
             .AsQueryable());
 
@@ -44,7 +44,7 @@ public partial class PageCoordinationServiceTests
         pageInfoOrchestrationServiceMock.VerifyNoOtherCalls();
         contentOrchestrationServiceMock.VerifyNoOtherCalls();
         pageRoleOrchestrationServiceMock.VerifyNoOtherCalls();
-        pageOrchestrationServiceMock.Verify(expression: service => service.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageOrchestrationServiceMock.Verify(expression: service => service.GetAllPages(ignoreFilters: true), times: Times.Once);
         pageOrchestrationServiceMock.VerifyNoOtherCalls();
     }
 
@@ -145,7 +145,7 @@ public partial class PageCoordinationServiceTests
         };
 
         pageInfoOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllPageInfo(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllPageInfos(ignoreFilters: true))
             .Returns(value: existingPageInfos.AsQueryable());
 
         pageInfoOrchestrationServiceMock
@@ -164,7 +164,7 @@ public partial class PageCoordinationServiceTests
             .ReturnsAsync(valueFunction: (LocalPageInfo item) => item);
 
         contentOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllContent(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllContents(ignoreFilters: true))
             .Returns(value: existingContents.AsQueryable());
 
         contentOrchestrationServiceMock
@@ -181,11 +181,11 @@ public partial class PageCoordinationServiceTests
             .ReturnsAsync(valueFunction: (LocalContent item) => item);
 
         pageRoleOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllPageRole(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllPageRoles(ignoreFilters: true))
             .Returns(value: existingPageRoles.AsQueryable());
 
         pageOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllPage(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { localExistingChild }.AsQueryable());
 
         pageOrchestrationServiceMock
@@ -198,7 +198,7 @@ public partial class PageCoordinationServiceTests
         await structureCoordinationService.HandlePageUpdateAsync(page: page);
 
         // Then
-        pageInfoOrchestrationServiceMock.Verify(expression: service => service.GetAllPageInfo(ignoreFilters: true), times: Times.Once);
+        pageInfoOrchestrationServiceMock.Verify(expression: service => service.GetAllPageInfos(ignoreFilters: true), times: Times.Once);
 
         pageInfoOrchestrationServiceMock.Verify(expression: service =>
             service.UpdatePageInfoAsync(updatedPageInfo: It.Is<LocalPageInfo>(match: item =>
@@ -214,7 +214,7 @@ public partial class PageCoordinationServiceTests
             .Keywords)),
 times: Times.Once);
 
-        contentOrchestrationServiceMock.Verify(expression: service => service.GetAllContent(ignoreFilters: true), times: Times.Once);
+        contentOrchestrationServiceMock.Verify(expression: service => service.GetAllContents(ignoreFilters: true), times: Times.Once);
 
         contentOrchestrationServiceMock.Verify(expression: service =>
             service.UpdateContentAsync(updatedContent: It.Is<LocalContent>(match: item =>
@@ -231,9 +231,9 @@ times: Times.Once);
 
         pageInfoOrchestrationServiceMock.VerifyNoOtherCalls();
         contentOrchestrationServiceMock.VerifyNoOtherCalls();
-        pageRoleOrchestrationServiceMock.Verify(expression: service => service.GetAllPageRole(ignoreFilters: true), times: Times.Once);
+        pageRoleOrchestrationServiceMock.Verify(expression: service => service.GetAllPageRoles(ignoreFilters: true), times: Times.Once);
         pageRoleOrchestrationServiceMock.VerifyNoOtherCalls();
-        pageOrchestrationServiceMock.Verify(expression: service => service.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageOrchestrationServiceMock.Verify(expression: service => service.GetAllPages(ignoreFilters: true), times: Times.Once);
 
         pageOrchestrationServiceMock.Verify(
 expression: service => service.AddOrUpdatePageResult(newPage: It.Is<IEnumerable<LocalPage>>(match: pages => pages.Single()

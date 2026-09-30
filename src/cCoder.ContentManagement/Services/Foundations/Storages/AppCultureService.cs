@@ -11,10 +11,10 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 
 internal partial class AppCultureService(IAppCultureBroker appCultureBroker) : IAppCultureService
 {
-    public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
+    public IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters = false) =>
         TryCatch<IQueryable<AppCulture>>(operation: () =>
     {
-        ValidateAllAppCultureOnGet(inputs: [ignoreFilters]);
+        ValidateAllAppCulturesOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? appCultureBroker.GetAllAppCulturesIgnoringFilters()

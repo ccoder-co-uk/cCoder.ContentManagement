@@ -19,18 +19,18 @@ public partial class TemplateProcessingServiceTests
         // Given
         IQueryable<Template> entities = new[] { CreateRandomTemplate() }.AsQueryable();
 
-        templateServiceMock.Setup(expression: x => x.GetAllTemplate())
+        templateServiceMock.Setup(expression: x => x.GetAllTemplates())
             .Returns(value: entities);
 
         // When
-        IQueryable<Template> result = templateProcessingService.GetAllTemplate();
+        IQueryable<Template> result = templateProcessingService.GetAllTemplates();
 
         // Then
 
         result.Should()
             .BeSameAs(expected: entities);
 
-        templateServiceMock.Verify(expression: x => x.GetAllTemplate(), times: Times.Once);
+        templateServiceMock.Verify(expression: x => x.GetAllTemplates(), times: Times.Once);
         templateServiceMock.VerifyNoOtherCalls();
     }
 

@@ -59,7 +59,7 @@ internal partial class CommonObjectService
     private static void ValidateCommonObjectOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllCommonObjectOnGet(object[] inputs) =>
+    private static void ValidateAllCommonObjectsOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateCommonObjectOnAdd(object[] inputs) =>

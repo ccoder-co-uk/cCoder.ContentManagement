@@ -20,18 +20,18 @@ public partial class CommonObjectOrchestrationServiceTests
         // Given
         IQueryable<CommonObject> entities = new[] { CreateRandomCommonObject() }.AsQueryable();
 
-        commonObjectProcessingServiceMock.Setup(expression: x => x.GetAllCommonObject(ignoreFilters: true))
+        commonObjectProcessingServiceMock.Setup(expression: x => x.GetAllCommonObjects(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
-        IQueryable<CommonObject> result = orchestrationService.GetAllCommonObject(ignoreFilters: true);
+        IQueryable<CommonObject> result = orchestrationService.GetAllCommonObjects(ignoreFilters: true);
 
         // Then
 
         result.Should()
             .BeSameAs(expected: entities);
 
-        commonObjectProcessingServiceMock.Verify(expression: x => x.GetAllCommonObject(ignoreFilters: true), times: Times.Once);
+        commonObjectProcessingServiceMock.Verify(expression: x => x.GetAllCommonObjects(ignoreFilters: true), times: Times.Once);
         commonObjectProcessingServiceMock.VerifyNoOtherCalls();
         authorizationProcessingServiceMock.VerifyNoOtherCalls();
     }

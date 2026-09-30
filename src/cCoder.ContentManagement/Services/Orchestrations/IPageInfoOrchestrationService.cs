@@ -13,7 +13,7 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 public interface IPageInfoOrchestrationService
 {
     PageInfo GetPageInfo(int pageInfoId);
-    IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false);
+    IQueryable<PageInfo> GetAllPageInfos(bool ignoreFilters = false);
     ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo);
     ValueTask<PageInfo> UpdatePageInfoAsync(PageInfo updatedPageInfo);
     ValueTask DeleteAsync(int pageInfoId);

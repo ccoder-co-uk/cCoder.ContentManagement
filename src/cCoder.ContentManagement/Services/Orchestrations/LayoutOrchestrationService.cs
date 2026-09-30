@@ -28,11 +28,11 @@ internal partial class LayoutOrchestrationService(
         return processingService.GetLayout(layoutId: ValidateId(layoutId: layoutId, parameterName: "id"));
     });
 
-    public IQueryable<Layout> GetAllLayout(bool ignoreFilters = false) =>
+    public IQueryable<Layout> GetAllLayouts(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Layout>>(operation: () =>
     {
-        ValidateAllLayoutOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllLayout(ignoreFilters: ignoreFilters);
+        ValidateAllLayoutsOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllLayouts(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Layout> AddLayoutAsync(Layout newLayout) =>
@@ -85,7 +85,7 @@ internal partial class LayoutOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllLayout(ignoreFilters: true)
+            entity = processingService.GetAllLayouts(ignoreFilters: true)
                 .FirstOrDefault(predicate: layout => layout.Id == layoutId);
         }
 
@@ -110,7 +110,7 @@ internal partial class LayoutOrchestrationService(
         ValidateByAppIdOnDelete(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        Layout[] layoutsToDelete = [.. ExecuteGetAllLayout(ignoreFilters: true)
+        Layout[] layoutsToDelete = [.. ExecuteGetAllLayouts(ignoreFilters: true)
             .Where(predicate: layout => layout.AppId == appId)];
 
         if (layoutsToDelete.Length > 0)
@@ -172,7 +172,7 @@ internal partial class LayoutOrchestrationService(
         string[] names = validatedItems.Select(selector: layout => layout.Name.ToLower())
             .ToArray();
 
-        var dbVersions = processingService.GetAllLayout()
+        var dbVersions = processingService.GetAllLayouts()
             .Where(predicate: layout => layout.AppId == appId && ((ReadOnlySpan<string>)names).Contains(value: layout.Name.ToLower()))
             .Select(selector: layout => new { layout.Id, layout.Name })
             .ToArray();
@@ -319,7 +319,7 @@ internal partial class LayoutOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllLayout(ignoreFilters: true)
+            entity = processingService.GetAllLayouts(ignoreFilters: true)
                 .FirstOrDefault(predicate: layout => layout.Id == layoutId);
         }
 
@@ -337,8 +337,8 @@ internal partial class LayoutOrchestrationService(
         await processingService.DeleteAsync(layoutId: layoutId);
     }
 
-    private IQueryable<Layout> ExecuteGetAllLayout(bool ignoreFilters = false) =>
-        processingService.GetAllLayout(ignoreFilters: ignoreFilters);
+    private IQueryable<Layout> ExecuteGetAllLayouts(bool ignoreFilters = false) =>
+        processingService.GetAllLayouts(ignoreFilters: ignoreFilters);
 
     private async ValueTask<Layout> ExecuteUpdateLayoutAsync(Layout updatedLayout)
     {

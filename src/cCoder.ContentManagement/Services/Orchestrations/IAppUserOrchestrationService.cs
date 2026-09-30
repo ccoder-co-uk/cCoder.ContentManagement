@@ -9,5 +9,5 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IAppUserOrchestrationService
 {
-    IQueryable<User> GetAllAppUser(int appId);
+    IQueryable<User> GetAllUsers(int appId);
 }

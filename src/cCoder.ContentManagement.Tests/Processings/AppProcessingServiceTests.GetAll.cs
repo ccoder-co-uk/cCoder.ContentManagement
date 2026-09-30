@@ -19,18 +19,18 @@ public partial class AppProcessingServiceTests
         // Given
         IQueryable<App> entities = new[] { CreateRandomApp() }.AsQueryable();
 
-        appServiceMock.Setup(expression: x => x.GetAllApp())
+        appServiceMock.Setup(expression: x => x.GetAllApps())
             .Returns(value: entities);
 
         // When
-        IQueryable<App> result = appProcessingService.GetAllApp();
+        IQueryable<App> result = appProcessingService.GetAllApps();
 
         // Then
 
         result.Should()
             .BeSameAs(expected: entities);
 
-        appServiceMock.Verify(expression: x => x.GetAllApp(), times: Times.Once);
+        appServiceMock.Verify(expression: x => x.GetAllApps(), times: Times.Once);
         appServiceMock.VerifyNoOtherCalls();
     }
 

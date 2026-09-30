@@ -22,11 +22,11 @@ internal partial class ComponentProcessingService(IComponentService service) : I
         return service.GetComponent(componentId: componentId);
     });
 
-    public IQueryable<Component> GetAllComponent(bool ignoreFilters = false) =>
+    public IQueryable<Component> GetAllComponents(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Component>>(operation: () =>
     {
-        ValidateAllComponentOnGet(inputs: [ignoreFilters]);
-        return service.GetAllComponent(ignoreFilters: ignoreFilters);
+        ValidateAllComponentsOnGet(inputs: [ignoreFilters]);
+        return service.GetAllComponents(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Component> AddComponentAsync(Component newComponent) =>

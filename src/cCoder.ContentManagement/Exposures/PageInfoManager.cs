@@ -16,8 +16,8 @@ internal sealed class PageInfoManager(IPageInfoOrchestrationService service) : I
     public PageInfo GetPageInfo(int pageInfoId) =>
         service.GetPageInfo(pageInfoId: pageInfoId);
 
-    public IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false) =>
-        service.GetAllPageInfo(ignoreFilters: ignoreFilters);
+    public IQueryable<PageInfo> GetAllPageInfos(bool ignoreFilters = false) =>
+        service.GetAllPageInfos(ignoreFilters: ignoreFilters);
 
     public ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo) =>
         service.AddPageInfoAsync(newPageInfo: newPageInfo);

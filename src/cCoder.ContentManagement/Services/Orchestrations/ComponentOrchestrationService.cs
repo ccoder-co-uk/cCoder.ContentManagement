@@ -30,11 +30,11 @@ internal partial class ComponentOrchestrationService(
 
     });
 
-    public IQueryable<Component> GetAllComponent(bool ignoreFilters = false) =>
+    public IQueryable<Component> GetAllComponents(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Component>>(operation: () =>
     {
-        ValidateAllComponentOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllComponent(ignoreFilters: ignoreFilters);
+        ValidateAllComponentsOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllComponents(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Component> AddComponentAsync(Component newComponent) =>
@@ -89,7 +89,7 @@ internal partial class ComponentOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllComponent(ignoreFilters: true)
+            entity = processingService.GetAllComponents(ignoreFilters: true)
                 .FirstOrDefault(predicate: component => component.Id == componentId);
         }
 
@@ -114,7 +114,7 @@ internal partial class ComponentOrchestrationService(
         ValidateByAppIdOnDelete(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        Component[] componentsToDelete = [.. ExecuteGetAllComponent(ignoreFilters: true)
+        Component[] componentsToDelete = [.. ExecuteGetAllComponents(ignoreFilters: true)
             .Where(predicate: component => component.AppId == appId)];
 
         foreach (Component component in componentsToDelete)
@@ -176,7 +176,7 @@ internal partial class ComponentOrchestrationService(
         string[] names = validatedItems.Select(selector: component => component.Name.ToLower())
             .ToArray();
 
-        var dbVersions = processingService.GetAllComponent()
+        var dbVersions = processingService.GetAllComponents()
             .Where(predicate: component => component.AppId == appId && ((ReadOnlySpan<string>)names).Contains(value: component.Name.ToLower()))
             .Select(selector: component => new { component.Id, component.Name })
             .ToArray();
@@ -306,7 +306,7 @@ internal partial class ComponentOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllComponent(ignoreFilters: true)
+            entity = processingService.GetAllComponents(ignoreFilters: true)
                 .FirstOrDefault(predicate: component => component.Id == componentId);
         }
 
@@ -324,8 +324,8 @@ internal partial class ComponentOrchestrationService(
         await processingService.DeleteAsync(componentId: componentId);
     }
 
-    private IQueryable<Component> ExecuteGetAllComponent(bool ignoreFilters = false) =>
-        processingService.GetAllComponent(ignoreFilters: ignoreFilters);
+    private IQueryable<Component> ExecuteGetAllComponents(bool ignoreFilters = false) =>
+        processingService.GetAllComponents(ignoreFilters: ignoreFilters);
 
     private async ValueTask<Component> ExecuteUpdateComponentAsync(Component updatedComponent)
     {

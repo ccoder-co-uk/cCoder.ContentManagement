@@ -21,7 +21,7 @@ internal interface IAppProcessingService
 
     App GetByDomainApp(string domain, bool ignoreFilters = false);
 
-    IQueryable<App> GetAllApp(bool ignoreFilters = false);
+    IQueryable<App> GetAllApps(bool ignoreFilters = false);
 
     App PrepareNewApp(App app, bool isFirstApp);
 

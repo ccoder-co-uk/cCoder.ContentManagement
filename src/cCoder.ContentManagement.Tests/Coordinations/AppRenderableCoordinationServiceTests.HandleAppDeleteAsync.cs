@@ -98,7 +98,7 @@ times: Times.Once);
 
         layoutOrchestrationServiceMock
             .InSequence(sequence: sequence)
-            .Setup(expression: service => service.GetAllLayout(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllLayouts(ignoreFilters: true))
             .Returns(value: new[] { layout }.AsQueryable());
 
         layoutOrchestrationServiceMock
@@ -109,7 +109,7 @@ newLayout: It.Is<IEnumerable<Layout>>(match: items => items.Single() == layout &
 
         pageOrchestrationServiceMock
             .InSequence(sequence: sequence)
-            .Setup(expression: service => service.GetAllPage(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { page }.AsQueryable());
 
         pageOrchestrationServiceMock
@@ -123,13 +123,13 @@ newPage: It.Is<IEnumerable<Page>>(match: items => items.Single() == page && page
         await pageComponentCoordinationService.HandleAppUpdateAsync(app: app);
 
         // Then
-        layoutOrchestrationServiceMock.Verify(expression: service => service.GetAllLayout(ignoreFilters: true), times: Times.Once);
+        layoutOrchestrationServiceMock.Verify(expression: service => service.GetAllLayouts(ignoreFilters: true), times: Times.Once);
 
         layoutOrchestrationServiceMock.Verify(
 expression: service => service.AddOrUpdateLayoutResult(newLayout: It.Is<IEnumerable<Layout>>(match: items => items.Single() == layout)),
 times: Times.Once);
 
-        pageOrchestrationServiceMock.Verify(expression: service => service.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageOrchestrationServiceMock.Verify(expression: service => service.GetAllPages(ignoreFilters: true), times: Times.Once);
 
         pageOrchestrationServiceMock.Verify(
 expression: service => service.AddOrUpdatePageResult(newPage: It.Is<IEnumerable<Page>>(match: items => items.Single() == page)),
@@ -221,19 +221,19 @@ times: Times.Once);
         Layout existingLayout = new() { Id = 4, AppId = app.Id };
 
         pageOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllPage(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { existingPage }.AsQueryable());
 
         componentOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllComponent(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllComponents(ignoreFilters: true))
             .Returns(value: new[] { existingComponent }.AsQueryable());
 
         templateOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllTemplate(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllTemplates(ignoreFilters: true))
             .Returns(value: new[] { existingTemplate }.AsQueryable());
 
         layoutOrchestrationServiceMock
-            .Setup(expression: service => service.GetAllLayout(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllLayouts(ignoreFilters: true))
             .Returns(value: new[] { existingLayout }.AsQueryable());
 
         pageOrchestrationServiceMock
@@ -273,10 +273,10 @@ deletedLayout: It.Is<IEnumerable<Layout>>(match: items => items.Single() == exis
         await pageComponentCoordinationService.HandleAppUpdateAsync(app: app);
 
         // Then
-        pageOrchestrationServiceMock.Verify(expression: service => service.GetAllPage(ignoreFilters: true), times: Times.Once);
-        componentOrchestrationServiceMock.Verify(expression: service => service.GetAllComponent(ignoreFilters: true), times: Times.Exactly(callCount: 2));
-        templateOrchestrationServiceMock.Verify(expression: service => service.GetAllTemplate(ignoreFilters: true), times: Times.Once);
-        layoutOrchestrationServiceMock.Verify(expression: service => service.GetAllLayout(ignoreFilters: true), times: Times.Once);
+        pageOrchestrationServiceMock.Verify(expression: service => service.GetAllPages(ignoreFilters: true), times: Times.Once);
+        componentOrchestrationServiceMock.Verify(expression: service => service.GetAllComponents(ignoreFilters: true), times: Times.Exactly(callCount: 2));
+        templateOrchestrationServiceMock.Verify(expression: service => service.GetAllTemplates(ignoreFilters: true), times: Times.Once);
+        layoutOrchestrationServiceMock.Verify(expression: service => service.GetAllLayouts(ignoreFilters: true), times: Times.Once);
 
         pageOrchestrationServiceMock.Verify(
 expression: service => service.DeleteAllPageAsync(deletedPage: It.Is<IEnumerable<Page>>(match: items => items.Single() == existingPage)),

@@ -28,7 +28,7 @@ public partial class TemplateServiceTests
             .Returns(value: templates);
 
         // When
-        IQueryable<Template> result = templateService.GetAllTemplate();
+        IQueryable<Template> result = templateService.GetAllTemplates();
 
         // Then
 

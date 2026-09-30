@@ -10,7 +10,7 @@
     <UseLocalData Condition="'$(UseLocalData)' == 'true' and !Exists('$(LocalDataProject)')">false</UseLocalData>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.29.1241" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
+    <PackageReference Include="cCoder.CodeAnalysis" Version="2026.9.30.859" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
     <PackageReference Include="cCoder.Data" Version="2026.9.29.1100" Condition="'$(UseLocalData)' != 'true'" />
     <PackageReference Include="cCoder.Eventing" Version="2026.9.27.1313" />
     <PackageReference Include="FluentAssertions" Version="8.11.0" />

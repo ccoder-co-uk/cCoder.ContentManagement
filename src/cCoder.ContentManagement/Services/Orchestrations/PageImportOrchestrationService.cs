@@ -24,7 +24,7 @@ internal sealed partial class PageImportOrchestrationService(
         if (page.PageInfo != null && page.PageInfo.Any())
         {
             PageInfo[] existingItems = pageInfoProcessingService
-                .GetAllPageInfo(ignoreFilters: true)
+                .GetAllPageInfos(ignoreFilters: true)
                 .Where(predicate: item => item.PageId == page.Id)
                 .ToArray();
 
@@ -45,7 +45,7 @@ internal sealed partial class PageImportOrchestrationService(
         if (page.Contents != null && page.Contents.Any())
         {
             Content[] existingItems = contentProcessingService
-                .GetAllContent(ignoreFilters: true)
+                .GetAllContents(ignoreFilters: true)
                 .Where(predicate: item => item.PageId == page.Id)
                 .ToArray();
 

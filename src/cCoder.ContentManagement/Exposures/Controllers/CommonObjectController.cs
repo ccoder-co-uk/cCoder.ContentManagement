@@ -34,7 +34,7 @@ public class CommonObjectController(
     {
         try
         {
-            IEnumerable<CommonObject> result = service.LatestCommonObject(type: type);
+            IEnumerable<CommonObject> result = service.LatestCommonObjects(type: type);
 
             return result is null
                 ? NotFound()
@@ -67,7 +67,7 @@ public class CommonObjectController(
     {
         try
         {
-            return Ok(value: service.GetAllCommonObject());
+            return Ok(value: service.GetAllCommonObjects());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -96,7 +96,7 @@ public class CommonObjectController(
     {
         try
         {
-            CommonObject result = service.GetAllCommonObject()
+            CommonObject result = service.GetAllCommonObjects()
                 .FirstOrDefault(predicate: commonObject => commonObject.Id == key);
 
             return result is null

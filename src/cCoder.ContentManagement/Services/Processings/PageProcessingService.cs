@@ -36,11 +36,11 @@ internal partial class PageProcessingService(
 
     });
 
-    public IQueryable<Page> GetAllPage(bool ignoreFilters = false) =>
+    public IQueryable<Page> GetAllPages(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Page>>(operation: () =>
     {
-        ValidateAllPageOnGet(inputs: [ignoreFilters]);
-        return service.GetAllPage(ignoreFilters: ignoreFilters);
+        ValidateAllPagesOnGet(inputs: [ignoreFilters]);
+        return service.GetAllPages(ignoreFilters: ignoreFilters);
     });
 
     public string MenuFor(int pageId, string culture) =>
@@ -49,7 +49,7 @@ internal partial class PageProcessingService(
         ValidateMenuFor(inputs: [pageId, culture]);
         ValidateId(pageId: pageId, parameterName: "id");
 
-        IEnumerable<string> enumerable = service.GetAllPage(ignoreFilters: false)
+        IEnumerable<string> enumerable = service.GetAllPages(ignoreFilters: false)
             .Where(predicate: page => page.ParentId == pageId && page.ShowOnMenus)
             .OrderBy(keySelector: page => page.Order)
             .Select(selector: page =>
@@ -77,13 +77,13 @@ internal partial class PageProcessingService(
 
     });
 
-    public IEnumerable<Page> GetChildrenPage(int pageId) =>
+    public IEnumerable<Page> GetChildrenPages(int pageId) =>
         TryCatch<IEnumerable<Page>>(operation: () =>
     {
-        ValidateChildrenPageOnGet(inputs: [pageId]);
+        ValidateChildrenPagesOnGet(inputs: [pageId]);
         ValidateId(pageId: pageId, parameterName: "id");
 
-        return ExecuteGetAllPage()
+        return ExecuteGetAllPages()
             .Where(predicate: page => page.ParentId == (int?)pageId);
 
     });
@@ -104,7 +104,7 @@ internal partial class PageProcessingService(
         ValidatePageOnUpdate(inputs: [updatedPage]);
         ValidatePage(page: updatedPage, parameterName: "page");
 
-        IQueryable<Page> pages = service.GetAllPage(ignoreFilters: true);
+        IQueryable<Page> pages = service.GetAllPages(ignoreFilters: true);
 
         Page dbVersion = pages
             .Where(predicate: existingPage => existingPage.Id == updatedPage.Id)
@@ -154,7 +154,7 @@ internal partial class PageProcessingService(
 
         if (newPage.ParentId.HasValue)
         {
-            parent = service.GetAllPage(ignoreFilters: false)
+            parent = service.GetAllPages(ignoreFilters: false)
                 .Where(predicate: existingPage => existingPage.Id == newPage.ParentId.Value)
                 .FirstOrDefault();
         }
@@ -167,7 +167,7 @@ internal partial class PageProcessingService(
                 string normalizedParentPath = parentPath.TrimStart(trimChar: '/')
                     .ToLower();
 
-                parent = service.GetAllPage(ignoreFilters: false)
+                parent = service.GetAllPages(ignoreFilters: false)
                     .Where(predicate: existingPage =>
                         existingPage.AppId == newPage.AppId &&
                         existingPage.Path.ToLower() == normalizedParentPath)
@@ -198,10 +198,10 @@ internal partial class PageProcessingService(
         storagePage.ParentId = parent?.Id;
         storagePage.Parent = null;
 
-        storagePage.PageInfo = ClonePageInfo(
+        storagePage.PageInfo = ClonePageInfos(
             pageInfo: newPage.PageInfo);
 
-        storagePage.Contents = CloneContent(
+        storagePage.Contents = CloneContents(
             contents: newPage.Contents);
 
         storagePage.Roles = ClonePageRoles(
@@ -288,7 +288,7 @@ internal partial class PageProcessingService(
 
     private async ValueTask RecomputePathsAsync(int appId)
     {
-        IQueryable<Page> pagesQuery = service.GetAllPage(ignoreFilters: true)
+        IQueryable<Page> pagesQuery = service.GetAllPages(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
             .OrderBy(keySelector: page => page.Order);
 
@@ -371,7 +371,7 @@ internal partial class PageProcessingService(
     {
         string normalizedPath = (page.Path ?? string.Empty).ToUpperInvariant();
 
-        bool pathExists = service.GetAllPage(ignoreFilters: true)
+        bool pathExists = service.GetAllPages(ignoreFilters: true)
             .Any(predicate: existingPage =>
                 existingPage.AppId == page.AppId &&
                 existingPage.Id != page.Id &&
@@ -391,7 +391,7 @@ internal partial class PageProcessingService(
 
         if (page.ParentId.HasValue)
         {
-            parent = service.GetAllPage(ignoreFilters: false)
+            parent = service.GetAllPages(ignoreFilters: false)
                 .Where(predicate: existingPage => existingPage.Id == page.ParentId.Value)
                 .FirstOrDefault();
         }
@@ -404,7 +404,7 @@ internal partial class PageProcessingService(
                 string normalizedParentPath = parentPath.TrimStart(trimChar: '/')
                     .ToLower();
 
-                parent = service.GetAllPage(ignoreFilters: false)
+                parent = service.GetAllPages(ignoreFilters: false)
                     .Where(predicate: existingPage =>
                         existingPage.AppId == page.AppId &&
                         existingPage.Path.ToLower() == normalizedParentPath)
@@ -435,9 +435,9 @@ internal partial class PageProcessingService(
         newPage.ParentId = parent?.Id;
         newPage.Parent = null;
 
-        newPage.PageInfo = ClonePageInfo(pageInfo: page.PageInfo);
+        newPage.PageInfo = ClonePageInfos(pageInfo: page.PageInfo);
 
-        newPage.Contents = CloneContent(contents: page.Contents);
+        newPage.Contents = CloneContents(contents: page.Contents);
 
         newPage.Roles = ClonePageRoles(
             pageRoles: ResolveRolesForNewPage(
@@ -454,8 +454,8 @@ internal partial class PageProcessingService(
         return service.DeleteAsync(pageId: pageId);
     }
 
-    private IQueryable<Page> ExecuteGetAllPage(bool ignoreFilters = false) =>
-        service.GetAllPage(ignoreFilters: ignoreFilters);
+    private IQueryable<Page> ExecuteGetAllPages(bool ignoreFilters = false) =>
+        service.GetAllPages(ignoreFilters: ignoreFilters);
 
     private Page ExecuteGetPage(int pageId)
     {
@@ -467,7 +467,7 @@ internal partial class PageProcessingService(
     {
         ValidatePage(page: updatedPage, parameterName: "page");
 
-        IQueryable<Page> pages = service.GetAllPage(ignoreFilters: true);
+        IQueryable<Page> pages = service.GetAllPages(ignoreFilters: true);
 
         Page dbVersion = pages
             .Where(predicate: existingPage => existingPage.Id == updatedPage.Id)
@@ -644,7 +644,7 @@ internal partial class PageProcessingService(
             };
     }
 
-    private static List<PageInfo> ClonePageInfo(
+    private static List<PageInfo> ClonePageInfos(
         IEnumerable<PageInfo> pageInfo)
     {
         List<PageInfo> results = [];
@@ -664,7 +664,7 @@ internal partial class PageProcessingService(
         return results;
     }
 
-    private static List<Content> CloneContent(
+    private static List<Content> CloneContents(
         IEnumerable<Content> contents)
     {
         List<Content> results = [];

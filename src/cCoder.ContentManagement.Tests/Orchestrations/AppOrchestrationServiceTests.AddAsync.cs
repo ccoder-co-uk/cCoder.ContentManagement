@@ -31,7 +31,7 @@ public partial class AppOrchestrationServiceTests
                     && context.Request.Privilege == "app_create")));
 
         appProcessingServiceMock
-            .Setup(expression: service => service.GetAllApp(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllApps(ignoreFilters: true))
             .Returns(value: Array.Empty<App>()
                 .AsQueryable());
 

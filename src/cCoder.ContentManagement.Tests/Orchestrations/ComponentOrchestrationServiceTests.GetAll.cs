@@ -19,12 +19,12 @@ public partial class ComponentOrchestrationServiceTests
         // Given
         IQueryable<Component> entities = new[] { CreateRandomComponent() }.AsQueryable();
 
-        componentProcessingServiceMock.Setup(expression: x => x.GetAllComponent(ignoreFilters: true))
+        componentProcessingServiceMock.Setup(expression: x => x.GetAllComponents(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
 
-        var result = orchestrationService.GetAllComponent(ignoreFilters: true)
+        var result = orchestrationService.GetAllComponents(ignoreFilters: true)
             .ToArray();
 
         // Then
@@ -33,7 +33,7 @@ public partial class ComponentOrchestrationServiceTests
             .Should()
             .Equal(expected: entities.Select(selector: item => item.Id));
 
-        componentProcessingServiceMock.Verify(expression: x => x.GetAllComponent(ignoreFilters: true), times: Times.Once);
+        componentProcessingServiceMock.Verify(expression: x => x.GetAllComponents(ignoreFilters: true), times: Times.Once);
         componentProcessingServiceMock.VerifyNoOtherCalls();
         componentEventProcessingServiceMock.VerifyNoOtherCalls();
     }

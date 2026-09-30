@@ -32,12 +32,12 @@ internal partial class CommonObjectProcessingService(
         return service.GetCommonObject(commonObjectId: commonObjectId);
     });
 
-    public IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false) =>
+    public IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters = false) =>
         TryCatch(operation: () =>
     {
-        ValidateAllCommonObjectOnGet(inputs: [ignoreFilters]);
+        ValidateAllCommonObjectsOnGet(inputs: [ignoreFilters]);
 
-        return service.GetAllCommonObject(ignoreFilters: ignoreFilters);
+        return service.GetAllCommonObjects(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
@@ -290,13 +290,13 @@ internal partial class CommonObjectProcessingService(
 
         NormalizeCulture(commonObject: updatedCommonObject);
 
-        int versionCount = service.GetAllCommonObject()
+        int versionCount = service.GetAllCommonObjects()
             .Count(predicate: item => item.Name == updatedCommonObject.Name
                 && item.Type == updatedCommonObject.Type
                 && item.Culture == updatedCommonObject.Culture
                 && item.Key == updatedCommonObject.Key) + 1;
 
-        int nextStoredVersion = (service.GetAllCommonObject()
+        int nextStoredVersion = (service.GetAllCommonObjects()
             .Where(predicate: item => item.Name == updatedCommonObject.Name
                 && item.Type == updatedCommonObject.Type
                 && item.Culture == updatedCommonObject.Culture

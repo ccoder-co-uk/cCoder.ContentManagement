@@ -24,11 +24,11 @@ internal partial class SubmissionProcessingService(ISubmissionService service) :
 
     });
 
-    public IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false) =>
+    public IQueryable<Submission> GetAllSubmissions(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Submission>>(operation: () =>
     {
-        ValidateAllSubmissionOnGet(inputs: [ignoreFilters]);
-        return service.GetAllSubmission(ignoreFilters: ignoreFilters);
+        ValidateAllSubmissionsOnGet(inputs: [ignoreFilters]);
+        return service.GetAllSubmissions(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Submission> AddSubmissionAsync(Submission newSubmission) =>

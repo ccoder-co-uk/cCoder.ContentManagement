@@ -36,7 +36,7 @@ public class ComponentController : ODataController
     {
         try
         {
-            return Ok(value: manager.GetAllComponent());
+            return Ok(value: manager.GetAllComponents());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -65,7 +65,7 @@ public class ComponentController : ODataController
     {
         try
         {
-            Component result = manager.GetAllComponent()
+            Component result = manager.GetAllComponents()
                 .FirstOrDefault(predicate: component => component.Id == key);
 
             return result is null

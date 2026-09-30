@@ -9,7 +9,7 @@ internal partial class PageOrchestrationService
     private static void ValidatePageOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllPageOnGet(object[] inputs) =>
+    private static void ValidateAllPagesOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidatePageOnAdd(object[] inputs) =>
@@ -39,7 +39,7 @@ internal partial class PageOrchestrationService
     private static void ValidateRootPageOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateChildrenPageOnGet(object[] inputs) =>
+    private static void ValidateChildrenPagesOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateMenuFor(object[] inputs) =>

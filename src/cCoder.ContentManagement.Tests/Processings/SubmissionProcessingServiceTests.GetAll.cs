@@ -19,18 +19,18 @@ public partial class SubmissionProcessingServiceTests
         // Given
         IQueryable<Submission> entities = new[] { CreateRandomSubmission() }.AsQueryable();
 
-        submissionServiceMock.Setup(expression: x => x.GetAllSubmission())
+        submissionServiceMock.Setup(expression: x => x.GetAllSubmissions())
             .Returns(value: entities);
 
         // When
-        IQueryable<Submission> result = submissionProcessingService.GetAllSubmission();
+        IQueryable<Submission> result = submissionProcessingService.GetAllSubmissions();
 
         // Then
 
         result.Should()
             .BeSameAs(expected: entities);
 
-        submissionServiceMock.Verify(expression: x => x.GetAllSubmission(), times: Times.Once);
+        submissionServiceMock.Verify(expression: x => x.GetAllSubmissions(), times: Times.Once);
         submissionServiceMock.VerifyNoOtherCalls();
     }
 

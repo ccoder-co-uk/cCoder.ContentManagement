@@ -18,11 +18,11 @@ public partial class PageOrchestrationServiceTests
         // Given
         Page[] expected = [CreateRandomPage()];
 
-        pageProcessingServiceMock.Setup(expression: x => x.GetChildrenPage(pageId: 1))
+        pageProcessingServiceMock.Setup(expression: x => x.GetChildrenPages(pageId: 1))
             .Returns(value: expected);
 
         // When
-        var result = orchestrationService.GetChildrenPage(pageId: 1)
+        var result = orchestrationService.GetChildrenPages(pageId: 1)
             .ToArray();
 
         // Then
@@ -30,7 +30,7 @@ public partial class PageOrchestrationServiceTests
             .Should()
             .Equal(expected: expected.Select(selector: item => item.Id));
 
-        pageProcessingServiceMock.Verify(expression: x => x.GetChildrenPage(pageId: 1), times: Times.Once);
+        pageProcessingServiceMock.Verify(expression: x => x.GetChildrenPages(pageId: 1), times: Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }

@@ -25,12 +25,12 @@ internal sealed partial class CommonObjectCoordinationService(
             commonObjectId: commonObjectId);
     });
 
-    public IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false) =>
+    public IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters = false) =>
         TryCatch(operation: () =>
     {
-        ValidateAllCommonObjectOnGet(inputs: [ignoreFilters]);
+        ValidateAllCommonObjectsOnGet(inputs: [ignoreFilters]);
 
-        return commonObjectOrchestrationService.GetAllCommonObject(
+        return commonObjectOrchestrationService.GetAllCommonObjects(
             ignoreFilters: ignoreFilters);
     });
 
@@ -110,10 +110,10 @@ internal sealed partial class CommonObjectCoordinationService(
             deletedCommonObject: deletedCommonObject);
     }, isValueTask: true);
 
-    public IEnumerable<CommonObject> LatestCommonObject(string type) =>
+    public IEnumerable<CommonObject> LatestCommonObjects(string type) =>
         TryCatch(operation: () =>
     {
-        ValidateLatestCommonObject(inputs: [type]);
-        return commonObjectOrchestrationService.LatestCommonObject(type: type);
+        ValidateLatestCommonObjects(inputs: [type]);
+        return commonObjectOrchestrationService.LatestCommonObjects(type: type);
     });
 }

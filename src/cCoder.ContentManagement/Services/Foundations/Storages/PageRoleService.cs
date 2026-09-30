@@ -63,10 +63,10 @@ internal partial class PageRoleService(
             deletedPageRole: deletedPageRole);
     }, isValueTask: true);
 
-    public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
+    public IQueryable<PageRole> GetAllPageRoles(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageRole>>(operation: () =>
     {
-        ValidateAllPageRoleOnGet(inputs: [ignoreFilters]);
+        ValidateAllPageRolesOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? pageRoleBroker.GetAllPageRolesIgnoringFilters()

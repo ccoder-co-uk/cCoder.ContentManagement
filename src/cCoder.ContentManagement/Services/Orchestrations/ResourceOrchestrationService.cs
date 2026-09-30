@@ -28,11 +28,11 @@ internal partial class ResourceOrchestrationService(
         return processingService.GetResource(resourceId: ValidateId(resourceId: resourceId, parameterName: "id"));
     });
 
-    public IQueryable<Resource> GetAllResource(bool ignoreFilters = false) =>
+    public IQueryable<Resource> GetAllResources(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Resource>>(operation: () =>
     {
-        ValidateAllResourceOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllResource(ignoreFilters: ignoreFilters);
+        ValidateAllResourcesOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllResources(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Resource> AddResourceAsync(Resource newResource) =>
@@ -85,7 +85,7 @@ internal partial class ResourceOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllResource(ignoreFilters: true)
+            entity = processingService.GetAllResources(ignoreFilters: true)
                 .FirstOrDefault(predicate: resource => resource.Id == resourceId);
         }
 
@@ -110,7 +110,7 @@ internal partial class ResourceOrchestrationService(
         ValidateByAppIdOnDelete(inputs: [appId]);
         ValidateAppId(appId: appId, parameterName: "appId");
 
-        Resource[] resourcesToDelete = [.. ExecuteGetAllResource(ignoreFilters: true)
+        Resource[] resourcesToDelete = [.. ExecuteGetAllResources(ignoreFilters: true)
             .Where(predicate: resource => resource.AppId == appId)];
 
         if (resourcesToDelete.Length > 0)
@@ -169,7 +169,7 @@ internal partial class ResourceOrchestrationService(
         Resource[] validatedItems = ValidateResources(resources: items, parameterName: "items")
             .ToArray();
 
-        var dbVersions = processingService.GetAllResource()
+        var dbVersions = processingService.GetAllResources()
             .Where(predicate: resource => resource.AppId == appId)
             .Select(selector: resource => new
             {
@@ -320,7 +320,7 @@ internal partial class ResourceOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllResource(ignoreFilters: true)
+            entity = processingService.GetAllResources(ignoreFilters: true)
                 .FirstOrDefault(predicate: resource => resource.Id == resourceId);
         }
 
@@ -338,8 +338,8 @@ internal partial class ResourceOrchestrationService(
         await processingService.DeleteAsync(resourceId: resourceId);
     }
 
-    private IQueryable<Resource> ExecuteGetAllResource(bool ignoreFilters = false) =>
-        processingService.GetAllResource(ignoreFilters: ignoreFilters);
+    private IQueryable<Resource> ExecuteGetAllResources(bool ignoreFilters = false) =>
+        processingService.GetAllResources(ignoreFilters: ignoreFilters);
 
     private async ValueTask<Resource> ExecuteUpdateResourceAsync(Resource updatedResource)
     {

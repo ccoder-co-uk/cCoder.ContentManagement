@@ -67,7 +67,7 @@ public partial class CommonObjectProcessingServiceTests
         incoming.LastUpdated = incoming.CreatedOn;
 
         commonObjectServiceMock
-            .Setup(expression: service => service.GetAllCommonObject(ignoreFilters: false))
+            .Setup(expression: service => service.GetAllCommonObjects(ignoreFilters: false))
             .Returns(value: new[] { existing }.AsQueryable());
 
         commonObjectServiceMock
@@ -95,7 +95,7 @@ public partial class CommonObjectProcessingServiceTests
             .Be(expected: 5);
 
         commonObjectServiceMock.Verify(
-            expression: service => service.GetAllCommonObject(ignoreFilters: false),
+            expression: service => service.GetAllCommonObjects(ignoreFilters: false),
             times: Times.Exactly(callCount: 2));
 
         commonObjectServiceMock.VerifyAll();

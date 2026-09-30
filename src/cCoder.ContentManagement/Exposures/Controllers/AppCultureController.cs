@@ -35,7 +35,7 @@ public class AppCultureController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllAppCulture());
+            return Ok(value: service.GetAllAppCultures());
         }
         catch (ContentManagementValidationException exception)
         {

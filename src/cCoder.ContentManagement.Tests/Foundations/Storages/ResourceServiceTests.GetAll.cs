@@ -30,7 +30,7 @@ public partial class ResourceServiceTests
         resourceBrokerMock.Setup(expression: x => x.GetAllResources())
             .Returns(value: resources);
 
-        IQueryable<Resource> result = resourceService.GetAllResource();
+        IQueryable<Resource> result = resourceService.GetAllResources();
 
         // Then
         Assert.Single(collection: result);

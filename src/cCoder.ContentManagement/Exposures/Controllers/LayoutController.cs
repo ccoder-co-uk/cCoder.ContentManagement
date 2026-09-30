@@ -36,7 +36,7 @@ public class LayoutController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllLayout());
+            return Ok(value: service.GetAllLayouts());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -65,7 +65,7 @@ public class LayoutController : ODataController
     {
         try
         {
-            Layout result = service.GetAllLayout()
+            Layout result = service.GetAllLayouts()
                 .FirstOrDefault(predicate: layout => layout.Id == key);
 
             return result is null

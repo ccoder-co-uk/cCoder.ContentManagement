@@ -24,7 +24,7 @@ public partial class CommonObjectServiceTests
             .Returns(value: commonObjects);
 
         // When
-        IQueryable<CommonObject> result = commonObjectService.GetAllCommonObject();
+        IQueryable<CommonObject> result = commonObjectService.GetAllCommonObjects();
 
         // Then
 

@@ -28,11 +28,11 @@ internal partial class PageInfoOrchestrationService(
         return processingService.GetPageInfo(pageInfoId: ValidateId(pageInfoId: pageInfoId, parameterName: "id"));
     });
 
-    public IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false) =>
+    public IQueryable<PageInfo> GetAllPageInfos(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageInfo>>(operation: () =>
     {
-        ValidateAllPageInfoOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllPageInfo(ignoreFilters: ignoreFilters);
+        ValidateAllPageInfosOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllPageInfos(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo) =>
@@ -81,7 +81,7 @@ internal partial class PageInfoOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllPageInfo(ignoreFilters: true)
+            entity = processingService.GetAllPageInfos(ignoreFilters: true)
                 .FirstOrDefault(predicate: pageInfo => pageInfo.Id == pageInfoId);
         }
 
@@ -221,7 +221,7 @@ internal partial class PageInfoOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllPageInfo(ignoreFilters: true)
+            entity = processingService.GetAllPageInfos(ignoreFilters: true)
                 .FirstOrDefault(predicate: pageInfo => pageInfo.Id == pageInfoId);
         }
 

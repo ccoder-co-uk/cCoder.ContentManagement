@@ -37,7 +37,7 @@ public sealed class AppUserController(
 
             return Ok(value: new
             {
-                value = service.GetAllAppUser(appId: key)
+                value = service.GetAllUsers(appId: key)
             });
         }
         catch (ContentManagementValidationException exception)

@@ -36,7 +36,7 @@ public class ResourceController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllResource());
+            return Ok(value: service.GetAllResources());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -65,7 +65,7 @@ public class ResourceController : ODataController
     {
         try
         {
-            Resource result = service.GetAllResource()
+            Resource result = service.GetAllResources()
                 .FirstOrDefault(predicate: resource => resource.Id == key);
 
             return result is null

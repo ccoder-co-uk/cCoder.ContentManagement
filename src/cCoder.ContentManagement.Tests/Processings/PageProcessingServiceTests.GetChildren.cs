@@ -25,11 +25,11 @@ public partial class PageProcessingServiceTests
         child.Id = 10;
         child.ParentId = parent.Id;
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
+        pageServiceMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { parent, child }.AsQueryable());
 
         // When
-        Page[] result = pageProcessingService.GetChildrenPage(pageId: parent.Id)
+        Page[] result = pageProcessingService.GetChildrenPages(pageId: parent.Id)
             .ToArray();
 
         // Then
@@ -39,7 +39,7 @@ public partial class PageProcessingServiceTests
         result[0].Id.Should()
             .Be(expected: child.Id);
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
@@ -54,18 +54,18 @@ public partial class PageProcessingServiceTests
         Page other = CreateRandomPage();
         other.ParentId = parent.Id + 1;
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
+        pageServiceMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { parent, other }.AsQueryable());
 
         // When
-        Page[] result = pageProcessingService.GetChildrenPage(pageId: parent.Id)
+        Page[] result = pageProcessingService.GetChildrenPages(pageId: parent.Id)
             .ToArray();
 
         // Then
         result.Should()
             .BeEmpty();
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

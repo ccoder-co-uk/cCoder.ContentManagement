@@ -22,7 +22,7 @@ internal sealed class AppManager(
             ignoreFilters: ignoreFilters);
 
     public IQueryable<App> GetAll(bool ignoreFilters = false) =>
-        appOrchestrationService.GetAllApp(ignoreFilters: ignoreFilters);
+        appOrchestrationService.GetAllApps(ignoreFilters: ignoreFilters);
 
     public ValueTask<App> AddAsync(App newApp) =>
         appOrchestrationService.AddAppAsync(newApp: newApp);

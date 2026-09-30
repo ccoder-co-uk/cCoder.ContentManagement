@@ -19,12 +19,12 @@ public partial class AppOrchestrationServiceTests
         // Given
         IQueryable<App> entities = new[] { CreateRandomApp() }.AsQueryable();
 
-        appProcessingServiceMock.Setup(expression: x => x.GetAllApp(ignoreFilters: true))
+        appProcessingServiceMock.Setup(expression: x => x.GetAllApps(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
 
-        var result = orchestrationService.GetAllApp(ignoreFilters: true)
+        var result = orchestrationService.GetAllApps(ignoreFilters: true)
             .ToArray();
 
         // Then
@@ -33,7 +33,7 @@ public partial class AppOrchestrationServiceTests
             .Should()
             .Equal(expected: entities.Select(selector: item => item.Id));
 
-        appProcessingServiceMock.Verify(expression: x => x.GetAllApp(ignoreFilters: true), times: Times.Once);
+        appProcessingServiceMock.Verify(expression: x => x.GetAllApps(ignoreFilters: true), times: Times.Once);
         appProcessingServiceMock.VerifyNoOtherCalls();
         appEventProcessingServiceMock.VerifyNoOtherCalls();
     }

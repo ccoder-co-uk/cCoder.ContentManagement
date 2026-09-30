@@ -15,11 +15,11 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class AppCultureProcessingService(IAppCultureService service) : IAppCultureProcessingService
 {
-    public IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false) =>
+    public IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters = false) =>
         TryCatch<IQueryable<AppCulture>>(operation: () =>
     {
-        ValidateAllAppCultureOnGet(inputs: [ignoreFilters]);
-        return service.GetAllAppCulture(ignoreFilters: ignoreFilters);
+        ValidateAllAppCulturesOnGet(inputs: [ignoreFilters]);
+        return service.GetAllAppCultures(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture) =>

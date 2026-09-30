@@ -44,7 +44,7 @@ public partial class PageProcessingServiceTests
         }.AsQueryable();
 
         pageServiceMock.Setup(expression: service =>
-                service.GetAllPage(ignoreFilters: true))
+                service.GetAllPages(ignoreFilters: true))
             .Returns(value: storedPages);
 
         pageServiceMock.Setup(expression: service =>
@@ -115,10 +115,10 @@ public partial class PageProcessingServiceTests
 
         currentUser = actor;
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageServiceMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { dbPage }.AsQueryable());
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
+        pageServiceMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { dbPage }.AsQueryable());
 
         pageServiceMock.Setup(expression: x => x.UpdatePageAsync(updatedPage: It.IsAny<Page>()))
@@ -131,7 +131,7 @@ public partial class PageProcessingServiceTests
         result.Should()
             .BeSameAs(expected: dbPage);
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
 
         pageServiceMock.Verify(expression: x => x.UpdatePageAsync(updatedPage: It.Is<Page>(match: updated =>
             updated.Id == page.Id &&
@@ -191,10 +191,10 @@ public partial class PageProcessingServiceTests
 
         currentUser = actor;
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageServiceMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { dbPage }.AsQueryable());
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
+        pageServiceMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { dbPage }.AsQueryable());
 
         // When
@@ -206,7 +206,7 @@ public partial class PageProcessingServiceTests
             .WithMessage(expectedWildcardPattern: "Access Denied!");
 
         pageServiceMock.Verify(
-            expression: x => x.GetAllPage(ignoreFilters: true),
+            expression: x => x.GetAllPages(ignoreFilters: true),
             times: Times.Once);
 
         VerifyNoOtherPageServiceCalls();
