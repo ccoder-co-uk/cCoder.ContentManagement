@@ -15,7 +15,7 @@ public interface ISubmissionManager
 {
     Submission GetSubmission(Guid submissionId);
 
-    IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false);
+    IQueryable<Submission> GetAllSubmissions(bool ignoreFilters = false);
 
     ValueTask<Submission> AddSubmissionAsync(Submission newSubmission);
 

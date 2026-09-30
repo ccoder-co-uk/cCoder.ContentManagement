@@ -19,18 +19,18 @@ public partial class ComponentProcessingServiceTests
         // Given
         IQueryable<Component> entities = new[] { CreateRandomComponent() }.AsQueryable();
 
-        componentServiceMock.Setup(expression: x => x.GetAllComponent())
+        componentServiceMock.Setup(expression: x => x.GetAllComponents())
             .Returns(value: entities);
 
         // When
-        IQueryable<Component> result = componentProcessingService.GetAllComponent();
+        IQueryable<Component> result = componentProcessingService.GetAllComponents();
 
         // Then
 
         result.Should()
             .BeSameAs(expected: entities);
 
-        componentServiceMock.Verify(expression: x => x.GetAllComponent(), times: Times.Once);
+        componentServiceMock.Verify(expression: x => x.GetAllComponents(), times: Times.Once);
         componentServiceMock.VerifyNoOtherCalls();
     }
 

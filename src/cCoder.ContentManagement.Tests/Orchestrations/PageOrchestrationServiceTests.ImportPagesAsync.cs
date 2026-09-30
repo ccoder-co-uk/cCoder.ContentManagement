@@ -36,7 +36,7 @@ public partial class PageOrchestrationServiceTests
             value: new ValueTask<Page>(result: page));
 
         processingServiceMock
-            .Setup(expression: service => service.GetAllPage(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllPages(ignoreFilters: true))
             .Returns(value: Array.Empty<Page>()
                 .AsQueryable());
 
@@ -80,7 +80,7 @@ public partial class PageOrchestrationServiceTests
         page.Path = "Login";
 
         pageProcessingServiceMock
-            .Setup(expression: service => service.GetAllPage(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllPages(ignoreFilters: true))
             .Returns(value: Array.Empty<Page>()
                 .AsQueryable());
 

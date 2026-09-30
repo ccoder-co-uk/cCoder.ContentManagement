@@ -14,7 +14,7 @@ internal sealed class ComponentManager(
         : IComponentManager
 {
     public IQueryable<Component> GetAll() =>
-        componentOrchestrationService.GetAllComponent();
+        componentOrchestrationService.GetAllComponents();
 
     public Component Get(int componentId) =>
         componentOrchestrationService.GetComponent(componentId: componentId);

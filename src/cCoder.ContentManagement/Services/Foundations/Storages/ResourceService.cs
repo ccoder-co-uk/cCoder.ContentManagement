@@ -21,11 +21,11 @@ internal partial class ResourceService(IResourceBroker resourceBroker) : IResour
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllResource(ignoreFilters: true)
+            return ExecuteGetAllResources(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
         }
 
-        Resource resource = ExecuteGetAllResource()
+        Resource resource = ExecuteGetAllResources()
             .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
 
         if (resource != null)
@@ -33,7 +33,7 @@ internal partial class ResourceService(IResourceBroker resourceBroker) : IResour
             return resource;
         }
 
-        Resource resource2 = ExecuteGetAllResource(ignoreFilters: true)
+        Resource resource2 = ExecuteGetAllResources(ignoreFilters: true)
             .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
 
         if (resource2 != null)
@@ -45,10 +45,10 @@ internal partial class ResourceService(IResourceBroker resourceBroker) : IResour
 
     });
 
-    public IQueryable<Resource> GetAllResource(bool ignoreFilters = false) =>
+    public IQueryable<Resource> GetAllResources(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Resource>>(operation: () =>
     {
-        ValidateAllResourceOnGet(inputs: [ignoreFilters]);
+        ValidateAllResourcesOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? resourceBroker.GetAllResourcesIgnoringFilters()
@@ -156,7 +156,7 @@ internal partial class ResourceService(IResourceBroker resourceBroker) : IResour
         };
     }
 
-    private IQueryable<Resource> ExecuteGetAllResource(bool ignoreFilters = false) =>
+    private IQueryable<Resource> ExecuteGetAllResources(bool ignoreFilters = false) =>
         (ignoreFilters
             ? resourceBroker.GetAllResourcesIgnoringFilters()
             : resourceBroker.GetAllResources());
@@ -167,11 +167,11 @@ internal partial class ResourceService(IResourceBroker resourceBroker) : IResour
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllResource(ignoreFilters: true)
+            return ExecuteGetAllResources(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
         }
 
-        Resource resource = ExecuteGetAllResource()
+        Resource resource = ExecuteGetAllResources()
             .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
 
         if (resource != null)
@@ -179,7 +179,7 @@ internal partial class ResourceService(IResourceBroker resourceBroker) : IResour
             return resource;
         }
 
-        Resource resource2 = ExecuteGetAllResource(ignoreFilters: true)
+        Resource resource2 = ExecuteGetAllResources(ignoreFilters: true)
             .FirstOrDefault(predicate: (Resource i) => i.Id == resourceId);
 
         if (resource2 != null)

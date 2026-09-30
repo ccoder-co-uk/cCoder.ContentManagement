@@ -12,7 +12,7 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal interface IAppCultureProcessingService
 {
-    IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false);
+    IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters = false);
 
     ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture);
 

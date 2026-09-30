@@ -37,7 +37,7 @@ internal partial class SubmissionService
     private static void ValidateSubmissionOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllSubmissionOnGet(object[] inputs) =>
+    private static void ValidateAllSubmissionsOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateSubmissionOnAdd(object[] inputs) =>

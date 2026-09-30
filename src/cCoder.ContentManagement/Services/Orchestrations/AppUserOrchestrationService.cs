@@ -14,10 +14,10 @@ internal sealed partial class AppUserOrchestrationService(
     IAppService appService,
     IAppUserService appUserService) : IAppUserOrchestrationService
 {
-    public IQueryable<User> GetAllAppUser(int appId) =>
+    public IQueryable<User> GetAllUsers(int appId) =>
         TryCatch<IQueryable<User>>(operation: () =>
     {
-        ValidateAllAppUserOnGet(inputs: [appId]);
+        ValidateAllUsersOnGet(inputs: [appId]);
         ArgumentOutOfRangeException.ThrowIfLessThan(value: appId, other: 1);
 
         AppOperation appOperation = appService.GetVisibleAppAppOperation(
@@ -28,6 +28,6 @@ internal sealed partial class AppUserOrchestrationService(
             throw new System.Security.SecurityException(message: "Access Denied!");
         }
 
-        return appUserService.GetAllAppUser(appId: appId);
+        return appUserService.GetAllUsers(appId: appId);
     });
 }

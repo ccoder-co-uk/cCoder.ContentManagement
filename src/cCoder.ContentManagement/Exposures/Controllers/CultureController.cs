@@ -36,7 +36,7 @@ public class CultureController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllCulture());
+            return Ok(value: service.GetAllCultures());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -65,7 +65,7 @@ public class CultureController : ODataController
     {
         try
         {
-            Culture result = service.GetAllCulture()
+            Culture result = service.GetAllCultures()
                 .FirstOrDefault(predicate: culture => culture.Id == key);
 
             return result is null

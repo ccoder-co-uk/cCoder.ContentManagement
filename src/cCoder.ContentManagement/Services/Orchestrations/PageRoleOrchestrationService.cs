@@ -22,11 +22,11 @@ internal partial class PageRoleOrchestrationService(
     IAuthorizationProcessingService authorizationProcessingService)
         : IPageRoleOrchestrationService
 {
-    public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
+    public IQueryable<PageRole> GetAllPageRoles(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageRole>>(operation: () =>
     {
-        ValidateAllPageRoleOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllPageRole(ignoreFilters: ignoreFilters);
+        ValidateAllPageRolesOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllPageRoles(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole) =>
@@ -74,7 +74,7 @@ internal partial class PageRoleOrchestrationService(
         {
             try
             {
-                PageRole existingPageRole = processingService.GetAllPageRole(ignoreFilters: true)
+                PageRole existingPageRole = processingService.GetAllPageRoles(ignoreFilters: true)
                     .FirstOrDefault(predicate: existing =>
                         existing.PageId == pageRole.PageId &&
                         existing.RoleId == pageRole.RoleId);

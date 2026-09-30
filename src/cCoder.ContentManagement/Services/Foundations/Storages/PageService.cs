@@ -54,10 +54,10 @@ internal partial class PageService(IPageBroker pageBroker) : IPageService
 
     });
 
-    public IQueryable<Page> GetAllPage(bool ignoreFilters = false) =>
+    public IQueryable<Page> GetAllPages(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Page>>(operation: () =>
     {
-        ValidateAllPageOnGet(inputs: [ignoreFilters]);
+        ValidateAllPagesOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? pageBroker.GetAllPagesIgnoringFilters()

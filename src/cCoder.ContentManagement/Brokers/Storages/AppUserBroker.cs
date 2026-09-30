@@ -12,7 +12,7 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 internal sealed class AppUserBroker(ICoreContextFactory coreContextFactory)
     : IAppUserBroker
 {
-    public IQueryable<User> GetAllAppUser(int appId)
+    public IQueryable<User> GetAllUsers(int appId)
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 

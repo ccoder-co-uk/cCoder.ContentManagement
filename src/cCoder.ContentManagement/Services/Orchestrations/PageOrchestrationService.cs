@@ -31,11 +31,11 @@ internal partial class PageOrchestrationService(
 
     });
 
-    public IQueryable<Page> GetAllPage(bool ignoreFilters = false) =>
+    public IQueryable<Page> GetAllPages(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Page>>(operation: () =>
     {
-        ValidateAllPageOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllPage(ignoreFilters: ignoreFilters);
+        ValidateAllPagesOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllPages(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Page> AddPageAsync(Page newPage) =>
@@ -111,7 +111,7 @@ internal partial class PageOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllPage(ignoreFilters: true)
+            entity = processingService.GetAllPages(ignoreFilters: true)
                 .FirstOrDefault(predicate: page => page.Id == pageId);
         }
 
@@ -138,7 +138,7 @@ internal partial class PageOrchestrationService(
         ValidateAppId(appId: appId, parameterName: "appId");
 
         Page[] pagesToDelete =
-            [.. ExecuteGetAllPage(ignoreFilters: true)
+            [.. ExecuteGetAllPages(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
             .ToArray()
             .OrderByDescending(keySelector: page => GetPathDepth(path: page.Path))
@@ -206,7 +206,7 @@ comparison: (left, right) => left.Path.Split(separator: '/')
             .Length.CompareTo(value: right.Path.Split(separator: '/')
             .Length));
 
-        List<Page> allPages = processingService.GetAllPage(ignoreFilters: true)
+        List<Page> allPages = processingService.GetAllPages(ignoreFilters: true)
             .Where(predicate: page => page.AppId == appId)
             .ToList();
 
@@ -295,12 +295,12 @@ comparison: (left, right) => left.Path.Split(separator: '/')
 
     });
 
-    public IEnumerable<Page> GetChildrenPage(int pageId) =>
+    public IEnumerable<Page> GetChildrenPages(int pageId) =>
         TryCatch<IEnumerable<Page>>(operation: () =>
     {
-        ValidateChildrenPageOnGet(inputs: [pageId]);
+        ValidateChildrenPagesOnGet(inputs: [pageId]);
         ValidateId(pageId: pageId, parameterName: "id");
-        return processingService.GetChildrenPage(pageId: pageId);
+        return processingService.GetChildrenPages(pageId: pageId);
 
     });
 
@@ -484,7 +484,7 @@ comparison: (left, right) => left.Path.Split(separator: '/')
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllPage(ignoreFilters: true)
+            entity = processingService.GetAllPages(ignoreFilters: true)
                 .FirstOrDefault(predicate: page => page.Id == pageId);
         }
 
@@ -503,8 +503,8 @@ comparison: (left, right) => left.Path.Split(separator: '/')
         await processingService.DeleteAsync(pageId: pageId);
     }
 
-    private IQueryable<Page> ExecuteGetAllPage(bool ignoreFilters = false) =>
-        processingService.GetAllPage(ignoreFilters: ignoreFilters);
+    private IQueryable<Page> ExecuteGetAllPages(bool ignoreFilters = false) =>
+        processingService.GetAllPages(ignoreFilters: ignoreFilters);
 
     private async ValueTask<Page> ExecuteUpdatePageAsync(Page updatedPage)
     {
@@ -579,7 +579,7 @@ comparison: (left, right) => left.Path.Split(separator: '/')
             context: new AuthorizationContext { AppId = appId });
 
     private Page GetPageForAuthorization(int pageId) =>
-        processingService.GetAllPage(ignoreFilters: true)
+        processingService.GetAllPages(ignoreFilters: true)
             .FirstOrDefault(predicate: page => page.Id == pageId)
         ?? throw new SecurityException(message: "Access Denied!");
 

@@ -39,7 +39,7 @@ public partial class PageProcessingServiceTests
             },
         ];
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
+        pageServiceMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { child }.AsQueryable());
 
         // When
@@ -55,7 +55,7 @@ public partial class PageProcessingServiceTests
         result.Should()
             .Contain(expected: "Docs");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 
@@ -66,7 +66,7 @@ public partial class PageProcessingServiceTests
 
 
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
+        pageServiceMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
@@ -77,7 +77,7 @@ public partial class PageProcessingServiceTests
         result.Should()
             .Be(expected: "<ul class='submenu'></ul>");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
         pageServiceMock.VerifyNoOtherCalls();
     }
 }

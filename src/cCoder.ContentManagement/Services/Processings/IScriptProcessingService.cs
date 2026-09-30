@@ -14,7 +14,7 @@ internal interface IScriptProcessingService
 {
     Script GetScript(int scriptId);
 
-    IQueryable<Script> GetAllScript(bool ignoreFilters = false);
+    IQueryable<Script> GetAllScripts(bool ignoreFilters = false);
 
     ValueTask<Script> AddScriptAsync(Script newScript);
 

@@ -14,7 +14,7 @@ public interface IPageInfoManager
 {
     PageInfo GetPageInfo(int pageInfoId);
 
-    IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false);
+    IQueryable<PageInfo> GetAllPageInfos(bool ignoreFilters = false);
 
     ValueTask<PageInfo> AddPageInfoAsync(PageInfo newPageInfo);
 

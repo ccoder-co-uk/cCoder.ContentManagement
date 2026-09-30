@@ -91,7 +91,7 @@ internal partial class AppRenderableCoordinationService(
             .Select(selector: template => template.Id)
             .ToArray();
 
-        Template[] templatesToDelete = templateOrchestrationService.GetAllTemplate(ignoreFilters: true)
+        Template[] templatesToDelete = templateOrchestrationService.GetAllTemplates(ignoreFilters: true)
             .Where(predicate: template => template.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingTemplateIds).Contains(value: template.Id))
             .ToArray();
 
@@ -108,7 +108,7 @@ internal partial class AppRenderableCoordinationService(
             .Select(selector: layout => layout.Id)
             .ToArray();
 
-        Layout[] layoutsToDelete = layoutOrchestrationService.GetAllLayout(ignoreFilters: true)
+        Layout[] layoutsToDelete = layoutOrchestrationService.GetAllLayouts(ignoreFilters: true)
             .Where(predicate: layout => layout.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingLayoutIds).Contains(value: layout.Id))
             .ToArray();
 

@@ -14,7 +14,7 @@ public interface ICultureManager
 {
     Culture GetCulture(string cultureId);
 
-    IQueryable<Culture> GetAllCulture(bool ignoreFilters = false);
+    IQueryable<Culture> GetAllCultures(bool ignoreFilters = false);
 
     ValueTask<Culture> AddCultureAsync(Culture newCulture);
 

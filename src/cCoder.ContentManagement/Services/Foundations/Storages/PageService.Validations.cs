@@ -44,7 +44,7 @@ internal partial class PageService
     private static void ValidatePageOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllPageOnGet(object[] inputs) =>
+    private static void ValidateAllPagesOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidatePageOnAdd(object[] inputs) =>

@@ -12,7 +12,7 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 public interface IAppCultureOrchestrationService
 {
-    IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false);
+    IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters = false);
     ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture);
     ValueTask DeleteAppCultureAsync(AppCulture deletedAppCulture);
     ValueTask DeleteByAppIdAsync(int appId);

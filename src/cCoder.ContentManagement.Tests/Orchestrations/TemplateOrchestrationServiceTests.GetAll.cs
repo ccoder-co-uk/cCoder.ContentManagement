@@ -19,12 +19,12 @@ public partial class TemplateOrchestrationServiceTests
         // Given
         IQueryable<Template> entities = new[] { CreateRandomTemplate() }.AsQueryable();
 
-        templateProcessingServiceMock.Setup(expression: x => x.GetAllTemplate(ignoreFilters: true))
+        templateProcessingServiceMock.Setup(expression: x => x.GetAllTemplates(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
 
-        var result = orchestrationService.GetAllTemplate(ignoreFilters: true)
+        var result = orchestrationService.GetAllTemplates(ignoreFilters: true)
             .ToArray();
 
         // Then
@@ -33,7 +33,7 @@ public partial class TemplateOrchestrationServiceTests
             .Should()
             .Equal(expected: entities.Select(selector: item => item.Id));
 
-        templateProcessingServiceMock.Verify(expression: x => x.GetAllTemplate(ignoreFilters: true), times: Times.Once);
+        templateProcessingServiceMock.Verify(expression: x => x.GetAllTemplates(ignoreFilters: true), times: Times.Once);
         templateProcessingServiceMock.VerifyNoOtherCalls();
         templateEventProcessingServiceMock.VerifyNoOtherCalls();
     }

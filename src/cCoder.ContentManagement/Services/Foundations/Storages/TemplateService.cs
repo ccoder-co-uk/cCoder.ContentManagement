@@ -22,11 +22,11 @@ internal partial class TemplateService(
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllTemplate(ignoreFilters: true)
+            return ExecuteGetAllTemplates(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
         }
 
-        Template template = ExecuteGetAllTemplate()
+        Template template = ExecuteGetAllTemplates()
             .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
 
         if (template != null)
@@ -34,7 +34,7 @@ internal partial class TemplateService(
             return template;
         }
 
-        Template template2 = ExecuteGetAllTemplate(ignoreFilters: true)
+        Template template2 = ExecuteGetAllTemplates(ignoreFilters: true)
             .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
 
         if (template2 != null)
@@ -46,10 +46,10 @@ internal partial class TemplateService(
 
     });
 
-    public IQueryable<Template> GetAllTemplate(bool ignoreFilters = false) =>
+    public IQueryable<Template> GetAllTemplates(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Template>>(operation: () =>
     {
-        ValidateAllTemplateOnGet(inputs: [ignoreFilters]);
+        ValidateAllTemplatesOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? templateBroker.GetAllTemplatesIgnoringFilters()
@@ -151,7 +151,7 @@ internal partial class TemplateService(
         };
     }
 
-    private IQueryable<Template> ExecuteGetAllTemplate(bool ignoreFilters = false) =>
+    private IQueryable<Template> ExecuteGetAllTemplates(bool ignoreFilters = false) =>
         (ignoreFilters
             ? templateBroker.GetAllTemplatesIgnoringFilters()
             : templateBroker.GetAllTemplates());
@@ -162,11 +162,11 @@ internal partial class TemplateService(
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllTemplate(ignoreFilters: true)
+            return ExecuteGetAllTemplates(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
         }
 
-        Template template = ExecuteGetAllTemplate()
+        Template template = ExecuteGetAllTemplates()
             .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
 
         if (template != null)
@@ -174,7 +174,7 @@ internal partial class TemplateService(
             return template;
         }
 
-        Template template2 = ExecuteGetAllTemplate(ignoreFilters: true)
+        Template template2 = ExecuteGetAllTemplates(ignoreFilters: true)
             .FirstOrDefault(predicate: (Template i) => i.Id == templateId);
 
         if (template2 != null)

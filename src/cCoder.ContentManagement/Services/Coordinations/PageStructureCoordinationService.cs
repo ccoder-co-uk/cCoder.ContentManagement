@@ -49,7 +49,7 @@ internal partial class PageStructureCoordinationService(
         if (page.Roles != null)
         {
             PageRole[] existingPageRoles = pageRoleOrchestrationService
-                .GetAllPageRole(ignoreFilters: true)
+                .GetAllPageRoles(ignoreFilters: true)
                 .Where(predicate: pageRole => pageRole.PageId == page.Id)
                 .ToArray();
 
@@ -85,7 +85,7 @@ internal partial class PageStructureCoordinationService(
         }
 
         Page[] existingChildrenToRecompute = pageOrchestrationService
-            .GetAllPage(ignoreFilters: true)
+            .GetAllPages(ignoreFilters: true)
             .Where(predicate: child =>
                 child.ParentId == (int?)page.Id &&
                 !((ReadOnlySpan<int>)providedChildIds).Contains(value: child.Id))
@@ -112,7 +112,7 @@ internal partial class PageStructureCoordinationService(
         ValidatePage(page: page, parameterName: "page");
 
         PageRole[] pageRolesToDelete = pageRoleOrchestrationService
-            .GetAllPageRole(ignoreFilters: true)
+            .GetAllPageRoles(ignoreFilters: true)
             .Where(predicate: pageRole => pageRole.PageId == page.Id)
             .ToArray();
 

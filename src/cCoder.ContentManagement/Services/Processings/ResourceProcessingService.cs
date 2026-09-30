@@ -24,11 +24,11 @@ internal partial class ResourceProcessingService(IResourceService service) : IRe
 
     });
 
-    public IQueryable<Resource> GetAllResource(bool ignoreFilters = false) =>
+    public IQueryable<Resource> GetAllResources(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Resource>>(operation: () =>
     {
-        ValidateAllResourceOnGet(inputs: [ignoreFilters]);
-        return service.GetAllResource(ignoreFilters: ignoreFilters);
+        ValidateAllResourcesOnGet(inputs: [ignoreFilters]);
+        return service.GetAllResources(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Resource> AddResourceAsync(Resource newResource) =>
@@ -63,7 +63,7 @@ internal partial class ResourceProcessingService(IResourceService service) : IRe
 
         if (string.IsNullOrEmpty(value: resource.Culture))
         {
-            List<Resource> allVersions = GetResourceVersions(
+            List<Resource> allVersions = GetMatchingResources(
                 resource: resource);
 
             foreach (Resource version in allVersions)
@@ -131,7 +131,7 @@ internal partial class ResourceProcessingService(IResourceService service) : IRe
 
             if (string.IsNullOrEmpty(value: item.Culture))
             {
-                List<Resource> allVersions = GetResourceVersions(
+                List<Resource> allVersions = GetMatchingResources(
                     resource: item);
 
                 foreach (Resource version in allVersions)
@@ -184,7 +184,7 @@ internal partial class ResourceProcessingService(IResourceService service) : IRe
 
         if (string.IsNullOrEmpty(value: resource.Culture))
         {
-            List<Resource> allVersions = GetResourceVersions(
+            List<Resource> allVersions = GetMatchingResources(
                 resource: resource);
 
             foreach (Resource version in allVersions)
@@ -198,8 +198,8 @@ internal partial class ResourceProcessingService(IResourceService service) : IRe
         }
     }
 
-    private IQueryable<Resource> ExecuteGetAllResource(bool ignoreFilters = false) =>
-        service.GetAllResource(ignoreFilters: ignoreFilters);
+    private IQueryable<Resource> ExecuteGetAllResources(bool ignoreFilters = false) =>
+        service.GetAllResources(ignoreFilters: ignoreFilters);
 
     private Resource ExecuteGetResource(int resourceId)
     {
@@ -213,11 +213,11 @@ internal partial class ResourceProcessingService(IResourceService service) : IRe
         return service.UpdateResourceAsync(updatedResource: updatedResource);
     }
 
-    private List<Resource> GetResourceVersions(Resource resource)
+    private List<Resource> GetMatchingResources(Resource resource)
     {
         List<Resource> versions = [];
 
-        foreach (Resource candidate in ExecuteGetAllResource()
+        foreach (Resource candidate in ExecuteGetAllResources()
             .Where(predicate: item =>
                 item.AppId == resource.AppId
                 && item.Key == resource.Key

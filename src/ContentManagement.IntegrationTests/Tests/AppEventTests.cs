@@ -244,6 +244,31 @@ value: new HttpEventMessage
             .Any(predicate: item => item.AppId == appId);
     }
 
+    private bool HasPageGraph(int appId)
+    {
+        using IServiceScope scope = Services.CreateScope();
+
+        using CoreDataContext core = scope.ServiceProvider.GetRequiredService<ICoreContextFactory>()
+            .CreateCoreContext();
+
+        int pageId = core.Set<Page>()
+            .IgnoreQueryFilters()
+            .Where(predicate: page => page.AppId == appId)
+            .Select(selector: page => page.Id)
+            .FirstOrDefault();
+
+        return pageId > 0
+            && core.Set<PageInfo>()
+                .IgnoreQueryFilters()
+                .Any(predicate: pageInfo => pageInfo.PageId == pageId)
+            && core.Set<Content>()
+                .IgnoreQueryFilters()
+                .Any(predicate: content => content.PageId == pageId)
+            && core.Set<PageRole>()
+                .IgnoreQueryFilters()
+                .Any(predicate: pageRole => pageRole.PageId == pageId);
+    }
+
     private bool HasResource(int appId)
     {
         using IServiceScope scope = Services.CreateScope();
@@ -566,7 +591,7 @@ value: new HttpEventMessage
     private async Task SeedPageAsync(int appId)
     {
         await PostEventAsync(eventName: "app_add", data: CreateAppWithPage(appId: appId));
-        await WaitForAsync(condition: () => HasPage(appId: appId), because: "app_add should create the page child row");
+        await WaitForAsync(condition: () => HasPageGraph(appId: appId), because: "app_add should create the complete page child graph");
     }
 
     private async Task SeedResourceAsync(int appId)

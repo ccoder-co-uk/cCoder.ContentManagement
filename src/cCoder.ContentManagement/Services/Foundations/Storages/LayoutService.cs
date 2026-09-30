@@ -21,11 +21,11 @@ internal partial class LayoutService(ILayoutBroker layoutBroker) : ILayoutServic
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllLayout(ignoreFilters: true)
+            return ExecuteGetAllLayouts(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
         }
 
-        Layout layout = ExecuteGetAllLayout()
+        Layout layout = ExecuteGetAllLayouts()
             .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
 
         if (layout != null)
@@ -33,7 +33,7 @@ internal partial class LayoutService(ILayoutBroker layoutBroker) : ILayoutServic
             return layout;
         }
 
-        Layout layout2 = ExecuteGetAllLayout(ignoreFilters: true)
+        Layout layout2 = ExecuteGetAllLayouts(ignoreFilters: true)
             .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
 
         if (layout2 != null)
@@ -45,10 +45,10 @@ internal partial class LayoutService(ILayoutBroker layoutBroker) : ILayoutServic
 
     });
 
-    public IQueryable<Layout> GetAllLayout(bool ignoreFilters = false) =>
+    public IQueryable<Layout> GetAllLayouts(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Layout>>(operation: () =>
     {
-        ValidateAllLayoutOnGet(inputs: [ignoreFilters]);
+        ValidateAllLayoutsOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? layoutBroker.GetAllLayoutsIgnoringFilters()
@@ -153,7 +153,7 @@ internal partial class LayoutService(ILayoutBroker layoutBroker) : ILayoutServic
         };
     }
 
-    private IQueryable<Layout> ExecuteGetAllLayout(bool ignoreFilters = false) =>
+    private IQueryable<Layout> ExecuteGetAllLayouts(bool ignoreFilters = false) =>
         (ignoreFilters
             ? layoutBroker.GetAllLayoutsIgnoringFilters()
             : layoutBroker.GetAllLayouts());
@@ -164,11 +164,11 @@ internal partial class LayoutService(ILayoutBroker layoutBroker) : ILayoutServic
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllLayout(ignoreFilters: true)
+            return ExecuteGetAllLayouts(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
         }
 
-        Layout layout = ExecuteGetAllLayout()
+        Layout layout = ExecuteGetAllLayouts()
             .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
 
         if (layout != null)
@@ -176,7 +176,7 @@ internal partial class LayoutService(ILayoutBroker layoutBroker) : ILayoutServic
             return layout;
         }
 
-        Layout layout2 = ExecuteGetAllLayout(ignoreFilters: true)
+        Layout layout2 = ExecuteGetAllLayouts(ignoreFilters: true)
             .FirstOrDefault(predicate: (Layout i) => i.Id == layoutId);
 
         if (layout2 != null)

@@ -22,7 +22,7 @@ public partial class PageProcessingServiceTests
         Page page = CreateRandomPage(user: actor);
         currentUser = actor;
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
+        pageServiceMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { page }.AsQueryable());
 
         pageServiceMock.Setup(expression: x => x.DeleteAsync(pageId: page.Id))

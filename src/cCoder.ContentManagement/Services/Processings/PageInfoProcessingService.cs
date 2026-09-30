@@ -25,11 +25,11 @@ internal partial class PageInfoProcessingService(IPageInfoService service)
 
     });
 
-    public IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false) =>
+    public IQueryable<PageInfo> GetAllPageInfos(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageInfo>>(operation: () =>
     {
-        ValidateAllPageInfoOnGet(inputs: [ignoreFilters]);
-        return service.GetAllPageInfo(ignoreFilters: ignoreFilters);
+        ValidateAllPageInfosOnGet(inputs: [ignoreFilters]);
+        return service.GetAllPageInfos(ignoreFilters: ignoreFilters);
     });
 
     public int? GetOwningAppId(int pageId) =>

@@ -6,7 +6,7 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class AppCultureOrchestrationService
 {
-    private static void ValidateAllAppCultureOnGet(object[] inputs) =>
+    private static void ValidateAllAppCulturesOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateAppCultureOnAdd(object[] inputs) =>

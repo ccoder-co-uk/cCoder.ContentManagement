@@ -93,7 +93,7 @@ internal partial class AppPageComponentCoordinationService(
             .Select(selector: page => page.Id)
             .ToArray();
 
-        Page[] pagesToDelete = pageOrchestrationService.GetAllPage(ignoreFilters: true)
+        Page[] pagesToDelete = pageOrchestrationService.GetAllPages(ignoreFilters: true)
             .Where(predicate: page =>
                 page.AppId == deletedApp.Id &&
                 !((ReadOnlySpan<int>)incomingPageIds).Contains(value: page.Id))
@@ -112,7 +112,7 @@ internal partial class AppPageComponentCoordinationService(
             .Select(selector: component => component.Id)
             .ToArray();
 
-        Component[] componentsToDelete = componentOrchestrationService.GetAllComponent(ignoreFilters: true)
+        Component[] componentsToDelete = componentOrchestrationService.GetAllComponents(ignoreFilters: true)
             .Where(predicate: component =>
                 component.AppId == deletedApp.Id &&
                 !((ReadOnlySpan<int>)incomingComponentIds).Contains(value: component.Id))
@@ -127,7 +127,7 @@ internal partial class AppPageComponentCoordinationService(
 
     private async ValueTask AddOrUpdateComponentsAsync(App newApp)
     {
-        HashSet<int> existingComponentIds = componentOrchestrationService.GetAllComponent(ignoreFilters: true)
+        HashSet<int> existingComponentIds = componentOrchestrationService.GetAllComponents(ignoreFilters: true)
             .Where(predicate: component => component.AppId == newApp.Id)
             .Select(selector: component => component.Id)
             .ToHashSet();

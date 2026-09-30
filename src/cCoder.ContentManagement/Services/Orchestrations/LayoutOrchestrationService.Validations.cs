@@ -9,7 +9,7 @@ internal partial class LayoutOrchestrationService
     private static void ValidateLayoutOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllLayoutOnGet(object[] inputs) =>
+    private static void ValidateAllLayoutsOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateLayoutOnAdd(object[] inputs) =>

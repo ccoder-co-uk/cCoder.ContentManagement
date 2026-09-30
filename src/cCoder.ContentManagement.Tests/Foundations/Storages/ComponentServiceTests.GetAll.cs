@@ -28,7 +28,7 @@ public partial class ComponentServiceTests
             .Returns(value: components);
 
         // When
-        IQueryable<Component> result = componentService.GetAllComponent();
+        IQueryable<Component> result = componentService.GetAllComponents();
 
         // Then
 

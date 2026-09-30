@@ -13,14 +13,14 @@ namespace cCoder.ContentManagement.Brokers.Storages;
 
 internal sealed class PageInfoBroker(ICoreContextFactory coreContextFactory) : IPageInfoBroker
 {
-    public IQueryable<PageInfo> GetAllPageInfo()
+    public IQueryable<PageInfo> GetAllPageInfos()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
         return coreDataContext.PageInfo;
     }
 
-    public IQueryable<PageInfo> GetAllPageInfoIgnoringFilters()
+    public IQueryable<PageInfo> GetAllPageInfosIgnoringFilters()
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 

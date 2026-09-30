@@ -38,7 +38,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllTemplate());
+            return Ok(value: service.GetAllTemplates());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -67,7 +67,7 @@ public class TemplateController : ODataController
     {
         try
         {
-            Template result = service.GetAllTemplate()
+            Template result = service.GetAllTemplates()
                 .FirstOrDefault(predicate: template => template.Id == key);
 
             return result is null

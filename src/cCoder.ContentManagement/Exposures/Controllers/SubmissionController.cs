@@ -36,7 +36,7 @@ public class SubmissionController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllSubmission());
+            return Ok(value: service.GetAllSubmissions());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -65,7 +65,7 @@ public class SubmissionController : ODataController
     {
         try
         {
-            Submission result = service.GetAllSubmission()
+            Submission result = service.GetAllSubmissions()
                 .FirstOrDefault(predicate: submission => submission.Id == key);
 
             return result is null

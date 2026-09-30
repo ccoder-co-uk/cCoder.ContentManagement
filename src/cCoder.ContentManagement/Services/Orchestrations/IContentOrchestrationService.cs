@@ -13,7 +13,7 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 public interface IContentOrchestrationService
 {
     Content GetContent(int contentId);
-    IQueryable<Content> GetAllContent(bool ignoreFilters = false);
+    IQueryable<Content> GetAllContents(bool ignoreFilters = false);
     ValueTask<Content> AddContentAsync(Content newContent);
     ValueTask<Content> UpdateContentAsync(Content updatedContent);
     ValueTask DeleteAsync(int contentId);

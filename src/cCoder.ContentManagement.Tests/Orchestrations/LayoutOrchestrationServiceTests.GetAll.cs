@@ -19,12 +19,12 @@ public partial class LayoutOrchestrationServiceTests
         // Given
         IQueryable<Layout> entities = new[] { CreateRandomLayout() }.AsQueryable();
 
-        layoutProcessingServiceMock.Setup(expression: x => x.GetAllLayout(ignoreFilters: true))
+        layoutProcessingServiceMock.Setup(expression: x => x.GetAllLayouts(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
 
-        var result = orchestrationService.GetAllLayout(ignoreFilters: true)
+        var result = orchestrationService.GetAllLayouts(ignoreFilters: true)
             .ToArray();
 
         // Then
@@ -33,7 +33,7 @@ public partial class LayoutOrchestrationServiceTests
             .Should()
             .Equal(expected: entities.Select(selector: item => item.Id));
 
-        layoutProcessingServiceMock.Verify(expression: x => x.GetAllLayout(ignoreFilters: true), times: Times.Once);
+        layoutProcessingServiceMock.Verify(expression: x => x.GetAllLayouts(ignoreFilters: true), times: Times.Once);
         layoutProcessingServiceMock.VerifyNoOtherCalls();
         layoutEventProcessingServiceMock.VerifyNoOtherCalls();
     }

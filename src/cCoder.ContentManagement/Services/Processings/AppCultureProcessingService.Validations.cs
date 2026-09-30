@@ -6,7 +6,7 @@ namespace cCoder.ContentManagement.Services.Processings;
 
 internal partial class AppCultureProcessingService
 {
-    private static void ValidateAllAppCultureOnGet(object[] inputs) =>
+    private static void ValidateAllAppCulturesOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateAppCultureOnAdd(object[] inputs) =>

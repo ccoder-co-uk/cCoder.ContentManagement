@@ -24,11 +24,11 @@ internal partial class ContentProcessingService(IContentService service) : ICont
 
     });
 
-    public IQueryable<Content> GetAllContent(bool ignoreFilters = false) =>
+    public IQueryable<Content> GetAllContents(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Content>>(operation: () =>
     {
-        ValidateAllContentOnGet(inputs: [ignoreFilters]);
-        return service.GetAllContent(ignoreFilters: ignoreFilters);
+        ValidateAllContentsOnGet(inputs: [ignoreFilters]);
+        return service.GetAllContents(ignoreFilters: ignoreFilters);
     });
 
     public int? GetAppIdByPageId(int pageId) =>

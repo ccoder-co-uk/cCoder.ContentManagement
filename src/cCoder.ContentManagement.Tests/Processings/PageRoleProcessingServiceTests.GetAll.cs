@@ -25,18 +25,18 @@ public partial class PageRoleProcessingServiceTests
 
         IQueryable<LocalPageRole> queryableLinks = links.AsQueryable();
 
-        pageRoleServiceMock.Setup(expression: x => x.GetAllPageRole())
+        pageRoleServiceMock.Setup(expression: x => x.GetAllPageRoles())
             .Returns(value: queryableLinks);
 
         // When
-        IQueryable<LocalPageRole> result = pageRoleProcessingService.GetAllPageRole();
+        IQueryable<LocalPageRole> result = pageRoleProcessingService.GetAllPageRoles();
 
         // Then
 
         result.Should()
             .BeSameAs(expected: queryableLinks);
 
-        pageRoleServiceMock.Verify(expression: x => x.GetAllPageRole(), times: Times.Once);
+        pageRoleServiceMock.Verify(expression: x => x.GetAllPageRoles(), times: Times.Once);
         pageRoleServiceMock.VerifyNoOtherCalls();
     }
 

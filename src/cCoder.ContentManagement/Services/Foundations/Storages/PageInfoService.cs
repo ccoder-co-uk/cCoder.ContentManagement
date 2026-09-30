@@ -20,11 +20,11 @@ internal partial class PageInfoService(IPageInfoBroker pageInfoBroker) : IPageIn
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllPageInfo(ignoreFilters: true)
+            return ExecuteGetAllPageInfos(ignoreFilters: true)
                 .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
         }
 
-        PageInfo pageInfo = ExecuteGetAllPageInfo()
+        PageInfo pageInfo = ExecuteGetAllPageInfos()
             .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
 
         if (pageInfo != null)
@@ -32,7 +32,7 @@ internal partial class PageInfoService(IPageInfoBroker pageInfoBroker) : IPageIn
             return pageInfo;
         }
 
-        PageInfo pageInfo2 = ExecuteGetAllPageInfo(ignoreFilters: true)
+        PageInfo pageInfo2 = ExecuteGetAllPageInfos(ignoreFilters: true)
             .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
 
         if (pageInfo2 != null)
@@ -44,14 +44,14 @@ internal partial class PageInfoService(IPageInfoBroker pageInfoBroker) : IPageIn
 
     });
 
-    public IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false) =>
+    public IQueryable<PageInfo> GetAllPageInfos(bool ignoreFilters = false) =>
         TryCatch<IQueryable<PageInfo>>(operation: () =>
     {
-        ValidateAllPageInfoOnGet(inputs: [ignoreFilters]);
+        ValidateAllPageInfosOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
-            ? pageInfoBroker.GetAllPageInfoIgnoringFilters()
-            : pageInfoBroker.GetAllPageInfo();
+            ? pageInfoBroker.GetAllPageInfosIgnoringFilters()
+            : pageInfoBroker.GetAllPageInfos();
     });
 
     public int? GetOwningAppId(int pageId) =>
@@ -137,10 +137,10 @@ internal partial class PageInfoService(IPageInfoBroker pageInfoBroker) : IPageIn
         };
     }
 
-    private IQueryable<PageInfo> ExecuteGetAllPageInfo(bool ignoreFilters = false) =>
+    private IQueryable<PageInfo> ExecuteGetAllPageInfos(bool ignoreFilters = false) =>
         (ignoreFilters
-            ? pageInfoBroker.GetAllPageInfoIgnoringFilters()
-            : pageInfoBroker.GetAllPageInfo());
+            ? pageInfoBroker.GetAllPageInfosIgnoringFilters()
+            : pageInfoBroker.GetAllPageInfos());
 
     private PageInfo ExecuteGetPageInfo(int pageInfoId, bool ignoreFilters = false)
     {
@@ -148,11 +148,11 @@ internal partial class PageInfoService(IPageInfoBroker pageInfoBroker) : IPageIn
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllPageInfo(ignoreFilters: true)
+            return ExecuteGetAllPageInfos(ignoreFilters: true)
                 .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
         }
 
-        PageInfo pageInfo = ExecuteGetAllPageInfo()
+        PageInfo pageInfo = ExecuteGetAllPageInfos()
             .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
 
         if (pageInfo != null)
@@ -160,7 +160,7 @@ internal partial class PageInfoService(IPageInfoBroker pageInfoBroker) : IPageIn
             return pageInfo;
         }
 
-        PageInfo pageInfo2 = ExecuteGetAllPageInfo(ignoreFilters: true)
+        PageInfo pageInfo2 = ExecuteGetAllPageInfos(ignoreFilters: true)
             .FirstOrDefault(predicate: (PageInfo i) => i.Id == pageInfoId);
 
         if (pageInfo2 != null)

@@ -21,11 +21,11 @@ internal partial class ScriptService(IScriptBroker scriptBroker) : IScriptServic
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllScript(ignoreFilters: true)
+            return ExecuteGetAllScripts(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
         }
 
-        Script script = ExecuteGetAllScript()
+        Script script = ExecuteGetAllScripts()
             .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
 
         if (script != null)
@@ -33,7 +33,7 @@ internal partial class ScriptService(IScriptBroker scriptBroker) : IScriptServic
             return script;
         }
 
-        Script script2 = ExecuteGetAllScript(ignoreFilters: true)
+        Script script2 = ExecuteGetAllScripts(ignoreFilters: true)
             .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
 
         if (script2 != null)
@@ -45,10 +45,10 @@ internal partial class ScriptService(IScriptBroker scriptBroker) : IScriptServic
 
     });
 
-    public IQueryable<Script> GetAllScript(bool ignoreFilters = false) =>
+    public IQueryable<Script> GetAllScripts(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Script>>(operation: () =>
     {
-        ValidateAllScriptOnGet(inputs: [ignoreFilters]);
+        ValidateAllScriptsOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? scriptBroker.GetAllScriptsIgnoringFilters()
@@ -150,7 +150,7 @@ internal partial class ScriptService(IScriptBroker scriptBroker) : IScriptServic
         };
     }
 
-    private IQueryable<Script> ExecuteGetAllScript(bool ignoreFilters = false) =>
+    private IQueryable<Script> ExecuteGetAllScripts(bool ignoreFilters = false) =>
         (ignoreFilters
             ? scriptBroker.GetAllScriptsIgnoringFilters()
             : scriptBroker.GetAllScripts());
@@ -161,11 +161,11 @@ internal partial class ScriptService(IScriptBroker scriptBroker) : IScriptServic
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllScript(ignoreFilters: true)
+            return ExecuteGetAllScripts(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
         }
 
-        Script script = ExecuteGetAllScript()
+        Script script = ExecuteGetAllScripts()
             .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
 
         if (script != null)
@@ -173,7 +173,7 @@ internal partial class ScriptService(IScriptBroker scriptBroker) : IScriptServic
             return script;
         }
 
-        Script script2 = ExecuteGetAllScript(ignoreFilters: true)
+        Script script2 = ExecuteGetAllScripts(ignoreFilters: true)
             .FirstOrDefault(predicate: (Script i) => i.Id == scriptId);
 
         if (script2 != null)

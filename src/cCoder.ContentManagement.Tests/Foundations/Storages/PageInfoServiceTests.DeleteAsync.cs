@@ -20,7 +20,7 @@ public partial class PageInfoServiceTests
         // Given
         PageInfo pageInfo = CreateRandomPageInfo(id: 9);
 
-        pageInfoBrokerMock.Setup(expression: x => x.GetAllPageInfo())
+        pageInfoBrokerMock.Setup(expression: x => x.GetAllPageInfos())
             .Returns(value: new[] { ToDataPageInfo(pageInfo: pageInfo) }.AsQueryable());
 
         pageInfoBrokerMock.Setup(expression: x => x.DeletePageInfoAsync(deletedPageInfo: It.Is<DataPageInfo>(match: candidate => candidate.Id == pageInfo.Id)))
@@ -30,7 +30,7 @@ public partial class PageInfoServiceTests
         await pageInfoService.DeleteAsync(pageInfoId: 9);
 
         // Then
-        pageInfoBrokerMock.Verify(expression: x => x.GetAllPageInfo(), times: Times.Once);
+        pageInfoBrokerMock.Verify(expression: x => x.GetAllPageInfos(), times: Times.Once);
         pageInfoBrokerMock.Verify(expression: x => x.DeletePageInfoAsync(deletedPageInfo: It.Is<DataPageInfo>(match: candidate => candidate.Id == pageInfo.Id)), times: Times.Once);
         pageInfoBrokerMock.VerifyNoOtherCalls();
     }

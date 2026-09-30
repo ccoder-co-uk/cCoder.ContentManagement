@@ -19,18 +19,18 @@ public partial class LayoutProcessingServiceTests
         // Given
         IQueryable<Layout> entities = new[] { CreateRandomLayout() }.AsQueryable();
 
-        layoutServiceMock.Setup(expression: x => x.GetAllLayout())
+        layoutServiceMock.Setup(expression: x => x.GetAllLayouts())
             .Returns(value: entities);
 
         // When
-        IQueryable<Layout> result = layoutProcessingService.GetAllLayout();
+        IQueryable<Layout> result = layoutProcessingService.GetAllLayouts();
 
         // Then
 
         result.Should()
             .BeSameAs(expected: entities);
 
-        layoutServiceMock.Verify(expression: x => x.GetAllLayout(), times: Times.Once);
+        layoutServiceMock.Verify(expression: x => x.GetAllLayouts(), times: Times.Once);
         layoutServiceMock.VerifyNoOtherCalls();
     }
 

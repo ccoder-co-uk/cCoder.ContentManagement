@@ -16,8 +16,8 @@ internal sealed class LayoutManager(ILayoutOrchestrationService service) : ILayo
     public Layout GetLayout(int layoutId) =>
         service.GetLayout(layoutId: layoutId);
 
-    public IQueryable<Layout> GetAllLayout(bool ignoreFilters = false) =>
-        service.GetAllLayout(ignoreFilters: ignoreFilters);
+    public IQueryable<Layout> GetAllLayouts(bool ignoreFilters = false) =>
+        service.GetAllLayouts(ignoreFilters: ignoreFilters);
 
     public ValueTask<Layout> AddLayoutAsync(Layout newLayout) =>
         service.AddLayoutAsync(newLayout: newLayout);

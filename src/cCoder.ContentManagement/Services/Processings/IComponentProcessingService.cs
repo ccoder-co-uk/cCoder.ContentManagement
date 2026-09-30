@@ -14,7 +14,7 @@ internal interface IComponentProcessingService
 {
     Component GetComponent(int componentId);
 
-    IQueryable<Component> GetAllComponent(bool ignoreFilters = false);
+    IQueryable<Component> GetAllComponents(bool ignoreFilters = false);
 
     ValueTask<Component> AddComponentAsync(Component newComponent);
 

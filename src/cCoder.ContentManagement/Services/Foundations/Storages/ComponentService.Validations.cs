@@ -41,7 +41,7 @@ internal partial class ComponentService
     private static void ValidateComponentOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllComponentOnGet(object[] inputs) =>
+    private static void ValidateAllComponentsOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateComponentOnAdd(object[] inputs) =>

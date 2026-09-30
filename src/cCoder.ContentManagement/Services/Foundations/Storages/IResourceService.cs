@@ -12,7 +12,7 @@ internal interface IResourceService
 {
     Resource GetResource(int resourceId, bool ignoreFilters = false);
 
-    IQueryable<Resource> GetAllResource(bool ignoreFilters = false);
+    IQueryable<Resource> GetAllResources(bool ignoreFilters = false);
 
     ValueTask<Resource> AddResourceAsync(Resource newResource);
 

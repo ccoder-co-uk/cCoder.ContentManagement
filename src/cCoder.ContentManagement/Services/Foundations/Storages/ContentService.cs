@@ -20,11 +20,11 @@ internal partial class ContentService(IContentBroker contentBroker) : IContentSe
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllContent(ignoreFilters: true)
+            return ExecuteGetAllContents(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
         }
 
-        Content content = ExecuteGetAllContent()
+        Content content = ExecuteGetAllContents()
             .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
 
         if (content != null)
@@ -32,7 +32,7 @@ internal partial class ContentService(IContentBroker contentBroker) : IContentSe
             return content;
         }
 
-        Content content2 = ExecuteGetAllContent(ignoreFilters: true)
+        Content content2 = ExecuteGetAllContents(ignoreFilters: true)
             .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
 
         if (content2 != null)
@@ -44,10 +44,10 @@ internal partial class ContentService(IContentBroker contentBroker) : IContentSe
 
     });
 
-    public IQueryable<Content> GetAllContent(bool ignoreFilters = false) =>
+    public IQueryable<Content> GetAllContents(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Content>>(operation: () =>
     {
-        ValidateAllContentOnGet(inputs: [ignoreFilters]);
+        ValidateAllContentsOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? contentBroker.GetAllContentsIgnoringFilters()
@@ -134,7 +134,7 @@ internal partial class ContentService(IContentBroker contentBroker) : IContentSe
         };
     }
 
-    private IQueryable<Content> ExecuteGetAllContent(bool ignoreFilters = false) =>
+    private IQueryable<Content> ExecuteGetAllContents(bool ignoreFilters = false) =>
         (ignoreFilters
             ? contentBroker.GetAllContentsIgnoringFilters()
             : contentBroker.GetAllContents());
@@ -145,11 +145,11 @@ internal partial class ContentService(IContentBroker contentBroker) : IContentSe
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllContent(ignoreFilters: true)
+            return ExecuteGetAllContents(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
         }
 
-        Content content = ExecuteGetAllContent()
+        Content content = ExecuteGetAllContents()
             .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
 
         if (content != null)
@@ -157,7 +157,7 @@ internal partial class ContentService(IContentBroker contentBroker) : IContentSe
             return content;
         }
 
-        Content content2 = ExecuteGetAllContent(ignoreFilters: true)
+        Content content2 = ExecuteGetAllContents(ignoreFilters: true)
             .FirstOrDefault(predicate: (Content i) => i.Id == contentId);
 
         if (content2 != null)

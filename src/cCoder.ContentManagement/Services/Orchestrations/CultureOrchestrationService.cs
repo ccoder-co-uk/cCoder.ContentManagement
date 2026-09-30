@@ -26,11 +26,11 @@ internal partial class CultureOrchestrationService(
         return processingService.GetCulture(cultureId: ValidateId(cultureId: cultureId, parameterName: "id"));
     });
 
-    public IQueryable<Culture> GetAllCulture(bool ignoreFilters = false) =>
+    public IQueryable<Culture> GetAllCultures(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Culture>>(operation: () =>
     {
-        ValidateAllCultureOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllCulture(ignoreFilters: ignoreFilters);
+        ValidateAllCulturesOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllCultures(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Culture> AddCultureAsync(Culture newCulture) =>

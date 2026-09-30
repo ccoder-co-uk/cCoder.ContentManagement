@@ -14,7 +14,7 @@ internal sealed class PageManager(
         : IPageManager
 {
     public IQueryable<Page> GetAll() =>
-        pageOrchestrationService.GetAllPage();
+        pageOrchestrationService.GetAllPages();
 
     public Page Get(int pageId) =>
         pageOrchestrationService.GetPage(pageId: pageId);

@@ -16,8 +16,8 @@ internal sealed class ScriptManager(IScriptOrchestrationService service) : IScri
     public Script GetScript(int scriptId) =>
         service.GetScript(scriptId: scriptId);
 
-    public IQueryable<Script> GetAllScript(bool ignoreFilters = false) =>
-        service.GetAllScript(ignoreFilters: ignoreFilters);
+    public IQueryable<Script> GetAllScripts(bool ignoreFilters = false) =>
+        service.GetAllScripts(ignoreFilters: ignoreFilters);
 
     public ValueTask<Script> AddScriptAsync(Script newScript) =>
         service.AddScriptAsync(newScript: newScript);

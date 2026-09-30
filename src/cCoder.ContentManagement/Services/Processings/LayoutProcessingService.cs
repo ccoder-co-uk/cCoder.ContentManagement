@@ -24,11 +24,11 @@ internal partial class LayoutProcessingService(ILayoutService service) : ILayout
 
     });
 
-    public IQueryable<Layout> GetAllLayout(bool ignoreFilters = false) =>
+    public IQueryable<Layout> GetAllLayouts(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Layout>>(operation: () =>
     {
-        ValidateAllLayoutOnGet(inputs: [ignoreFilters]);
-        return service.GetAllLayout(ignoreFilters: ignoreFilters);
+        ValidateAllLayoutsOnGet(inputs: [ignoreFilters]);
+        return service.GetAllLayouts(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Layout> AddLayoutAsync(Layout newLayout) =>

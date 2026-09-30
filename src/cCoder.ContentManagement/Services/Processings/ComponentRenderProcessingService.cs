@@ -394,7 +394,7 @@ internal partial class ComponentRenderProcessingService(
 
         List<Resource> list = known;
         List<Resource> list2 = new List<Resource>();
-        list2.AddRange(collection: ExecuteSectionForCultureResource(potentials: renderParams.App.Resources, key: key, culture: renderParams.Culture ?? string.Empty));
+        list2.AddRange(collection: ExecuteSectionForCultureResources(potentials: renderParams.App.Resources, key: key, culture: renderParams.Culture ?? string.Empty));
         list.AddRange(collection: list2);
         string key2 = key.ToLowerInvariant();
         string culture = renderParams.Culture.ToLowerInvariant();
@@ -915,7 +915,7 @@ internal partial class ComponentRenderProcessingService(
         return $"<section name='{component.Name}' class='component' data-id='{component.Id}' data-resource-key='{component.ResourceKey}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Content, replacements: replacements)}<script type='text/javascript' nonce='{ContentSecurityPolicyNonceContract.Placeholder}'>{ProcessContentString(key: component.ResourceKey, renderParams: renderParams, content: component.Script, replacements: replacements)}</script></section>";
     }
 
-    private static IEnumerable<Resource> ExecuteSectionForCultureResource(IEnumerable<Resource> potentials, string key, string culture)
+    private static IEnumerable<Resource> ExecuteSectionForCultureResources(IEnumerable<Resource> potentials, string key, string culture)
     {
         List<Resource> list = new List<Resource>();
 

@@ -17,8 +17,8 @@ internal sealed class SubmissionManager(ISubmissionOrchestrationService service)
     public Submission GetSubmission(Guid submissionId) =>
         service.GetSubmission(submissionId: submissionId);
 
-    public IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false) =>
-        service.GetAllSubmission(ignoreFilters: ignoreFilters);
+    public IQueryable<Submission> GetAllSubmissions(bool ignoreFilters = false) =>
+        service.GetAllSubmissions(ignoreFilters: ignoreFilters);
 
     public ValueTask<Submission> AddSubmissionAsync(Submission newSubmission) =>
         service.AddSubmissionAsync(newSubmission: newSubmission);

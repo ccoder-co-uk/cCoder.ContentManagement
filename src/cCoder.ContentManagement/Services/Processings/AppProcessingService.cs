@@ -67,10 +67,10 @@ internal partial class AppProcessingService(
             .FirstOrDefault(predicate: app => app.Domain == domain);
     });
 
-    public IQueryable<App> GetAllApp(bool ignoreFilters = false) =>
+    public IQueryable<App> GetAllApps(bool ignoreFilters = false) =>
         TryCatch<IQueryable<App>>(operation: () =>
     {
-        ValidateAllAppOnGet(inputs: [ignoreFilters]);
+        ValidateAllAppsOnGet(inputs: [ignoreFilters]);
         return GetAllAppsFromStorage(ignoreFilters: ignoreFilters);
     });
 

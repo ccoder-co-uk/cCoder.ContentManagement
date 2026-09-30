@@ -28,7 +28,7 @@ public partial class LayoutServiceTests
             .Returns(value: layouts);
 
         // When
-        IQueryable<Layout> result = layoutService.GetAllLayout();
+        IQueryable<Layout> result = layoutService.GetAllLayouts();
 
         // Then
 

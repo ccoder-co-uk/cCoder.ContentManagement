@@ -65,11 +65,11 @@ internal partial class AppOrchestrationService(
             ignoreFilters: ignoreFilters);
     });
 
-    public IQueryable<App> GetAllApp(bool ignoreFilters = false) =>
+    public IQueryable<App> GetAllApps(bool ignoreFilters = false) =>
         TryCatch<IQueryable<App>>(operation: () =>
     {
-        ValidateAllAppOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllApp(ignoreFilters: ignoreFilters);
+        ValidateAllAppsOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllApps(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<App> AddAppAsync(App newApp) =>
@@ -80,7 +80,7 @@ internal partial class AppOrchestrationService(
         Authorize(appId: null, privilege: "app_create");
 
         bool isFirstApp = !processingService
-            .GetAllApp(ignoreFilters: true)
+            .GetAllApps(ignoreFilters: true)
             .Any();
 
         processingService.PrepareNewApp(

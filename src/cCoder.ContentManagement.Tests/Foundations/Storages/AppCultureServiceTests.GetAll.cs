@@ -28,7 +28,7 @@ public partial class AppCultureServiceTests
             .Returns(value: appCultures);
 
         // When
-        IQueryable<AppCulture> result = appCultureService.GetAllAppCulture();
+        IQueryable<AppCulture> result = appCultureService.GetAllAppCultures();
 
         // Then
 

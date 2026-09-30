@@ -12,7 +12,7 @@ internal interface ITemplateService
 {
     Template GetTemplate(int templateId, bool ignoreFilters = false);
 
-    IQueryable<Template> GetAllTemplate(bool ignoreFilters = false);
+    IQueryable<Template> GetAllTemplates(bool ignoreFilters = false);
 
     ValueTask<Template> AddTemplateAsync(Template newTemplate);
 

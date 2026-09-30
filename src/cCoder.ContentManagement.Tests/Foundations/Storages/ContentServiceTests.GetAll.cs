@@ -28,7 +28,7 @@ public partial class ContentServiceTests
             .Returns(value: contents);
 
         // When
-        IQueryable<Content> result = contentService.GetAllContent();
+        IQueryable<Content> result = contentService.GetAllContents();
 
         // Then
 

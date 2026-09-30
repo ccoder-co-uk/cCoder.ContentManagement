@@ -12,7 +12,7 @@ namespace cCoder.ContentManagement.Exposures;
 
 public interface IAppCultureManager
 {
-    IQueryable<AppCulture> GetAllAppCulture(bool ignoreFilters = false);
+    IQueryable<AppCulture> GetAllAppCultures(bool ignoreFilters = false);
 
     ValueTask<AppCulture> AddAppCultureAsync(AppCulture newAppCulture);
 

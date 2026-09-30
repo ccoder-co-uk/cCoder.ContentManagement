@@ -19,12 +19,12 @@ public partial class ResourceOrchestrationServiceTests
         // Given
         IQueryable<Resource> entities = new[] { CreateRandomResource() }.AsQueryable();
 
-        resourceProcessingServiceMock.Setup(expression: x => x.GetAllResource(ignoreFilters: true))
+        resourceProcessingServiceMock.Setup(expression: x => x.GetAllResources(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
 
-        var result = orchestrationService.GetAllResource(ignoreFilters: true)
+        var result = orchestrationService.GetAllResources(ignoreFilters: true)
             .ToArray();
 
         // Then
@@ -33,7 +33,7 @@ public partial class ResourceOrchestrationServiceTests
             .Should()
             .Equal(expected: entities.Select(selector: item => item.Id));
 
-        resourceProcessingServiceMock.Verify(expression: x => x.GetAllResource(ignoreFilters: true), times: Times.Once);
+        resourceProcessingServiceMock.Verify(expression: x => x.GetAllResources(ignoreFilters: true), times: Times.Once);
         resourceProcessingServiceMock.VerifyNoOtherCalls();
         resourceEventProcessingServiceMock.VerifyNoOtherCalls();
     }

@@ -12,7 +12,7 @@ internal interface ICultureService
 {
     Culture GetCulture(string cultureId, bool ignoreFilters = false);
 
-    IQueryable<Culture> GetAllCulture(bool ignoreFilters = false);
+    IQueryable<Culture> GetAllCultures(bool ignoreFilters = false);
 
     int? GetOwningAppId(string cultureId);
 

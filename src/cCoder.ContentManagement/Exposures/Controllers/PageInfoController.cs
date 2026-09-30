@@ -36,7 +36,7 @@ public class PageInfoController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllPageInfo());
+            return Ok(value: service.GetAllPageInfos());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -65,7 +65,7 @@ public class PageInfoController : ODataController
     {
         try
         {
-            PageInfo result = service.GetAllPageInfo()
+            PageInfo result = service.GetAllPageInfos()
                 .FirstOrDefault(predicate: pageInfo => pageInfo.Id == key);
 
             return result is null

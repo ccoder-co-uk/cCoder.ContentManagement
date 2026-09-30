@@ -19,12 +19,12 @@ public partial class ContentOrchestrationServiceTests
         // Given
         IQueryable<Content> entities = new[] { CreateRandomContent() }.AsQueryable();
 
-        contentProcessingServiceMock.Setup(expression: x => x.GetAllContent(ignoreFilters: true))
+        contentProcessingServiceMock.Setup(expression: x => x.GetAllContents(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
 
-        var result = orchestrationService.GetAllContent(ignoreFilters: true)
+        var result = orchestrationService.GetAllContents(ignoreFilters: true)
             .ToArray();
 
         // Then
@@ -33,7 +33,7 @@ public partial class ContentOrchestrationServiceTests
             .Should()
             .Equal(expected: entities.Select(selector: item => item.Id));
 
-        contentProcessingServiceMock.Verify(expression: x => x.GetAllContent(ignoreFilters: true), times: Times.Once);
+        contentProcessingServiceMock.Verify(expression: x => x.GetAllContents(ignoreFilters: true), times: Times.Once);
         contentProcessingServiceMock.VerifyNoOtherCalls();
         contentEventProcessingServiceMock.VerifyNoOtherCalls();
     }

@@ -13,7 +13,7 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 public interface ICultureOrchestrationService
 {
     Culture GetCulture(string cultureId);
-    IQueryable<Culture> GetAllCulture(bool ignoreFilters = false);
+    IQueryable<Culture> GetAllCultures(bool ignoreFilters = false);
     ValueTask<Culture> AddCultureAsync(Culture newCulture);
     ValueTask<Culture> UpdateCultureAsync(Culture updatedCulture);
     ValueTask DeleteAsync(string cultureId);

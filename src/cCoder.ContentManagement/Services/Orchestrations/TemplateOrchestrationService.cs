@@ -28,11 +28,11 @@ internal partial class TemplateOrchestrationService(
         return processingService.GetTemplate(templateId: templateId);
     });
 
-    public IQueryable<Template> GetAllTemplate(bool ignoreFilters = false) =>
+    public IQueryable<Template> GetAllTemplates(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Template>>(operation: () =>
     {
-        ValidateAllTemplateOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllTemplate(ignoreFilters: ignoreFilters);
+        ValidateAllTemplatesOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllTemplates(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Template> AddTemplateAsync(Template newTemplate) =>
@@ -83,7 +83,7 @@ internal partial class TemplateOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllTemplate(ignoreFilters: true)
+            entity = processingService.GetAllTemplates(ignoreFilters: true)
                 .FirstOrDefault(predicate: template => template.Id == templateId);
         }
 
@@ -107,7 +107,7 @@ internal partial class TemplateOrchestrationService(
     {
         ValidateByAppIdOnDelete(inputs: [appId]);
 
-        Template[] templatesToDelete = [.. ExecuteGetAllTemplate(ignoreFilters: true)
+        Template[] templatesToDelete = [.. ExecuteGetAllTemplates(ignoreFilters: true)
             .Where(predicate: template => template.AppId == appId)];
 
         if (templatesToDelete.Length > 0)
@@ -163,7 +163,7 @@ internal partial class TemplateOrchestrationService(
         string[] names = validatedItems.Select(selector: template => template.Name.ToLower())
             .ToArray();
 
-        var dbVersions = processingService.GetAllTemplate()
+        var dbVersions = processingService.GetAllTemplates()
             .Where(predicate: template => template.AppId == appId && ((ReadOnlySpan<string>)names).Contains(value: template.Name.ToLower()))
             .Select(selector: template => new { template.Id, template.Name })
             .ToArray();
@@ -271,7 +271,7 @@ internal partial class TemplateOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllTemplate(ignoreFilters: true)
+            entity = processingService.GetAllTemplates(ignoreFilters: true)
                 .FirstOrDefault(predicate: template => template.Id == templateId);
         }
 
@@ -289,8 +289,8 @@ internal partial class TemplateOrchestrationService(
         await processingService.DeleteAsync(templateId: templateId);
     }
 
-    private IQueryable<Template> ExecuteGetAllTemplate(bool ignoreFilters = false) =>
-        processingService.GetAllTemplate(ignoreFilters: ignoreFilters);
+    private IQueryable<Template> ExecuteGetAllTemplates(bool ignoreFilters = false) =>
+        processingService.GetAllTemplates(ignoreFilters: ignoreFilters);
 
     private async ValueTask<Template> ExecuteUpdateTemplateAsync(Template updatedTemplate)
     {

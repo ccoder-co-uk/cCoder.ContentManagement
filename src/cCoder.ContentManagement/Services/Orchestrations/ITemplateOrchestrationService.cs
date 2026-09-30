@@ -14,7 +14,7 @@ public interface ITemplateOrchestrationService
 {
     Template GetTemplate(int templateId);
 
-    IQueryable<Template> GetAllTemplate(bool ignoreFilters = false);
+    IQueryable<Template> GetAllTemplates(bool ignoreFilters = false);
 
     ValueTask<Template> AddTemplateAsync(Template newTemplate);
 

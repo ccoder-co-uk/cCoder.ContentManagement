@@ -136,7 +136,7 @@ internal partial class AppService
     private static void ValidateAppOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllAppOnGet(object[] inputs) =>
+    private static void ValidateAllAppsOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateAppOnAdd(object[] inputs) =>

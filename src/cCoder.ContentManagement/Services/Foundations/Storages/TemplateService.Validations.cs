@@ -41,7 +41,7 @@ internal partial class TemplateService
     private static void ValidateTemplateOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllTemplateOnGet(object[] inputs) =>
+    private static void ValidateAllTemplatesOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateTemplateOnAdd(object[] inputs) =>

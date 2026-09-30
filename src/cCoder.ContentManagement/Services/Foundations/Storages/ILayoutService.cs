@@ -12,7 +12,7 @@ internal interface ILayoutService
 {
     Layout GetLayout(int layoutId, bool ignoreFilters = false);
 
-    IQueryable<Layout> GetAllLayout(bool ignoreFilters = false);
+    IQueryable<Layout> GetAllLayouts(bool ignoreFilters = false);
 
     ValueTask<Layout> AddLayoutAsync(Layout newLayout);
 

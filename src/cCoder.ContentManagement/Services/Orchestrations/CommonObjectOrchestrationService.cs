@@ -40,11 +40,11 @@ internal partial class CommonObjectOrchestrationService(
 
     });
 
-    public IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false) =>
+    public IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters = false) =>
         TryCatch<IQueryable<CommonObject>>(operation: () =>
     {
-        ValidateAllCommonObjectOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllCommonObject(ignoreFilters: ignoreFilters);
+        ValidateAllCommonObjectsOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllCommonObjects(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
@@ -165,10 +165,10 @@ internal partial class CommonObjectOrchestrationService(
             commonObjects: commonObjects);
     }, isValueTask: true);
 
-    public IEnumerable<CommonObject> LatestCommonObject(string type) =>
+    public IEnumerable<CommonObject> LatestCommonObjects(string type) =>
         TryCatch<IEnumerable<CommonObject>>(operation: () =>
     {
-        ValidateLatestCommonObject(inputs: [type]);
+        ValidateLatestCommonObjects(inputs: [type]);
         ValidateType(type: type, parameterName: "type");
 
         CommonObject[] latestCommonObjects = latestCacheProcessingService

@@ -16,8 +16,8 @@ internal sealed class CultureManager(ICultureOrchestrationService service) : ICu
     public Culture GetCulture(string cultureId) =>
         service.GetCulture(cultureId: cultureId);
 
-    public IQueryable<Culture> GetAllCulture(bool ignoreFilters = false) =>
-        service.GetAllCulture(ignoreFilters: ignoreFilters);
+    public IQueryable<Culture> GetAllCultures(bool ignoreFilters = false) =>
+        service.GetAllCultures(ignoreFilters: ignoreFilters);
 
     public ValueTask<Culture> AddCultureAsync(Culture newCulture) =>
         service.AddCultureAsync(newCulture: newCulture);

@@ -82,7 +82,7 @@ internal partial class PageCoordinationService(
 
         if (page.PageInfo != null)
         {
-            PageInfo[] existingPageInfos = pageInfoOrchestrationService.GetAllPageInfo(ignoreFilters: true)
+            PageInfo[] existingPageInfos = pageInfoOrchestrationService.GetAllPageInfos(ignoreFilters: true)
                 .Where(predicate: pageInfo => pageInfo.PageId == page.Id)
                 .ToArray();
 
@@ -91,7 +91,7 @@ internal partial class PageCoordinationService(
 
         if (page.Contents != null)
         {
-            Content[] existingContents = contentOrchestrationService.GetAllContent(ignoreFilters: true)
+            Content[] existingContents = contentOrchestrationService.GetAllContents(ignoreFilters: true)
                 .Where(predicate: content => content.PageId == page.Id)
                 .ToArray();
 
@@ -106,11 +106,11 @@ internal partial class PageCoordinationService(
         ValidateHandlePageDeleteAsync(inputs: [page]);
         ValidatePage(page: page, parameterName: "page");
 
-        IEnumerable<PageInfo> pageInfosToDelete = pageInfoOrchestrationService.GetAllPageInfo(ignoreFilters: true)
+        IEnumerable<PageInfo> pageInfosToDelete = pageInfoOrchestrationService.GetAllPageInfos(ignoreFilters: true)
             .Where(predicate: pageInfo => pageInfo.PageId == page.Id)
             .ToArray();
 
-        IEnumerable<Content> contentsToDelete = contentOrchestrationService.GetAllContent(ignoreFilters: true)
+        IEnumerable<Content> contentsToDelete = contentOrchestrationService.GetAllContents(ignoreFilters: true)
             .Where(predicate: content => content.PageId == page.Id)
             .ToArray();
 

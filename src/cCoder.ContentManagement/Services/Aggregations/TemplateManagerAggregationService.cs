@@ -29,10 +29,10 @@ internal sealed partial class TemplateManagerAggregationService(
             return templateContentOrchestrationService.ConvertHtmlToPdf(html: html);
         });
 
-    public IQueryable<Template> GetAllTemplate() =>
+    public IQueryable<Template> GetAllTemplates() =>
         TryCatch(operation: () =>
         {
-            return templateOrchestrationService.GetAllTemplate();
+            return templateOrchestrationService.GetAllTemplates();
         });
 
     public Template GetTemplate(int templateId) =>

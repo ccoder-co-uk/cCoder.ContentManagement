@@ -12,7 +12,7 @@ namespace cCoder.ContentManagement.Exposures;
 
 public interface IPageRoleManager
 {
-    IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false);
+    IQueryable<PageRole> GetAllPageRoles(bool ignoreFilters = false);
 
     ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole);
 

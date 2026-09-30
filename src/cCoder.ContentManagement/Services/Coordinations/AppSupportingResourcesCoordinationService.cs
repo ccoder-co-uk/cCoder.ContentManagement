@@ -115,7 +115,7 @@ internal partial class AppSupportingResourcesCoordinationService(
             .Select(selector: culture => culture.CultureId)
             .ToArray();
 
-        AppCulture[] culturesToDelete = appCultureOrchestrationService.GetAllAppCulture(ignoreFilters: true)
+        AppCulture[] culturesToDelete = appCultureOrchestrationService.GetAllAppCultures(ignoreFilters: true)
             .Where(predicate: culture =>
                 culture.AppId == deletedApp.Id &&
                 culture.CultureId.Length > 0 &&
@@ -135,7 +135,7 @@ internal partial class AppSupportingResourcesCoordinationService(
             .Select(selector: resource => resource.Id)
             .ToArray();
 
-        Resource[] resourcesToDelete = resourceOrchestrationService.GetAllResource(ignoreFilters: true)
+        Resource[] resourcesToDelete = resourceOrchestrationService.GetAllResources(ignoreFilters: true)
             .Where(predicate: resource => resource.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingResourceIds).Contains(value: resource.Id))
             .ToArray();
 
@@ -152,7 +152,7 @@ internal partial class AppSupportingResourcesCoordinationService(
             .Select(selector: script => script.Id)
             .ToArray();
 
-        Script[] scriptsToDelete = scriptOrchestrationService.GetAllScript(ignoreFilters: true)
+        Script[] scriptsToDelete = scriptOrchestrationService.GetAllScripts(ignoreFilters: true)
             .Where(predicate: script => script.AppId == deletedApp.Id && !((ReadOnlySpan<int>)incomingScriptIds).Contains(value: script.Id))
             .ToArray();
 
@@ -164,7 +164,7 @@ internal partial class AppSupportingResourcesCoordinationService(
 
     private async ValueTask AddOrUpdateCulturesAsync(App newApp)
     {
-        HashSet<string> existingCultureIds = appCultureOrchestrationService.GetAllAppCulture(ignoreFilters: true)
+        HashSet<string> existingCultureIds = appCultureOrchestrationService.GetAllAppCultures(ignoreFilters: true)
             .Where(predicate: culture => culture.AppId == newApp.Id)
             .Select(selector: culture => culture.CultureId)
             .ToHashSet(comparer: StringComparer.Ordinal);
@@ -180,7 +180,7 @@ internal partial class AppSupportingResourcesCoordinationService(
 
     private async ValueTask AddOrUpdateResourcesAsync(App newApp)
     {
-        HashSet<int> existingResourceIds = resourceOrchestrationService.GetAllResource(ignoreFilters: true)
+        HashSet<int> existingResourceIds = resourceOrchestrationService.GetAllResources(ignoreFilters: true)
             .Where(predicate: resource => resource.AppId == newApp.Id)
             .Select(selector: resource => resource.Id)
             .ToHashSet();
@@ -200,7 +200,7 @@ internal partial class AppSupportingResourcesCoordinationService(
 
     private async ValueTask AddOrUpdateScriptsAsync(App newApp)
     {
-        HashSet<int> existingScriptIds = scriptOrchestrationService.GetAllScript(ignoreFilters: true)
+        HashSet<int> existingScriptIds = scriptOrchestrationService.GetAllScripts(ignoreFilters: true)
             .Where(predicate: script => script.AppId == newApp.Id)
             .Select(selector: script => script.Id)
             .ToHashSet();

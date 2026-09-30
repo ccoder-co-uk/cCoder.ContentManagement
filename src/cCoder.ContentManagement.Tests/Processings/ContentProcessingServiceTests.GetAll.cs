@@ -19,18 +19,18 @@ public partial class ContentProcessingServiceTests
         // Given
         IQueryable<Content> entities = new[] { CreateRandomContent() }.AsQueryable();
 
-        contentServiceMock.Setup(expression: x => x.GetAllContent())
+        contentServiceMock.Setup(expression: x => x.GetAllContents())
             .Returns(value: entities);
 
         // When
-        IQueryable<Content> result = contentProcessingService.GetAllContent();
+        IQueryable<Content> result = contentProcessingService.GetAllContents();
 
         // Then
 
         result.Should()
             .BeSameAs(expected: entities);
 
-        contentServiceMock.Verify(expression: x => x.GetAllContent(), times: Times.Once);
+        contentServiceMock.Verify(expression: x => x.GetAllContents(), times: Times.Once);
         contentServiceMock.VerifyNoOtherCalls();
     }
 

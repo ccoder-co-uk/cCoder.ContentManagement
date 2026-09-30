@@ -12,7 +12,7 @@ internal interface ICommonObjectService
 {
     CommonObject GetCommonObject(int commonObjectId, bool ignoreFilters = false);
 
-    IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false);
+    IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters = false);
 
     ValueTask<CommonObject> AddCommonObjectAsync(
         CommonObject newCommonObject,

@@ -16,8 +16,8 @@ internal sealed class ContentManager(IContentOrchestrationService service) : ICo
     public Content GetContent(int contentId) =>
         service.GetContent(contentId: contentId);
 
-    public IQueryable<Content> GetAllContent(bool ignoreFilters = false) =>
-        service.GetAllContent(ignoreFilters: ignoreFilters);
+    public IQueryable<Content> GetAllContents(bool ignoreFilters = false) =>
+        service.GetAllContents(ignoreFilters: ignoreFilters);
 
     public ValueTask<Content> AddContentAsync(Content newContent) =>
         service.AddContentAsync(newContent: newContent);

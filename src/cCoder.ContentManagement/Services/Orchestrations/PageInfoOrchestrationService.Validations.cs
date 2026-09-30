@@ -9,7 +9,7 @@ internal partial class PageInfoOrchestrationService
     private static void ValidatePageInfoOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllPageInfoOnGet(object[] inputs) =>
+    private static void ValidateAllPageInfosOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidatePageInfoOnAdd(object[] inputs) =>

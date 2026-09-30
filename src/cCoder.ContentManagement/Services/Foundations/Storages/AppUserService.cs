@@ -12,11 +12,11 @@ namespace cCoder.ContentManagement.Services.Foundations.Storages;
 internal sealed partial class AppUserService(IAppUserBroker appUserBroker)
     : IAppUserService
 {
-    public IQueryable<User> GetAllAppUser(int appId) =>
+    public IQueryable<User> GetAllUsers(int appId) =>
         TryCatch<IQueryable<User>>(operation: () =>
     {
-        ValidateAllAppUserOnGet(inputs: [appId]);
+        ValidateAllUsersOnGet(inputs: [appId]);
         ArgumentOutOfRangeException.ThrowIfLessThan(value: appId, other: 1);
-        return appUserBroker.GetAllAppUser(appId: appId);
+        return appUserBroker.GetAllUsers(appId: appId);
     });
 }

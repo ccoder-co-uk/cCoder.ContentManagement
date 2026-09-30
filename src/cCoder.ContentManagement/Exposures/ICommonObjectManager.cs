@@ -14,7 +14,7 @@ public interface ICommonObjectManager
 {
     CommonObject GetCommonObject(int commonObjectId);
 
-    IQueryable<CommonObject> GetAllCommonObject(bool ignoreFilters = false);
+    IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters = false);
 
     CommonObject[] DeserializeCommonObjects(object payload);
 
@@ -29,6 +29,6 @@ public interface ICommonObjectManager
 
     ValueTask DeleteAllCommonObjectAsync(IEnumerable<CommonObject> deletedCommonObject);
 
-    IEnumerable<CommonObject> LatestCommonObject(string type);
+    IEnumerable<CommonObject> LatestCommonObjects(string type);
 
 }

@@ -14,7 +14,7 @@ internal interface IPageInfoProcessingService
 {
     PageInfo GetPageInfo(int pageInfoId);
 
-    IQueryable<PageInfo> GetAllPageInfo(bool ignoreFilters = false);
+    IQueryable<PageInfo> GetAllPageInfos(bool ignoreFilters = false);
 
     int? GetOwningAppId(int pageId);
 

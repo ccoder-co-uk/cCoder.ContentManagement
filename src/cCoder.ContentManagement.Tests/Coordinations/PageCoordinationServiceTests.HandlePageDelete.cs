@@ -62,13 +62,13 @@ public partial class PageCoordinationServiceTests
 
         IQueryable<LocalPageInfo> pageInfos = localPageInfos.AsQueryable();
 
-        pageRoleOrchestrationServiceMock.Setup(expression: service => service.GetAllPageRole(ignoreFilters: true))
+        pageRoleOrchestrationServiceMock.Setup(expression: service => service.GetAllPageRoles(ignoreFilters: true))
             .Returns(value: pageRoles);
 
-        pageInfoOrchestrationServiceMock.Setup(expression: service => service.GetAllPageInfo(ignoreFilters: true))
+        pageInfoOrchestrationServiceMock.Setup(expression: service => service.GetAllPageInfos(ignoreFilters: true))
             .Returns(value: pageInfos);
 
-        contentOrchestrationServiceMock.Setup(expression: service => service.GetAllContent(ignoreFilters: true))
+        contentOrchestrationServiceMock.Setup(expression: service => service.GetAllContents(ignoreFilters: true))
             .Returns(value: contents);
 
         pageRoleOrchestrationServiceMock
@@ -88,9 +88,9 @@ public partial class PageCoordinationServiceTests
         await structureCoordinationService.HandlePageDeleteAsync(page: page);
 
         // Then
-        pageRoleOrchestrationServiceMock.Verify(expression: service => service.GetAllPageRole(ignoreFilters: true), times: Times.Once);
-        pageInfoOrchestrationServiceMock.Verify(expression: service => service.GetAllPageInfo(ignoreFilters: true), times: Times.Once);
-        contentOrchestrationServiceMock.Verify(expression: service => service.GetAllContent(ignoreFilters: true), times: Times.Once);
+        pageRoleOrchestrationServiceMock.Verify(expression: service => service.GetAllPageRoles(ignoreFilters: true), times: Times.Once);
+        pageInfoOrchestrationServiceMock.Verify(expression: service => service.GetAllPageInfos(ignoreFilters: true), times: Times.Once);
+        contentOrchestrationServiceMock.Verify(expression: service => service.GetAllContents(ignoreFilters: true), times: Times.Once);
 
         pageRoleOrchestrationServiceMock.Verify(
 expression: service => service.DeleteAllPageRoleAsync(

@@ -35,7 +35,7 @@ public class PageRoleController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllPageRole());
+            return Ok(value: service.GetAllPageRoles());
         }
         catch (ContentManagementValidationException exception)
         {

@@ -19,12 +19,12 @@ public partial class ScriptOrchestrationServiceTests
         // Given
         IQueryable<Script> entities = new[] { CreateRandomScript() }.AsQueryable();
 
-        scriptProcessingServiceMock.Setup(expression: x => x.GetAllScript(ignoreFilters: true))
+        scriptProcessingServiceMock.Setup(expression: x => x.GetAllScripts(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
 
-        var result = orchestrationService.GetAllScript(ignoreFilters: true)
+        var result = orchestrationService.GetAllScripts(ignoreFilters: true)
             .ToArray();
 
         // Then
@@ -33,7 +33,7 @@ public partial class ScriptOrchestrationServiceTests
             .Should()
             .Equal(expected: entities.Select(selector: item => item.Id));
 
-        scriptProcessingServiceMock.Verify(expression: x => x.GetAllScript(ignoreFilters: true), times: Times.Once);
+        scriptProcessingServiceMock.Verify(expression: x => x.GetAllScripts(ignoreFilters: true), times: Times.Once);
         scriptProcessingServiceMock.VerifyNoOtherCalls();
         scriptEventProcessingServiceMock.VerifyNoOtherCalls();
     }

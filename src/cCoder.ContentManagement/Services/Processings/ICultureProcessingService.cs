@@ -14,7 +14,7 @@ internal interface ICultureProcessingService
 {
     Culture GetCulture(string cultureId);
 
-    IQueryable<Culture> GetAllCulture(bool ignoreFilters = false);
+    IQueryable<Culture> GetAllCultures(bool ignoreFilters = false);
 
     int? GetOwningAppId(string cultureId);
 

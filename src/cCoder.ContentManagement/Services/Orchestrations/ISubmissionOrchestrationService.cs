@@ -14,7 +14,7 @@ namespace cCoder.ContentManagement.Services.Orchestrations;
 public interface ISubmissionOrchestrationService
 {
     Submission GetSubmission(Guid submissionId);
-    IQueryable<Submission> GetAllSubmission(bool ignoreFilters = false);
+    IQueryable<Submission> GetAllSubmissions(bool ignoreFilters = false);
     ValueTask<Submission> AddSubmissionAsync(Submission newSubmission);
     ValueTask<Submission> UpdateSubmissionAsync(Submission updatedSubmission);
     ValueTask DeleteAsync(Guid submissionId);

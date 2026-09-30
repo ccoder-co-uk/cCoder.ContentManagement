@@ -30,7 +30,7 @@ public partial class PageOrchestrationServiceTests
             .Returns(value: true);
 
         pageProcessingServiceMock
-            .Setup(expression: service => service.GetAllPage(ignoreFilters: true))
+            .Setup(expression: service => service.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { entity }.AsQueryable());
 
         pageProcessingServiceMock.Setup(expression: x => x.UpdatePageAsync(updatedPage: entity))
@@ -53,7 +53,7 @@ public partial class PageOrchestrationServiceTests
             layoutName: entity.Layout), times: Times.Once);
 
         pageProcessingServiceMock.Verify(expression: service =>
-            service.GetAllPage(ignoreFilters: true), times: Times.Once);
+            service.GetAllPages(ignoreFilters: true), times: Times.Once);
 
         pageProcessingServiceMock.Verify(expression: x => x.UpdatePageAsync(updatedPage: entity), times: Times.Once);
         pageEventProcessingServiceMock.Verify(expression: x => x.RaisePageUpdateEventAsync(entity: entity, userId: CurrentUserId), times: Times.Once);

@@ -19,12 +19,12 @@ public partial class SubmissionOrchestrationServiceTests
         // Given
         IQueryable<Submission> entities = new[] { CreateRandomSubmission() }.AsQueryable();
 
-        submissionProcessingServiceMock.Setup(expression: x => x.GetAllSubmission(ignoreFilters: true))
+        submissionProcessingServiceMock.Setup(expression: x => x.GetAllSubmissions(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
 
-        var result = orchestrationService.GetAllSubmission(ignoreFilters: true)
+        var result = orchestrationService.GetAllSubmissions(ignoreFilters: true)
             .ToArray();
 
         // Then
@@ -33,7 +33,7 @@ public partial class SubmissionOrchestrationServiceTests
             .Should()
             .Equal(expected: entities.Select(selector: item => item.Id));
 
-        submissionProcessingServiceMock.Verify(expression: x => x.GetAllSubmission(ignoreFilters: true), times: Times.Once);
+        submissionProcessingServiceMock.Verify(expression: x => x.GetAllSubmissions(ignoreFilters: true), times: Times.Once);
         submissionProcessingServiceMock.VerifyNoOtherCalls();
         submissionEventProcessingServiceMock.VerifyNoOtherCalls();
     }

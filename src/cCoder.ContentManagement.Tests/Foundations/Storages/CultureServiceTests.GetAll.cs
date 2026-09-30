@@ -28,7 +28,7 @@ public partial class CultureServiceTests
             .Returns(value: cultures);
 
         // When
-        IQueryable<Culture> result = cultureService.GetAllCulture();
+        IQueryable<Culture> result = cultureService.GetAllCultures();
 
         // Then
 

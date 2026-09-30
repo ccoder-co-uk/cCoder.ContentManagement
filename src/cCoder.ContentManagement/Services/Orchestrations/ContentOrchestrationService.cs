@@ -28,11 +28,11 @@ internal partial class ContentOrchestrationService(
         return processingService.GetContent(contentId: ValidateId(contentId: contentId, parameterName: "id"));
     });
 
-    public IQueryable<Content> GetAllContent(bool ignoreFilters = false) =>
+    public IQueryable<Content> GetAllContents(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Content>>(operation: () =>
     {
-        ValidateAllContentOnGet(inputs: [ignoreFilters]);
-        return processingService.GetAllContent(ignoreFilters: ignoreFilters);
+        ValidateAllContentsOnGet(inputs: [ignoreFilters]);
+        return processingService.GetAllContents(ignoreFilters: ignoreFilters);
     });
 
     public ValueTask<Content> AddContentAsync(Content newContent) =>
@@ -83,7 +83,7 @@ internal partial class ContentOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllContent(ignoreFilters: true)
+            entity = processingService.GetAllContents(ignoreFilters: true)
                 .FirstOrDefault(predicate: content => content.Id == contentId);
         }
 
@@ -213,7 +213,7 @@ internal partial class ContentOrchestrationService(
         }
         catch (SecurityException)
         {
-            entity = processingService.GetAllContent(ignoreFilters: true)
+            entity = processingService.GetAllContents(ignoreFilters: true)
                 .FirstOrDefault(predicate: content => content.Id == contentId);
         }
 

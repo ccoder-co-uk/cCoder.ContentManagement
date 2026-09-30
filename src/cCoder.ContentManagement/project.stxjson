@@ -6908,8 +6908,8 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Brokers.Storages.AppUserBroker.GetAllAppUser(System.Int32)",
-          "Name": "GetAllAppUser",
+          "Id": "cCoder.ContentManagement.Brokers.Storages.AppUserBroker.GetAllUsers(System.Int32)",
+          "Name": "GetAllUsers",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -6919,7 +6919,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.Security.User\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Brokers.Storages.IAppUserBroker.GetAllAppUser(System.Int32)"
+            "cCoder.ContentManagement.Brokers.Storages.IAppUserBroker.GetAllUsers(System.Int32)"
           ],
           "Calls": [
             {
@@ -9201,13 +9201,13 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Storages.PageInfoBroker.GetAllPageInfo()",
-          "Name": "GetAllPageInfo",
+          "Id": "cCoder.ContentManagement.Brokers.Storages.PageInfoBroker.GetAllPageInfos()",
+          "Name": "GetAllPageInfos",
           "LineNumber": 16,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.PageInfo\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfo()"
+            "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfos()"
           ],
           "Calls": [
             {
@@ -9231,13 +9231,13 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Storages.PageInfoBroker.GetAllPageInfoIgnoringFilters()",
-          "Name": "GetAllPageInfoIgnoringFilters",
+          "Id": "cCoder.ContentManagement.Brokers.Storages.PageInfoBroker.GetAllPageInfosIgnoringFilters()",
+          "Name": "GetAllPageInfosIgnoringFilters",
           "LineNumber": 23,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.PageInfo\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfoIgnoringFilters()"
+            "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfosIgnoringFilters()"
           ],
           "Calls": [
             {
@@ -12718,8 +12718,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.AppCultureManager.GetAllAppCulture(System.Boolean)",
-          "Name": "GetAllAppCulture",
+          "Id": "cCoder.ContentManagement.Exposures.AppCultureManager.GetAllAppCultures(System.Boolean)",
+          "Name": "GetAllAppCultures",
           "LineNumber": 16,
           "Inputs": [
             {
@@ -12729,13 +12729,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.AppCulture\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.IAppCultureManager.GetAllAppCulture(System.Boolean)"
+            "cCoder.ContentManagement.Exposures.IAppCultureManager.GetAllAppCultures(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IAppCultureOrchestrationService",
-              "MethodName": "GetAllAppCulture",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppCultureOrchestrationService.GetAllAppCulture(System.Boolean)",
+              "MethodName": "GetAllAppCultures",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppCultureOrchestrationService.GetAllAppCultures(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -12964,8 +12964,8 @@
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService",
-              "MethodName": "GetAllApp",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.GetAllApp(System.Boolean)",
+              "MethodName": "GetAllApps",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.GetAllApps(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -13968,8 +13968,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.CommonObjectManager.GetAllCommonObject(System.Boolean)",
-          "Name": "GetAllCommonObject",
+          "Id": "cCoder.ContentManagement.Exposures.CommonObjectManager.GetAllCommonObjects(System.Boolean)",
+          "Name": "GetAllCommonObjects",
           "LineNumber": 23,
           "Inputs": [
             {
@@ -13979,13 +13979,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.ICommonObjectManager.GetAllCommonObject(System.Boolean)"
+            "cCoder.ContentManagement.Exposures.ICommonObjectManager.GetAllCommonObjects(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
-              "MethodName": "GetAllCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObject(System.Boolean)",
+              "MethodName": "GetAllCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
             }
@@ -14068,8 +14068,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.CommonObjectManager.LatestCommonObject(System.String)",
-          "Name": "LatestCommonObject",
+          "Id": "cCoder.ContentManagement.Exposures.CommonObjectManager.LatestCommonObjects(System.String)",
+          "Name": "LatestCommonObjects",
           "LineNumber": 57,
           "Inputs": [
             {
@@ -14079,13 +14079,13 @@
           ],
           "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.ICommonObjectManager.LatestCommonObject(System.String)"
+            "cCoder.ContentManagement.Exposures.ICommonObjectManager.LatestCommonObjects(System.String)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
-              "MethodName": "LatestCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObject(System.String)",
+              "MethodName": "LatestCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObjects(System.String)",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
             }
@@ -14360,8 +14360,8 @@
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService",
-              "MethodName": "GetAllComponent",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.GetAllComponent(System.Boolean)",
+              "MethodName": "GetAllComponents",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.GetAllComponents(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -14958,8 +14958,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.ContentManager.GetAllContent(System.Boolean)",
-          "Name": "GetAllContent",
+          "Id": "cCoder.ContentManagement.Exposures.ContentManager.GetAllContents(System.Boolean)",
+          "Name": "GetAllContents",
           "LineNumber": 19,
           "Inputs": [
             {
@@ -14969,13 +14969,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Content\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.IContentManager.GetAllContent(System.Boolean)"
+            "cCoder.ContentManagement.Exposures.IContentManager.GetAllContents(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService",
-              "MethodName": "GetAllContent",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContent(System.Boolean)",
+              "MethodName": "GetAllContents",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContents(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -15303,8 +15303,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService",
-              "MethodName": "GetAllApp",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.GetAllApp(System.Boolean)",
+              "MethodName": "GetAllApps",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.GetAllApps(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -15427,8 +15427,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService",
-              "MethodName": "GetAllApp",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.GetAllApp(System.Boolean)",
+              "MethodName": "GetAllApps",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.GetAllApps(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -16056,8 +16056,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IAppCultureOrchestrationService",
-              "MethodName": "GetAllAppCulture",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppCultureOrchestrationService.GetAllAppCulture(System.Boolean)",
+              "MethodName": "GetAllAppCultures",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppCultureOrchestrationService.GetAllAppCultures(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -16316,8 +16316,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IAppUserOrchestrationService",
-              "MethodName": "GetAllAppUser",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppUserOrchestrationService.GetAllAppUser(System.Int32)",
+              "MethodName": "GetAllUsers",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IAppUserOrchestrationService.GetAllUsers(System.Int32)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -16605,8 +16605,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
-              "MethodName": "GetAllCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObject(System.Boolean)",
+              "MethodName": "GetAllCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
             }
@@ -16724,8 +16724,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
-              "MethodName": "GetAllCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObject(System.Boolean)",
+              "MethodName": "GetAllCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
             }
@@ -16845,8 +16845,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
-              "MethodName": "LatestCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObject(System.String)",
+              "MethodName": "LatestCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObjects(System.String)",
               "StandardElementType": "CoordinationService",
               "IsDependencyBoundary": false
             }
@@ -17392,8 +17392,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService",
-              "MethodName": "GetAllComponent",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.GetAllComponent(System.Boolean)",
+              "MethodName": "GetAllComponents",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.GetAllComponents(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -17511,8 +17511,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService",
-              "MethodName": "GetAllComponent",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.GetAllComponent(System.Boolean)",
+              "MethodName": "GetAllComponents",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.GetAllComponents(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -18015,8 +18015,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService",
-              "MethodName": "GetAllContent",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContent(System.Boolean)",
+              "MethodName": "GetAllContents",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContents(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -18134,8 +18134,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService",
-              "MethodName": "GetAllContent",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContent(System.Boolean)",
+              "MethodName": "GetAllContents",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContents(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -18638,8 +18638,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService",
-              "MethodName": "GetAllCulture",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService.GetAllCulture(System.Boolean)",
+              "MethodName": "GetAllCultures",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService.GetAllCultures(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -18762,8 +18762,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService",
-              "MethodName": "GetAllCulture",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService.GetAllCulture(System.Boolean)",
+              "MethodName": "GetAllCultures",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService.GetAllCultures(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -19266,8 +19266,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService",
-              "MethodName": "GetAllLayout",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService.GetAllLayout(System.Boolean)",
+              "MethodName": "GetAllLayouts",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService.GetAllLayouts(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -19385,8 +19385,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService",
-              "MethodName": "GetAllLayout",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService.GetAllLayout(System.Boolean)",
+              "MethodName": "GetAllLayouts",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService.GetAllLayouts(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -20032,8 +20032,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPages(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -20160,8 +20160,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPages(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -20951,8 +20951,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService",
-              "MethodName": "GetAllPageInfo",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfo(System.Boolean)",
+              "MethodName": "GetAllPageInfos",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfos(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -21070,8 +21070,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService",
-              "MethodName": "GetAllPageInfo",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfo(System.Boolean)",
+              "MethodName": "GetAllPageInfos",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfos(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -22340,8 +22340,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService",
-              "MethodName": "GetAllPageRole",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRole(System.Boolean)",
+              "MethodName": "GetAllPageRoles",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRoles(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -22999,8 +22999,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService",
-              "MethodName": "GetAllResource",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService.GetAllResource(System.Boolean)",
+              "MethodName": "GetAllResources",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService.GetAllResources(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -23118,8 +23118,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService",
-              "MethodName": "GetAllResource",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService.GetAllResource(System.Boolean)",
+              "MethodName": "GetAllResources",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService.GetAllResources(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -23622,8 +23622,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService",
-              "MethodName": "GetAllScript",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService.GetAllScript(System.Boolean)",
+              "MethodName": "GetAllScripts",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService.GetAllScripts(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -23741,8 +23741,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService",
-              "MethodName": "GetAllScript",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService.GetAllScript(System.Boolean)",
+              "MethodName": "GetAllScripts",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService.GetAllScripts(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -24245,8 +24245,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService",
-              "MethodName": "GetAllSubmission",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService.GetAllSubmission(System.Boolean)",
+              "MethodName": "GetAllSubmissions",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService.GetAllSubmissions(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -24369,8 +24369,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService",
-              "MethodName": "GetAllSubmission",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService.GetAllSubmission(System.Boolean)",
+              "MethodName": "GetAllSubmissions",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService.GetAllSubmissions(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -25004,8 +25004,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService",
-              "MethodName": "GetAllTemplate",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.GetAllTemplate(System.Boolean)",
+              "MethodName": "GetAllTemplates",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.GetAllTemplates(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -25123,8 +25123,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService",
-              "MethodName": "GetAllTemplate",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.GetAllTemplate(System.Boolean)",
+              "MethodName": "GetAllTemplates",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.GetAllTemplates(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -25664,8 +25664,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.CultureManager.GetAllCulture(System.Boolean)",
-          "Name": "GetAllCulture",
+          "Id": "cCoder.ContentManagement.Exposures.CultureManager.GetAllCultures(System.Boolean)",
+          "Name": "GetAllCultures",
           "LineNumber": 19,
           "Inputs": [
             {
@@ -25675,13 +25675,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Culture\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.ICultureManager.GetAllCulture(System.Boolean)"
+            "cCoder.ContentManagement.Exposures.ICultureManager.GetAllCultures(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService",
-              "MethodName": "GetAllCulture",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService.GetAllCulture(System.Boolean)",
+              "MethodName": "GetAllCultures",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService.GetAllCultures(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -26161,8 +26161,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.LayoutManager.GetAllLayout(System.Boolean)",
-          "Name": "GetAllLayout",
+          "Id": "cCoder.ContentManagement.Exposures.LayoutManager.GetAllLayouts(System.Boolean)",
+          "Name": "GetAllLayouts",
           "LineNumber": 19,
           "Inputs": [
             {
@@ -26172,13 +26172,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Layout\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.ILayoutManager.GetAllLayout(System.Boolean)"
+            "cCoder.ContentManagement.Exposures.ILayoutManager.GetAllLayouts(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService",
-              "MethodName": "GetAllLayout",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService.GetAllLayout(System.Boolean)",
+              "MethodName": "GetAllLayouts",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService.GetAllLayouts(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -26591,8 +26591,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.PageInfoManager.GetAllPageInfo(System.Boolean)",
-          "Name": "GetAllPageInfo",
+          "Id": "cCoder.ContentManagement.Exposures.PageInfoManager.GetAllPageInfos(System.Boolean)",
+          "Name": "GetAllPageInfos",
           "LineNumber": 19,
           "Inputs": [
             {
@@ -26602,13 +26602,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.PageInfo\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.IPageInfoManager.GetAllPageInfo(System.Boolean)"
+            "cCoder.ContentManagement.Exposures.IPageInfoManager.GetAllPageInfos(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService",
-              "MethodName": "GetAllPageInfo",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfo(System.Boolean)",
+              "MethodName": "GetAllPageInfos",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfos(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -26934,8 +26934,8 @@
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPages(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -27822,8 +27822,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.PageRoleManager.GetAllPageRole(System.Boolean)",
-          "Name": "GetAllPageRole",
+          "Id": "cCoder.ContentManagement.Exposures.PageRoleManager.GetAllPageRoles(System.Boolean)",
+          "Name": "GetAllPageRoles",
           "LineNumber": 16,
           "Inputs": [
             {
@@ -27833,13 +27833,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.Security.PageRole\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.IPageRoleManager.GetAllPageRole(System.Boolean)"
+            "cCoder.ContentManagement.Exposures.IPageRoleManager.GetAllPageRoles(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService",
-              "MethodName": "GetAllPageRole",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRole(System.Boolean)",
+              "MethodName": "GetAllPageRoles",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRoles(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -28146,8 +28146,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.ResourceManager.GetAllResource(System.Boolean)",
-          "Name": "GetAllResource",
+          "Id": "cCoder.ContentManagement.Exposures.ResourceManager.GetAllResources(System.Boolean)",
+          "Name": "GetAllResources",
           "LineNumber": 19,
           "Inputs": [
             {
@@ -28157,13 +28157,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Resource\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.IResourceManager.GetAllResource(System.Boolean)"
+            "cCoder.ContentManagement.Exposures.IResourceManager.GetAllResources(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService",
-              "MethodName": "GetAllResource",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService.GetAllResource(System.Boolean)",
+              "MethodName": "GetAllResources",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService.GetAllResources(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -28628,8 +28628,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.ScriptManager.GetAllScript(System.Boolean)",
-          "Name": "GetAllScript",
+          "Id": "cCoder.ContentManagement.Exposures.ScriptManager.GetAllScripts(System.Boolean)",
+          "Name": "GetAllScripts",
           "LineNumber": 19,
           "Inputs": [
             {
@@ -28639,13 +28639,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Script\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.IScriptManager.GetAllScript(System.Boolean)"
+            "cCoder.ContentManagement.Exposures.IScriptManager.GetAllScripts(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService",
-              "MethodName": "GetAllScript",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService.GetAllScript(System.Boolean)",
+              "MethodName": "GetAllScripts",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService.GetAllScripts(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -29058,8 +29058,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.SubmissionManager.GetAllSubmission(System.Boolean)",
-          "Name": "GetAllSubmission",
+          "Id": "cCoder.ContentManagement.Exposures.SubmissionManager.GetAllSubmissions(System.Boolean)",
+          "Name": "GetAllSubmissions",
           "LineNumber": 20,
           "Inputs": [
             {
@@ -29069,13 +29069,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Submission\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Exposures.ISubmissionManager.GetAllSubmission(System.Boolean)"
+            "cCoder.ContentManagement.Exposures.ISubmissionManager.GetAllSubmissions(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService",
-              "MethodName": "GetAllSubmission",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService.GetAllSubmission(System.Boolean)",
+              "MethodName": "GetAllSubmissions",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService.GetAllSubmissions(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -29457,8 +29457,8 @@
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Aggregations.ITemplateManagerAggregationService",
-              "MethodName": "GetAllTemplate",
-              "MethodId": "cCoder.ContentManagement.Services.Aggregations.ITemplateManagerAggregationService.GetAllTemplate()",
+              "MethodName": "GetAllTemplates",
+              "MethodId": "cCoder.ContentManagement.Services.Aggregations.ITemplateManagerAggregationService.GetAllTemplates()",
               "StandardElementType": "AggregationService",
               "IsDependencyBoundary": false
             }
@@ -37122,19 +37122,19 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.TemplateManagerAggregationService.GetAllTemplate()",
-          "Name": "GetAllTemplate",
+          "Id": "cCoder.ContentManagement.Services.Aggregations.TemplateManagerAggregationService.GetAllTemplates()",
+          "Name": "GetAllTemplates",
           "LineNumber": 32,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Template\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Aggregations.ITemplateManagerAggregationService.GetAllTemplate()"
+            "cCoder.ContentManagement.Services.Aggregations.ITemplateManagerAggregationService.GetAllTemplates()"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService",
-              "MethodName": "GetAllTemplate",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.GetAllTemplate(System.Boolean)",
+              "MethodName": "GetAllTemplates",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.GetAllTemplates(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -38248,8 +38248,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.GetAllCommonObject(System.Boolean)",
-          "Name": "GetAllCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)",
+          "Name": "GetAllCommonObjects",
           "LineNumber": 28,
           "Inputs": [
             {
@@ -38259,13 +38259,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObject(System.Boolean)"
+            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "GetAllCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetAllCommonObject(System.Boolean)",
+              "MethodName": "GetAllCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetAllCommonObjects(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -38348,8 +38348,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.LatestCommonObject(System.String)",
-          "Name": "LatestCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.LatestCommonObjects(System.String)",
+          "Name": "LatestCommonObjects",
           "LineNumber": 113,
           "Inputs": [
             {
@@ -38359,13 +38359,13 @@
           ],
           "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObject(System.String)"
+            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObjects(System.String)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "LatestCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.LatestCommonObject(System.String)",
+              "MethodName": "LatestCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.LatestCommonObjects(System.String)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -38759,8 +38759,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService",
-              "MethodName": "GetAllContent",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContent(System.Boolean)",
+              "MethodName": "GetAllContents",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContents(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             },
@@ -38773,8 +38773,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService",
-              "MethodName": "GetAllPageInfo",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfo(System.Boolean)",
+              "MethodName": "GetAllPageInfos",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfos(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -38840,15 +38840,15 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService",
-              "MethodName": "GetAllContent",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContent(System.Boolean)",
+              "MethodName": "GetAllContents",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContents(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService",
-              "MethodName": "GetAllPageInfo",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfo(System.Boolean)",
+              "MethodName": "GetAllPageInfos",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfos(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -39104,8 +39104,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService",
-              "MethodName": "GetAllPageRole",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRole(System.Boolean)",
+              "MethodName": "GetAllPageRoles",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRoles(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -39200,15 +39200,15 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPages(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService",
-              "MethodName": "GetAllPageRole",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRole(System.Boolean)",
+              "MethodName": "GetAllPageRoles",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRoles(System.Boolean)",
               "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
@@ -47290,8 +47290,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.AppCultureService.GetAllAppCulture(System.Boolean)",
-          "Name": "GetAllAppCulture",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.AppCultureService.GetAllAppCultures(System.Boolean)",
+          "Name": "GetAllAppCultures",
           "LineNumber": 14,
           "Inputs": [
             {
@@ -47301,7 +47301,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.AppCulture\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.IAppCultureService.GetAllAppCulture(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.IAppCultureService.GetAllAppCultures(System.Boolean)"
           ],
           "Calls": [
             {
@@ -48089,8 +48089,8 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.AppUserService.GetAllAppUser(System.Int32)",
-          "Name": "GetAllAppUser",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.AppUserService.GetAllUsers(System.Int32)",
+          "Name": "GetAllUsers",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -48100,7 +48100,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.Security.User\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.IAppUserService.GetAllAppUser(System.Int32)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.IAppUserService.GetAllUsers(System.Int32)"
           ],
           "Calls": [
             {
@@ -48112,8 +48112,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Brokers.Storages.IAppUserBroker",
-              "MethodName": "GetAllAppUser",
-              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IAppUserBroker.GetAllAppUser(System.Int32)",
+              "MethodName": "GetAllUsers",
+              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IAppUserBroker.GetAllUsers(System.Int32)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             }
@@ -48332,8 +48332,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService.GetAllCommonObject(System.Boolean)",
-          "Name": "GetAllCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService.GetAllCommonObjects(System.Boolean)",
+          "Name": "GetAllCommonObjects",
           "LineNumber": 111,
           "Inputs": [
             {
@@ -48343,7 +48343,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.GetAllCommonObject(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.GetAllCommonObjects(System.Boolean)"
           ],
           "Calls": [
             {
@@ -48640,8 +48640,8 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService.GetAllComponent(System.Boolean)",
-          "Name": "GetAllComponent",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ComponentService.GetAllComponents(System.Boolean)",
+          "Name": "GetAllComponents",
           "LineNumber": 48,
           "Inputs": [
             {
@@ -48651,7 +48651,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Component\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.IComponentService.GetAllComponent(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.IComponentService.GetAllComponents(System.Boolean)"
           ],
           "Calls": [
             {
@@ -48946,8 +48946,8 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService.GetAllContent(System.Boolean)",
-          "Name": "GetAllContent",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ContentService.GetAllContents(System.Boolean)",
+          "Name": "GetAllContents",
           "LineNumber": 47,
           "Inputs": [
             {
@@ -48957,7 +48957,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Content\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.IContentService.GetAllContent(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.IContentService.GetAllContents(System.Boolean)"
           ],
           "Calls": [
             {
@@ -49303,8 +49303,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService.GetAllCulture(System.Boolean)",
-          "Name": "GetAllCulture",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.CultureService.GetAllCultures(System.Boolean)",
+          "Name": "GetAllCultures",
           "LineNumber": 47,
           "Inputs": [
             {
@@ -49314,7 +49314,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Culture\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.ICultureService.GetAllCulture(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.ICultureService.GetAllCultures(System.Boolean)"
           ],
           "Calls": [
             {
@@ -49660,8 +49660,8 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService.GetAllLayout(System.Boolean)",
-          "Name": "GetAllLayout",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.LayoutService.GetAllLayouts(System.Boolean)",
+          "Name": "GetAllLayouts",
           "LineNumber": 48,
           "Inputs": [
             {
@@ -49671,7 +49671,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Layout\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.ILayoutService.GetAllLayout(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.ILayoutService.GetAllLayouts(System.Boolean)"
           ],
           "Calls": [
             {
@@ -49966,8 +49966,8 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService.GetAllPageInfo(System.Boolean)",
-          "Name": "GetAllPageInfo",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageInfoService.GetAllPageInfos(System.Boolean)",
+          "Name": "GetAllPageInfos",
           "LineNumber": 47,
           "Inputs": [
             {
@@ -49977,20 +49977,20 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.PageInfo\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.IPageInfoService.GetAllPageInfo(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.IPageInfoService.GetAllPageInfos(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker",
-              "MethodName": "GetAllPageInfo",
-              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfo()",
+              "MethodName": "GetAllPageInfos",
+              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfos()",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
             {
               "TypeName": "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker",
-              "MethodName": "GetAllPageInfoIgnoringFilters",
-              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfoIgnoringFilters()",
+              "MethodName": "GetAllPageInfosIgnoringFilters",
+              "MethodId": "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfosIgnoringFilters()",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             }
@@ -50862,8 +50862,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageRoleService.GetAllPageRole(System.Boolean)",
-          "Name": "GetAllPageRole",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageRoleService.GetAllPageRoles(System.Boolean)",
+          "Name": "GetAllPageRoles",
           "LineNumber": 66,
           "Inputs": [
             {
@@ -50873,7 +50873,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.Security.PageRole\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService.GetAllPageRole(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService.GetAllPageRoles(System.Boolean)"
           ],
           "Calls": [
             {
@@ -51253,8 +51253,8 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageService.GetAllPage(System.Boolean)",
-          "Name": "GetAllPage",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.PageService.GetAllPages(System.Boolean)",
+          "Name": "GetAllPages",
           "LineNumber": 57,
           "Inputs": [
             {
@@ -51264,7 +51264,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Page\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPage(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPages(System.Boolean)"
           ],
           "Calls": [
             {
@@ -51693,8 +51693,8 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService.GetAllResource(System.Boolean)",
-          "Name": "GetAllResource",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ResourceService.GetAllResources(System.Boolean)",
+          "Name": "GetAllResources",
           "LineNumber": 48,
           "Inputs": [
             {
@@ -51704,7 +51704,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Resource\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.IResourceService.GetAllResource(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.IResourceService.GetAllResources(System.Boolean)"
           ],
           "Calls": [
             {
@@ -52172,8 +52172,8 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService.GetAllScript(System.Boolean)",
-          "Name": "GetAllScript",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ScriptService.GetAllScripts(System.Boolean)",
+          "Name": "GetAllScripts",
           "LineNumber": 48,
           "Inputs": [
             {
@@ -52183,7 +52183,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Script\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.IScriptService.GetAllScript(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.IScriptService.GetAllScripts(System.Boolean)"
           ],
           "Calls": [
             {
@@ -52485,8 +52485,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.SubmissionService.GetAllSubmission(System.Boolean)",
-          "Name": "GetAllSubmission",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.SubmissionService.GetAllSubmissions(System.Boolean)",
+          "Name": "GetAllSubmissions",
           "LineNumber": 48,
           "Inputs": [
             {
@@ -52496,7 +52496,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Submission\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.ISubmissionService.GetAllSubmission(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.ISubmissionService.GetAllSubmissions(System.Boolean)"
           ],
           "Calls": [
             {
@@ -52791,8 +52791,8 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService.GetAllTemplate(System.Boolean)",
-          "Name": "GetAllTemplate",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.TemplateService.GetAllTemplates(System.Boolean)",
+          "Name": "GetAllTemplates",
           "LineNumber": 49,
           "Inputs": [
             {
@@ -52802,7 +52802,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Template\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Foundations.Storages.ITemplateService.GetAllTemplate(System.Boolean)"
+            "cCoder.ContentManagement.Services.Foundations.Storages.ITemplateService.GetAllTemplates(System.Boolean)"
           ],
           "Calls": [
             {
@@ -53623,8 +53623,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService.GetAllAppCulture(System.Boolean)",
-          "Name": "GetAllAppCulture",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.AppCultureOrchestrationService.GetAllAppCultures(System.Boolean)",
+          "Name": "GetAllAppCultures",
           "LineNumber": 23,
           "Inputs": [
             {
@@ -53634,13 +53634,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.AppCulture\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IAppCultureOrchestrationService.GetAllAppCulture(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.IAppCultureOrchestrationService.GetAllAppCultures(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IAppCultureProcessingService",
-              "MethodName": "GetAllAppCulture",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IAppCultureProcessingService.GetAllAppCulture(System.Boolean)",
+              "MethodName": "GetAllAppCultures",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IAppCultureProcessingService.GetAllAppCultures(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -53725,8 +53725,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IAppProcessingService",
-              "MethodName": "GetAllApp",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IAppProcessingService.GetAllApp(System.Boolean)",
+              "MethodName": "GetAllApps",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IAppProcessingService.GetAllApps(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -53884,8 +53884,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService.GetAllApp(System.Boolean)",
-          "Name": "GetAllApp",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService.GetAllApps(System.Boolean)",
+          "Name": "GetAllApps",
           "LineNumber": 68,
           "Inputs": [
             {
@@ -53895,13 +53895,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.App\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.GetAllApp(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.GetAllApps(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IAppProcessingService",
-              "MethodName": "GetAllApp",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IAppProcessingService.GetAllApp(System.Boolean)",
+              "MethodName": "GetAllApps",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IAppProcessingService.GetAllApps(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -54276,8 +54276,8 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.AppUserOrchestrationService.GetAllAppUser(System.Int32)",
-          "Name": "GetAllAppUser",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.AppUserOrchestrationService.GetAllUsers(System.Int32)",
+          "Name": "GetAllUsers",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -54287,7 +54287,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.Security.User\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IAppUserOrchestrationService.GetAllAppUser(System.Int32)"
+            "cCoder.ContentManagement.Services.Orchestrations.IAppUserOrchestrationService.GetAllUsers(System.Int32)"
           ],
           "Calls": [
             {
@@ -54313,8 +54313,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IAppUserService",
-              "MethodName": "GetAllAppUser",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IAppUserService.GetAllAppUser(System.Int32)",
+              "MethodName": "GetAllUsers",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IAppUserService.GetAllUsers(System.Int32)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -55551,8 +55551,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.GetAllCommonObject(System.Boolean)",
-          "Name": "GetAllCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.GetAllCommonObjects(System.Boolean)",
+          "Name": "GetAllCommonObjects",
           "LineNumber": 43,
           "Inputs": [
             {
@@ -55562,13 +55562,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetAllCommonObject(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetAllCommonObjects(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService",
-              "MethodName": "GetAllCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetAllCommonObject(System.Boolean)",
+              "MethodName": "GetAllCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetAllCommonObjects(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -55652,8 +55652,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.LatestCommonObject(System.String)",
-          "Name": "LatestCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.LatestCommonObjects(System.String)",
+          "Name": "LatestCommonObjects",
           "LineNumber": 168,
           "Inputs": [
             {
@@ -55663,7 +55663,7 @@
           ],
           "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.LatestCommonObject(System.String)"
+            "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.LatestCommonObjects(System.String)"
           ],
           "Calls": [
             {
@@ -56035,8 +56035,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService",
-              "MethodName": "GetAllComponent",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.GetAllComponent(System.Boolean)",
+              "MethodName": "GetAllComponents",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.GetAllComponents(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -56132,8 +56132,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService.GetAllComponent(System.Boolean)",
-          "Name": "GetAllComponent",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService.GetAllComponents(System.Boolean)",
+          "Name": "GetAllComponents",
           "LineNumber": 33,
           "Inputs": [
             {
@@ -56143,13 +56143,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Component\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.GetAllComponent(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.GetAllComponents(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService",
-              "MethodName": "GetAllComponent",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.GetAllComponent(System.Boolean)",
+              "MethodName": "GetAllComponents",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.GetAllComponents(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -56323,8 +56323,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService",
-              "MethodName": "GetAllComponent",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.GetAllComponent(System.Boolean)",
+              "MethodName": "GetAllComponents",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.GetAllComponents(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -57011,8 +57011,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IContentProcessingService",
-              "MethodName": "GetAllContent",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IContentProcessingService.GetAllContent(System.Boolean)",
+              "MethodName": "GetAllContents",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IContentProcessingService.GetAllContents(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -57055,8 +57055,8 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ContentOrchestrationService.GetAllContent(System.Boolean)",
-          "Name": "GetAllContent",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ContentOrchestrationService.GetAllContents(System.Boolean)",
+          "Name": "GetAllContents",
           "LineNumber": 31,
           "Inputs": [
             {
@@ -57066,13 +57066,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Content\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContent(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContents(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IContentProcessingService",
-              "MethodName": "GetAllContent",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IContentProcessingService.GetAllContent(System.Boolean)",
+              "MethodName": "GetAllContents",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IContentProcessingService.GetAllContents(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -57514,8 +57514,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.CultureOrchestrationService.GetAllCulture(System.Boolean)",
-          "Name": "GetAllCulture",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.CultureOrchestrationService.GetAllCultures(System.Boolean)",
+          "Name": "GetAllCultures",
           "LineNumber": 29,
           "Inputs": [
             {
@@ -57525,13 +57525,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Culture\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService.GetAllCulture(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService.GetAllCultures(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ICultureProcessingService",
-              "MethodName": "GetAllCulture",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ICultureProcessingService.GetAllCulture(System.Boolean)",
+              "MethodName": "GetAllCultures",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ICultureProcessingService.GetAllCultures(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -58079,8 +58079,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService",
-              "MethodName": "GetAllLayout",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.GetAllLayout(System.Boolean)",
+              "MethodName": "GetAllLayouts",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.GetAllLayouts(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -58176,8 +58176,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService.GetAllLayout(System.Boolean)",
-          "Name": "GetAllLayout",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.LayoutOrchestrationService.GetAllLayouts(System.Boolean)",
+          "Name": "GetAllLayouts",
           "LineNumber": 31,
           "Inputs": [
             {
@@ -58187,13 +58187,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Layout\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService.GetAllLayout(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService.GetAllLayouts(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService",
-              "MethodName": "GetAllLayout",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.GetAllLayout(System.Boolean)",
+              "MethodName": "GetAllLayouts",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.GetAllLayouts(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -58367,8 +58367,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService",
-              "MethodName": "GetAllLayout",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.GetAllLayout(System.Boolean)",
+              "MethodName": "GetAllLayouts",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.GetAllLayouts(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -58707,8 +58707,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IContentProcessingService",
-              "MethodName": "GetAllContent",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IContentProcessingService.GetAllContent(System.Boolean)",
+              "MethodName": "GetAllContents",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IContentProcessingService.GetAllContents(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -58728,8 +58728,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService",
-              "MethodName": "GetAllPageInfo",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService.GetAllPageInfo(System.Boolean)",
+              "MethodName": "GetAllPageInfos",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService.GetAllPageInfos(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -59021,8 +59021,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService",
-              "MethodName": "GetAllPageInfo",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService.GetAllPageInfo(System.Boolean)",
+              "MethodName": "GetAllPageInfos",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService.GetAllPageInfos(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -59065,8 +59065,8 @@
           "HasTryCatch": true
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.PageInfoOrchestrationService.GetAllPageInfo(System.Boolean)",
-          "Name": "GetAllPageInfo",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.PageInfoOrchestrationService.GetAllPageInfos(System.Boolean)",
+          "Name": "GetAllPageInfos",
           "LineNumber": 31,
           "Inputs": [
             {
@@ -59076,13 +59076,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.PageInfo\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfo(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfos(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService",
-              "MethodName": "GetAllPageInfo",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService.GetAllPageInfo(System.Boolean)",
+              "MethodName": "GetAllPageInfos",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService.GetAllPageInfos(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -59492,8 +59492,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPages(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -59612,8 +59612,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetAllPage(System.Boolean)",
-          "Name": "GetAllPage",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetAllPages(System.Boolean)",
+          "Name": "GetAllPages",
           "LineNumber": 34,
           "Inputs": [
             {
@@ -59623,13 +59623,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Page\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPage(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPages(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPages(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -59661,8 +59661,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetChildrenPage(System.Int32)",
-          "Name": "GetChildrenPage",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService.GetChildrenPages(System.Int32)",
+          "Name": "GetChildrenPages",
           "LineNumber": 298,
           "Inputs": [
             {
@@ -59672,13 +59672,13 @@
           ],
           "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetChildrenPage(System.Int32)"
+            "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetChildrenPages(System.Int32)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
-              "MethodName": "GetChildrenPage",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetChildrenPage(System.Int32)",
+              "MethodName": "GetChildrenPages",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetChildrenPages(System.Int32)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -59927,8 +59927,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageProcessingService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPages(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -61258,8 +61258,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageRoleProcessingService",
-              "MethodName": "GetAllPageRole",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageRoleProcessingService.GetAllPageRole(System.Boolean)",
+              "MethodName": "GetAllPageRoles",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageRoleProcessingService.GetAllPageRoles(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -61487,8 +61487,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService.GetAllPageRole(System.Boolean)",
-          "Name": "GetAllPageRole",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.PageRoleOrchestrationService.GetAllPageRoles(System.Boolean)",
+          "Name": "GetAllPageRoles",
           "LineNumber": 25,
           "Inputs": [
             {
@@ -61498,13 +61498,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.Security.PageRole\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRole(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRoles(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IPageRoleProcessingService",
-              "MethodName": "GetAllPageRole",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageRoleProcessingService.GetAllPageRole(System.Boolean)",
+              "MethodName": "GetAllPageRoles",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IPageRoleProcessingService.GetAllPageRoles(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -62030,8 +62030,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService",
-              "MethodName": "GetAllResource",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResource(System.Boolean)",
+              "MethodName": "GetAllResources",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResources(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -62127,8 +62127,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService.GetAllResource(System.Boolean)",
-          "Name": "GetAllResource",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService.GetAllResources(System.Boolean)",
+          "Name": "GetAllResources",
           "LineNumber": 31,
           "Inputs": [
             {
@@ -62138,13 +62138,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Resource\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService.GetAllResource(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService.GetAllResources(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService",
-              "MethodName": "GetAllResource",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResource(System.Boolean)",
+              "MethodName": "GetAllResources",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResources(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -62290,8 +62290,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService",
-              "MethodName": "GetAllResource",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResource(System.Boolean)",
+              "MethodName": "GetAllResources",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResources(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -62643,8 +62643,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService",
-              "MethodName": "GetAllScript",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.GetAllScript(System.Boolean)",
+              "MethodName": "GetAllScripts",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.GetAllScripts(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -62740,8 +62740,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService.GetAllScript(System.Boolean)",
-          "Name": "GetAllScript",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService.GetAllScripts(System.Boolean)",
+          "Name": "GetAllScripts",
           "LineNumber": 31,
           "Inputs": [
             {
@@ -62751,13 +62751,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Script\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService.GetAllScript(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService.GetAllScripts(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService",
-              "MethodName": "GetAllScript",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.GetAllScript(System.Boolean)",
+              "MethodName": "GetAllScripts",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.GetAllScripts(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -62931,8 +62931,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService",
-              "MethodName": "GetAllScript",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.GetAllScript(System.Boolean)",
+              "MethodName": "GetAllScripts",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.GetAllScripts(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -63314,8 +63314,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.SubmissionOrchestrationService.GetAllSubmission(System.Boolean)",
-          "Name": "GetAllSubmission",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.SubmissionOrchestrationService.GetAllSubmissions(System.Boolean)",
+          "Name": "GetAllSubmissions",
           "LineNumber": 30,
           "Inputs": [
             {
@@ -63325,13 +63325,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Submission\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService.GetAllSubmission(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService.GetAllSubmissions(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ISubmissionProcessingService",
-              "MethodName": "GetAllSubmission",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ISubmissionProcessingService.GetAllSubmission(System.Boolean)",
+              "MethodName": "GetAllSubmissions",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ISubmissionProcessingService.GetAllSubmissions(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -63850,8 +63850,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService",
-              "MethodName": "GetAllTemplate",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.GetAllTemplate(System.Boolean)",
+              "MethodName": "GetAllTemplates",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.GetAllTemplates(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -63945,8 +63945,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService.GetAllTemplate(System.Boolean)",
-          "Name": "GetAllTemplate",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.TemplateOrchestrationService.GetAllTemplates(System.Boolean)",
+          "Name": "GetAllTemplates",
           "LineNumber": 31,
           "Inputs": [
             {
@@ -63956,13 +63956,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Template\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.GetAllTemplate(System.Boolean)"
+            "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.GetAllTemplates(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService",
-              "MethodName": "GetAllTemplate",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.GetAllTemplate(System.Boolean)",
+              "MethodName": "GetAllTemplates",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.GetAllTemplates(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -64128,8 +64128,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService",
-              "MethodName": "GetAllTemplate",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.GetAllTemplate(System.Boolean)",
+              "MethodName": "GetAllTemplates",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.GetAllTemplates(System.Boolean)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
@@ -64845,8 +64845,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.AppCultureProcessingService.GetAllAppCulture(System.Boolean)",
-          "Name": "GetAllAppCulture",
+          "Id": "cCoder.ContentManagement.Services.Processings.AppCultureProcessingService.GetAllAppCultures(System.Boolean)",
+          "Name": "GetAllAppCultures",
           "LineNumber": 18,
           "Inputs": [
             {
@@ -64856,13 +64856,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.AppCulture\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IAppCultureProcessingService.GetAllAppCulture(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.IAppCultureProcessingService.GetAllAppCultures(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IAppCultureService",
-              "MethodName": "GetAllAppCulture",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IAppCultureService.GetAllAppCulture(System.Boolean)",
+              "MethodName": "GetAllAppCultures",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IAppCultureService.GetAllAppCultures(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -65280,8 +65280,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.AppProcessingService.GetAllApp(System.Boolean)",
-          "Name": "GetAllApp",
+          "Id": "cCoder.ContentManagement.Services.Processings.AppProcessingService.GetAllApps(System.Boolean)",
+          "Name": "GetAllApps",
           "LineNumber": 70,
           "Inputs": [
             {
@@ -65291,7 +65291,7 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.App\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IAppProcessingService.GetAllApp(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.IAppProcessingService.GetAllApps(System.Boolean)"
           ],
           "Calls": [],
           "PossibleExceptionTypes": [
@@ -66821,8 +66821,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.GetAllCommonObject(System.Boolean)",
-          "Name": "GetAllCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.GetAllCommonObjects(System.Boolean)",
+          "Name": "GetAllCommonObjects",
           "LineNumber": 35,
           "Inputs": [
             {
@@ -66832,13 +66832,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CommonObject\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetAllCommonObject(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetAllCommonObjects(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService",
-              "MethodName": "GetAllCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.GetAllCommonObject(System.Boolean)",
+              "MethodName": "GetAllCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.GetAllCommonObjects(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -67386,8 +67386,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.ComponentProcessingService.GetAllComponent(System.Boolean)",
-          "Name": "GetAllComponent",
+          "Id": "cCoder.ContentManagement.Services.Processings.ComponentProcessingService.GetAllComponents(System.Boolean)",
+          "Name": "GetAllComponents",
           "LineNumber": 25,
           "Inputs": [
             {
@@ -67397,13 +67397,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Component\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.GetAllComponent(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.GetAllComponents(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IComponentService",
-              "MethodName": "GetAllComponent",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IComponentService.GetAllComponent(System.Boolean)",
+              "MethodName": "GetAllComponents",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IComponentService.GetAllComponents(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -68022,8 +68022,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.ContentProcessingService.GetAllContent(System.Boolean)",
-          "Name": "GetAllContent",
+          "Id": "cCoder.ContentManagement.Services.Processings.ContentProcessingService.GetAllContents(System.Boolean)",
+          "Name": "GetAllContents",
           "LineNumber": 27,
           "Inputs": [
             {
@@ -68033,13 +68033,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Content\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IContentProcessingService.GetAllContent(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.IContentProcessingService.GetAllContents(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IContentService",
-              "MethodName": "GetAllContent",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IContentService.GetAllContent(System.Boolean)",
+              "MethodName": "GetAllContents",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IContentService.GetAllContents(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -68652,8 +68652,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.CultureProcessingService.GetAllCulture(System.Boolean)",
-          "Name": "GetAllCulture",
+          "Id": "cCoder.ContentManagement.Services.Processings.CultureProcessingService.GetAllCultures(System.Boolean)",
+          "Name": "GetAllCultures",
           "LineNumber": 28,
           "Inputs": [
             {
@@ -68663,13 +68663,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Culture\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.ICultureProcessingService.GetAllCulture(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.ICultureProcessingService.GetAllCultures(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.ICultureService",
-              "MethodName": "GetAllCulture",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ICultureService.GetAllCulture(System.Boolean)",
+              "MethodName": "GetAllCultures",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ICultureService.GetAllCultures(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -69795,8 +69795,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.LayoutProcessingService.GetAllLayout(System.Boolean)",
-          "Name": "GetAllLayout",
+          "Id": "cCoder.ContentManagement.Services.Processings.LayoutProcessingService.GetAllLayouts(System.Boolean)",
+          "Name": "GetAllLayouts",
           "LineNumber": 27,
           "Inputs": [
             {
@@ -69806,13 +69806,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Layout\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.GetAllLayout(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.GetAllLayouts(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.ILayoutService",
-              "MethodName": "GetAllLayout",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ILayoutService.GetAllLayout(System.Boolean)",
+              "MethodName": "GetAllLayouts",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ILayoutService.GetAllLayouts(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -71030,8 +71030,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.PageInfoProcessingService.GetAllPageInfo(System.Boolean)",
-          "Name": "GetAllPageInfo",
+          "Id": "cCoder.ContentManagement.Services.Processings.PageInfoProcessingService.GetAllPageInfos(System.Boolean)",
+          "Name": "GetAllPageInfos",
           "LineNumber": 28,
           "Inputs": [
             {
@@ -71041,13 +71041,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.PageInfo\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService.GetAllPageInfo(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService.GetAllPageInfos(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageInfoService",
-              "MethodName": "GetAllPageInfo",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageInfoService.GetAllPageInfo(System.Boolean)",
+              "MethodName": "GetAllPageInfos",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageInfoService.GetAllPageInfos(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -71373,8 +71373,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPages(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             },
@@ -71516,8 +71516,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.GetAllPage(System.Boolean)",
-          "Name": "GetAllPage",
+          "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.GetAllPages(System.Boolean)",
+          "Name": "GetAllPages",
           "LineNumber": 39,
           "Inputs": [
             {
@@ -71527,13 +71527,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Page\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPage(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPages(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPages(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -71565,8 +71565,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.GetChildrenPage(System.Int32)",
-          "Name": "GetChildrenPage",
+          "Id": "cCoder.ContentManagement.Services.Processings.PageProcessingService.GetChildrenPages(System.Int32)",
+          "Name": "GetChildrenPages",
           "LineNumber": 80,
           "Inputs": [
             {
@@ -71576,7 +71576,7 @@
           ],
           "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetChildrenPage(System.Int32)"
+            "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetChildrenPages(System.Int32)"
           ],
           "Calls": [
             {
@@ -71890,8 +71890,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPages(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -72006,8 +72006,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService",
-              "MethodName": "GetAllPage",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPage(System.Boolean)",
+              "MethodName": "GetAllPages",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPages(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             },
@@ -73437,8 +73437,8 @@
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService",
-              "MethodName": "GetAllPageRole",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService.GetAllPageRole(System.Boolean)",
+              "MethodName": "GetAllPageRoles",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService.GetAllPageRoles(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -73476,8 +73476,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService.GetAllPageRole(System.Boolean)",
-          "Name": "GetAllPageRole",
+          "Id": "cCoder.ContentManagement.Services.Processings.PageRoleProcessingService.GetAllPageRoles(System.Boolean)",
+          "Name": "GetAllPageRoles",
           "LineNumber": 52,
           "Inputs": [
             {
@@ -73487,13 +73487,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.Security.PageRole\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IPageRoleProcessingService.GetAllPageRole(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.IPageRoleProcessingService.GetAllPageRoles(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService",
-              "MethodName": "GetAllPageRole",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService.GetAllPageRole(System.Boolean)",
+              "MethodName": "GetAllPageRoles",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService.GetAllPageRoles(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -74117,8 +74117,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.ResourceProcessingService.GetAllResource(System.Boolean)",
-          "Name": "GetAllResource",
+          "Id": "cCoder.ContentManagement.Services.Processings.ResourceProcessingService.GetAllResources(System.Boolean)",
+          "Name": "GetAllResources",
           "LineNumber": 27,
           "Inputs": [
             {
@@ -74128,13 +74128,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Resource\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResource(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResources(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IResourceService",
-              "MethodName": "GetAllResource",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IResourceService.GetAllResource(System.Boolean)",
+              "MethodName": "GetAllResources",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IResourceService.GetAllResources(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -74689,8 +74689,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.ScriptProcessingService.GetAllScript(System.Boolean)",
-          "Name": "GetAllScript",
+          "Id": "cCoder.ContentManagement.Services.Processings.ScriptProcessingService.GetAllScripts(System.Boolean)",
+          "Name": "GetAllScripts",
           "LineNumber": 27,
           "Inputs": [
             {
@@ -74700,13 +74700,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Script\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.GetAllScript(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.GetAllScripts(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IScriptService",
-              "MethodName": "GetAllScript",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IScriptService.GetAllScript(System.Boolean)",
+              "MethodName": "GetAllScripts",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IScriptService.GetAllScripts(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -75261,8 +75261,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.SubmissionProcessingService.GetAllSubmission(System.Boolean)",
-          "Name": "GetAllSubmission",
+          "Id": "cCoder.ContentManagement.Services.Processings.SubmissionProcessingService.GetAllSubmissions(System.Boolean)",
+          "Name": "GetAllSubmissions",
           "LineNumber": 27,
           "Inputs": [
             {
@@ -75272,13 +75272,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Submission\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.ISubmissionProcessingService.GetAllSubmission(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.ISubmissionProcessingService.GetAllSubmissions(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.ISubmissionService",
-              "MethodName": "GetAllSubmission",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ISubmissionService.GetAllSubmission(System.Boolean)",
+              "MethodName": "GetAllSubmissions",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ISubmissionService.GetAllSubmissions(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -75980,8 +75980,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.TemplateProcessingService.GetAllTemplate(System.Boolean)",
-          "Name": "GetAllTemplate",
+          "Id": "cCoder.ContentManagement.Services.Processings.TemplateProcessingService.GetAllTemplates(System.Boolean)",
+          "Name": "GetAllTemplates",
           "LineNumber": 28,
           "Inputs": [
             {
@@ -75991,13 +75991,13 @@
           ],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Template\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.GetAllTemplate(System.Boolean)"
+            "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.GetAllTemplates(System.Boolean)"
           ],
           "Calls": [
             {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.ITemplateService",
-              "MethodName": "GetAllTemplate",
-              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ITemplateService.GetAllTemplate(System.Boolean)",
+              "MethodName": "GetAllTemplates",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ITemplateService.GetAllTemplates(System.Boolean)",
               "StandardElementType": "FoundationService",
               "IsDependencyBoundary": false
             }
@@ -80547,8 +80547,8 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Brokers.Storages.IAppUserBroker.GetAllAppUser(System.Int32)",
-          "Name": "GetAllAppUser",
+          "Id": "cCoder.ContentManagement.Brokers.Storages.IAppUserBroker.GetAllUsers(System.Int32)",
+          "Name": "GetAllUsers",
           "LineNumber": 12,
           "Inputs": [
             {
@@ -81700,8 +81700,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfo()",
-          "Name": "GetAllPageInfo",
+          "Id": "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfos()",
+          "Name": "GetAllPageInfos",
           "LineNumber": 14,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.PageInfo\u003E",
@@ -81720,8 +81720,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfoIgnoringFilters()",
-          "Name": "GetAllPageInfoIgnoringFilters",
+          "Id": "cCoder.ContentManagement.Brokers.Storages.IPageInfoBroker.GetAllPageInfosIgnoringFilters()",
+          "Name": "GetAllPageInfosIgnoringFilters",
           "LineNumber": 16,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.PageInfo\u003E",
@@ -83359,8 +83359,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.IAppCultureManager.GetAllAppCulture(System.Boolean)",
-          "Name": "GetAllAppCulture",
+          "Id": "cCoder.ContentManagement.Exposures.IAppCultureManager.GetAllAppCultures(System.Boolean)",
+          "Name": "GetAllAppCultures",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -83720,8 +83720,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.GetAllCommonObject(System.Boolean)",
-          "Name": "GetAllCommonObject",
+          "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.GetAllCommonObjects(System.Boolean)",
+          "Name": "GetAllCommonObjects",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -83770,8 +83770,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.LatestCommonObject(System.String)",
-          "Name": "LatestCommonObject",
+          "Id": "cCoder.ContentManagement.Exposures.ICommonObjectManager.LatestCommonObjects(System.String)",
+          "Name": "LatestCommonObjects",
           "LineNumber": 32,
           "Inputs": [
             {
@@ -84212,8 +84212,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.IContentManager.GetAllContent(System.Boolean)",
-          "Name": "GetAllContent",
+          "Id": "cCoder.ContentManagement.Exposures.IContentManager.GetAllContents(System.Boolean)",
+          "Name": "GetAllContents",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -84399,8 +84399,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.ICultureManager.GetAllCulture(System.Boolean)",
-          "Name": "GetAllCulture",
+          "Id": "cCoder.ContentManagement.Exposures.ICultureManager.GetAllCultures(System.Boolean)",
+          "Name": "GetAllCultures",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -84611,8 +84611,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.ILayoutManager.GetAllLayout(System.Boolean)",
-          "Name": "GetAllLayout",
+          "Id": "cCoder.ContentManagement.Exposures.ILayoutManager.GetAllLayouts(System.Boolean)",
+          "Name": "GetAllLayouts",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -84827,8 +84827,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.IPageInfoManager.GetAllPageInfo(System.Boolean)",
-          "Name": "GetAllPageInfo",
+          "Id": "cCoder.ContentManagement.Exposures.IPageInfoManager.GetAllPageInfos(System.Boolean)",
+          "Name": "GetAllPageInfos",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -85414,8 +85414,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.IPageRoleManager.GetAllPageRole(System.Boolean)",
-          "Name": "GetAllPageRole",
+          "Id": "cCoder.ContentManagement.Exposures.IPageRoleManager.GetAllPageRoles(System.Boolean)",
+          "Name": "GetAllPageRoles",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -85642,8 +85642,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.IResourceManager.GetAllResource(System.Boolean)",
-          "Name": "GetAllResource",
+          "Id": "cCoder.ContentManagement.Exposures.IResourceManager.GetAllResources(System.Boolean)",
+          "Name": "GetAllResources",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -85883,8 +85883,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.IScriptManager.GetAllScript(System.Boolean)",
-          "Name": "GetAllScript",
+          "Id": "cCoder.ContentManagement.Exposures.IScriptManager.GetAllScripts(System.Boolean)",
+          "Name": "GetAllScripts",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -86099,8 +86099,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Exposures.ISubmissionManager.GetAllSubmission(System.Boolean)",
-          "Name": "GetAllSubmission",
+          "Id": "cCoder.ContentManagement.Exposures.ISubmissionManager.GetAllSubmissions(System.Boolean)",
+          "Name": "GetAllSubmissions",
           "LineNumber": 18,
           "Inputs": [
             {
@@ -88339,8 +88339,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Aggregations.ITemplateManagerAggregationService.GetAllTemplate()",
-          "Name": "GetAllTemplate",
+          "Id": "cCoder.ContentManagement.Services.Aggregations.ITemplateManagerAggregationService.GetAllTemplates()",
+          "Name": "GetAllTemplates",
           "LineNumber": 16,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Template\u003E",
@@ -88861,8 +88861,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObject(System.Boolean)",
-          "Name": "GetAllCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)",
+          "Name": "GetAllCommonObjects",
           "LineNumber": 16,
           "Inputs": [
             {
@@ -88911,8 +88911,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObject(System.String)",
-          "Name": "LatestCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObjects(System.String)",
+          "Name": "LatestCommonObjects",
           "LineNumber": 23,
           "Inputs": [
             {
@@ -93003,8 +93003,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IAppCultureService.GetAllAppCulture(System.Boolean)",
-          "Name": "GetAllAppCulture",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IAppCultureService.GetAllAppCultures(System.Boolean)",
+          "Name": "GetAllAppCultures",
           "LineNumber": 13,
           "Inputs": [
             {
@@ -93385,8 +93385,8 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IAppUserService.GetAllAppUser(System.Int32)",
-          "Name": "GetAllAppUser",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IAppUserService.GetAllUsers(System.Int32)",
+          "Name": "GetAllUsers",
           "LineNumber": 12,
           "Inputs": [
             {
@@ -93501,8 +93501,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.GetAllCommonObject(System.Boolean)",
-          "Name": "GetAllCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.GetAllCommonObjects(System.Boolean)",
+          "Name": "GetAllCommonObjects",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -93646,8 +93646,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IComponentService.GetAllComponent(System.Boolean)",
-          "Name": "GetAllComponent",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IComponentService.GetAllComponents(System.Boolean)",
+          "Name": "GetAllComponents",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -93787,8 +93787,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IContentService.GetAllContent(System.Boolean)",
-          "Name": "GetAllContent",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IContentService.GetAllContents(System.Boolean)",
+          "Name": "GetAllContents",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -93953,8 +93953,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ICultureService.GetAllCulture(System.Boolean)",
-          "Name": "GetAllCulture",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ICultureService.GetAllCultures(System.Boolean)",
+          "Name": "GetAllCultures",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -94119,8 +94119,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ILayoutService.GetAllLayout(System.Boolean)",
-          "Name": "GetAllLayout",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ILayoutService.GetAllLayouts(System.Boolean)",
+          "Name": "GetAllLayouts",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -94260,8 +94260,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageInfoService.GetAllPageInfo(System.Boolean)",
-          "Name": "GetAllPageInfo",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageInfoService.GetAllPageInfos(System.Boolean)",
+          "Name": "GetAllPageInfos",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -94703,8 +94703,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService.GetAllPageRole(System.Boolean)",
-          "Name": "GetAllPageRole",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRoleService.GetAllPageRoles(System.Boolean)",
+          "Name": "GetAllPageRoles",
           "LineNumber": 14,
           "Inputs": [
             {
@@ -94890,8 +94890,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPage(System.Boolean)",
-          "Name": "GetAllPage",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IPageService.GetAllPages(System.Boolean)",
+          "Name": "GetAllPages",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -95092,8 +95092,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IResourceService.GetAllResource(System.Boolean)",
-          "Name": "GetAllResource",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IResourceService.GetAllResources(System.Boolean)",
+          "Name": "GetAllResources",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -95315,8 +95315,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IScriptService.GetAllScript(System.Boolean)",
-          "Name": "GetAllScript",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.IScriptService.GetAllScripts(System.Boolean)",
+          "Name": "GetAllScripts",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -95456,8 +95456,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ISubmissionService.GetAllSubmission(System.Boolean)",
-          "Name": "GetAllSubmission",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ISubmissionService.GetAllSubmissions(System.Boolean)",
+          "Name": "GetAllSubmissions",
           "LineNumber": 16,
           "Inputs": [
             {
@@ -95597,8 +95597,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ITemplateService.GetAllTemplate(System.Boolean)",
-          "Name": "GetAllTemplate",
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ITemplateService.GetAllTemplates(System.Boolean)",
+          "Name": "GetAllTemplates",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -96299,8 +96299,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IAppCultureOrchestrationService.GetAllAppCulture(System.Boolean)",
-          "Name": "GetAllAppCulture",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IAppCultureOrchestrationService.GetAllAppCultures(System.Boolean)",
+          "Name": "GetAllAppCultures",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -96411,8 +96411,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.GetAllApp(System.Boolean)",
-          "Name": "GetAllApp",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IAppOrchestrationService.GetAllApps(System.Boolean)",
+          "Name": "GetAllApps",
           "LineNumber": 22,
           "Inputs": [
             {
@@ -96606,8 +96606,8 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IAppUserOrchestrationService.GetAllAppUser(System.Int32)",
-          "Name": "GetAllAppUser",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IAppUserOrchestrationService.GetAllUsers(System.Int32)",
+          "Name": "GetAllUsers",
           "LineNumber": 12,
           "Inputs": [
             {
@@ -96917,8 +96917,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetAllCommonObject(System.Boolean)",
-          "Name": "GetAllCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetAllCommonObjects(System.Boolean)",
+          "Name": "GetAllCommonObjects",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -96967,8 +96967,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.LatestCommonObject(System.String)",
-          "Name": "LatestCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.LatestCommonObjects(System.String)",
+          "Name": "LatestCommonObjects",
           "LineNumber": 33,
           "Inputs": [
             {
@@ -97154,8 +97154,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.GetAllComponent(System.Boolean)",
-          "Name": "GetAllComponent",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IComponentOrchestrationService.GetAllComponents(System.Boolean)",
+          "Name": "GetAllComponents",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -97555,8 +97555,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContent(System.Boolean)",
-          "Name": "GetAllContent",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IContentOrchestrationService.GetAllContents(System.Boolean)",
+          "Name": "GetAllContents",
           "LineNumber": 16,
           "Inputs": [
             {
@@ -97742,8 +97742,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService.GetAllCulture(System.Boolean)",
-          "Name": "GetAllCulture",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ICultureOrchestrationService.GetAllCultures(System.Boolean)",
+          "Name": "GetAllCultures",
           "LineNumber": 16,
           "Inputs": [
             {
@@ -97986,8 +97986,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService.GetAllLayout(System.Boolean)",
-          "Name": "GetAllLayout",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ILayoutOrchestrationService.GetAllLayouts(System.Boolean)",
+          "Name": "GetAllLayouts",
           "LineNumber": 16,
           "Inputs": [
             {
@@ -98276,8 +98276,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfo(System.Boolean)",
-          "Name": "GetAllPageInfo",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageInfoOrchestrationService.GetAllPageInfos(System.Boolean)",
+          "Name": "GetAllPageInfos",
           "LineNumber": 16,
           "Inputs": [
             {
@@ -98488,8 +98488,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPage(System.Boolean)",
-          "Name": "GetAllPage",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetAllPages(System.Boolean)",
+          "Name": "GetAllPages",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -98513,8 +98513,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetChildrenPage(System.Int32)",
-          "Name": "GetChildrenPage",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageOrchestrationService.GetChildrenPages(System.Int32)",
+          "Name": "GetChildrenPages",
           "LineNumber": 37,
           "Inputs": [
             {
@@ -99304,8 +99304,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRole(System.Boolean)",
-          "Name": "GetAllPageRole",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IPageRoleOrchestrationService.GetAllPageRoles(System.Boolean)",
+          "Name": "GetAllPageRoles",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -99590,8 +99590,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService.GetAllResource(System.Boolean)",
-          "Name": "GetAllResource",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IResourceOrchestrationService.GetAllResources(System.Boolean)",
+          "Name": "GetAllResources",
           "LineNumber": 16,
           "Inputs": [
             {
@@ -99831,8 +99831,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService.GetAllScript(System.Boolean)",
-          "Name": "GetAllScript",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.IScriptOrchestrationService.GetAllScripts(System.Boolean)",
+          "Name": "GetAllScripts",
           "LineNumber": 16,
           "Inputs": [
             {
@@ -100047,8 +100047,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService.GetAllSubmission(System.Boolean)",
-          "Name": "GetAllSubmission",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ISubmissionOrchestrationService.GetAllSubmissions(System.Boolean)",
+          "Name": "GetAllSubmissions",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -100321,8 +100321,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.GetAllTemplate(System.Boolean)",
-          "Name": "GetAllTemplate",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.ITemplateOrchestrationService.GetAllTemplates(System.Boolean)",
+          "Name": "GetAllTemplates",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -100782,8 +100782,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IAppCultureProcessingService.GetAllAppCulture(System.Boolean)",
-          "Name": "GetAllAppCulture",
+          "Id": "cCoder.ContentManagement.Services.Processings.IAppCultureProcessingService.GetAllAppCultures(System.Boolean)",
+          "Name": "GetAllAppCultures",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -100993,8 +100993,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IAppProcessingService.GetAllApp(System.Boolean)",
-          "Name": "GetAllApp",
+          "Id": "cCoder.ContentManagement.Services.Processings.IAppProcessingService.GetAllApps(System.Boolean)",
+          "Name": "GetAllApps",
           "LineNumber": 24,
           "Inputs": [
             {
@@ -101780,8 +101780,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetAllCommonObject(System.Boolean)",
-          "Name": "GetAllCommonObject",
+          "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetAllCommonObjects(System.Boolean)",
+          "Name": "GetAllCommonObjects",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -102070,8 +102070,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.GetAllComponent(System.Boolean)",
-          "Name": "GetAllComponent",
+          "Id": "cCoder.ContentManagement.Services.Processings.IComponentProcessingService.GetAllComponents(System.Boolean)",
+          "Name": "GetAllComponents",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -102393,8 +102393,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IContentProcessingService.GetAllContent(System.Boolean)",
-          "Name": "GetAllContent",
+          "Id": "cCoder.ContentManagement.Services.Processings.IContentProcessingService.GetAllContents(System.Boolean)",
+          "Name": "GetAllContents",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -102704,8 +102704,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.ICultureProcessingService.GetAllCulture(System.Boolean)",
-          "Name": "GetAllCulture",
+          "Id": "cCoder.ContentManagement.Services.Processings.ICultureProcessingService.GetAllCultures(System.Boolean)",
+          "Name": "GetAllCultures",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -103246,8 +103246,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.GetAllLayout(System.Boolean)",
-          "Name": "GetAllLayout",
+          "Id": "cCoder.ContentManagement.Services.Processings.ILayoutProcessingService.GetAllLayouts(System.Boolean)",
+          "Name": "GetAllLayouts",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -103816,8 +103816,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService.GetAllPageInfo(System.Boolean)",
-          "Name": "GetAllPageInfo",
+          "Id": "cCoder.ContentManagement.Services.Processings.IPageInfoProcessingService.GetAllPageInfos(System.Boolean)",
+          "Name": "GetAllPageInfos",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -104028,8 +104028,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPage(System.Boolean)",
-          "Name": "GetAllPage",
+          "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetAllPages(System.Boolean)",
+          "Name": "GetAllPages",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -104053,8 +104053,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetChildrenPage(System.Int32)",
-          "Name": "GetChildrenPage",
+          "Id": "cCoder.ContentManagement.Services.Processings.IPageProcessingService.GetChildrenPages(System.Int32)",
+          "Name": "GetChildrenPages",
           "LineNumber": 35,
           "Inputs": [
             {
@@ -104942,8 +104942,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IPageRoleProcessingService.GetAllPageRole(System.Boolean)",
-          "Name": "GetAllPageRole",
+          "Id": "cCoder.ContentManagement.Services.Processings.IPageRoleProcessingService.GetAllPageRoles(System.Boolean)",
+          "Name": "GetAllPageRoles",
           "LineNumber": 15,
           "Inputs": [
             {
@@ -105236,8 +105236,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResource(System.Boolean)",
-          "Name": "GetAllResource",
+          "Id": "cCoder.ContentManagement.Services.Processings.IResourceProcessingService.GetAllResources(System.Boolean)",
+          "Name": "GetAllResources",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -105522,8 +105522,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.GetAllScript(System.Boolean)",
-          "Name": "GetAllScript",
+          "Id": "cCoder.ContentManagement.Services.Processings.IScriptProcessingService.GetAllScripts(System.Boolean)",
+          "Name": "GetAllScripts",
           "LineNumber": 17,
           "Inputs": [
             {
@@ -105808,8 +105808,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.ISubmissionProcessingService.GetAllSubmission(System.Boolean)",
-          "Name": "GetAllSubmission",
+          "Id": "cCoder.ContentManagement.Services.Processings.ISubmissionProcessingService.GetAllSubmissions(System.Boolean)",
+          "Name": "GetAllSubmissions",
           "LineNumber": 18,
           "Inputs": [
             {
@@ -106172,8 +106172,8 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.GetAllTemplate(System.Boolean)",
-          "Name": "GetAllTemplate",
+          "Id": "cCoder.ContentManagement.Services.Processings.ITemplateProcessingService.GetAllTemplates(System.Boolean)",
+          "Name": "GetAllTemplates",
           "LineNumber": 17,
           "Inputs": [
             {

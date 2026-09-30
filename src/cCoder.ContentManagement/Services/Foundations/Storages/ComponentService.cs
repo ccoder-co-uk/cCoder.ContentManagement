@@ -21,11 +21,11 @@ internal partial class ComponentService(IComponentBroker componentBroker) : ICom
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllComponent(ignoreFilters: true)
+            return ExecuteGetAllComponents(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
         }
 
-        Component component = ExecuteGetAllComponent()
+        Component component = ExecuteGetAllComponents()
             .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
 
         if (component != null)
@@ -33,7 +33,7 @@ internal partial class ComponentService(IComponentBroker componentBroker) : ICom
             return component;
         }
 
-        Component component2 = ExecuteGetAllComponent(ignoreFilters: true)
+        Component component2 = ExecuteGetAllComponents(ignoreFilters: true)
             .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
 
         if (component2 != null)
@@ -45,10 +45,10 @@ internal partial class ComponentService(IComponentBroker componentBroker) : ICom
 
     });
 
-    public IQueryable<Component> GetAllComponent(bool ignoreFilters = false) =>
+    public IQueryable<Component> GetAllComponents(bool ignoreFilters = false) =>
         TryCatch<IQueryable<Component>>(operation: () =>
     {
-        ValidateAllComponentOnGet(inputs: [ignoreFilters]);
+        ValidateAllComponentsOnGet(inputs: [ignoreFilters]);
 
         return ignoreFilters
             ? componentBroker.GetAllComponentsIgnoringFilters()
@@ -156,7 +156,7 @@ internal partial class ComponentService(IComponentBroker componentBroker) : ICom
         };
     }
 
-    private IQueryable<Component> ExecuteGetAllComponent(bool ignoreFilters = false) =>
+    private IQueryable<Component> ExecuteGetAllComponents(bool ignoreFilters = false) =>
         (ignoreFilters
             ? componentBroker.GetAllComponentsIgnoringFilters()
             : componentBroker.GetAllComponents());
@@ -167,11 +167,11 @@ internal partial class ComponentService(IComponentBroker componentBroker) : ICom
 
         if (ignoreFilters)
         {
-            return ExecuteGetAllComponent(ignoreFilters: true)
+            return ExecuteGetAllComponents(ignoreFilters: true)
                 .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
         }
 
-        Component component = ExecuteGetAllComponent()
+        Component component = ExecuteGetAllComponents()
             .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
 
         if (component != null)
@@ -179,7 +179,7 @@ internal partial class ComponentService(IComponentBroker componentBroker) : ICom
             return component;
         }
 
-        Component component2 = ExecuteGetAllComponent(ignoreFilters: true)
+        Component component2 = ExecuteGetAllComponents(ignoreFilters: true)
             .FirstOrDefault(predicate: (Component i) => i.Id == componentId);
 
         if (component2 != null)

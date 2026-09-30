@@ -13,7 +13,7 @@ internal interface ITemplateManagerAggregationService
 {
     ValueTask<string> ReadContentAsync(Stream source);
     byte[] ConvertHtmlToPdf(string html);
-    IQueryable<Template> GetAllTemplate();
+    IQueryable<Template> GetAllTemplates();
     Template GetTemplate(int templateId);
     ValueTask<Template> AddTemplateAsync(Template newTemplate);
     ValueTask<Template> UpdateTemplateAsync(Template updatedTemplate);

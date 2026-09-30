@@ -12,7 +12,7 @@ internal interface IContentService
 {
     Content GetContent(int contentId, bool ignoreFilters = false);
 
-    IQueryable<Content> GetAllContent(bool ignoreFilters = false);
+    IQueryable<Content> GetAllContents(bool ignoreFilters = false);
 
     int? GetAppIdByPageId(int pageId);
 

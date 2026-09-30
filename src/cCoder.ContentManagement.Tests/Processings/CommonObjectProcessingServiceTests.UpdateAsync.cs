@@ -25,7 +25,7 @@ public partial class CommonObjectProcessingServiceTests
         existingVersion.Version = 2;
 
         commonObjectServiceMock
-            .Setup(expression: service => service.GetAllCommonObject(ignoreFilters: false))
+            .Setup(expression: service => service.GetAllCommonObjects(ignoreFilters: false))
             .Returns(value: new[] { existingVersion }.AsQueryable());
 
         commonObjectServiceMock
@@ -53,7 +53,7 @@ public partial class CommonObjectProcessingServiceTests
             .Be(expected: CurrentUserId);
 
         commonObjectServiceMock.Verify(
-            expression: service => service.GetAllCommonObject(ignoreFilters: false),
+            expression: service => service.GetAllCommonObjects(ignoreFilters: false),
             times: Times.Exactly(callCount: 2));
 
         commonObjectServiceMock.VerifyAll();

@@ -103,7 +103,7 @@ public partial class AppProcessingServiceTests
         App GetApp(int appId, bool ignoreFilters = false);
         ValueTask<App> GetAppForRenderAsync(int appId);
         App GetAppForDelete(int appId);
-        IQueryable<App> GetAllApp(bool ignoreFilters = false);
+        IQueryable<App> GetAllApps(bool ignoreFilters = false);
         ValueTask<App> AddAppAsync(App newApp);
         ValueTask<App> UpdateAppAsync(App updatedApp);
         ValueTask DeleteAsync(int appId);
@@ -129,13 +129,13 @@ public partial class AppProcessingServiceTests
     {
         public AppOperation GetVisibleAppsAppOperation(AppOperation appOperation)
         {
-            appOperation.Apps = service.GetAllApp();
+            appOperation.Apps = service.GetAllApps();
             return appOperation;
         }
 
         public AppOperation GetUnfilteredAppsAppOperation(AppOperation appOperation)
         {
-            appOperation.Apps = service.GetAllApp(ignoreFilters: true);
+            appOperation.Apps = service.GetAllApps(ignoreFilters: true);
             return appOperation;
         }
 

@@ -47,7 +47,7 @@ public partial class PageProcessingServiceTests
         pageServiceMock.Setup(expression: x => x.AddPageAsync(newPage: It.IsAny<Page>()))
             .ReturnsAsync(value: addedPage);
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageServiceMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: Array.Empty<Page>()
             .AsQueryable());
 
@@ -73,7 +73,7 @@ newPage: It.Is<Page>(match: p =>
 times: Times.Once
         );
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         VerifyNoOtherPageServiceCalls();
     }
 
@@ -119,10 +119,10 @@ times: Times.Once
         pageServiceMock.Setup(expression: x => x.AddPageAsync(newPage: It.IsAny<Page>()))
             .ReturnsAsync(value: addedPage);
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
+        pageServiceMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { parent }.AsQueryable());
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageServiceMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { parent }.AsQueryable());
 
         // When
@@ -132,8 +132,8 @@ times: Times.Once
         result.Should()
             .BeSameAs(expected: addedPage);
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
 
         pageServiceMock.Verify(
 expression: x => x.AddPageAsync(newPage: It.Is<Page>(match: p => p.Path == "parent/Child" && p.AppId == 1)),
@@ -168,7 +168,7 @@ times: Times.Once
             Contents = [],
         };
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageServiceMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { existingPage }.AsQueryable());
 
         // When
@@ -179,7 +179,7 @@ times: Times.Once
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
             .WithMessage(expectedWildcardPattern: "A page already exists for app 1 with path 'About'.");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         VerifyNoOtherPageServiceCalls();
     }
 
@@ -217,7 +217,7 @@ times: Times.Once
             Roles = [],
         };
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageServiceMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { existingPage }.AsQueryable());
 
         pageServiceMock.Setup(expression: x => x.AddPageAsync(newPage: It.IsAny<Page>()))
@@ -230,7 +230,7 @@ times: Times.Once
         result.Should()
             .BeSameAs(expected: addedPage);
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
 
         pageServiceMock.Verify(
 expression: x => x.AddPageAsync(newPage: It.Is<Page>(match: p => p.AppId == 1 && p.Path == "About")),
@@ -286,10 +286,10 @@ times: Times.Once);
             Roles = [],
         };
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage())
+        pageServiceMock.Setup(expression: x => x.GetAllPages())
             .Returns(value: new[] { parent }.AsQueryable());
 
-        pageServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageServiceMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: new[] { parent, hiddenDuplicate }.AsQueryable());
 
         // When
@@ -300,8 +300,8 @@ times: Times.Once);
             .ThrowAsync<System.ComponentModel.DataAnnotations.ValidationException>()
             .WithMessage(expectedWildcardPattern: "A page already exists for app 1 with path 'parent/Child'.");
 
-        pageServiceMock.Verify(expression: x => x.GetAllPage(), times: Times.Once);
-        pageServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(), times: Times.Once);
+        pageServiceMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         VerifyNoOtherPageServiceCalls();
     }
 }

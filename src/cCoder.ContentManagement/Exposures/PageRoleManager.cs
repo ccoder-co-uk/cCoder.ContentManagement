@@ -13,8 +13,8 @@ namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class PageRoleManager(IPageRoleOrchestrationService service) : IPageRoleManager
 {
-    public IQueryable<PageRole> GetAllPageRole(bool ignoreFilters = false) =>
-        service.GetAllPageRole(ignoreFilters: ignoreFilters);
+    public IQueryable<PageRole> GetAllPageRoles(bool ignoreFilters = false) =>
+        service.GetAllPageRoles(ignoreFilters: ignoreFilters);
 
     public ValueTask<PageRole> AddPageRoleAsync(PageRole newPageRole) =>
         service.AddPageRoleAsync(newPageRole: newPageRole);

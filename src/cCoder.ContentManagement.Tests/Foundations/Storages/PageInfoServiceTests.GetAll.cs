@@ -21,18 +21,18 @@ public partial class PageInfoServiceTests
         PageInfo pageInfo = CreateRandomPageInfo();
         IQueryable<DataPageInfo> pageInfos = new[] { ToDataPageInfo(pageInfo: pageInfo) }.AsQueryable();
 
-        pageInfoBrokerMock.Setup(expression: x => x.GetAllPageInfo())
+        pageInfoBrokerMock.Setup(expression: x => x.GetAllPageInfos())
             .Returns(value: pageInfos);
 
         // When
-        IQueryable<PageInfo> result = pageInfoService.GetAllPageInfo();
+        IQueryable<PageInfo> result = pageInfoService.GetAllPageInfos();
 
         // Then
 
         result.Should()
             .BeEquivalentTo(expectation: [pageInfo]);
 
-        pageInfoBrokerMock.Verify(expression: x => x.GetAllPageInfo(), times: Times.Once);
+        pageInfoBrokerMock.Verify(expression: x => x.GetAllPageInfos(), times: Times.Once);
         pageInfoBrokerMock.VerifyNoOtherCalls();
     }
 

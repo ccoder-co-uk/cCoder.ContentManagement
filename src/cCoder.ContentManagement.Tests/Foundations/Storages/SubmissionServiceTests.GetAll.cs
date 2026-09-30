@@ -34,7 +34,7 @@ public partial class SubmissionServiceTests
             .Returns(value: submissions);
 
         // When
-        IQueryable<Submission> result = submissionService.GetAllSubmission();
+        IQueryable<Submission> result = submissionService.GetAllSubmissions();
 
         // Then
 

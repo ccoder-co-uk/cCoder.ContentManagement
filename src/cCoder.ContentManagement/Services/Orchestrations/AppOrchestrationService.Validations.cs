@@ -21,7 +21,7 @@ internal partial class AppOrchestrationService
     private static void ValidateByDomainAppOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllAppOnGet(object[] inputs) =>
+    private static void ValidateAllAppsOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateAppOnAdd(object[] inputs) =>

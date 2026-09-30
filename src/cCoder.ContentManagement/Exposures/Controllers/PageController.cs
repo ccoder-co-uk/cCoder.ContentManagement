@@ -37,7 +37,7 @@ public class PageController : ODataController
     {
         try
         {
-            return Ok(value: manager.GetAllPage());
+            return Ok(value: manager.GetAllPages());
         }
         catch (ContentManagementValidationException exception)
         {
@@ -140,7 +140,7 @@ public class PageController : ODataController
     {
         try
         {
-            Page result = manager.GetAllPage()
+            Page result = manager.GetAllPages()
                 .FirstOrDefault(predicate: page => page.Id == key);
 
             return result is null

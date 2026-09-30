@@ -9,7 +9,7 @@ internal partial class ContentOrchestrationService
     private static void ValidateContentOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
-    private static void ValidateAllContentOnGet(object[] inputs) =>
+    private static void ValidateAllContentsOnGet(object[] inputs) =>
         Validate(inputs: inputs);
 
     private static void ValidateContentOnAdd(object[] inputs) =>

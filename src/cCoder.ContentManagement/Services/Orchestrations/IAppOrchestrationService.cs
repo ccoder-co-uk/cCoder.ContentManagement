@@ -19,7 +19,7 @@ public interface IAppOrchestrationService
 
     App GetByDomainApp(string domain, bool ignoreFilters = false);
 
-    IQueryable<App> GetAllApp(bool ignoreFilters = false);
+    IQueryable<App> GetAllApps(bool ignoreFilters = false);
 
     ValueTask<App> AddAppAsync(App newApp);
 

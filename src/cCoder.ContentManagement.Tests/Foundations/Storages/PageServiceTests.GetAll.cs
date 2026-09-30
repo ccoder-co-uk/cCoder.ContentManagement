@@ -27,7 +27,7 @@ public partial class PageServiceTests
             .Returns(value: pages);
 
         // When
-        IQueryable<Page> result = pageService.GetAllPage();
+        IQueryable<Page> result = pageService.GetAllPages();
 
         // Then
 

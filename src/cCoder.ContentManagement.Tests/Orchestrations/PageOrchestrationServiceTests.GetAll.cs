@@ -19,12 +19,12 @@ public partial class PageOrchestrationServiceTests
         // Given
         IQueryable<Page> entities = new[] { CreateRandomPage() }.AsQueryable();
 
-        pageProcessingServiceMock.Setup(expression: x => x.GetAllPage(ignoreFilters: true))
+        pageProcessingServiceMock.Setup(expression: x => x.GetAllPages(ignoreFilters: true))
             .Returns(value: entities);
 
         // When
 
-        var result = orchestrationService.GetAllPage(ignoreFilters: true)
+        var result = orchestrationService.GetAllPages(ignoreFilters: true)
             .ToArray();
 
         // Then
@@ -33,7 +33,7 @@ public partial class PageOrchestrationServiceTests
             .Should()
             .Equal(expected: entities.Select(selector: item => item.Id));
 
-        pageProcessingServiceMock.Verify(expression: x => x.GetAllPage(ignoreFilters: true), times: Times.Once);
+        pageProcessingServiceMock.Verify(expression: x => x.GetAllPages(ignoreFilters: true), times: Times.Once);
         pageProcessingServiceMock.VerifyNoOtherCalls();
         pageEventProcessingServiceMock.VerifyNoOtherCalls();
     }
