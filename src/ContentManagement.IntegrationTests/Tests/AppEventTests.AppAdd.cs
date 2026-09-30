@@ -113,10 +113,10 @@ because: "app_add should create the layout child row");
 
             // Then
             await WaitForAsync(
-condition: () => HasPage(appId: appId),
-because: "app_add should create the page child row");
+condition: () => HasPageGraph(appId: appId),
+because: "app_add should create the complete page child graph");
 
-            HasPage(appId: appId)
+            HasPageGraph(appId: appId)
                 .Should()
                 .BeTrue();
         }
