@@ -16,6 +16,29 @@ namespace cCoder.ContentManagement.Tests.Foundations.Serialization;
 public sealed partial class JsonServiceRecordTests
 {
     [Fact]
+    public void ParseJson_WhenDateTimeOffsetHasNoOffset_AssumesUniversalTime()
+    {
+        // Given
+        JsonBroker broker = new();
+
+        // When
+        DateTimeOffsetRecord result = broker.ParseJson<DateTimeOffsetRecord>(
+            json: "{\"LastUpdated\":\"03/21/2022 12:37:55\"}");
+
+        // Then
+        result.LastUpdated.Should()
+            .Be(expected: new DateTimeOffset(
+                year: 2022,
+                month: 3,
+                day: 21,
+                hour: 12,
+                minute: 37,
+                second: 55,
+                millisecond: 0,
+                offset: TimeSpan.Zero));
+    }
+
+    [Fact]
     public void ParseRecords_WhenPayloadIsAnArray_PreservesRawRecordTextAndValues()
     {
         // Given
@@ -51,4 +74,6 @@ public sealed partial class JsonServiceRecordTests
             .StringValues.Should()
             .NotContainKey(unexpected: "Missing");
     }
+
+    private sealed record DateTimeOffsetRecord(DateTimeOffset LastUpdated);
 }
