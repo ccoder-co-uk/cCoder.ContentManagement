@@ -118,6 +118,10 @@ internal partial class CommonObjectService(
             : commonObjectBroker.GetAllCommonObjects();
     });
 
+    public CommonObject[] GetLatestCommonObjects() =>
+        TryCatch(operation: () => commonObjectBroker
+            .GetLatestCommonObjectsPaged());
+
     public ValueTask<CommonObject> AddCommonObjectAsync(
         CommonObject newCommonObject,
         string userId) =>

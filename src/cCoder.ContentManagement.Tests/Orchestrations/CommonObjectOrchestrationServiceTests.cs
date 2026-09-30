@@ -6,7 +6,6 @@ using System;
 using cCoder.Data.Models;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.ContentManagement.Services.Processings;
-using cCoder.ContentManagement.Rendering.Services.Processings;
 using FizzWare.NBuilder;
 using Moq;
 using System.Linq.Expressions;
@@ -17,8 +16,8 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class CommonObjectOrchestrationServiceTests
 {
     private readonly Mock<ICommonObjectProcessingService> commonObjectProcessingServiceMock;
-    private readonly Mock<ICommonObjectLatestCacheProcessingService> cacheProcessingServiceMock;
     private readonly Mock<IAuthorizationProcessingService> authorizationProcessingServiceMock;
+    private readonly Mock<ICommonObjectEventProcessingService> eventProcessingServiceMock;
     private readonly CommonObjectOrchestrationService orchestrationService;
     private const string CurrentUserId = "test-user";
 
@@ -26,8 +25,8 @@ public partial class CommonObjectOrchestrationServiceTests
     {
         // Given
         commonObjectProcessingServiceMock = new Mock<ICommonObjectProcessingService>(behavior: MockBehavior.Strict);
-        cacheProcessingServiceMock = new Mock<ICommonObjectLatestCacheProcessingService>(behavior: MockBehavior.Strict);
         authorizationProcessingServiceMock = new(behavior: MockBehavior.Strict);
+        eventProcessingServiceMock = new(behavior: MockBehavior.Strict);
         authorizationProcessingServiceMock
             .Setup(expression: service => service.GetCurrentUserId())
             .Returns(value: CurrentUserId);
@@ -35,8 +34,8 @@ public partial class CommonObjectOrchestrationServiceTests
         // When
         orchestrationService = new CommonObjectOrchestrationService(
             processingService: commonObjectProcessingServiceMock.Object,
-            latestCacheProcessingService: cacheProcessingServiceMock.Object,
-            authorizationProcessingService: authorizationProcessingServiceMock.Object);
+            authorizationProcessingService: authorizationProcessingServiceMock.Object,
+            eventProcessingService: eventProcessingServiceMock.Object);
 
         // Then
     }

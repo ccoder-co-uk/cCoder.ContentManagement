@@ -11,14 +11,13 @@ using System.ComponentModel.DataAnnotations;
 using cCoder.Data.Models;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Services.Processings;
-using cCoder.ContentManagement.Rendering.Services.Processings;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal partial class CommonObjectOrchestrationService(
     ICommonObjectProcessingService processingService,
-    ICommonObjectLatestCacheProcessingService latestCacheProcessingService,
-    IAuthorizationProcessingService authorizationProcessingService)
+    IAuthorizationProcessingService authorizationProcessingService,
+    ICommonObjectEventProcessingService eventProcessingService)
         : ICommonObjectOrchestrationService
 {
     public CommonObject[] DeserializeCommonObjects(object payload) =>
@@ -60,15 +59,8 @@ internal partial class CommonObjectOrchestrationService(
                 parameterName: "newCommonObjects")
         ];
 
-        CommonObject[] latestCommonObjects = latestCacheProcessingService
-            .GetCommonObjectCacheSnapshot()?
-            .LatestSet
-            ?? latestCacheProcessingService
-                .LoadCommonObjectCacheSnapshot()
-                .LatestSet;
-
-        latestCommonObjects = latestCommonObjects
-            .ToArray();
+        CommonObject[] latestCommonObjects =
+            processingService.GetLatestCommonObjects();
 
         AuthorizeImport(
             commonObjects: validatedCommonObjects,
@@ -82,9 +74,18 @@ internal partial class CommonObjectOrchestrationService(
                 latestCommonObjects: latestCommonObjects,
                 userId: userId);
 
-        latestCacheProcessingService.RefreshCommonObjects(
-            changedCommonObjectCount: results.Count(
-                predicate: result => result.Success));
+        CommonObject[] importedCommonObjects = results
+            .Where(predicate: result =>
+                result.Success && result.Item is not null)
+            .Select(selector: result => result.Item)
+            .ToArray();
+
+        if (importedCommonObjects.Length > 0)
+        {
+            await eventProcessingService.RaiseCommonObjectsImportedEventAsync(
+                commonObjects: importedCommonObjects,
+                userId: userId);
+        }
 
         return results;
 
@@ -98,12 +99,15 @@ internal partial class CommonObjectOrchestrationService(
         Authorize(privilege: "commonobject_create");
         Authorize(privilege: "commonobject_update");
 
+        string userId = authorizationProcessingService.GetCurrentUserId();
+
         CommonObject result = await processingService.UpdateCommonObjectAsync(
             updatedCommonObject: updatedCommonObject,
-            userId: authorizationProcessingService.GetCurrentUserId());
+            userId: userId);
 
-        latestCacheProcessingService.RefreshCommonObjects(
-            changedCommonObjectCount: 1);
+        await eventProcessingService.RaiseCommonObjectUpdateEventAsync(
+            entity: result,
+            userId: userId);
 
         return result;
 
@@ -116,10 +120,14 @@ internal partial class CommonObjectOrchestrationService(
         ValidateId(commonObjectId: commonObjectId, parameterName: "id");
         Authorize(privilege: "commonobject_delete");
 
+        CommonObject commonObject = processingService.GetCommonObject(
+            commonObjectId: commonObjectId);
+
         await processingService.DeleteAsync(commonObjectId: commonObjectId);
 
-        latestCacheProcessingService.RefreshCommonObjects(
-            changedCommonObjectCount: 1);
+        await eventProcessingService.RaiseCommonObjectDeleteEventAsync(
+            entity: commonObject,
+            userId: authorizationProcessingService.GetCurrentUserId());
 
     }, isValueTask: true);
 
@@ -171,12 +179,8 @@ internal partial class CommonObjectOrchestrationService(
         ValidateLatestCommonObjects(inputs: [type]);
         ValidateType(type: type, parameterName: "type");
 
-        CommonObject[] latestCommonObjects = latestCacheProcessingService
-            .GetCommonObjectCacheSnapshot()?
-            .LatestSet
-            ?? latestCacheProcessingService
-                .LoadCommonObjectCacheSnapshot()
-                .LatestSet;
+        CommonObject[] latestCommonObjects =
+            processingService.GetLatestCommonObjects();
 
         return latestCommonObjects
             .Where(predicate: item => item.Type == type);
@@ -204,9 +208,18 @@ internal partial class CommonObjectOrchestrationService(
                 newCommonObject: commonObjects,
                 userId: userId);
 
-        latestCacheProcessingService.RefreshCommonObjects(
-            changedCommonObjectCount: results.Count(
-                predicate: result => result.Success));
+        CommonObject[] changedCommonObjects = results
+            .Where(predicate: result =>
+                result.Success && result.Item is not null)
+            .Select(selector: result => result.Item)
+            .ToArray();
+
+        if (changedCommonObjects.Length > 0)
+        {
+            await eventProcessingService.RaiseCommonObjectsImportedEventAsync(
+                commonObjects: changedCommonObjects,
+                userId: userId);
+        }
 
         return results;
     }
@@ -217,8 +230,14 @@ internal partial class CommonObjectOrchestrationService(
         await processingService.DeleteAllCommonObjectAsync(
             deletedCommonObject: commonObjects);
 
-        latestCacheProcessingService.RefreshCommonObjects(
-            changedCommonObjectCount: commonObjects.Length);
+        string userId = authorizationProcessingService.GetCurrentUserId();
+
+        foreach (CommonObject commonObject in commonObjects)
+        {
+            await eventProcessingService.RaiseCommonObjectDeleteEventAsync(
+                entity: commonObject,
+                userId: userId);
+        }
     }
 
     private void AuthorizeImport(

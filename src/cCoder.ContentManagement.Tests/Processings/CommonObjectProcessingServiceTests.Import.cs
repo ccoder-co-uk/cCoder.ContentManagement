@@ -29,6 +29,7 @@ public partial class CommonObjectProcessingServiceTests
                 userId: CurrentUserId))
             .ReturnsAsync(value: incoming);
 
+
         // When
         OperationResult<CommonObject>[] results = (await commonObjectProcessingService
             .AddAllCommonObjectsAsync(
@@ -75,6 +76,7 @@ public partial class CommonObjectProcessingServiceTests
                 newCommonObject: incoming,
                 userId: CurrentUserId))
             .ReturnsAsync(value: incoming);
+
 
         // When
         OperationResult<CommonObject>[] results = (await commonObjectProcessingService

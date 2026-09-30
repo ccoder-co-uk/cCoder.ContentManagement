@@ -6989,7 +6989,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.AddCommonObjectAsync(cCoder.Data.Models.CommonObject)",
           "Name": "AddCommonObjectAsync",
-          "LineNumber": 44,
+          "LineNumber": 47,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -7024,7 +7024,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.DeleteAllCommonObjectsAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
           "Name": "DeleteAllCommonObjectsAsync",
-          "LineNumber": 59,
+          "LineNumber": 62,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -7059,7 +7059,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.DeleteCommonObjectAsync(cCoder.Data.Models.CommonObject)",
           "Name": "DeleteCommonObjectAsync",
-          "LineNumber": 54,
+          "LineNumber": 57,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -7154,7 +7154,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.GetAppId(cCoder.Data.Models.CommonObject)",
           "Name": "GetAppId",
-          "LineNumber": 64,
+          "LineNumber": 67,
           "Inputs": [
             {
               "Name": "commonObject",
@@ -7249,9 +7249,39 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.RefreshCommonObjects()",
+          "Name": "RefreshCommonObjects",
+          "LineNumber": 44,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.RefreshCommonObjects()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.Data.Exposures.ICommonObjectCacheManager",
+              "MethodName": "Refresh",
+              "MethodId": "cCoder.Data.Exposures.ICommonObjectCacheManager.Refresh()",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CommonObjectBroker.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 49,
+          "LineNumber": 52,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -13710,16 +13740,15 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "AddAllCommonObjectsAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -13762,16 +13791,15 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "AddOrUpdateCommonObjectResult",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -13814,16 +13842,15 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "DeleteAllCommonObjectAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -13866,16 +13893,15 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "DeleteAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeleteAsync(System.Int32)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.DeleteAsync(System.Int32)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -13918,10 +13944,10 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "DeserializeCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeserializeCommonObjects(System.Object)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.DeserializeCommonObjects(System.Object)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
@@ -13967,10 +13993,10 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "GetAllCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetAllCommonObjects(System.Boolean)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
@@ -14016,10 +14042,10 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "GetCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetCommonObject(System.Int32)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetCommonObject(System.Int32)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
@@ -14067,16 +14093,15 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "LatestCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObjects(System.String)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.LatestCommonObjects(System.String)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
@@ -14118,16 +14143,15 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "UpdateCommonObjectAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -16457,16 +16481,15 @@
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "DeleteAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeleteAsync(System.Int32)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.DeleteAsync(System.Int32)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -16588,10 +16611,10 @@
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "GetAllCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetAllCommonObjects(System.Boolean)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
@@ -16707,10 +16730,10 @@
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "GetAllCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetAllCommonObjects(System.Boolean)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
@@ -16828,16 +16851,15 @@
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "LatestCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObjects(System.String)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.LatestCommonObjects(System.String)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
@@ -16968,23 +16990,22 @@
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "AddAllCommonObjectsAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "DeserializeCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeserializeCommonObjects(System.Object)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.DeserializeCommonObjects(System.Object)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -17106,16 +17127,15 @@
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
+              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
               "MethodName": "UpdateCommonObjectAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
-              "StandardElementType": "CoordinationService",
+              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
+              "StandardElementType": "OrchestrationService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -29830,7 +29850,7 @@
     {
       "Name": "cCoder.ContentManagement.IEventHubExtensions",
       "StandardElementType": "Exposure",
-      "LineNumber": 17,
+      "LineNumber": 18,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": null,
@@ -29840,7 +29860,7 @@
         {
           "Id": "cCoder.ContentManagement.IEventHubExtensions.ListenToContentManagementEvents(cCoder.Eventing.IEventHub)",
           "Name": "ListenToContentManagementEvents",
-          "LineNumber": 19,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "eventHub",
@@ -29883,7 +29903,7 @@
         {
           "Id": "cCoder.ContentManagement.IEventHubExtensions.ListenToContentManagementWebEvents(cCoder.Eventing.IEventHub)",
           "Name": "ListenToContentManagementWebEvents",
-          "LineNumber": 35,
+          "LineNumber": 36,
           "Inputs": [
             {
               "Name": "eventHub",
@@ -29929,7 +29949,7 @@
         {
           "Id": "cCoder.ContentManagement.IEventHubExtensions.ListenToFinalContentManagementEvents(cCoder.Eventing.IEventHub)",
           "Name": "ListenToFinalContentManagementEvents",
-          "LineNumber": 27,
+          "LineNumber": 28,
           "Inputs": [
             {
               "Name": "eventHub",
@@ -33638,7 +33658,7 @@
         {
           "Id": "cCoder.ContentManagement.Rendering.Services.Foundations.CommonObjectLatestCacheService.GetCommonObjectCacheSnapshot()",
           "Name": "GetCommonObjectCacheSnapshot",
-          "LineNumber": 101,
+          "LineNumber": 103,
           "Inputs": [],
           "ReturnType": "cCoder.ContentManagement.Models.Caching.CommonObjectCacheSnapshot",
           "Implements": [
@@ -33747,6 +33767,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker",
               "MethodName": "GetLatestCommonObjectsPaged",
               "MethodId": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.GetLatestCommonObjectsPaged(System.Int32)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker",
+              "MethodName": "RefreshCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.RefreshCommonObjects()",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             }
@@ -37912,517 +37939,6 @@
           ],
           "IncomingExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService",
-      "StandardElementType": "CoordinationService",
-      "LineNumber": 14,
-      "IsPublic": false,
-      "Kind": "Class",
-      "BaseType": null,
-      "Interfaces": [
-        {
-          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
-          "FullName": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
-          "Name": "ICommonObjectCoordinationService",
-          "Namespace": "cCoder.ContentManagement.Services.Coordinations",
-          "AssemblyName": "cCoder.ContentManagement",
-          "Kind": "Interface",
-          "IsInCurrentProject": true,
-          "StandardElementType": "CoordinationService"
-        }
-      ],
-      "Properties": [],
-      "Methods": [
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])",
-          "Name": "AddAllCommonObjectsAsync",
-          "LineNumber": 46,
-          "Inputs": [
-            {
-              "Name": "newCommonObjects",
-              "Type": "cCoder.Data.Models.CommonObject[]"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService",
-              "MethodName": "RaiseCommonObjectsImportedEventAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService.RaiseCommonObjectsImportedEventAsync(System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "AddAllCommonObjectsAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
-          "Name": "AddOrUpdateCommonObjectResult",
-          "LineNumber": 94,
-          "Inputs": [
-            {
-              "Name": "newCommonObject",
-              "Type": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "AddOrUpdateCommonObjectResult",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
-          "Name": "DeleteAllCommonObjectAsync",
-          "LineNumber": 103,
-          "Inputs": [
-            {
-              "Name": "deletedCommonObject",
-              "Type": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "DeleteAllCommonObjectAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.DeleteAsync(System.Int32)",
-          "Name": "DeleteAsync",
-          "LineNumber": 78,
-          "Inputs": [
-            {
-              "Name": "commonObjectId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeleteAsync(System.Int32)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService",
-              "MethodName": "RaiseCommonObjectDeletedEventAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService.RaiseCommonObjectDeletedEventAsync(cCoder.Data.Models.CommonObject)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "DeleteAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.DeleteAsync(System.Int32)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "GetCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetCommonObject(System.Int32)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.DeserializeCommonObjects(System.Object)",
-          "Name": "DeserializeCommonObjects",
-          "LineNumber": 37,
-          "Inputs": [
-            {
-              "Name": "payload",
-              "Type": "System.Object"
-            }
-          ],
-          "ReturnType": "cCoder.Data.Models.CommonObject[]",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeserializeCommonObjects(System.Object)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "DeserializeCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.DeserializeCommonObjects(System.Object)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)",
-          "Name": "GetAllCommonObjects",
-          "LineNumber": 28,
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CommonObject\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "GetAllCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetAllCommonObjects(System.Boolean)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.GetCommonObject(System.Int32)",
-          "Name": "GetCommonObject",
-          "LineNumber": 19,
-          "Inputs": [
-            {
-              "Name": "commonObjectId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "cCoder.Data.Models.CommonObject",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetCommonObject(System.Int32)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "GetCommonObject",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.GetCommonObject(System.Int32)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.LatestCommonObjects(System.String)",
-          "Name": "LatestCommonObjects",
-          "LineNumber": 113,
-          "Inputs": [
-            {
-              "Name": "type",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObjects(System.String)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "LatestCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.LatestCommonObjects(System.String)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
-          "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 62,
-          "Inputs": [
-            {
-              "Name": "updatedCommonObject",
-              "Type": "cCoder.Data.Models.CommonObject"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CommonObject\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService",
-              "MethodName": "RaiseCommonObjectUpdatedEventAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService.RaiseCommonObjectUpdatedEventAsync(cCoder.Data.Models.CommonObject)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-              "MethodName": "UpdateCommonObjectAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
-              "StandardElementType": "OrchestrationService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
-            "System.Security.SecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
@@ -48153,7 +47669,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService.AddCommonObjectAsync(cCoder.Data.Models.CommonObject,System.String)",
           "Name": "AddCommonObjectAsync",
-          "LineNumber": 121,
+          "LineNumber": 125,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -48208,7 +47724,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 178,
+          "LineNumber": 182,
           "Inputs": [
             {
               "Name": "commonObjectId",
@@ -48437,9 +47953,53 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService.GetLatestCommonObjects()",
+          "Name": "GetLatestCommonObjects",
+          "LineNumber": 121,
+          "Inputs": [],
+          "ReturnType": "cCoder.Data.Models.CommonObject[]",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.GetLatestCommonObjects()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker",
+              "MethodName": "GetLatestCommonObjectsPaged",
+              "MethodId": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.GetLatestCommonObjectsPaged(System.Int32)",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.CommonObjectService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject,System.String)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 150,
+          "LineNumber": 154,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -54976,17 +54536,17 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectEventOrchestrationService",
+      "Name": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService",
       "StandardElementType": "OrchestrationService",
-      "LineNumber": 14,
+      "LineNumber": 17,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
       "Interfaces": [
         {
-          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService",
-          "FullName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService",
-          "Name": "ICommonObjectEventOrchestrationService",
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
+          "FullName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
+          "Name": "ICommonObjectOrchestrationService",
           "Namespace": "cCoder.ContentManagement.Services.Orchestrations",
           "AssemblyName": "cCoder.ContentManagement",
           "Kind": "Interface",
@@ -54997,132 +54557,18 @@
       "Properties": [],
       "Methods": [
         {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectEventOrchestrationService.RaiseCommonObjectDeletedEventAsync(cCoder.Data.Models.CommonObject)",
-          "Name": "RaiseCommonObjectDeletedEventAsync",
+          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])",
+          "Name": "AddAllCommonObjectsAsync",
           "LineNumber": 49,
           "Inputs": [
             {
-              "Name": "commonObject",
-              "Type": "cCoder.Data.Models.CommonObject"
+              "Name": "newCommonObjects",
+              "Type": "cCoder.Data.Models.CommonObject[]"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService.RaiseCommonObjectDeletedEventAsync(cCoder.Data.Models.CommonObject)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService",
-              "MethodName": "GetCurrentUserId",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService.GetCurrentUserId()",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService",
-              "MethodName": "RaiseCommonObjectDeleteEventAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService.RaiseCommonObjectDeleteEventAsync(cCoder.Data.Models.CommonObject,System.String)",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectEventOrchestrationService.RaiseCommonObjectUpdatedEventAsync(cCoder.Data.Models.CommonObject)",
-          "Name": "RaiseCommonObjectUpdatedEventAsync",
-          "LineNumber": 39,
-          "Inputs": [
-            {
-              "Name": "commonObject",
-              "Type": "cCoder.Data.Models.CommonObject"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService.RaiseCommonObjectUpdatedEventAsync(cCoder.Data.Models.CommonObject)"
-          ],
-          "Calls": [
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService",
-              "MethodName": "GetCurrentUserId",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService.GetCurrentUserId()",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService",
-              "MethodName": "RaiseCommonObjectUpdateEventAsync",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService.RaiseCommonObjectUpdateEventAsync(cCoder.Data.Models.CommonObject,System.String)",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "System.ComponentModel.DataAnnotations.ValidationException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectEventOrchestrationService.RaiseCommonObjectsImportedEventAsync(System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E)",
-          "Name": "RaiseCommonObjectsImportedEventAsync",
-          "LineNumber": 19,
-          "Inputs": [
-            {
-              "Name": "results",
-              "Type": "System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService.RaiseCommonObjectsImportedEventAsync(System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E)"
+            "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])"
           ],
           "Calls": [
             {
@@ -55159,113 +54605,6 @@
               "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService.RaiseCommonObjectsImportedEventAsync(cCoder.Data.Models.CommonObject[],System.String)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
-            }
-          ],
-          "PossibleExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "IncomingExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "ThrowsExceptionTypes": [
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
-            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
-          ],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        }
-      ]
-    },
-    {
-      "Name": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService",
-      "StandardElementType": "OrchestrationService",
-      "LineNumber": 18,
-      "IsPublic": false,
-      "Kind": "Class",
-      "BaseType": null,
-      "Interfaces": [
-        {
-          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-          "FullName": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
-          "Name": "ICommonObjectOrchestrationService",
-          "Namespace": "cCoder.ContentManagement.Services.Orchestrations",
-          "AssemblyName": "cCoder.ContentManagement",
-          "Kind": "Interface",
-          "IsInCurrentProject": true,
-          "StandardElementType": "OrchestrationService"
-        }
-      ],
-      "Properties": [],
-      "Methods": [
-        {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])",
-          "Name": "AddAllCommonObjectsAsync",
-          "LineNumber": 50,
-          "Inputs": [
-            {
-              "Name": "newCommonObjects",
-              "Type": "cCoder.Data.Models.CommonObject[]"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E\u003E",
-          "Implements": [
-            "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])"
-          ],
-          "Calls": [
-            {
-              "TypeName": "System.Linq.Enumerable",
-              "MethodName": "Count",
-              "MethodId": "System.Linq.Enumerable.Count(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, System.Boolean\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Enumerable",
-              "MethodName": "ToArray",
-              "MethodId": "System.Linq.Enumerable.ToArray(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService",
-              "MethodName": "GetCommonObjectCacheSnapshot",
-              "MethodId": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService.GetCommonObjectCacheSnapshot()",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService",
-              "MethodName": "LoadCommonObjectCacheSnapshot",
-              "MethodId": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService.LoadCommonObjectCacheSnapshot()",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService",
-              "MethodName": "RefreshCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService.RefreshCommonObjects(System.Int32)",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService",
-              "MethodName": "GetCurrentUserId",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService.GetCurrentUserId()",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
             },
             {
               "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService",
@@ -55273,11 +54612,17 @@
               "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[],System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E,System.String)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService",
+              "MethodName": "GetLatestCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetLatestCommonObjects()",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -55308,7 +54653,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
           "Name": "AddOrUpdateCommonObjectResult",
-          "LineNumber": 126,
+          "LineNumber": 134,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -55344,7 +54689,6 @@
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -55375,7 +54719,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
           "Name": "DeleteAllCommonObjectAsync",
-          "LineNumber": 152,
+          "LineNumber": 160,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -55397,7 +54741,6 @@
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -55428,7 +54771,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 112,
+          "LineNumber": 116,
           "Inputs": [
             {
               "Name": "commonObjectId",
@@ -55441,9 +54784,16 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService",
-              "MethodName": "RefreshCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService.RefreshCommonObjects(System.Int32)",
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService",
+              "MethodName": "GetCurrentUserId",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService.GetCurrentUserId()",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService",
+              "MethodName": "RaiseCommonObjectDeleteEventAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService.RaiseCommonObjectDeleteEventAsync(cCoder.Data.Models.CommonObject,System.String)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -55453,11 +54803,17 @@
               "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.DeleteAsync(System.Int32)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService",
+              "MethodName": "GetCommonObject",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetCommonObject(System.Int32)",
+              "StandardElementType": "ProcessingService",
+              "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -55488,7 +54844,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.DeserializeCommonObjects(System.Object)",
           "Name": "DeserializeCommonObjects",
-          "LineNumber": 24,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "payload",
@@ -55537,7 +54893,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.GetAllCommonObjects(System.Boolean)",
           "Name": "GetAllCommonObjects",
-          "LineNumber": 43,
+          "LineNumber": 42,
           "Inputs": [
             {
               "Name": "ignoreFilters",
@@ -55586,7 +54942,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.GetCommonObject(System.Int32)",
           "Name": "GetCommonObject",
-          "LineNumber": 34,
+          "LineNumber": 33,
           "Inputs": [
             {
               "Name": "commonObjectId",
@@ -55638,7 +54994,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.LatestCommonObjects(System.String)",
           "Name": "LatestCommonObjects",
-          "LineNumber": 168,
+          "LineNumber": 176,
           "Inputs": [
             {
               "Name": "type",
@@ -55658,23 +55014,15 @@
               "IsDependencyBoundary": true
             },
             {
-              "TypeName": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService",
-              "MethodName": "GetCommonObjectCacheSnapshot",
-              "MethodId": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService.GetCommonObjectCacheSnapshot()",
-              "StandardElementType": "ProcessingService",
-              "IsDependencyBoundary": false
-            },
-            {
-              "TypeName": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService",
-              "MethodName": "LoadCommonObjectCacheSnapshot",
-              "MethodId": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService.LoadCommonObjectCacheSnapshot()",
+              "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService",
+              "MethodName": "GetLatestCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetLatestCommonObjects()",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             }
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
@@ -55704,7 +55052,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 93,
+          "LineNumber": 94,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -55717,16 +55065,16 @@
           ],
           "Calls": [
             {
-              "TypeName": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService",
-              "MethodName": "RefreshCommonObjects",
-              "MethodId": "cCoder.ContentManagement.Rendering.Services.Processings.ICommonObjectLatestCacheProcessingService.RefreshCommonObjects(System.Int32)",
+              "TypeName": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService",
+              "MethodName": "GetCurrentUserId",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService.GetCurrentUserId()",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
             {
-              "TypeName": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService",
-              "MethodName": "GetCurrentUserId",
-              "MethodId": "cCoder.ContentManagement.Services.Processings.IAuthorizationProcessingService.GetCurrentUserId()",
+              "TypeName": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService",
+              "MethodName": "RaiseCommonObjectUpdateEventAsync",
+              "MethodId": "cCoder.ContentManagement.Services.Processings.ICommonObjectEventProcessingService.RaiseCommonObjectUpdateEventAsync(cCoder.Data.Models.CommonObject,System.String)",
               "StandardElementType": "ProcessingService",
               "IsDependencyBoundary": false
             },
@@ -55740,7 +55088,6 @@
           ],
           "PossibleExceptionTypes": [
             "System.ComponentModel.DataAnnotations.ValidationException",
-            "System.InvalidOperationException",
             "System.Security.SecurityException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
             "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
@@ -66501,7 +65848,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[],System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E,System.String)",
           "Name": "AddAllCommonObjectsAsync",
-          "LineNumber": 43,
+          "LineNumber": 46,
           "Inputs": [
             {
               "Name": "newCommonObjects",
@@ -66574,7 +65921,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.AddCommonObjectAsync(cCoder.Data.Models.CommonObject,System.String)",
           "Name": "AddCommonObjectAsync",
-          "LineNumber": 156,
+          "LineNumber": 159,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -66621,7 +65968,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E,System.String)",
           "Name": "AddOrUpdateCommonObjectResult",
-          "LineNumber": 188,
+          "LineNumber": 191,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -66668,7 +66015,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
           "Name": "DeleteAllCommonObjectAsync",
-          "LineNumber": 204,
+          "LineNumber": 207,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -66713,7 +66060,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 180,
+          "LineNumber": 183,
           "Inputs": [
             {
               "Name": "commonObjectId",
@@ -66907,9 +66254,53 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.GetLatestCommonObjects()",
+          "Name": "GetLatestCommonObjects",
+          "LineNumber": 43,
+          "Inputs": [],
+          "ReturnType": "cCoder.Data.Models.CommonObject[]",
+          "Implements": [
+            "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetLatestCommonObjects()"
+          ],
+          "Calls": [
+            {
+              "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService",
+              "MethodName": "GetLatestCommonObjects",
+              "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.GetLatestCommonObjects()",
+              "StandardElementType": "FoundationService",
+              "IsDependencyBoundary": false
+            }
+          ],
+          "PossibleExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementSecurityException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementTaskCanceledException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "IncomingExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "ThrowsExceptionTypes": [
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementDependencyException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementServiceException",
+            "cCoder.ContentManagement.Models.Exceptions.ContentManagementValidationException"
+          ],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Processings.CommonObjectProcessingService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject,System.String)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 168,
+          "LineNumber": 171,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -80570,7 +79961,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.AddCommonObjectAsync(cCoder.Data.Models.CommonObject)",
           "Name": "AddCommonObjectAsync",
-          "LineNumber": 20,
+          "LineNumber": 22,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -80595,7 +79986,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.DeleteAllCommonObjectsAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
           "Name": "DeleteAllCommonObjectsAsync",
-          "LineNumber": 26,
+          "LineNumber": 28,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -80620,7 +80011,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.DeleteCommonObjectAsync(cCoder.Data.Models.CommonObject)",
           "Name": "DeleteCommonObjectAsync",
-          "LineNumber": 24,
+          "LineNumber": 26,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -80685,7 +80076,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.GetAppId(cCoder.Data.Models.CommonObject)",
           "Name": "GetAppId",
-          "LineNumber": 28,
+          "LineNumber": 30,
           "Inputs": [
             {
               "Name": "entity",
@@ -80733,9 +80124,29 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.RefreshCommonObjects()",
+          "Name": "RefreshCommonObjects",
+          "LineNumber": 20,
+          "Inputs": [],
+          "ReturnType": "System.Void",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ICommonObjectBroker.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 22,
+          "LineNumber": 24,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -88710,243 +88121,6 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService",
-      "StandardElementType": "CoordinationService",
-      "LineNumber": 13,
-      "IsPublic": true,
-      "Kind": "Interface",
-      "BaseType": null,
-      "Interfaces": [],
-      "Properties": [],
-      "Methods": [
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[])",
-          "Name": "AddAllCommonObjectsAsync",
-          "LineNumber": 18,
-          "Inputs": [
-            {
-              "Name": "newCommonObjects",
-              "Type": "cCoder.Data.Models.CommonObject[]"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
-          "Name": "AddOrUpdateCommonObjectResult",
-          "LineNumber": 21,
-          "Inputs": [
-            {
-              "Name": "newCommonObject",
-              "Type": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CSystem.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
-          "Name": "DeleteAllCommonObjectAsync",
-          "LineNumber": 22,
-          "Inputs": [
-            {
-              "Name": "deletedCommonObject",
-              "Type": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeleteAsync(System.Int32)",
-          "Name": "DeleteAsync",
-          "LineNumber": 20,
-          "Inputs": [
-            {
-              "Name": "commonObjectId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.DeserializeCommonObjects(System.Object)",
-          "Name": "DeserializeCommonObjects",
-          "LineNumber": 17,
-          "Inputs": [
-            {
-              "Name": "payload",
-              "Type": "System.Object"
-            }
-          ],
-          "ReturnType": "cCoder.Data.Models.CommonObject[]",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetAllCommonObjects(System.Boolean)",
-          "Name": "GetAllCommonObjects",
-          "LineNumber": 16,
-          "Inputs": [
-            {
-              "Name": "ignoreFilters",
-              "Type": "System.Boolean"
-            }
-          ],
-          "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CommonObject\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.GetCommonObject(System.Int32)",
-          "Name": "GetCommonObject",
-          "LineNumber": 15,
-          "Inputs": [
-            {
-              "Name": "commonObjectId",
-              "Type": "System.Int32"
-            }
-          ],
-          "ReturnType": "cCoder.Data.Models.CommonObject",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.LatestCommonObjects(System.String)",
-          "Name": "LatestCommonObjects",
-          "LineNumber": 23,
-          "Inputs": [
-            {
-              "Name": "type",
-              "Type": "System.String"
-            }
-          ],
-          "ReturnType": "System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Coordinations.ICommonObjectCoordinationService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject)",
-          "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 19,
-          "Inputs": [
-            {
-              "Name": "updatedCommonObject",
-              "Type": "cCoder.Data.Models.CommonObject"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.Data.Models.CommonObject\u003E",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        }
-      ]
-    },
-    {
       "Name": "cCoder.ContentManagement.Services.Coordinations.IContentManagementPackageCoordinationService",
       "StandardElementType": "CoordinationService",
       "LineNumber": 10,
@@ -93408,7 +92582,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.AddCommonObjectAsync(cCoder.Data.Models.CommonObject,System.String)",
           "Name": "AddCommonObjectAsync",
-          "LineNumber": 17,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -93437,7 +92611,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 25,
+          "LineNumber": 27,
           "Inputs": [
             {
               "Name": "commonObjectId",
@@ -93462,7 +92636,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.DeserializeCommonObjects(System.Object)",
           "Name": "DeserializeCommonObjects",
-          "LineNumber": 27,
+          "LineNumber": 29,
           "Inputs": [
             {
               "Name": "payload",
@@ -93539,9 +92713,29 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.GetLatestCommonObjects()",
+          "Name": "GetLatestCommonObjects",
+          "LineNumber": 17,
+          "Inputs": [],
+          "ReturnType": "cCoder.Data.Models.CommonObject[]",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Foundations.Storages.ICommonObjectService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject,System.String)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 21,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -96679,97 +95873,10 @@
       ]
     },
     {
-      "Name": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService",
-      "StandardElementType": "OrchestrationService",
-      "LineNumber": 12,
-      "IsPublic": false,
-      "Kind": "Interface",
-      "BaseType": null,
-      "Interfaces": [],
-      "Properties": [],
-      "Methods": [
-        {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService.RaiseCommonObjectDeletedEventAsync(cCoder.Data.Models.CommonObject)",
-          "Name": "RaiseCommonObjectDeletedEventAsync",
-          "LineNumber": 19,
-          "Inputs": [
-            {
-              "Name": "commonObject",
-              "Type": "cCoder.Data.Models.CommonObject"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService.RaiseCommonObjectUpdatedEventAsync(cCoder.Data.Models.CommonObject)",
-          "Name": "RaiseCommonObjectUpdatedEventAsync",
-          "LineNumber": 17,
-          "Inputs": [
-            {
-              "Name": "commonObject",
-              "Type": "cCoder.Data.Models.CommonObject"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        },
-        {
-          "Id": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectEventOrchestrationService.RaiseCommonObjectsImportedEventAsync(System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E)",
-          "Name": "RaiseCommonObjectsImportedEventAsync",
-          "LineNumber": 14,
-          "Inputs": [
-            {
-              "Name": "results",
-              "Type": "System.Collections.Generic.IEnumerable\u003CcCoder.ContentManagement.Models.Results.OperationResult\u003CcCoder.Data.Models.CommonObject\u003E\u003E"
-            }
-          ],
-          "ReturnType": "System.Threading.Tasks.ValueTask",
-          "Implements": [],
-          "Calls": [],
-          "PossibleExceptionTypes": [],
-          "IncomingExceptionTypes": [],
-          "ThrowsExceptionTypes": [],
-          "HttpMethods": [],
-          "HttpResponses": [],
-          "IsHttpRequestHandler": false,
-          "IsODataControllerAction": false,
-          "HasFromBodyParameter": false,
-          "HasKeyParameter": false,
-          "HandlesNullWithNotFound": false,
-          "HasTryCatch": false
-        }
-      ]
-    },
-    {
       "Name": "cCoder.ContentManagement.Services.Orchestrations.ICommonObjectOrchestrationService",
       "StandardElementType": "OrchestrationService",
       "LineNumber": 13,
-      "IsPublic": false,
+      "IsPublic": true,
       "Kind": "Interface",
       "BaseType": null,
       "Interfaces": [],
@@ -101600,7 +100707,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.AddAllCommonObjectsAsync(cCoder.Data.Models.CommonObject[],System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E,System.String)",
           "Name": "AddAllCommonObjectsAsync",
-          "LineNumber": 33,
+          "LineNumber": 35,
           "Inputs": [
             {
               "Name": "newCommonObjects",
@@ -101633,7 +100740,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.AddCommonObjectAsync(cCoder.Data.Models.CommonObject,System.String)",
           "Name": "AddCommonObjectAsync",
-          "LineNumber": 21,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -101662,7 +100769,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.AddOrUpdateCommonObjectResult(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E,System.String)",
           "Name": "AddOrUpdateCommonObjectResult",
-          "LineNumber": 27,
+          "LineNumber": 29,
           "Inputs": [
             {
               "Name": "newCommonObject",
@@ -101691,7 +100798,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.DeleteAllCommonObjectAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CommonObject\u003E)",
           "Name": "DeleteAllCommonObjectAsync",
-          "LineNumber": 31,
+          "LineNumber": 33,
           "Inputs": [
             {
               "Name": "deletedCommonObject",
@@ -101716,7 +100823,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.DeleteAsync(System.Int32)",
           "Name": "DeleteAsync",
-          "LineNumber": 25,
+          "LineNumber": 27,
           "Inputs": [
             {
               "Name": "commonObjectId",
@@ -101741,7 +100848,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.DeserializeCommonObjects(System.Object)",
           "Name": "DeserializeCommonObjects",
-          "LineNumber": 19,
+          "LineNumber": 21,
           "Inputs": [
             {
               "Name": "payload",
@@ -101814,9 +100921,29 @@
           "HasTryCatch": false
         },
         {
+          "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.GetLatestCommonObjects()",
+          "Name": "GetLatestCommonObjects",
+          "LineNumber": 19,
+          "Inputs": [],
+          "ReturnType": "cCoder.Data.Models.CommonObject[]",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        },
+        {
           "Id": "cCoder.ContentManagement.Services.Processings.ICommonObjectProcessingService.UpdateCommonObjectAsync(cCoder.Data.Models.CommonObject,System.String)",
           "Name": "UpdateCommonObjectAsync",
-          "LineNumber": 23,
+          "LineNumber": 25,
           "Inputs": [
             {
               "Name": "updatedCommonObject",
@@ -106526,7 +105653,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.CommonObjectManager",
-      "ToType": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService"
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.ComponentManager",
@@ -106574,7 +105701,7 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.CommonObjectController",
-      "ToType": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService"
+      "ToType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
@@ -106949,14 +106076,6 @@
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectEventOrchestrationService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Coordinations.CommonObjectCoordinationService",
-      "ToType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService"
-    },
-    {
       "FromType": "cCoder.ContentManagement.Services.Coordinations.ContentManagementPackageCoordinationService",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ContentManagementPackageExportOrchestrationService"
     },
@@ -107305,20 +106424,12 @@
       "ToType": "cCoder.ContentManagement.Rendering.Services.Processings.MetadataCacheSourceProcessingService"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectEventOrchestrationService",
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
     },
     {
-      "FromType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectEventOrchestrationService",
+      "FromType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService",
       "ToType": "cCoder.ContentManagement.Services.Processings.CommonObjectEventProcessingService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Rendering.Services.Processings.CommonObjectLatestCacheProcessingService"
-    },
-    {
-      "FromType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService",
-      "ToType": "cCoder.ContentManagement.Services.Processings.AuthorizationProcessingService"
     },
     {
       "FromType": "cCoder.ContentManagement.Services.Orchestrations.CommonObjectOrchestrationService",

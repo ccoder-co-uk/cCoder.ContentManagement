@@ -7,53 +7,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using cCoder.CodeAnalysis.Exposures;
-using cCoder.ContentManagement.Services.Coordinations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Exposures;
 
 internal sealed class CommonObjectManager(
-    ICommonObjectCoordinationService commonObjectCoordinationService)
+    ICommonObjectOrchestrationService commonObjectOrchestrationService)
         : ICommonObjectManager, ICompositionExposure
 {
     public CommonObject GetCommonObject(int commonObjectId) =>
-        commonObjectCoordinationService.GetCommonObject(
+        commonObjectOrchestrationService.GetCommonObject(
             commonObjectId: commonObjectId);
 
     public IQueryable<CommonObject> GetAllCommonObjects(
         bool ignoreFilters = false) =>
-        commonObjectCoordinationService.GetAllCommonObjects(
+        commonObjectOrchestrationService.GetAllCommonObjects(
             ignoreFilters: ignoreFilters);
 
     public CommonObject[] DeserializeCommonObjects(object payload) =>
-        commonObjectCoordinationService.DeserializeCommonObjects(
+        commonObjectOrchestrationService.DeserializeCommonObjects(
             payload: payload);
 
     public ValueTask<IEnumerable<OperationResult<CommonObject>>>
         AddAllCommonObjectsAsync(CommonObject[] newCommonObjects) =>
-        commonObjectCoordinationService.AddAllCommonObjectsAsync(
+        commonObjectOrchestrationService.AddAllCommonObjectsAsync(
             newCommonObjects: newCommonObjects);
 
     public ValueTask<CommonObject> UpdateCommonObjectAsync(
         CommonObject updatedCommonObject) =>
-        commonObjectCoordinationService.UpdateCommonObjectAsync(
+        commonObjectOrchestrationService.UpdateCommonObjectAsync(
             updatedCommonObject: updatedCommonObject);
 
     public ValueTask DeleteAsync(int commonObjectId) =>
-        commonObjectCoordinationService.DeleteAsync(
+        commonObjectOrchestrationService.DeleteAsync(
             commonObjectId: commonObjectId);
 
     public ValueTask<IEnumerable<OperationResult<CommonObject>>>
         AddOrUpdateCommonObjectResult(
             IEnumerable<CommonObject> newCommonObject) =>
-        commonObjectCoordinationService.AddOrUpdateCommonObjectResult(
+        commonObjectOrchestrationService.AddOrUpdateCommonObjectResult(
             newCommonObject: newCommonObject);
 
     public ValueTask DeleteAllCommonObjectAsync(
         IEnumerable<CommonObject> deletedCommonObject) =>
-        commonObjectCoordinationService.DeleteAllCommonObjectAsync(
+        commonObjectOrchestrationService.DeleteAllCommonObjectAsync(
             deletedCommonObject: deletedCommonObject);
 
     public IEnumerable<CommonObject> LatestCommonObjects(string type) =>
-        commonObjectCoordinationService.LatestCommonObjects(type: type);
+        commonObjectOrchestrationService.LatestCommonObjects(type: type);
 }

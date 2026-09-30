@@ -25,7 +25,7 @@ internal sealed class CommonObjectBroker(
 
     public CommonObject[] GetLatestCommonObjectsPaged(int pageSize = 500) =>
         commonObjectCacheManager.Get(
-                fromCache: false,
+                fromCache: true,
                 ignoreFilters: true)
             .GroupBy(keySelector: commonObject => new
             {
@@ -40,6 +40,9 @@ internal sealed class CommonObjectBroker(
                         keySelector: version => version.Version)
                     .First())
             .ToArray();
+
+    public void RefreshCommonObjects() =>
+        commonObjectCacheManager.Refresh();
 
     public ValueTask<CommonObject> AddCommonObjectAsync(
         CommonObject newCommonObject) =>

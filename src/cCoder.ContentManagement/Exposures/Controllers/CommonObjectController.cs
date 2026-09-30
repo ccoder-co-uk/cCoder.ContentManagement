@@ -12,7 +12,7 @@ using cCoder.CodeAnalysis.Exposures;
 using cCoder.ContentManagement.Brokers.Loggings;
 using cCoder.ContentManagement.Models.Exceptions;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
-using cCoder.ContentManagement.Services.Coordinations;
+using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -22,10 +22,10 @@ using cCoder.Data.Models;
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class CommonObjectController(
-    ICommonObjectCoordinationService service,
+    ICommonObjectOrchestrationService service,
     ILoggingBroker loggingBroker) : ODataController(), ICompositionExposure
 {
-    private readonly ICommonObjectCoordinationService service = service;
+    private readonly ICommonObjectOrchestrationService service = service;
 
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.All, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 6, MaxExpansionDepth = 6)]

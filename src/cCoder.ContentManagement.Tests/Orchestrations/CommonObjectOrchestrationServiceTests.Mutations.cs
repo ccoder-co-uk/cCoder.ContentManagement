@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using cCoder.ContentManagement.Models;
 using cCoder.ContentManagement.Models.Exceptions;
-using cCoder.ContentManagement.Models.Caching;
 using cCoder.Data.Models;
 using FluentAssertions;
 using Moq;
@@ -21,16 +20,16 @@ namespace cCoder.Core.Services.Tests.CMS.Orchestrations;
 public partial class CommonObjectOrchestrationServiceTests
 {
     [Fact]
-    public async Task ShouldAuthorizePersistAndRefreshOnceWhenImportChangesObjectsAsync()
+    public async Task ShouldAuthorizePersistAndRaiseImportEventWhenImportChangesObjectsAsync()
     {
         // Given
         CommonObject entity = CreateRandomCommonObject();
         CommonObject[] items = [entity];
         OperationResult<CommonObject>[] results = [new() { Success = true, Item = entity }];
 
-        cacheProcessingServiceMock
-            .Setup(expression: service => service.GetCommonObjectCacheSnapshot())
-            .Returns(value: new CommonObjectCacheSnapshot { LatestSet = [] });
+        commonObjectProcessingServiceMock
+            .Setup(expression: service => service.GetLatestCommonObjects())
+            .Returns(value: []);
 
         ShouldSetupAuthorization(privilege: "commonobject_create");
 
@@ -41,8 +40,13 @@ public partial class CommonObjectOrchestrationServiceTests
                 userId: CurrentUserId))
             .ReturnsAsync(value: results);
 
-        cacheProcessingServiceMock.Setup(
-            expression: service => service.RefreshCommonObjects(changedCommonObjectCount: 1));
+        eventProcessingServiceMock
+            .Setup(expression: service => service.RaiseCommonObjectsImportedEventAsync(
+                commonObjects: It.Is<CommonObject[]>(match: values =>
+                    values.Length == 1 && values[0] == entity),
+                userId: CurrentUserId))
+            .Returns(value: ValueTask.CompletedTask);
+
 
         // When
         IEnumerable<OperationResult<CommonObject>> actual =
@@ -52,24 +56,20 @@ public partial class CommonObjectOrchestrationServiceTests
         actual.Should()
             .BeSameAs(expected: results);
 
-        cacheProcessingServiceMock.Verify(
-            expression: service => service.RefreshCommonObjects(changedCommonObjectCount: 1),
-            times: Times.Once);
-
         commonObjectProcessingServiceMock.VerifyAll();
-        cacheProcessingServiceMock.VerifyAll();
         authorizationProcessingServiceMock.VerifyAll();
+        eventProcessingServiceMock.VerifyAll();
     }
 
     [Fact]
-    public async Task ShouldRequestZeroChangedRefreshWhenImportChangesNoObjectsAsync()
+    public async Task ShouldNotRaiseImportEventWhenImportChangesNoObjectsAsync()
     {
         // Given
         CommonObject[] items = [CreateRandomCommonObject()];
 
-        cacheProcessingServiceMock
-            .Setup(expression: service => service.GetCommonObjectCacheSnapshot())
-            .Returns(value: new CommonObjectCacheSnapshot { LatestSet = [] });
+        commonObjectProcessingServiceMock
+            .Setup(expression: service => service.GetLatestCommonObjects())
+            .Returns(value: []);
 
         ShouldSetupAuthorization(privilege: "commonobject_create");
 
@@ -80,9 +80,6 @@ public partial class CommonObjectOrchestrationServiceTests
                 userId: CurrentUserId))
             .ReturnsAsync(value: []);
 
-        cacheProcessingServiceMock.Setup(
-            expression: service => service.RefreshCommonObjects(changedCommonObjectCount: 0));
-
         // When
         IEnumerable<OperationResult<CommonObject>> actual =
             await orchestrationService.AddAllCommonObjectsAsync(newCommonObjects: items);
@@ -91,20 +88,18 @@ public partial class CommonObjectOrchestrationServiceTests
         actual.Should()
             .BeEmpty();
 
-        cacheProcessingServiceMock.Verify(
-            expression: service => service.RefreshCommonObjects(changedCommonObjectCount: 0),
-            times: Times.Once);
+        eventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task ShouldNotPersistOrRefreshWhenImportAuthorizationIsDeniedAsync()
+    public async Task ShouldNotPersistOrRaiseEventWhenImportAuthorizationIsDeniedAsync()
     {
         // Given
         CommonObject[] items = [CreateRandomCommonObject()];
 
-        cacheProcessingServiceMock
-            .Setup(expression: service => service.GetCommonObjectCacheSnapshot())
-            .Returns(value: new CommonObjectCacheSnapshot { LatestSet = [] });
+        commonObjectProcessingServiceMock
+            .Setup(expression: service => service.GetLatestCommonObjects())
+            .Returns(value: []);
 
         authorizationProcessingServiceMock
             .Setup(expression: service => service.AuthorizeAuthorizationContext(
@@ -126,14 +121,11 @@ public partial class CommonObjectOrchestrationServiceTests
                 userId: It.IsAny<string>()),
             times: Times.Never);
 
-        cacheProcessingServiceMock.Verify(
-            expression: service => service.RefreshCommonObjects(
-                changedCommonObjectCount: It.IsAny<int>()),
-            times: Times.Never);
+        eventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task ShouldAuthorizeCreateAndUpdatePersistThenRefreshWhenUpdateAsync()
+    public async Task ShouldAuthorizePersistAndRaiseUpdateEventWhenUpdateAsync()
     {
         // Given
         CommonObject entity = CreateRandomCommonObject();
@@ -146,8 +138,12 @@ public partial class CommonObjectOrchestrationServiceTests
                 userId: CurrentUserId))
             .ReturnsAsync(value: entity);
 
-        cacheProcessingServiceMock.Setup(
-            expression: service => service.RefreshCommonObjects(changedCommonObjectCount: 1));
+        eventProcessingServiceMock
+            .Setup(expression: service => service.RaiseCommonObjectUpdateEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
+            .Returns(value: ValueTask.CompletedTask);
+
 
         // When
         CommonObject actual = await orchestrationService.UpdateCommonObjectAsync(
@@ -157,21 +153,19 @@ public partial class CommonObjectOrchestrationServiceTests
         actual.Should()
             .BeSameAs(expected: entity);
 
-        cacheProcessingServiceMock.Verify(
-            expression: service => service.RefreshCommonObjects(changedCommonObjectCount: 1),
-            times: Times.Once);
-
         commonObjectProcessingServiceMock.VerifyAll();
-        cacheProcessingServiceMock.VerifyAll();
 
         authorizationProcessingServiceMock.Verify(
             expression: service => service.AuthorizeAuthorizationContext(
                 context: It.IsAny<AuthorizationContext>()),
             times: Times.Exactly(callCount: 2));
+
+        eventProcessingServiceMock.VerifyAll();
+
     }
 
     [Fact]
-    public async Task ShouldNotRefreshWhenUpdatePersistenceFailsAsync()
+    public async Task ShouldNotRaiseEventWhenUpdatePersistenceFailsAsync()
     {
         // Given
         CommonObject entity = CreateRandomCommonObject();
@@ -192,44 +186,50 @@ public partial class CommonObjectOrchestrationServiceTests
         await action.Should()
             .ThrowAsync<ContentManagementDependencyException>();
 
-        cacheProcessingServiceMock.Verify(
-            expression: service => service.RefreshCommonObjects(
-                changedCommonObjectCount: It.IsAny<int>()),
-            times: Times.Never);
+        eventProcessingServiceMock.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task ShouldAuthorizeDeletePersistThenRefreshWhenDeleteAsync()
+    public async Task ShouldAuthorizePersistAndRaiseDeleteEventWhenDeleteAsync()
     {
         // Given
         ShouldSetupAuthorization(privilege: "commonobject_delete");
 
+        CommonObject entity = CreateRandomCommonObject();
+        entity.Id = 42;
+
         commonObjectProcessingServiceMock
-            .Setup(expression: service => service.DeleteAsync(commonObjectId: 42))
+            .Setup(expression: service => service.GetCommonObject(commonObjectId: 42))
+            .Returns(value: entity);
+
+        commonObjectProcessingServiceMock
+            .Setup(expression: service => service.DeleteAsync(
+                commonObjectId: 42))
             .Returns(value: ValueTask.CompletedTask);
 
-        cacheProcessingServiceMock.Setup(
-            expression: service => service.RefreshCommonObjects(changedCommonObjectCount: 1));
+        eventProcessingServiceMock
+            .Setup(expression: service => service.RaiseCommonObjectDeleteEventAsync(
+                entity: entity,
+                userId: CurrentUserId))
+            .Returns(value: ValueTask.CompletedTask);
 
         // When
         await orchestrationService.DeleteAsync(commonObjectId: 42);
 
         // Then
-        cacheProcessingServiceMock.Verify(
-            expression: service => service.RefreshCommonObjects(changedCommonObjectCount: 1),
-            times: Times.Once);
-
         commonObjectProcessingServiceMock.VerifyAll();
-        cacheProcessingServiceMock.VerifyAll();
 
         authorizationProcessingServiceMock.Verify(
             expression: service => service.AuthorizeAuthorizationContext(
                 context: It.IsAny<AuthorizationContext>()),
             times: Times.Once);
+
+        eventProcessingServiceMock.VerifyAll();
+
     }
 
     [Fact]
-    public async Task ShouldAuthorizeDeleteAllPersistThenRefreshOnceAsync()
+    public async Task ShouldAuthorizePersistAndRaiseDeleteEventsWhenDeleteAllAsync()
     {
         // Given
         CommonObject[] items = [CreateRandomCommonObject(), CreateRandomCommonObject()];
@@ -240,28 +240,31 @@ public partial class CommonObjectOrchestrationServiceTests
                 deletedCommonObject: items))
             .Returns(value: ValueTask.CompletedTask);
 
-        cacheProcessingServiceMock.Setup(
-            expression: service => service.RefreshCommonObjects(changedCommonObjectCount: 2));
+        foreach (CommonObject item in items)
+        {
+            eventProcessingServiceMock
+                .Setup(expression: service => service.RaiseCommonObjectDeleteEventAsync(
+                    entity: item,
+                    userId: CurrentUserId))
+                .Returns(value: ValueTask.CompletedTask);
+        }
 
         // When
         await orchestrationService.DeleteAllCommonObjectAsync(deletedCommonObject: items);
 
         // Then
-        cacheProcessingServiceMock.Verify(
-            expression: service => service.RefreshCommonObjects(changedCommonObjectCount: 2),
-            times: Times.Once);
-
         commonObjectProcessingServiceMock.VerifyAll();
-        cacheProcessingServiceMock.VerifyAll();
 
         authorizationProcessingServiceMock.Verify(
             expression: service => service.AuthorizeAuthorizationContext(
                 context: It.IsAny<AuthorizationContext>()),
             times: Times.Once);
+
+        eventProcessingServiceMock.VerifyAll();
     }
 
     [Fact]
-    public void ShouldReadLatestObjectsFromCacheByType()
+    public void ShouldReadLatestObjectsFromDataCacheByType()
     {
         // Given
         CommonObject included = CreateRandomCommonObject();
@@ -269,12 +272,9 @@ public partial class CommonObjectOrchestrationServiceTests
         CommonObject excluded = CreateRandomCommonObject();
         excluded.Type = "Core/Script";
 
-        cacheProcessingServiceMock
-            .Setup(expression: service => service.GetCommonObjectCacheSnapshot())
-            .Returns(value: new CommonObjectCacheSnapshot
-            {
-                LatestSet = [included, excluded]
-            });
+        commonObjectProcessingServiceMock
+            .Setup(expression: service => service.GetLatestCommonObjects())
+            .Returns(value: [included, excluded]);
 
         // When
         CommonObject[] actual = orchestrationService
@@ -285,6 +285,6 @@ public partial class CommonObjectOrchestrationServiceTests
         actual.Should()
             .Equal(elements: included);
 
-        cacheProcessingServiceMock.VerifyAll();
+        commonObjectProcessingServiceMock.VerifyAll();
     }
 }

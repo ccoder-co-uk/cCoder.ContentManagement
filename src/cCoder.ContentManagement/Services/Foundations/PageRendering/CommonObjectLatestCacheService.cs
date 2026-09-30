@@ -26,6 +26,8 @@ internal sealed partial class CommonObjectLatestCacheService(
     public CommonObjectCacheSnapshot LoadCommonObjectCacheSnapshot() =>
         TryCatch(operation: () =>
         {
+            commonObjectBroker.RefreshCommonObjects();
+
             List<CommonObject> orderedObjects = [];
 
             foreach (CommonObject commonObject in commonObjectBroker
