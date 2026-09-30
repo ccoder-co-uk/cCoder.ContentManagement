@@ -9,7 +9,6 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using cCoder.CodeAnalysis.Exposures;
-using cCoder.ContentManagement.Dependencies.Serialization;
 
 namespace cCoder.ContentManagement.Brokers;
 
@@ -21,7 +20,10 @@ internal sealed class JsonBroker : IJsonBroker, IUtilityBroker
         ReferenceHandler = ReferenceHandler.IgnoreCycles
     };
 
-    private static readonly JsonSerializerOptions ParseOptions = CreateParseOptions();
+    private static readonly JsonSerializerOptions ParseOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
 
     public object ParseJson(string json) =>
         (object)JsonNode.Parse(json: json) ?? ParseNullElement();
@@ -115,16 +117,4 @@ internal sealed class JsonBroker : IJsonBroker, IUtilityBroker
         return document.RootElement.Clone();
     }
 
-    private static JsonSerializerOptions CreateParseOptions()
-    {
-        JsonSerializerOptions options = new()
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        options.Converters.Add(
-            item: new DateTimeOffsetJsonConverterDependency());
-
-        return options;
-    }
 }
