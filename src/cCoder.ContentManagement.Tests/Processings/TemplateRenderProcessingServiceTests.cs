@@ -2,11 +2,11 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Net.Http;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Loggings;
-using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Tests.Brokers.Rendering;
 using Moq;
 using cCoder.ContentManagement.Tests.Brokers.Caching;
@@ -27,11 +27,17 @@ public partial class TemplateRenderProcessingServiceTests
 
     private TemplateRenderProcessingService CreateSut(RenderConfig config)
     {
+        Mock<IHttpClientFactory> httpClientFactoryMock = new();
+
+        httpClientFactoryMock
+            .Setup(expression: factory => factory.CreateClient(
+                name: nameof(WorkflowExecutionBroker)))
+            .Returns(valueFunction: () => new HttpClient());
+
         TemplateRenderService templateRenderService = new(
             contentRenderBroker: new TestContentRenderBroker(),
             workflowExecutionBroker: new WorkflowExecutionBroker(
-                workflowExecutionDependency:
-                    new WorkflowExecutionDependency()),
+                httpClientFactory: httpClientFactoryMock.Object),
             cacheBroker: cacheBroker,
             jsonBroker: new JsonBroker(),
             loggingBroker: Mock.Of<ILoggingBroker>(),

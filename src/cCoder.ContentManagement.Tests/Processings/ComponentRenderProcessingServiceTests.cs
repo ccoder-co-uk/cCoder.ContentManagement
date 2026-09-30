@@ -2,10 +2,10 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Net.Http;
 using cCoder.ContentManagement.Services.Foundations.Rendering;
 using cCoder.ContentManagement.Brokers;
 using cCoder.ContentManagement.Brokers.Storages;
-using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.ContentManagement.Tests.Brokers.Rendering;
 using Moq;
@@ -28,6 +28,13 @@ public partial class ComponentRenderProcessingServiceTests
 
     private ComponentRenderProcessingService CreateSut(string workflowBaseUrl)
     {
+        Mock<IHttpClientFactory> httpClientFactoryMock = new();
+
+        httpClientFactoryMock
+            .Setup(expression: factory => factory.CreateClient(
+                name: nameof(WorkflowExecutionBroker)))
+            .Returns(valueFunction: () => new HttpClient());
+
         RenderConfig config = new()
         {
             SslPort = 443,
@@ -38,8 +45,7 @@ public partial class ComponentRenderProcessingServiceTests
             contentRenderBroker: new TestContentRenderBroker(
                 renderFileContentBroker: renderFileContentBrokerMock.Object),
             workflowExecutionBroker: new WorkflowExecutionBroker(
-                workflowExecutionDependency:
-                    new WorkflowExecutionDependency()),
+                httpClientFactory: httpClientFactoryMock.Object),
             cacheBroker: cacheBroker,
             jsonBroker: new JsonBroker(),
             regularExpressionBroker: new RegularExpressionBroker());

@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using cCoder.ContentManagement.Brokers.OData;
 using System;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using cCoder.ContentManagement.Extensions.OData;
 using cCoder.ContentManagement.Extensions;
 using cCoder.ContentManagement.Brokers;
@@ -18,7 +20,6 @@ using cCoder.ContentManagement.Brokers.Storages;
 using cCoder.ContentManagement.Brokers.ServiceProviders;
 using cCoder.ContentManagement.Exposures;
 using cCoder.ContentManagement.Exposures.Caching;
-using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Brokers.Rendering;
 using cCoder.ContentManagement.Brokers.Caching;
 using cCoder.ContentManagement.Models;
@@ -191,12 +192,19 @@ public static partial class IServiceCollectionExtensions
 
     private static void AddDependencies(this IServiceCollection services)
     {
-        services.AddTransient<WorkflowExecutionDependency>();
+        services.AddHttpClient(name: nameof(WorkflowExecutionBroker))
+            .ConfigurePrimaryHttpMessageHandler(
+                static () => new HttpClientHandler
+                {
+                    AutomaticDecompression =
+                        DecompressionMethods.GZip |
+                        DecompressionMethods.Deflate
+                });
     }
 
     private static void AddBrokers(this IServiceCollection services)
     {
-        services.AddSingleton<MemoryCacheDependency>();
+        services.AddMemoryCache();
         services.AddSingleton<ICacheBroker, CacheBroker>();
         services.AddTransient<IMetadataTypeCacheBroker, MetadataTypeCacheBroker>();
         services.AddTransient<IContentRenderBroker, ContentRenderBroker>();

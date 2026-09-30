@@ -5,9 +5,9 @@
 using cCoder.ContentManagement.Models;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using cCoder.ContentManagement.Rendering.Brokers;
 using cCoder.ContentManagement.Brokers;
-using cCoder.ContentManagement.Dependencies;
 using cCoder.ContentManagement.Rendering.Services.Foundations;
 using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Brokers.Storages;
@@ -39,6 +39,13 @@ public partial class PageRenderProcessingServiceTests
 
     private PageRenderTestHarness CreateSut(RenderConfig config)
     {
+        Mock<IHttpClientFactory> httpClientFactoryMock = new();
+
+        httpClientFactoryMock
+            .Setup(expression: factory => factory.CreateClient(
+                name: nameof(WorkflowExecutionBroker)))
+            .Returns(valueFunction: () => new HttpClient());
+
         RegularExpressionBroker regularExpressionBroker = new();
 
         cacheBroker.SetCommonObject(
@@ -56,8 +63,7 @@ public partial class PageRenderProcessingServiceTests
                 componentReaderBroker: componentReaderBroker,
                 scriptReaderBroker: scriptReaderBroker),
             workflowExecutionBroker: new WorkflowExecutionBroker(
-                workflowExecutionDependency:
-                    new WorkflowExecutionDependency()),
+                httpClientFactory: httpClientFactoryMock.Object),
             cacheBroker: cacheBroker,
             jsonBroker: new JsonBroker(),
             regularExpressionBroker: regularExpressionBroker);
