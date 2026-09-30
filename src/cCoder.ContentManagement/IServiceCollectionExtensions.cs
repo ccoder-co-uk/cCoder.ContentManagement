@@ -275,7 +275,6 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppRenderableCoordinationService, AppRenderableCoordinationService>();
         services.AddTransient<IAppPageComponentCoordinationService, AppPageComponentCoordinationService>();
         services.AddTransient<IAppSupportingResourcesCoordinationService, AppSupportingResourcesCoordinationService>();
-        services.AddTransient<ICommonObjectCoordinationService, CommonObjectCoordinationService>();
         services.AddTransient<
             IContentManagementPackageCoordinationService,
             ContentManagementPackageCoordinationService>();
@@ -433,7 +432,6 @@ public static partial class IServiceCollectionExtensions
             AppUserOrchestrationService>();
         services.AddTransient<ICurrentAppOrchestrationService, CurrentAppOrchestrationService>();
         services.AddTransient<ICommonObjectOrchestrationService, CommonObjectOrchestrationService>();
-        services.AddTransient<ICommonObjectEventOrchestrationService, CommonObjectEventOrchestrationService>();
         services.AddTransient<ICommonObjectManager, CommonObjectManager>();
         services.AddTransient<IComponentOrchestrationService, ComponentOrchestrationService>();
         services.AddTransient<IComponentRenderOrchestrationService, ComponentRenderOrchestrationService>();
@@ -475,8 +473,8 @@ public static partial class IServiceCollectionExtensions
         services.AddTransient<IAppCultureProcessingService, AppCultureProcessingService>();
         services.AddTransient<IAppEventProcessingService, AppEventProcessingService>();
         services.AddTransient<IAppProcessingService, AppProcessingService>();
-        services.AddTransient<ICommonObjectEventProcessingService, CommonObjectEventProcessingService>();
         services.AddTransient<ICommonObjectProcessingService, CommonObjectProcessingService>();
+        services.AddTransient<ICommonObjectEventProcessingService, CommonObjectEventProcessingService>();
         services.AddTransient<IComponentEventProcessingService, ComponentEventProcessingService>();
         services.AddTransient<IComponentProcessingService, ComponentProcessingService>();
         services.AddTransient<IComponentRenderProcessingService, ComponentRenderProcessingService>();

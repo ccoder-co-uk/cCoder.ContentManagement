@@ -11,6 +11,7 @@ using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
 using cCoder.Eventing;
 using cCoder.ContentManagement.Rendering.Services.Processings;
+using cCoder.ContentManagement.Services.Orchestrations.Caching;
 
 namespace cCoder.ContentManagement;
 
@@ -62,6 +63,37 @@ public static partial class IEventHubExtensions
         ListenToScriptPackageImportEvents(eventHub: eventHub);
         ListenToTemplatePackageImportEvents(eventHub: eventHub);
         ListenToCommonObjectPackageImportEvents(eventHub: eventHub);
+        ListenToCommonObjectCacheEvents(eventHub: eventHub);
+    }
+
+    private static void ListenToCommonObjectCacheEvents(IEventHub eventHub)
+    {
+        eventHub.ListenToEvent(
+            name: "common_object_add",
+            handler: (ICommonObjectCacheOrchestrationService service, CommonObject _) =>
+                RefreshCommonObjectCacheAsync(service: service));
+
+        eventHub.ListenToEvent(
+            name: "common_object_update",
+            handler: (ICommonObjectCacheOrchestrationService service, CommonObject _) =>
+                RefreshCommonObjectCacheAsync(service: service));
+
+        eventHub.ListenToEvent(
+            name: "common_object_delete",
+            handler: (ICommonObjectCacheOrchestrationService service, CommonObject _) =>
+                RefreshCommonObjectCacheAsync(service: service));
+
+        eventHub.ListenToEvent(
+            name: "common_objects_imported",
+            handler: (ICommonObjectCacheOrchestrationService service, CommonObject[] _) =>
+                RefreshCommonObjectCacheAsync(service: service));
+    }
+
+    private static ValueTask RefreshCommonObjectCacheAsync(
+        ICommonObjectCacheOrchestrationService service)
+    {
+        service.Refresh();
+        return ValueTask.CompletedTask;
     }
 
     private static void ListenToAppSupportingResourcesEvents(IEventHub eventHub)
@@ -211,14 +243,14 @@ public static partial class IEventHubExtensions
     private static void ListenToCommonObjectPackageImportEvents(IEventHub eventHub) =>
         eventHub.ListenToEvent(
             name: "common_objects_import",
-            handler: (ICommonObjectCoordinationService service,
+            handler: (ICommonObjectOrchestrationService service,
                 PackageItemImportEvent<CommonObject> import) =>
                 ImportCommonObjectsAsync(
                     service: service,
                     items: import.Items));
 
     private static async ValueTask ImportCommonObjectsAsync(
-        ICommonObjectCoordinationService service,
+        ICommonObjectOrchestrationService service,
         CommonObject[] items) =>
         _ = await service.AddAllCommonObjectsAsync(
             newCommonObjects: items);

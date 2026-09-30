@@ -14,6 +14,8 @@ internal interface ICommonObjectService
 
     IQueryable<CommonObject> GetAllCommonObjects(bool ignoreFilters = false);
 
+    CommonObject[] GetLatestCommonObjects();
+
     ValueTask<CommonObject> AddCommonObjectAsync(
         CommonObject newCommonObject,
         string userId);

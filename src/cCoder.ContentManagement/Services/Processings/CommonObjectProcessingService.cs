@@ -40,6 +40,9 @@ internal partial class CommonObjectProcessingService(
         return service.GetAllCommonObjects(ignoreFilters: ignoreFilters);
     });
 
+    public CommonObject[] GetLatestCommonObjects() =>
+        TryCatch(operation: () => service.GetLatestCommonObjects());
+
     public ValueTask<IEnumerable<OperationResult<CommonObject>>> AddAllCommonObjectsAsync(
         CommonObject[] newCommonObjects,
         IEnumerable<CommonObject> latestCommonObjects,

@@ -17,6 +17,8 @@ public interface ICommonObjectBroker
 
     CommonObject[] GetLatestCommonObjectsPaged(int pageSize = 500);
 
+    void RefreshCommonObjects();
+
     ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject);
 
     ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);

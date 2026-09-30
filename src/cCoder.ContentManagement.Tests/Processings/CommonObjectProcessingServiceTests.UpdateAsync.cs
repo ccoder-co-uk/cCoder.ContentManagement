@@ -34,6 +34,7 @@ public partial class CommonObjectProcessingServiceTests
                 userId: CurrentUserId))
             .ReturnsAsync(value: commonObject);
 
+
         // When
         CommonObject result = await commonObjectProcessingService.UpdateCommonObjectAsync(
             updatedCommonObject: commonObject,

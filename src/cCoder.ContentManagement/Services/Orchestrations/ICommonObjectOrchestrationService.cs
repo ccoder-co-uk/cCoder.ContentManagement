@@ -10,7 +10,7 @@ using cCoder.Data.Models;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
-internal interface ICommonObjectOrchestrationService
+public interface ICommonObjectOrchestrationService
 {
     CommonObject GetCommonObject(int commonObjectId);
 
