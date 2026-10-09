@@ -9,11 +9,11 @@ using cCoder.ContentManagement.Models;
 
 internal interface IPageAuthorizationBroker
 {
-    ValueTask<PageAuthorizationResult> GetAuthorizedPageAsync(
+    ValueTask<PageAuthorizationData> GetAuthorizedPageAsync(
         string domain,
         string path);
 
-    ValueTask<PageAuthorizationResult> GetPageIgnoringFiltersAsync(
+    ValueTask<PageAuthorizationData> GetPageIgnoringFiltersAsync(
         string domain,
         string path);
 

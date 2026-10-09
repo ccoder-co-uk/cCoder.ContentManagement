@@ -56,4 +56,44 @@ public sealed partial class PageContextOrchestrationServiceTests
         pageAuthorizationProcessingService.VerifyAll();
         authorizationProcessingService.VerifyAll();
     }
+
+    [Fact]
+    public async Task ShouldReuseUserResolvedDuringPageAuthorizationAsync()
+    {
+        // Given
+        User user = new() { Id = "Paul" };
+
+        HttpPageRenderContext context = new()
+        {
+            Culture = "en-GB",
+            User = user
+        };
+
+        Mock<IHttpContextProcessingService> httpContextProcessingService = new();
+        Mock<IPageAuthorizationProcessingService> pageAuthorizationProcessingService = new();
+
+        Mock<IAuthorizationProcessingService> authorizationProcessingService = new(
+            behavior: MockBehavior.Strict);
+
+        httpContextProcessingService.Setup(expression: service =>
+            service.GetPageRenderContext())
+            .Returns(value: context);
+
+        pageAuthorizationProcessingService.Setup(expression: service =>
+            service.AuthorizeHttpPageRenderContextAsync(httpPageRenderContext: context))
+            .ReturnsAsync(value: context);
+
+        PageContextOrchestrationService service = new(
+            httpContextProcessingService: httpContextProcessingService.Object,
+            pageAuthorizationProcessingService: pageAuthorizationProcessingService.Object,
+            authorizationProcessingService: authorizationProcessingService.Object);
+
+        // When
+        HttpPageRenderContext result =
+            await service.ResolvePageRenderContextAsync();
+
+        // Then
+        Assert.Same(expected: user, actual: result.User);
+        authorizationProcessingService.VerifyNoOtherCalls();
+    }
 }
