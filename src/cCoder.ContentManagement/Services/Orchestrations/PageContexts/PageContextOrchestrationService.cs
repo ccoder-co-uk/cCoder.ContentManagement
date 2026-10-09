@@ -30,7 +30,7 @@ internal sealed partial class PageContextOrchestrationService(
             .AuthorizeHttpPageRenderContextAsync(
                 httpPageRenderContext: context);
 
-        context.User = authorizationProcessingService
+        context.User ??= authorizationProcessingService
             .ResolveCurrentAuthorizationContext(
                 context: new AuthorizationContext
                 {

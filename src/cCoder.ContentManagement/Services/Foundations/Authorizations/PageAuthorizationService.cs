@@ -23,10 +23,13 @@ internal sealed partial class PageAuthorizationService(
             pageRenderContext: httpPageRenderContext,
             parameterName: "pageRenderContext");
 
-        PageAuthorizationResult authorization = await pageAuthorizationBroker
+        PageAuthorizationData authorizationData = await pageAuthorizationBroker
             .GetAuthorizedPageAsync(
                 domain: httpPageRenderContext.Domain,
                 path: httpPageRenderContext.Path);
+
+        PageAuthorizationResult authorization = authorizationData.Result;
+        httpPageRenderContext.User = authorizationData.User;
 
         if (authorization?.PageId is not null)
         {
@@ -45,10 +48,13 @@ internal sealed partial class PageAuthorizationService(
             return httpPageRenderContext;
         }
 
-        authorization = await pageAuthorizationBroker
+        authorizationData = await pageAuthorizationBroker
             .GetPageIgnoringFiltersAsync(
                 domain: httpPageRenderContext.Domain,
                 path: httpPageRenderContext.Path);
+
+        authorization = authorizationData.Result;
+        httpPageRenderContext.User = authorizationData.User;
 
         if (authorization?.PageId is not null)
         {

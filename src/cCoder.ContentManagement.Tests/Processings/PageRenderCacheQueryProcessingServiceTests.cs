@@ -16,6 +16,7 @@ public sealed partial class PageRenderCacheQueryProcessingServiceTests
 {
     [Theory]
     [InlineData("en-gb-north", "en-gb")]
+    [InlineData("en-GB", "en-gb")]
     [InlineData("en-us", "en")]
     [InlineData("fr", "")]
     [InlineData("", "")]

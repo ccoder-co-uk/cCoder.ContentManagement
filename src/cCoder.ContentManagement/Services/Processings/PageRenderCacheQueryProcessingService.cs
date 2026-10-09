@@ -57,7 +57,10 @@ internal sealed partial class PageRenderCacheQueryProcessingService(
             {
                 foreach (PageRenderCache match in matches)
                 {
-                    if (match.Culture == fallbackCulture)
+                    if (string.Equals(
+                        a: match.Culture,
+                        b: fallbackCulture,
+                        comparisonType: StringComparison.OrdinalIgnoreCase))
                     {
                         return match;
                     }

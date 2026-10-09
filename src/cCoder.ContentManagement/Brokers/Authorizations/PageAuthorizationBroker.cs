@@ -40,14 +40,14 @@ internal sealed class PageAuthorizationBroker(
                                 && pageRole.PageId == pageId))));
     }
 
-    public async ValueTask<PageAuthorizationResult> GetAuthorizedPageAsync(
+    public async ValueTask<PageAuthorizationData> GetAuthorizedPageAsync(
         string domain,
         string path)
     {
         await using CoreDataContext context =
             coreContextFactory.CreateCoreContext();
 
-        return await context.Apps
+        PageAuthorizationResult result = await context.Apps
             .Where(predicate: app => app.Domain == domain)
             .Select(selector: app => new PageAuthorizationResult
             {
@@ -70,16 +70,22 @@ internal sealed class PageAuthorizationBroker(
                 AppConfigJson = app.ConfigJson
             })
             .SingleOrDefaultAsync();
+
+        return new PageAuthorizationData
+        {
+            Result = result,
+            User = context.User
+        };
     }
 
-    public async ValueTask<PageAuthorizationResult> GetPageIgnoringFiltersAsync(
+    public async ValueTask<PageAuthorizationData> GetPageIgnoringFiltersAsync(
         string domain,
         string path)
     {
         await using CoreDataContext context =
             coreContextFactory.CreateCoreContext();
 
-        return await context.Apps
+        PageAuthorizationResult result = await context.Apps
             .IgnoreQueryFilters()
             .Where(predicate: app => app.Domain == domain)
             .Select(selector: app => new PageAuthorizationResult
@@ -107,5 +113,11 @@ internal sealed class PageAuthorizationBroker(
                 AppConfigJson = app.ConfigJson
             })
             .SingleOrDefaultAsync();
+
+        return new PageAuthorizationData
+        {
+            Result = result,
+            User = context.User
+        };
     }
 }

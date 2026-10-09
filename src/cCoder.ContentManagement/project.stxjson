@@ -444,7 +444,7 @@
               "Type": "System.String"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageAuthorizationResult\u003E",
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageAuthorizationData\u003E",
           "Implements": [
             "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker.GetAuthorizedPageAsync(System.String,System.String)"
           ],
@@ -528,7 +528,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Authorizations.PageAuthorizationBroker.GetPageIgnoringFiltersAsync(System.String,System.String)",
           "Name": "GetPageIgnoringFiltersAsync",
-          "LineNumber": 75,
+          "LineNumber": 81,
           "Inputs": [
             {
               "Name": "domain",
@@ -539,7 +539,7 @@
               "Type": "System.String"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageAuthorizationResult\u003E",
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageAuthorizationData\u003E",
           "Implements": [
             "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker.GetPageIgnoringFiltersAsync(System.String,System.String)"
           ],
@@ -31467,9 +31467,29 @@
       "Methods": []
     },
     {
+      "Name": "cCoder.ContentManagement.Models.PageAuthorizationData",
+      "StandardElementType": "Model",
+      "LineNumber": 9,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [
+        {
+          "Name": "Result",
+          "Type": "cCoder.ContentManagement.Models.PageAuthorizationResult"
+        },
+        {
+          "Name": "User",
+          "Type": "cCoder.Data.Models.Security.User"
+        }
+      ],
+      "Methods": []
+    },
+    {
       "Name": "cCoder.ContentManagement.Models.PageAuthorizationResult",
       "StandardElementType": "Model",
-      "LineNumber": 7,
+      "LineNumber": 8,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -71982,6 +72002,13 @@
               "IsDependencyBoundary": true
             },
             {
+              "TypeName": "System.String",
+              "MethodName": "Equals",
+              "MethodId": "System.String.Equals(System.String?,System.String?,System.StringComparison)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
               "TypeName": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService",
               "MethodName": "GetAllPageRenderCaches",
               "MethodId": "cCoder.ContentManagement.Services.Foundations.Storages.IPageRenderCacheService.GetAllPageRenderCaches()",
@@ -75726,7 +75753,7 @@
               "Type": "System.String"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageAuthorizationResult\u003E",
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageAuthorizationData\u003E",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
@@ -75755,7 +75782,7 @@
               "Type": "System.String"
             }
           ],
-          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageAuthorizationResult\u003E",
+          "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageAuthorizationData\u003E",
           "Implements": [],
           "Calls": [],
           "PossibleExceptionTypes": [],
