@@ -4,6 +4,8 @@
 
 namespace cCoder.ContentManagement.Models;
 
+using cCoder.Data.Models.CMS;
+
 internal sealed class PageAuthorizationResult
 {
     public int? PageId { get; set; }
@@ -21,4 +23,6 @@ internal sealed class PageAuthorizationResult
     public string DefaultTheme { get; set; }
 
     public string AppConfigJson { get; set; }
+
+    public PageRenderCache[] CacheCandidates { get; set; }
 }

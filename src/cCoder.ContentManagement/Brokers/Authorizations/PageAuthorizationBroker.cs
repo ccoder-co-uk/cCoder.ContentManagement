@@ -42,7 +42,9 @@ internal sealed class PageAuthorizationBroker(
 
     public async ValueTask<PageAuthorizationData> GetAuthorizedPageAsync(
         string domain,
-        string path)
+        string path,
+        string culture,
+        string theme)
     {
         await using CoreDataContext context =
             coreContextFactory.CreateCoreContext();
@@ -67,14 +69,26 @@ internal sealed class PageAuthorizationBroker(
                     .ToLower(),
                 DefaultTheme = (app.DefaultTheme ?? "Default")
                     .Trim(),
-                AppConfigJson = app.ConfigJson
+                AppConfigJson = app.ConfigJson,
+                CacheCandidates = app.Pages
+                    .Where(predicate: page => page.Path == path)
+                    .SelectMany(selector: page => context.PageRenderCaches
+                        .Where(predicate: cache =>
+                            cache.PageId == page.Id
+                            && (cache.Theme == theme
+                                || (theme == string.Empty
+                                    && cache.Theme == (app.DefaultTheme ?? "Default")
+                                        .Trim()
+                                        .ToLower()))))
+                    .ToArray()
             })
             .SingleOrDefaultAsync();
 
         return new PageAuthorizationData
         {
             Result = result,
-            User = context.User
+            User = context.User,
+            CacheLookupCompleted = true
         };
     }
 
@@ -120,4 +134,5 @@ internal sealed class PageAuthorizationBroker(
             User = context.User
         };
     }
+
 }

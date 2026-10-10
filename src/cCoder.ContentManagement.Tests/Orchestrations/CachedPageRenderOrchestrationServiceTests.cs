@@ -81,6 +81,40 @@ public sealed partial class CachedPageRenderOrchestrationServiceTests
         queryService.VerifyAll();
     }
 
+    [Fact]
+    public void ShouldUsePrefetchedCacheWithoutIssuingAnotherQuery()
+    {
+        // Given
+        PageRenderCache cache = new() { PageId = 17 };
+        HttpPageRenderOperation operation = CreateOperation();
+        operation.Context.PrefetchedPageRenderCache = cache;
+        operation.Context.PageRenderCacheLookupCompleted = true;
+        Mock<IPageRenderCacheQueryProcessingService> queryService = new();
+        Mock<ICachedPageRenderProcessingService> renderService = new();
+
+        renderService.Setup(expression: service =>
+            service.RenderPageRenderCacheOperation(
+                operation: It.Is<PageRenderCacheOperation>(match: item =>
+                    item.Cache == cache
+                    && item.RenderOperation == operation)))
+            .Returns(valueFunction: (PageRenderCacheOperation item) => item);
+
+        CachedPageRenderOrchestrationService service = new(
+            queryProcessingService: queryService.Object,
+            renderProcessingService: renderService.Object,
+            cacheProcessingService:
+                Mock.Of<IPageRenderCacheProcessingService>());
+
+        // When
+        HttpPageRenderOperation result = service.RenderHttpPageRenderOperation(
+            httpPageRenderOperation: operation);
+
+        // Then
+        Assert.Same(expected: operation, actual: result);
+        queryService.VerifyNoOtherCalls();
+        renderService.VerifyAll();
+    }
+
     private static HttpPageRenderOperation CreateOperation() =>
         new()
         {

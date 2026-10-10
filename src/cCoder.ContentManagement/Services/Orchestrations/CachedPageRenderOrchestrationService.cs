@@ -29,10 +29,12 @@ internal sealed partial class CachedPageRenderOrchestrationService(
                 return httpPageRenderOperation;
             }
 
-            PageRenderCache cache = queryProcessingService.GetPageRenderCache(
-                pageId: context.PageId.Value,
-                culture: context.Culture,
-                theme: context.Theme);
+            PageRenderCache cache = context.PageRenderCacheLookupCompleted
+                ? context.PrefetchedPageRenderCache
+                : queryProcessingService.GetPageRenderCache(
+                    pageId: context.PageId.Value,
+                    culture: context.Culture,
+                    theme: context.Theme);
 
             if (cache is null)
             {
