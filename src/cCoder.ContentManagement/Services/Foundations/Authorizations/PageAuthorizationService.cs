@@ -66,13 +66,17 @@ internal sealed partial class PageAuthorizationService(
 
         if (authorization?.PageId is not null)
         {
+            string cacheCulture = ResolveCacheCulture(
+                requestedCulture: httpPageRenderContext.Culture,
+                authorization: authorization);
+
             ApplyAuthorization(
                 pageRenderContext: httpPageRenderContext,
                 authorization: authorization);
 
             httpPageRenderContext.PrefetchedPageRenderCache = ResolveCache(
                 candidates: authorization.CacheCandidates,
-                culture: httpPageRenderContext.Culture);
+                culture: cacheCulture);
 
             httpPageRenderContext.PageRenderCacheLookupCompleted =
                 authorizationData.CacheLookupCompleted;
@@ -165,6 +169,21 @@ internal sealed partial class PageAuthorizationService(
         }
 
         return null;
+    }
+
+    private static string ResolveCacheCulture(
+        string requestedCulture,
+        PageAuthorizationResult authorization)
+    {
+        if (!string.IsNullOrWhiteSpace(value: requestedCulture))
+        {
+            return requestedCulture;
+        }
+
+        return !string.IsNullOrWhiteSpace(
+                value: authorization.UserDefaultCultureId)
+            ? authorization.UserDefaultCultureId
+            : authorization.DefaultCulture;
     }
 
     private static User MapUser(
