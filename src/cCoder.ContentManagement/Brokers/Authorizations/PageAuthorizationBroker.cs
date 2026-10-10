@@ -11,8 +11,17 @@ using Microsoft.EntityFrameworkCore;
 namespace cCoder.ContentManagement.Brokers.Authorizations;
 
 internal sealed class PageAuthorizationBroker(
-    ICoreContextFactory coreContextFactory) : IPageAuthorizationBroker
+    ICoreContextFactory coreContextFactory)
+        : IPageAuthorizationBroker
 {
+    public string GetCurrentUserId()
+    {
+        using CoreDataContext context =
+            coreContextFactory.CreateCoreContext();
+
+        return context.AuthInfo.SSOUserId;
+    }
+
     public async ValueTask<bool> CanUpdatePageAsync(
         int appId,
         int pageId)

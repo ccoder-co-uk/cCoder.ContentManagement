@@ -9,9 +9,11 @@ using cCoder.ContentManagement.Services.Coordinations;
 using cCoder.ContentManagement.Services.Orchestrations;
 using cCoder.Data.Models;
 using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 using cCoder.Eventing;
 using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Services.Orchestrations.Caching;
+using cCoder.ContentManagement.Brokers.Authorizations;
 
 namespace cCoder.ContentManagement;
 
@@ -41,12 +43,59 @@ public static partial class IEventHubExtensions
         ListenToPageOwnedRenderCacheEvents(eventHub: eventHub);
         ListenToCommonObjectRenderCacheEvents(eventHub: eventHub);
         ListenToPackageImportRenderCacheEvents(eventHub: eventHub);
+        ListenToPageAuthorizationCacheEvents(eventHub: eventHub);
         ListenToRenderRequestEvents(eventHub: eventHub);
         ListenToRenderTagEvents(eventHub: eventHub);
         ListenToFinalAppDeleteEvent(eventHub: eventHub);
 
         return eventHub;
     }
+
+    private static void ListenToPageAuthorizationCacheEvents(
+        IEventHub eventHub)
+    {
+        ListenToPageAuthorizationCacheEvent<App>(eventHub: eventHub, eventName: "app_add");
+        ListenToPageAuthorizationCacheEvent<App>(eventHub: eventHub, eventName: "app_update");
+        ListenToPageAuthorizationCacheEvent<App>(eventHub: eventHub, eventName: "app_delete");
+        ListenToPageAuthorizationCacheEvent<AppCulture>(eventHub: eventHub, eventName: "app_culture_add");
+        ListenToPageAuthorizationCacheEvent<AppCulture>(eventHub: eventHub, eventName: "app_culture_delete");
+        ListenToPageAuthorizationCacheEvent<Page>(eventHub: eventHub, eventName: "page_add");
+        ListenToPageAuthorizationCacheEvent<Page>(eventHub: eventHub, eventName: "page_update");
+        ListenToPageAuthorizationCacheEvent<Page>(eventHub: eventHub, eventName: "page_delete");
+        ListenToPageAuthorizationCacheEvent<PageRole>(eventHub: eventHub, eventName: "page_role_add");
+        ListenToPageAuthorizationCacheEvent<PageRole>(eventHub: eventHub, eventName: "page_role_update");
+        ListenToPageAuthorizationCacheEvent<PageRole>(eventHub: eventHub, eventName: "page_role_delete");
+        ListenToPageAuthorizationCacheEvent<Layout>(eventHub: eventHub, eventName: "layout_add");
+        ListenToPageAuthorizationCacheEvent<Layout>(eventHub: eventHub, eventName: "layout_update");
+        ListenToPageAuthorizationCacheEvent<Layout>(eventHub: eventHub, eventName: "layout_delete");
+        ListenToPageAuthorizationCacheEvent<Template>(eventHub: eventHub, eventName: "template_add");
+        ListenToPageAuthorizationCacheEvent<Template>(eventHub: eventHub, eventName: "template_update");
+        ListenToPageAuthorizationCacheEvent<Template>(eventHub: eventHub, eventName: "template_delete");
+        ListenToPageAuthorizationCacheEvent<Component>(eventHub: eventHub, eventName: "component_add");
+        ListenToPageAuthorizationCacheEvent<Component>(eventHub: eventHub, eventName: "component_update");
+        ListenToPageAuthorizationCacheEvent<Component>(eventHub: eventHub, eventName: "component_delete");
+        ListenToPageAuthorizationCacheEvent<Resource>(eventHub: eventHub, eventName: "resource_add");
+        ListenToPageAuthorizationCacheEvent<Resource>(eventHub: eventHub, eventName: "resource_update");
+        ListenToPageAuthorizationCacheEvent<Resource>(eventHub: eventHub, eventName: "resource_delete");
+        ListenToPageAuthorizationCacheEvent<Script>(eventHub: eventHub, eventName: "script_add");
+        ListenToPageAuthorizationCacheEvent<Script>(eventHub: eventHub, eventName: "script_update");
+        ListenToPageAuthorizationCacheEvent<Script>(eventHub: eventHub, eventName: "script_delete");
+        ListenToPageAuthorizationCacheEvent<CommonObject>(eventHub: eventHub, eventName: "common_object_add");
+        ListenToPageAuthorizationCacheEvent<CommonObject>(eventHub: eventHub, eventName: "common_object_update");
+        ListenToPageAuthorizationCacheEvent<CommonObject>(eventHub: eventHub, eventName: "common_object_delete");
+        ListenToPageAuthorizationCacheEvent<PackageImportEvent>(eventHub: eventHub, eventName: "package_import");
+    }
+
+    private static void ListenToPageAuthorizationCacheEvent<T>(
+        IEventHub eventHub,
+        string eventName) =>
+        eventHub.ListenToEvent<T, IPageAuthorizationCacheBroker>(
+            name: eventName,
+            handler: static (cache, _) =>
+            {
+                cache.Clear();
+                return ValueTask.CompletedTask;
+            });
 
     private static void ListenToContentManagementBusinessEvents(
         IEventHub eventHub)
