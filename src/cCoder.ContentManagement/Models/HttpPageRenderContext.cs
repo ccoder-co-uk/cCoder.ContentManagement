@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using cCoder.Data.Models.Security;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Models;
 
@@ -53,4 +54,8 @@ public sealed class HttpPageRenderContext
     public string AppConfigJson { get; set; }
 
     public User User { get; set; }
+
+    internal PageRenderCache PrefetchedPageRenderCache { get; set; }
+
+    internal bool PageRenderCacheLookupCompleted { get; set; }
 }

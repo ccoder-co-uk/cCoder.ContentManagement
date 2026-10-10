@@ -3,8 +3,12 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using cCoder.ContentManagement.Brokers.Authorizations;
 using cCoder.ContentManagement.Models;
+using cCoder.Data.Models.CMS;
 
 namespace cCoder.ContentManagement.Services.Foundations.Authorizations;
 
@@ -26,7 +30,9 @@ internal sealed partial class PageAuthorizationService(
         PageAuthorizationData authorizationData = await pageAuthorizationBroker
             .GetAuthorizedPageAsync(
                 domain: httpPageRenderContext.Domain,
-                path: httpPageRenderContext.Path);
+                path: httpPageRenderContext.Path,
+                culture: httpPageRenderContext.Culture,
+                theme: httpPageRenderContext.Theme);
 
         PageAuthorizationResult authorization = authorizationData.Result;
         httpPageRenderContext.User = authorizationData.User;
@@ -36,6 +42,13 @@ internal sealed partial class PageAuthorizationService(
             ApplyAuthorization(
                 pageRenderContext: httpPageRenderContext,
                 authorization: authorization);
+
+            httpPageRenderContext.PrefetchedPageRenderCache = ResolveCache(
+                candidates: authorization.CacheCandidates,
+                culture: httpPageRenderContext.Culture);
+
+            httpPageRenderContext.PageRenderCacheLookupCompleted =
+                authorizationData.CacheLookupCompleted;
 
             if (httpPageRenderContext.Edit)
             {
@@ -99,5 +112,58 @@ internal sealed partial class PageAuthorizationService(
         {
             pageRenderContext.Theme = authorization.DefaultTheme;
         }
+    }
+
+    private static PageRenderCache ResolveCache(
+        PageRenderCache[] candidates,
+        string culture)
+    {
+        if (candidates is null)
+        {
+            return null;
+        }
+
+        foreach (string fallbackCulture in ResolveCultureFallbacks(culture: culture))
+        {
+            PageRenderCache match = candidates.FirstOrDefault(
+                predicate: cache => string.Equals(
+                    a: cache.Culture,
+                    b: fallbackCulture,
+                    comparisonType: StringComparison.OrdinalIgnoreCase));
+
+            if (match is not null)
+            {
+                return match;
+            }
+        }
+
+        return null;
+    }
+
+    private static string[] ResolveCultureFallbacks(string culture)
+    {
+        List<string> cultures = [];
+        string current = (culture ?? string.Empty).Trim();
+
+        while (!string.IsNullOrWhiteSpace(value: current))
+        {
+            cultures.Add(item: current);
+
+            int separatorIndex = current.LastIndexOf(
+                value: "-",
+                comparisonType: StringComparison.Ordinal);
+
+            current = separatorIndex < 0
+                ? string.Empty
+                : current[..separatorIndex];
+        }
+
+        cultures.Add(item: string.Empty);
+
+        return
+        [
+            .. cultures.Distinct(
+                comparer: StringComparer.OrdinalIgnoreCase)
+        ];
     }
 }

@@ -11,4 +11,6 @@ internal sealed class PageAuthorizationData
     public PageAuthorizationResult Result { get; set; }
 
     public User User { get; set; }
+
+    public bool CacheLookupCompleted { get; set; }
 }

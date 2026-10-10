@@ -11,7 +11,9 @@ internal interface IPageAuthorizationBroker
 {
     ValueTask<PageAuthorizationData> GetAuthorizedPageAsync(
         string domain,
-        string path);
+        string path,
+        string culture,
+        string theme);
 
     ValueTask<PageAuthorizationData> GetPageIgnoringFiltersAsync(
         string domain,

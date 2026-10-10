@@ -431,7 +431,7 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Authorizations.PageAuthorizationBroker.GetAuthorizedPageAsync(System.String,System.String)",
+          "Id": "cCoder.ContentManagement.Brokers.Authorizations.PageAuthorizationBroker.GetAuthorizedPageAsync(System.String,System.String,System.String,System.String)",
           "Name": "GetAuthorizedPageAsync",
           "LineNumber": 43,
           "Inputs": [
@@ -442,11 +442,19 @@
             {
               "Name": "path",
               "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "theme",
+              "Type": "System.String"
             }
           ],
           "ReturnType": "System.Threading.Tasks.ValueTask\u003CcCoder.ContentManagement.Models.PageAuthorizationData\u003E",
           "Implements": [
-            "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker.GetAuthorizedPageAsync(System.String,System.String)"
+            "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker.GetAuthorizedPageAsync(System.String,System.String,System.String,System.String)"
           ],
           "Calls": [
             {
@@ -465,8 +473,22 @@
             },
             {
               "TypeName": "System.Linq.Enumerable",
+              "MethodName": "SelectMany",
+              "MethodId": "System.Linq.Enumerable.SelectMany(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, System.Collections.Generic.IEnumerable\u003CTResult\u003E\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
               "MethodName": "SingleOrDefault",
               "MethodId": "System.Linq.Enumerable.SingleOrDefault(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Enumerable",
+              "MethodName": "ToArray",
+              "MethodId": "System.Linq.Enumerable.ToArray(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -528,7 +550,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Authorizations.PageAuthorizationBroker.GetPageIgnoringFiltersAsync(System.String,System.String)",
           "Name": "GetPageIgnoringFiltersAsync",
-          "LineNumber": 81,
+          "LineNumber": 95,
           "Inputs": [
             {
               "Name": "domain",
@@ -30932,7 +30954,7 @@
     {
       "Name": "cCoder.ContentManagement.Models.HttpPageRenderContext",
       "StandardElementType": "Model",
-      "LineNumber": 9,
+      "LineNumber": 10,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": null,
@@ -31476,6 +31498,10 @@
       "Interfaces": [],
       "Properties": [
         {
+          "Name": "CacheLookupCompleted",
+          "Type": "System.Boolean"
+        },
+        {
           "Name": "Result",
           "Type": "cCoder.ContentManagement.Models.PageAuthorizationResult"
         },
@@ -31489,7 +31515,7 @@
     {
       "Name": "cCoder.ContentManagement.Models.PageAuthorizationResult",
       "StandardElementType": "Model",
-      "LineNumber": 8,
+      "LineNumber": 9,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -31502,6 +31528,10 @@
         {
           "Name": "AppId",
           "Type": "System.Int32"
+        },
+        {
+          "Name": "CacheCandidates",
+          "Type": "cCoder.Data.Models.CMS.PageRenderCache[]"
         },
         {
           "Name": "DefaultCulture",
@@ -39059,7 +39089,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Foundations.Authorizations.PageAuthorizationService",
       "StandardElementType": "FoundationService",
-      "LineNumber": 11,
+      "LineNumber": 15,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -39080,7 +39110,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Authorizations.PageAuthorizationService.AuthorizeHttpPageRenderContextAsync(cCoder.ContentManagement.Models.HttpPageRenderContext)",
           "Name": "AuthorizeHttpPageRenderContextAsync",
-          "LineNumber": 15,
+          "LineNumber": 19,
           "Inputs": [
             {
               "Name": "httpPageRenderContext",
@@ -39102,7 +39132,7 @@
             {
               "TypeName": "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker",
               "MethodName": "GetAuthorizedPageAsync",
-              "MethodId": "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker.GetAuthorizedPageAsync(System.String,System.String)",
+              "MethodId": "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker.GetAuthorizedPageAsync(System.String,System.String,System.String,System.String)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -53994,7 +54024,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Orchestrations.CachedPageRenderOrchestrationService.StoreHttpPageRenderOperationAsync(cCoder.ContentManagement.Models.HttpPageRenderOperation)",
           "Name": "StoreHttpPageRenderOperationAsync",
-          "LineNumber": 51,
+          "LineNumber": 53,
           "Inputs": [
             {
               "Name": "httpPageRenderOperation",
@@ -75713,7 +75743,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker.CanUpdatePageAsync(System.Int32,System.Int32)",
           "Name": "CanUpdatePageAsync",
-          "LineNumber": 20,
+          "LineNumber": 22,
           "Inputs": [
             {
               "Name": "appId",
@@ -75740,7 +75770,7 @@
           "HasTryCatch": false
         },
         {
-          "Id": "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker.GetAuthorizedPageAsync(System.String,System.String)",
+          "Id": "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker.GetAuthorizedPageAsync(System.String,System.String,System.String,System.String)",
           "Name": "GetAuthorizedPageAsync",
           "LineNumber": 12,
           "Inputs": [
@@ -75750,6 +75780,14 @@
             },
             {
               "Name": "path",
+              "Type": "System.String"
+            },
+            {
+              "Name": "culture",
+              "Type": "System.String"
+            },
+            {
+              "Name": "theme",
               "Type": "System.String"
             }
           ],
@@ -75771,7 +75809,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Authorizations.IPageAuthorizationBroker.GetPageIgnoringFiltersAsync(System.String,System.String)",
           "Name": "GetPageIgnoringFiltersAsync",
-          "LineNumber": 16,
+          "LineNumber": 18,
           "Inputs": [
             {
               "Name": "domain",
