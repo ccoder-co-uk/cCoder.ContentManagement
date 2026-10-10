@@ -25,4 +25,14 @@ internal sealed class PageAuthorizationResult
     public string AppConfigJson { get; set; }
 
     public PageRenderCache[] CacheCandidates { get; set; }
+
+    public string UserId { get; set; }
+
+    public string UserDefaultCultureId { get; set; }
+
+    public string UserDisplayName { get; set; }
+
+    public string UserEmail { get; set; }
+
+    public bool? UserIsActive { get; set; }
 }
