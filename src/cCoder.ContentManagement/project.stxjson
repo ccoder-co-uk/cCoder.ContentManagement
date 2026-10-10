@@ -4962,7 +4962,7 @@
     {
       "Name": "cCoder.ContentManagement.Brokers.RegularExpressionBroker",
       "StandardElementType": "Broker",
-      "LineNumber": 13,
+      "LineNumber": 14,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -4993,7 +4993,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.RegularExpressionBroker.ForEachMatch(System.String,System.String,System.Action\u003CSystem.String, System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, System.String\u003E\u003E)",
           "Name": "ForEachMatch",
-          "LineNumber": 58,
+          "LineNumber": 65,
           "Inputs": [
             {
               "Name": "input",
@@ -5043,13 +5043,6 @@
             },
             {
               "TypeName": "System.Text.RegularExpressions.Regex",
-              "MethodName": ".ctor",
-              "MethodId": "System.Text.RegularExpressions.Regex..ctor(System.String,System.Text.RegularExpressions.RegexOptions)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Text.RegularExpressions.Regex",
               "MethodName": "Matches",
               "MethodId": "System.Text.RegularExpressions.Regex.Matches(System.String)",
               "StandardElementType": "Dependency",
@@ -5071,7 +5064,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.RegularExpressionBroker.Replace(System.String,System.String,System.Func\u003CSystem.String, System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, System.String\u003E, System.String\u003E)",
           "Name": "Replace",
-          "LineNumber": 21,
+          "LineNumber": 28,
           "Inputs": [
             {
               "Name": "input",
@@ -5100,13 +5093,6 @@
             },
             {
               "TypeName": "System.Text.RegularExpressions.Regex",
-              "MethodName": ".ctor",
-              "MethodId": "System.Text.RegularExpressions.Regex..ctor(System.String,System.Text.RegularExpressions.RegexOptions)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Text.RegularExpressions.Regex",
               "MethodName": "Replace",
               "MethodId": "System.Text.RegularExpressions.Regex.Replace(System.String,System.Text.RegularExpressions.MatchEvaluator)",
               "StandardElementType": "Dependency",
@@ -5128,7 +5114,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.RegularExpressionBroker.Replace(System.String,System.String,System.String)",
           "Name": "Replace",
-          "LineNumber": 35,
+          "LineNumber": 42,
           "Inputs": [
             {
               "Name": "input",
@@ -5148,13 +5134,6 @@
             "cCoder.ContentManagement.Brokers.IRegularExpressionBroker.Replace(System.String,System.String,System.String)"
           ],
           "Calls": [
-            {
-              "TypeName": "System.Text.RegularExpressions.Regex",
-              "MethodName": ".ctor",
-              "MethodId": "System.Text.RegularExpressions.Regex..ctor(System.String,System.Text.RegularExpressions.RegexOptions)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
             {
               "TypeName": "System.Text.RegularExpressions.Regex",
               "MethodName": "Replace",
@@ -5178,7 +5157,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.RegularExpressionBroker.TryMatch(System.String,System.String,System.Int32,System.Int32,System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, System.String\u003E)",
           "Name": "TryMatch",
-          "LineNumber": 42,
+          "LineNumber": 49,
           "Inputs": [
             {
               "Name": "input",
@@ -5206,13 +5185,6 @@
             "cCoder.ContentManagement.Brokers.IRegularExpressionBroker.TryMatch(System.String,System.String,System.Int32,System.Int32,System.Collections.Generic.IReadOnlyDictionary\u003CSystem.String, System.String\u003E)"
           ],
           "Calls": [
-            {
-              "TypeName": "System.Text.RegularExpressions.Regex",
-              "MethodName": ".ctor",
-              "MethodId": "System.Text.RegularExpressions.Regex..ctor(System.String,System.Text.RegularExpressions.RegexOptions)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
             {
               "TypeName": "System.Text.RegularExpressions.Regex",
               "MethodName": "Match",

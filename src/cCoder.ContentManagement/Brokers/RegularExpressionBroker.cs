@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -18,12 +19,18 @@ internal sealed class RegularExpressionBroker : IRegularExpressionBroker, IUtili
     private const RegexOptions MarkupOptions =
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant;
 
+    private static readonly ConcurrentDictionary<string, Regex> StandardExpressions =
+        new(comparer: StringComparer.Ordinal);
+
+    private static readonly ConcurrentDictionary<string, Regex> MarkupExpressions =
+        new(comparer: StringComparer.Ordinal);
+
     public string Replace(
         string input,
         string pattern,
         Func<string, IReadOnlyDictionary<string, string>, string> evaluator)
     {
-        Regex expression = new(pattern: pattern, options: StandardOptions);
+        Regex expression = GetStandardExpression(pattern: pattern);
 
         return expression.Replace(
             input: input,
@@ -36,7 +43,7 @@ internal sealed class RegularExpressionBroker : IRegularExpressionBroker, IUtili
         string input,
         string pattern,
         string replacement) =>
-        new Regex(pattern: pattern, options: MarkupOptions)
+        GetMarkupExpression(pattern: pattern)
             .Replace(input: input, replacement: replacement);
 
     public bool TryMatch(
@@ -46,7 +53,7 @@ internal sealed class RegularExpressionBroker : IRegularExpressionBroker, IUtili
         out int index,
         out IReadOnlyDictionary<string, string> groups)
     {
-        Regex expression = new(pattern: pattern, options: MarkupOptions);
+        Regex expression = GetMarkupExpression(pattern: pattern);
         Match match = expression.Match(input: input, startat: startIndex);
 
         index = match.Index;
@@ -60,7 +67,7 @@ internal sealed class RegularExpressionBroker : IRegularExpressionBroker, IUtili
         string pattern,
         Action<string, IReadOnlyDictionary<string, string>> action)
     {
-        Regex expression = new(pattern: pattern, options: StandardOptions);
+        Regex expression = GetStandardExpression(pattern: pattern);
 
         expression.Matches(input: input)
             .Cast<Match>()
@@ -86,4 +93,18 @@ internal sealed class RegularExpressionBroker : IRegularExpressionBroker, IUtili
                 keySelector: group => group.Key,
                 elementSelector: group => group.First().Value,
                 comparer: StringComparer.Ordinal);
+
+    private static Regex GetStandardExpression(string pattern) =>
+        StandardExpressions.GetOrAdd(
+            key: pattern,
+            valueFactory: static value => new Regex(
+                pattern: value,
+                options: StandardOptions));
+
+    private static Regex GetMarkupExpression(string pattern) =>
+        MarkupExpressions.GetOrAdd(
+            key: pattern,
+            valueFactory: static value => new Regex(
+                pattern: value,
+                options: MarkupOptions));
 }
