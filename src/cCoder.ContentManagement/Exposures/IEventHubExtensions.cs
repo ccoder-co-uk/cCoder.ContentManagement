@@ -83,7 +83,7 @@ public static partial class IEventHubExtensions
         ListenToPageAuthorizationCacheEvent<CommonObject>(eventHub: eventHub, eventName: "common_object_add");
         ListenToPageAuthorizationCacheEvent<CommonObject>(eventHub: eventHub, eventName: "common_object_update");
         ListenToPageAuthorizationCacheEvent<CommonObject>(eventHub: eventHub, eventName: "common_object_delete");
-        ListenToPageAuthorizationCacheEvent<PackageImportEvent>(eventHub: eventHub, eventName: "package_import");
+        ListenToPageAuthorizationCacheEvent<PackageImportEvent>(eventHub: eventHub, eventName: "package_import_complete");
     }
 
     private static void ListenToPageAuthorizationCacheEvent<T>(
