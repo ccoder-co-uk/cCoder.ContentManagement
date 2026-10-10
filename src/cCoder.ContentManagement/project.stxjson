@@ -459,6 +459,13 @@
           "Calls": [
             {
               "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
+              "MethodName": "IgnoreQueryFilters",
+              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IgnoreQueryFilters(System.Linq.IQueryable\u003CTEntity\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
               "MethodName": "SingleOrDefaultAsync",
               "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.SingleOrDefaultAsync(System.Linq.IQueryable\u003CTSource\u003E,System.Threading.CancellationToken)",
               "StandardElementType": "Dependency",
@@ -466,22 +473,15 @@
             },
             {
               "TypeName": "System.Linq.Enumerable",
-              "MethodName": "Select",
-              "MethodId": "System.Linq.Enumerable.Select(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, TResult\u003E)",
+              "MethodName": "DefaultIfEmpty",
+              "MethodId": "System.Linq.Enumerable.DefaultIfEmpty(System.Collections.Generic.IEnumerable\u003CTSource\u003E,TSource)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
             {
               "TypeName": "System.Linq.Enumerable",
-              "MethodName": "SelectMany",
-              "MethodId": "System.Linq.Enumerable.SelectMany(System.Collections.Generic.IEnumerable\u003CTSource\u003E,System.Func\u003CTSource, System.Collections.Generic.IEnumerable\u003CTResult\u003E\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Enumerable",
-              "MethodName": "SingleOrDefault",
-              "MethodId": "System.Linq.Enumerable.SingleOrDefault(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
+              "MethodName": "Single",
+              "MethodId": "System.Linq.Enumerable.Single(System.Collections.Generic.IEnumerable\u003CTSource\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -501,6 +501,20 @@
             },
             {
               "TypeName": "System.Linq.Queryable",
+              "MethodName": "Any",
+              "MethodId": "System.Linq.Queryable.Any(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, System.Boolean\u003E\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "AsQueryable",
+              "MethodId": "System.Linq.Queryable.AsQueryable(System.Collections.Generic.IEnumerable\u003CTElement\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
               "MethodName": "Select",
               "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
@@ -508,8 +522,36 @@
             },
             {
               "TypeName": "System.Linq.Queryable",
+              "MethodName": "SelectMany",
+              "MethodId": "System.Linq.Queryable.SelectMany(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, System.Collections.Generic.IEnumerable\u003CTResult\u003E\u003E\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "SingleOrDefault",
+              "MethodId": "System.Linq.Queryable.SingleOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
               "MethodName": "Where",
               "MethodId": "System.Linq.Queryable.Where(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, System.Boolean\u003E\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.String",
+              "MethodName": "Contains",
+              "MethodId": "System.String.Contains(System.String)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.String",
+              "MethodName": "IsNullOrWhiteSpace",
+              "MethodId": "System.String.IsNullOrWhiteSpace(System.String?)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -550,7 +592,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Authorizations.PageAuthorizationBroker.GetPageIgnoringFiltersAsync(System.String,System.String)",
           "Name": "GetPageIgnoringFiltersAsync",
-          "LineNumber": 95,
+          "LineNumber": 181,
           "Inputs": [
             {
               "Name": "domain",
@@ -31556,6 +31598,26 @@
         {
           "Name": "TenantId",
           "Type": "System.String"
+        },
+        {
+          "Name": "UserDefaultCultureId",
+          "Type": "System.String"
+        },
+        {
+          "Name": "UserDisplayName",
+          "Type": "System.String"
+        },
+        {
+          "Name": "UserEmail",
+          "Type": "System.String"
+        },
+        {
+          "Name": "UserId",
+          "Type": "System.String"
+        },
+        {
+          "Name": "UserIsActive",
+          "Type": "System.Boolean?"
         }
       ],
       "Methods": []
@@ -39089,7 +39151,7 @@
     {
       "Name": "cCoder.ContentManagement.Services.Foundations.Authorizations.PageAuthorizationService",
       "StandardElementType": "FoundationService",
-      "LineNumber": 15,
+      "LineNumber": 16,
       "IsPublic": false,
       "Kind": "Class",
       "BaseType": null,
@@ -39110,7 +39172,7 @@
         {
           "Id": "cCoder.ContentManagement.Services.Foundations.Authorizations.PageAuthorizationService.AuthorizeHttpPageRenderContextAsync(cCoder.ContentManagement.Models.HttpPageRenderContext)",
           "Name": "AuthorizeHttpPageRenderContextAsync",
-          "LineNumber": 19,
+          "LineNumber": 20,
           "Inputs": [
             {
               "Name": "httpPageRenderContext",

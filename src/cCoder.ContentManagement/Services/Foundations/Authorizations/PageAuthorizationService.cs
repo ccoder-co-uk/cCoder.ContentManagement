@@ -9,6 +9,7 @@ using System.Linq;
 using cCoder.ContentManagement.Brokers.Authorizations;
 using cCoder.ContentManagement.Models;
 using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 
 namespace cCoder.ContentManagement.Services.Foundations.Authorizations;
 
@@ -35,7 +36,10 @@ internal sealed partial class PageAuthorizationService(
                 theme: httpPageRenderContext.Theme);
 
         PageAuthorizationResult authorization = authorizationData.Result;
-        httpPageRenderContext.User = authorizationData.User;
+
+        httpPageRenderContext.User = MapUser(
+            result: authorizationData.Result,
+            fallback: authorizationData.User);
 
         if (authorization?.PageId is not null)
         {
@@ -138,6 +142,34 @@ internal sealed partial class PageAuthorizationService(
         }
 
         return null;
+    }
+
+    private static User MapUser(
+        PageAuthorizationResult result,
+        User fallback)
+    {
+        if (result?.UserId is null)
+        {
+            return fallback ?? new User
+            {
+                DefaultCultureId = string.Empty,
+                IsActive = true,
+                Id = "Guest",
+                DisplayName = "Guest",
+                Email = string.Empty,
+                Roles = []
+            };
+        }
+
+        return new User
+        {
+            Id = result.UserId,
+            DefaultCultureId = result.UserDefaultCultureId,
+            DisplayName = result.UserDisplayName,
+            Email = result.UserEmail,
+            IsActive = result.UserIsActive ?? false,
+            Roles = []
+        };
     }
 
     private static string[] ResolveCultureFallbacks(string culture)
