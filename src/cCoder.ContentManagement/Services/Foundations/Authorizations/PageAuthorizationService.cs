@@ -14,7 +14,8 @@ using cCoder.Data.Models.Security;
 namespace cCoder.ContentManagement.Services.Foundations.Authorizations;
 
 internal sealed partial class PageAuthorizationService(
-    IPageAuthorizationBroker pageAuthorizationBroker)
+    IPageAuthorizationBroker pageAuthorizationBroker,
+    IPageAuthorizationCacheBroker pageAuthorizationCacheBroker)
         : IPageAuthorizationService
 {
     public ValueTask<HttpPageRenderContext> AuthorizeHttpPageRenderContextAsync(
@@ -28,12 +29,34 @@ internal sealed partial class PageAuthorizationService(
             pageRenderContext: httpPageRenderContext,
             parameterName: "pageRenderContext");
 
-        PageAuthorizationData authorizationData = await pageAuthorizationBroker
-            .GetAuthorizedPageAsync(
-                domain: httpPageRenderContext.Domain,
-                path: httpPageRenderContext.Path,
-                culture: httpPageRenderContext.Culture,
-                theme: httpPageRenderContext.Theme);
+        string userId = pageAuthorizationBroker.GetCurrentUserId()
+            ?? "Guest";
+
+        string cacheKey = $"PageAuthorization:{userId}|" +
+            $"{httpPageRenderContext.Domain}|" +
+            $"{httpPageRenderContext.Path}|" +
+            $"{httpPageRenderContext.Culture}|" +
+            httpPageRenderContext.Theme;
+
+        PageAuthorizationData authorizationData =
+            pageAuthorizationCacheBroker.Get(key: cacheKey);
+
+        if (authorizationData is null)
+        {
+            authorizationData = await pageAuthorizationBroker
+                .GetAuthorizedPageAsync(
+                    domain: httpPageRenderContext.Domain,
+                    path: httpPageRenderContext.Path,
+                    culture: httpPageRenderContext.Culture,
+                    theme: httpPageRenderContext.Theme);
+
+            if (authorizationData.Result?.CacheCandidates?.Length > 0)
+            {
+                pageAuthorizationCacheBroker.Set(
+                    key: cacheKey,
+                    pageAuthorizationData: authorizationData);
+            }
+        }
 
         PageAuthorizationResult authorization = authorizationData.Result;
 

@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 using cCoder.ContentManagement.Services.Processings;
 using cCoder.Data.Models.CMS;
 using cCoder.ContentManagement.Models;
+using cCoder.ContentManagement.Brokers.Authorizations;
 
 namespace cCoder.ContentManagement.Services.Orchestrations;
 
 internal sealed partial class PageRenderCacheOrchestrationService(
     IPageRenderCacheProcessingService processingService,
-    IAuthorizationProcessingService authorizationProcessingService)
+    IAuthorizationProcessingService authorizationProcessingService,
+    IPageAuthorizationCacheBroker pageAuthorizationCacheBroker)
         : IPageRenderCacheOrchestrationService
 {
     private static readonly HashSet<string> CommonCacheRenderTypes =
@@ -68,6 +70,8 @@ internal sealed partial class PageRenderCacheOrchestrationService(
                 appId: updatedPageRenderCache.AppId,
                 privilege: "pagerendercache_update");
 
+            pageAuthorizationCacheBroker.Clear();
+
             return processingService.UpdatePageRenderCacheAsync(
                 updatedPageRenderCache: updatedPageRenderCache);
         }, isValueTask: true);
@@ -84,6 +88,8 @@ internal sealed partial class PageRenderCacheOrchestrationService(
             {
                 return ValueTask.CompletedTask;
             }
+
+            pageAuthorizationCacheBroker.Clear();
 
             Authorize(
                 appId: cache.AppId,
@@ -121,6 +127,8 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         int appId,
         bool fromEvent)
     {
+        pageAuthorizationCacheBroker.Clear();
+
         int[] pageIds = processingService.GetAllPageRenderCaches()
             .Where(predicate: cache => cache.AppId == appId)
             .Select(selector: cache => cache.PageId)
@@ -170,6 +178,8 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         int pageId,
         bool fromEvent)
     {
+        pageAuthorizationCacheBroker.Clear();
+
         PageRenderCache cache = processingService.GetAllPageRenderCaches()
             .FirstOrDefault(predicate: item => item.PageId == pageId);
 
@@ -209,6 +219,8 @@ internal sealed partial class PageRenderCacheOrchestrationService(
                 appId: appId,
                 privilege: "pagerendercache_rebuild");
 
+            pageAuthorizationCacheBroker.Clear();
+
             return processingService.ReplacePageRenderCachesAsync(
                 appId: appId,
                 pageIds: pageIds,
@@ -223,6 +235,8 @@ internal sealed partial class PageRenderCacheOrchestrationService(
         {
             ValidatePageRenderCachesOnReplace(
                 inputs: [appId, pageIds, replacements]);
+
+            pageAuthorizationCacheBroker.Clear();
 
             return processingService.ReplacePageRenderCachesFromEventAsync(
                 appId: appId,

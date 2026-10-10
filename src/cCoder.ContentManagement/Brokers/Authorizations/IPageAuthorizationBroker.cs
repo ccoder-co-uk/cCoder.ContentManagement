@@ -9,6 +9,8 @@ using cCoder.ContentManagement.Models;
 
 internal interface IPageAuthorizationBroker
 {
+    string GetCurrentUserId();
+
     ValueTask<PageAuthorizationData> GetAuthorizedPageAsync(
         string domain,
         string path,
