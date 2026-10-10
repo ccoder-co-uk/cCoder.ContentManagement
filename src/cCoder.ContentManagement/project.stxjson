@@ -508,29 +508,8 @@
             },
             {
               "TypeName": "System.Linq.Queryable",
-              "MethodName": "AsQueryable",
-              "MethodId": "System.Linq.Queryable.AsQueryable(System.Collections.Generic.IEnumerable\u003CTElement\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Queryable",
-              "MethodName": "Select",
-              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Queryable",
-              "MethodName": "SelectMany",
-              "MethodId": "System.Linq.Queryable.SelectMany(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, System.Collections.Generic.IEnumerable\u003CTResult\u003E\u003E\u003E)",
-              "StandardElementType": "Dependency",
-              "IsDependencyBoundary": true
-            },
-            {
-              "TypeName": "System.Linq.Queryable",
-              "MethodName": "SingleOrDefault",
-              "MethodId": "System.Linq.Queryable.SingleOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "MethodName": "DefaultIfEmpty",
+              "MethodId": "System.Linq.Queryable.DefaultIfEmpty(System.Linq.IQueryable\u003CTSource\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -592,7 +571,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Authorizations.PageAuthorizationBroker.GetPageIgnoringFiltersAsync(System.String,System.String)",
           "Name": "GetPageIgnoringFiltersAsync",
-          "LineNumber": 181,
+          "LineNumber": 118,
           "Inputs": [
             {
               "Name": "domain",
