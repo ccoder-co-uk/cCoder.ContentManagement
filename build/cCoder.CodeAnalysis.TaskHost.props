@@ -1,0 +1,16 @@
+<Project>
+  <!--
+    The cCoder.CodeAnalysis package registers this netstandard2.0 task through
+    TaskHostFactory. The .NET 10 SDK cannot create that external host, but the
+    task runs correctly in the current MSBuild process. Register the same task
+    before the package targets are imported so the package target keeps its
+    normal execution and inputs without changing analyzer behavior.
+  -->
+  <PropertyGroup Condition="'$(PkgcCoder_CodeAnalysis)' != ''">
+    <cCoderCodeAnalysisBuildTaskAssembly>$(PkgcCoder_CodeAnalysis)\tools\netstandard2.0\cCoder.CodeAnalysis.BuildTasks.dll</cCoderCodeAnalysisBuildTaskAssembly>
+  </PropertyGroup>
+  <UsingTask
+    TaskName="cCoder.CodeAnalysis.BuildTasks.GenerateArchitectureTask"
+    AssemblyFile="$(cCoderCodeAnalysisBuildTaskAssembly)"
+    Condition="'$(cCoderCodeAnalysisBuildTaskAssembly)' != ''" />
+</Project>

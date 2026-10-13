@@ -8,6 +8,7 @@
     <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
     <UseLocalData Condition="'$(UseLocalData)' == 'true' and !Exists('$(LocalDataProject)')">false</UseLocalData>
   </PropertyGroup>
+  <Import Project="..\..\build\cCoder.CodeAnalysis.TaskHost.props" />
   <ItemGroup>
     <PackageReference Include="cCoder.CodeAnalysis" Version="2026.10.8.1211" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
     <PackageReference Include="cCoder.CodeAnalysis.Contracts" Version="2026.10.8.1211" />

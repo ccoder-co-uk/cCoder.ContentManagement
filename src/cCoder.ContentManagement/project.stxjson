@@ -4888,6 +4888,74 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "cCoder.CodeAnalysis.Contracts:cCoder.CodeAnalysis.Exposures.IUtilityBroker",
+          "FullName": "cCoder.CodeAnalysis.Exposures.IUtilityBroker",
+          "Name": "IUtilityBroker",
+          "Namespace": "cCoder.CodeAnalysis.Exposures",
+          "AssemblyName": "cCoder.CodeAnalysis.Contracts",
+          "Kind": "Interface",
+          "IsInCurrentProject": false,
+          "StandardElementType": "Dependency"
+        },
+        {
+          "Id": "cCoder.ContentManagement:cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+          "FullName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+          "Name": "IODataResultBroker",
+          "Namespace": "cCoder.ContentManagement.Brokers.OData",
+          "AssemblyName": "cCoder.ContentManagement",
+          "Kind": "Interface",
+          "IsInCurrentProject": true,
+          "StandardElementType": "Broker"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
+          "Name": "CreateSingleResult",
+          "LineNumber": 14,
+          "Inputs": [
+            {
+              "Name": "queryable",
+              "Type": "System.Linq.IQueryable\u003CT\u003E"
+            }
+          ],
+          "ReturnType": "Microsoft.AspNetCore.OData.Results.SingleResult\u003CT\u003E",
+          "Implements": [
+            "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "Microsoft.AspNetCore.OData.Results.SingleResult",
+              "MethodName": "Create",
+              "MethodId": "Microsoft.AspNetCore.OData.Results.SingleResult.Create(System.Linq.IQueryable\u003CT\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Brokers.OData.RouteModelBroker",
       "StandardElementType": "Broker",
       "LineNumber": 11,
@@ -15374,7 +15442,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.AppController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 21,
+      "LineNumber": 22,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -15393,7 +15461,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.AppController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 205,
+          "LineNumber": 211,
           "Inputs": [
             {
               "Name": "key",
@@ -15509,7 +15577,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.AppController.Get(System.Int32)",
           "Name": "Get",
-          "LineNumber": 97,
+          "LineNumber": 103,
           "Inputs": [
             {
               "Name": "key",
@@ -15565,6 +15633,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -15654,7 +15729,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.AppController.GetAll(Microsoft.AspNetCore.OData.Query.ODataQueryOptions\u003CcCoder.Data.Models.CMS.App\u003E)",
           "Name": "GetAll",
-          "LineNumber": 68,
+          "LineNumber": 74,
           "Inputs": [
             {
               "Name": "queryOptions",
@@ -15768,7 +15843,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.AppController.GetIsAdmin(System.Int32,System.String)",
           "Name": "GetIsAdmin",
-          "LineNumber": 34,
+          "LineNumber": 40,
           "Inputs": [
             {
               "Name": "key",
@@ -15911,7 +15986,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.AppController.Post(cCoder.Data.Models.CMS.App)",
           "Name": "Post",
-          "LineNumber": 132,
+          "LineNumber": 138,
           "Inputs": [
             {
               "Name": "newApp",
@@ -16028,7 +16103,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.AppController.Put(System.Int32,cCoder.Data.Models.CMS.App)",
           "Name": "Put",
-          "LineNumber": 169,
+          "LineNumber": 175,
           "Inputs": [
             {
               "Name": "key",
@@ -17465,7 +17540,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 21,
+      "LineNumber": 22,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -17484,7 +17559,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ComponentController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 164,
+          "LineNumber": 170,
           "Inputs": [
             {
               "Name": "key",
@@ -17601,7 +17676,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ComponentController.Get(System.Int32)",
           "Name": "Get",
-          "LineNumber": 64,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "key",
@@ -17657,6 +17732,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -17746,7 +17828,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ComponentController.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 35,
+          "LineNumber": 41,
           "Inputs": [],
           "ReturnType": "Microsoft.AspNetCore.Mvc.IActionResult",
           "Implements": [],
@@ -17855,7 +17937,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ComponentController.Post(cCoder.Data.Models.CMS.Component)",
           "Name": "Post",
-          "LineNumber": 99,
+          "LineNumber": 105,
           "Inputs": [
             {
               "Name": "newComponent",
@@ -17972,7 +18054,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ComponentController.Put(System.Int32,cCoder.Data.Models.CMS.Component)",
           "Name": "Put",
-          "LineNumber": 132,
+          "LineNumber": 138,
           "Inputs": [
             {
               "Name": "key",
@@ -18095,7 +18177,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.ContentController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 21,
+      "LineNumber": 22,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -18114,7 +18196,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ContentController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 158,
+          "LineNumber": 160,
           "Inputs": [
             {
               "Name": "key",
@@ -18231,7 +18313,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ContentController.Get(System.Int32)",
           "Name": "Get",
-          "LineNumber": 57,
+          "LineNumber": 59,
           "Inputs": [
             {
               "Name": "key",
@@ -18287,6 +18369,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -18376,7 +18465,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ContentController.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 28,
+          "LineNumber": 30,
           "Inputs": [],
           "ReturnType": "Microsoft.AspNetCore.Mvc.IActionResult",
           "Implements": [],
@@ -18485,7 +18574,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ContentController.Post(cCoder.Data.Models.CMS.Content)",
           "Name": "Post",
-          "LineNumber": 92,
+          "LineNumber": 94,
           "Inputs": [
             {
               "Name": "newContent",
@@ -18602,7 +18691,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ContentController.Put(System.Int32,cCoder.Data.Models.CMS.Content)",
           "Name": "Put",
-          "LineNumber": 125,
+          "LineNumber": 127,
           "Inputs": [
             {
               "Name": "key",
@@ -18725,7 +18814,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.CultureController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 21,
+      "LineNumber": 22,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -18744,7 +18833,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CultureController.Delete(System.String)",
           "Name": "Delete",
-          "LineNumber": 164,
+          "LineNumber": 170,
           "Inputs": [
             {
               "Name": "key",
@@ -18861,7 +18950,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CultureController.Get(System.String)",
           "Name": "Get",
-          "LineNumber": 64,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "key",
@@ -18917,6 +19006,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -19006,7 +19102,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CultureController.GetAll(Microsoft.AspNetCore.OData.Query.ODataQueryOptions\u003CcCoder.Data.Models.CMS.Culture\u003E)",
           "Name": "GetAll",
-          "LineNumber": 35,
+          "LineNumber": 41,
           "Inputs": [
             {
               "Name": "queryOptions",
@@ -19120,7 +19216,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CultureController.Post(cCoder.Data.Models.CMS.Culture)",
           "Name": "Post",
-          "LineNumber": 99,
+          "LineNumber": 105,
           "Inputs": [
             {
               "Name": "newCulture",
@@ -19237,7 +19333,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CultureController.Put(System.String,cCoder.Data.Models.CMS.Culture)",
           "Name": "Put",
-          "LineNumber": 132,
+          "LineNumber": 138,
           "Inputs": [
             {
               "Name": "key",
@@ -19360,7 +19456,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.LayoutController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 21,
+      "LineNumber": 22,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -19379,7 +19475,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.LayoutController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 164,
+          "LineNumber": 170,
           "Inputs": [
             {
               "Name": "key",
@@ -19496,7 +19592,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.LayoutController.Get(System.Int32)",
           "Name": "Get",
-          "LineNumber": 64,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "key",
@@ -19552,6 +19648,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -19641,7 +19744,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.LayoutController.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 35,
+          "LineNumber": 41,
           "Inputs": [],
           "ReturnType": "Microsoft.AspNetCore.Mvc.IActionResult",
           "Implements": [],
@@ -19750,7 +19853,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.LayoutController.Post(cCoder.Data.Models.CMS.Layout)",
           "Name": "Post",
-          "LineNumber": 99,
+          "LineNumber": 105,
           "Inputs": [
             {
               "Name": "newLayout",
@@ -19867,7 +19970,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.LayoutController.Put(System.Int32,cCoder.Data.Models.CMS.Layout)",
           "Name": "Put",
-          "LineNumber": 132,
+          "LineNumber": 138,
           "Inputs": [
             {
               "Name": "key",
@@ -20146,7 +20249,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.PageController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 22,
+      "LineNumber": 23,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -20165,7 +20268,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 240,
+          "LineNumber": 246,
           "Inputs": [
             {
               "Name": "key",
@@ -20283,7 +20386,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageController.Get(Microsoft.AspNetCore.OData.Query.ODataQueryOptions\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "Get",
-          "LineNumber": 36,
+          "LineNumber": 42,
           "Inputs": [
             {
               "Name": "queryOptions",
@@ -20397,7 +20500,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageController.Get(System.Int32)",
           "Name": "Get",
-          "LineNumber": 139,
+          "LineNumber": 145,
           "Inputs": [
             {
               "Name": "key",
@@ -20453,6 +20556,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -20542,7 +20652,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageController.GetMenu(System.Int32,System.String)",
           "Name": "GetMenu",
-          "LineNumber": 98,
+          "LineNumber": 104,
           "Inputs": [
             {
               "Name": "key",
@@ -20685,7 +20795,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageController.GetRootFor(System.Int32)",
           "Name": "GetRootFor",
-          "LineNumber": 66,
+          "LineNumber": 72,
           "Inputs": [
             {
               "Name": "key",
@@ -20818,7 +20928,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageController.Post(cCoder.Data.Models.CMS.Page)",
           "Name": "Post",
-          "LineNumber": 174,
+          "LineNumber": 180,
           "Inputs": [
             {
               "Name": "newPage",
@@ -20935,7 +21045,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageController.Put(System.Int32,cCoder.Data.Models.CMS.Page)",
           "Name": "Put",
-          "LineNumber": 207,
+          "LineNumber": 213,
           "Inputs": [
             {
               "Name": "key",
@@ -21059,7 +21169,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 21,
+      "LineNumber": 22,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -21078,7 +21188,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 164,
+          "LineNumber": 170,
           "Inputs": [
             {
               "Name": "key",
@@ -21195,7 +21305,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController.Get(System.Int32)",
           "Name": "Get",
-          "LineNumber": 64,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "key",
@@ -21251,6 +21361,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -21340,7 +21457,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 35,
+          "LineNumber": 41,
           "Inputs": [],
           "ReturnType": "Microsoft.AspNetCore.Mvc.IActionResult",
           "Implements": [],
@@ -21449,7 +21566,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController.Post(cCoder.Data.Models.CMS.PageInfo)",
           "Name": "Post",
-          "LineNumber": 99,
+          "LineNumber": 105,
           "Inputs": [
             {
               "Name": "newPageInfo",
@@ -21566,7 +21683,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController.Put(System.Int32,cCoder.Data.Models.CMS.PageInfo)",
           "Name": "Put",
-          "LineNumber": 132,
+          "LineNumber": 138,
           "Inputs": [
             {
               "Name": "key",
@@ -23114,7 +23231,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.ResourceController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 21,
+      "LineNumber": 22,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -23133,7 +23250,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ResourceController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 164,
+          "LineNumber": 170,
           "Inputs": [
             {
               "Name": "key",
@@ -23250,7 +23367,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ResourceController.Get(System.Int32)",
           "Name": "Get",
-          "LineNumber": 64,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "key",
@@ -23306,6 +23423,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -23395,7 +23519,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ResourceController.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 35,
+          "LineNumber": 41,
           "Inputs": [],
           "ReturnType": "Microsoft.AspNetCore.Mvc.IActionResult",
           "Implements": [],
@@ -23504,7 +23628,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ResourceController.Post(cCoder.Data.Models.CMS.Resource)",
           "Name": "Post",
-          "LineNumber": 99,
+          "LineNumber": 105,
           "Inputs": [
             {
               "Name": "newResource",
@@ -23621,7 +23745,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ResourceController.Put(System.Int32,cCoder.Data.Models.CMS.Resource)",
           "Name": "Put",
-          "LineNumber": 132,
+          "LineNumber": 138,
           "Inputs": [
             {
               "Name": "key",
@@ -23744,7 +23868,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.ScriptController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 21,
+      "LineNumber": 22,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -23763,7 +23887,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ScriptController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 164,
+          "LineNumber": 170,
           "Inputs": [
             {
               "Name": "key",
@@ -23880,7 +24004,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ScriptController.Get(System.Int32)",
           "Name": "Get",
-          "LineNumber": 64,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "key",
@@ -23936,6 +24060,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -24025,7 +24156,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ScriptController.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 35,
+          "LineNumber": 41,
           "Inputs": [],
           "ReturnType": "Microsoft.AspNetCore.Mvc.IActionResult",
           "Implements": [],
@@ -24134,7 +24265,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ScriptController.Post(cCoder.Data.Models.CMS.Script)",
           "Name": "Post",
-          "LineNumber": 99,
+          "LineNumber": 105,
           "Inputs": [
             {
               "Name": "newScript",
@@ -24251,7 +24382,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ScriptController.Put(System.Int32,cCoder.Data.Models.CMS.Script)",
           "Name": "Put",
-          "LineNumber": 132,
+          "LineNumber": 138,
           "Inputs": [
             {
               "Name": "key",
@@ -24374,7 +24505,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 21,
+      "LineNumber": 22,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -24393,7 +24524,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController.Delete(System.Guid)",
           "Name": "Delete",
-          "LineNumber": 170,
+          "LineNumber": 176,
           "Inputs": [
             {
               "Name": "key",
@@ -24510,7 +24641,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController.Get(System.Guid)",
           "Name": "Get",
-          "LineNumber": 64,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "key",
@@ -24566,6 +24697,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -24655,7 +24793,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController.GetAll(Microsoft.AspNetCore.OData.Query.ODataQueryOptions\u003CcCoder.Data.Models.CMS.Submission\u003E)",
           "Name": "GetAll",
-          "LineNumber": 35,
+          "LineNumber": 41,
           "Inputs": [
             {
               "Name": "queryOptions",
@@ -24769,7 +24907,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController.Post(cCoder.Data.Models.CMS.Submission)",
           "Name": "Post",
-          "LineNumber": 99,
+          "LineNumber": 105,
           "Inputs": [
             {
               "Name": "newSubmission",
@@ -24886,7 +25024,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController.Put(System.Guid,cCoder.Data.Models.CMS.Submission)",
           "Name": "Put",
-          "LineNumber": 136,
+          "LineNumber": 142,
           "Inputs": [
             {
               "Name": "key",
@@ -25140,7 +25278,7 @@
     {
       "Name": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
       "StandardElementType": "HttpExposure",
-      "LineNumber": 21,
+      "LineNumber": 22,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": {
@@ -25159,7 +25297,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.TemplateController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 166,
+          "LineNumber": 170,
           "Inputs": [
             {
               "Name": "key",
@@ -25276,7 +25414,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.TemplateController.Get(System.Int32)",
           "Name": "Get",
-          "LineNumber": 66,
+          "LineNumber": 70,
           "Inputs": [
             {
               "Name": "key",
@@ -25332,6 +25470,13 @@
               "TypeName": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker",
               "MethodName": "LogError",
               "MethodId": "cCoder.ContentManagement.Brokers.Loggings.ILoggingBroker.LogError(System.Exception,System.String,System.Object[])",
+              "StandardElementType": "Broker",
+              "IsDependencyBoundary": false
+            },
+            {
+              "TypeName": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+              "MethodName": "CreateSingleResult",
+              "MethodId": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
               "StandardElementType": "Broker",
               "IsDependencyBoundary": false
             },
@@ -25421,7 +25566,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.TemplateController.GetAll()",
           "Name": "GetAll",
-          "LineNumber": 37,
+          "LineNumber": 41,
           "Inputs": [],
           "ReturnType": "Microsoft.AspNetCore.Mvc.IActionResult",
           "Implements": [],
@@ -25530,7 +25675,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.TemplateController.Post(cCoder.Data.Models.CMS.Template)",
           "Name": "Post",
-          "LineNumber": 101,
+          "LineNumber": 105,
           "Inputs": [
             {
               "Name": "newTemplate",
@@ -25647,7 +25792,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.TemplateController.Put(System.Int32,cCoder.Data.Models.CMS.Template)",
           "Name": "Put",
-          "LineNumber": 134,
+          "LineNumber": 138,
           "Inputs": [
             {
               "Name": "key",
@@ -79627,6 +79772,43 @@
       ]
     },
     {
+      "Name": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker",
+      "StandardElementType": "Broker",
+      "LineNumber": 11,
+      "IsPublic": true,
+      "Kind": "Interface",
+      "BaseType": null,
+      "Interfaces": [],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "cCoder.ContentManagement.Brokers.OData.IODataResultBroker.CreateSingleResult(System.Linq.IQueryable\u003CT\u003E)",
+          "Name": "CreateSingleResult",
+          "LineNumber": 13,
+          "Inputs": [
+            {
+              "Name": "queryable",
+              "Type": "System.Linq.IQueryable\u003CT\u003E"
+            }
+          ],
+          "ReturnType": "Microsoft.AspNetCore.OData.Results.SingleResult\u003CT\u003E",
+          "Implements": [],
+          "Calls": [],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "cCoder.ContentManagement.Brokers.OData.IRouteModelBroker",
       "StandardElementType": "Broker",
       "LineNumber": 11,
@@ -106228,6 +106410,10 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.AppController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.AppController",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.AppOrchestrationService"
     },
     {
@@ -106260,11 +106446,19 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.ComponentController",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ComponentOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.ContentController",
       "ToType": "cCoder.ContentManagement.Brokers.Loggings.LoggingBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.ContentController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.ContentController",
@@ -106276,11 +106470,19 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.CultureController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.CultureController",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.CultureOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.LayoutController",
       "ToType": "cCoder.ContentManagement.Brokers.Loggings.LoggingBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.LayoutController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.LayoutController",
@@ -106300,11 +106502,19 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.PageController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.PageController",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.PageOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController",
       "ToType": "cCoder.ContentManagement.Brokers.Loggings.LoggingBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController",
@@ -106340,6 +106550,10 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.ResourceController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.ResourceController",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ResourceOrchestrationService"
     },
     {
@@ -106348,11 +106562,19 @@
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.ScriptController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.ScriptController",
       "ToType": "cCoder.ContentManagement.Services.Orchestrations.ScriptOrchestrationService"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController",
       "ToType": "cCoder.ContentManagement.Brokers.Loggings.LoggingBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController",
@@ -106369,6 +106591,10 @@
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
       "ToType": "cCoder.ContentManagement.Brokers.Loggings.LoggingBroker"
+    },
+    {
+      "FromType": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
+      "ToType": "cCoder.ContentManagement.Brokers.OData.ODataResultBroker"
     },
     {
       "FromType": "cCoder.ContentManagement.Exposures.Controllers.TemplateController",
