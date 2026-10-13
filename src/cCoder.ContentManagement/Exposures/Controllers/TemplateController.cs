@@ -74,7 +74,9 @@ public class TemplateController : ODataController
             IQueryable<Template> query = service.GetAllTemplates()
                 .Where(predicate: template => template.Id == key);
 
-            Template result = query.FirstOrDefault();
+            int? result = query
+                .Select(selector: template => (int?)template.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
