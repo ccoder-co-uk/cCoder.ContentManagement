@@ -63,7 +63,9 @@ public class ContentController(
             IQueryable<Content> query = contentOrchestrationService.GetAllContents()
                 .Where(predicate: content => content.Id == key);
 
-            Content result = query.FirstOrDefault();
+            int? result = query
+                .Select(selector: content => (int?)content.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
