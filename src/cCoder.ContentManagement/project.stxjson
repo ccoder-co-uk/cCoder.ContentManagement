@@ -17566,7 +17566,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ComponentController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 170,
+          "LineNumber": 172,
           "Inputs": [
             {
               "Name": "key",
@@ -17725,6 +17725,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -17944,7 +17951,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ComponentController.Post(cCoder.Data.Models.CMS.Component)",
           "Name": "Post",
-          "LineNumber": 105,
+          "LineNumber": 107,
           "Inputs": [
             {
               "Name": "newComponent",
@@ -18061,7 +18068,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ComponentController.Put(System.Int32,cCoder.Data.Models.CMS.Component)",
           "Name": "Put",
-          "LineNumber": 138,
+          "LineNumber": 140,
           "Inputs": [
             {
               "Name": "key",
@@ -18203,7 +18210,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ContentController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 160,
+          "LineNumber": 162,
           "Inputs": [
             {
               "Name": "key",
@@ -18362,6 +18369,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -18581,7 +18595,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ContentController.Post(cCoder.Data.Models.CMS.Content)",
           "Name": "Post",
-          "LineNumber": 94,
+          "LineNumber": 96,
           "Inputs": [
             {
               "Name": "newContent",
@@ -18698,7 +18712,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ContentController.Put(System.Int32,cCoder.Data.Models.CMS.Content)",
           "Name": "Put",
-          "LineNumber": 127,
+          "LineNumber": 129,
           "Inputs": [
             {
               "Name": "key",
@@ -18840,7 +18854,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CultureController.Delete(System.String)",
           "Name": "Delete",
-          "LineNumber": 170,
+          "LineNumber": 172,
           "Inputs": [
             {
               "Name": "key",
@@ -18999,6 +19013,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -19223,7 +19244,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CultureController.Post(cCoder.Data.Models.CMS.Culture)",
           "Name": "Post",
-          "LineNumber": 105,
+          "LineNumber": 107,
           "Inputs": [
             {
               "Name": "newCulture",
@@ -19340,7 +19361,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.CultureController.Put(System.String,cCoder.Data.Models.CMS.Culture)",
           "Name": "Put",
-          "LineNumber": 138,
+          "LineNumber": 140,
           "Inputs": [
             {
               "Name": "key",
@@ -19482,7 +19503,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.LayoutController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 170,
+          "LineNumber": 172,
           "Inputs": [
             {
               "Name": "key",
@@ -19641,6 +19662,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -19860,7 +19888,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.LayoutController.Post(cCoder.Data.Models.CMS.Layout)",
           "Name": "Post",
-          "LineNumber": 105,
+          "LineNumber": 107,
           "Inputs": [
             {
               "Name": "newLayout",
@@ -19977,7 +20005,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.LayoutController.Put(System.Int32,cCoder.Data.Models.CMS.Layout)",
           "Name": "Put",
-          "LineNumber": 138,
+          "LineNumber": 140,
           "Inputs": [
             {
               "Name": "key",
@@ -20275,7 +20303,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 246,
+          "LineNumber": 248,
           "Inputs": [
             {
               "Name": "key",
@@ -20549,6 +20577,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -20935,7 +20970,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageController.Post(cCoder.Data.Models.CMS.Page)",
           "Name": "Post",
-          "LineNumber": 180,
+          "LineNumber": 182,
           "Inputs": [
             {
               "Name": "newPage",
@@ -21052,7 +21087,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageController.Put(System.Int32,cCoder.Data.Models.CMS.Page)",
           "Name": "Put",
-          "LineNumber": 213,
+          "LineNumber": 215,
           "Inputs": [
             {
               "Name": "key",
@@ -21195,7 +21230,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 170,
+          "LineNumber": 172,
           "Inputs": [
             {
               "Name": "key",
@@ -21354,6 +21389,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -21573,7 +21615,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController.Post(cCoder.Data.Models.CMS.PageInfo)",
           "Name": "Post",
-          "LineNumber": 105,
+          "LineNumber": 107,
           "Inputs": [
             {
               "Name": "newPageInfo",
@@ -21690,7 +21732,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.PageInfoController.Put(System.Int32,cCoder.Data.Models.CMS.PageInfo)",
           "Name": "Put",
-          "LineNumber": 138,
+          "LineNumber": 140,
           "Inputs": [
             {
               "Name": "key",
@@ -23257,7 +23299,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ResourceController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 170,
+          "LineNumber": 172,
           "Inputs": [
             {
               "Name": "key",
@@ -23416,6 +23458,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -23635,7 +23684,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ResourceController.Post(cCoder.Data.Models.CMS.Resource)",
           "Name": "Post",
-          "LineNumber": 105,
+          "LineNumber": 107,
           "Inputs": [
             {
               "Name": "newResource",
@@ -23752,7 +23801,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ResourceController.Put(System.Int32,cCoder.Data.Models.CMS.Resource)",
           "Name": "Put",
-          "LineNumber": 138,
+          "LineNumber": 140,
           "Inputs": [
             {
               "Name": "key",
@@ -23894,7 +23943,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ScriptController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 170,
+          "LineNumber": 172,
           "Inputs": [
             {
               "Name": "key",
@@ -24053,6 +24102,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -24272,7 +24328,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ScriptController.Post(cCoder.Data.Models.CMS.Script)",
           "Name": "Post",
-          "LineNumber": 105,
+          "LineNumber": 107,
           "Inputs": [
             {
               "Name": "newScript",
@@ -24389,7 +24445,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.ScriptController.Put(System.Int32,cCoder.Data.Models.CMS.Script)",
           "Name": "Put",
-          "LineNumber": 138,
+          "LineNumber": 140,
           "Inputs": [
             {
               "Name": "key",
@@ -24531,7 +24587,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController.Delete(System.Guid)",
           "Name": "Delete",
-          "LineNumber": 176,
+          "LineNumber": 178,
           "Inputs": [
             {
               "Name": "key",
@@ -24690,6 +24746,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -24914,7 +24977,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController.Post(cCoder.Data.Models.CMS.Submission)",
           "Name": "Post",
-          "LineNumber": 105,
+          "LineNumber": 107,
           "Inputs": [
             {
               "Name": "newSubmission",
@@ -25031,7 +25094,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.SubmissionController.Put(System.Guid,cCoder.Data.Models.CMS.Submission)",
           "Name": "Put",
-          "LineNumber": 142,
+          "LineNumber": 144,
           "Inputs": [
             {
               "Name": "key",
@@ -25304,7 +25367,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.TemplateController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 170,
+          "LineNumber": 172,
           "Inputs": [
             {
               "Name": "key",
@@ -25463,6 +25526,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -25682,7 +25752,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.TemplateController.Post(cCoder.Data.Models.CMS.Template)",
           "Name": "Post",
-          "LineNumber": 105,
+          "LineNumber": 107,
           "Inputs": [
             {
               "Name": "newTemplate",
@@ -25799,7 +25869,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.TemplateController.Put(System.Int32,cCoder.Data.Models.CMS.Template)",
           "Name": "Put",
-          "LineNumber": 138,
+          "LineNumber": 140,
           "Inputs": [
             {
               "Name": "key",
