@@ -67,12 +67,14 @@ public class TemplateController : ODataController
     {
         try
         {
-            Template result = service.GetAllTemplates()
-                .FirstOrDefault(predicate: template => template.Id == key);
+            IQueryable<Template> query = service.GetAllTemplates()
+                .Where(predicate: template => template.Id == key);
+
+            Template result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
