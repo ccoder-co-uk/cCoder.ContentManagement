@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using cCoder.Data.Models.CMS;
+using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
@@ -105,7 +106,8 @@ public class AppController : ODataController
         try
         {
             IQueryable<App> query = service.GetAllApps()
-                .Where(predicate: app => app.Id == key);
+                .Where(predicate: app => app.Id == key)
+                .Include(navigationPropertyPath: app => app.Layouts);
 
             int? result = query
                 .Select(selector: app => (int?)app.Id)
