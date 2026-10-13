@@ -74,7 +74,9 @@ public class LayoutController : ODataController
             IQueryable<Layout> query = service.GetAllLayouts()
                 .Where(predicate: layout => layout.Id == key);
 
-            Layout result = query.FirstOrDefault();
+            int? result = query
+                .Select(selector: layout => (int?)layout.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
