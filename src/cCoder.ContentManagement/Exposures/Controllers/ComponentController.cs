@@ -74,7 +74,9 @@ public class ComponentController : ODataController
             IQueryable<Component> query = manager.GetAllComponents()
                 .Where(predicate: component => component.Id == key);
 
-            Component result = query.FirstOrDefault();
+            int? result = query
+                .Select(selector: component => (int?)component.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
