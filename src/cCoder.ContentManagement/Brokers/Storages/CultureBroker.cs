@@ -17,7 +17,8 @@ internal sealed class CultureBroker(ICoreContextFactory coreContextFactory) : IC
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return coreDataContext.Cultures;
+        return coreDataContext.Cultures
+            .Include(navigationPropertyPath: culture => culture.Apps);
     }
 
     public IQueryable<Culture> GetAllCulturesIgnoringFilters()
