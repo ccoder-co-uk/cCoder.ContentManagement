@@ -65,12 +65,14 @@ public class PageInfoController : ODataController
     {
         try
         {
-            PageInfo result = service.GetAllPageInfos()
-                .FirstOrDefault(predicate: pageInfo => pageInfo.Id == key);
+            IQueryable<PageInfo> query = service.GetAllPageInfos()
+                .Where(predicate: pageInfo => pageInfo.Id == key);
+
+            PageInfo result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
