@@ -65,12 +65,14 @@ public class SubmissionController : ODataController
     {
         try
         {
-            Submission result = service.GetAllSubmissions()
-                .FirstOrDefault(predicate: submission => submission.Id == key);
+            IQueryable<Submission> query = service.GetAllSubmissions()
+                .Where(predicate: submission => submission.Id == key);
+
+            Submission result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
