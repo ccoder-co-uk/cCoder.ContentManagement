@@ -149,7 +149,9 @@ public class PageController : ODataController
             IQueryable<Page> query = manager.GetAllPages()
                 .Where(predicate: page => page.Id == key);
 
-            Page result = query.FirstOrDefault();
+            int? result = query
+                .Select(selector: page => (int?)page.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
