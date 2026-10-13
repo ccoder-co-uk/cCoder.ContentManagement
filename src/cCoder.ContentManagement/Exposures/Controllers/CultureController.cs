@@ -65,12 +65,14 @@ public class CultureController : ODataController
     {
         try
         {
-            Culture result = service.GetAllCultures()
-                .FirstOrDefault(predicate: culture => culture.Id == key);
+            IQueryable<Culture> query = service.GetAllCultures()
+                .Where(predicate: culture => culture.Id == key);
+
+            Culture result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
