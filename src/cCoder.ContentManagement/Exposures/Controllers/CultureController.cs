@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using cCoder.Data.Models.CMS;
+using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
@@ -72,7 +73,8 @@ public class CultureController : ODataController
         try
         {
             IQueryable<Culture> query = service.GetAllCultures()
-                .Where(predicate: culture => culture.Id == key);
+                .Where(predicate: culture => culture.Id == key)
+                .Include(navigationPropertyPath: culture => culture.Apps);
 
             string result = query
                 .Select(selector: culture => culture.Id)
