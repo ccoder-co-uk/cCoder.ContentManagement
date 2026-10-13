@@ -6211,7 +6211,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.AddAppAsync(cCoder.Data.Models.CMS.App)",
           "Name": "AddAppAsync",
-          "LineNumber": 93,
+          "LineNumber": 94,
           "Inputs": [
             {
               "Name": "newApp",
@@ -6266,7 +6266,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.DeleteAllAppsAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.App\u003E)",
           "Name": "DeleteAllAppsAsync",
-          "LineNumber": 190,
+          "LineNumber": 191,
           "Inputs": [
             {
               "Name": "deletedApp",
@@ -6321,7 +6321,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.DeleteAppAggregateAsync(cCoder.Data.Models.CMS.App)",
           "Name": "DeleteAppAggregateAsync",
-          "LineNumber": 150,
+          "LineNumber": 151,
           "Inputs": [
             {
               "Name": "deletedApp",
@@ -6432,7 +6432,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.DeleteAppAsync(cCoder.Data.Models.CMS.App)",
           "Name": "DeleteAppAsync",
-          "LineNumber": 143,
+          "LineNumber": 144,
           "Inputs": [
             {
               "Name": "deletedApp",
@@ -6495,6 +6495,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
+              "MethodName": "Include",
+              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.Include(System.Linq.IQueryable\u003CTEntity\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTEntity, TProperty\u003E\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
               "TypeName": "cCoder.Data.ICoreContextFactory",
               "MethodName": "CreateCoreContext",
               "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
@@ -6517,7 +6524,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.GetAllAppsIgnoringFilters()",
           "Name": "GetAllAppsIgnoringFilters",
-          "LineNumber": 25,
+          "LineNumber": 26,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.App\u003E",
           "Implements": [
@@ -6554,7 +6561,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.GetAppForDelete(System.Int32)",
           "Name": "GetAppForDelete",
-          "LineNumber": 50,
+          "LineNumber": 51,
           "Inputs": [
             {
               "Name": "appId",
@@ -6617,7 +6624,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.GetAppForRenderAsync(System.Int32)",
           "Name": "GetAppForRenderAsync",
-          "LineNumber": 32,
+          "LineNumber": 33,
           "Inputs": [
             {
               "Name": "appId",
@@ -6680,7 +6687,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.GetCultures()",
           "Name": "GetCultures",
-          "LineNumber": 61,
+          "LineNumber": 62,
           "Inputs": [],
           "ReturnType": "cCoder.Data.Models.CMS.Culture[]",
           "Implements": [
@@ -6717,7 +6724,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.GetCurrentUser()",
           "Name": "GetCurrentUser",
-          "LineNumber": 77,
+          "LineNumber": 78,
           "Inputs": [],
           "ReturnType": "cCoder.Data.Models.Security.User",
           "Implements": [
@@ -6747,7 +6754,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.GetCurrentUserId()",
           "Name": "GetCurrentUserId",
-          "LineNumber": 85,
+          "LineNumber": 86,
           "Inputs": [],
           "ReturnType": "System.String",
           "Implements": [
@@ -6777,7 +6784,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.GetPrivileges()",
           "Name": "GetPrivileges",
-          "LineNumber": 69,
+          "LineNumber": 70,
           "Inputs": [],
           "ReturnType": "cCoder.Data.Models.Security.Privilege[]",
           "Implements": [
@@ -6814,7 +6821,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.PersistNewAppRolesAsync(cCoder.Data.Models.CMS.App)",
           "Name": "PersistNewAppRolesAsync",
-          "LineNumber": 112,
+          "LineNumber": 113,
           "Inputs": [
             {
               "Name": "app",
@@ -6897,7 +6904,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.AppBroker.UpdateAppAsync(cCoder.Data.Models.CMS.App)",
           "Name": "UpdateAppAsync",
-          "LineNumber": 101,
+          "LineNumber": 102,
           "Inputs": [
             {
               "Name": "updatedApp",
@@ -8342,7 +8349,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CultureBroker.AddCultureAsync(cCoder.Data.Models.CMS.Culture)",
           "Name": "AddCultureAsync",
-          "LineNumber": 42,
+          "LineNumber": 43,
           "Inputs": [
             {
               "Name": "newCulture",
@@ -8397,7 +8404,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CultureBroker.DeleteAllCulturesAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Culture\u003E)",
           "Name": "DeleteAllCulturesAsync",
-          "LineNumber": 68,
+          "LineNumber": 69,
           "Inputs": [
             {
               "Name": "deletedCulture",
@@ -8452,7 +8459,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CultureBroker.DeleteCultureAsync(cCoder.Data.Models.CMS.Culture)",
           "Name": "DeleteCultureAsync",
-          "LineNumber": 61,
+          "LineNumber": 62,
           "Inputs": [
             {
               "Name": "deletedCulture",
@@ -8515,6 +8522,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
+              "MethodName": "Include",
+              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.Include(System.Linq.IQueryable\u003CTEntity\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTEntity, TProperty\u003E\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
               "TypeName": "cCoder.Data.ICoreContextFactory",
               "MethodName": "CreateCoreContext",
               "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
@@ -8537,7 +8551,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CultureBroker.GetAllCulturesIgnoringFilters()",
           "Name": "GetAllCulturesIgnoringFilters",
-          "LineNumber": 23,
+          "LineNumber": 24,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Culture\u003E",
           "Implements": [
@@ -8574,7 +8588,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CultureBroker.GetOwningAppId(System.String)",
           "Name": "GetOwningAppId",
-          "LineNumber": 30,
+          "LineNumber": 31,
           "Inputs": [
             {
               "Name": "cultureId",
@@ -8637,7 +8651,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.CultureBroker.UpdateCultureAsync(cCoder.Data.Models.CMS.Culture)",
           "Name": "UpdateCultureAsync",
-          "LineNumber": 50,
+          "LineNumber": 51,
           "Inputs": [
             {
               "Name": "updatedCulture",
@@ -9025,7 +9039,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.AddPageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "AddPageAsync",
-          "LineNumber": 41,
+          "LineNumber": 42,
           "Inputs": [
             {
               "Name": "newPage",
@@ -9080,7 +9094,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.DeleteAllPagesAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Page\u003E)",
           "Name": "DeleteAllPagesAsync",
-          "LineNumber": 67,
+          "LineNumber": 68,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -9135,7 +9149,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.DeletePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "DeletePageAsync",
-          "LineNumber": 60,
+          "LineNumber": 61,
           "Inputs": [
             {
               "Name": "deletedPage",
@@ -9198,6 +9212,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
+              "MethodName": "Include",
+              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.Include(System.Linq.IQueryable\u003CTEntity\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTEntity, TProperty\u003E\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
               "TypeName": "cCoder.Data.ICoreContextFactory",
               "MethodName": "CreateCoreContext",
               "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
@@ -9220,7 +9241,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.GetAllPagesIgnoringFilters()",
           "Name": "GetAllPagesIgnoringFilters",
-          "LineNumber": 23,
+          "LineNumber": 24,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Page\u003E",
           "Implements": [
@@ -9257,7 +9278,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.LayoutExistsForApp(System.Int32,System.String)",
           "Name": "LayoutExistsForApp",
-          "LineNumber": 30,
+          "LineNumber": 31,
           "Inputs": [
             {
               "Name": "appId",
@@ -9310,7 +9331,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.PageBroker.UpdatePageAsync(cCoder.Data.Models.CMS.Page)",
           "Name": "UpdatePageAsync",
-          "LineNumber": 49,
+          "LineNumber": 50,
           "Inputs": [
             {
               "Name": "updatedPage",
