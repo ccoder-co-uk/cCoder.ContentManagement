@@ -74,7 +74,9 @@ public class ResourceController : ODataController
             IQueryable<Resource> query = service.GetAllResources()
                 .Where(predicate: resource => resource.Id == key);
 
-            Resource result = query.FirstOrDefault();
+            int? result = query
+                .Select(selector: resource => (int?)resource.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
