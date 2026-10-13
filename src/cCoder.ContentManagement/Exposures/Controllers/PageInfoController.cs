@@ -74,7 +74,9 @@ public class PageInfoController : ODataController
             IQueryable<PageInfo> query = service.GetAllPageInfos()
                 .Where(predicate: pageInfo => pageInfo.Id == key);
 
-            PageInfo result = query.FirstOrDefault();
+            int? result = query
+                .Select(selector: pageInfo => (int?)pageInfo.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
