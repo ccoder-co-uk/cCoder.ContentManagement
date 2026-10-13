@@ -58,12 +58,14 @@ public class ContentController(
     {
         try
         {
-            Content result = contentOrchestrationService.GetAllContents()
-                .FirstOrDefault(predicate: content => content.Id == key);
+            IQueryable<Content> query = contentOrchestrationService.GetAllContents()
+                .Where(predicate: content => content.Id == key);
+
+            Content result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
