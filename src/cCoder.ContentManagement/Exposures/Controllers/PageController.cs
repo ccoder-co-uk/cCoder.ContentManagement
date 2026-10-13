@@ -140,12 +140,14 @@ public class PageController : ODataController
     {
         try
         {
-            Page result = manager.GetAllPages()
-                .FirstOrDefault(predicate: page => page.Id == key);
+            IQueryable<Page> query = manager.GetAllPages()
+                .Where(predicate: page => page.Id == key);
+
+            Page result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
