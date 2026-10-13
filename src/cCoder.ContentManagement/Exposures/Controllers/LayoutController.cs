@@ -65,12 +65,14 @@ public class LayoutController : ODataController
     {
         try
         {
-            Layout result = service.GetAllLayouts()
-                .FirstOrDefault(predicate: layout => layout.Id == key);
+            IQueryable<Layout> query = service.GetAllLayouts()
+                .Where(predicate: layout => layout.Id == key);
+
+            Layout result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
