@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using cCoder.Data.Models.CMS;
-using Microsoft.EntityFrameworkCore;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
@@ -148,8 +147,7 @@ public class PageController : ODataController
         try
         {
             IQueryable<Page> query = manager.GetAllPages()
-                .Where(predicate: page => page.Id == key)
-                .Include(navigationPropertyPath: page => page.Contents);
+                .Where(predicate: page => page.Id == key);
 
             int? result = query
                 .Select(selector: page => (int?)page.Id)
