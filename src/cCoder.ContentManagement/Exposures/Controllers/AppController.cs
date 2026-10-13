@@ -98,12 +98,14 @@ public class AppController : ODataController
     {
         try
         {
-            App result = service.GetAllApps()
-                .FirstOrDefault(predicate: app => app.Id == key);
+            IQueryable<App> query = service.GetAllApps()
+                .Where(predicate: app => app.Id == key);
+
+            App result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
