@@ -65,12 +65,14 @@ public class ComponentController : ODataController
     {
         try
         {
-            Component result = manager.GetAllComponents()
-                .FirstOrDefault(predicate: component => component.Id == key);
+            IQueryable<Component> query = manager.GetAllComponents()
+                .Where(predicate: component => component.Id == key);
+
+            Component result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
