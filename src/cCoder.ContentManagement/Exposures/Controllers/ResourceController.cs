@@ -65,12 +65,14 @@ public class ResourceController : ODataController
     {
         try
         {
-            Resource result = service.GetAllResources()
-                .FirstOrDefault(predicate: resource => resource.Id == key);
+            IQueryable<Resource> query = service.GetAllResources()
+                .Where(predicate: resource => resource.Id == key);
+
+            Resource result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
