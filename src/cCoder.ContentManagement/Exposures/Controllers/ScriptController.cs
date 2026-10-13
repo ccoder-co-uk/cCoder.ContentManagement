@@ -74,7 +74,9 @@ public class ScriptController : ODataController
             IQueryable<Script> query = service.GetAllScripts()
                 .Where(predicate: script => script.Id == key);
 
-            Script result = query.FirstOrDefault();
+            int? result = query
+                .Select(selector: script => (int?)script.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
