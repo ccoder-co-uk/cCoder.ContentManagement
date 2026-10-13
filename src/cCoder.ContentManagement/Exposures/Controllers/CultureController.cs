@@ -74,7 +74,9 @@ public class CultureController : ODataController
             IQueryable<Culture> query = service.GetAllCultures()
                 .Where(predicate: culture => culture.Id == key);
 
-            Culture result = query.FirstOrDefault();
+            string result = query
+                .Select(selector: culture => culture.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
