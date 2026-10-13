@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Loggings;
+using cCoder.ContentManagement.Brokers.OData;
 using cCoder.ContentManagement.Models.Exceptions;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Models;
@@ -23,11 +24,16 @@ public class PageController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
     private readonly IPageOrchestrationService manager;
+    private readonly IODataResultBroker oDataResultBroker;
 
-    public PageController(IPageOrchestrationService manager, ILoggingBroker loggingBroker)
+    public PageController(
+        IPageOrchestrationService manager,
+        ILoggingBroker loggingBroker,
+        IODataResultBroker oDataResultBroker)
     {
         this.manager = manager;
         this.loggingBroker = loggingBroker;
+        this.oDataResultBroker = oDataResultBroker;
     }
 
     [HttpGet]
@@ -147,7 +153,7 @@ public class PageController : ODataController
 
             return result is null
                 ? NotFound()
-                : Ok(value: query);
+                : Ok(value: oDataResultBroker.CreateSingleResult(queryable: query));
         }
         catch (ContentManagementValidationException exception)
         {
