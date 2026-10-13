@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Loggings;
+using cCoder.ContentManagement.Brokers.OData;
 using cCoder.ContentManagement.Models.Exceptions;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -22,11 +23,16 @@ public class ComponentController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
     private readonly IComponentOrchestrationService manager;
+    private readonly IODataResultBroker oDataResultBroker;
 
-    public ComponentController(IComponentOrchestrationService manager, ILoggingBroker loggingBroker)
+    public ComponentController(
+        IComponentOrchestrationService manager,
+        ILoggingBroker loggingBroker,
+        IODataResultBroker oDataResultBroker)
     {
         this.manager = manager;
         this.loggingBroker = loggingBroker;
+        this.oDataResultBroker = oDataResultBroker;
     }
 
     [HttpGet]
@@ -72,7 +78,7 @@ public class ComponentController : ODataController
 
             return result is null
                 ? NotFound()
-                : Ok(value: query);
+                : Ok(value: oDataResultBroker.CreateSingleResult(queryable: query));
         }
         catch (ContentManagementValidationException exception)
         {
