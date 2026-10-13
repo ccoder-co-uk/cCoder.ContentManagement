@@ -74,7 +74,9 @@ public class SubmissionController : ODataController
             IQueryable<Submission> query = service.GetAllSubmissions()
                 .Where(predicate: submission => submission.Id == key);
 
-            Submission result = query.FirstOrDefault();
+            Guid? result = query
+                .Select(selector: submission => (Guid?)submission.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
