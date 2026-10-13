@@ -15461,7 +15461,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.AppController.Delete(System.Int32)",
           "Name": "Delete",
-          "LineNumber": 211,
+          "LineNumber": 213,
           "Inputs": [
             {
               "Name": "key",
@@ -15619,6 +15619,13 @@
               "TypeName": "System.Linq.Queryable",
               "MethodName": "FirstOrDefault",
               "MethodId": "System.Linq.Queryable.FirstOrDefault(System.Linq.IQueryable\u003CTSource\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Linq.Queryable",
+              "MethodName": "Select",
+              "MethodId": "System.Linq.Queryable.Select(System.Linq.IQueryable\u003CTSource\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTSource, TResult\u003E\u003E)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },
@@ -15986,7 +15993,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.AppController.Post(cCoder.Data.Models.CMS.App)",
           "Name": "Post",
-          "LineNumber": 138,
+          "LineNumber": 140,
           "Inputs": [
             {
               "Name": "newApp",
@@ -16103,7 +16110,7 @@
         {
           "Id": "cCoder.ContentManagement.Exposures.Controllers.AppController.Put(System.Int32,cCoder.Data.Models.CMS.App)",
           "Name": "Put",
-          "LineNumber": 175,
+          "LineNumber": 177,
           "Inputs": [
             {
               "Name": "key",

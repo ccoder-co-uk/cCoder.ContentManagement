@@ -107,7 +107,9 @@ public class AppController : ODataController
             IQueryable<App> query = service.GetAllApps()
                 .Where(predicate: app => app.Id == key);
 
-            App result = query.FirstOrDefault();
+            int? result = query
+                .Select(selector: app => (int?)app.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
