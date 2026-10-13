@@ -65,12 +65,14 @@ public class ScriptController : ODataController
     {
         try
         {
-            Script result = service.GetAllScripts()
-                .FirstOrDefault(predicate: script => script.Id == key);
+            IQueryable<Script> query = service.GetAllScripts()
+                .Where(predicate: script => script.Id == key);
+
+            Script result = query.FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: query);
         }
         catch (ContentManagementValidationException exception)
         {
