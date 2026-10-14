@@ -17,7 +17,8 @@ internal sealed class ContentBroker(ICoreContextFactory coreContextFactory) : IC
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return coreDataContext.Contents;
+        return coreDataContext.Contents
+            .Include(navigationPropertyPath: content => content.Page);
     }
 
     public IQueryable<Content> GetAllContentsIgnoringFilters()

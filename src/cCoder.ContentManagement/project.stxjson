@@ -7976,7 +7976,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ContentBroker.AddContentAsync(cCoder.Data.Models.CMS.Content)",
           "Name": "AddContentAsync",
-          "LineNumber": 41,
+          "LineNumber": 42,
           "Inputs": [
             {
               "Name": "newContent",
@@ -8031,7 +8031,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ContentBroker.DeleteAllContentsAsync(System.Collections.Generic.IEnumerable\u003CcCoder.Data.Models.CMS.Content\u003E)",
           "Name": "DeleteAllContentsAsync",
-          "LineNumber": 67,
+          "LineNumber": 68,
           "Inputs": [
             {
               "Name": "deletedContent",
@@ -8086,7 +8086,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ContentBroker.DeleteContentAsync(cCoder.Data.Models.CMS.Content)",
           "Name": "DeleteContentAsync",
-          "LineNumber": 60,
+          "LineNumber": 61,
           "Inputs": [
             {
               "Name": "deletedContent",
@@ -8149,6 +8149,13 @@
           ],
           "Calls": [
             {
+              "TypeName": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions",
+              "MethodName": "Include",
+              "MethodId": "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.Include(System.Linq.IQueryable\u003CTEntity\u003E,System.Linq.Expressions.Expression\u003CSystem.Func\u003CTEntity, TProperty\u003E\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
               "TypeName": "cCoder.Data.ICoreContextFactory",
               "MethodName": "CreateCoreContext",
               "MethodId": "cCoder.Data.ICoreContextFactory.CreateCoreContext()",
@@ -8171,7 +8178,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ContentBroker.GetAllContentsIgnoringFilters()",
           "Name": "GetAllContentsIgnoringFilters",
-          "LineNumber": 23,
+          "LineNumber": 24,
           "Inputs": [],
           "ReturnType": "System.Linq.IQueryable\u003CcCoder.Data.Models.CMS.Content\u003E",
           "Implements": [
@@ -8208,7 +8215,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ContentBroker.GetAppIdByPageId(System.Int32)",
           "Name": "GetAppIdByPageId",
-          "LineNumber": 30,
+          "LineNumber": 31,
           "Inputs": [
             {
               "Name": "pageId",
@@ -8271,7 +8278,7 @@
         {
           "Id": "cCoder.ContentManagement.Brokers.Storages.ContentBroker.UpdateContentAsync(cCoder.Data.Models.CMS.Content)",
           "Name": "UpdateContentAsync",
-          "LineNumber": 49,
+          "LineNumber": 50,
           "Inputs": [
             {
               "Name": "updatedContent",

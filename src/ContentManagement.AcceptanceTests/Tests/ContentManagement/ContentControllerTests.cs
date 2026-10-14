@@ -5,11 +5,14 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Linq;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using cCoder.Data;
 using cCoder.Data.Models.CMS;
+using cCoder.Data.Models.Security;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Web.AcceptanceTests.Infrastructure;
 using Xunit;
@@ -32,6 +35,7 @@ public sealed partial class ContentControllerTests(WebAcceptanceFixture fixture)
         App app;
         Page page;
         Content contentEntity;
+        Role role;
 
         using (IServiceScope scope = fixture.Factory.Services.CreateScope())
         {
@@ -47,6 +51,21 @@ public sealed partial class ContentControllerTests(WebAcceptanceFixture fixture)
                 DefaultCultureId = string.Empty,
                 TenantId = Unique(prefix: "tenant"),
                 ConfigJson = "{}",
+            });
+
+            role = await core.AddRoleAsync(role: new Role
+            {
+                Id = Guid.NewGuid(),
+                AppId = app.Id,
+                Name = Unique(prefix: "ContentExpansionRole"),
+                Description = "Content expansion role",
+                Privs = "app_admin",
+            });
+
+            _ = await core.AddUserRoleAsync(userRole: new UserRole
+            {
+                RoleId = role.Id,
+                UserId = "Guest",
             });
 
             page = await core.AddPageAsync(page: new Page
@@ -92,6 +111,19 @@ requestUri: $"{BaseUrl}({contentEntity.Id})?$expand=Page");
 
             core.Contents.Remove(entity: contentEntity);
             core.Pages.Remove(entity: page);
+
+            UserRole[] userRoles = core.UserRoles
+                .IgnoreQueryFilters()
+                .Where(predicate: userRole => userRole.RoleId == role.Id)
+                .ToArray();
+
+            core.UserRoles.RemoveRange(entities: userRoles);
+
+            Role storedRole = core.Roles
+                .IgnoreQueryFilters()
+                .First(predicate: roleEntity => roleEntity.Id == role.Id);
+
+            core.Roles.Remove(entity: storedRole);
             core.Apps.Remove(entity: app);
             _ = await core.SaveChangesAsync();
         }
