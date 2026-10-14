@@ -12,7 +12,7 @@
   <Import Project="..\..\build\cCoder.CodeAnalysis.TaskHost.props" />
   <ItemGroup>
     <PackageReference Include="cCoder.CodeAnalysis" Version="2026.10.8.1211" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
-    <PackageReference Include="cCoder.Data" Version="2026.10.8.1248" Condition="'$(UseLocalData)' != 'true'" />
+    <PackageReference Include="cCoder.Data" Version="2026.10.14.1440" Condition="'$(UseLocalData)' != 'true'" />
     <PackageReference Include="cCoder.Eventing" Version="2026.10.8.1222" />
     <PackageReference Include="FluentAssertions" Version="8.11.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
