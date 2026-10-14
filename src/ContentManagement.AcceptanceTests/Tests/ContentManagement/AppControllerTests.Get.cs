@@ -59,7 +59,9 @@ public sealed partial class AppControllerTests
     public async Task Get_WithLayoutsExpansion_ReturnsLayouts()
     {
         // Given
-        SeededApp seededApp = await SeedDatabase(privileges: "app_read");
+        SeededApp seededApp = await SeedDatabase(
+            privileges: ["app_read", "app_admin", "layout_read"]);
+
         Layout layout;
 
         using (IServiceScope scope = fixture.Factory.Services.CreateScope())
