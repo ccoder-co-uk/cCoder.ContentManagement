@@ -2,7 +2,10 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
@@ -39,5 +42,41 @@ public sealed partial class SubmissionControllerTests
 
         actualSubmissions.Should()
             .NotBeNull();
+    }
+
+    [Fact]
+    public async Task Get_WithAppExpansion_ReturnsApp()
+    {
+        // Given
+        Submission createdSubmission = await CreateSubmissionAsync(
+payload: new
+{
+    appId = 1,
+    createdBy = "Guest",
+    lastUpdatedBy = "Guest",
+    createdOn = DateTimeOffset.UtcNow,
+    lastUpdatedOn = DateTimeOffset.UtcNow,
+    sourceComponent = "Expansion",
+    state = "New",
+    dataJson = "{\"name\":\"Expansion\"}",
+});
+
+        // When
+        using var response = await Client.GetAsync(
+requestUri: $"{BaseUrl}({createdSubmission.Id})?$expand=App");
+
+        string content = await response.Content.ReadAsStringAsync();
+
+        // Then
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
+        JsonObject actualSubmission = JsonNode.Parse(json: content)!.AsObject();
+
+        actualSubmission["App"]!.AsObject()["Id"]!.GetValue<int>()
+            .Should()
+            .Be(expected: 1);
+
+        await DeleteSubmissionAsync(id: createdSubmission.Id);
     }
 }

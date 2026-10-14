@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Loggings;
+using cCoder.ContentManagement.Brokers.OData;
 using cCoder.ContentManagement.Models.Exceptions;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -22,11 +23,16 @@ public class CultureController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
     private readonly ICultureOrchestrationService service;
+    private readonly IODataResultBroker oDataResultBroker;
 
-    public CultureController(ICultureOrchestrationService service, ILoggingBroker loggingBroker)
+    public CultureController(
+        ICultureOrchestrationService service,
+        ILoggingBroker loggingBroker,
+        IODataResultBroker oDataResultBroker)
     {
         this.service = service;
         this.loggingBroker = loggingBroker;
+        this.oDataResultBroker = oDataResultBroker;
     }
 
     [HttpGet]
@@ -65,12 +71,16 @@ public class CultureController : ODataController
     {
         try
         {
-            Culture result = service.GetAllCultures()
-                .FirstOrDefault(predicate: culture => culture.Id == key);
+            IQueryable<Culture> query = service.GetAllCultures()
+                .Where(predicate: culture => culture.Id == key);
+
+            string result = query
+                .Select(selector: culture => culture.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: oDataResultBroker.CreateSingleResult(queryable: query));
         }
         catch (ContentManagementValidationException exception)
         {

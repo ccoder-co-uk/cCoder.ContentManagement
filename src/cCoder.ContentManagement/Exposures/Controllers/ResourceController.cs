@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Loggings;
+using cCoder.ContentManagement.Brokers.OData;
 using cCoder.ContentManagement.Models.Exceptions;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -22,11 +23,16 @@ public class ResourceController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
     private readonly IResourceOrchestrationService service;
+    private readonly IODataResultBroker oDataResultBroker;
 
-    public ResourceController(IResourceOrchestrationService service, ILoggingBroker loggingBroker)
+    public ResourceController(
+        IResourceOrchestrationService service,
+        ILoggingBroker loggingBroker,
+        IODataResultBroker oDataResultBroker)
     {
         this.service = service;
         this.loggingBroker = loggingBroker;
+        this.oDataResultBroker = oDataResultBroker;
     }
 
     [HttpGet]
@@ -65,12 +71,16 @@ public class ResourceController : ODataController
     {
         try
         {
-            Resource result = service.GetAllResources()
-                .FirstOrDefault(predicate: resource => resource.Id == key);
+            IQueryable<Resource> query = service.GetAllResources()
+                .Where(predicate: resource => resource.Id == key);
+
+            int? result = query
+                .Select(selector: resource => (int?)resource.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: oDataResultBroker.CreateSingleResult(queryable: query));
         }
         catch (ContentManagementValidationException exception)
         {

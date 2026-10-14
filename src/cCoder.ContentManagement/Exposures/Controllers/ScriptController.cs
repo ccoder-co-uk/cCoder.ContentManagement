@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Loggings;
+using cCoder.ContentManagement.Brokers.OData;
 using cCoder.ContentManagement.Models.Exceptions;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -22,11 +23,16 @@ public class ScriptController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
     private readonly IScriptOrchestrationService service;
+    private readonly IODataResultBroker oDataResultBroker;
 
-    public ScriptController(IScriptOrchestrationService service, ILoggingBroker loggingBroker)
+    public ScriptController(
+        IScriptOrchestrationService service,
+        ILoggingBroker loggingBroker,
+        IODataResultBroker oDataResultBroker)
     {
         this.service = service;
         this.loggingBroker = loggingBroker;
+        this.oDataResultBroker = oDataResultBroker;
     }
 
     [HttpGet]
@@ -65,12 +71,16 @@ public class ScriptController : ODataController
     {
         try
         {
-            Script result = service.GetAllScripts()
-                .FirstOrDefault(predicate: script => script.Id == key);
+            IQueryable<Script> query = service.GetAllScripts()
+                .Where(predicate: script => script.Id == key);
+
+            int? result = query
+                .Select(selector: script => (int?)script.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: oDataResultBroker.CreateSingleResult(queryable: query));
         }
         catch (ContentManagementValidationException exception)
         {

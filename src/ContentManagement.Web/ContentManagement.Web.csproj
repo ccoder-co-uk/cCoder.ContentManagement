@@ -8,6 +8,7 @@
     <UseLocalData Condition="'$(UseLocalData)' == ''">false</UseLocalData>
     <UseLocalData Condition="'$(UseLocalData)' == 'true' and !Exists('$(LocalDataProject)')">false</UseLocalData>
   </PropertyGroup>
+  <Import Project="..\..\build\cCoder.CodeAnalysis.TaskHost.props" />
   <ItemGroup>
     <PackageReference Include="cCoder.CodeAnalysis" Version="2026.10.8.1211" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
     <PackageReference Include="cCoder.CodeAnalysis.Contracts" Version="2026.10.8.1211" />
@@ -22,7 +23,7 @@
     <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.10.8.1222" />
     <PackageReference Include="cCoder.Eventing.Http" Version="2026.10.8.1222" />
     <PackageReference Include="cCoder.Security" Version="2026.10.8.1235" />
-    <PackageReference Include="cCoder.Security.Data" Version="2026.10.8.1235" />
+    <PackageReference Include="cCoder.Security.Data" Version="2026.10.14.1427" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cCoder.ContentManagement\cCoder.ContentManagement.csproj" AdditionalProperties="UseLocalData=$(UseLocalData);LocalDataProject=$(LocalDataProject)" />

@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Loggings;
+using cCoder.ContentManagement.Brokers.OData;
 using cCoder.ContentManagement.Models.Exceptions;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -22,11 +23,16 @@ public class PageInfoController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
     private readonly IPageInfoOrchestrationService service;
+    private readonly IODataResultBroker oDataResultBroker;
 
-    public PageInfoController(IPageInfoOrchestrationService service, ILoggingBroker loggingBroker)
+    public PageInfoController(
+        IPageInfoOrchestrationService service,
+        ILoggingBroker loggingBroker,
+        IODataResultBroker oDataResultBroker)
     {
         this.service = service;
         this.loggingBroker = loggingBroker;
+        this.oDataResultBroker = oDataResultBroker;
     }
 
     [HttpGet]
@@ -65,12 +71,16 @@ public class PageInfoController : ODataController
     {
         try
         {
-            PageInfo result = service.GetAllPageInfos()
-                .FirstOrDefault(predicate: pageInfo => pageInfo.Id == key);
+            IQueryable<PageInfo> query = service.GetAllPageInfos()
+                .Where(predicate: pageInfo => pageInfo.Id == key);
+
+            int? result = query
+                .Select(selector: pageInfo => (int?)pageInfo.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: oDataResultBroker.CreateSingleResult(queryable: query));
         }
         catch (ContentManagementValidationException exception)
         {

@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using cCoder.Data.Models.CMS;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,6 +64,44 @@ public sealed partial class PageControllerTests
 
         actualPage.Name.Should()
             .Be(expected: title);
+
+        await DeletePageAsync(id: expectedPage.Id);
+        await Teardown(seededContext: seededContext);
+    }
+
+    [Fact]
+    public async Task GetById_WithContentsExpansion_ReturnsPageContents()
+    {
+        // Given
+        SeededPageContext seededContext = await SeedDatabase(
+            includeAppAdmin: true,
+            privileges: ["page_create", "page_delete"]);
+
+        Page expectedPage = await CreatePageAsync(
+            payload: CreateValidPagePayload(
+                seededContext: seededContext,
+                name: Unique(prefix: "Page")));
+
+        // When
+        using HttpResponseMessage response = await Client.GetAsync(
+            requestUri: $"{BaseUrl}({expectedPage.Id})?$expand=Contents");
+
+        string content = await response.Content.ReadAsStringAsync();
+
+        // Then
+        response.StatusCode.Should()
+            .Be(expected: System.Net.HttpStatusCode.OK, because: content);
+
+        JsonObject actualPage = JsonNode.Parse(json: content)!.AsObject();
+        JsonArray actualContents = actualPage["Contents"]!.AsArray();
+
+        actualContents
+            .Should()
+            .ContainSingle();
+
+        actualContents[0]!["Name"]!.GetValue<string>()
+            .Should()
+            .Be(expected: "body");
 
         await DeletePageAsync(id: expectedPage.Id);
         await Teardown(seededContext: seededContext);

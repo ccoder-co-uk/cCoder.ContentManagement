@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Loggings;
+using cCoder.ContentManagement.Brokers.OData;
 using cCoder.ContentManagement.Models.Exceptions;
 using cCoder.ContentManagement.Services.Orchestrations;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +21,8 @@ namespace cCoder.ContentManagement.Exposures.Controllers;
 
 public class ContentController(
     IContentOrchestrationService contentOrchestrationService,
-    ILoggingBroker loggingBroker) : ODataController
+    ILoggingBroker loggingBroker,
+    IODataResultBroker oDataResultBroker) : ODataController
 {
     [HttpGet]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
@@ -58,12 +60,16 @@ public class ContentController(
     {
         try
         {
-            Content result = contentOrchestrationService.GetAllContents()
-                .FirstOrDefault(predicate: content => content.Id == key);
+            IQueryable<Content> query = contentOrchestrationService.GetAllContents()
+                .Where(predicate: content => content.Id == key);
+
+            int? result = query
+                .Select(selector: content => (int?)content.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: oDataResultBroker.CreateSingleResult(queryable: query));
         }
         catch (ContentManagementValidationException exception)
         {
