@@ -3,6 +3,8 @@
 // ---------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Net;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
@@ -58,6 +60,32 @@ public sealed partial class PageInfoControllerTests
 
         actualPageInfo!.Id.Should()
             .Be(expected: seededContext.PageInfoId);
+
+        await DeletePageInfoAsync(id: seededContext.PageInfoId);
+        await Teardown(seededContext: seededContext);
+    }
+
+    [Fact]
+    public async Task Get_WithPageExpansion_ReturnsPage()
+    {
+        // Given
+        SeededPageInfoContext seededContext = await SeedDatabase(includePageInfo: true);
+
+        // When
+        using var response = await Client.GetAsync(
+requestUri: $"{BaseUrl}({seededContext.PageInfoId})?$expand=Page");
+
+        string content = await response.Content.ReadAsStringAsync();
+
+        // Then
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
+        JsonObject actualPageInfo = JsonNode.Parse(json: content)!.AsObject();
+
+        actualPageInfo["Page"]!.AsObject()["Id"]!.GetValue<int>()
+            .Should()
+            .Be(expected: seededContext.PageId);
 
         await DeletePageInfoAsync(id: seededContext.PageInfoId);
         await Teardown(seededContext: seededContext);

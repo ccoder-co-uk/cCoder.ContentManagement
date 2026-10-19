@@ -17,7 +17,8 @@ internal sealed class PageBroker(ICoreContextFactory coreContextFactory) : IPage
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return coreDataContext.Pages;
+        return coreDataContext.Pages
+            .Include(navigationPropertyPath: page => page.Contents);
     }
 
     public IQueryable<Page> GetAllPagesIgnoringFilters()

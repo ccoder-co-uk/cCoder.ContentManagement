@@ -1,0 +1,16 @@
+// ---------------------------------------------------------------
+// Copyright (c) Paul.Ward@ccoder.co.uk
+// ---------------------------------------------------------------
+
+using System.Linq;
+
+using cCoder.CodeAnalysis.Exposures;
+using Microsoft.AspNetCore.OData.Results;
+
+namespace cCoder.ContentManagement.Brokers.OData;
+
+internal sealed class ODataResultBroker : IODataResultBroker, IUtilityBroker
+{
+    public SingleResult<T> CreateSingleResult<T>(IQueryable<T> queryable) =>
+        SingleResult.Create(queryable: queryable);
+}

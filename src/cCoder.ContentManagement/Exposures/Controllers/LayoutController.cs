@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using cCoder.ContentManagement.Brokers.Loggings;
+using cCoder.ContentManagement.Brokers.OData;
 using cCoder.ContentManagement.Models.Exceptions;
 using BadRequestResult = cCoder.ContentManagement.Api.OData.BadRequestResult;
 using cCoder.ContentManagement.Services.Orchestrations;
@@ -22,11 +23,16 @@ public class LayoutController : ODataController
 {
     private readonly ILoggingBroker loggingBroker;
     private readonly ILayoutOrchestrationService service;
+    private readonly IODataResultBroker oDataResultBroker;
 
-    public LayoutController(ILayoutOrchestrationService service, ILoggingBroker loggingBroker)
+    public LayoutController(
+        ILayoutOrchestrationService service,
+        ILoggingBroker loggingBroker,
+        IODataResultBroker oDataResultBroker)
     {
         this.service = service;
         this.loggingBroker = loggingBroker;
+        this.oDataResultBroker = oDataResultBroker;
     }
 
     [HttpGet]
@@ -65,12 +71,16 @@ public class LayoutController : ODataController
     {
         try
         {
-            Layout result = service.GetAllLayouts()
-                .FirstOrDefault(predicate: layout => layout.Id == key);
+            IQueryable<Layout> query = service.GetAllLayouts()
+                .Where(predicate: layout => layout.Id == key);
+
+            int? result = query
+                .Select(selector: layout => (int?)layout.Id)
+                .FirstOrDefault();
 
             return result is null
                 ? NotFound()
-                : Ok(value: result);
+                : Ok(value: oDataResultBroker.CreateSingleResult(queryable: query));
         }
         catch (ContentManagementValidationException exception)
         {

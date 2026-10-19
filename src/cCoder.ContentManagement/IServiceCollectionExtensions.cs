@@ -207,6 +207,7 @@ public static partial class IServiceCollectionExtensions
         services.AddMemoryCache();
         services.AddSingleton<ICacheBroker, CacheBroker>();
         services.AddTransient<IMetadataTypeCacheBroker, MetadataTypeCacheBroker>();
+        services.AddTransient<IODataResultBroker, ODataResultBroker>();
         services.AddTransient<IContentRenderBroker, ContentRenderBroker>();
         services.AddTransient<Brokers.Loggings.ILoggingBroker, Brokers.Loggings.LoggingBroker>();
         services.AddHttpContextAccessor();

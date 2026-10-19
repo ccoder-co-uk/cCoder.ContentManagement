@@ -2,6 +2,8 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System.Net;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using cCoder.Data.Models.CMS;
 using FluentAssertions;
@@ -57,5 +59,40 @@ payload: new
 
         actualCount.Should()
             .BeGreaterThanOrEqualTo(expected: 0);
+    }
+
+    [Fact]
+    public async Task Get_WithAppExpansion_ReturnsApp()
+    {
+        // Given
+        Component createdComponent = await CreateComponentAsync(
+payload: new
+{
+    appId = 1,
+    name = Unique(prefix: "Component"),
+    description = "Expansion component",
+    resourceKey = "Default",
+    content = "<div>Expansion component</div>",
+    script = "console.log('component');",
+    key = "Expansion",
+});
+
+        // When
+        using var response = await Client.GetAsync(
+requestUri: $"{BaseUrl}({createdComponent.Id})?$expand=App");
+
+        string content = await response.Content.ReadAsStringAsync();
+
+        // Then
+        response.StatusCode.Should()
+            .Be(expected: HttpStatusCode.OK, because: content);
+
+        JsonObject actualComponent = JsonNode.Parse(json: content)!.AsObject();
+
+        actualComponent["App"]!.AsObject()["Id"]!.GetValue<int>()
+            .Should()
+            .Be(expected: 1);
+
+        await DeleteComponentAsync(id: createdComponent.Id);
     }
 }

@@ -271,9 +271,78 @@
       "Methods": []
     },
     {
+      "Name": "ContentManagement.Web.Hosting.AppSecurityControllerFeatureProvider",
+      "StandardElementType": "Dependency",
+      "LineNumber": 12,
+      "IsPublic": false,
+      "Kind": "Class",
+      "BaseType": null,
+      "Interfaces": [
+        {
+          "Id": "Microsoft.AspNetCore.Mvc.Core:Microsoft.AspNetCore.Mvc.ApplicationParts.IApplicationFeatureProvider\u003CMicrosoft.AspNetCore.Mvc.Controllers.ControllerFeature\u003E",
+          "FullName": "Microsoft.AspNetCore.Mvc.ApplicationParts.IApplicationFeatureProvider\u003CMicrosoft.AspNetCore.Mvc.Controllers.ControllerFeature\u003E",
+          "Name": "IApplicationFeatureProvider",
+          "Namespace": "Microsoft.AspNetCore.Mvc.ApplicationParts",
+          "AssemblyName": "Microsoft.AspNetCore.Mvc.Core",
+          "Kind": "Interface",
+          "IsInCurrentProject": false,
+          "StandardElementType": "Dependency"
+        }
+      ],
+      "Properties": [],
+      "Methods": [
+        {
+          "Id": "ContentManagement.Web.Hosting.AppSecurityControllerFeatureProvider.PopulateFeature(System.Collections.Generic.IEnumerable\u003CMicrosoft.AspNetCore.Mvc.ApplicationParts.ApplicationPart\u003E,Microsoft.AspNetCore.Mvc.Controllers.ControllerFeature)",
+          "Name": "PopulateFeature",
+          "LineNumber": 15,
+          "Inputs": [
+            {
+              "Name": "parts",
+              "Type": "System.Collections.Generic.IEnumerable\u003CMicrosoft.AspNetCore.Mvc.ApplicationParts.ApplicationPart\u003E"
+            },
+            {
+              "Name": "feature",
+              "Type": "Microsoft.AspNetCore.Mvc.Controllers.ControllerFeature"
+            }
+          ],
+          "ReturnType": "System.Void",
+          "Implements": [
+            "Microsoft.AspNetCore.Mvc.ApplicationParts.IApplicationFeatureProvider\u003CMicrosoft.AspNetCore.Mvc.Controllers.ControllerFeature\u003E.PopulateFeature(System.Collections.Generic.IEnumerable\u003CMicrosoft.AspNetCore.Mvc.ApplicationParts.ApplicationPart\u003E,Microsoft.AspNetCore.Mvc.Controllers.ControllerFeature)"
+          ],
+          "Calls": [
+            {
+              "TypeName": "System.Collections.Generic.ICollection\u003CT\u003E",
+              "MethodName": "Remove",
+              "MethodId": "System.Collections.Generic.ICollection\u003CT\u003E.Remove(T)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Reflection.IntrospectionExtensions",
+              "MethodName": "GetTypeInfo",
+              "MethodId": "System.Reflection.IntrospectionExtensions.GetTypeInfo(System.Type)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            }
+          ],
+          "PossibleExceptionTypes": [],
+          "IncomingExceptionTypes": [],
+          "ThrowsExceptionTypes": [],
+          "HttpMethods": [],
+          "HttpResponses": [],
+          "IsHttpRequestHandler": false,
+          "IsODataControllerAction": false,
+          "HasFromBodyParameter": false,
+          "HasKeyParameter": false,
+          "HandlesNullWithNotFound": false,
+          "HasTryCatch": false
+        }
+      ]
+    },
+    {
       "Name": "ContentManagement.Web.IServiceCollectionExtensions",
       "StandardElementType": "App",
-      "LineNumber": 20,
+      "LineNumber": 21,
       "IsPublic": true,
       "Kind": "Class",
       "BaseType": null,
@@ -283,7 +352,7 @@
         {
           "Id": "ContentManagement.Web.IServiceCollectionExtensions.AddWeb(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,System.Action\u003CContentManagement.Web.Models.AppConfiguration\u003E)",
           "Name": "AddWeb",
-          "LineNumber": 22,
+          "LineNumber": 23,
           "Inputs": [
             {
               "Name": "services",
@@ -309,9 +378,30 @@
               "IsDependencyBoundary": true
             },
             {
+              "TypeName": "Microsoft.Extensions.DependencyInjection.MvcCoreMvcBuilderExtensions",
+              "MethodName": "ConfigureApplicationPartManager",
+              "MethodId": "Microsoft.Extensions.DependencyInjection.MvcCoreMvcBuilderExtensions.ConfigureApplicationPartManager(Microsoft.Extensions.DependencyInjection.IMvcBuilder,System.Action\u003CMicrosoft.AspNetCore.Mvc.ApplicationParts.ApplicationPartManager\u003E)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions",
+              "MethodName": "AddControllers",
+              "MethodId": "Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions.AddControllers(Microsoft.Extensions.DependencyInjection.IServiceCollection)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
               "TypeName": "System.Action\u003CT\u003E",
               "MethodName": "Invoke",
               "MethodId": "System.Action\u003CT\u003E.Invoke(T)",
+              "StandardElementType": "Dependency",
+              "IsDependencyBoundary": true
+            },
+            {
+              "TypeName": "System.Collections.Generic.ICollection\u003CT\u003E",
+              "MethodName": "Add",
+              "MethodId": "System.Collections.Generic.ICollection\u003CT\u003E.Add(T)",
               "StandardElementType": "Dependency",
               "IsDependencyBoundary": true
             },

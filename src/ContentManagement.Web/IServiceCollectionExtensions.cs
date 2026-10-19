@@ -13,6 +13,7 @@ using cCoder.Eventing.Http;
 using cCoder.Eventing.Http.Models;
 using cCoder.Security;
 using cCoder.Security.Data.EF;
+using ContentManagement.Web.Hosting;
 using ContentManagement.Web.Models;
 
 namespace ContentManagement.Web;
@@ -47,6 +48,11 @@ public static class IServiceCollectionExtensions
             configuration: webConfiguration.AppSecurity);
         services.AddContentManagementWeb(
             configuration: webConfiguration.ContentManagement);
+
+        services.AddControllers()
+            .ConfigureApplicationPartManager(
+                manager => manager.FeatureProviders.Add(
+                    item: new AppSecurityControllerFeatureProvider()));
 
         return services;
     }

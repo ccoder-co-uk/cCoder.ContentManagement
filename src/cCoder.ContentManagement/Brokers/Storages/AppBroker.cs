@@ -19,7 +19,8 @@ internal sealed class AppBroker(ICoreContextFactory coreContextFactory) : IAppBr
     {
         CoreDataContext coreDataContext = coreContextFactory.CreateCoreContext();
 
-        return coreDataContext.Apps;
+        return coreDataContext.Apps
+            .Include(navigationPropertyPath: app => app.Layouts);
     }
 
     public IQueryable<App> GetAllAppsIgnoringFilters()
