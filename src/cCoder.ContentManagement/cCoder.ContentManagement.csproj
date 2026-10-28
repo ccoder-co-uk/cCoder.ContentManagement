@@ -32,15 +32,15 @@
     <PackageReference Include="cCoder.CodeAnalysis" Version="2026.10.8.1211" IncludeAssets="analyzers;build;buildTransitive" PrivateAssets="all" />
     <PackageReference Include="cCoder.CodeAnalysis.Contracts" Version="2026.10.8.1211" />
     <PackageReference Include="cCoder.Data" Version="2026.10.14.1440" Condition="'$(UseLocalData)' != 'true'" />
-    <PackageReference Include="cCoder.Eventing" Version="2026.10.8.1222" />
+    <PackageReference Include="cCoder.Eventing" Version="2026.10.28.1123" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.14" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.3.1" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.4" />
-    <PackageReference Include="itext" Version="9.7.0" />
-    <PackageReference Include="itext.pdfhtml" Version="6.3.3" />
-    <PackageReference Include="itext.bouncy-castle-adapter" Version="9.7.0" />
+    <PackageReference Include="itext" Version="9.8.0" />
+    <PackageReference Include="itext.pdfhtml" Version="6.3.4" />
+    <PackageReference Include="itext.bouncy-castle-adapter" Version="9.8.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseLocalData)' == 'true'">
     <ProjectReference Include="$(LocalDataProject)" />

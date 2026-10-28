@@ -14,15 +14,15 @@
     <PackageReference Include="cCoder.CodeAnalysis.Contracts" Version="2026.10.8.1211" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="10.0.12" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
+    <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="10.0.14" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.3.1" />
     <PackageReference Include="cCoder.AppSecurity" Version="2026.10.8.1310" />
-    <PackageReference Include="cCoder.Eventing" Version="2026.10.8.1222" />
-    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.10.8.1222" />
-    <PackageReference Include="cCoder.Eventing.Http" Version="2026.10.8.1222" />
-    <PackageReference Include="cCoder.Security" Version="2026.10.8.1235" />
+    <PackageReference Include="cCoder.Eventing" Version="2026.10.28.1123" />
+    <PackageReference Include="cCoder.Eventing.AzureServiceBus" Version="2026.10.28.1123" />
+    <PackageReference Include="cCoder.Eventing.Http" Version="2026.10.28.1123" />
+    <PackageReference Include="cCoder.Security" Version="2026.10.14.1427" />
     <PackageReference Include="cCoder.Security.Data" Version="2026.10.14.1427" />
   </ItemGroup>
   <ItemGroup>
