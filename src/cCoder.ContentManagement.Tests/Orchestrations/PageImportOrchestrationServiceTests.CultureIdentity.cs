@@ -100,4 +100,37 @@ public sealed partial class PageImportOrchestrationServiceTests
             expression: service => service.AddPageInfoAsync(newPageInfo: It.IsAny<PageInfo>()),
             times: Times.Never());
     }
+
+    [Fact]
+    public async Task ShouldPreferExactCultureWhenOlderCaseVariantAlsoExistsAsync()
+    {
+        // Given
+        Content older = new() { Id = 42, PageId = 7, Name = "body", CultureId = "en-GB", Html = "old" };
+        Content exact = new() { Id = 99, PageId = 7, Name = "body", CultureId = "en-gb", Html = "current" };
+        Content incoming = new() { Name = "body", CultureId = "en-gb", Html = "new" };
+        Page page = new() { Id = 7, Contents = [incoming] };
+        Mock<IPageInfoProcessingService> pageInfo = new(MockBehavior.Strict);
+        Mock<IContentProcessingService> content = new(MockBehavior.Strict);
+
+        content
+            .Setup(expression: service => service.GetAllContents(ignoreFilters: true))
+            .Returns(value: new[] { older, exact }
+                .AsQueryable());
+
+        content
+            .Setup(expression: service => service.UpdateContentAsync(updatedContent: incoming))
+            .ReturnsAsync(value: incoming);
+
+        PageImportOrchestrationService service = new(
+            pageInfoProcessingService: pageInfo.Object,
+            contentProcessingService: content.Object);
+
+        // When
+        await service.HandlePageImportAsync(page: page);
+
+        // Then
+
+        incoming.Id.Should()
+            .Be(expected: exact.Id);
+    }
 }

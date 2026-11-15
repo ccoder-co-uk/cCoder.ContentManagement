@@ -32,6 +32,8 @@ internal sealed partial class PageImportOrchestrationService(
             foreach (PageInfo incoming in page.PageInfo)
             {
                 PageInfo existing = existingItems.FirstOrDefault(predicate: item =>
+                    item.CultureId == incoming.CultureId)
+                    ?? existingItems.FirstOrDefault(predicate: item =>
                     string.Equals(
                         a: item.CultureId,
                         b: incoming.CultureId,
@@ -56,6 +58,9 @@ internal sealed partial class PageImportOrchestrationService(
             foreach (Content incoming in page.Contents)
             {
                 Content existing = existingItems.FirstOrDefault(predicate: item =>
+                    item.Name == incoming.Name &&
+                    item.CultureId == incoming.CultureId)
+                    ?? existingItems.FirstOrDefault(predicate: item =>
                     string.Equals(
                         a: item.Name,
                         b: incoming.Name,
