@@ -2,6 +2,7 @@
 // Copyright (c) Paul.Ward@ccoder.co.uk
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
@@ -31,7 +32,10 @@ internal sealed partial class PageImportOrchestrationService(
             foreach (PageInfo incoming in page.PageInfo)
             {
                 PageInfo existing = existingItems.FirstOrDefault(predicate: item =>
-                    item.CultureId == incoming.CultureId);
+                    string.Equals(
+                        a: item.CultureId,
+                        b: incoming.CultureId,
+                        comparisonType: StringComparison.OrdinalIgnoreCase));
 
                 incoming.Id = existing?.Id ?? 0;
                 incoming.PageId = page.Id;
@@ -52,8 +56,14 @@ internal sealed partial class PageImportOrchestrationService(
             foreach (Content incoming in page.Contents)
             {
                 Content existing = existingItems.FirstOrDefault(predicate: item =>
-                    item.Name == incoming.Name &&
-                    item.CultureId == incoming.CultureId);
+                    string.Equals(
+                        a: item.Name,
+                        b: incoming.Name,
+                        comparisonType: StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(
+                        a: item.CultureId,
+                        b: incoming.CultureId,
+                        comparisonType: StringComparison.OrdinalIgnoreCase));
 
                 incoming.Id = existing?.Id ?? 0;
                 incoming.PageId = page.Id;
