@@ -12,6 +12,8 @@ using cCoder.ContentManagement.Models.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using System.Security;
+using System.Security.Authentication;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
@@ -25,21 +27,56 @@ public class PageRenderCacheController(
     {
         try
         {
-            return Ok(value: manager.GetAllPageRenderCaches());
+
+            {
+                var actionValue = manager.GetAllPageRenderCaches();
+                loggingBroker.LogInformation(message: "Controller action completed successfully.");
+                return Ok(value: actionValue);
+            }
         }
-        catch (ContentManagementValidationException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
 
-            return BadRequest(); }
-        catch (ContentManagementSecurityException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+        catch (ContentManagementValidationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+        catch (ArgumentException exception)
+{
+    loggingBroker.LogWarning(message: "Controller argument validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
-    }
+        catch (AuthenticationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authentication failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status401Unauthorized, value: "Authentication failed.");
+}
+
+        catch (UnauthorizedAccessException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authorization failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (ContentManagementSecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (SecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (Exception exception)
+{
+    loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+    return StatusCode(statusCode: StatusCodes.Status500InternalServerError, value: "The content management operation failed.");
+}
+        }
 
     [HttpGet]
     [EnableQuery]
@@ -48,70 +85,190 @@ public class PageRenderCacheController(
         try
         {
             PageRenderCache result = manager.GetPageRenderCache(pageRenderCacheId: key);
-            return result == null ? NotFound() : Ok(value: result);
+
+            if (result == null)
+            {
+                loggingBroker.LogWarning(message: "Controller action returned a client error.");
+                return NotFound();
+            }
+            else
+            {
+                loggingBroker.LogInformation(message: "Controller action completed successfully.");
+                return Ok(value: result);
+            }
         }
-        catch (ContentManagementValidationException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
 
-            return BadRequest(); }
-        catch (ContentManagementSecurityException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+        catch (ContentManagementValidationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+        catch (ArgumentException exception)
+{
+    loggingBroker.LogWarning(message: "Controller argument validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
-    }
+        catch (AuthenticationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authentication failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status401Unauthorized, value: "Authentication failed.");
+}
+
+        catch (UnauthorizedAccessException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authorization failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (ContentManagementSecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (SecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (Exception exception)
+{
+    loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+    return StatusCode(statusCode: StatusCodes.Status500InternalServerError, value: "The content management operation failed.");
+}
+        }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] PageRenderCache newPageRenderCache)
     {
         try
         {
-            if (!ModelState.IsValid) { return BadRequest(modelState: ModelState); }
+            if (!ModelState.IsValid) {
+{
+    loggingBroker.LogWarning(message: "Controller action returned a client error.");
+    return BadRequest(modelState: ModelState);
+} }
 
-            return StatusCode(
-                statusCode: StatusCodes.Status201Created,
-                value: await manager.AddPageRenderCacheAsync(newPageRenderCache: newPageRenderCache));
+
+            {
+
+                var actionValue = await manager.AddPageRenderCacheAsync(newPageRenderCache: newPageRenderCache);
+
+                loggingBroker.LogInformation(message: "Controller action completed successfully.");
+
+                return StatusCode(statusCode: StatusCodes.Status201Created, value: actionValue);
+
+            }
         }
-        catch (ContentManagementValidationException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
 
-            return BadRequest(); }
-        catch (ContentManagementSecurityException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+        catch (ContentManagementValidationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+        catch (ArgumentException exception)
+{
+    loggingBroker.LogWarning(message: "Controller argument validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
-    }
+        catch (AuthenticationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authentication failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status401Unauthorized, value: "Authentication failed.");
+}
+
+        catch (UnauthorizedAccessException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authorization failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (ContentManagementSecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (SecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (Exception exception)
+{
+    loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+    return StatusCode(statusCode: StatusCodes.Status500InternalServerError, value: "The content management operation failed.");
+}
+        }
 
     [HttpPut]
     public async Task<IActionResult> Put([FromRoute] string key, [FromBody] PageRenderCache updatedPageRenderCache)
     {
         try
         {
-            if (!ModelState.IsValid) { return BadRequest(modelState: ModelState); }
+            if (!ModelState.IsValid) {
+{
+    loggingBroker.LogWarning(message: "Controller action returned a client error.");
+    return BadRequest(modelState: ModelState);
+} }
 
             updatedPageRenderCache.Id = key;
-            return Ok(value: await manager.UpdatePageRenderCacheAsync(updatedPageRenderCache: updatedPageRenderCache));
+
+            {
+                var actionValue = await manager.UpdatePageRenderCacheAsync(updatedPageRenderCache: updatedPageRenderCache);
+                loggingBroker.LogInformation(message: "Controller action completed successfully.");
+                return Ok(value: actionValue);
+            }
         }
-        catch (ContentManagementValidationException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
 
-            return BadRequest(); }
-        catch (ContentManagementSecurityException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+        catch (ContentManagementValidationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+        catch (ArgumentException exception)
+{
+    loggingBroker.LogWarning(message: "Controller argument validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
-    }
+        catch (AuthenticationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authentication failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status401Unauthorized, value: "Authentication failed.");
+}
+
+        catch (UnauthorizedAccessException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authorization failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (ContentManagementSecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (SecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (Exception exception)
+{
+    loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+    return StatusCode(statusCode: StatusCodes.Status500InternalServerError, value: "The content management operation failed.");
+}
+        }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] string key)
@@ -119,20 +276,54 @@ public class PageRenderCacheController(
         try
         {
             await manager.DeletePageRenderCacheAsync(pageRenderCacheId: key);
-            return NoContent();
+
+            {
+                loggingBroker.LogInformation(message: "Controller action completed successfully.");
+                return NoContent();
+            }
         }
-        catch (ContentManagementValidationException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
 
-            return BadRequest(); }
-        catch (ContentManagementSecurityException exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+        catch (ContentManagementValidationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden); }
-        catch (Exception exception) {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+        catch (ArgumentException exception)
+{
+    loggingBroker.LogWarning(message: "Controller argument validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError); }
-    }
+        catch (AuthenticationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authentication failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status401Unauthorized, value: "Authentication failed.");
+}
+
+        catch (UnauthorizedAccessException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authorization failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (ContentManagementSecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (SecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
+        catch (Exception exception)
+{
+    loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+    return StatusCode(statusCode: StatusCodes.Status500InternalServerError, value: "The content management operation failed.");
+}
+        }
 
 }
