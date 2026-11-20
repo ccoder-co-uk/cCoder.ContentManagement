@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using cCoder.Data.Models.CMS;
+using System.Security;
+using System.Security.Authentication;
 
 namespace cCoder.ContentManagement.Exposures.Controllers;
 
@@ -42,27 +44,56 @@ public class LayoutController : ODataController
     {
         try
         {
-            return Ok(value: service.GetAllLayouts());
+
+            {
+                var actionValue = service.GetAllLayouts();
+                loggingBroker.LogInformation(message: "Controller action completed successfully.");
+                return Ok(value: actionValue);
+            }
         }
+
         catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+{
+    loggingBroker.LogWarning(message: "Controller validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return BadRequest();
-        }
+        catch (ArgumentException exception)
+{
+    loggingBroker.LogWarning(message: "Controller argument validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
+
+        catch (AuthenticationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authentication failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status401Unauthorized, value: "Authentication failed.");
+}
+
+        catch (UnauthorizedAccessException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authorization failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
         catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
+        catch (SecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
         catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+{
+    loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+    return StatusCode(statusCode: StatusCodes.Status500InternalServerError, value: "The content management operation failed.");
+}
         }
-    }
 
     [HttpGet]
     [AllowAnonymous]
@@ -78,29 +109,72 @@ public class LayoutController : ODataController
                 .Select(selector: layout => (int?)layout.Id)
                 .FirstOrDefault();
 
-            return result is null
-                ? NotFound()
-                : Ok(value: oDataResultBroker.CreateSingleResult(queryable: query));
+
+            if (result is null)
+
+            {
+
+                loggingBroker.LogWarning(message: "Controller action returned a client error.");
+
+                return NotFound();
+
+            }
+
+            else
+
+            {
+
+                var actionValue = oDataResultBroker.CreateSingleResult(queryable: query);
+
+                loggingBroker.LogInformation(message: "Controller action completed successfully.");
+
+                return Ok(value: actionValue);
+
+            }
         }
+
         catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+{
+    loggingBroker.LogWarning(message: "Controller validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return BadRequest();
-        }
+        catch (ArgumentException exception)
+{
+    loggingBroker.LogWarning(message: "Controller argument validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
+
+        catch (AuthenticationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authentication failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status401Unauthorized, value: "Authentication failed.");
+}
+
+        catch (UnauthorizedAccessException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authorization failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
         catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
+        catch (SecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
         catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+{
+    loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+    return StatusCode(statusCode: StatusCodes.Status500InternalServerError, value: "The content management operation failed.");
+}
         }
-    }
 
     [HttpPost]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
@@ -110,30 +184,68 @@ public class LayoutController : ODataController
         {
             if (!base.ModelState.IsValid)
             {
-                return new BadRequestResult(modelState: base.ModelState);
+
+                {
+                    var actionValue = new BadRequestResult(modelState: base.ModelState);
+                    loggingBroker.LogWarning(message: "Controller action returned a client error.");
+                    return actionValue;
+                }
             }
 
-            return StatusCode(statusCode: StatusCodes.Status201Created, value: await service.AddLayoutAsync(newLayout: newLayout));
+
+            {
+
+                var actionValue = await service.AddLayoutAsync(newLayout: newLayout);
+
+                loggingBroker.LogInformation(message: "Controller action completed successfully.");
+
+                return StatusCode(statusCode: StatusCodes.Status201Created, value: actionValue);
+
+            }
         }
+
         catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+{
+    loggingBroker.LogWarning(message: "Controller validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return BadRequest();
-        }
+        catch (ArgumentException exception)
+{
+    loggingBroker.LogWarning(message: "Controller argument validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
+
+        catch (AuthenticationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authentication failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status401Unauthorized, value: "Authentication failed.");
+}
+
+        catch (UnauthorizedAccessException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authorization failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
         catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
+        catch (SecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
         catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+{
+    loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+    return StatusCode(statusCode: StatusCodes.Status500InternalServerError, value: "The content management operation failed.");
+}
         }
-    }
 
     [HttpPut]
     [EnableQuery(AllowedArithmeticOperators = AllowedArithmeticOperators.All, AllowedFunctions = AllowedFunctions.AllFunctions, AllowedLogicalOperators = AllowedLogicalOperators.All, AllowedQueryOptions = AllowedQueryOptions.All, MaxAnyAllExpressionDepth = 5, MaxExpansionDepth = 5)]
@@ -143,30 +255,68 @@ public class LayoutController : ODataController
         {
             if (!base.ModelState.IsValid)
             {
-                return new BadRequestResult(modelState: base.ModelState);
+
+                {
+                    var actionValue = new BadRequestResult(modelState: base.ModelState);
+                    loggingBroker.LogWarning(message: "Controller action returned a client error.");
+                    return actionValue;
+                }
             }
 
-            return Ok(value: await service.UpdateLayoutAsync(updatedLayout: updatedLayout));
+
+            {
+
+                var actionValue = await service.UpdateLayoutAsync(updatedLayout: updatedLayout);
+
+                loggingBroker.LogInformation(message: "Controller action completed successfully.");
+
+                return Ok(value: actionValue);
+
+            }
         }
+
         catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+{
+    loggingBroker.LogWarning(message: "Controller validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return BadRequest();
-        }
+        catch (ArgumentException exception)
+{
+    loggingBroker.LogWarning(message: "Controller argument validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
+
+        catch (AuthenticationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authentication failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status401Unauthorized, value: "Authentication failed.");
+}
+
+        catch (UnauthorizedAccessException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authorization failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
         catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
+        catch (SecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
         catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+{
+    loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+    return StatusCode(statusCode: StatusCodes.Status500InternalServerError, value: "The content management operation failed.");
+}
         }
-    }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromRoute] int key)
@@ -174,25 +324,53 @@ public class LayoutController : ODataController
         try
         {
             await service.DeleteAsync(layoutId: key);
-            return NoContent();
+
+            {
+                loggingBroker.LogInformation(message: "Controller action completed successfully.");
+                return NoContent();
+            }
         }
+
         catch (ContentManagementValidationException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+{
+    loggingBroker.LogWarning(message: "Controller validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
 
-            return BadRequest();
-        }
+        catch (ArgumentException exception)
+{
+    loggingBroker.LogWarning(message: "Controller argument validation failed.", args: exception);
+    return BadRequest(error: "The content management request is invalid.");
+}
+
+        catch (AuthenticationException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authentication failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status401Unauthorized, value: "Authentication failed.");
+}
+
+        catch (UnauthorizedAccessException exception)
+{
+    loggingBroker.LogWarning(message: "Controller authorization failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
         catch (ContentManagementSecurityException exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
 
-            return StatusCode(statusCode: StatusCodes.Status403Forbidden);
-        }
+        catch (SecurityException exception)
+{
+    loggingBroker.LogWarning(message: "Controller security check failed.", args: exception);
+    return StatusCode(statusCode: StatusCodes.Status403Forbidden, value: "The content management operation is forbidden.");
+}
+
         catch (Exception exception)
-        {
-            loggingBroker.LogError(exception: exception, message: "Controller request failed.");
-
-            return StatusCode(statusCode: StatusCodes.Status500InternalServerError);
+{
+    loggingBroker.LogError(exception: exception, message: "Controller request failed.");
+    return StatusCode(statusCode: StatusCodes.Status500InternalServerError, value: "The content management operation failed.");
+}
         }
-    }
 }
