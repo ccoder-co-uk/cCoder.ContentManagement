@@ -20,6 +20,10 @@ internal interface ICommonObjectService
         CommonObject newCommonObject,
         string userId);
 
+    ValueTask<CommonObject[]> AddAllCommonObjectsAsync(
+        CommonObject[] newCommonObjects,
+        string userId);
+
     ValueTask<CommonObject> UpdateCommonObjectAsync(
         CommonObject updatedCommonObject,
         string userId);

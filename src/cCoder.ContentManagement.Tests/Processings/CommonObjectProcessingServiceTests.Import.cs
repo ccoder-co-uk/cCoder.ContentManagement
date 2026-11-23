@@ -24,10 +24,11 @@ public partial class CommonObjectProcessingServiceTests
         incoming.Version = 9;
 
         commonObjectServiceMock
-            .Setup(expression: service => service.AddCommonObjectAsync(
-                newCommonObject: incoming,
+            .Setup(expression: service => service.AddAllCommonObjectsAsync(
+                newCommonObjects: It.Is<CommonObject[]>(match: items =>
+                    items.Length == 1 && items[0] == incoming),
                 userId: CurrentUserId))
-            .ReturnsAsync(value: incoming);
+            .ReturnsAsync(value: [incoming]);
 
 
         // When
@@ -68,14 +69,11 @@ public partial class CommonObjectProcessingServiceTests
         incoming.LastUpdated = incoming.CreatedOn;
 
         commonObjectServiceMock
-            .Setup(expression: service => service.GetAllCommonObjects(ignoreFilters: false))
-            .Returns(value: new[] { existing }.AsQueryable());
-
-        commonObjectServiceMock
-            .Setup(expression: service => service.AddCommonObjectAsync(
-                newCommonObject: incoming,
+            .Setup(expression: service => service.AddAllCommonObjectsAsync(
+                newCommonObjects: It.Is<CommonObject[]>(match: items =>
+                    items.Length == 1 && items[0] == incoming),
                 userId: CurrentUserId))
-            .ReturnsAsync(value: incoming);
+            .ReturnsAsync(value: [incoming]);
 
 
         // When
@@ -96,11 +94,46 @@ public partial class CommonObjectProcessingServiceTests
         incoming.Version.Should()
             .Be(expected: 5);
 
-        commonObjectServiceMock.Verify(
-            expression: service => service.GetAllCommonObjects(ignoreFilters: false),
-            times: Times.Exactly(callCount: 2));
-
         commonObjectServiceMock.VerifyAll();
+        VerifyNoOtherCommonObjectServiceCalls();
+    }
+
+    [Fact]
+    public async Task ShouldPersistAllChangedImportItemsInOneBatch()
+    {
+        // Given
+        CommonObject first = CreateRandomCommonObject(type: "Core/Other");
+        CommonObject second = CreateRandomCommonObject(type: "Core/Other");
+        CommonObject[] incoming = [first, second];
+
+        commonObjectServiceMock
+            .Setup(expression: service => service.AddAllCommonObjectsAsync(
+                newCommonObjects: It.Is<CommonObject[]>(match: items =>
+                    items.Length == 2
+                    && items[0] == first
+                    && items[1] == second),
+                userId: CurrentUserId))
+            .ReturnsAsync(value: incoming);
+
+        // When
+        OperationResult<CommonObject>[] results = (await commonObjectProcessingService
+            .AddAllCommonObjectsAsync(
+                newCommonObjects: incoming,
+                latestCommonObjects: [],
+                userId: CurrentUserId))
+            .ToArray();
+
+        // Then
+        results
+            .Should()
+            .HaveCount(expected: 2);
+
+        commonObjectServiceMock.Verify(
+            expression: service => service.AddAllCommonObjectsAsync(
+                newCommonObjects: It.IsAny<CommonObject[]>(),
+                userId: CurrentUserId),
+            times: Times.Once);
+
         VerifyNoOtherCommonObjectServiceCalls();
     }
 

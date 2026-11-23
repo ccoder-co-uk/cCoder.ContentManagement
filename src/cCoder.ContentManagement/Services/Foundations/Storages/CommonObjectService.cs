@@ -151,6 +151,43 @@ internal partial class CommonObjectService(
 
     }, isValueTask: true);
 
+    public ValueTask<CommonObject[]> AddAllCommonObjectsAsync(
+        CommonObject[] newCommonObjects,
+        string userId) =>
+        TryCatch<CommonObject[]>(operation: async () =>
+    {
+        ValidateAllCommonObjectsOnAdd(inputs: [newCommonObjects, userId]);
+
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+
+        CommonObject[] storageCommonObjects = newCommonObjects
+            .Select(selector: commonObject =>
+            {
+                CommonObject storageCommonObject = CreateStorageCommonObject(
+                    newCommonObject: commonObject);
+
+                storageCommonObject.CreatedOn = now;
+                storageCommonObject.CreatedBy = userId;
+                storageCommonObject.LastUpdated = now;
+                storageCommonObject.LastUpdatedBy = userId;
+                return storageCommonObject;
+            })
+            .ToArray();
+
+        CommonObject[] results = await commonObjectBroker
+            .AddAllCommonObjectsAsync(
+                newCommonObjects: storageCommonObjects);
+
+        for (int index = 0; index < results.Length; index++)
+        {
+            CopyCommonObject(
+                source: results[index],
+                target: newCommonObjects[index]);
+        }
+
+        return newCommonObjects;
+    }, isValueTask: true);
+
     public ValueTask<CommonObject> UpdateCommonObjectAsync(
         CommonObject updatedCommonObject,
         string userId) =>
@@ -212,6 +249,24 @@ internal partial class CommonObjectService(
             Json = newCommonObject.Json,
             Culture = newCommonObject.Culture
         };
+    }
+
+    private static void CopyCommonObject(
+        CommonObject source,
+        CommonObject target)
+    {
+        target.Id = source.Id;
+        target.Name = source.Name;
+        target.Description = source.Description;
+        target.LastUpdated = source.LastUpdated;
+        target.LastUpdatedBy = source.LastUpdatedBy;
+        target.CreatedOn = source.CreatedOn;
+        target.CreatedBy = source.CreatedBy;
+        target.Version = source.Version;
+        target.Key = source.Key;
+        target.Type = source.Type;
+        target.Json = source.Json;
+        target.Culture = source.Culture;
     }
 
     private IQueryable<CommonObject> ExecuteGetAllCommonObjects(bool ignoreFilters = false) =>

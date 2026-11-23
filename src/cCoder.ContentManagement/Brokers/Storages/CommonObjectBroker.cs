@@ -44,10 +44,19 @@ internal sealed class CommonObjectBroker(
     public void RefreshCommonObjects() =>
         commonObjectCacheManager.Refresh();
 
+    public void ApplyCommonObjects(CommonObject[] changedCommonObjects) =>
+        commonObjectCacheManager.Apply(
+            changedCommonObjects: changedCommonObjects);
+
     public ValueTask<CommonObject> AddCommonObjectAsync(
         CommonObject newCommonObject) =>
         commonObjectCacheManager.AddAsync(
             newCommonObject: newCommonObject);
+
+    public ValueTask<CommonObject[]> AddAllCommonObjectsAsync(
+        CommonObject[] newCommonObjects) =>
+        commonObjectCacheManager.AddAllAsync(
+            newCommonObjects: newCommonObjects);
 
     public ValueTask<CommonObject> UpdateCommonObjectAsync(
         CommonObject updatedCommonObject) =>

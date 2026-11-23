@@ -244,18 +244,26 @@ internal partial class CommonObjectOrchestrationService(
         IEnumerable<CommonObject> commonObjects,
         IEnumerable<CommonObject> latestCommonObjects)
     {
-        CommonObject[] latest = latestCommonObjects.ToArray();
+        Dictionary<(string Type, string Culture, string Name, string Key), CommonObject>
+            latestByIdentity = latestCommonObjects.ToDictionary(
+                keySelector: commonObject => (
+                    commonObject.Type,
+                    commonObject.Culture ?? string.Empty,
+                    commonObject.Name,
+                    commonObject.Key));
+
         bool hasAdds = false;
         bool hasUpdates = false;
 
         foreach (CommonObject item in commonObjects)
         {
-            CommonObject existing = latest.FirstOrDefault(
-                predicate: candidate =>
-                    candidate.Type == item.Type
-                    && candidate.Culture == (item.Culture ?? string.Empty)
-                    && candidate.Name == item.Name
-                    && candidate.Key == item.Key);
+            latestByIdentity.TryGetValue(
+                key: (
+                    item.Type,
+                    item.Culture ?? string.Empty,
+                    item.Name,
+                    item.Key),
+                value: out CommonObject existing);
 
             hasAdds |= existing is null;
 

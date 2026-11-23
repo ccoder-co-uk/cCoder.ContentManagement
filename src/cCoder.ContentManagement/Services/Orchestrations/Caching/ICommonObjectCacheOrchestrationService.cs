@@ -11,6 +11,8 @@ internal interface ICommonObjectCacheOrchestrationService
 {
     void Refresh();
 
+    void ApplyCommonObjects(CommonObject[] changedCommonObjects);
+
     void EnsureAvailable();
 
     T[] GetAll<T>();
