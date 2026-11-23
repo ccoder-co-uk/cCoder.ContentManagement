@@ -14,6 +14,7 @@ using cCoder.Eventing;
 using cCoder.ContentManagement.Rendering.Services.Processings;
 using cCoder.ContentManagement.Services.Orchestrations.Caching;
 using cCoder.ContentManagement.Brokers.Authorizations;
+using cCoder.ContentManagement.Brokers.Storages;
 
 namespace cCoder.ContentManagement;
 
@@ -117,15 +118,21 @@ public static partial class IEventHubExtensions
 
     private static void ListenToCommonObjectCacheEvents(IEventHub eventHub)
     {
+        ListenToCommonObjectDataCacheEvents(eventHub: eventHub);
+
         eventHub.ListenToEvent(
             name: "common_object_add",
-            handler: (ICommonObjectCacheOrchestrationService service, CommonObject _) =>
-                RefreshCommonObjectCacheAsync(service: service));
+            handler: (ICommonObjectCacheOrchestrationService service, CommonObject commonObject) =>
+                ApplyCommonObjectCacheChangesAsync(
+                    service: service,
+                    changedCommonObjects: [commonObject]));
 
         eventHub.ListenToEvent(
             name: "common_object_update",
-            handler: (ICommonObjectCacheOrchestrationService service, CommonObject _) =>
-                RefreshCommonObjectCacheAsync(service: service));
+            handler: (ICommonObjectCacheOrchestrationService service, CommonObject commonObject) =>
+                ApplyCommonObjectCacheChangesAsync(
+                    service: service,
+                    changedCommonObjects: [commonObject]));
 
         eventHub.ListenToEvent(
             name: "common_object_delete",
@@ -134,14 +141,56 @@ public static partial class IEventHubExtensions
 
         eventHub.ListenToEvent(
             name: "common_objects_imported",
-            handler: (ICommonObjectCacheOrchestrationService service, CommonObject[] _) =>
-                RefreshCommonObjectCacheAsync(service: service));
+            handler: (ICommonObjectCacheOrchestrationService service, CommonObject[] commonObjects) =>
+                ApplyCommonObjectCacheChangesAsync(
+                    service: service,
+                    changedCommonObjects: commonObjects));
+    }
+
+    private static void ListenToCommonObjectDataCacheEvents(IEventHub eventHub)
+    {
+        eventHub.ListenToEvent(
+            name: "common_object_add",
+            handler: (ICommonObjectBroker broker, CommonObject commonObject) =>
+                ApplyCommonObjectDataCacheChangesAsync(
+                    broker: broker,
+                    changedCommonObjects: [commonObject]));
+
+        eventHub.ListenToEvent(
+            name: "common_object_update",
+            handler: (ICommonObjectBroker broker, CommonObject commonObject) =>
+                ApplyCommonObjectDataCacheChangesAsync(
+                    broker: broker,
+                    changedCommonObjects: [commonObject]));
+
+        eventHub.ListenToEvent(
+            name: "common_objects_imported",
+            handler: (ICommonObjectBroker broker, CommonObject[] commonObjects) =>
+                ApplyCommonObjectDataCacheChangesAsync(
+                    broker: broker,
+                    changedCommonObjects: commonObjects));
+    }
+
+    private static ValueTask ApplyCommonObjectDataCacheChangesAsync(
+        ICommonObjectBroker broker,
+        CommonObject[] changedCommonObjects)
+    {
+        broker.ApplyCommonObjects(changedCommonObjects: changedCommonObjects);
+        return ValueTask.CompletedTask;
     }
 
     private static ValueTask RefreshCommonObjectCacheAsync(
         ICommonObjectCacheOrchestrationService service)
     {
         service.Refresh();
+        return ValueTask.CompletedTask;
+    }
+
+    private static ValueTask ApplyCommonObjectCacheChangesAsync(
+        ICommonObjectCacheOrchestrationService service,
+        CommonObject[] changedCommonObjects)
+    {
+        service.ApplyCommonObjects(changedCommonObjects: changedCommonObjects);
         return ValueTask.CompletedTask;
     }
 

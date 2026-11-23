@@ -61,99 +61,57 @@ internal partial class CommonObjectProcessingService(
             NormalizeCulture(commonObject: commonObject);
         }
 
-        List<CommonObject> adds = [];
-        List<CommonObject> updates = [];
+        Dictionary<(string Type, string Culture, string Name, string Key), CommonObject>
+            latestByIdentity = latestCommonObjects.ToDictionary(
+                keySelector: commonObject => (
+                    commonObject.Type,
+                    commonObject.Culture ?? string.Empty,
+                    commonObject.Name,
+                    commonObject.Key));
 
-        List<string> types = [];
+        List<CommonObject> changedCommonObjects = [];
 
-        foreach (CommonObject commonObject in newCommonObjects)
+        foreach (CommonObject entry in newCommonObjects)
         {
-            bool typeExists = false;
+            latestByIdentity.TryGetValue(
+                key: (
+                    entry.Type,
+                    entry.Culture,
+                    entry.Name,
+                    entry.Key),
+                value: out CommonObject matched);
 
-            foreach (string type in types)
+            if (matched is null)
             {
-                if (string.Equals(
-                    a: type,
-                    b: commonObject.Type,
-                    comparisonType: StringComparison.Ordinal))
-                {
-                    typeExists = true;
-                    break;
-                }
+                entry.Id = 0;
+                entry.Version = 1;
+                changedCommonObjects.Add(item: entry);
             }
-
-            if (!typeExists)
+            else if (entry.CreatedOn > matched.CreatedOn
+                || entry.LastUpdated > matched.LastUpdated)
             {
-                types.Add(item: commonObject.Type);
+                entry.Id = 0;
+                entry.Version = matched.Version + 1;
+                changedCommonObjects.Add(item: entry);
             }
         }
 
-        foreach (string type in types)
+        if (changedCommonObjects.Count == 0)
         {
-            List<CommonObject> existingSet = [];
-
-            foreach (CommonObject existing in latestCommonObjects)
-            {
-                if (string.Equals(
-                    a: existing.Type,
-                    b: type,
-                    comparisonType: StringComparison.Ordinal))
-                {
-                    existingSet.Add(item: existing);
-                }
-            }
-
-            foreach (CommonObject entry in newCommonObjects)
-            {
-                if (!string.Equals(
-                    a: entry.Type,
-                    b: type,
-                    comparisonType: StringComparison.Ordinal))
-                {
-                    continue;
-                }
-
-                CommonObject matched = null;
-
-                foreach (CommonObject existing in existingSet)
-                {
-                    if (existing.Culture == entry.Culture
-                        && existing.Name == entry.Name
-                        && existing.Key == entry.Key)
-                    {
-                        matched = existing;
-                        break;
-                    }
-                }
-
-                if (matched is null)
-                {
-                    entry.Id = 0;
-                    entry.Version = 1;
-                    adds.Add(item: entry);
-                }
-                else if (entry.CreatedOn > matched.CreatedOn
-                    || entry.LastUpdated > matched.LastUpdated)
-                {
-                    entry.Version = matched.Version + 1;
-                    updates.Add(item: entry);
-                }
-            }
+            return [];
         }
 
-        List<OperationResult<CommonObject>> results = [];
+        CommonObject[] savedCommonObjects = await service.AddAllCommonObjectsAsync(
+            newCommonObjects: changedCommonObjects.ToArray(),
+            userId: userId);
 
-        results.AddRange(collection:
-            await ExecuteAddOrUpdateCommonObjectResult(
-                commonObjects: adds,
-                userId: userId));
-
-        results.AddRange(collection:
-            await ExecuteAddOrUpdateCommonObjectResult(
-                commonObjects: updates,
-                userId: userId));
-
-        return results;
+        return savedCommonObjects.Select(selector: commonObject =>
+            new OperationResult<CommonObject>
+            {
+                Success = true,
+                Item = commonObject,
+                Message = "Added Successfully"
+            });
     }, isValueTask: true);
 
     public ValueTask<CommonObject> AddCommonObjectAsync(

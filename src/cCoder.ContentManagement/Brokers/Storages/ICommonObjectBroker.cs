@@ -19,7 +19,11 @@ public interface ICommonObjectBroker
 
     void RefreshCommonObjects();
 
+    void ApplyCommonObjects(CommonObject[] changedCommonObjects);
+
     ValueTask<CommonObject> AddCommonObjectAsync(CommonObject newCommonObject);
+
+    ValueTask<CommonObject[]> AddAllCommonObjectsAsync(CommonObject[] newCommonObjects);
 
     ValueTask<CommonObject> UpdateCommonObjectAsync(CommonObject updatedCommonObject);
 
