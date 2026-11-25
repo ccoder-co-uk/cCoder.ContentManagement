@@ -61,7 +61,16 @@ internal partial class AppEventService(IAppEventBroker appEventBroker) : IAppEve
             {
                 SSOUserId = userId
             },
-            Data = app
+            Data = new App
+            {
+                Id = app.Id,
+                DefaultCultureId = app.DefaultCultureId,
+                TenantId = app.TenantId,
+                Name = app.Name,
+                Domain = app.Domain,
+                DefaultTheme = app.DefaultTheme,
+                ConfigJson = app.ConfigJson
+            }
         };
 
         await appEventBroker.RaiseAppDeleteEventAsync(message: message);
