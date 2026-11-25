@@ -248,6 +248,11 @@ internal partial class AppOrchestrationService
         {
             throw new ContentManagementSecurityException(innerException: innerException);
         }
+        catch (ContentManagementServiceException exception)
+            when (exception.InnerException is System.Security.SecurityException)
+        {
+            throw new ContentManagementSecurityException(innerException: exception.InnerException);
+        }
         catch (TaskCanceledException innerException)
         {
             throw new ContentManagementTaskCanceledException(innerException: innerException);
